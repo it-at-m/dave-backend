@@ -16,6 +16,7 @@ DAVe besteht aus folgenden Repositories:
 	* Ausgabe aller Zählstellen mit Koordinaten als CSV-Datei
 	* Ausgabe der Spitzenstunde einer bestimmten Zählung als CSV-Datei
 	* Daten aller Zählstellen und Zählungen des angegebenen Monats werden im JSON-Format zurückgegeben
+
 [EAI-Repository](https://github.com/it-at-m/dave-eai)
 
 Besonders ist die Aufteilung der Daten. Alle Daten, die relevant für die Suche sind (Stammdaten), werden in Elasticsearch gespeichert. Die Bewegungsdaten - im Fall von DAVe die Zähldaten - werden in einer relationalen Datenbank (bei der LHM: Oracle) vorgehalten. Um die Ladegeschwindigkeit zu erhöhen, werden bereits beim Speichern der Zähldaten diverse Berechnungen durchgeführt und die vorberechneten Ergebnisse zum direkten Abruf in der Datenbank hinterlegt. Hier kommt auch eine KI-Komponente zum Einsatz, die die Hochrechnung von Kurzzeitzählungen auf den ganzen Tag übernimmt (bisher nur bei Radzählungen).
