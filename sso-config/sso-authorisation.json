@@ -1,0 +1,8 @@
+{
+  "allowRemoteResourceManagement": true,
+  "policyEnforcementMode": "ENFORCING",
+  "resources": [],
+  "policies": [],
+  "scopes": [],
+  "decisionStrategy": "UNANIMOUS"
+}

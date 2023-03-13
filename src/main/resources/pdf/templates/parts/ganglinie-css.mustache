@@ -1,0 +1,93 @@
+  <style>
+    /* Gangliniendiagramm */
+    table.ganglinie {
+      border-collapse: collapse;
+      -fs-table-paginate: paginate;
+    }
+
+    table.ganglinie tr, td, th {
+      border: 1px solid black;
+      font-size: x-small;
+    }
+
+    .ganglinie-table-cell {
+      width: {{{tableCellWidth}}};
+    }
+
+    .ganglinie-table-cell-header {
+      text-align: left;
+    }
+
+    .ganglinie-table-cell-time {
+      text-align: center;
+    }
+
+    .ganglinie-table-cell-data {
+      text-align: right;
+    }
+
+    .color-box {
+      float: left;
+      width: 8px;
+      height: 8px;
+      margin-top: 4px;
+      margin-left: 1.5px;
+      margin-right: 3px;
+      border: 1px solid rgba(0, 0, 0, .2);
+    }
+
+    .color-box.kfz {
+      background: #B71C1C;
+    }
+    .color-box.gv {
+      background: #40C4FF;
+    }
+    .color-box.sv {
+      background: #0D47A1;
+    }
+    .color-box.rad {
+      background: #1B5E20;
+    }
+    .color-box.fuss {
+      background: #CDDC39;
+    }
+    .color-box.sv-anteil {
+      background: #263238;
+    }
+    .color-box.gv-anteil
+    {
+      background: #90A4AE;
+    }
+    .color-box.pkw-einheiten
+    {
+      background: #000000;
+    }
+    .color-box.pkw
+    {
+      background: #00E5FF;
+    }
+    .color-box.lkw
+    {
+      background: #BF360C;
+    }
+    .color-box.lz
+    {
+      background: #FF9E80;
+    }
+    .color-box.bus
+    {
+      background: #FFC107;
+    }
+    .color-box.krad
+    {
+      background: #0097A7;
+    }
+
+    table.ganglinie tr:nth-child(even) {
+      background-color: #eee;
+    }
+
+    table.ganglinie tr:nth-child(odd) {
+      background-color: #fff;
+    }
+  </style>

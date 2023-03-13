@@ -1,0 +1,17 @@
+{{#sindZusatzinformationenVorhanden}}
+  <b>Zusatzinformationen:</b><br/>
+  <table class="format format-zaehlstelleninformationen">
+    {{#zusatzinformationenZeitreihe}}
+      <tr>
+        {{#identifier}}
+          <td>
+            <div style="margin-right: 10px">{{.}}</div>
+          </td>
+        {{/identifier}}
+        {{#comment}}
+          <td>{{.}}</td>
+        {{/comment}}
+      </tr>
+    {{/zusatzinformationenZeitreihe}}
+  </table>
+{{/sindZusatzinformationenVorhanden}}

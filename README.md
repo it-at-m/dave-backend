@@ -1,64 +1,46 @@
-## Customize this file after creating the new REPO and remove this lines.
-What to adjust:  
-* Add the your project or repo name direct under the logo.
-* Add a short and long desciption.
-* Add links for your final repo to report a bug or request a feature.
-* Add list of used technologies.
-* If you have, add a roadmap or remove this section.
-* Fill up the section for set up and documentation.
- * Start in this file only with documentation and link to the docs folder.
-* Add project shields. Use [shields.io](https://shields.io/)
+# Backend (Datenportal):
 
-## ------- end to remove -------
-<!-- add Project Logo, if existing -->
+## About the project
 
-# repo or project name
+Dieses Repository ist eine der 5 Komponenten der Anwendung "DAVe" (Datenbank und Auswertung für Verkehrszählungen).
 
-*Add a description from your project here.*
+Es müssen nicht zwingend alle 5 Komponenten gleichzeitig verwendet werden. Allerdings bildet dieses Repository den Kern der Anwendung und ist Voraussetzung für alle anderen Bestandteile.
 
+DAVe besteht aus folgenden Repositories:
 
-### Built With
+* **Backend (Datenportal)**: Beinhaltet die Business Logik für Frontend, Adminportal, Selfserviceportal und EAI. Bildet den Kern der Anwendung. 
+* **Frontend (Datenportal)**: Das Datenportal bietet einen lesenden Zugriff auf die Zählungen. Es kann nach Zählungen gesucht werden (auch auf einer Karte). Hat ein Nutzer eine Zählung, bzw. eine Zählstelle gefunden, so kann in dieser eine umfangreiche Datenanalyse betrieben werden. [Repository](https://github.com/it-at-m/dave-frontend)
+* **Adminportal**: Das Adminportal ist den Administratoren der Anwendung vorbehalten. Hier ist der komplette Workflow um eine Zählstelle, oder eine Zählung anzulegen abgebildet. Auch die Kommunikation mit dem Zähldienstleister wird über dieses Portal abgewickelt. [Repository](https://github.com/it-at-m/dave-admin-portal)
+* **Selfserviceportal**: Das Selfserviceportal ist dem Zähldienstleister vorbehalten. Dort sieht der Dienstleister Aufträge für neue Zählungen, kann Metadaten zu einer Zählung pflegen und die Zähldaten hochladen. Das Selfserviceportal kann auch mit mehreren verschiedene Zähldienstleister betrieben werden. [Repository](https://github.com/it-at-m/dave-selfservice-portal)
+* **EAI**: Um Schnittstellen zu anderen Systemen innerhalb der LHM zur Verfügung zu stellen, gibt es die Möglichkeit direkt Daten als CSV-Datei zu bekommen. Folgende Funktionen werden angeboten:
+	* Ausgabe aller Zählstellen mit Koordinaten als CSV-Datei
+	* Ausgabe der Spitzenstunde einer bestimmten Zählung als CSV-Datei
+	* Daten aller Zählstellen und Zählungen des angegebenen Monats werden im JSON-Format zurückgegeben
+[EAI-Repository](https://github.com/it-at-m/dave-eai)
 
-The documentation project is built with technologies we use in our projects:
-
-* *write here the list of used technologies*
-
-## Roadmap
-
-*if you have a ROADMAP for your project add this here*
+Besonders ist die Aufteilung der Daten. Alle Daten, die relevant für die Suche sind (Stammdaten), werden in Elasticsearch gespeichert. Die Bewegungsdaten - im Fall von DAVe die Zähldaten - werden in einer relationalen Datenbank (bei der LHM: Oracle) vorgehalten. Um die Ladegeschwindigkeit zu erhöhen, werden bereits beim Speichern der Zähldaten diverse Berechnungen durchgeführt und die vorberechneten Ergebnisse zum direkten Abruf in der Datenbank hinterlegt. Hier kommt auch eine KI-Komponente zum Einsatz, die die Hochrechnung von Kurzzeitzählungen auf den ganzen Tag übernimmt (bisher nur bei Radzählungen).
+Die Frontends sind jeweils Vue Single Page Applications, die über ein Service Gateway mit dem Backend kommunizieren. DAVe besteht nur aus einem einzigen Spring Service.
 
 
-See the [open issues](#) for a full list of proposed features (and known issues).
-
-
-## Set up
-*how can i start and fly this project*
-
-## Documentation
-*what insights do you have to tell*
+## Built with
+    Java 11
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-If you have a suggestion that would make this better, please open an issue with the tag "enhancement", fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion that would make this better, please open an issue with the tag "enhancement", fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Don't forget to give the project a star! Thanks again!
 
-1. Open an issue with the tag "enhancement"
-2. Fork the Project
-3. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-4. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-5. Push to the Branch (`git push origin feature/AmazingFeature`)
-6. Open a Pull Request
-
-More about this in the [CODE_OF_CONDUCT](/CODE_OF_CONDUCT.md) file.
-
+    Open an issue with the tag "enhancement"
+    Fork the Project
+    Create your Feature Branch (git checkout -b feature/AmazingFeature)
+    Commit your Changes (git commit -m 'Add some AmazingFeature')
+    Push to the Branch (git push origin feature/AmazingFeature)
+    Open a Pull Request
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](LICENSE) file for more information.
-
-
+Distributed under the MIT License. See LICENSE for more information.
 ## Contact
 
-it@M - opensource@muenchen.de
+it@m - opensource@muenchen.de

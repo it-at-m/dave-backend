@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {{{globalCssMustachePart}}}
+  {{{datentabelleCssMustachePart}}}
+</head>
+<body>
+{{{logoMustachePart}}}
+{{{footerMustachePart}}}
+<!--Ab der zweiten Seite soll über dem Content noch ein Header angezeigt werden-->
+<div style="position: running(datentabelle-header-second-page-and-onward); margin-top: 1.1cm">
+  <h4>{{documentTitle}}</h4>
+  {{#zaehlstelleninformationen}}
+    <b>{{projektname}}</b>
+    <table class="format">
+      <tr>
+        <td>Zähldatum:</td>
+        <td>{{zaehldatum}}</td>
+      </tr>
+    </table>
+    <br/>
+  {{/zaehlstelleninformationen}}
+  <h5>{{tableTitle}}</h5>
+</div>
+
+<h4>{{documentTitle}}</h4>
+{{{zaehlstelleninformationenMustachePart}}}
+{{{schematischeUebersichtMustachePart}}}
+<br/>
+{{{datentabelleTableMustachePart}}}
+{{{zusatzinformationenMustachePart}}}
+</body>
+</html>

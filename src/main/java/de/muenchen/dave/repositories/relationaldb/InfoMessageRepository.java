@@ -1,0 +1,44 @@
+/*
+ * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
+ * der Landeshauptstadt München, 2021
+ */
+package de.muenchen.dave.repositories.relationaldb;
+
+import de.muenchen.dave.domain.InfoMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+
+public interface InfoMessageRepository extends JpaRepository<InfoMessage, UUID> { //NOSONAR
+
+    @Override
+    Optional<InfoMessage> findById(UUID id);
+
+    @Override
+    <S extends InfoMessage> S save(S chatMessage);
+
+    @Override
+    <S extends InfoMessage> List<S> saveAll(Iterable<S> entities);
+
+    @Override
+    void deleteById(UUID id);
+
+    @Override
+    void delete(InfoMessage entity);
+
+    @Override
+    void deleteAll(Iterable<? extends InfoMessage> entities);
+
+    @Override
+    void deleteAll();
+
+    List<InfoMessage> findAllByAktivIsTrue();
+
+    List<InfoMessage> findAllByOrderByCreatedTimeDesc();
+
+    Optional<InfoMessage> findTopByAktivIsTrueOrderByCreatedTimeDesc();
+
+}

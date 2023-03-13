@@ -1,0 +1,38 @@
+test:
+  faker:
+    zaehlstelle:
+      stellen:
+        - { bezirknummer: '1', bezirk: 'Altstadt-Lehel', lat: '48.13759', lng: '11.58805', name: 'Maxmonument', platz: '', strassen: 'Maximilianstraße, Thierschstraße', geo: '' }
+        - { bezirknummer: '3', bezirk: 'Maxvorstadt', lat: '48.14758', lng: '11.55887', name: 'Stiglmeierplatz', platz: 'Stiglmeierplatz', strassen: 'Nymphenburger Straße, Dachauer Straße, Brienner Straße, Seidlstraße', geo: '' }
+        - { bezirknummer: '4', bezirk: 'Schwabing-West', lat: '48.17056', lng: '11.56429', name: 'Lerchenauer / Schleißheimer Straße', platz: '', strassen: 'Lerchenauer Straße, Schleißheimer Straße', geo: '' }
+        - { bezirknummer: '5', bezirk: 'Au-Haidhausen', lat: '48.12859', lng: '11.59391', name: 'Rosenheimer Platz', platz: 'Rosenheimer Platz', strassen: 'Rosenheimer Straße, Steinstraße, Franziskanerstraße, Balanstraße, Weißenburger Straße', geo: '' }
+        - { bezirknummer: '6', bezirk: 'Sendling', lat: '48.11689', lng: '11.53807', name: 'Harras', platz: 'Harras', strassen: 'Am Harras, Albert-Roßhaupter-Straße, Meindlstraße, Karwendelstraße', geo: '' }
+        - { bezirknummer: '9', bezirk: 'Neuhausen-Nymphenburg', lat: '48.1629', lng: '11.54222', name: 'Heideckstraße', platz: '', strassen: 'Heideckstraße, Dachauer Straße, Hedwig-Dransfeld-Allee', geo: '' }
+        - { bezirknummer: '10', bezirk: 'Moosach', lat: '48.18114', lng: '11.51151', name: 'Pelkovenstraße', platz: '', strassen: 'Dachauer Straße, Pelkovenstraße, Bunzlauer Straße, Baubergerstraße', geo: '' }
+        - { bezirknummer: '13', bezirk: 'Bogenhausen', lat: '48.15678', lng: '11.60538', name: 'John-F.-Kennedy-Brücke', platz: '', strassen: 'Isarring, Thomas-Mann-Allee', geo: 'Isar, Brücke' }
+        - { bezirknummer: '18', bezirk: 'Untergiesing-Harlaching', lat: '48.10079', lng: '11.5498', name: 'Thalkirchner Brücke', platz: '', strassen: 'Thalkirchner Brücke', geo: 'Isar, Brücke' }
+        - { bezirknummer: '23', bezirk: 'Allach-Untermenzing', lat: '48.17771', lng: '11.47255', name: 'S-Bahn Untermenzing', platz: '', strassen: 'Von-Kahr-Straße', geo: 'Brücke, Bahn' }
+        - { bezirknummer: '3', bezirk: 'Maxvorstadt', lat: '48.15428', lng: '11.55384', name: 'Dachauerstraße, Lothstraße', platz: '', strassen: 'Dachauerstraße, Lothstraße', geo: 'Trambahn' }
+        - { bezirknummer: '9', bezirk: 'Neuhausen-Nymphenburg', lat: '48.15947', lng: '11.5474', name: 'Dachauerstraße, Schwere-Reiter-Straße, Leonrodstraße', platz: '', strassen: 'Dachauerstraße, Schwere-Reiter-Straße, Leonrodstraße', geo: 'Trambahn, Brücke' }
+        - { bezirknummer: '9', bezirk: 'Neuhausen-Nymphenburg', lat: '48.16578', lng: '11.53793', name: 'Dachauerstraße, Landshuterallee', platz: '', strassen: 'Dachauerstraße, Landshuterallee', geo: 'Trambahn' }
+        - { bezirknummer: '10', bezirk: 'Moosach', lat: '48.17579', lng: '11.52197', name: 'Dachauerstraße, Wintrichring, Georg-Brauchle-Ring', platz: '', strassen: 'Dachauerstraße, Wintrichring, Georg-Brauchle-Ring', geo: 'Tunnel, Bahn' }
+        - { bezirknummer: '25', bezirk: 'Laim', lat: '48.1431', lng: '11.50318', name: 'S-Bahn Laim', platz: '', strassen: 'Landsberger Straße, Fürstenriederstraße, Wotanstraße', geo: '' }
+        - { bezirknummer: '25', bezirk: 'Laim', lat: '48.14133', lng: '11.51873', name: 'S-Bahn Hirschgarten', platz: '', strassen: 'Landsberger Straße, Friedenheimer Brücke, Elsenheimerstraße', geo: '' }
+        - { bezirknummer: '1', bezirk: 'Altstadt-Lehel', lat: '48.13233', lng: '11.58489', name: 'Ludwigsbrücke', platz: '', strassen: 'Ludwigsbrücke, Zweibrückenstraße, Erhardstraße, Steinsdorfstraße', geo: 'private final static String GEO = "geo";' }
+        - { bezirknummer: '1', bezirk: 'Altstadt-Lehel', lat: '48.12316', lng: '11.56741', name: 'Wittelsbacherbrücke', platz: '', strassen: 'Wittelsbacherstraße, Baldeplatz, Wittelsbacherbrücke', geo: '' }
+        - { bezirknummer: '1', bezirk: 'Altstadt-Lehel', lat: '48.14964', lng: '11.59754', name: 'Max-Joseph-Brücke', platz: '', strassen: 'Tivolistraße, Widenmayerstraße, Ifflandstraße', geo: '' }
+        - { bezirknummer: '2', bezirk: 'Ludwigsvorstadt-Isarvorstadt', lat: '48.12787', lng: '11.57625', name: 'Reichenbachbrücke', platz: '', strassen: 'Reichenbachbrücke, Auenstraße, Erhardstraße, Frauenhoferstraße', geo: '' }
+        - { bezirknummer: '4', bezirk: 'Schwabing-West', lat: '48.16034', lng: '11.57504', name: 'Kurfürstenplatz', platz: '', strassen: 'Kurfürstenplatz, Hohenzollernstraße, Belgradstraße', geo: '' }
+        - { bezirknummer: '7', bezirk: 'Sendling-Westpark', lat: '48.1133', lng: '11.51695', name: 'Luise-Kiesselbach-Tunnel', platz: '', strassen: 'Waldfriedhofstraße, Garmischer Straße, Albert-Roßhaupter-straße, Luise-Kiesselbach-Platz, Luise-Kiesselbach-Tunnel', geo: '' }
+        - { bezirknummer: '8', bezirk: 'Schwanthalerhöhe', lat: '48.13615', lng: '11.5343', name: 'Trappentreutunnel, Gollierstraße', platz: '', strassen: 'Trappentreustraße, Gollierstraße, Gollierplatz', geo: '' }
+        - { bezirknummer: '11', bezirk: 'Milbertshofen-Am Hart', lat: '48.18718', lng: '11.56609', name: 'Moosacher Straße, Frankfurter Ring, Schleißheimer Straße', platz: '', strassen: 'Moosacher Straße, Frankfurter Ring, Schleißheimer Straße', geo: '' }
+        - { bezirknummer: '12', bezirk: 'Schwabing-Freimann', lat: '48.18596', lng: '11.61086', name: 'Ungererstraße, Situlistraße, Frankfurter Ring, Föringer Ring', platz: '', strassen: 'Ungererstraße, Situlistraße, Frankfurter Ring, Föringer Ring', geo: '' }
+        - { bezirknummer: '13', bezirk: 'Bogenhausen', lat: '48.14639', lng: '11.64002', name: 'Denninger Straße, Daglfinger Straße, Friedrich-Eckart-Straße, Ostpreußenstraße', platz: '', strassen: 'Denninger Straße, Daglfinger Straße, Friedrich-Eckart-Straße, Ostpreußenstraße', geo: '' }
+    zaehlung:
+      wetter: [ "SUNNY", "SUNNY_COLD", "CLOUDY", "RAINY", "CONTINUOUS_RAINY", "FOGGY", "SNOWY", "NO_INFORMATION" ]
+      kategorie: [ "PKW", "LKW", "LZ", "BUS", "KRAD", "RAD", "FUSS" ]
+      grund: [ "Tram", "Ampelschaltung", "Wechselverkehrszeichen", "Freigabe LKW", "Abbiegeverbot" ]
+      art: [ "Hauptverkehrsrichtung/Oberfläche/Hoch", "Querschnitt", "Querschnitt/Sonderztählung", "Querschnitt/Hauptverkehrsrichtung/Oberfläche/Hoch", "Teilknoten" ]
+      zeit: [ "DAUER_2_X_4_STUNDEN", "DAUER_16_STUNDEN", "DAUER_24_STUNDEN" ]
+      schule: [ "Schule", "Schule", "Schule", "Ferien" ]
+      tag: [ "Wochenende", "Feiertag", "Wochentag" ]

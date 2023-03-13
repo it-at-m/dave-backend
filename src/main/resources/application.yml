@@ -1,0 +1,70 @@
+spring:
+  application.name: @project.artifactId@
+  banner.location: banner.txt
+  jpa.properties:
+    hibernate.search.default.directory_provider: filesystem
+    hibernate.search.default.indexBase: ./index/default
+
+  # Wird bei der PDF-Generierung benötigt, damit das Backend auch Diagramme > 1MB verarbeiten kann
+  servlet.multipart.max-file-size: 10MB
+  servlet.multipart.max-request-size: 10MB
+
+server:
+  shutdown: "graceful"
+  port: 39146
+  error:
+    include-exception: false
+    include-stacktrace: never
+    whitelabel:
+      enabled: false
+
+# Config for spring actuator endpoints
+management:
+  server.port: ${server.port}
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health, info, prometheus, livenessstate, readinessstate
+      path-mapping:
+        prometheus: metrics
+  endpoint:
+    health.enabled: true
+    info.enabled: true
+    prometheus.enabled: true
+  info:
+    env:
+info.application.name: @project.artifactId@
+info.application.version: @project.version@
+
+
+dave:
+  radius:
+    distance-check-meter: 25
+  zaehlung:
+    status:
+      #      Jeden Tag um 04:00 Uhr
+      updater: 0 0 4 1/1 * ?
+  email:
+    sender:
+      # Server Einstellungen
+      hostname: <SMTP-Mailserver-URL>
+      # URLs für den Link in der EMail
+      url:
+        adminportal: https://dave-adminportal
+        selfserviceportal: https://dave-selfserviceportal
+    receiver:
+      # Server Einstellungen
+      hostname: <IMAP-Server-URL> 
+      protocol: imap
+      port: 993
+      # Default Update-Intervall in Millisekunden für den Email-Abruf
+      update-interval: 3600000
+      folder-success: Erfolgreich
+      folder-error: Fehlerhaft
+      cut-email-body:
+      # Antwortemails ab hier bereinigen. Semikolon ist ein ODER
+        line-contains-strings: "Parameter1;Parameter2;-----Ursprüngliche Nachricht-----"
+        line-begins-with-strings: "Von:;Gesendet:"
+  onnx:
+    model-path: model/Rad_Modell_DAVE.onnx

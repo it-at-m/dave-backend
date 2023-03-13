@@ -1,0 +1,212 @@
+{{#ganglinieTables}}
+  <table class="ganglinie">
+    <thead>
+    <tr>
+      <th>
+        <div class="ganglinie-table-cell ganglinie-table-cell-time"><b>Zeit</b></div>
+      </th>
+      {{#ganglinieTableColumns}}
+        <th>
+          <div class="ganglinie-table-cell ganglinie-table-cell-time"><b>{{uhrzeit}}</b></div>
+        </th>
+      {{/ganglinieTableColumns}}
+    </tr>
+    </thead>
+    <!-- wenn KFZ angewählt -->
+    {{#kraftfahrzeugverkehr}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box kfz"/>
+            KFZ
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{kfz}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/kraftfahrzeugverkehr}}
+    <!-- wenn SV angewählt -->
+    {{#schwerverkehr}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box sv"/>
+            SV
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{sv}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/schwerverkehr}}
+    <!-- SV-Anteil -->
+    {{#schwerverkehrsanteilProzent}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box sv-anteil"/>
+            SV %
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{svAnteil}}%</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/schwerverkehrsanteilProzent}}
+    <!-- Gueterverkehr -->
+    {{#gueterverkehr}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box gv"/>
+            GV
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{gv}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/gueterverkehr}}
+    <!-- GV-Anteil -->
+    {{#gueterverkehrsanteilProzent}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box gv-anteil"/>
+            GV %
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{gvAnteil}}%</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/gueterverkehrsanteilProzent}}
+    {{#pkwEinheiten}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box pkw-einheiten"/>
+            Pkw-Einh.
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{pkwEinheiten}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/pkwEinheiten}}
+    {{#radverkehr}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box rad"/>
+            Rad
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{fahrradfahrer}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/radverkehr}}
+    {{#fussverkehr}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box fuss"/>
+            Fuß
+          </div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{fussgaenger}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/fussverkehr}}
+    {{#personenkraftwagen}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box pkw"/>
+            Pkw</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{pkw}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/personenkraftwagen}}
+    {{#lastkraftwagen}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box lkw"/>
+            Lkw</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{lkw}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/lastkraftwagen}}
+    {{#lastzuege}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box lz"/>
+            Lz</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{lastzuege}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/lastzuege}}
+    {{#busse}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box bus"/>
+            Bus</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{busse}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/busse}}
+    {{#kraftraeder}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box krad"/>
+            Krad</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{kraftraeder}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/kraftraeder}}
+  </table>
+  <br/>
+{{/ganglinieTables}}

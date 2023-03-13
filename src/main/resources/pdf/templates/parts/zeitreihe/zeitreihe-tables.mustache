@@ -1,0 +1,125 @@
+{{#zeitreiheTable}}
+  <table class="zeitreihe">
+    <thead>
+    <tr>
+      <th>
+        Datum
+      </th>
+      {{#kraftfahrzeugverkehr}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box kfz"/>
+            KFZ
+          </div>
+        </th>
+      {{/kraftfahrzeugverkehr}}
+      {{#gueterverkehr}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box gv"/>
+            GV
+          </div>
+        </th>
+      {{/gueterverkehr}}
+      {{#schwerverkehr}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box sv"/>
+            SV
+          </div>
+        </th>
+      {{/schwerverkehr}}
+      {{#radverkehr}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box rad"/>
+            Rad
+          </div>
+        </th>
+      {{/radverkehr}}
+      {{#fussverkehr}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box fuss"/>
+            Fuß
+          </div>
+        </th>
+      {{/fussverkehr}}
+      {{#zeitreiheGesamt}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box gesamt"/>
+            Gesamt
+          </div>
+        </th>
+      {{/zeitreiheGesamt}}
+      {{#schwerverkehrsanteilProzent}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box sv-anteil"/>
+            SV %
+          </div>
+        </th>
+      {{/schwerverkehrsanteilProzent}}
+      {{#gueterverkehrsanteilProzent}}
+        <th>
+          <div class="zeitreihe-table-cell">
+            <div class="color-box gv-anteil"/>
+            GV %
+          </div>
+        </th>
+      {{/gueterverkehrsanteilProzent}}
+    </tr>
+    </thead>
+    {{#zeitreiheTableRows}}
+      <tr>
+        <td>
+          <div class="zeitreihe-table-cell">
+            <b>{{datum}}</b>
+          </div>
+        </td>
+        {{#kraftfahrzeugverkehr}}
+          <td>
+            <div class="zeitreihe-table-cell">{{kfz}}</div>
+          </td>
+        {{/kraftfahrzeugverkehr}}
+        {{#gueterverkehr}}
+          <td>
+            <div class="zeitreihe-table-cell">{{gv}}</div>
+          </td>
+        {{/gueterverkehr}}
+        {{#schwerverkehr}}
+          <td>
+            <div class="zeitreihe-table-cell">{{sv}}</div>
+          </td>
+        {{/schwerverkehr}}
+        {{#radverkehr}}
+          <td>
+            <div class="zeitreihe-table-cell">{{rad}}</div>
+          </td>
+        {{/radverkehr}}
+        {{#fussverkehr}}
+          <td>
+            <div class="zeitreihe-table-cell">{{fuss}}</div>
+          </td>
+        {{/fussverkehr}}
+
+        {{#zeitreiheGesamt}}
+          <td>
+            <div class="zeitreihe-table-cell">{{gesamt}}</div>
+          </td>
+        {{/zeitreiheGesamt}}
+        {{#schwerverkehrsanteilProzent}}
+          <td>
+            <div class="zeitreihe-table-cell">{{svAnteilInProzent}}%</div>
+          </td>
+        {{/schwerverkehrsanteilProzent}}
+        {{#gueterverkehrsanteilProzent}}
+          <td>
+            <div class="zeitreihe-table-cell">{{gvAnteilInProzent}}%</div>
+          </td>
+        {{/gueterverkehrsanteilProzent}}
+      </tr>
+    {{/zeitreiheTableRows}}
+  </table>
+{{/zeitreiheTable}}

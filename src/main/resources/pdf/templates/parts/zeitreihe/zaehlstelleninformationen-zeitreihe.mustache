@@ -1,0 +1,18 @@
+{{#zaehlstelleninformationenZeitreihe}}
+  <table class="format format-zaehlstelleninformationen" style="width:450px;">
+    {{#platzVorhanden}}
+      <tr>
+        <td style="width: 100px;">Platz:</td>
+        <td>{{platz}}</td>
+      </tr>
+    {{/platzVorhanden}}
+    <tr>
+      <td style="width: 100px;">Straßen:</td>
+      <td>
+        {{#knotenarme}}
+          {{strassenname}}<br/>
+        {{/knotenarme}}
+      </td>
+    </tr>
+  </table>
+{{/zaehlstelleninformationenZeitreihe}}

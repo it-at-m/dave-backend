@@ -1,0 +1,92 @@
+<style>
+  /* Datentabelle PDF-Report fixer Teil */
+
+  h5.datentabelle {
+    margin-top: 0px;
+  }
+
+  td.datentabelle-cell-numeric {
+    text-align: center;
+  }
+
+  table.datentabelle {
+    border: 1px solid black;
+    border-collapse: collapse;
+    -fs-table-paginate: paginate;
+    width: 100%;
+  }
+
+  table.datentabelle td, th {
+    font-size: xx-small;
+    border: 0px;
+    border-collapse: collapse;
+  }
+
+  table.datentabelle th.datentabelle-header {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  table.datentabelle td.datentabelle-border-right, th.datentabelle-border-right {
+    border-right: 1px solid black;
+  }
+
+  table.datentabelle th.datentabelle-border-bottom, th.datentabelle-border-bottom {
+    border-bottom: 1px solid black;
+  }
+
+  /* Keine Umrandung und kein Umbruch bei 15-Minuten Werten */
+  .datentabelle-row {
+    -fs-page-break-min-height: 5cm;
+    background-color: #fff;
+  }
+
+  table.datentabelle tr.datentabelle-rowStunde td {
+    font-weight: bold;
+
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+
+  table.datentabelle tr.datentabelle-rowSpStdBlock td {
+    background-color: #eee;
+    font-weight: bold;
+
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  table.datentabelle tr.datentabelle-rowSpStdTag td {
+    background-color: #eee;
+    font-weight: bold;
+
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  table.datentabelle tr.datentabelle-rowBlock td {
+    background-color: #eee;
+    font-weight: bold;
+
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  table.datentabelle tr.datentabelle-rowTageswert td {
+    font-weight: bold;
+
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+  }
+
+  table.zaehlungskenngroessen {
+    border: 1px solid black;
+    -fs-table-paginate: paginate;
+    width: 100%;
+  }
+
+  table.zaehlungskenngroessen th {
+    font-size: medium;
+  }
+</style>

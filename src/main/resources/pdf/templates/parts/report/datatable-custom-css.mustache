@@ -1,0 +1,35 @@
+<style>
+  /* Datentabelle PDF-Report Custom Teil */
+
+  /* Hier wird dem "rechtesten" angezeigten Fahrzeugtyp eine rechte Border verpasst */
+  table.datentabelle .datentabelle-{{datentabelleZaehldaten.getRightBorderFahrzeugtypen}}-{{randomTableId}} {
+  border-right: 1px solid black;
+}
+
+  /* Hier wird der "rechtesten" angezeigten Fahrzeugklasse eine rechte Border verpasst */
+  table.datentabelle .datentabelle-{{datentabelleZaehldaten.getRightBorderFahrzeugklassen}}-{{randomTableId}} {
+  border-right: 1px solid black;
+}
+
+  /* Hier wird den "rechtesten" angezeigtem Anteil eine rechte Border verpasst */
+  table.datentabelle .datentabelle-{{datentabelleZaehldaten.getRightBorderAnteile}}-{{randomTableId}} {
+  border-right: 1px solid black;
+}
+
+  table.datentabelle .datentabelle-fahrzeugtypen-{{randomTableId}} {
+  width: {{datentabelleZaehldaten.getColWidthFahrzeugtypen}}%;
+}
+
+  table.datentabelle .datentabelle-fahrzeugklassen-{{randomTableId}} {
+  width: {{datentabelleZaehldaten.getColWidthFahrzeugklassen}}%;
+}
+
+  table.datentabelle .datentabelle-anteile-{{randomTableId}} {
+  width: {{datentabelleZaehldaten.getColWidthAnteile}}%;
+}
+
+  table.datentabelle .datentabelle-zeit-{{randomTableId}} {
+  width: 8%;
+}
+
+</style>

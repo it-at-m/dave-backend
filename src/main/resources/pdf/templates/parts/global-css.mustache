@@ -1,0 +1,92 @@
+<style>
+  @page {
+    size: portrait a4;
+    margin-top: 1cm;
+    margin-right: 1cm;
+    /*Da Footer im Margin Bereich liegt 1.5cm mehr als oben und rechts*/
+    margin-bottom: 2.5cm;
+    margin-left: 2.5cm;
+
+    @bottom-right {
+      content: element(footer)
+    }
+
+  }
+
+  @page:first {
+
+    @top-right {
+      content: element(logo)
+    }
+    @top-left {
+      content: element(left)
+    }
+  }
+
+  body {
+    font-size: small;
+    font-family: "Roboto", sans-serif;
+  }
+
+  figcaption.report {
+      font-style: italic;
+  }
+
+  div.report {
+    margin: 0 auto;
+  }
+
+  h1.report {
+      font-weight: 300;
+      font-size: 4rem;
+      padding-top: 400px;
+  }
+
+  p.report {
+      font-size: 0.875rem;
+      font-weight: 400;
+  }
+
+  h2.report {
+     font-size: 2.125rem;
+     font-weight: 300;
+     margin-top: 75px;
+  }
+
+  h3.report {
+      font-size: 1.5rem;
+      font-weight: 400;
+  }
+
+  h4.report {
+    font-size: large;
+  }
+
+  h5 {
+    font-size: medium;
+  }
+
+  svg {
+    height: 100%;
+    width: 100%;
+  }
+
+  page-break-before {
+    display: block;
+    /* Create a page break before this element. */
+    page-break-before: always;
+  }
+
+  table.format * {
+    border: none;
+    border-collapse: collapse;
+    font-size: small;
+    margin-left: 0px;
+    padding-left: 0px;
+  }
+
+  table.format-zaehlstelleninformationen td {
+    vertical-align: top;
+  }
+
+</style>

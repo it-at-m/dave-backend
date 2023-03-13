@@ -1,0 +1,30 @@
+/*
+ * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
+ * der Landeshauptstadt München, 2020
+ */
+package de.muenchen.dave.domain.dtos.laden;
+
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
+
+
+@Data
+public class LadeZaehldatenSteplineDTO implements Serializable {
+
+    private List<String> legend;
+
+    private Integer rangeMax;
+
+    private Integer rangeMaxPercent;
+
+    private List<String> xAxisDataFirstChart;
+
+    private List<String> xAxisDataSecondChart;
+
+    private List<StepLineSeriesEntryBaseDTO> seriesEntriesFirstChart;
+
+    private List<StepLineSeriesEntryBaseDTO> seriesEntriesSecondChart;
+
+}

@@ -1,0 +1,180 @@
+{{#datentabelleZaehldaten}}
+  <h5 class="datentabelle">{{tableTitle}}</h5>
+  <table class="datentabelle">
+    <thead>
+    <tr>
+      <th colspan="3" class="datentabelle-header datentabelle-border-right">
+        Zeit
+      </th>
+      {{#showTabsFahrzeugtypen}}
+        <th colspan="{{ activeTabsFahrzeugtypen }}" class="datentabelle-header datentabelle-border-right">
+          Fahrzeugtypen
+        </th>
+      {{/showTabsFahrzeugtypen}}
+      {{#showTabsFahrzeugklassen}}
+        <th colspan="{{ activeTabsFahrzeugklassen }}" class="datentabelle-header datentabelle-border-right">
+          Fahrzeugklasse
+        </th>
+      {{/showTabsFahrzeugklassen}}
+      {{#showTabsAnteile}}
+        <th colspan="{{ activeTabsAnteile }}"
+            class="datentabelle-header datentabelle-border-right">
+          Anteil
+        </th>
+      {{/showTabsAnteile}}
+      {{#showPkwEinheiten}}
+        <th rowspan="2" class="datentabelle-header datentabelle-border-bottom">Pkw-Einheiten</th>
+      {{/showPkwEinheiten}}
+    </tr>
+    <tr>
+      <th class="datentabelle-header datentabelle-border-bottom datentabelle-zeit">
+        von
+      </th>
+      <th class="datentabelle-header datentabelle-border-bottom datentabelle-zeit">
+        bis
+      </th>
+      <th class="datentabelle-header datentabelle-border-bottom datentabelle-border-right datentabelle-zeit">
+
+      </th>
+      {{#showPersonenkraftwagen}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-personenkraftwagen">
+          Pkw
+        </th>
+      {{/showPersonenkraftwagen}}
+      {{#showLastkraftwagen}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-lastkraftwagen">
+          Lkw
+        </th>
+      {{/showLastkraftwagen}}
+      {{#showLastzuege}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-lastzuege">
+          Lz
+        </th>
+      {{/showLastzuege}}
+      {{#showBusse}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-busse">
+          Bus
+        </th>
+      {{/showBusse}}
+      {{#showKraftraeder}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-kraftraeder">
+          Krad
+        </th>
+      {{/showKraftraeder}}
+      {{#showRadverkehr}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-radverkehr">
+          Rad
+        </th>
+      {{/showRadverkehr}}
+      {{#showFussverkehr}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-fussverkehr">
+          Fuß
+        </th>
+      {{/showFussverkehr}}
+      {{#showKraftfahrzeugverkehr}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugklassen datentabelle-kraftfahrzeugverkehr">
+          KFZ
+        </th>
+      {{/showKraftfahrzeugverkehr}}
+      {{#showSchwerverkehr}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugklassen datentabelle-schwerverkehr">
+          SV
+        </th>
+      {{/showSchwerverkehr}}
+      {{#showGueterverkehr}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugklassen datentabelle-gueterverkehr">
+          GV
+        </th>
+      {{/showGueterverkehr}}
+      {{#showSchwerverkehrsanteilProzent}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-anteile datentabelle-schwerverkehrsanteil-prozent">
+          SV%
+        </th>
+      {{/showSchwerverkehrsanteilProzent}}
+      {{#showGueterverkehrsanteilProzent}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-anteile datentabelle-gueterverkehrsanteil-prozent">
+          GV%
+        </th>
+      {{/showGueterverkehrsanteilProzent}}
+    </tr>
+    </thead>
+    {{#zaehldatenList}}
+      <tr class="datentabelle-row{{type}}">
+        <td class="datentabelle-zeit">
+          {{startUhrzeit}}
+        </td>
+        <td class="datentabelle-zeit">
+          {{endeUhrzeit}}
+        </td>
+        <td class="datentabelle-border-right datentabelle-zeit">
+          {{type}}
+        </td>
+        {{#showPersonenkraftwagen}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-personenkraftwagen">
+            {{pkw}}
+          </td>
+        {{/showPersonenkraftwagen}}
+        {{#showLastkraftwagen}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-lastkraftwagen">
+            {{lkw}}
+          </td>
+        {{/showLastkraftwagen}}
+        {{#showLastzuege}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-lastzuege">
+            {{lastzuege}}
+          </td>
+        {{/showLastzuege}}
+        {{#showBusse}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-busse">
+            {{busse}}
+          </td>
+        {{/showBusse}}
+        {{#showKraftraeder}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-kraftraeder">
+            {{kraftraeder}}
+          </td>
+        {{/showKraftraeder}}
+        {{#showRadverkehr}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-radverkehr">
+            {{fahrradfahrer}}
+          </td>
+        {{/showRadverkehr}}
+        {{#showFussverkehr}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-fussverkehr">
+            {{fussgaenger}}
+          </td>
+        {{/showFussverkehr}}
+        {{#showKraftfahrzeugverkehr}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugklassen datentabelle-kraftfahrzeugverkehr">
+            {{kfz}}
+          </td>
+        {{/showKraftfahrzeugverkehr}}
+        {{#showSchwerverkehr}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugklassen datentabelle-schwerverkehr">
+            {{schwerverkehr}}
+          </td>
+        {{/showSchwerverkehr}}
+        {{#showGueterverkehr}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugklassen datentabelle-gueterverkehr">
+            {{gueterverkehr}}
+          </td>
+        {{/showGueterverkehr}}
+        {{#showSchwerverkehrsanteilProzent}}
+          <td class="datentabelle-cell-numeric datentabelle-anteile datentabelle-schwerverkehrsanteil-prozent">
+            {{anteilSchwerverkehrAnKfzProzent}}%
+          </td>
+        {{/showSchwerverkehrsanteilProzent}}
+        {{#showGueterverkehrsanteilProzent}}
+          <td class="datentabelle-cell-numeric datentabelle-anteile datentabelle-gueterverkehrsanteil-prozent">
+            {{anteilGueterverkehrAnKfzProzent}}%
+          </td>
+        {{/showGueterverkehrsanteilProzent}}
+        {{#showPkwEinheiten}}
+          <td class="datentabelle-cell-numeric">
+            {{pkwEinheiten}}
+          </td>
+        {{/showPkwEinheiten}}
+      </tr>
+    {{/zaehldatenList}}
+  </table>
+{{/datentabelleZaehldaten}}
