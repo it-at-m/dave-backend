@@ -13,10 +13,10 @@ spring:
   datasource:
     username: dave
     #    prod
-    url: <database-host-url>
-    driver-class-name: <database-driver> # z. B. oracle.jdbc.OracleDriver
+    url: ${database_host_url}
+    driver-class-name: ${database_driver} # z. B. oracle.jdbc.OracleDriver
   jpa:
-    database: <database-type> # oracle
+    database: ${database_type} # oracle
     hibernate:
       # always drop and create the db should be the best
       # configuration for local (development) mode. this
