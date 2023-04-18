@@ -65,7 +65,7 @@ public class RequestResponseLoggingFilter implements Filter {
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
         if (this.checkForLogging(httpRequest)) {
             log.info("User {} executed {} on URI {} with http status {}",
-                    SecurityContextInformationExtractor.getUsername(),
+                    SecurityContextInformationExtractor.getAuthenticatedUsername(),
                     httpRequest.getMethod(),
                     httpRequest.getRequestURI(),
                     httpResponse.getStatus()
