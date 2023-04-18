@@ -19,14 +19,14 @@ public final class SecurityContextInformationExtractor {
 
     public static final String NAME_UNAUTHENTICATED_USER = "unauthenticated";
 
-    private static final String ATTRIBUTE_LHMOBJECTID = "lhmObjectID";
+    private static final String ATTRIBUTE_USER_NAME = "user_name";
 
     /**
      * The method extracts the username out of the {@link BearerTokenAuthentication}.
      *
      * @return The username or a placeholder if there is no {@link BearerTokenAuthentication} available.
      */
-    static String getUsername() {
+    static String getAuthenticatedUsername() {
         log.debug("get Username");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof BearerTokenAuthentication) {
@@ -48,11 +48,11 @@ public final class SecurityContextInformationExtractor {
         return isFachadmin.get();
     }
 
-    public static String getLhmobjectId() {
-        log.debug("get lhmobjectid");
+    public static String getUserName() {
+        log.debug("get user_name");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication instanceof BearerTokenAuthentication) {
-            return (String) ((BearerTokenAuthentication) authentication).getTokenAttributes().get(ATTRIBUTE_LHMOBJECTID);
+            return (String) ((BearerTokenAuthentication) authentication).getTokenAttributes().get(ATTRIBUTE_USER_NAME);
         } else {
             return "";
         }
