@@ -2,33 +2,46 @@ name: release
 
 # Run workflow on commits to the `main` branch
 on:
-  workflow_dispatch:
-    inputs:
-      snapshot-build:
-        description: "Snapshot build (y/n)?"
-        required: true
-        default: "y"
-      release-tag:
-        description: "Release Tag (only if not snapshot)"
-        required: false
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'main'
 
 jobs:
-  release:
+  if_merged:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
+        with:
+          ssh-key: ${{ secrets.SECRET_KEY }}
 
       - name: Install Java and Maven
         uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: "temurin"
-
-      - name: Remove SNAPSHOT
-        if: github.event.inputs.snapshot-build == 'n'
+          cache: "maven"
+      - name: Set up Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Clean Maven Project Version
+        id: set-version
         run: |
-          mvn versions:set --batch-mode -DnewVersion=${{ github.event.inputs.release-tag }} -DprocessAllModules
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version: $current_version"
+          new_version=$(echo $current_version | sed 's/-SNAPSHOT//')
+          echo "New version: $new_version"
+          mvn -B versions:set -DnewVersion=$new_version
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add pom.xml
+          git commit -m "Bump main version to $new_version"
+          git push
+          echo "::set-output name=new_version::$new_version"
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
@@ -49,40 +62,48 @@ jobs:
         with:
           context: .
           push: true
-          tags: itatm/dave-backend:${{ github.event.inputs.release-tag }},itatm/dave-backend:latest
+          tags: itatm/dave-backend:${{ steps.set-version.outputs.new_version }},itatm/dave-backend:latest
 
-  github-release:
-    name: Create Release
-    if: github.event.inputs.snapshot-build == 'n'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Create tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{ github.event.inputs.release-tag }}',
-              sha: context.sha
-            })
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.event.inputs.release-tag }}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-      - name: Update Docker Hub Description
+      - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_KEY }}
           repository: itatm/dave-backend
-          readme-filepath: ./IMAGE_README.md
-          short-description: ${{ github.event.repository.description }}
+          short-description: Anwendungs-Kern für Frontend, Adminportal, Selfserviceportal und EAI.
 
+  # github-release:
+  #   needs: release
+  #   name: Create Release
+  #   if: github.event.inputs.snapshot-build == 'n'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Create tag
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           github.rest.git.createRef({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             ref: 'refs/tags/${{ github.event.inputs.release-tag }}',
+  #             sha: context.sha
+  #           })
+  #     - name: Create GitHub Release
+  #       id: create_release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         tag_name: ${{ github.event.inputs.release-tag }}
+  #         draft: false
+  #         prerelease: false
+  #         generate_release_notes: true
+  #     - name: Update Docker Hub Description
+  #       uses: peter-evans/dockerhub-description@v3
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_KEY }}
+  #         repository: itatm/dave-backend
+  #         readme-filepath: ./IMAGE_README.md
+  #         short-description: ${{ github.event.repository.description }}
