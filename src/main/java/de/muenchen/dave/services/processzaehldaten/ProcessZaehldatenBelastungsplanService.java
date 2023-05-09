@@ -17,7 +17,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
-import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -423,6 +422,16 @@ public class ProcessZaehldatenBelastungsplanService {
     public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
                                                                     final OptionsDTO options) throws DataNotFoundException {
         final LadeBelastungsplanDTO basisBelastungsplan = ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+
+        // Fuer die zweite Zaehlung muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
+        // der Vergleich auch klappt. Dies ist noetig, wenn zwei Zaehlungen mit unterschiedlicher Dauer verglichen
+        // werden (Es macht aber nichts, wenn man den Wert immer neu setzt).
+        // Stimmt die Zaehldauer aus den Options nicht mit der Zaehldauer aus der Zaehlung ueberein, so
+        // liefert die Methode LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options) ein falsches
+        // Ergebnis zurueck.
+        final Zaehlung zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
+        options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
+
         final LadeBelastungsplanDTO vergleichsBelastungsplan = ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(), options);
 
         return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
