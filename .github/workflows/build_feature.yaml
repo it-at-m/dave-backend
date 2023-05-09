@@ -44,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: itatm/dave-backend:${{ step.slug.outputs.branch-name-slug }}
+          tags: itatm/dave-backend:${{ steps.slug.outputs.branch-name-slug }}
