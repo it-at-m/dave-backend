@@ -23,6 +23,10 @@ jobs:
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
+
+      - uses: gacts/github-slug@v1
+        id: slug
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -40,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: itatm/dave-backend:${{ github.ref_name }}
+          tags: itatm/dave-backend:${{ step.slug.outputs.branch-name-slug }}
