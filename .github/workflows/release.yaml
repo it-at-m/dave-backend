@@ -9,7 +9,7 @@ on:
       - 'main'
 
 jobs:
-  if_merged:
+  merge_release:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -73,7 +73,7 @@ jobs:
           short-description: Anwendungs-Kern für Frontend, Adminportal, Selfserviceportal und EAI.
 
   github-release:
-    needs: release
+    needs: merge_release
     name: Create Release
     runs-on: ubuntu-latest
     steps:
