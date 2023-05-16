@@ -86,24 +86,26 @@ jobs:
           new_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "New version: $new_version"
           echo "::set-output name=new_version::$new_version"
-        - name: Create tag
-          uses: actions/github-script@v6
-          with:
-            script: |
-              github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/${{ steps.get-version.outputs.new_version }}',
-                sha: context.sha
-              })
-        - name: Create GitHub Release
-          id: create_release
-          uses: actions/create-release@v1
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            tag_name: ${{ steps.get-version.outputs.new_version }}
-            release_name: Release ${{ steps.get-version.outpus.new_version }}
-            body: {{ github.event.pull_request.body }}
-            draft: false
-            prerelease: false
+
+      - name: Create tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.get-version.outputs.new_version }}',
+              sha: context.sha
+            })
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get-version.outputs.new_version }}
+          release_name: Release ${{ steps.get-version.outpus.new_version }}
+          body: {{ github.event.pull_request.body }}
+          draft: false
+          prerelease: false
