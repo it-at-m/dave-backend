@@ -106,6 +106,7 @@ jobs:
         with:
           tag_name: ${{ steps.get-version.outputs.new_version }}
           release_name: Release ${{ steps.get-version.outpus.new_version }}
-          body: {{ github.event.pull_request.body }}
+          body: |
+            {{ github.event.pull_request.body }}
           draft: false
           prerelease: false
