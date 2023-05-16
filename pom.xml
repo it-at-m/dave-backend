@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-backend</artifactId>
-    <version>1.13.2</version>
+    <version>1.13.2-SNAPSHOT</version>
     <name>dave_backend</name>
     <description>Backend für DAVe</description>
 

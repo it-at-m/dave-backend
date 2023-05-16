@@ -72,38 +72,40 @@ jobs:
           repository: itatm/dave-backend
           short-description: Anwendungs-Kern für Frontend, Adminportal, Selfserviceportal und EAI.
 
-  # github-release:
-  #   needs: release
-  #   name: Create Release
-  #   if: github.event.inputs.snapshot-build == 'n'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
+  github-release:
+    needs: release
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-  #     - name: Create tag
-  #       uses: actions/github-script@v6
-  #       with:
-  #         script: |
-  #           github.rest.git.createRef({
-  #             owner: context.repo.owner,
-  #             repo: context.repo.repo,
-  #             ref: 'refs/tags/${{ github.event.inputs.release-tag }}',
-  #             sha: context.sha
-  #           })
-  #     - name: Create GitHub Release
-  #       id: create_release
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         tag_name: ${{ github.event.inputs.release-tag }}
-  #         draft: false
-  #         prerelease: false
-  #         generate_release_notes: true
-  #     - name: Update Docker Hub Description
-  #       uses: peter-evans/dockerhub-description@v3
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_KEY }}
-  #         repository: itatm/dave-backend
-  #         readme-filepath: ./IMAGE_README.md
-  #         short-description: ${{ github.event.repository.description }}
+      - name: Get New Project Version
+        id: get-version
+        run: |
+          new_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "New version: $new_version"
+          echo "::set-output name=new_version::$new_version"
+
+      - name: Create tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.get-version.outputs.new_version }}',
+              sha: context.sha
+            })
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get-version.outputs.new_version }}
+          release_name: Release ${{ steps.get-version.outpus.new_version }}
+          body: {{ github.event.pull_request.body }}
+          draft: false
+          prerelease: false
