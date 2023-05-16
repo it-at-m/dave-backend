@@ -11,6 +11,7 @@ on:
 jobs:
   merge_release:
     if: github.event.pull_request.merged == true
+    name: Create docker release
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -41,7 +42,7 @@ jobs:
           git add pom.xml
           git commit -m "Bump main version to $new_version"
           git push
-          echo "::set-output name=new_version::$new_version"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
@@ -74,7 +75,7 @@ jobs:
 
   github-release:
     needs: merge_release
-    name: Create Release
+    name: Create github release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -83,9 +84,10 @@ jobs:
       - name: Get New Project Version
         id: get-version
         run: |
-          new_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          new_version=$(echo $current_version | sed 's/-SNAPSHOT//')
           echo "New version: $new_version"
-          echo "::set-output name=new_version::$new_version"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
       - name: Create tag
         uses: actions/github-script@v6
@@ -105,8 +107,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get-version.outputs.new_version }}
-          release_name: Release ${{ steps.get-version.outpus.new_version }}
-          body: |
-            {{ github.event.pull_request.body }}
+          release_name: Release ${{ steps.get-version.outputs.new_version }}
+          body: ${{ github.event.pull_request.body }}
           draft: false
           prerelease: false
