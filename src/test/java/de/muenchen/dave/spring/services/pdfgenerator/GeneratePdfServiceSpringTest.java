@@ -37,7 +37,8 @@ public class GeneratePdfServiceSpringTest {
     GeneratePdfService generatePdfService;
 
     /**
-     * Übernommen von <a href="https://github.com/danfickle/openhtmltopdf/wiki/Testing-Your-PDF-Document-Output">...</a>
+     * Übernommen von <a href=
+     * "https://github.com/danfickle/openhtmltopdf/wiki/Testing-Your-PDF-Document-Output">...</a>
      * <p>
      * Überprüft ob die übergebene PDF mit einer bereits hinterlegten übereinstimmt.
      * Bei einem Negativergebnis werden Screenshots von beider PDFs und eines "diffs" nach
