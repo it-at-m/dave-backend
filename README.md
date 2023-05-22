@@ -26,6 +26,11 @@ Die Frontends sind jeweils Vue Single Page Applications, die über ein Service G
 ## Built with
     Java 11
 
+## Coding Conventions
+
+Wir verwenden den [itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat) für Code-Formatierungskonventionen.
+We use the Spring JavaFormat project to apply code formatting conventions. Die Formate können zur lokalen Prüfung auch direkt in die IDE (Eclipse / IntelliJ) eingebunden werden. Die Prüfung ist Teil der Build-Pipeline und führt bei Verstößen zum Abbruch.
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
