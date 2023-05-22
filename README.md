@@ -26,11 +26,6 @@ Die Frontends sind jeweils Vue Single Page Applications, die über ein Service G
 ## Built with
     Java 11
 
-## Coding Conventions
-
-Wir verwenden den [itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat) für Code-Formatierungskonventionen.
-We use the Spring JavaFormat project to apply code formatting conventions. Die Formate können zur lokalen Prüfung auch direkt in die IDE (Eclipse / IntelliJ) eingebunden werden. Die Prüfung ist Teil der Build-Pipeline und führt bei Verstößen zum Abbruch.
-
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
@@ -43,6 +38,11 @@ If you have a suggestion that would make this better, please open an issue with 
     Commit your Changes (git commit -m 'Add some AmazingFeature')
     Push to the Branch (git push origin feature/AmazingFeature)
     Open a Pull Request
+
+### Coding Conventions
+
+We use the [itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat) project to apply code formatting conventions.
+To add those conventions to your favorite IDE, please have a look at the [README of itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat#verwendung).
 
 ## License
 
