@@ -27,7 +27,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-
 @RequestMapping(value = "/zaehlstelle")
 @RestController
 @Slf4j
@@ -63,7 +62,7 @@ public class ZaehlstelleController {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<NextZaehlstellennummerDTO> getNextCurrentNumber(@RequestParam(value = REQUEST_PARAMETER_ID) @NotNull final String partOfzaehlstelleId,
-                                                                          @RequestParam(value = "stadtbezirksnummer") @NotNull final Integer stadtbezirksnummer) {
+            @RequestParam(value = "stadtbezirksnummer") @NotNull final Integer stadtbezirksnummer) {
         try {
             final NextZaehlstellennummerDTO nextCurrentNumber = this.indexService.getNextZaehlstellennummer(partOfzaehlstelleId, stadtbezirksnummer);
             return ResponseEntity.ok(nextCurrentNumber);
@@ -113,7 +112,8 @@ public class ZaehlstelleController {
     }
 
     /**
-     * Gibt die Zählstellen zurück, für die für einen bestimmten Participant ungelesene Nachrichten vorliegen
+     * Gibt die Zählstellen zurück, für die für einen bestimmten Participant ungelesene Nachrichten
+     * vorliegen
      *
      * @param participantId Participant bei dem ungelesene Nachrichten gefunden werden sollen
      * @return Zählstellen mit ungelesenen Nachrichten für bestimmten Participant
@@ -122,16 +122,20 @@ public class ZaehlstelleController {
             " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
     @GetMapping(value = "/byUnreadMessages", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenByUnreadMessages(@RequestParam(value = REQUEST_PARAMETER_PARTICIPANT) final int participantId) {
+    public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenByUnreadMessages(
+            @RequestParam(value = REQUEST_PARAMETER_PARTICIPANT) final int participantId) {
         try {
             final List<LadeZaehlstelleWithUnreadMessageDTO> dto = this.indexService.readZaehlstellenWithUnreadMessages(participantId);
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
-            log.error("Fehler im ZaehlstellenController, Zählstellen mit ungelesenen Nachrichten konnten nicht gefunden werden. ParticipantId: {}", participantId, e);
+            log.error("Fehler im ZaehlstellenController, Zählstellen mit ungelesenen Nachrichten konnten nicht gefunden werden. ParticipantId: {}",
+                    participantId, e);
             throw e;
         } catch (final Exception e) {
-            log.error("Unerwarteter Fehler im ZaehlstellenController beim Laden der Zählstellen mit ungelesenen Nachrichten. ParticipantId: {}", participantId, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zählstellen mit ungelesenen Nachrichten aufgetreten.");
+            log.error("Unerwarteter Fehler im ZaehlstellenController beim Laden der Zählstellen mit ungelesenen Nachrichten. ParticipantId: {}", participantId,
+                    e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Es ist ein unerwarteter Fehler beim Laden der Zählstellen mit ungelesenen Nachrichten aufgetreten.");
         }
     }
 }

@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
-
 /**
  * Die Hochrechnung und die hochgerechneten Werte
  * zur Ermittlung des Tageswert einer Zaehlung vom

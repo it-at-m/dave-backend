@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.pdf.templates;
 
 import lombok.Data;
 
-
 @Data
 public class DiagrammPdf extends BasicPdf {
 

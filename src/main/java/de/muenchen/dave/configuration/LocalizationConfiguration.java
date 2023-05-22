@@ -12,7 +12,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 import java.util.Locale;
 
-
 @Configuration
 public class LocalizationConfiguration {
 

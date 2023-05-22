@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Die Klasse {@link EmailReceiveService} checkt neue Emails im Postfach der technischen E-Mail-Adresse und verarbeitet diese.
+ * Die Klasse {@link EmailReceiveService} checkt neue Emails im Postfach der technischen
+ * E-Mail-Adresse und verarbeitet diese.
  */
 @Slf4j
 @Service
@@ -116,7 +117,7 @@ public class EmailReceiveService {
             try {
                 chatMessageService.saveChatMessage(processEmailService.processEmail(message));
                 // Flag auf gelesen setzen und verschieben wenn Verarbeitung erfolgreich war
-                folderInbox.setFlags(new Message[]{message}, new Flags(Flags.Flag.SEEN), true);
+                folderInbox.setFlags(new Message[] { message }, new Flags(Flags.Flag.SEEN), true);
                 moveMessage(message, folderSuccess);
             } catch (MessagingException | IOException e) {
                 log.error("Es ist ein Fehler beim Verarbeiten der E-Mail aufgetreten.", e);
@@ -131,7 +132,7 @@ public class EmailReceiveService {
     // Verschiebt eine Email
     private void moveMessage(Message message, IMAPFolder folder) {
         try {
-            folderInbox.moveMessages(new Message[]{message}, folder);
+            folderInbox.moveMessages(new Message[] { message }, folder);
         } catch (MessagingException e) {
             log.error("Es ist ein Fehler beim Verschieben der E-Mail aufgetreten.", e);
         }

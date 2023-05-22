@@ -30,9 +30,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 
-
 /**
- * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen werden.
+ * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen
+ * werden.
  */
 @RestController
 @Slf4j
@@ -60,8 +60,8 @@ public class EaiController {
     private final AuswertungVisumService auswertungVisumService;
 
     public EaiController(final AuswertungSpitzenstundeService auswertungSpitzenstundeService,
-                         final AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService,
-                         final AuswertungVisumService auswertungVisumService) {
+            final AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService,
+            final AuswertungVisumService auswertungVisumService) {
         this.auswertungSpitzenstundeService = auswertungSpitzenstundeService;
         this.auswertungZaehlstellenKoordinateService = auswertungZaehlstellenKoordinateService;
         this.auswertungVisumService = auswertungVisumService;
@@ -71,21 +71,23 @@ public class EaiController {
      * Rest-Endpunkt zur Bereitstellung der Spitzenstundenauswertung.
      *
      * @param zaehlstellenNummer der Zählstelle für welche die Zähung stattgefunden hat.
-     * @param zaehlart           der Zählung.
-     * @param zaehldatum         der Zählung.
-     * @param zeitblock          der Zählung.
-     * @param zeitauswahl        darf nur die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                           {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *                           {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} annehmen.
+     * @param zaehlart der Zählung.
+     * @param zaehldatum der Zählung.
+     * @param zeitblock der Zählung.
+     * @param zeitauswahl darf nur die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} annehmen.
      * @return die Spitzenstundenauswertung.
      */
     @GetMapping(value = "/lade-auswertung-spitzenstunde", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<LadeAuswertungSpitzenstundeDTO>> ladeAuswertungSpitzenstunde(@RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_NUMMER) @NotEmpty final String zaehlstellenNummer,
-                                                                                            @RequestParam(value = REQUEST_PARAMETER_ZAEHLART) @NotNull final Zaehlart zaehlart,
-                                                                                            @RequestParam(value = REQUEST_PARAMETER_ZAEHLDATUM) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull final LocalDate zaehldatum,
-                                                                                            @RequestParam(value = REQUEST_PARAMETER_ZEITBLOCK) @NotNull final Zeitblock zeitblock,
-                                                                                            @RequestParam(value = REQUEST_PARAMETER_ZEITAUSWAHL) @NotEmpty final String zeitauswahl) {
+    public ResponseEntity<List<LadeAuswertungSpitzenstundeDTO>> ladeAuswertungSpitzenstunde(
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_NUMMER) @NotEmpty final String zaehlstellenNummer,
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLART) @NotNull final Zaehlart zaehlart,
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLDATUM) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull final LocalDate zaehldatum,
+            @RequestParam(value = REQUEST_PARAMETER_ZEITBLOCK) @NotNull final Zeitblock zeitblock,
+            @RequestParam(value = REQUEST_PARAMETER_ZEITAUSWAHL) @NotEmpty final String zeitauswahl) {
         log.info("ladeAuswertungSpitzenstunde für Zaehlstellennummer {}, Zaehlart {}, Zaehldatum {}, Zeitblock {} und Zeitauswahl {} aufgerufen",
                 zaehlstellenNummer,
                 zaehlart,
@@ -93,14 +95,12 @@ public class EaiController {
                 zeitblock,
                 zeitauswahl);
         try {
-            final List<LadeAuswertungSpitzenstundeDTO> ladeAuswertungSpitzenstunden =
-                    auswertungSpitzenstundeService.getAuswertungSpitzenstunde(
-                            zaehlstellenNummer,
-                            zaehlart,
-                            zaehldatum,
-                            zeitblock,
-                            zeitauswahl
-                    );
+            final List<LadeAuswertungSpitzenstundeDTO> ladeAuswertungSpitzenstunden = auswertungSpitzenstundeService.getAuswertungSpitzenstunde(
+                    zaehlstellenNummer,
+                    zaehlart,
+                    zaehldatum,
+                    zeitblock,
+                    zeitauswahl);
             log.info("Laden der AuswertungSpitzenstunde abgeschlossen.");
             return ResponseEntity.ok(ladeAuswertungSpitzenstunden);
         } catch (DataNotFoundException exception) {
@@ -123,8 +123,8 @@ public class EaiController {
     @Transactional(readOnly = true)
     public ResponseEntity<List<LadeAuswertungZaehlstelleKoordinateDTO>> ladeAuswertungZaehlstellenKoordinate() {
         log.info("ladeAuswertungZaehlstellenKoordinate aufgerufen");
-        final List<LadeAuswertungZaehlstelleKoordinateDTO> ladeAuswertungSpitzenstunden =
-                auswertungZaehlstellenKoordinateService.getAuswertungZaehlstellenKoordinate();
+        final List<LadeAuswertungZaehlstelleKoordinateDTO> ladeAuswertungSpitzenstunden = auswertungZaehlstellenKoordinateService
+                .getAuswertungZaehlstellenKoordinate();
         log.info("Laden der Auswertung der Zaehlstellenkoordinaten abgeschlossen.");
         return ResponseEntity.ok(ladeAuswertungSpitzenstunden);
     }
@@ -132,14 +132,14 @@ public class EaiController {
     /**
      * Rest-Endpunkt zum Bereitstellung aller Zählungen eines bestimmten Monatszeitraums für Visum.
      *
-     * @param jahr  welches ausgewertet werden soll.
+     * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
      * @return die {@link LadeAuswertungZaehlstelleKoordinateDTO} je vorhandener Zählstelle.
      */
     @GetMapping(value = "/lade-auswertung-visum", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<LadeAuswertungVisumDTO> ladeAuswertungVisum(@RequestParam(value = REQUEST_PARAMETER_JAHR) @NotNull final Integer jahr,
-                                                                      @RequestParam(value = REQUEST_PARAMETER_MONAT) @NotNull @Min(1) @Max(12) final Integer monat) {
+            @RequestParam(value = REQUEST_PARAMETER_MONAT) @NotNull @Min(1) @Max(12) final Integer monat) {
         log.info("ladeAuswertungVisum aufgerufen");
         final var auswertungVisum = auswertungVisumService.getAuswertungVisum(jahr, monat);
         log.info("Laden der Visum-Auswertung abgeschlossen.");

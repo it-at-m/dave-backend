@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @AllArgsConstructor
 @Getter
 public enum Zaehlart {
@@ -59,14 +58,13 @@ public enum Zaehlart {
 
     /**
      * @return Eine {@link Map} mit dem Zaehlartkürzel als Key und
-     * der Liste an Bedeutungen als Value.
+     *         der Liste an Bedeutungen als Value.
      */
     public static Map<String, List<String>> getEnumattributeAsMap() {
         return Arrays.stream(Zaehlart.values())
                 .collect(Collectors.toMap(
                         Zaehlart::getZaehlartkürzel,
-                        Zaehlart::getBedeutung
-                ));
+                        Zaehlart::getBedeutung));
     }
 
     public static String getZaehlartkürzel(final Zaehlart zaehlart) {
@@ -74,4 +72,3 @@ public enum Zaehlart {
     }
 
 }
-

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 public class PkwEinheitService {
 
@@ -22,7 +21,7 @@ public class PkwEinheitService {
     private final PkwEinheitMapper pkwEinheitMapper;
 
     public PkwEinheitService(final PkwEinheitRepository pkwEinheitRepository,
-                             final PkwEinheitMapper pkwEinheitMapper) {
+            final PkwEinheitMapper pkwEinheitMapper) {
         this.pkwEinheitRepository = pkwEinheitRepository;
         this.pkwEinheitMapper = pkwEinheitMapper;
     }
@@ -51,6 +50,5 @@ public class PkwEinheitService {
                 .map(pkwEinheitMapper::entity2bearbeiteDto)
                 .orElseThrow(() -> new DataNotFoundException("Keine PkwEinheit gefunden."));
     }
-
 
 }

@@ -12,7 +12,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
-
 /**
  * Je nach Kreuzungstyp sind folgende Attribute gesetzt.
  * <p>

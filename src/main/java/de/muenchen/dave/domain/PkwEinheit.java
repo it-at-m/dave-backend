@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 
-
 @Entity
 // Definition of getter, setter, ...
 @Getter

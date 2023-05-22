@@ -12,20 +12,24 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
-
 /**
- * Der Sortierindex ist erforderlich, um bei der Extraktion der {@link Zeitintervall}e einer Zaehlung
+ * Der Sortierindex ist erforderlich, um bei der Extraktion der {@link Zeitintervall}e einer
+ * Zaehlung
  * diese in der richtigen Reihenfolge zu erhalten.
  * <p>
  * Der Sortierindex baut sich folgendermaßen auf.
  * <p>
  * Bedeutung der Dezimalstellen im Sortierindex:
- * - Stelle 9-8 (XX0000000):    Zu welchem Block gehört der Zeitintervall, Gesamt/Tagessumme oder SpStd (Tag).
- * - Stelle 7 (00X000000):    Die oberste Sortierreihenfolge innerhalb eines Blocks (Zeitintervall, Blocksumme der SpStd).
- * - Stelle 6-4 (000XXX000):  Der Index ermittelt aus der Endeuhrzeit auf Basis der Viertelstundenintervalle eines Tages.
- * - Stelle 3-1 (000000XXX):  Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_VIERTEL} und
+ * - Stelle 9-8 (XX0000000): Zu welchem Block gehört der Zeitintervall, Gesamt/Tagessumme oder SpStd
+ * (Tag).
+ * - Stelle 7 (00X000000): Die oberste Sortierreihenfolge innerhalb eines Blocks (Zeitintervall,
+ * Blocksumme der SpStd).
+ * - Stelle 6-4 (000XXX000): Der Index ermittelt aus der Endeuhrzeit auf Basis der
+ * Viertelstundenintervalle eines Tages.
+ * - Stelle 3-1 (000000XXX): Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_VIERTEL}
+ * und
  * {@link TypeZeitintervall#STUNDE_HALB} wird der Index der Startuhrzeit ermittelt.
- * Für  Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_KOMPLETT} wird der Index
+ * Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_KOMPLETT} wird der Index
  * der Endeuhrzeit ermittelt.
  *
  * <p>
@@ -131,7 +135,7 @@ public final class ZeitintervallSortingIndexUtil {
      *
      * @param zeitintervall Der Zeitintervall für den der Index ermittelt werden soll.
      * @return 0 falls der Zeitintervall nicht in einem {@link Zeitblock} vorkommt,
-     * ansonsten der Indexwert.
+     *         ansonsten der Indexwert.
      */
     public static int getSortingIndexWithinBlock(final Zeitintervall zeitintervall) {
         int sortingIndex = 0;
@@ -153,7 +157,7 @@ public final class ZeitintervallSortingIndexUtil {
      *
      * @param zeitintervall Der Zeitintervall für den der Index ermittelt werden soll.
      * @return 0 falls der Zeitintervall nicht in einen entsprechenden {@link Zeitblock}
-     * verortet werden kann ansonsten der Indexsummand des Zeitblocks.
+     *         verortet werden kann ansonsten der Indexsummand des Zeitblocks.
      */
     public static int getFirstStepSortingIndex(final Zeitintervall zeitintervall) {
         int sortingIndex = 0;
@@ -177,7 +181,7 @@ public final class ZeitintervallSortingIndexUtil {
      *
      * @param zeitintervall Der Zeitintervall für den der Index ermittelt werden soll.
      * @return 0 falls der Zeitintervall nicht als Zeitblock oder normaler Intervall
-     * interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
+     *         interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
      */
     public static int getSecondStepSortingIndex(final Zeitintervall zeitintervall) {
         int sortingIndex = 0;
@@ -197,7 +201,7 @@ public final class ZeitintervallSortingIndexUtil {
      *
      * @param zeitintervall Der Zeitintervall für den der Index ermittelt werden soll.
      * @return 0 falls der Zeitintervall nicht als normaler Intervall
-     * interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
+     *         interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
      */
     public static int getThirdAndFourthStepSortingIndex(final Zeitintervall zeitintervall) {
         int sortingIndex = 0;
@@ -207,11 +211,9 @@ public final class ZeitintervallSortingIndexUtil {
             sortingIndex += getQuarterHourIndexForTime(zeitintervall.getEndeUhrzeit().toLocalTime())
                     * FACTOR_END_TIME;
             if (zeitintervall.getType().equals(TypeZeitintervall.STUNDE_KOMPLETT)) {
-                sortingIndex +=
-                        getQuarterHourIndexForTime(zeitintervall.getEndeUhrzeit().toLocalTime());
+                sortingIndex += getQuarterHourIndexForTime(zeitintervall.getEndeUhrzeit().toLocalTime());
             } else {
-                sortingIndex +=
-                        getQuarterHourIndexForTime(zeitintervall.getStartUhrzeit().toLocalTime());
+                sortingIndex += getQuarterHourIndexForTime(zeitintervall.getStartUhrzeit().toLocalTime());
             }
         }
         return sortingIndex;

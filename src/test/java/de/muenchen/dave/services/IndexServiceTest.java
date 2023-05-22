@@ -12,7 +12,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-
 public class IndexServiceTest {
 
     private IndexService service = new IndexService(
@@ -21,8 +20,7 @@ public class IndexServiceTest {
             null,
             null,
             null,
-            null
-    );
+            null);
 
     @Test
     public void testUpdateZaehlstelleWithZaehlung() {

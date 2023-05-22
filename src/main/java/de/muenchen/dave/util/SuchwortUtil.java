@@ -134,27 +134,27 @@ public final class SuchwortUtil {
             knotenarmeSuchworte.addAll(strassennamen);
 
             switch (knotenarme.size()) {
-                case 2:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Querschnitt", "zweiarmig"));
-                    break;
-                case 3:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Einmündung", "dreiarmig"));
-                    break;
-                case 4:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "vierarmig"));
-                    break;
-                case 5:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "fünfarmig"));
-                    break;
-                case 6:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "sechsarmig"));
-                    break;
-                case 7:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "siebenarmig"));
-                    break;
-                case 8:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "achtarmig"));
-                    break;
+            case 2:
+                knotenarmeSuchworte.addAll(Arrays.asList("Querschnitt", "zweiarmig"));
+                break;
+            case 3:
+                knotenarmeSuchworte.addAll(Arrays.asList("Einmündung", "dreiarmig"));
+                break;
+            case 4:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "vierarmig"));
+                break;
+            case 5:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "fünfarmig"));
+                break;
+            case 6:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "sechsarmig"));
+                break;
+            case 7:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "siebenarmig"));
+                break;
+            case 8:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "achtarmig"));
+                break;
             }
         }
         return knotenarmeSuchworte;

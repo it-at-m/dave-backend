@@ -38,7 +38,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @Slf4j
 public class LadeZaehldatenService {
@@ -82,49 +81,64 @@ public class LadeZaehldatenService {
     private final IndexService indexService;
 
     public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
-                                 final IndexService indexService) {
+            final IndexService indexService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
         // Kfz
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
         // Rad
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
         // Fuss
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
-        SPITZENSTUNDEN_BLOCK_SORTING_INDEX.add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+        SPITZENSTUNDEN_BLOCK_SORTING_INDEX
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
     }
 
     /**
-     * Diese Methode gibt an ob ein Zeitintervall nach der Datenextraktion weiterverarbeitet werden soll.
+     * Diese Methode gibt an ob ein Zeitintervall nach der Datenextraktion weiterverarbeitet werden
+     * soll.
      *
      * @param zeitintervall welcher geprüft werden soll.
-     * @param zeitblock     der für die Prüfung benötigt wird.
+     * @param zeitblock der für die Prüfung benötigt wird.
      * @return false falls der Zeitintervall nicht weiterverarbeitet werden soll andernfalls true.
      */
     private static boolean shouldZeitintervallBeReturned(final Zeitintervall zeitintervall,
-                                                         final Zeitblock zeitblock) {
+            final Zeitblock zeitblock) {
         boolean returnZeitintervall = true;
         if ((!Zeitblock.ZB_00_24.equals(zeitblock) && !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL))
                 && (zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ
-                || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
-                || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
-                || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY)) {
+                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
+                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
+                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY)) {
             returnZeitintervall = false;
         }
         if (zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
-                && (SPITZENSTUNDEN_BLOCK_SORTING_INDEX.contains(zeitintervall.getSortingIndex()))
-        ) {
+                && (SPITZENSTUNDEN_BLOCK_SORTING_INDEX.contains(zeitintervall.getSortingIndex()))) {
             returnZeitintervall = false;
         }
         return returnZeitintervall;
@@ -136,38 +150,34 @@ public class LadeZaehldatenService {
      * Beim Mapping werden die Informationen in {@link OptionsDTO} berücksichtigt.
      *
      * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDTO}.
-     * @param pkwEinheit    als {@link PkwEinheit}
-     * @param options       die {@link OptionsDTO} zur Berücksichtigung der Art
-     *                      und Weise des Mappings.
+     * @param pkwEinheit als {@link PkwEinheit}
+     * @param options die {@link OptionsDTO} zur Berücksichtigung der Art
+     *            und Weise des Mappings.
      * @return das gemappte {@link LadeZaehldatumDTO}.
      */
     public static LadeZaehldatumDTO mapToZaehldatum(final Zeitintervall zeitintervall,
-                                                    final PkwEinheit pkwEinheit,
-                                                    final OptionsDTO options) {
+            final PkwEinheit pkwEinheit,
+            final OptionsDTO options) {
         final LadeZaehldatumDTO ladeZaehldatum;
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumTageswert.setKfz(
                     ObjectUtils.defaultIfNull(
                             zeitintervall.getHochrechnung().getHochrechnungKfz(),
-                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP)
-            );
+                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
             ladeZaehldatumTageswert.setGueterverkehr(
                     ObjectUtils.defaultIfNull(
                             zeitintervall.getHochrechnung().getHochrechnungGv(),
-                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP)
-            );
+                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
             ladeZaehldatumTageswert.setSchwerverkehr(
                     ObjectUtils.defaultIfNull(
                             zeitintervall.getHochrechnung().getHochrechnungSv(),
-                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP)
-            );
+                            BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
 
             ladeZaehldatumTageswert.setFahrradfahrer(
                     ObjectUtils.defaultIfNull(
                             zeitintervall.getHochrechnung().getHochrechnungRad(),
-                            0)
-            );
+                            0));
             ladeZaehldatumTageswert.setType(TAGESWERT);
             ladeZaehldatum = ladeZaehldatumTageswert;
         } else {
@@ -180,8 +190,7 @@ public class LadeZaehldatenService {
             ladeZaehldatum.setFahrradfahrer(zeitintervall.getFahrradfahrer());
             ladeZaehldatum.setFussgaenger(zeitintervall.getFussgaenger());
             ladeZaehldatum.setPkwEinheiten(
-                    CalculationUtil.calculatePkwEinheiten(ladeZaehldatum, pkwEinheit)
-            );
+                    CalculationUtil.calculatePkwEinheiten(ladeZaehldatum, pkwEinheit));
             if (TypeZeitintervall.GESAMT.equals(zeitintervall.getType())) {
                 ladeZaehldatum.setType(GESAMT);
             }
@@ -245,7 +254,7 @@ public class LadeZaehldatenService {
             }
             if (ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
                     || (!ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
-                    && BooleanUtils.isTrue(options.getStundensumme()))) {
+                            && BooleanUtils.isTrue(options.getStundensumme()))) {
                 types.add(TypeZeitintervall.STUNDE_KOMPLETT);
             }
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
@@ -261,7 +270,7 @@ public class LadeZaehldatenService {
             }
             if (BooleanUtils.isTrue(options.getBlocksumme())
                     && options.getZeitblock().getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)) {
-                /**
+                /*
                  * Erforderlich falls als Zeitblock {@link Zeitblock#ZB_06_19}
                  * oder {@link Zeitblock#ZB_06_22} gewählt wurde.
                  */
@@ -278,25 +287,29 @@ public class LadeZaehldatenService {
     }
 
     public static boolean isZeitintervallForTageswert(final Zeitintervall zeitintervall,
-                                                      final OptionsDTO options) {
+            final OptionsDTO options) {
         return TypeZeitintervall.GESAMT.equals(zeitintervall.getType())
                 && !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer());
     }
 
     /**
-     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und Kreisverkehr
+     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und
+     * Kreisverkehr
      * die für die Datenextraktion relevante {@link FahrbewegungKreisverkehr}.
      *
-     * @param von            als Startknotenarm.
-     * @param nach           als Zielknotenarm
+     * @param von als Startknotenarm.
+     * @param nach als Zielknotenarm
      * @param isKreisverkehr bezeichner ob erzeugung für Kreuzung oder Kreisverkehr.
-     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit Fahrbeziehungsauswahl "alle nach alle" handelt.
-     * {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Fahrbeziehungsauswahl mit "X nach alle" handelt.
-     * {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Fahrbeziehungsauswahl mit "alle nach X" handelt.
+     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit Fahrbeziehungsauswahl
+     *         "alle nach alle" handelt.
+     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Fahrbeziehungsauswahl mit
+     *         "X nach alle" handelt.
+     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Fahrbeziehungsauswahl mit
+     *         "alle nach X" handelt.
      */
     public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
-                                                                          final Integer nach,
-                                                                          final Boolean isKreisverkehr) {
+            final Integer nach,
+            final Boolean isKreisverkehr) {
         final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
         if (isKreisverkehr) {
             if (ObjectUtils.isNotEmpty(von) && ObjectUtils.isEmpty(nach)) {
@@ -321,13 +334,13 @@ public class LadeZaehldatenService {
      * zurückgegeben.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options    zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *                   und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
+     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
      * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
      * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
      */
     public LadeZaehldatenTableDTO ladeZaehldaten(final UUID zaehlungId,
-                                                 final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDTO options) throws DataNotFoundException {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
         final List<Zeitintervall> zeitintervalle;
@@ -347,8 +360,8 @@ public class LadeZaehldatenService {
     }
 
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
-                                                      final Boolean isKreisverkehr,
-                                                      final OptionsDTO options) {
+            final Boolean isKreisverkehr,
+            final OptionsDTO options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types.toString());
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
@@ -361,24 +374,22 @@ public class LadeZaehldatenService {
                 types);
         log.debug("Size of extracted Zeitintervalle: {}", extractedZeitintervalle.size());
         return extractedZeitintervalle.stream()
-                .filter(zeitintervall ->
-                        shouldZeitintervallBeReturned(zeitintervall, options.getZeitblock())
-                )
+                .filter(zeitintervall -> shouldZeitintervallBeReturned(zeitintervall, options.getZeitblock()))
                 .collect(Collectors.toList());
     }
 
     public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
-                                                     final LocalDateTime startUhrzeit,
-                                                     final LocalDateTime endeUhrzeit,
-                                                     final Integer von,
-                                                     final Integer nach,
-                                                     final Boolean isKreisverkehr,
-                                                     final Set<TypeZeitintervall> types) {
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Boolean isKreisverkehr,
+            final Set<TypeZeitintervall> types) {
         final FahrbewegungKreisverkehr fahrbewegungKreisverkehr = createFahrbewegungKreisverkehr(von, nach, isKreisverkehr);
         final Integer vonKnotenarm;
         final Integer nachKnotenarm;
         if (isKreisverkehr) {
-            /**
+            /*
              * In {@link de.muenchen.dave.domain.Fahrbeziehung} definiert das Attribut "von"
              * den im Kreisverkehr jeweils betroffenen Knotenarm.
              * Das Attribut "nach" ist immer "null".
@@ -405,48 +416,46 @@ public class LadeZaehldatenService {
                 vonKnotenarm,
                 nachKnotenarm,
                 fahrbewegungKreisverkehr,
-                types
-        );
+                types);
     }
 
     public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
-                                                     final LocalDateTime startUhrzeit,
-                                                     final LocalDateTime endeUhrzeit,
-                                                     final Integer von,
-                                                     final Integer nach,
-                                                     final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
-                                                     final Set<TypeZeitintervall> types) {
-        return zeitintervallRepository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
-                zaehlungId,
-                startUhrzeit,
-                endeUhrzeit,
-                von,
-                nach,
-                fahrbewegungKreisverkehr,
-                types
-        );
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
+            final Set<TypeZeitintervall> types) {
+        return zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        zaehlungId,
+                        startUhrzeit,
+                        endeUhrzeit,
+                        von,
+                        nach,
+                        fahrbewegungKreisverkehr,
+                        types);
     }
 
     /**
      * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options    zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *                   und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
+     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
-     * gefolgt vom {@link Zeitintervall} der Spitzenstunde.
+     *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
-                                                                      final Boolean isKreisverkehr,
-                                                                      final OptionsDTO options) {
+            final Boolean isKreisverkehr,
+            final OptionsDTO options) {
         final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, isKreisverkehr, options);
         final List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
-            /**
+            /*
              * Bei Auswahl des Zeitblocks für den gesamten Tag werden alle Spitzenstunden zurückgegeben.
              * d.h. die Spitzenstunden je Zeitblock und die Spitzenstunde über den ganzen Tag.
              * Hier ist dann die am Ende der Liste befindliche Spitzenstunde über den ganzen Tag zu extrahieren.
-             *
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
              */
@@ -458,8 +467,7 @@ public class LadeZaehldatenService {
                     options.getVonKnotenarm(),
                     options.getNachKnotenarm(),
                     isKreisverkehr,
-                    SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL)
-            );
+                    SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL));
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
                 extractedZeitintervalle.add(spitzenStunde);
             }

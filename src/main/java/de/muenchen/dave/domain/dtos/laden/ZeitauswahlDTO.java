@@ -10,7 +10,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Set;
 
-
 /**
  * Klasse stellt die möglichen Zeitblöcke und Stunden zur Verfügung welche ausgewählt werden können.
  */

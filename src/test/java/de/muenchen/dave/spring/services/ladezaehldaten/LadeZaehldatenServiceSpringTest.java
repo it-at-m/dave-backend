@@ -1,6 +1,5 @@
 package de.muenchen.dave.spring.services.ladezaehldaten;
 
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
@@ -52,13 +51,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
-
-@SpringBootTest(
-        classes = {DaveBackendApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-                "refarch.gracefulshutdown.pre-wait-seconds=0"})
-@ActiveProfiles(profiles = {SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE})
+@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
+        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 class LadeZaehldatenServiceSpringTest {
 
     private List<Zeitintervall> zeitintervalle;
@@ -89,14 +85,15 @@ class LadeZaehldatenServiceSpringTest {
                     null));
             startTime = startTime.plusMinutes(15);
         }
-        when(zeitintervallRepository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                anySet())).thenReturn(zeitintervalle);
+        when(zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        any(),
+                        anySet())).thenReturn(zeitintervalle);
 
     }
 
@@ -109,8 +106,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_00_06),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY);
@@ -119,8 +115,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_00_06),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY);
@@ -129,8 +124,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_00_24),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         zeitintervall.setSortingIndex(1);
@@ -139,8 +133,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_00_24),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         zeitintervall.setSortingIndex(1);
@@ -149,8 +142,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_00_06),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         zeitintervall.setSortingIndex(12000000);
@@ -159,8 +151,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(22000000);
@@ -169,8 +160,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(32000000);
@@ -179,8 +169,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(42000000);
@@ -189,8 +178,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(52000000);
@@ -199,8 +187,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         zeitintervall.setSortingIndex(1);
@@ -209,8 +196,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_19),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         zeitintervall.setSortingIndex(52000000);
@@ -219,8 +205,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitblock.class),
                 ArrayUtils.toArray(zeitintervall, Zeitblock.ZB_06_10),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
     }
 
@@ -249,8 +234,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
         expectedTageswert.setType(LadeZaehldatenService.TAGESWERT);
         expectedTageswert.setStartUhrzeit(LocalTime.of(6, 0));
@@ -273,8 +257,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         LadeZaehldatumDTO expected = new LadeZaehldatumDTO();
         expected.setType(LadeZaehldatenService.GESAMT);
         expected.setStartUhrzeit(LocalTime.MIN);
@@ -296,8 +279,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         expected.setType(null);
         assertThat(result, is(expected));
 
@@ -308,8 +290,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.STUNDE);
         assertThat(result, is(expected));
 
@@ -321,8 +302,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.SPITZENSTUNDE_BLOCK_KFZ);
         assertThat(result, is(expected));
 
@@ -333,8 +313,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.SPITZENSTUNDE_TAG_KFZ);
         assertThat(result, is(expected));
 
@@ -344,8 +323,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
-                LadeZaehldatumDTO.class
-        );
+                LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.BLOCK);
         assertThat(result, is(expected));
     }
@@ -360,8 +338,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         Set<TypeZeitintervall> expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL);
         assertThat(result, is(expected));
 
@@ -371,8 +348,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_HALB);
         assertThat(result, is(expected));
 
@@ -382,8 +358,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_KOMPLETT);
         assertThat(result, is(expected));
 
@@ -397,8 +372,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet();
         assertThat(result, is(expected));
 
@@ -412,8 +386,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         assertThat(result, is(expected));
 
@@ -427,12 +400,10 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(
                 TypeZeitintervall.SPITZENSTUNDE_KFZ,
-                TypeZeitintervall.SPITZENSTUNDE_FUSS
-        );
+                TypeZeitintervall.SPITZENSTUNDE_FUSS);
         assertThat(result, is(expected));
 
         options.setIntervall(null);
@@ -445,8 +416,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(
                 TypeZeitintervall.SPITZENSTUNDE_KFZ,
                 TypeZeitintervall.SPITZENSTUNDE_RAD,
@@ -461,8 +431,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.BLOCK);
         assertThat(result, is(expected));
 
@@ -474,8 +443,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.BLOCK_SPEZIAL);
         assertThat(result, is(expected));
 
@@ -487,8 +455,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.GESAMT);
         assertThat(result, is(expected));
 
@@ -500,8 +467,7 @@ class LadeZaehldatenServiceSpringTest {
                 LadeZaehldatenService.class,
                 ArrayUtils.toArray(OptionsDTO.class),
                 ArrayUtils.toArray(options),
-                Set.class
-        );
+                Set.class);
         expected = new HashSet<>();
         assertThat(result, is(expected));
 
@@ -577,8 +543,7 @@ class LadeZaehldatenServiceSpringTest {
         chosenOptions.setZeitblock(Zeitblock.ZB_00_24);
         chosenOptions.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         zeitintervalle.get(0).setType(TypeZeitintervall.BLOCK);
-        LadeZaehldatenTableDTO ladeZaehldatenTable =
-                ladeZaehldatenService.ladeZaehldaten(zaehlungId, chosenOptions);
+        LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(zaehlungId, chosenOptions);
 
         assertThat(ladeZaehldatenTable.getZaehldaten().size(), is(96));
 

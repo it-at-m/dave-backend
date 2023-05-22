@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Service
 @Slf4j
 public abstract class ZaehlungPersistierungsService {
@@ -46,13 +45,12 @@ public abstract class ZaehlungPersistierungsService {
     protected final ZeitintervallMapper zeitintervallMapper;
 
     public ZaehlungPersistierungsService(final IndexService indexService,
-                                         final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-                                         final ZeitintervallMapper zeitintervallMapper) {
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
+            final ZeitintervallMapper zeitintervallMapper) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         this.zeitintervallMapper = zeitintervallMapper;
     }
-
 
     /**
      * Methode zum Aktualiseren des Status einer Zählung
@@ -60,8 +58,8 @@ public abstract class ZaehlungPersistierungsService {
      * @param updateStatusDto enthält die Id und den neuen Status
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim Speichern der Zaehlstelle
-     * @throws DataNotFoundException         Beim Laden der Zaehlstelle
-     * @throws PlausibilityException         Beim Pruefen der Daten
+     * @throws DataNotFoundException Beim Laden der Zaehlstelle
+     * @throws PlausibilityException Beim Pruefen der Daten
      */
     public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
@@ -101,14 +99,14 @@ public abstract class ZaehlungPersistierungsService {
     /**
      * Diese Methode erstellt die {@link Hochrechnung} für den {@link Zeitintervall}.
      *
-     * @param zeitintervall          für dem die Hochrechnung erstellt werden soll.
+     * @param zeitintervall für dem die Hochrechnung erstellt werden soll.
      * @param hochrechnungsfaktorDto zur Ermittlung der hochgerechneten Werte.
-     * @param zaehldauer             Zaehldauer als String
+     * @param zaehldauer Zaehldauer als String
      * @return die {@link Hochrechnung}.
      */
     public Hochrechnung createHochrechnung(final Zeitintervall zeitintervall,
-                                           final HochrechnungsfaktorDTO hochrechnungsfaktorDto,
-                                           final String zaehldauer) {
+            final HochrechnungsfaktorDTO hochrechnungsfaktorDto,
+            final String zaehldauer) {
         final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setPkw(zeitintervall.getPkw());
         ladeZaehldatumDTO.setLkw(zeitintervall.getLkw());
@@ -121,7 +119,7 @@ public abstract class ZaehlungPersistierungsService {
         final Hochrechnung hochrechnung = new Hochrechnung();
         if (StringUtils.equalsAny(zaehldauer, Zaehldauer.DAUER_16_STUNDEN.toString(), Zaehldauer.DAUER_13_STUNDEN.toString())
                 && (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_10_15)
-                || ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24))) {
+                        || ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24))) {
             hochrechnung.setFaktorKfz(BigDecimal.ZERO);
             hochrechnung.setFaktorSv(BigDecimal.ZERO);
             hochrechnung.setFaktorGv(BigDecimal.ZERO);
@@ -196,7 +194,8 @@ public abstract class ZaehlungPersistierungsService {
         return new ArrayList<>(fahrzeugkategorien);
     }
 
-    public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus) throws BrokenInfrastructureException, DataNotFoundException {
+    public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)
+            throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.indexService.getZaehlung(updateStatusDto.getZaehlungId());
         // Wenn Das Datum der Zählung <= LocalDate.now() ist, dann Status ändern
         if (zaehlung.getDatum().isBefore(LocalDate.now()) || zaehlung.getDatum().isEqual(LocalDate.now())) {

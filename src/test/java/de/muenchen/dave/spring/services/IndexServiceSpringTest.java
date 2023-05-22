@@ -37,12 +37,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(
-        classes = {DaveBackendApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-                "refarch.gracefulshutdown.pre-wait-seconds=0"})
-@ActiveProfiles(profiles = {SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE})
+@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
+        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 public class IndexServiceSpringTest {
 
@@ -78,8 +76,7 @@ public class IndexServiceSpringTest {
         final Page<Zaehlstelle> resultFindAllByStatus = new PageImpl<>(Arrays.asList(
                 zaehlstelle1,
                 zaehlstelle2,
-                zaehlstelle3
-        ));
+                zaehlstelle3));
         when(zaehlstelleIndex.findAllByStatus(anyString(), any())).thenReturn(resultFindAllByStatus);
 
         final List<OpenZaehlungDTO> openZaehlungen = this.service.getOpenZaehlungen();

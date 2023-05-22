@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
 @Service
 public class InfoMessageService {
 
@@ -26,7 +25,7 @@ public class InfoMessageService {
     private final InfoMessageMapper infoMessageMapper;
 
     public InfoMessageService(final InfoMessageRepository infoMessageRepository,
-                              final InfoMessageMapper infoMessageMapper) {
+            final InfoMessageMapper infoMessageMapper) {
         this.infoMessageRepository = infoMessageRepository;
         this.infoMessageMapper = infoMessageMapper;
     }

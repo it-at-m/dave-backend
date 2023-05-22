@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ChartLegendUtil {
 
@@ -63,7 +62,7 @@ public final class ChartLegendUtil {
     public static final String PKW_EINHEITEN_HEATMAP = "PKW-Einheiten";
 
     public static List<String> checkAndAddToLegendWhenNotAvailable(final List<String> legend,
-                                                                   final String legendEntryToAdd) {
+            final String legendEntryToAdd) {
         if (!legend.contains(legendEntryToAdd)) {
             legend.add(legendEntryToAdd);
         }

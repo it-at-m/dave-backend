@@ -61,16 +61,15 @@ public class FillPdfBeanService {
     private static final String CELL_WIDTH_20_MM = "20mm";
     private static final String CELL_WIDTH_UNITS = "mm";
 
-
     private final IndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
     private final GangliniePdfOptionsMapper gangliniePdfOptionsMapper;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
     public FillPdfBeanService(final IndexService indexService,
-                              final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
-                              final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
-                              final LadeZaehldatenService ladeZaehldatenService) {
+            final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
+            final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
+            final LadeZaehldatenService ladeZaehldatenService) {
         this.indexService = indexService;
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.gangliniePdfOptionsMapper = gangliniePdfOptionsMapper;
@@ -80,7 +79,7 @@ public class FillPdfBeanService {
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
      *
-     * @param pdfBean    PDF-Bean die befüllt werden soll
+     * @param pdfBean PDF-Bean die befüllt werden soll
      * @param department Organisationseinheit des Benutzers
      * @return {@link PdfBean}
      */
@@ -94,18 +93,19 @@ public class FillPdfBeanService {
         return pdfBean;
     }
 
-
     /**
-     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
+     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache
+     * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
      *
-     * @param basicPdf      Die Bean, die befüllt werden soll.
-     * @param zaehlung      Die im Frontend ausgewählte Zählung.
+     * @param basicPdf Die Bean, die befüllt werden soll.
+     * @param zaehlung Die im Frontend ausgewählte Zählung.
      * @param kreuzungsname ZaehlstelleHeaderDTO, da hier Kreuzungsname vorhanden.
-     * @param zaehlstelle   Zählstelle aus dem Frontend.
-     * @param department    Organisationseinheit des Benutzers
+     * @param zaehlstelle Zählstelle aus dem Frontend.
+     * @param department Organisationseinheit des Benutzers
      * @return Befüllte BasicPdf Bean.
      */
-    static BasicPdf fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle, final String department) {
+    static BasicPdf fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+            final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
         basicPdf.setZaehlstelleninformationen(fillZaehlstelleninformationen(basicPdf.getZaehlstelleninformationen(), kreuzungsname, zaehlung));
@@ -122,7 +122,8 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen, final String kreuzungsname, final Zaehlung zaehlung) {
+    static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
+            final String kreuzungsname, final Zaehlung zaehlung) {
         zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
         zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(zaehlung.getZaehldauer()));
@@ -141,10 +142,12 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen, final Zaehlstelle zaehlstelle, final Zaehlung zaehlung) {
+    static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen, final Zaehlstelle zaehlstelle,
+            final Zaehlung zaehlung) {
         zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(zaehlstelle.getKommentar()));
         zusatzinformationen.setIstKommentarVorhandenZaehlung(StringUtils.isNotEmpty(zaehlung.getKommentar()));
-        zusatzinformationen.setIstKommentarVorhanden(zusatzinformationen.isIstKommentarVorhandenZaehlstelle() || zusatzinformationen.isIstKommentarVorhandenZaehlung());
+        zusatzinformationen
+                .setIstKommentarVorhanden(zusatzinformationen.isIstKommentarVorhandenZaehlstelle() || zusatzinformationen.isIstKommentarVorhandenZaehlung());
         zusatzinformationen.setKommentarZaehlung(StringUtils.defaultIfEmpty(zaehlung.getKommentar(), StringUtils.EMPTY));
         zusatzinformationen.setKommentarZaehlstelle(StringUtils.defaultIfEmpty(zaehlstelle.getKommentar(), StringUtils.EMPTY));
 
@@ -152,14 +155,16 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Erstellt und setzt den Titel des Diagramms. Hier wird überprüft ob in den Optionen eine bestimmte Fahrbeziehung
-     * ausgewählt wurde (VonKnotenarm oder / und NachKnotenarm) und ggf. die Straßennamen und Knotenarmnummern gesetzt.
-     * Wenn nichts ausgewählt:      "Gesamte Zählstelle"
-     * VonKnotenarm ausgewählt:     "von [straßenname] ([knotenarmnummer]) "
-     * NachKnotenarm ausgewählt:    "nach [straßenname] ([knotenarmnummer])"
-     * Beides ausgewählt:           "von [straßenname] ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
+     * Erstellt und setzt den Titel des Diagramms. Hier wird überprüft ob in den Optionen eine bestimmte
+     * Fahrbeziehung
+     * ausgewählt wurde (VonKnotenarm oder / und NachKnotenarm) und ggf. die Straßennamen und
+     * Knotenarmnummern gesetzt.
+     * Wenn nichts ausgewählt: "Gesamte Zählstelle"
+     * VonKnotenarm ausgewählt: "von [straßenname] ([knotenarmnummer]) "
+     * NachKnotenarm ausgewählt: "nach [straßenname] ([knotenarmnummer])"
+     * Beides ausgewählt: "von [straßenname] ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
      *
-     * @param options  Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @param zaehlung Die im Frontend gewählte Zählung
      * @return chartTitle als String
      */
@@ -204,7 +209,8 @@ public class FillPdfBeanService {
      * Konvertiert den übergebenen Parameter (bisher Integer oder BigDecimal) in einen String.
      *
      * @param zaehldata Wert der in einen String umgewandelt werden soll.
-     * @return Der übergebene Wert als String. Wenn der übergebene Wert 'null' beträgt wird ein leerer String zurückgegeben.
+     * @return Der übergebene Wert als String. Wenn der übergebene Wert 'null' beträgt wird ein leerer
+     *         String zurückgegeben.
      */
     static String convertZaehldata(final Number zaehldata) {
         if (zaehldata == null) {
@@ -217,17 +223,19 @@ public class FillPdfBeanService {
 
     /**
      * Erstellt den ChartTitle für das Diagramm eines Belastungsplanes.
-     * Bei Tageswert wird nur Tageswert angezeigt. Bei Block und Stunde wird noch die ausgewählte Zeit angezeigt.
-     * Bei Spitzenstunde wir zuerst der ausgewählte Zeitblock angezeigt, dann in Klammern die berechnete Spitzenstunde.
+     * Bei Tageswert wird nur Tageswert angezeigt. Bei Block und Stunde wird noch die ausgewählte Zeit
+     * angezeigt.
+     * Bei Spitzenstunde wir zuerst der ausgewählte Zeitblock angezeigt, dann in Klammern die berechnete
+     * Spitzenstunde.
      * <p>
      * Beispiele:
      * __________________________________________________________________________
-     * | Zeitauswahl    | Überschrift im Diagramm                               |
+     * | Zeitauswahl | Überschrift im Diagramm |
      * |########################################################################|
-     * | Tageswert      | Tageswert                                             |
-     * | Block          | Block 0 - 6 Uhr                                       |
-     * | Stunde         | Stunde 2 - 3 Uhr                                      |
-     * | Spitzenstunde  | Spitzenstunde 07:30 - 08:30 Uhr (Block 6 - 10 Uhr)    |
+     * | Tageswert | Tageswert |
+     * | Block | Block 0 - 6 Uhr |
+     * | Stunde | Stunde 2 - 3 Uhr |
+     * | Spitzenstunde | Spitzenstunde 07:30 - 08:30 Uhr (Block 6 - 10 Uhr) |
      * ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
      *
      * @param zaehlungId ID der Zaehlung
@@ -241,47 +249,49 @@ public class FillPdfBeanService {
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
         } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
                 || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
-            chartTitle.append(optionsDTO.getZeitauswahl());
-            chartTitle.append(StringUtils.SPACE);
+                    chartTitle.append(optionsDTO.getZeitauswahl());
+                    chartTitle.append(StringUtils.SPACE);
 
-            chartTitle.append(getTimeblockForChartTitle(optionsDTO));
+                    chartTitle.append(getTimeblockForChartTitle(optionsDTO));
 
-        } else if (StringUtils.equalsAny(optionsDTO.getZeitauswahl(),
-                Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName(),
-                Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName(),
-                Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName())) {
+                } else
+            if (StringUtils.equalsAny(optionsDTO.getZeitauswahl(),
+                    Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName(),
+                    Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName(),
+                    Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName())) {
 
-            chartTitle.append(optionsDTO.getZeitauswahl());
-            chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(optionsDTO.getZeitauswahl());
+                        chartTitle.append(StringUtils.SPACE);
 
-            // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
-            final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), optionsDTO);
-            final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
+                        // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
+                        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId),
+                                optionsDTO);
+                        final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
 
-            final Optional<LadeZaehldatumDTO> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
-                    .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
-                            LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
-                            LadeZaehldatenService.SPITZENSTUNDE_TAG))
-                    .findFirst();
-            if (optSpitzenStundeBlock.isPresent()) {
-                final LadeZaehldatumDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
+                        final Optional<LadeZaehldatumDTO> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
+                                .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
+                                        LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
+                                        LadeZaehldatenService.SPITZENSTUNDE_TAG))
+                                .findFirst();
+                        if (optSpitzenStundeBlock.isPresent()) {
+                            final LadeZaehldatumDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
 
-                chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
-                chartTitle.append(StringUtils.SPACE);
-                chartTitle.append(MINUS);
-                chartTitle.append(StringUtils.SPACE);
-                chartTitle.append(spitzenStundeBlock.getEndeUhrzeit());
-                chartTitle.append(StringUtils.SPACE);
-                chartTitle.append(CHART_TITLE_UHR);
-                chartTitle.append(StringUtils.SPACE);
-            }
+                            chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(MINUS);
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(spitzenStundeBlock.getEndeUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(CHART_TITLE_UHR);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
 
-            chartTitle.append("(");
-            chartTitle.append(CHART_TITLE_BLOCK);
-            chartTitle.append(StringUtils.SPACE);
-            chartTitle.append(getTimeblockForChartTitle(optionsDTO));
-            chartTitle.append(")");
-        }
+                        chartTitle.append("(");
+                        chartTitle.append(CHART_TITLE_BLOCK);
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(getTimeblockForChartTitle(optionsDTO));
+                        chartTitle.append(")");
+                    }
         return chartTitle.toString();
     }
 
@@ -317,18 +327,19 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
+     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
      *
-     * @param diagrammPdf      DiagrammPdf bean die befüllt werden soll.
-     * @param zaehlungId       Die ID der im Frontend ausgewählten Zählung.
-     * @param options          Die im Frontend ausgewählten Optionen.
+     * @param diagrammPdf DiagrammPdf bean die befüllt werden soll.
+     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
+     * @param options Die im Frontend ausgewählten Optionen.
      * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
-     * @param department       Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return {@link DiagrammPdf}
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public DiagrammPdf fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
-                                             final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
+            final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
 
@@ -347,20 +358,21 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
+     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
      *
-     * @param gangliniePdf                      GangliniePdf bean die befüllt werden soll.
-     * @param zaehlungId                        Die ID der im Frontend ausgewählten Zählung.
-     * @param options                           Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png                  Der Graph aus dem Frontend als Base64-PNG
+     * @param gangliniePdf GangliniePdf bean die befüllt werden soll.
+     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
+     * @param options Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return Die befüllte Bean als {@link GangliniePdf}
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public GangliniePdf fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
-                                         final OptionsDTO options, final String chartAsBase64Png,
-                                         final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
+            final OptionsDTO options, final String chartAsBase64Png,
+            final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
 
@@ -388,9 +400,9 @@ public class FillPdfBeanService {
             if (StringUtils.equals(lzDto.getType(), LadeZaehldatenService.STUNDE)
                     || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.GESAMT)
                     || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.TAGESWERT)
-//                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
+                    //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
                     || (StringUtils.equals(lzDto.getType(), LadeZaehldatenService.BLOCK)
-                    && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
+                            && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
 
                 final GanglinieTableColumn gtc = new GanglinieTableColumn();
 
@@ -474,21 +486,21 @@ public class FillPdfBeanService {
         }
     }
 
-
     /**
-     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
+     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
      *
-     * @param datentabellePdf                   Die zu befüllende Bean
-     * @param zaehlungId                        ID der im Frontend ausgewählten Zählung
-     * @param options                           Die im Frontend ausgewählten Optionen.
+     * @param datentabellePdf Die zu befüllende Bean
+     * @param zaehlungId ID der im Frontend ausgewählten Zählung
+     * @param options Die im Frontend ausgewählten Optionen.
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return die befüllte Datentabelle als {@link DatentabellePdf}
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung gefunden wurde
      */
     public DatentabellePdf fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
-                                               final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
-                                               final String department) throws DataNotFoundException {
+            final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
 
@@ -508,9 +520,10 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt ein Objekt der Klasse {@link DatentabellePdfZaehldaten} und gibt dieses zurück.
+     * Diese Methode befüllt ein Objekt der Klasse {@link DatentabellePdfZaehldaten} und gibt dieses
+     * zurück.
      *
-     * @param options    Die im Frontend ausgewählten Optionen.
+     * @param options Die im Frontend ausgewählten Optionen.
      * @param zaehlungId ID der im Frontend ausgewählten Zählung
      * @return Befülltes Objekt vom Typ {@link DatentabellePdfZaehldaten}.
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
@@ -522,8 +535,7 @@ public class FillPdfBeanService {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()
                 .filter(ladeZaehldatumDTO -> StringUtils.equalsIgnoreCase(ladeZaehldatumDTO.getType(), LadeZaehldatenService.TAGESWERT))
-                .forEach(ladeZaehldatumDTO ->
-                {
+                .forEach(ladeZaehldatumDTO -> {
                     ladeZaehldatumDTO.setEndeUhrzeit(null);
                     ladeZaehldatumDTO.setStartUhrzeit(null);
                 });
@@ -606,7 +618,7 @@ public class FillPdfBeanService {
     /**
      * @param zaehlung als {@link Zaehlung}
      * @return die {@link Zaehlart} der {@link Zaehlung} als String
-     * oder {@link StringUtils#EMPTY} falls {@link Zaehlart#N}.
+     *         oder {@link StringUtils#EMPTY} falls {@link Zaehlart#N}.
      */
     public String getCorrectZaehlartString(final Zaehlung zaehlung) {
         return StringUtils.equals(zaehlung.getZaehlart(), Zaehlart.N.toString())

@@ -19,7 +19,8 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
 
 /**
- * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die ONNX-Vorhersage.
+ * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die
+ * ONNX-Vorhersage.
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class KIZeitintervallMapper {
@@ -73,27 +74,27 @@ public abstract class KIZeitintervallMapper {
     protected void setDay(Zeitintervall zeitintervall, @MappingTarget KIZeitintervall kiZeitintervall) {
         final DayOfWeek day = zeitintervall.getStartUhrzeit().getDayOfWeek();
         switch (day) {
-            case MONDAY:
-                kiZeitintervall.setMontag(1);
-                break;
-            case TUESDAY:
-                kiZeitintervall.setDienstag(1);
-                break;
-            case WEDNESDAY:
-                kiZeitintervall.setMittwoch(1);
-                break;
-            case THURSDAY:
-                kiZeitintervall.setDonnerstag(1);
-                break;
-            case FRIDAY:
-                kiZeitintervall.setFreitag(1);
-                break;
-            case SATURDAY:
-                kiZeitintervall.setSamstag(1);
-                break;
-            case SUNDAY:
-                kiZeitintervall.setSonntag(1);
-                break;
+        case MONDAY:
+            kiZeitintervall.setMontag(1);
+            break;
+        case TUESDAY:
+            kiZeitintervall.setDienstag(1);
+            break;
+        case WEDNESDAY:
+            kiZeitintervall.setMittwoch(1);
+            break;
+        case THURSDAY:
+            kiZeitintervall.setDonnerstag(1);
+            break;
+        case FRIDAY:
+            kiZeitintervall.setFreitag(1);
+            break;
+        case SATURDAY:
+            kiZeitintervall.setSamstag(1);
+            break;
+        case SUNDAY:
+            kiZeitintervall.setSonntag(1);
+            break;
         }
     }
 

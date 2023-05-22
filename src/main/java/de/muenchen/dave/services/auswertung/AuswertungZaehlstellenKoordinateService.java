@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @Slf4j
 public class AuswertungZaehlstellenKoordinateService {
@@ -21,13 +20,14 @@ public class AuswertungZaehlstellenKoordinateService {
     private final ZaehlstelleMapper zaehlstelleMapper;
 
     public AuswertungZaehlstellenKoordinateService(final IndexService indexService,
-                                                   final ZaehlstelleMapper zaehlstelleMapper) {
+            final ZaehlstelleMapper zaehlstelleMapper) {
         this.indexService = indexService;
         this.zaehlstelleMapper = zaehlstelleMapper;
     }
 
     /**
-     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDTO} für jede vorhandene {@link Zaehlstelle}
+     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDTO} für jede vorhandene
+     *         {@link Zaehlstelle}
      */
     public List<LadeAuswertungZaehlstelleKoordinateDTO> getAuswertungZaehlstellenKoordinate() {
         return indexService.getAllZaehlstellen().stream()

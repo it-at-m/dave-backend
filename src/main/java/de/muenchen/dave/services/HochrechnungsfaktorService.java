@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 public class HochrechnungsfaktorService {
 
@@ -28,13 +27,14 @@ public class HochrechnungsfaktorService {
     private final HochrechnungsfaktorMapper hochrechnungsfaktorMapper;
 
     public HochrechnungsfaktorService(final HochrechnungsfaktorRepository hochrechnungsfaktorRepository,
-                                      final HochrechnungsfaktorMapper hochrechnungsfaktorMapper) {
+            final HochrechnungsfaktorMapper hochrechnungsfaktorMapper) {
         this.hochrechnungsfaktorRepository = hochrechnungsfaktorRepository;
         this.hochrechnungsfaktorMapper = hochrechnungsfaktorMapper;
     }
 
     /**
-     * Diese Methode speichert/aktualisiert einen {@link Hochrechnungsfaktor} in der Relationalen Datenbank.
+     * Diese Methode speichert/aktualisiert einen {@link Hochrechnungsfaktor} in der Relationalen
+     * Datenbank.
      * <p>
      * Die Aktualisierung findet statt, sobald im DTO eine Id vorhanden ist.
      * Ansonsten wird ein neues Objekt angelegt.
@@ -77,12 +77,12 @@ public class HochrechnungsfaktorService {
      * Setzte die fachlichen Attribute des im Parameter gegebenen DTOs
      * in der im zweiten Parameter übergebene Entität.
      *
-     * @param hofaDto    DTO
+     * @param hofaDto DTO
      * @param hofaEntity Bean
      * @return die im zweiten Parameter übergebene Entität mit den fachlichen Daten der DTO.
      */
     public static Hochrechnungsfaktor setDtoDataToEntity(final HochrechnungsfaktorDTO hofaDto,
-                                                         final Hochrechnungsfaktor hofaEntity) {
+            final Hochrechnungsfaktor hofaEntity) {
         hofaEntity.setMatrix(hofaDto.getMatrix());
         hofaEntity.setKfz(hofaDto.getKfz());
         hofaEntity.setSv(hofaDto.getSv());

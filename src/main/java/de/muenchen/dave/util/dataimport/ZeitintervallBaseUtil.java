@@ -29,7 +29,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallBaseUtil {
 
@@ -43,7 +42,7 @@ public final class ZeitintervallBaseUtil {
      *
      * @param zeitintervalle Die Zeitintervalle aus denen die Datenstruktur erstellt werden soll.
      * @return Datenstruktur mit {@link Zeitintervall}e gruppiert nach den
-     * entsprechenden {@link Intervall}en.
+     *         entsprechenden {@link Intervall}en.
      */
     public static Map<Intervall, List<Zeitintervall>> createByIntervallGroupedZeitintervalle(final List<Zeitintervall> zeitintervalle) {
         final Map<Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
@@ -61,9 +60,9 @@ public final class ZeitintervallBaseUtil {
     }
 
     public static Zeitintervall createZeitintervallWithoutCountingValues(final UUID zaehlungId,
-                                                                         final LocalDateTime startUhrzeit,
-                                                                         final LocalDateTime endeUhrzeit,
-                                                                         final TypeZeitintervall type) {
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final TypeZeitintervall type) {
         final Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zaehlungId);
         zeitintervall.setStartUhrzeit(startUhrzeit);
@@ -75,18 +74,17 @@ public final class ZeitintervallBaseUtil {
     }
 
     public static Zeitintervall createZeitintervallWithoutCountingValues(final UUID zaehlungId,
-                                                                         final LocalDateTime startUhrzeit,
-                                                                         final LocalDateTime endeUhrzeit,
-                                                                         final TypeZeitintervall type,
-                                                                         final Fahrbeziehung fahrbeziehung) {
-        final Zeitintervall zeitintervall =
-                createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final TypeZeitintervall type,
+            final Fahrbeziehung fahrbeziehung) {
+        final Zeitintervall zeitintervall = createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
         zeitintervall.setFahrbeziehung(fahrbeziehung);
         return zeitintervall;
     }
 
     public static Zeitintervall summation(final Zeitintervall zeitintervall1,
-                                          final Zeitintervall zeitintervall2) {
+            final Zeitintervall zeitintervall2) {
         final Zeitintervall summedZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervall1.getZaehlungId(),
                 zeitintervall1.getStartUhrzeit(),
@@ -103,27 +101,19 @@ public final class ZeitintervallBaseUtil {
         summedZeitintervall.getHochrechnung().setHochrechnungKfz(
                 CalculationUtil.nullSafeSummation(
                         zeitintervall1.getHochrechnung().getHochrechnungKfz(),
-                        zeitintervall2.getHochrechnung().getHochrechnungKfz()
-                )
-        );
+                        zeitintervall2.getHochrechnung().getHochrechnungKfz()));
         summedZeitintervall.getHochrechnung().setHochrechnungGv(
                 CalculationUtil.nullSafeSummation(
                         zeitintervall1.getHochrechnung().getHochrechnungGv(),
-                        zeitintervall2.getHochrechnung().getHochrechnungGv()
-                )
-        );
+                        zeitintervall2.getHochrechnung().getHochrechnungGv()));
         summedZeitintervall.getHochrechnung().setHochrechnungSv(
                 CalculationUtil.nullSafeSummation(
                         zeitintervall1.getHochrechnung().getHochrechnungSv(),
-                        zeitintervall2.getHochrechnung().getHochrechnungSv()
-                )
-        );
+                        zeitintervall2.getHochrechnung().getHochrechnungSv()));
         summedZeitintervall.getHochrechnung().setHochrechnungRad(
                 CalculationUtil.nullSafeSummation(
                         zeitintervall1.getHochrechnung().getHochrechnungRad(),
-                        zeitintervall2.getHochrechnung().getHochrechnungRad()
-                )
-        );
+                        zeitintervall2.getHochrechnung().getHochrechnungRad()));
         return summedZeitintervall;
     }
 
@@ -138,13 +128,13 @@ public final class ZeitintervallBaseUtil {
     }
 
     /**
-     * @param fahrbeziehung                    Die {@link Fahrbeziehung} der betroffenen Zeitintervalle.
+     * @param fahrbeziehung Die {@link Fahrbeziehung} der betroffenen Zeitintervalle.
      * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall}
-     *                                         gruppierten {@link Zeitintervall}e.
+     *            gruppierten {@link Zeitintervall}e.
      * @return Alle {@link Zeitintervall}e welche die {@link Fahrbeziehung} besitzen.
      */
     public static List<Zeitintervall> getZeitintervalleForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
-                                                                        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
+            final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForFahrbeziehung = new ArrayList<>();
         zeitintervalleGroupedByIntervall.keySet().forEach(intervall -> {
             zeitintervalleGroupedByIntervall.get(intervall).stream()
@@ -160,23 +150,22 @@ public final class ZeitintervallBaseUtil {
     }
 
     private static boolean isZeitintervallWithinTimeParameters(final Zeitintervall zeitintervall,
-                                                               final LocalDateTime startTime,
-                                                               final LocalDateTime endTime) {
+            final LocalDateTime startTime,
+            final LocalDateTime endTime) {
         return (zeitintervall.getStartUhrzeit().equals(startTime) || zeitintervall.getStartUhrzeit().isAfter(startTime))
                 && isZeitintervallBeforeTimeParameters(zeitintervall, endTime);
     }
 
     private static boolean isZeitintervallBeforeTimeParameters(final Zeitintervall zeitintervall,
-                                                               final LocalDateTime endTime) {
+            final LocalDateTime endTime) {
         return (zeitintervall.getEndeUhrzeit().equals(endTime) || zeitintervall.getEndeUhrzeit().isBefore(endTime))
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));
     }
 
-
     public static Zeitintervall checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(final Zeitintervall zeitintervall) {
         if ((zeitintervall.getEndeUhrzeit().equals(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX)))
                 || (zeitintervall.getEndeUhrzeit().isBefore(zeitintervall.getStartUhrzeit())
-                && zeitintervall.getEndeUhrzeit().equals(TIME_VALUE_FOUND_START_OF_DAY))) {
+                        && zeitintervall.getEndeUhrzeit().equals(TIME_VALUE_FOUND_START_OF_DAY))) {
             zeitintervall.setEndeUhrzeit(TIME_VALUE_FOUND_END_OF_DAY);
         }
         return zeitintervall;

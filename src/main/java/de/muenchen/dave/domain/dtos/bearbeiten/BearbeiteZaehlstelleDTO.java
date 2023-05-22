@@ -5,7 +5,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.util.List;
 
-
 @Data
 public class BearbeiteZaehlstelleDTO {
 

@@ -13,40 +13,34 @@ import java.util.Optional;
 
 public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteAll();
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteAll(Iterable<? extends Zaehlstelle> var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteById(String var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void delete(Zaehlstelle var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     <S extends Zaehlstelle> S save(S var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1);
 
     Optional<Zaehlstelle> findById(String var1);

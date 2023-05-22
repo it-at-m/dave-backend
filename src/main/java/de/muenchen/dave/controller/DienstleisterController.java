@@ -41,11 +41,7 @@ public class DienstleisterController {
      * @return Der gespeicherte Dienstleister als DTO
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    @RequestMapping(
-            value = "/save",
-            method = {RequestMethod.POST, RequestMethod.PUT},
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DienstleisterDTO> saveDienstleister(@RequestBody @NotNull final DienstleisterDTO dienstleisterDTO) {
         log.debug("Dienstleister speichern: {}", dienstleisterDTO);
         try {
@@ -64,7 +60,8 @@ public class DienstleisterController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/getByDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DienstleisterDTO> getDienstleisterByKennung(@RequestParam(value = REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG) @NotNull final String dienstleisterkennung) {
+    public ResponseEntity<DienstleisterDTO> getDienstleisterByKennung(
+            @RequestParam(value = REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG) @NotNull final String dienstleisterkennung) {
         log.debug("Dienstleister laden: {}", dienstleisterkennung);
         try {
             return ResponseEntity.ok(this.dienstleisterService.loadDienstleisterByKennung(dienstleisterkennung));

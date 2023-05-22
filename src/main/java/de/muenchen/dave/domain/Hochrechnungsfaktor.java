@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.Table;
 
-
 @Entity
 @Getter
 @Setter
@@ -19,14 +18,8 @@ import javax.persistence.Table;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(
-                name = "index_active",
-                columnList = "active"
-        ),
-        @Index(
-                name = "index_default_faktor",
-                columnList = "default_faktor"
-        )
+        @Index(name = "index_active", columnList = "active"),
+        @Index(name = "index_default_faktor", columnList = "default_faktor")
 })
 public class Hochrechnungsfaktor extends BaseEntity {
 

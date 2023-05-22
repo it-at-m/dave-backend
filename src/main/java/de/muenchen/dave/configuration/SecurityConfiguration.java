@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 /**
  * The central class for configuration of all security aspects.
  */
@@ -46,8 +45,8 @@ public class SecurityConfiguration {
                 .antMatchers(
                         "/lade-auswertung-spitzenstunde",
                         "/lade-auswertung-zaehlstellen-koordinate",
-                        "/lade-auswertung-visum"
-                ).permitAll()
+                        "/lade-auswertung-visum")
+                .permitAll()
                 // allow access to /actuator/info
                 .antMatchers("/actuator/info").permitAll()
                 // allow access to /actuator/health for OpenShift Health Check
@@ -68,8 +67,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(final ClientRegistrationRepository clientRegistrationRepository,
-                                                                                                  final OAuth2AuthorizedClientService authorizedClientService) {
+    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
+            final ClientRegistrationRepository clientRegistrationRepository,
+            final OAuth2AuthorizedClientService authorizedClientService) {
 
         final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
                 .builder()
@@ -78,8 +78,7 @@ public class SecurityConfiguration {
 
         final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
                 clientRegistrationRepository,
-                authorizedClientService
-        );
+                authorizedClientService);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
         return authorizedClientManager;

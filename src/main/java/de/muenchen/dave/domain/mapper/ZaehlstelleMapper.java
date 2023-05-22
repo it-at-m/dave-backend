@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Set;
 
-
 @Mapper(componentModel = "spring")
 public interface ZaehlstelleMapper {
 
@@ -67,6 +66,7 @@ public interface ZaehlstelleMapper {
     }
 
     LeseZaehlstelleDTO bean2LeseZaehlstelleDto(Zaehlstelle bean);
+
     LadeZaehlstelleWithUnreadMessageDTO bean2LadeZaehlstelleWithUnreadMessageDTO(Zaehlstelle bean);
 
     @AfterMapping
@@ -90,6 +90,7 @@ public interface ZaehlstelleMapper {
     }
 
     LeseZaehlungDTO bean2LeseDto(Zaehlung bean);
+
     LadeZaehlungWithUnreadMessageDTO bean2LadeZaehlungWithUnreadMessageDTO(Zaehlung bean);
 
     @AfterMapping

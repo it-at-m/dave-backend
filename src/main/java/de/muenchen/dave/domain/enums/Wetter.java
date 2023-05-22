@@ -6,7 +6,6 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
-
 @AllArgsConstructor
 @Getter
 public enum Wetter {

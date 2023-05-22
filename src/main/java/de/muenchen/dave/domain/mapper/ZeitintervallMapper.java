@@ -15,12 +15,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-
 @Mapper(componentModel = "spring")
 public interface ZeitintervallMapper {
 
     /**
-     * Die vorgehaltene {@link ZeitintervallDTO}#getStartUhrzeit() und {@link ZeitintervallDTO}#getEndeUhrzeit()
+     * Die vorgehaltene {@link ZeitintervallDTO}#getStartUhrzeit() und
+     * {@link ZeitintervallDTO}#getEndeUhrzeit()
      * ist im Format {@link DaveConstants}#ZEITINTERVALL_TIME_FORMAT hinterlegt.
      * Diese Methode erweitert die Uhrzeit um das Datum {@link DaveConstants#DEFAULT_LOCALDATE}
      * damit in der eigentlichen Mappermethode ein Parsing von String nach
@@ -34,17 +34,13 @@ public interface ZeitintervallMapper {
                 DaveConstants.DEFAULT_LOCALDATE,
                 LocalTime.parse(
                         zeitintervalle.getStartUhrzeit(),
-                        DateTimeFormatter.ofPattern(DaveConstants.ZEITINTERVALL_TIME_FORMAT, Locale.GERMANY)
-                )
-        );
+                        DateTimeFormatter.ofPattern(DaveConstants.ZEITINTERVALL_TIME_FORMAT, Locale.GERMANY)));
         zeitintervalle.setStartUhrzeit(time.toString());
         time = LocalDateTime.of(
                 DaveConstants.DEFAULT_LOCALDATE,
                 LocalTime.parse(
                         zeitintervalle.getEndeUhrzeit(),
-                        DateTimeFormatter.ofPattern(DaveConstants.ZEITINTERVALL_TIME_FORMAT, Locale.GERMANY)
-                )
-        );
+                        DateTimeFormatter.ofPattern(DaveConstants.ZEITINTERVALL_TIME_FORMAT, Locale.GERMANY)));
         zeitintervalle.setEndeUhrzeit(time.toString());
     }
 

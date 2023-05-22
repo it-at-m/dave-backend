@@ -6,7 +6,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class CoordinateUtilTest {
 
     @Test
@@ -36,7 +35,7 @@ class CoordinateUtilTest {
 
     /**
      * Testdaten für Koordinatenumrechnung:
-     * https://www.koordinaten-umrechner.de/decimal/66.296139,-104.062500?karte=OpenStreetMap&zoom=4
+     * <a href="https://www.koordinaten-umrechner.de/decimal/66.296139,-104.062500?karte=OpenStreetMap&zoom=4">...</a>
      */
     @Test
     public void transformFromWGS84ToUTM() {

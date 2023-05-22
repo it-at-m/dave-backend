@@ -21,7 +21,6 @@ public interface ChatMessageMapper {
 
     List<ChatMessage> dtoList2beanList(List<ChatMessageDTO> dto);
 
-
     ChatMessageDTO bean2Dto(ChatMessage bean);
 
     List<ChatMessageDTO> beanList2DtoList(List<ChatMessage> bean);

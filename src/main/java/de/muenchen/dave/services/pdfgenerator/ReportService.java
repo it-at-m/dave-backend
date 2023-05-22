@@ -71,10 +71,10 @@ public class ReportService {
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
     public ReportService(final GeneratePdfService generatePdfService,
-                         final FillPdfBeanService fillPdfBeanService,
-                         final ProcessZaehldatenService processZaehldatenService,
-                         final IndexService indexService,
-                         final LadeZaehldatumMapper ladeZaehldatumMapper) {
+            final FillPdfBeanService fillPdfBeanService,
+            final ProcessZaehldatenService processZaehldatenService,
+            final IndexService indexService,
+            final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
@@ -124,7 +124,6 @@ public class ReportService {
         return sb.toString();
     }
 
-
     public String generateReportBody(final List<BaseAsset> assetList) {
         final StringBuilder sb = new StringBuilder();
 
@@ -152,7 +151,8 @@ public class ReportService {
             } else if (asset.getType().equals(AssetType.DATATABLE)) {
                 final DatatableAsset datatableAsset = (DatatableAsset) asset;
                 try {
-                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanService.getDatentabellePdfZaehldaten(datatableAsset.getOptions(), datatableAsset.getZaehlungId());
+                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanService
+                            .getDatentabellePdfZaehldaten(datatableAsset.getOptions(), datatableAsset.getZaehlungId());
                     datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
                     datatableAsset.setRandomTableId(UUID.randomUUID().toString());
 

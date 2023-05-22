@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public interface DienstleisterRepository extends JpaRepository<Dienstleister, UUID> { //NOSONAR
 
     @Override

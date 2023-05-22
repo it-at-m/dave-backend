@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-
 @Data
 @NoArgsConstructor
 public class PkwEinheit implements Serializable {

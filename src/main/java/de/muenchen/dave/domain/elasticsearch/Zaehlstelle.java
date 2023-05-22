@@ -12,7 +12,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Data
 @Document(indexName = "zaehlstelle")
 public class Zaehlstelle {

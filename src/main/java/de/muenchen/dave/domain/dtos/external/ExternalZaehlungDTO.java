@@ -7,7 +7,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Data
 public class ExternalZaehlungDTO {
 

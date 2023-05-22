@@ -9,7 +9,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-
 @Data
 @JsonIgnoreProperties(value = {
         "startUhrzeit",

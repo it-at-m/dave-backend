@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.List;
 
-
 @Data
 public class ZaehlungskenngroessenAsset extends BaseAsset {
     private String zaehlungId;

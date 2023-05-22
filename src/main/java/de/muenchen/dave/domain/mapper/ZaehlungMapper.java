@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-
 @Mapper(componentModel = "spring")
 public interface ZaehlungMapper {
 
@@ -58,9 +57,7 @@ public interface ZaehlungMapper {
         final List<BearbeiteFahrbeziehungDTO> fahrbeziehungenDTO = dto.getFahrbeziehungen();
         if (CollectionUtils.isNotEmpty(fahrbeziehungenDTO)) {
             bean.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenDTO.forEach(fahr ->
-                    bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr))
-            );
+            fahrbeziehungenDTO.forEach(fahr -> bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr)));
         }
 
         if (StringUtils.isNotEmpty(dto.getZaehlart())) {
@@ -88,9 +85,7 @@ public interface ZaehlungMapper {
         final List<Fahrbeziehung> fahrbeziehungenBean = bean.getFahrbeziehungen();
         if (CollectionUtils.isNotEmpty(fahrbeziehungenBean)) {
             dto.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenBean.forEach(fahr ->
-                    dto.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr))
-            );
+            fahrbeziehungenBean.forEach(fahr -> dto.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr)));
         }
     }
 
@@ -113,9 +108,7 @@ public interface ZaehlungMapper {
         final List<BearbeiteFahrbeziehungDTO> fahrbeziehungenDTO = dto.getFahrbeziehungen();
         if (CollectionUtils.isNotEmpty(fahrbeziehungenDTO)) {
             bean.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenDTO.forEach(fahr ->
-                    bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr))
-            );
+            fahrbeziehungenDTO.forEach(fahr -> bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr)));
         }
     }
 

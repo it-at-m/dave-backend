@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Service
 @Slf4j
 public class ProcessZaehldatenSteplineService {
@@ -37,65 +36,59 @@ public class ProcessZaehldatenSteplineService {
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     public static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-                                                                       final Integer value) {
+            final Integer value) {
         ladeZaehldatenStepline.setRangeMax(
                 ZaehldatenProcessingUtil.getValueRounded(
                         Math.max(
                                 ZaehldatenProcessingUtil.getZeroIfNull(value),
-                                ladeZaehldatenStepline.getRangeMax()
-                        ),
-                        ROUNDING_VALUE
-                )
-        );
+                                ladeZaehldatenStepline.getRangeMax()),
+                        ROUNDING_VALUE));
     }
 
     public static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-                                                                       final BigDecimal value) {
+            final BigDecimal value) {
         setRangeMaxRoundedToHundredInZaehldatenStepline(
                 ladeZaehldatenStepline,
                 ZaehldatenProcessingUtil.getZeroIfNull(value).intValue());
     }
 
     public static void setRangeMaxPercentInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-                                                              final BigDecimal value) {
+            final BigDecimal value) {
         final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
         ladeZaehldatenStepline.setRangeMaxPercent(
                 ZaehldatenProcessingUtil.getValueRounded(
                         BigDecimal.valueOf(currentValue)
                                 .max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
-                        ROUNDING_VALUE_PERCENT
-                )
-        );
+                        ROUNDING_VALUE_PERCENT));
     }
 
     public static void setLegendInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-                                                     final String legendEntry) {
+            final String legendEntry) {
         ladeZaehldatenStepline.setLegend(
                 ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
                         ladeZaehldatenStepline.getLegend(),
-                        legendEntry
-                )
-        );
+                        legendEntry));
     }
 
     /**
-     * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
+     * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
      * befinden, wird das Diagramm in zwei Unterdiagramme aufgeteilt.
      * Die Aufteilung der Daten für die beiden Unterdiagramme wird in der mitte der X-Achse
      * des Gesamtdiagramms vorgenommen.
      *
      * @param ladeZaehldatenStepline Die für ein Diagramm aufbereitete Daten.
-     *                               Die Unterteilung in Unterdiagramme ist noch nicht durchgeführt.
-     * @param options                Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
-     *                               und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
+     *            Die Unterteilung in Unterdiagramme ist noch nicht durchgeführt.
+     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
+     *            und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-                                                                                                         final OptionsDTO options) {
+            final OptionsDTO options) {
         if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
                 && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
                 && !(StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)
-                || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)
-                || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS))) {
+                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)
+                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS))) {
             final List<StepLineSeriesEntryBaseDTO> newSeriesEntriesFirstChart = new ArrayList<>();
             final List<StepLineSeriesEntryBaseDTO> newSeriesEntriesSecondChart = new ArrayList<>();
             final int splittedSize = ladeZaehldatenStepline.getXAxisDataFirstChart().size() / 2;
@@ -103,8 +96,7 @@ public class ProcessZaehldatenSteplineService {
             // Split X axis data
             List<List<String>> splittetXAxisData = ListUtils.partition(
                     ladeZaehldatenStepline.getXAxisDataFirstChart(),
-                    splittedSize
-            );
+                    splittedSize);
             ladeZaehldatenStepline.setXAxisDataFirstChart(new ArrayList<>(splittetXAxisData.get(0)));
             ladeZaehldatenStepline.setXAxisDataSecondChart(new ArrayList<>(splittetXAxisData.get(1)));
 
@@ -113,8 +105,7 @@ public class ProcessZaehldatenSteplineService {
                 if (serieEntryFirstChart.getClass().equals(StepLineSeriesEntryIntegerDTO.class)) {
                     List<List<Integer>> splittedYAxisData = ListUtils.partition(
                             ((StepLineSeriesEntryIntegerDTO) serieEntryFirstChart).getYAxisData(),
-                            splittedSize
-                    );
+                            splittedSize);
                     final StepLineSeriesEntryIntegerDTO stepLineSeriesEntryFirstChart = new StepLineSeriesEntryIntegerDTO();
                     stepLineSeriesEntryFirstChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntryFirstChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(0)));
@@ -129,8 +120,7 @@ public class ProcessZaehldatenSteplineService {
                 } else {
                     List<List<BigDecimal>> splittedYAxisData = ListUtils.partition(
                             ((StepLineSeriesEntryBigDecimalDTO) serieEntryFirstChart).getYAxisData(),
-                            splittedSize
-                    );
+                            splittedSize);
                     final StepLineSeriesEntryBigDecimalDTO stepLineSeriesEntryFirstChart = new StepLineSeriesEntryBigDecimalDTO();
                     stepLineSeriesEntryFirstChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntryFirstChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(0)));
@@ -150,8 +140,8 @@ public class ProcessZaehldatenSteplineService {
     }
 
     public static void setSeriesIndexForChart(final String fahrzeugkategorie,
-                                              final StepLineSeriesEntryBaseDTO seriesEntryFirstChart,
-                                              final StepLineSeriesEntryBaseDTO seriesEntrySecondChart) {
+            final StepLineSeriesEntryBaseDTO seriesEntryFirstChart,
+            final StepLineSeriesEntryBaseDTO seriesEntrySecondChart) {
         if (ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT.equals(fahrzeugkategorie)
                 || ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT.equals(fahrzeugkategorie)) {
             setSeriesIndexForFirstChartPercent(seriesEntryFirstChart);
@@ -185,25 +175,29 @@ public class ProcessZaehldatenSteplineService {
     /**
      * Diese Methode führt die Datenaufbereitung für das Stepline-Diagramm durch.
      * <p>
-     * Sind in den options die Werte {@link Zeitblock#ZB_00_24} und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
+     * Sind in den options die Werte {@link Zeitblock#ZB_00_24} und
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
      * zu finden, so wird die Datenaufbereitung für zwei Unterdiagramme vorgenommen.
      * Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in zwei Unterdiagramme statt
      * und die Daten werden für ein Diagramm aufbereitet.
      * <p>
-     * Falls keine Aufteilung in zwei Unterdiagrammme erforderlich ist, werden in der Klasse {@link LadeZaehldatenSteplineDTO} neben den Variablen
+     * Falls keine Aufteilung in zwei Unterdiagrammme erforderlich ist, werden in der Klasse
+     * {@link LadeZaehldatenSteplineDTO} neben den Variablen
      * {@link LadeZaehldatenSteplineDTO}#getLegend, {@link LadeZaehldatenSteplineDTO}#getRangeMax und
-     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur die Variablen {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart
+     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur die Variablen
+     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart
      * sowie {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesFirstChart gesetzt.
      * <p>
-     * Ist eine Aufteilung notwendig, so werden auch die Variablen {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart
+     * Ist eine Aufteilung notwendig, so werden auch die Variablen
+     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart
      * sowie {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesSecondChart gesetzt.
      *
      * @param zaehldatenTable Die Datengrundlage zur Aufbereitung des Stepline-Diagramms.
-     * @param options         Die durch den User im Frontend gewählten Optionen.
+     * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Stepline-Diagramm entsprechend der gewählten Optionen.
      */
     public LadeZaehldatenSteplineDTO ladeProcessedZaehldatenStepline(final LadeZaehldatenTableDTO zaehldatenTable,
-                                                                     final OptionsDTO options) {
+            final OptionsDTO options) {
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
         ladeZaehldatenStepline.setRangeMaxPercent(0);
@@ -297,9 +291,7 @@ public class ProcessZaehldatenSteplineService {
                     ladeZaehldatenStepline.setXAxisDataFirstChart(
                             ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                                     ladeZaehldatenStepline.getXAxisDataFirstChart(),
-                                    ZaehldatenProcessingUtil.getStartUhrzeit(ladeZaehldatum)
-                            )
-                    );
+                                    ZaehldatenProcessingUtil.getStartUhrzeit(ladeZaehldatum)));
                 });
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(options));
         splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(ladeZaehldatenStepline, options);
@@ -307,7 +299,8 @@ public class ProcessZaehldatenSteplineService {
     }
 
     /**
-     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
+     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
+     * {@link StepLineSeriesEntryBigDecimalDTO}
      * nach Fahrzeugklasse und Fahrzeugkategorie aufgliedert und vorhält.
      */
     @Getter
@@ -370,8 +363,8 @@ public class ProcessZaehldatenSteplineService {
         }
 
         private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
-                                                          final StepLineSeriesEntryBaseDTO entry,
-                                                          final Boolean isChosen) {
+                final StepLineSeriesEntryBaseDTO entry,
+                final Boolean isChosen) {
             if (isChosen.booleanValue()) {
                 allEntries.add(entry);
             }
@@ -383,9 +376,9 @@ public class ProcessZaehldatenSteplineService {
          * und Prozentwerte als Liste zurück.
          *
          * @param options Das Objekt mit der Information bezüglich erwünschter oder nicht erwünschter
-         *                Fahrzeugklassen, Fahrzeugkategorien oder Prozentwerte
+         *            Fahrzeugklassen, Fahrzeugkategorien oder Prozentwerte
          * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO}
-         * und {@link StepLineSeriesEntryBigDecimalDTO}.
+         *         und {@link StepLineSeriesEntryBigDecimalDTO}.
          */
         public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final OptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();

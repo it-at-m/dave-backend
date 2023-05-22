@@ -10,7 +10,6 @@ import org.springframework.data.elasticsearch.core.suggest.Completion;
 
 import javax.persistence.Id;
 
-
 @Data
 @Document(indexName = "suggestion")
 @AllArgsConstructor

@@ -34,7 +34,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-
 @Slf4j
 @RestController
 @RequestMapping("/zaehlung")
@@ -48,8 +47,8 @@ public class ZaehlungController {
     private final ChatMessageService chatMessageService;
 
     public ZaehlungController(final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService,
-                              final ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService,
-                              final ChatMessageService chatMessageService) {
+            final ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService,
+            final ChatMessageService chatMessageService) {
         this.internalZaehlungPersistierungsService = internalZaehlungPersistierungsService;
         this.externalZaehlungPersistierungsService = externalZaehlungPersistierungsService;
         this.chatMessageService = chatMessageService;
@@ -71,7 +70,7 @@ public class ZaehlungController {
     @PostMapping(value = "/saveWithZeitintervall", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<BackendIdDTO> saveWithZeitintervall(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
-                                                              @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
         log.debug("Zaehlung mit Zeitintervalle speichern: {}", zaehlung);
         try {
             final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlungWithZeitintervalle(zaehlung, zaehlstelleId);
@@ -88,7 +87,7 @@ public class ZaehlungController {
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<BackendIdDTO> saveZaehlung(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
-                                                     @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
         log.debug("Zaehlung speichern: {}", zaehlung);
         try {
             final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlung(zaehlung, zaehlstelleId);
@@ -122,7 +121,8 @@ public class ZaehlungController {
     public ResponseEntity<List<ExternalZaehlungDTO>> getZaehlungenForExternal() {
         log.debug("Lade Zaehlungen für Dienstleister");
         try {
-            return ResponseEntity.ok(this.externalZaehlungPersistierungsService.getZaehlungenForExternal(SecurityContextInformationExtractor.getUserName(), SecurityContextInformationExtractor.isFachadmin()));
+            return ResponseEntity.ok(this.externalZaehlungPersistierungsService.getZaehlungenForExternal(SecurityContextInformationExtractor.getUserName(),
+                    SecurityContextInformationExtractor.isFachadmin()));
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -167,11 +167,10 @@ public class ZaehlungController {
         }
     }
 
-
     @PostMapping(value = "/updateDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<BackendIdDTO> updateDienstleisterkennung(@RequestBody @NotNull final DienstleisterDTO dienstleisterDTO,
-                                                     @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotNull final String zaehlungId) {
+            @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotNull final String zaehlungId) {
         log.debug("Zaehlung {} Dienstleisterkennung aktualisieren: {}", zaehlungId, dienstleisterDTO);
         try {
             final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.updateDienstleisterkennung(zaehlungId, dienstleisterDTO);

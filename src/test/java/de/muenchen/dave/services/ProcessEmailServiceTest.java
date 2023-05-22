@@ -42,7 +42,7 @@ public class ProcessEmailServiceTest {
         Mockito.when(message.getContentType()).thenReturn("text/plain; charset=utf-8");
         Mockito.when(message.getContent()).thenReturn("Antwort \r\n");
         Mockito.when(message.getSubject()).thenReturn("DAVe: Neue Nachricht vom Mobilitätsreferat [5ff15a92-7dac-434a-a5a9-a54914c38274]");
-        Mockito.when(message.getFrom()).thenReturn(new Address[]{new InternetAddress("mob@muenchen.de")});
+        Mockito.when(message.getFrom()).thenReturn(new Address[] { new InternetAddress("mob@muenchen.de") });
         Mockito.when(message.getSentDate()).thenReturn(date);
     }
 
@@ -69,7 +69,7 @@ public class ProcessEmailServiceTest {
 
         // EMail vom Dienstleister
         Mockito.when(message.getSubject()).thenReturn("DAVe: Neue Nachricht vom Dienstleister [5ff15a92-7dac-434a-a5a9-a54914c38274]");
-        Mockito.when(message.getFrom()).thenReturn(new Address[]{new InternetAddress("dl@dienstleister.de")});
+        Mockito.when(message.getFrom()).thenReturn(new Address[] { new InternetAddress("dl@dienstleister.de") });
         assertThat(processEmailService.processEmail(message).getParticipantId(), is(Participant.DIENSTLEISTER.getParticipantId()));
 
         // Email ohne Zeitstempel
@@ -99,7 +99,8 @@ public class ProcessEmailServiceTest {
         Mockito.when(message.getContentType()).thenReturn("multipart/mixed; \n" +
                 "\tboundary=_002_6d49c1225d51446e8ad5647eb9d9b3e3muenchende_");
         Mockito.when(message.getContent()).thenReturn(mimeMultipart);
-        assertThat(processEmailService.processEmail(message).getContent(), is("Multipart Nachricht 1\r\n[Der Anhang wurde entfernt. Anhänge werden nicht unterstützt.]"));
+        assertThat(processEmailService.processEmail(message).getContent(),
+                is("Multipart Nachricht 1\r\n[Der Anhang wurde entfernt. Anhänge werden nicht unterstützt.]"));
     }
 
     @Test
@@ -145,7 +146,7 @@ public class ProcessEmailServiceTest {
         });
 
         // FromAddresses mehr als 1
-        Mockito.when(message.getFrom()).thenReturn(new Address[]{new InternetAddress("mob@muenchen.de"), new InternetAddress("mob2@muenchen.de")});
+        Mockito.when(message.getFrom()).thenReturn(new Address[] { new InternetAddress("mob@muenchen.de"), new InternetAddress("mob2@muenchen.de") });
         Assertions.assertThrows(MessagingException.class, () -> {
             processEmailService.processEmail(message);
         });

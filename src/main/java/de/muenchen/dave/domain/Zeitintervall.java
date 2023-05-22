@@ -28,7 +28,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 @Entity
 // Definition of getter, setter, ...
 @Getter
@@ -39,22 +38,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(
-                name = "index_zaehlung",
-                columnList = "zaehlung_id"
-        ),
-        @Index(
-                name = "index_combined_1",
-                columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"
-        ),
-        @Index(
-                name = "index_combined_2",
-                columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"
-        ),
-        @Index(
-                name = "index_combined_3",
-                columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type"
-        )
+        @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
+        @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
+        @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
+        @Index(name = "index_combined_3", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type")
 })
 public class Zeitintervall extends BaseEntity {
 
@@ -132,5 +119,3 @@ public class Zeitintervall extends BaseEntity {
     private Fahrbeziehung fahrbeziehung;
 
 }
-
-

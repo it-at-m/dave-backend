@@ -28,18 +28,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Service
 @Slf4j
 public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierungsService {
 
     private final KnotenarmMapper knotenarmMapper;
 
-
     public ExternalZaehlungPersistierungsService(final IndexService indexService,
-                                                 final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-                                                 final ZeitintervallMapper zeitintervallMapper,
-                                                 final KnotenarmMapper knotenarmMapper) {
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
+            final ZeitintervallMapper zeitintervallMapper,
+            final KnotenarmMapper knotenarmMapper) {
         super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
         this.knotenarmMapper = knotenarmMapper;
     }
@@ -50,7 +48,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @param zaehlungDto enthält die Id und die neuen Metadaten
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim erneuern der Zaehlstelle im Index
-     * @throws DataNotFoundException         beim Laden der Zaehlstelle im Index
+     * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      */
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
@@ -100,7 +98,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         return backendIdDto;
     }
 
-    public List<ExternalZaehlungDTO> getZaehlungenForExternal(final String dienstleisterKennung, final boolean isFachadmin) throws BrokenInfrastructureException {
+    public List<ExternalZaehlungDTO> getZaehlungenForExternal(final String dienstleisterKennung, final boolean isFachadmin)
+            throws BrokenInfrastructureException {
         return this.indexService.getZaehlungenForExternal(dienstleisterKennung, isFachadmin);
     }
 
@@ -112,14 +111,14 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die {@link Hochrechnung}
      * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
      *
-     * @param zeitintervall    in welchem die zusätzlichen Informationen gesetzt werden sollen.
-     * @param zaehlung         zum Setzen der zusätzlichen Daten.
+     * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
+     * @param zaehlung zum Setzen der zusätzlichen Daten.
      * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
     public Zeitintervall setAdditionalDataToZeitintervall(final Zeitintervall zeitintervall,
-                                                          final Zaehlung zaehlung,
-                                                          final ExternalFahrbeziehungDTO fahrbeziehungDto) {
+            final Zaehlung zaehlung,
+            final ExternalFahrbeziehungDTO fahrbeziehungDto) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
         zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehungDto.getId()));
         zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
@@ -128,20 +127,18 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 this.createHochrechnung(
                         zeitintervall,
                         fahrbeziehungDto.getHochrechnungsfaktor(),
-                        zaehlung.getZaehldauer()
-                )
-        );
+                        zaehlung.getZaehldauer()));
         return zeitintervall;
     }
-
 
     /**
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
      * einen {@link Zeitintervall}.
      *
      * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen
-     *                         an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}
+     *            an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     *         {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final ExternalFahrbeziehungDTO fahrbeziehungDto) {
         final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
@@ -150,8 +147,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             fahrbeziehung.setNach(fahrbeziehungDto.getNach());
         } else {
             fahrbeziehung.setVon(fahrbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional =
-                    FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
                 fahrbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {

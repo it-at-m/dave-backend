@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 @MappedSuperclass
 @NoArgsConstructor
 @Getter

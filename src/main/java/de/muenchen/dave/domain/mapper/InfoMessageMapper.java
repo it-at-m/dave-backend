@@ -22,7 +22,8 @@ public interface InfoMessageMapper {
         if (chatMessage.getGueltigVon() == null || chatMessage.getGueltigBis() == null) {
             dto.setGueltig(false);
         } else {
-            dto.setGueltig((chatMessage.getGueltigVon().isBefore(now) || chatMessage.getGueltigVon().isEqual(now)) && (chatMessage.getGueltigBis().isEqual(now) || chatMessage.getGueltigBis().isAfter(now)));
+            dto.setGueltig((chatMessage.getGueltigVon().isBefore(now) || chatMessage.getGueltigVon().isEqual(now))
+                    && (chatMessage.getGueltigBis().isEqual(now) || chatMessage.getGueltigBis().isAfter(now)));
         }
     }
 }

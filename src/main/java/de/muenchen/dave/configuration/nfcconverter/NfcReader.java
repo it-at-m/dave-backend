@@ -11,7 +11,6 @@ import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
 
-
 /**
  * Wrapper für Reader der eine NFC-Konvertierung durchführt.
  * Achtung:

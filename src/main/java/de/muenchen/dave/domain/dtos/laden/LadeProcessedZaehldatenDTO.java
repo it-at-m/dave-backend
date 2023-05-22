@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-
 @Data
 public class LadeProcessedZaehldatenDTO implements Serializable {
 

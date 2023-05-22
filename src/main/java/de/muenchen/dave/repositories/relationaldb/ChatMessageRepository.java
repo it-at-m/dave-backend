@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> { //NOSONAR
 
     @Override
@@ -39,6 +38,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, UUID> 
     List<ChatMessage> findAll(final Sort sort);
 
     List<ChatMessage> findAllByZaehlungIdOrderByTimestampAsc(UUID zaehlungId);
-
 
 }

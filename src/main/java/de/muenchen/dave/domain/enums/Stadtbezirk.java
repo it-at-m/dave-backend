@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 @AllArgsConstructor
 @Getter
 public enum Stadtbezirk {
@@ -81,4 +80,3 @@ public enum Stadtbezirk {
     }
 
 }
-

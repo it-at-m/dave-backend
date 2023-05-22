@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-
 @Service
 @Slf4j
 public class ProcessZaehldatenService {
@@ -34,9 +33,9 @@ public class ProcessZaehldatenService {
     private final IndexService indexService;
 
     public ProcessZaehldatenService(final LadeZaehldatenService ladeZaehldatenService,
-                                    final ProcessZaehldatenSteplineService processZaehldatenSteplineService,
-                                    final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService,
-                                    final IndexService indexService) {
+            final ProcessZaehldatenSteplineService processZaehldatenSteplineService,
+            final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService,
+            final IndexService indexService) {
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.processZaehldatenSteplineService = processZaehldatenSteplineService;
         this.processZaehldatenHeatmapService = processZaehldatenHeatmapService;
@@ -51,45 +50,41 @@ public class ProcessZaehldatenService {
      * die entsprechende Komponente übergeben werden müssen.
      *
      * @param zaehlungId Die Id der Zaehlung.
-     * @param options    Die durch den User im Frontend gewählten Optionen.
+     * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbereiteten Zaehldaten zur Darstellung in der Listenausgabe,
-     * in der Heatmap und im Stepline-Diagramm.
+     *         in der Heatmap und im Stepline-Diagramm.
      * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
     public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
-                                                              final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
 
         log.debug("Lade Zaehldaten for Table");
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
-        final LadeZaehldatenTableDTO ladeZaehldatenTable =
-                ladeZaehldatenService.ladeZaehldaten(
-                        UUID.fromString(zaehlungId),
-                        options);
+        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
+                UUID.fromString(zaehlungId),
+                options);
         processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
 
         log.debug("Process Zaehldaten Stepline");
         processedZaehldaten.setZaehldatenStepline(
                 processZaehldatenSteplineService.ladeProcessedZaehldatenStepline(
                         ladeZaehldatenTable,
-                        options
-                )
-        );
+                        options));
 
         log.debug("Process Zaehldaten Heatmap");
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap =
-                processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
-                        ladeZaehldatenTable,
-                        options);
+        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
+                ladeZaehldatenTable,
+                options);
         processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
 
         return processedZaehldaten;
     }
 
-
     /**
-     * Liefert die Zählungskenngrößen einer Zählung. Hier sollen die Werte für KFZ, GV, SV, Rad und Fuss (jeweils sofern vorhanden) für folgende Zeitblöcke geholt werden:
+     * Liefert die Zählungskenngrößen einer Zählung. Hier sollen die Werte für KFZ, GV, SV, Rad und Fuss
+     * (jeweils sofern vorhanden) für folgende Zeitblöcke geholt werden:
      * - Spitzenstunden KFZ (sofern vorhanden)
      * - Spitzenstunden RAD (sofern vorhanden)
      * - Spitzenstunden FUSS (sofern vorhanden)
@@ -105,7 +100,6 @@ public class ProcessZaehldatenService {
 
         return ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlung.getId()),
-                ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung)
-        );
+                ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung));
     }
 }

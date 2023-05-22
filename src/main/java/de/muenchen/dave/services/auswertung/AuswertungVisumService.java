@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
 @Service
 @Slf4j
 public class AuswertungVisumService {
@@ -41,9 +40,9 @@ public class AuswertungVisumService {
     private final LadeZaehldatenService ladeZaehldatenService;
 
     public AuswertungVisumService(final ZaehlstelleIndex zaehlstelleIndex,
-                                  final ZaehlstelleMapper zaehlstelleMapper,
-                                  final ZaehlungMapper zaehlungMapper,
-                                  final LadeZaehldatenService ladeZaehldatenService) {
+            final ZaehlstelleMapper zaehlstelleMapper,
+            final ZaehlungMapper zaehlungMapper,
+            final LadeZaehldatenService ladeZaehldatenService) {
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.zaehlungMapper = zaehlungMapper;
@@ -51,12 +50,13 @@ public class AuswertungVisumService {
     }
 
     /**
-     * Diese Methode ermittelt für den in den Parametern angegeben Monatszeitraum die durchgeführten Zählungen je Zählstelle.
+     * Diese Methode ermittelt für den in den Parametern angegeben Monatszeitraum die durchgeführten
+     * Zählungen je Zählstelle.
      * Je relevante Fahrbeziehung werden die Zahldaten an die Zählung angehangen.
      * Für eine Kreuzung werden die Fahrbeziehung "x nach alle" und "alle nach x" betrachtet.
      * Der Kreisverkehr beinhaltet nur die Fahrbeziehungen "x nach alle".
      *
-     * @param jahr  welches ausgewertet werden soll.
+     * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
      * @return durchgeführten Zählungen je Zählstelle mit den Zähldaten je relevante Fahrbeziehung.
      */
@@ -154,11 +154,11 @@ public class AuswertungVisumService {
      * {@link AuswertungVisumService#ladeZaehldaten(FahrbeziehungVisumDTO, Zaehlung)}.
      *
      * @param fahrbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
-     * @param zaehlung           zum setzen der Optionen.
+     * @param zaehlung zum setzen der Optionen.
      * @return die Optionen für die Datenextraktion.
      */
     public static OptionsDTO createOptions(final FahrbeziehungVisumDTO fahrbeziehungVisum,
-                                           final Zaehlung zaehlung) {
+            final Zaehlung zaehlung) {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setVonKnotenarm(fahrbeziehungVisum.getVon());
         options.setNachKnotenarm(fahrbeziehungVisum.getNach());
@@ -170,18 +170,18 @@ public class AuswertungVisumService {
      * Diese Methode holt die Zeitintervalle aus der Datenbank und gibt diese als Zaehldaten
      * im Objekt fahrbeziehungVisum zurück.
      *
-     * @param fahrbeziehungVisum die für die Datenextraktion relevanten Knotenarme welche die Fahrbeziehung definieren.
-     * @param zaehlung           für welche die Daten extrahiert werden sollen.
+     * @param fahrbeziehungVisum die für die Datenextraktion relevanten Knotenarme welche die
+     *            Fahrbeziehung definieren.
+     * @param zaehlung für welche die Daten extrahiert werden sollen.
      * @return die fahrbeziehungVisum mit den Zaehldaten für die Zaehlung der Fahrbeziehung.
      */
     public FahrbeziehungVisumDTO ladeZaehldaten(final FahrbeziehungVisumDTO fahrbeziehungVisum,
-                                                final Zaehlung zaehlung) {
+            final Zaehlung zaehlung) {
         List<LadeZaehldatumDTO> zaehldaten;
         try {
             zaehldaten = ladeZaehldatenService.ladeZaehldaten(
                     UUID.fromString(zaehlung.getId()),
-                    createOptions(fahrbeziehungVisum, zaehlung)
-            ).getZaehldaten();
+                    createOptions(fahrbeziehungVisum, zaehlung)).getZaehldaten();
         } catch (DataNotFoundException dnfe) {
             zaehldaten = new ArrayList<>();
         }

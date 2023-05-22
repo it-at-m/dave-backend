@@ -9,7 +9,6 @@ import lombok.Data;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * Klasse stellt die möglichen Fahrbeziehung zur Verfügung welche ausgewählt werden können.
  */

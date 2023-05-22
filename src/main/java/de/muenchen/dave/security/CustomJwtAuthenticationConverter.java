@@ -28,16 +28,17 @@ import java.util.stream.Collectors;
 @Profile("!no-security")
 @Component
 @RequiredArgsConstructor
-public class CustomJwtAuthenticationConverter  implements Converter<Jwt, AbstractAuthenticationToken> {
+public class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final CustomUserInfoTokenServices userInfoTokenServices;
 
     /**
-     * Erstellt das {@link org.springframework.security.authentication.AbstractAuthenticationToken} für den SecurityContext des entsprechenden Threads.
+     * Erstellt das {@link org.springframework.security.authentication.AbstractAuthenticationToken} für
+     * den SecurityContext des entsprechenden Threads.
      *
      * @param jwt als Access-Token.
      * @return den {@link AbstractAuthenticationToken} erstellt aus dem Access-Token, angereichert um
-     * die "authorities" (Rechte) vom Userinfo-Endpunkt des SSO.
+     *         die "authorities" (Rechte) vom Userinfo-Endpunkt des SSO.
      */
     @Override
     public AbstractAuthenticationToken convert(final Jwt jwt) {
@@ -45,8 +46,7 @@ public class CustomJwtAuthenticationConverter  implements Converter<Jwt, Abstrac
                 OAuth2AccessToken.TokenType.BEARER,
                 jwt.getTokenValue(),
                 jwt.getIssuedAt(),
-                jwt.getExpiresAt()
-        );
+                jwt.getExpiresAt());
         final Map<String, Object> attributes = jwt.getClaims();
         // Holen der Authorities vom UserInfoEndpunkt des SSO
         final Collection<GrantedAuthority> authorities = this.loadGrantedAuthoritiesFromUserInfoEndpoint(accessToken);

@@ -37,7 +37,8 @@ public class ChatMessageController {
     }
 
     /**
-     * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und Admin-Portal).
+     * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und
+     * Admin-Portal).
      *
      * @param zaehlungId Die ID der Zählung
      * @return Eine Liste der Chat Nachrichten
@@ -81,7 +82,7 @@ public class ChatMessageController {
     /**
      * Rest-Endpunkt um den Status ungelesener Nachrichten zu updaten.
      *
-     * @param zaehlungId    Zählungs-ID, in der der Nachrichtenstatus geupdated werden soll.
+     * @param zaehlungId Zählungs-ID, in der der Nachrichtenstatus geupdated werden soll.
      * @param participantId Participant-ID, für den der Nachrichtenstatus geupdated werden soll.
      * @return Die geupdateten ChatMessages
      */
@@ -89,14 +90,15 @@ public class ChatMessageController {
             " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
     @GetMapping(value = "/updateUnreadMessages", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateUnreadMessages(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) final String zaehlungId,
-                                               @RequestParam(value = CALLING_PARTICIPANT_ID) final Integer participantId) {
+            @RequestParam(value = CALLING_PARTICIPANT_ID) final Integer participantId) {
         log.debug("Update der unread Messages in Zählung {} für Participant {}", zaehlungId, participantId);
         try {
             chatMessageService.updateUnreadMessages(zaehlungId, participantId);
             return ResponseEntity.noContent().build();
         } catch (BrokenInfrastructureException brokenInfrastructureException) {
             log.error("Fehler im ChatMessageController, UnreadMessages Status konnte nicht gesetzt werden: {}", zaehlungId, brokenInfrastructureException);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim setzen der nicht gelesenene Nachrichten aufgetreten.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Es ist ein unerwarteter Fehler beim setzen der nicht gelesenene Nachrichten aufgetreten.");
         }
     }
 

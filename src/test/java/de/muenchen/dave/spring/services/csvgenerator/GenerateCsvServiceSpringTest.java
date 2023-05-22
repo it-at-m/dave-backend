@@ -37,10 +37,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
-
 /**
- * In dieser Testfile werden einige Objekte mithilfe eines JSON-Strings erstellt, welcher in der Produktion im Debug Mode generiert wurde.
- * Um ein aktuelles JSON zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das gewünschte Objekt existiert
+ * In dieser Testfile werden einige Objekte mithilfe eines JSON-Strings erstellt, welcher in der
+ * Produktion im Debug Mode generiert wurde.
+ * Um ein aktuelles JSON zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das
+ * gewünschte Objekt existiert
  * einen Breakpoint setzen, den Test hier debuggen und dort im Evaluator folgenden Code ausführen:
  * <p>
  * Gson gson = new Gson();
@@ -48,12 +49,10 @@ import static org.mockito.Mockito.when;
  * <p>
  * Resultierenden String dann hier an die entsprechende Stelle (gson.fromJson) kopieren.
  */
-@SpringBootTest(
-        classes = {DaveBackendApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-                "refarch.gracefulshutdown.pre-wait-seconds=0"})
-@ActiveProfiles(profiles = {SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE})
+@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
+        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class GenerateCsvServiceSpringTest {
 
     public static final String MOCKABLE_ZAEHLUNG_ID = "6837e615-ea6e-4e42-9c6f-f9aadde6599f";
@@ -70,7 +69,7 @@ public class GenerateCsvServiceSpringTest {
     private static Zaehlung getZaehlung() {
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setId(MOCKABLE_ZAEHLUNG_ID);
-        zaehlung.setDatum(LocalDate.of(2020, 11, 04));
+        zaehlung.setDatum(LocalDate.of(2020, 11, 4));
         zaehlung.setJahr("2020");
         zaehlung.setMonat("November");
         zaehlung.setJahreszeit("Herbst");
@@ -111,7 +110,6 @@ public class GenerateCsvServiceSpringTest {
         zaehlung.setKnotenarme(knotenarmList);
 
         zaehlung.setPkwEinheit(null);
-
 
         return zaehlung;
     }
@@ -172,11 +170,14 @@ public class GenerateCsvServiceSpringTest {
 
     private static LadeZaehldatenTableDTO getLadeZaehldatenTableDTO() {
 
-        /**
-         * Nachfolgende JSON wurde aus der Produktion im Debug Mode generiert. Beschreibung siehe JavaDoc von FillBeanServiceSpringTest.
+        /*
+         * Nachfolgende JSON wurde aus der Produktion im Debug Mode generiert. Beschreibung siehe JavaDoc
+         * von FillBeanServiceSpringTest.
          */
         Gson gson = new Gson();
-        LadeZaehldatenTableDTO ladeZaehldatenTableDTO = gson.fromJson("{\"zaehldaten\":[{\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":15,\"second\":0,\"nano\":0},\"pkw\":49,\"lkw\":4,\"lastzuege\":0,\"busse\":6,\"kraftraeder\":3,\"fahrradfahrer\":17,\"pkwEinheiten\":85},{\"startUhrzeit\":{\"hour\":6,\"minute\":15,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":30,\"second\":0,\"nano\":0},\"pkw\":83,\"lkw\":8,\"lastzuege\":1,\"busse\":2,\"kraftraeder\":4,\"fahrradfahrer\":22,\"pkwEinheiten\":119},{\"startUhrzeit\":{\"hour\":6,\"minute\":30,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":45,\"second\":0,\"nano\":0},\"pkw\":122,\"lkw\":4,\"lastzuege\":0,\"busse\":6,\"kraftraeder\":9,\"fahrradfahrer\":31,\"pkwEinheiten\":165},{\"startUhrzeit\":{\"hour\":6,\"minute\":45,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":7,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":144,\"lkw\":8,\"lastzuege\":1,\"busse\":6,\"kraftraeder\":6,\"fahrradfahrer\":29,\"pkwEinheiten\":197},{\"type\":\"Stunde\",\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":7,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":398,\"lkw\":24,\"lastzuege\":2,\"busse\":20,\"kraftraeder\":22,\"fahrradfahrer\":99,\"pkwEinheiten\":565},{\"type\":\"Block\",\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":10,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":3242,\"lkw\":130,\"lastzuege\":8,\"busse\":89,\"kraftraeder\":181,\"fahrradfahrer\":954,\"pkwEinheiten\":4222},{\"type\":\"SpStd\",\"startUhrzeit\":{\"hour\":17,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":18,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":1318,\"lkw\":7,\"lastzuege\":0,\"busse\":27,\"kraftraeder\":99,\"fahrradfahrer\":277,\"fussgaenger\":0,\"pkwEinheiten\":1559},{\"kfz\":16586,\"schwerverkehr\":762,\"gueterverkehr\":403,\"type\":\"Tageswert\",\"startUhrzeit\":{\"hour\":0,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":23,\"minute\":59,\"second\":59,\"nano\":999000000}}]}", LadeZaehldatenTableDTO.class);
+        LadeZaehldatenTableDTO ladeZaehldatenTableDTO = gson.fromJson(
+                "{\"zaehldaten\":[{\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":15,\"second\":0,\"nano\":0},\"pkw\":49,\"lkw\":4,\"lastzuege\":0,\"busse\":6,\"kraftraeder\":3,\"fahrradfahrer\":17,\"pkwEinheiten\":85},{\"startUhrzeit\":{\"hour\":6,\"minute\":15,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":30,\"second\":0,\"nano\":0},\"pkw\":83,\"lkw\":8,\"lastzuege\":1,\"busse\":2,\"kraftraeder\":4,\"fahrradfahrer\":22,\"pkwEinheiten\":119},{\"startUhrzeit\":{\"hour\":6,\"minute\":30,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":6,\"minute\":45,\"second\":0,\"nano\":0},\"pkw\":122,\"lkw\":4,\"lastzuege\":0,\"busse\":6,\"kraftraeder\":9,\"fahrradfahrer\":31,\"pkwEinheiten\":165},{\"startUhrzeit\":{\"hour\":6,\"minute\":45,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":7,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":144,\"lkw\":8,\"lastzuege\":1,\"busse\":6,\"kraftraeder\":6,\"fahrradfahrer\":29,\"pkwEinheiten\":197},{\"type\":\"Stunde\",\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":7,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":398,\"lkw\":24,\"lastzuege\":2,\"busse\":20,\"kraftraeder\":22,\"fahrradfahrer\":99,\"pkwEinheiten\":565},{\"type\":\"Block\",\"startUhrzeit\":{\"hour\":6,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":10,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":3242,\"lkw\":130,\"lastzuege\":8,\"busse\":89,\"kraftraeder\":181,\"fahrradfahrer\":954,\"pkwEinheiten\":4222},{\"type\":\"SpStd\",\"startUhrzeit\":{\"hour\":17,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":18,\"minute\":0,\"second\":0,\"nano\":0},\"pkw\":1318,\"lkw\":7,\"lastzuege\":0,\"busse\":27,\"kraftraeder\":99,\"fahrradfahrer\":277,\"fussgaenger\":0,\"pkwEinheiten\":1559},{\"kfz\":16586,\"schwerverkehr\":762,\"gueterverkehr\":403,\"type\":\"Tageswert\",\"startUhrzeit\":{\"hour\":0,\"minute\":0,\"second\":0,\"nano\":0},\"endeUhrzeit\":{\"hour\":23,\"minute\":59,\"second\":59,\"nano\":999000000}}]}",
+                LadeZaehldatenTableDTO.class);
         return ladeZaehldatenTableDTO;
     }
 

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * Wrapper für HttpServletRequest, der NFC-Konvertierung durchführt.
  *
@@ -50,6 +49,7 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
         this.headers = null;
         this.contentTypes = contentTypes;
     }
+
     private void convert() {
         if (params != null) {
             return;

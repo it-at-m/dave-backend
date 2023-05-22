@@ -18,7 +18,6 @@ import java.time.Duration;
 @Slf4j
 public class ElasticsearchConfiguration {
 
-
     @Value(value = "${elasticsearch.password}")
     private String password;
 
@@ -36,7 +35,6 @@ public class ElasticsearchConfiguration {
 
     @Value(value = "${elasticsearch.socketTimeout}")
     private int socketTimeout;
-
 
     @Bean
     public RestHighLevelClient client() {

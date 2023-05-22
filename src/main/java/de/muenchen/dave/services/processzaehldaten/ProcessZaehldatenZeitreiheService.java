@@ -39,10 +39,9 @@ public class ProcessZaehldatenZeitreiheService {
     private final IndexService indexService;
     private final ZeitauswahlService zeitauswahlService;
 
-
     public ProcessZaehldatenZeitreiheService(final IndexService indexService,
-                                             final ZeitintervallRepository zeitintervallRepository,
-                                             final ZeitauswahlService zeitauswahlService) {
+            final ZeitintervallRepository zeitintervallRepository,
+            final ZeitauswahlService zeitauswahlService) {
         this.zeitauswahlService = zeitauswahlService;
         this.indexService = indexService;
         this.zeitintervallRepository = zeitintervallRepository;
@@ -51,14 +50,15 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Lädt die Daten für eine Zeitreihe und gibt diese zurück
      *
-     * @param zaehlstelleId     Die ID der im Frontend ausgewählten Zählstelle
+     * @param zaehlstelleId Die ID der im Frontend ausgewählten Zählstelle
      * @param currentZaehlungId Die ID der im Frontend ausgewählten Zählung
-     * @param options           Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @return Zeitreihendaten als LadeZaehldatenZeitreiheDTO
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1, #p2}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String zaehlstelleId, final String currentZaehlungId, final OptionsDTO options) throws DataNotFoundException {
+    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String zaehlstelleId, final String currentZaehlungId, final OptionsDTO options)
+            throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s, %s und %s", zaehlstelleId, currentZaehlungId, options.toString()));
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelle(zaehlstelleId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
@@ -68,8 +68,7 @@ public class ProcessZaehldatenZeitreiheService {
         final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(
                 currentZaehlung.getZaehldauer(),
                 currentZaehlung.getId(),
-                currentZaehlung.getSonderzaehlung()
-        );
+                currentZaehlung.getSonderzaehlung());
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
                 .forEach(zaehlung -> {
@@ -78,8 +77,8 @@ public class ProcessZaehldatenZeitreiheService {
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-                        final Zeitintervall zeitintervall = zeitintervallRepository.
-                                findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+                        final Zeitintervall zeitintervall = zeitintervallRepository
+                                .findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
                                         UUID.fromString(zaehlung.getId()),
                                         options.getZeitblock().getTypeZeitintervall(),
                                         options.getVonKnotenarm(),
@@ -109,9 +108,9 @@ public class ProcessZaehldatenZeitreiheService {
         return ladeZaehldatenZeitreiheDTO;
     }
 
-
     /**
-     * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte Fahrbeziehung besitzt
+     * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
+     * Fahrbeziehung besitzt
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options
@@ -137,24 +136,26 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Filtert die Zaehlungen aus der Zaehlstelle heraus, die in der Zeitreihe angezeigt werden sollen und gibt diese als Stream zurück.
-     * Die Zaehlungen werden anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
+     * Filtert die Zaehlungen aus der Zaehlstelle heraus, die in der Zeitreihe angezeigt werden sollen
+     * und gibt diese als Stream zurück.
+     * Die Zaehlungen werden anhand der aktuellen Zählung und der in den Optionen gewählten
+     * Vergleichszählung gefiltert.
      * Gewählte Zählungen müssen alle der folgenden Kriterien erfüllen:
      * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (inkl.)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
      *
-     * @param zaehlstelle     Zählstelle mit allen Zählungen
+     * @param zaehlstelle Zählstelle mit allen Zählungen
      * @param currentZaehlung Im Frontend ausgewählten Zählung
-     * @param options         Optionen aus dem Frontend
-     * @param zeitauswahlDTO  ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
+     * @param options Optionen aus dem Frontend
+     * @param zeitauswahlDTO ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
      * @return Stream der gefilterten Zählungen
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,
-                                                                       final Zaehlung currentZaehlung,
-                                                                       final OptionsDTO options,
-                                                                       final ZeitauswahlDTO zeitauswahlDTO) {
+            final Zaehlung currentZaehlung,
+            final OptionsDTO options,
+            final ZeitauswahlDTO zeitauswahlDTO) {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
 
@@ -170,24 +171,24 @@ public class ProcessZaehldatenZeitreiheService {
                 .filter(zaehlung -> this.zeitauswahlService.determinePossibleZeitauswahl(
                         zaehlung.getZaehldauer(),
                         zaehlung.getId(),
-                        zaehlung.getSonderzaehlung()
-                ).getBlocks().contains(options.getZeitblock()) ||
+                        zaehlung.getSonderzaehlung()).getBlocks().contains(options.getZeitblock()) ||
                         this.zeitauswahlService.determinePossibleZeitauswahl(
                                 zaehlung.getZaehldauer(),
                                 zaehlung.getId(),
-                                zaehlung.getSonderzaehlung()
-                        ).getHours().contains(options.getZeitblock()) ||
+                                zaehlung.getSonderzaehlung()).getHours().contains(options.getZeitblock())
+                        ||
                         options.getZeitblock().equals(Zeitblock.ZB_00_24));
     }
 
     /**
      * Befüllt das übergebene ladeZaehldatenZeitreiheDTO Objekt mit den Zeitreihe-Daten
      *
-     * @param options                    Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @param ladeZaehldatenZeitreiheDTO Objekt, das befüllt werden soll
-     * @param ladeZaehldatumDTO          Objekt mit den Werten
+     * @param ladeZaehldatumDTO Objekt mit den Werten
      */
-    static void fillLadeZaehldatenZeitreiheDTO(final OptionsDTO options, final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO, final LadeZaehldatumDTO ladeZaehldatumDTO) {
+    static void fillLadeZaehldatenZeitreiheDTO(final OptionsDTO options, final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
+            final LadeZaehldatumDTO ladeZaehldatumDTO) {
         if (options.getKraftfahrzeugverkehr()) {
             ladeZaehldatenZeitreiheDTO.getKfz().add(ladeZaehldatumDTO.getKfz());
         }
@@ -217,8 +218,8 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Ermittelt einen Gesamtwert auf KFZ, Fussgänger und Fahrradfahrer und gibt diesen zurück
      *
-     * @param kfz           Wert für Kraftfahrzeuge
-     * @param fussgaenger   Wert für Fussgänger
+     * @param kfz Wert für Kraftfahrzeuge
+     * @param fussgaenger Wert für Fussgänger
      * @param fahrradfahrer Wert für Fahrradfahrer
      * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
      */
@@ -235,13 +236,15 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Berechnet das "älteste Datum" nach dem gesucht werden soll. Wenn in den Optionen keine Vergleichszählung gewählt wurde,
-     * wird das Datum der drittletzten Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden. Ansonsten das Datum
+     * Berechnet das "älteste Datum" nach dem gesucht werden soll. Wenn in den Optionen keine
+     * Vergleichszählung gewählt wurde,
+     * wird das Datum der drittletzten Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden.
+     * Ansonsten das Datum
      * der zweitletzten Zählung bzw. wenn auch diese nicht vorhanden, dann der aktuellen Zählung.
      *
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      * @param currentDate Datum der aktuell im Frontend gewählten Zählung
-     * @param options     Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @return
      */
     static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {

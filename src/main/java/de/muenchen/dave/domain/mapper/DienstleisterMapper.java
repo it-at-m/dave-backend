@@ -15,7 +15,6 @@ public interface DienstleisterMapper {
 
     List<Dienstleister> dtoList2beanList(List<DienstleisterDTO> dto);
 
-
     DienstleisterDTO bean2Dto(Dienstleister bean);
 
     List<DienstleisterDTO> beanList2DtoList(List<Dienstleister> bean);

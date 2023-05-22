@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 public class ChatMessageService {
 
@@ -33,7 +32,8 @@ public class ChatMessageService {
     private static final boolean SEND_EMAIL_IF_UPDATE_EXTERNAL_ZAEHLUNG = false;
     private static final boolean SEND_EMAIL_IF_UPDATE_INTERNAL_ZAEHLUNG = false;
     private static final List<String> UPDATE_FROM_EXTERNAL_FOR_STATUS = Arrays.asList(Status.ACCOMPLISHED.name(), Status.COUNTING.name());
-    private static final List<String> SEND_EMAIL_TO_EXTERNAL_FOR_STATUS = Arrays.asList(Status.INSTRUCTED.name(), Status.COUNTING.name(), Status.CORRECTION.name());
+    private static final List<String> SEND_EMAIL_TO_EXTERNAL_FOR_STATUS = Arrays.asList(Status.INSTRUCTED.name(), Status.COUNTING.name(),
+            Status.CORRECTION.name());
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatMessageMapper chatMessageMapper;
@@ -41,9 +41,9 @@ public class ChatMessageService {
     private final EmailSendService emailSendService;
 
     public ChatMessageService(final ChatMessageRepository chatMessageRepository,
-                              final ChatMessageMapper chatMessageMapper,
-                              final IndexService indexService,
-                              final EmailSendService emailSendService) {
+            final ChatMessageMapper chatMessageMapper,
+            final IndexService indexService,
+            final EmailSendService emailSendService) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatMessageMapper = chatMessageMapper;
         this.indexService = indexService;
@@ -51,13 +51,14 @@ public class ChatMessageService {
     }
 
     /**
-     * Die Methode speichert eine Chat Nachricht ab. Ist die Nachricht vom Dienstleister oder liegt die Zählung
+     * Die Methode speichert eine Chat Nachricht ab. Ist die Nachricht vom Dienstleister oder liegt die
+     * Zählung
      * beim Dienstleister, dann wird auch eine E-Mail versendet.
      *
      * @param chatMessageDTO Das {@link ChatMessageDTO} zum Speichern.
      * @return Das gespeicherte {@link ChatMessageDTO}.
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
-     * @throws DataNotFoundException         Wenn Daten nicht geladen werden konnten
+     * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      */
     public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO) throws BrokenInfrastructureException, DataNotFoundException {
         ChatMessage chatMessage = chatMessageMapper.dto2bean(chatMessageDTO);
@@ -69,7 +70,8 @@ public class ChatMessageService {
             emailSendService.sendEmail(chatMessage);
         }
 
-        final Participant participant = (chatMessageDTO.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.MOBILITAETSREFERAT : Participant.DIENSTLEISTER;
+        final Participant participant = (chatMessageDTO.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.MOBILITAETSREFERAT
+                : Participant.DIENSTLEISTER;
         indexService.setUnreadMessagesInZaehlungForParticipant(chatMessageDTO.getZaehlungId(), participant, true);
         return chatMessageMapper.bean2Dto(chatMessage);
     }
@@ -138,7 +140,7 @@ public class ChatMessageService {
     }
 
     public void saveUpdateMessage(final ChatMessage message, final String zaehlungId, final Participant callingParticipant,
-                                  final boolean sendEmail) throws BrokenInfrastructureException {
+            final boolean sendEmail) throws BrokenInfrastructureException {
         message.setTimestamp(LocalDateTime.now(ChatMessageService.ZONE));
         message.setUploaded(true);
         message.setViewed(false);
@@ -154,15 +156,17 @@ public class ChatMessageService {
     }
 
     /**
-     * In dieser Methode werden alle ChatMessages zur übergebenen Zählung zum übergebenen Participant auf viewed = true gesetzt.
+     * In dieser Methode werden alle ChatMessages zur übergebenen Zählung zum übergebenen Participant
+     * auf viewed = true gesetzt.
      *
-     * @param zaehlungId           Zählungs-ID der Zählung
+     * @param zaehlungId Zählungs-ID der Zählung
      * @param callingParticipantId Participant dessen Messages auf viewed gestellt werden sollen.
      * @return Liste mit allen Chatnachrichten zu einer Zählung
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      */
     public List<ChatMessage> updateUnreadMessages(final String zaehlungId, final Integer callingParticipantId) throws BrokenInfrastructureException {
-        final Participant participant = (callingParticipantId == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.DIENSTLEISTER : Participant.MOBILITAETSREFERAT;
+        final Participant participant = (callingParticipantId == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.DIENSTLEISTER
+                : Participant.MOBILITAETSREFERAT;
         indexService.setUnreadMessagesInZaehlungForParticipant(zaehlungId, participant, false);
         final List<ChatMessage> messages = chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(UUID.fromString(zaehlungId));
         messages.stream()
