@@ -26,9 +26,9 @@ public class NfcHelperTest {
 
     public static final String THIRD_NFC = "\u1e69";
 
-    public static final String[] NFD_INPUT = new String[]{FIRST_NFD, SECOND_NFD, THIRD_NFD};
+    public static final String[] NFD_INPUT = new String[] { FIRST_NFD, SECOND_NFD, THIRD_NFD };
 
-    public static final String[] NFC_OUTPUT_EXPECTED = new String[]{FIRST_NFC, SECOND_NFC, THIRD_NFC};
+    public static final String[] NFC_OUTPUT_EXPECTED = new String[] { FIRST_NFC, SECOND_NFC, THIRD_NFC };
 
     @Test
     public void nfcConverterString() {

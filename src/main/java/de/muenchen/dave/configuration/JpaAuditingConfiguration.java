@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-
 /**
  * Die Annotation {@link EnableJpaAuditing} ist erforderlich um z.B.
  * die Annotation {@link CreatedDate} in Klasse {@link BaseEntity}
@@ -19,4 +18,3 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 public class JpaAuditingConfiguration {
 }
-

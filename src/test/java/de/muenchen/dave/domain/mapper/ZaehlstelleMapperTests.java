@@ -111,8 +111,7 @@ public class ZaehlstelleMapperTests {
         zaehlung.setDatum(LocalDate.of(2019, 1, 1));
         zaehlstelle.getZaehlungen().add(zaehlung);
 
-        final LadeAuswertungZaehlstelleKoordinateDTO result =
-                mapper.bean2LadeAuswertungZaehlstelleKoordinateDto(zaehlstelle);
+        final LadeAuswertungZaehlstelleKoordinateDTO result = mapper.bean2LadeAuswertungZaehlstelleKoordinateDto(zaehlstelle);
         final LadeAuswertungZaehlstelleKoordinateDTO expected = new LadeAuswertungZaehlstelleKoordinateDTO();
         expected.setNummer("123456");
         expected.setKommentar("Ein Kommentar");

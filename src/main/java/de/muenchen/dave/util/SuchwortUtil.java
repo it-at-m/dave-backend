@@ -7,13 +7,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.services.IndexServiceUtils;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -23,6 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -134,27 +133,27 @@ public final class SuchwortUtil {
             knotenarmeSuchworte.addAll(strassennamen);
 
             switch (knotenarme.size()) {
-                case 2:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Querschnitt", "zweiarmig"));
-                    break;
-                case 3:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Einmündung", "dreiarmig"));
-                    break;
-                case 4:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "vierarmig"));
-                    break;
-                case 5:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "fünfarmig"));
-                    break;
-                case 6:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "sechsarmig"));
-                    break;
-                case 7:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "siebenarmig"));
-                    break;
-                case 8:
-                    knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "achtarmig"));
-                    break;
+            case 2:
+                knotenarmeSuchworte.addAll(Arrays.asList("Querschnitt", "zweiarmig"));
+                break;
+            case 3:
+                knotenarmeSuchworte.addAll(Arrays.asList("Einmündung", "dreiarmig"));
+                break;
+            case 4:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "vierarmig"));
+                break;
+            case 5:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "fünfarmig"));
+                break;
+            case 6:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "sechsarmig"));
+                break;
+            case 7:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "siebenarmig"));
+                break;
+            case 8:
+                knotenarmeSuchworte.addAll(Arrays.asList("Kreuzung", "achtarmig"));
+                break;
             }
         }
         return knotenarmeSuchworte;

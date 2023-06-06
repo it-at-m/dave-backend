@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain;
 
+import javax.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Min;
-
 /**
- * Diese Klasse stellt die für das Ausführen von Vorhersagen notwendige Repräsentation eines Zeitintervalls dar.
+ * Diese Klasse stellt die für das Ausführen von Vorhersagen notwendige Repräsentation eines
+ * Zeitintervalls dar.
  */
 @Data
 @AllArgsConstructor
@@ -52,7 +52,9 @@ public class KIZeitintervall {
     int sonntag = 0;
 
     /**
-     * Diese Methode wandelt ein KIZeitintervall-Objekt in ein Array mit primitivem long-Typ um, damit die ONNX-Runtime (int64) dieses zur Vorhersage verwenden kann.
+     * Diese Methode wandelt ein KIZeitintervall-Objekt in ein Array mit primitivem long-Typ um, damit
+     * die ONNX-Runtime (int64) dieses zur Vorhersage verwenden kann.
+     *
      * @return Das KIZeitintervall als long[]-Repräsentation.
      */
     public long[] toArray() {

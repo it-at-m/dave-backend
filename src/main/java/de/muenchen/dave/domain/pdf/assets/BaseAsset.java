@@ -6,10 +6,7 @@ import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import lombok.Data;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type",
-        visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ImageAsset.class, name = "IMAGE"),
         @JsonSubTypes.Type(value = TextAsset.class, name = "TEXT"),
@@ -22,8 +19,7 @@ import lombok.Data;
         @JsonSubTypes.Type(value = NewlineAsset.class, name = "NEWLINE"),
         @JsonSubTypes.Type(value = LogoAsset.class, name = "LOGO"),
         @JsonSubTypes.Type(value = DatatableAsset.class, name = "DATATABLE"),
-        @JsonSubTypes.Type(value = ZaehlungskenngroessenAsset.class, name = "ZAEHLUNGSKENNGROESSEN")}
-)
+        @JsonSubTypes.Type(value = ZaehlungskenngroessenAsset.class, name = "ZAEHLUNGSKENNGROESSEN") })
 @Data
 public class BaseAsset implements MustacheBean {
     private AssetType type;

@@ -8,13 +8,11 @@ import de.muenchen.dave.domain.InfoMessage;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
 import de.muenchen.dave.domain.mapper.InfoMessageMapper;
 import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class InfoMessageService {
@@ -26,7 +24,7 @@ public class InfoMessageService {
     private final InfoMessageMapper infoMessageMapper;
 
     public InfoMessageService(final InfoMessageRepository infoMessageRepository,
-                              final InfoMessageMapper infoMessageMapper) {
+            final InfoMessageMapper infoMessageMapper) {
         this.infoMessageRepository = infoMessageRepository;
         this.infoMessageMapper = infoMessageMapper;
     }

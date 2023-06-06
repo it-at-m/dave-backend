@@ -24,6 +24,12 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.IndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -31,14 +37,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
 
 @Service
 @Slf4j
@@ -52,10 +50,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     private int radiusDistanceCheck;
 
     public InternalZaehlungPersistierungsService(final IndexService indexService,
-                                                 final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-                                                 final PkwEinheitRepository pkwEinheitRepository,
-                                                 final ZeitintervallMapper zeitintervallMapper,
-                                                 final PkwEinheitMapper pkwEinheitMapper) {
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
+            final PkwEinheitRepository pkwEinheitRepository,
+            final ZeitintervallMapper zeitintervallMapper,
+            final PkwEinheitMapper pkwEinheitMapper) {
         super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
         this.pkwEinheitMapper = pkwEinheitMapper;
         this.pkwEinheitRepository = pkwEinheitRepository;
@@ -66,7 +64,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param zaehlungId zu löschende Zählung
      * @return gelöscht/nicht gelÖscht
-     * @throws DataNotFoundException         beim Loeschen der Zaehlung aus dem Index
+     * @throws DataNotFoundException beim Loeschen der Zaehlung aus dem Index
      * @throws BrokenInfrastructureException beim Loeschen der Zaehlung aus dem Index
      */
     @Transactional
@@ -84,14 +82,15 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     /**
      * In der Methode wird die Zaehlung im Elasticsearch-Server gespeichert.
      *
-     * @param zaehlungDto   die Zaehlung zum speichern.
+     * @param zaehlungDto die Zaehlung zum speichern.
      * @param zaehlstelleId die Id der dazugehörigen Zählstelle
      * @return die Id der gespeicherten Zaehlung.
      * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException         Beim Schreiben in den Index
+     * @throws DataNotFoundException Beim Schreiben in den Index
      */
     @Transactional
-    public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
+            throws BrokenInfrastructureException, DataNotFoundException {
         final BackendIdDTO backendIdDto = new BackendIdDTO();
 
         // Setzen der PKW-Einheiten
@@ -104,14 +103,12 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             // createZaehlung
             zaehlung = this.indexService.erstelleZaehlung(
                     zaehlungDto,
-                    zaehlstelleId
-            );
+                    zaehlstelleId);
         } else {
             // updateZaehlung
             zaehlung = this.indexService.erneuereZaehlung(
                     zaehlungDto,
-                    zaehlstelleId
-            );
+                    zaehlstelleId);
         }
 
         // Rückgabe der ZaehlungsId
@@ -123,14 +120,15 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * In der Methode wird die Zaehlung im Elasticsearch-Server und es werden die Zeitintervalle
      * in der relationalen Datenbank gespeichert.
      *
-     * @param zaehlungDto   die Zaehlung zum speichern.
+     * @param zaehlungDto die Zaehlung zum speichern.
      * @param zaehlstelleId die Id der dazugehörigen Zählstelle
      * @return die Id der gespeicherten Zaehlung.
      * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException         Beim Schreiben/Laden in/aus den/dem Index
+     * @throws DataNotFoundException Beim Schreiben/Laden in/aus den/dem Index
      */
     @Transactional
-    public BackendIdDTO saveZaehlungWithZeitintervalle(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public BackendIdDTO saveZaehlungWithZeitintervalle(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
+            throws BrokenInfrastructureException, DataNotFoundException {
         final BackendIdDTO backendIdDto = new BackendIdDTO();
 
         // Setzen der PKW-Einheiten
@@ -143,14 +141,11 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // Zaehlung persitieren - ohne Suggestions
         final Zaehlung zaehlung = this.indexService.erstelleZaehlung(
                 zaehlungDto,
-                zaehlstelleId
-        );
+                zaehlstelleId);
 
         // Koordinate prüfen.
         zaehlung.setPunkt(
-                this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(this.radiusDistanceCheck, zaehlstelle, zaehlung)
-        );
-
+                this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(this.radiusDistanceCheck, zaehlstelle, zaehlung));
 
         // Zeitintervalle persistieren
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
@@ -161,7 +156,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                     .forEach(zeitintervalleToPersist::add);
         });
 
-        this.zeitintervallPersistierungsService.aufbereitenUndPersistieren(zeitintervalleToPersist, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN).contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
+        this.zeitintervallPersistierungsService.aufbereitenUndPersistieren(zeitintervalleToPersist,
+                List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                        .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
 
         // Fahrzeugkategorien und -klassen setzen
         zaehlung.setKategorien(this.getFahrzeugKategorienAndFahrzeugklassen(zeitintervalleToPersist));
@@ -181,28 +178,24 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die {@link Hochrechnung}
      * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
      *
-     * @param zeitintervall    in welchem die zusätzlichen Informationen gesetzt werden sollen.
-     * @param zaehlung         zum Setzen der zusätzlichen Daten.
+     * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
+     * @param zaehlung zum Setzen der zusätzlichen Daten.
      * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
     public Zeitintervall setAdditionalDataToZeitintervall(final Zeitintervall zeitintervall,
-                                                          final Zaehlung zaehlung,
-                                                          final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
+            final Zaehlung zaehlung,
+            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
 
         this.getFromBearbeiteFahrbeziehungDto(zaehlung, fahrbeziehungDto)
-                .ifPresent(fahrbeziehung ->
-                        zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehung.getId()))
-                );
+                .ifPresent(fahrbeziehung -> zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehung.getId())));
 
         zeitintervall.setHochrechnung(
                 this.createHochrechnung(
                         zeitintervall,
                         fahrbeziehungDto.getHochrechnungsfaktor(),
-                        zaehlung.getZaehldauer()
-                )
-        );
+                        zaehlung.getZaehldauer()));
 
         zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
         return zeitintervall;
@@ -212,12 +205,12 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode gibt die {@link Fahrbeziehung} der {@link Zaehlung} zurück, welche
      * durch die {@link BearbeiteFahrbeziehungDTO} repräsentiert wird.
      *
-     * @param zaehlung         aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
+     * @param zaehlung aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
      * @param fahrbeziehungDto welche die Basis zum Suchen der {@link Fahrbeziehung} darstellt.
      * @return die gefundene {@link Fahrbeziehung}.
      */
     public Optional<Fahrbeziehung> getFromBearbeiteFahrbeziehungDto(final Zaehlung zaehlung,
-                                                                    final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
+            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         return zaehlung.getFahrbeziehungen().stream()
                 .filter(fahrbeziehung -> this.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung))
                 .findFirst();
@@ -228,12 +221,12 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
      *
      * @param fahrbeziehungDto zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @param fahrbeziehung    zur Prüfung auf repräsentation der selben Fahrbeziehung.
+     * @param fahrbeziehung zur Prüfung auf repräsentation der selben Fahrbeziehung.
      * @return true falls die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs
-     * repräsentiert wird.
+     *         repräsentiert wird.
      */
     public boolean isSameFahrbeziehung(final BearbeiteFahrbeziehungDTO fahrbeziehungDto,
-                                       final Fahrbeziehung fahrbeziehung) {
+            final Fahrbeziehung fahrbeziehung) {
         return Objects.equals(fahrbeziehungDto.getIsKreuzung(), fahrbeziehung.getIsKreuzung())
                 // Kreuzung
                 && Objects.equals(fahrbeziehungDto.getVon(), fahrbeziehung.getVon())
@@ -254,19 +247,18 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      */
     public BearbeiteZaehlungDTO setYoungestPkwEinheitFromRelationalDatabase(final BearbeiteZaehlungDTO zaehlungDto) {
         this.getYoungestPkwEinheitFromRelationalDatabase().ifPresent(
-                pkwEinheit -> zaehlungDto.setPkwEinheit(this.pkwEinheitMapper.entity2bearbeiteDto(pkwEinheit))
-        );
+                pkwEinheit -> zaehlungDto.setPkwEinheit(this.pkwEinheitMapper.entity2bearbeiteDto(pkwEinheit)));
         return zaehlungDto;
     }
-
 
     /**
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
      * einen {@link Zeitintervall}.
      *
      * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen
-     *                         an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}
+     *            an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     *         {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
@@ -275,8 +267,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             fahrbeziehung.setNach(fahrbeziehungDto.getNach());
         } else {
             fahrbeziehung.setVon(fahrbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional =
-                    FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
                 fahrbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {
@@ -291,15 +282,16 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * übergebenen Distanz.
      *
      * @param radiusDistanceCheck Der Radius für die Prüfung der Distanz.
-     * @param zaehlstelle         Die {@link Zaehlstelle} zur Prüfung des Abstands zur {@link Zaehlung}.
-     * @param zaehlung            Die {@link Zaehlung} zur Prüfung des Abstands zur {@link Zaehlstelle}.
+     * @param zaehlstelle Die {@link Zaehlstelle} zur Prüfung des Abstands zur {@link Zaehlung}.
+     * @param zaehlung Die {@link Zaehlung} zur Prüfung des Abstands zur {@link Zaehlstelle}.
      * @return die Koordinate der {@link Zaehlstelle}, falls die Koordinate der {@link Zaehlung}
-     * sich innerhalb des durch den Radius definierten Umkreis um die {@link Zaehlstelle} befindet.
-     * Ansonsten wird die Koordinate der {@link Zaehlung} zurückgegeben.
+     *         sich innerhalb des durch den Radius definierten Umkreis um die {@link Zaehlstelle}
+     *         befindet.
+     *         Ansonsten wird die Koordinate der {@link Zaehlung} zurückgegeben.
      */
     public GeoPoint getKoordinateZaehlstelleWhenZaehlungWithinDistance(final double radiusDistanceCheck,
-                                                                       final Zaehlstelle zaehlstelle,
-                                                                       final Zaehlung zaehlung) {
+            final Zaehlstelle zaehlstelle,
+            final Zaehlung zaehlung) {
         GeoPoint position = zaehlung.getPunkt();
         if (CoordinateUtil.arePositionsWithinGivenDistance(
                 radiusDistanceCheck,
@@ -337,7 +329,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         return this.indexService.getOpenZaehlungen();
     }
 
-    public BackendIdDTO updateDienstleisterkennung(final String zaehlungId, final DienstleisterDTO dienstleisterDTO) throws DataNotFoundException, BrokenInfrastructureException {
+    public BackendIdDTO updateDienstleisterkennung(final String zaehlungId, final DienstleisterDTO dienstleisterDTO)
+            throws DataNotFoundException, BrokenInfrastructureException {
         final BackendIdDTO backendIdDto = new BackendIdDTO();
 
         final Zaehlung zaehlungToUpdate = this.indexService.getZaehlung(zaehlungId);
@@ -347,8 +340,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // updateZaehlung
         this.indexService.erneuereZaehlung(
                 zaehlungToUpdate,
-                zaehlstelleByZaehlungId.getId()
-        );
+                zaehlstelleByZaehlungId.getId());
 
         // Rückgabe der ZaehlungsId
         backendIdDto.setId(zaehlungId);

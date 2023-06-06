@@ -7,6 +7,9 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.HochrechnungsfaktorService;
+import java.util.List;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.UUID;
-
-
 @RestController
 @RequestMapping("/hochrechnungsfaktor")
 public class HochrechnungsfaktorController {
@@ -35,17 +33,12 @@ public class HochrechnungsfaktorController {
         this.hochrechnungsfaktorService = hochrechnungsfaktorService;
     }
 
-    @RequestMapping(
-            value = "/save",
-            method = {RequestMethod.POST, RequestMethod.PUT},
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<HochrechnungsfaktorDTO> saveHochrechnungsfaktor(@RequestBody @NotNull final HochrechnungsfaktorDTO hochrechnungsfaktorDTO) {
         try {
             return ResponseEntity.ok(
-                    hochrechnungsfaktorService.saveHochrechnungsfaktor(hochrechnungsfaktorDTO)
-            );
+                    hochrechnungsfaktorService.saveHochrechnungsfaktor(hochrechnungsfaktorDTO));
         } catch (final DataNotFoundException exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
         }
@@ -58,8 +51,7 @@ public class HochrechnungsfaktorController {
     public ResponseEntity<List<HochrechnungsfaktorDTO>> getAllHochrechnungsfaktoren() {
         try {
             return ResponseEntity.ok(
-                    hochrechnungsfaktorService.getHochrechnungsfaktoren()
-            );
+                    hochrechnungsfaktorService.getHochrechnungsfaktoren());
         } catch (final DataNotFoundException exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
         }

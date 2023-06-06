@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-
 @Slf4j
 public class SucheServiceTests {
 
@@ -31,8 +30,7 @@ public class SucheServiceTests {
             null,
             null,
             null,
-            null
-    );
+            null);
 
     @Test
     public void mapZaehlungenToZaehlartenKarte() {

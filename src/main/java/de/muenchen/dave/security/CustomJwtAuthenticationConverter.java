@@ -1,5 +1,8 @@
 package de.muenchen.dave.security;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
@@ -15,10 +18,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtBearerTokenAuthenticationConverter;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 /**
  * Ersetzt den {@link JwtAuthenticationConverter} wegen Deprecation.
  * Siehe {@link JwtAuthenticationConverter#extractAuthorities(Jwt)}.
@@ -28,16 +27,17 @@ import java.util.stream.Collectors;
 @Profile("!no-security")
 @Component
 @RequiredArgsConstructor
-public class CustomJwtAuthenticationConverter  implements Converter<Jwt, AbstractAuthenticationToken> {
+public class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final CustomUserInfoTokenServices userInfoTokenServices;
 
     /**
-     * Erstellt das {@link org.springframework.security.authentication.AbstractAuthenticationToken} für den SecurityContext des entsprechenden Threads.
+     * Erstellt das {@link org.springframework.security.authentication.AbstractAuthenticationToken} für
+     * den SecurityContext des entsprechenden Threads.
      *
      * @param jwt als Access-Token.
      * @return den {@link AbstractAuthenticationToken} erstellt aus dem Access-Token, angereichert um
-     * die "authorities" (Rechte) vom Userinfo-Endpunkt des SSO.
+     *         die "authorities" (Rechte) vom Userinfo-Endpunkt des SSO.
      */
     @Override
     public AbstractAuthenticationToken convert(final Jwt jwt) {
@@ -45,8 +45,7 @@ public class CustomJwtAuthenticationConverter  implements Converter<Jwt, Abstrac
                 OAuth2AccessToken.TokenType.BEARER,
                 jwt.getTokenValue(),
                 jwt.getIssuedAt(),
-                jwt.getExpiresAt()
-        );
+                jwt.getExpiresAt());
         final Map<String, Object> attributes = jwt.getClaims();
         // Holen der Authorities vom UserInfoEndpunkt des SSO
         final Collection<GrantedAuthority> authorities = this.loadGrantedAuthoritiesFromUserInfoEndpoint(accessToken);

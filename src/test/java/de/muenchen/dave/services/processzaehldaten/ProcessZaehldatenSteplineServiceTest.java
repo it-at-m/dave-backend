@@ -51,7 +51,6 @@ class ProcessZaehldatenSteplineServiceTest {
         ladeZaehldatum1.setEndeUhrzeit(LocalTime.of(8, 0));
         setDataInZaehldatum(ladeZaehldatum1, 1);
 
-
         final LadeZaehldatumDTO ladeZaehldatum2 = new LadeZaehldatumDTO();
         ladeZaehldatum2.setType("");
         ladeZaehldatum2.setStartUhrzeit(LocalTime.of(8, 0));
@@ -159,8 +158,10 @@ class ProcessZaehldatenSteplineServiceTest {
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9).getName(), is(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().size(), is(6));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0), is(BigDecimal.valueOf(60.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(3), is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(3),
+                is(BigDecimal.valueOf(60.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getXAxisIndex(), is(0));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisIndex(), is(1));
 
@@ -234,8 +235,10 @@ class ProcessZaehldatenSteplineServiceTest {
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9).getName(), is(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0), is(BigDecimal.valueOf(60.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(2), is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(60.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getXAxisIndex(), is(0));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisIndex(), is(1));
 
@@ -256,8 +259,10 @@ class ProcessZaehldatenSteplineServiceTest {
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9).getName(), is(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(0), is(BigDecimal.valueOf(60.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(2), is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(60.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getXAxisIndex(), is(1));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisIndex(), is(3));
 
@@ -330,18 +335,21 @@ class ProcessZaehldatenSteplineServiceTest {
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9).getName(), is(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0), is(BigDecimal.valueOf(60.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(2), is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(60.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getXAxisIndex(), is(0));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(9)).getYAxisIndex(), is(1));
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11).getName(), is(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisData().get(0), is(BigDecimal.valueOf(40.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisData().get(2), is(BigDecimal.valueOf(40.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(40.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(40.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getXAxisIndex(), is(0));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesFirstChart().get(11)).getYAxisIndex(), is(1));
-
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesSecondChart().size(), is(12));
         assertThat(ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(0).getName(), is(ChartLegendUtil.PKW));
@@ -353,15 +361,19 @@ class ProcessZaehldatenSteplineServiceTest {
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9).getName(), is(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(0), is(BigDecimal.valueOf(60.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(2), is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(60.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(60.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getXAxisIndex(), is(1));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(9)).getYAxisIndex(), is(3));
 
         assertThat(ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11).getName(), is(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisData().size(), is(3));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisData().get(0), is(BigDecimal.valueOf(40.0)));
-        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisData().get(2), is(BigDecimal.valueOf(40.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisData().get(0),
+                is(BigDecimal.valueOf(40.0)));
+        assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisData().get(2),
+                is(BigDecimal.valueOf(40.0)));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getXAxisIndex(), is(1));
         assertThat(((StepLineSeriesEntryBigDecimalDTO) ladeZaehldatenStepline.getSeriesEntriesSecondChart().get(11)).getYAxisIndex(), is(3));
     }

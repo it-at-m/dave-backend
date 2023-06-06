@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfCompon
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import lombok.Data;
 
-
 @Data
 public class BasicPdf extends PdfBean {
 

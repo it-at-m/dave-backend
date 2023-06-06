@@ -16,7 +16,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 
-
 class PkwEinheitServiceTest {
 
     private final PkwEinheitService pkwEinheitService;
@@ -27,8 +26,7 @@ class PkwEinheitServiceTest {
         this.pkwEinheitRepository = Mockito.mock(PkwEinheitRepository.class);
         this.pkwEinheitService = new PkwEinheitService(
                 this.pkwEinheitRepository,
-                new PkwEinheitMapperImpl()
-        );
+                new PkwEinheitMapperImpl());
 
     }
 

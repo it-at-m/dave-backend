@@ -36,17 +36,17 @@ public class KIServiceTest {
     void testPredictHochrechnungTageswerteForZeitIntervalleOfZaehlungNoFahrbeziehungen() {
         // Arrange
         KIZeitintervall kiIntervall = KIZeitintervall.builder()
-            .rad(6)
-            .jahresZeit(3)
-            .jahreSeit89(31)
-            .montag(0)
-            .dienstag(0)
-            .mittwoch(1)
-            .donnerstag(0)
-            .freitag(0)
-            .samstag(0)
-            .sonntag(0)
-            .build();
+                .rad(6)
+                .jahresZeit(3)
+                .jahreSeit89(31)
+                .montag(0)
+                .dienstag(0)
+                .mittwoch(1)
+                .donnerstag(0)
+                .freitag(0)
+                .samstag(0)
+                .sonntag(0)
+                .build();
         Mockito.when(mapper.zeitintervallToKIZeitintervall(any())).thenReturn(kiIntervall);
 
         // Act & Assert
@@ -58,6 +58,7 @@ public class KIServiceTest {
 
         assertThat(actualMessage, equalTo(expectedMessage));
     }
+
     @Test
     void testPredictHochrechnungTageswerteForZeitIntervalleOfZaehlungWrongInputDimension() {
         // Arrange
@@ -85,7 +86,6 @@ public class KIServiceTest {
 
         assertThat(actualMessage, equalTo(expectedMessage));
     }
-
 
     @Test
     void testPredictHochrechnungTageswerteForZeitIntervalleOfZaehlungExcessInputs() throws PredictionFailedException {

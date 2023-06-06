@@ -18,7 +18,6 @@ import org.apache.sis.referencing.GeodeticCalculator;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public final class CoordinateUtil {
@@ -26,23 +25,23 @@ public final class CoordinateUtil {
     private static final CoordinateReferenceSystem CRS_WGS84 = CommonCRS.WGS84.geographic();
 
     public static boolean arePositionsWithinGivenDistance(final double distance,
-                                                          final GeoPoint position1,
-                                                          final GeoPoint position2) {
+            final GeoPoint position1,
+            final GeoPoint position2) {
         final PositionWGS84 wgs84Position1 = new PositionWGS84(position1.getLat(), position1.getLon());
         final PositionWGS84 wgs84Position2 = new PositionWGS84(position2.getLat(), position2.getLon());
         return arePositionsWithinGivenDistance(distance, wgs84Position1, wgs84Position2);
     }
 
     public static boolean arePositionsWithinGivenDistance(final double distance,
-                                                          final PositionWGS84 position1,
-                                                          final PositionWGS84 position2) {
+            final PositionWGS84 position1,
+            final PositionWGS84 position2) {
         log.debug("Check if positions are within a distance of {} meters.", distance);
         final double geodesicDistance = calculateDistanceInMeter(position1, position2);
         return geodesicDistance <= distance;
     }
 
     public static double calculateDistanceInMeter(final PositionWGS84 position1,
-                                                  final PositionWGS84 position2) {
+            final PositionWGS84 position2) {
         log.debug("Calculate distance in meter.");
         final GeodeticCalculator calculator = GeodeticCalculator.create(CRS_WGS84);
         calculator.setStartGeographicPoint(position1.getLatitude(), position1.getLongitude());
@@ -62,8 +61,7 @@ public final class CoordinateUtil {
         if (ObjectUtils.isNotEmpty(positionWgs84)) {
             final var wgsCoordinates = new WGS84(
                     positionWgs84.getLat(),
-                    positionWgs84.getLon()
-            );
+                    positionWgs84.getLon());
             var utm = new UTM(wgsCoordinates);
             positionUtm.setZone(utm.getZone());
             positionUtm.setLetter(utm.getLetter());

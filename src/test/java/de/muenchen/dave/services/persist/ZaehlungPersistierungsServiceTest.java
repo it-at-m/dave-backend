@@ -33,7 +33,6 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class ZaehlungPersistierungsServiceTest {
 
     private final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService;
@@ -55,8 +54,7 @@ class ZaehlungPersistierungsServiceTest {
                 null,
                 null,
                 null,
-                null
-        );
+                null);
     }
 
     // Internal
@@ -167,8 +165,8 @@ class ZaehlungPersistierungsServiceTest {
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
 
-        Optional<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> result =
-                internalZaehlungPersistierungsService.getFromBearbeiteFahrbeziehungDto(zaehlung, fahrbeziehungDto);
+        Optional<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> result = internalZaehlungPersistierungsService.getFromBearbeiteFahrbeziehungDto(zaehlung,
+                fahrbeziehungDto);
         fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
         fahrbeziehung.setIsKreuzung(true);
         fahrbeziehung.setVon(1);
@@ -512,8 +510,8 @@ class ZaehlungPersistierungsServiceTest {
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);
 
-
-        Hochrechnung result = internalZaehlungPersistierungsService.createHochrechnung(zeitintervall, hochrechnungsfaktorDto, Zaehldauer.DAUER_24_STUNDEN.toString());
+        Hochrechnung result = internalZaehlungPersistierungsService.createHochrechnung(zeitintervall, hochrechnungsfaktorDto,
+                Zaehldauer.DAUER_24_STUNDEN.toString());
         Hochrechnung expected = new Hochrechnung();
         expected.setFaktorKfz(BigDecimal.valueOf(2.0));
         expected.setFaktorSv(BigDecimal.valueOf(3.0));
@@ -624,8 +622,7 @@ class ZaehlungPersistierungsServiceTest {
     public void getFahrzeugKategorienAndFahrzeugklassen() {
         final Zeitintervall zeitintervall = new Zeitintervall();
 
-        List<Fahrzeug> result =
-                externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
+        List<Fahrzeug> result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
         List<Fahrzeug> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
@@ -644,7 +641,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setLkw(1);
         zeitintervall.setLastzuege(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.GV_P, Fahrzeug.SV_P,
+                Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -652,7 +650,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setLastzuege(1);
         zeitintervall.setBusse(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.GV_P, Fahrzeug.SV_P,
+                Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -661,7 +660,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setBusse(1);
         zeitintervall.setKraftraeder(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.GV_P,
+                Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -671,7 +671,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setKraftraeder(1);
         zeitintervall.setFahrradfahrer(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD,
+                Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -682,7 +683,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setFahrradfahrer(1);
         zeitintervall.setFussgaenger(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD,
+                Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
     }
 }

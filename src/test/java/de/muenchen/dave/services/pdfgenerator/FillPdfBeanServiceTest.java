@@ -65,7 +65,6 @@ class FillPdfBeanServiceTest {
         assertThat(zusatzinformationenPdfComponent.getKommentarZaehlung(), is(""));
         assertThat(zusatzinformationenPdfComponent.getKommentarZaehlstelle(), is(""));
 
-
         zaehlung.setKommentar("Zaehlung Kommentar");
         zaehlstelle.setKommentar("Zaehlstellenkommentar");
         this.fillPdfBeanService.fillZusatzinformationen(zusatzinformationenPdfComponent, zaehlstelle, zaehlung);
@@ -113,6 +112,5 @@ class FillPdfBeanServiceTest {
         optionsDTO.setZeitblock(Zeitblock.ZB_00_24);
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("0 - 24 Uhr"));
     }
-
 
 }

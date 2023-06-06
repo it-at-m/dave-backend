@@ -7,15 +7,13 @@ package de.muenchen.dave.repositories.relationaldb;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
 
@@ -56,8 +54,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
-            final TypeZeitintervall type
-    );
+            final TypeZeitintervall type);
 
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
             final UUID zaehlungId,
@@ -74,8 +71,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final Integer fahrbeziehungVon,
             final Integer fahrbeziehungNach,
             final LocalDateTime startuhrzeit,
-            final LocalDateTime endeuhrzeit
-    );
+            final LocalDateTime endeuhrzeit);
 
     /*
      * Extrahiert den Zeitintervall entsprechend des SortingIndex über alle vorhandenen Fahrbeziehungen.
@@ -83,8 +79,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
     Optional<Zeitintervall> findByZaehlungIdAndTypeAndFahrbeziehungVonNullAndFahrbeziehungNachNullAndSortingIndex(
             final UUID zaehlungId,
             final TypeZeitintervall type,
-            final Integer sortingIndex
-    );
+            final Integer sortingIndex);
 
     /*
      * Die Methode wird verwendet, um die Zeitintervalle, beginnend bei der Startuhrzeit und endend
@@ -95,8 +90,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
-            final TypeZeitintervall type
-    );
+            final TypeZeitintervall type);
 
     /*
      * Die Methode wird verwendet, um die Zeitintervalle, beginnend bei der Startuhrzeit und endend
@@ -109,7 +103,6 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
-            final TypeZeitintervall type
-    );
+            final TypeZeitintervall type);
 
 }

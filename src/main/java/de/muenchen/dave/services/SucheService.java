@@ -17,6 +17,16 @@ import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.util.DaveConstants;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -32,18 +42,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 
 @Service
 @Slf4j
@@ -62,9 +60,9 @@ public class SucheService {
     private final ElasticsearchOperations elasticsearchOperations;
 
     public SucheService(final ZaehlstelleIndex zaehlstelleIndex,
-                        final ZaehlstelleMapper zaehlstelleMapper,
-                        final ZaehlungMapper zaehlungMapper,
-                        final ElasticsearchOperations elasticsearchOperations) {
+            final ZaehlstelleMapper zaehlstelleMapper,
+            final ZaehlungMapper zaehlungMapper,
+            final ElasticsearchOperations elasticsearchOperations) {
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.zaehlungMapper = zaehlungMapper;
@@ -103,7 +101,7 @@ public class SucheService {
      * Die Methode filtert vom Ergebnis {@link SucheService#complexSuggest} alle nicht sichtbaren
      * Zaehlstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
@@ -111,17 +109,15 @@ public class SucheService {
         final var sucheComplexSuggests = this.complexSuggest(query, noFilter);
         final var zaehlstellenSuggests = sucheComplexSuggests.getZaehlstellenSuggests()
                 .stream()
-                .filter(sucheZaehlstelleSuggest ->
-                        ObjectUtils.isEmpty(sucheZaehlstelleSuggest.getSichtbarDatenportal())
-                                || sucheZaehlstelleSuggest.getSichtbarDatenportal()
-                ).collect(Collectors.toList());
+                .filter(sucheZaehlstelleSuggest -> ObjectUtils.isEmpty(sucheZaehlstelleSuggest.getSichtbarDatenportal())
+                        || sucheZaehlstelleSuggest.getSichtbarDatenportal())
+                .collect(Collectors.toList());
         sucheComplexSuggests.setZaehlstellenSuggests(zaehlstellenSuggests);
         final var zaehlungenSuggests = sucheComplexSuggests.getZaehlungenSuggests()
                 .stream()
-                .filter(sucheZaehlungSuggest ->
-                        ObjectUtils.isEmpty(sucheZaehlungSuggest.getSichtbarDatenportal())
-                                || sucheZaehlungSuggest.getSichtbarDatenportal()
-                ).collect(Collectors.toList());
+                .filter(sucheZaehlungSuggest -> ObjectUtils.isEmpty(sucheZaehlungSuggest.getSichtbarDatenportal())
+                        || sucheZaehlungSuggest.getSichtbarDatenportal())
+                .collect(Collectors.toList());
         sucheComplexSuggests.setZaehlungenSuggests(zaehlungenSuggests);
         return sucheComplexSuggests;
     }
@@ -131,7 +127,7 @@ public class SucheService {
      * besteht aus Suchvorschlägen, Vorschläge für eine bestimmte Suchstelle und
      * Vorschläge für eine bestimmte Zählung.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
@@ -158,7 +154,8 @@ public class SucheService {
         sucheZaehlungSuggestDtos.forEach(zaehlung -> {
             zaehlstellen.get().forEach(zst -> {
                 if (!zst.getZaehlungen().isEmpty()) {
-                    final Optional<Zaehlung> first = zst.getZaehlungen().stream().filter(zaehlungFilter -> zaehlungFilter.getId().equalsIgnoreCase(zaehlung.getId())).findFirst();
+                    final Optional<Zaehlung> first = zst.getZaehlungen().stream()
+                            .filter(zaehlungFilter -> zaehlungFilter.getId().equalsIgnoreCase(zaehlung.getId())).findFirst();
                     if (first.isPresent()) {
                         zaehlung.setZaehlstelleId(zst.getId());
                         zaehlung.setSichtbarDatenportal(zst.getSichtbarDatenportal());
@@ -180,7 +177,7 @@ public class SucheService {
      * Gibt alle sichtbaren Zählstellen zurück.
      * Eine Zählstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return passende Zaehlstellen
      */
@@ -189,17 +186,16 @@ public class SucheService {
         log.debug("Zugriff auf den Service #sucheZaehlstelleSichtbarDatenportal");
         return this.sucheZaehlstelle(query, noFilter)
                 .stream()
-                .filter(zaehlstelleKarte ->
-                        ObjectUtils.isEmpty(zaehlstelleKarte.getSichtbarDatenportal())
-                                || zaehlstelleKarte.getSichtbarDatenportal()
-                )
+                .filter(zaehlstelleKarte -> ObjectUtils.isEmpty(zaehlstelleKarte.getSichtbarDatenportal())
+                        || zaehlstelleKarte.getSichtbarDatenportal())
                 .collect(Collectors.toSet());
     }
 
     /**
      * Sucht alle freigegebenen Zählstellen und gibt diese an getZaehlstelleKarteDTOS weiter.
      *
-     * @param query    Eine Suchquery zur Suche von Zählstellen. Bei leerer Suchquery sollen alle Zählstellen gefunden werden.
+     * @param query Eine Suchquery zur Suche von Zählstellen. Bei leerer Suchquery sollen alle
+     *            Zählstellen gefunden werden.
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Set von befüllten ZaehlstellenDTOs der gesuchten Zählstellen
      */
@@ -276,12 +272,14 @@ public class SucheService {
     }
 
     /**
-     * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden hier ausgefiltert.
-     * Desweiteren darf ein normaler Anwender keine Sonderzählungen sehen, diese werden ebenfalls ausgefiltert.
+     * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden
+     * hier ausgefiltert.
+     * Desweiteren darf ein normaler Anwender keine Sonderzählungen sehen, diese werden ebenfalls
+     * ausgefiltert.
      * Wenn eine Zählstelle nach dem Filtern keine Zählungen mehr enthält, so wird dies auch entfernt.
      *
      * @param zaehlstellen zu filtern
-     * @param noFilter     Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Liste mit erlaubten Záhlstellen
      */
     private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
@@ -305,8 +303,7 @@ public class SucheService {
                                     return true;
                                 }
                             })
-                            .collect(Collectors.toList())
-            );
+                            .collect(Collectors.toList()));
         });
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
@@ -315,10 +312,11 @@ public class SucheService {
     }
 
     /**
-     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und liefert diese zurück
+     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
+     * liefert diese zurück
      *
      * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param noFilter     Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
     private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
@@ -351,8 +349,7 @@ public class SucheService {
             zaehlstelleKarteDTO.setLetzteZaehlungId(
                     letzeZaehlung == null
                             ? ""
-                            : letzeZaehlung.getId()
-            );
+                            : letzeZaehlung.getId());
 
             zaehlstelleKarteDTO.setTooltip(
                     IndexServiceUtils.createTooltip(
@@ -361,12 +358,10 @@ public class SucheService {
                             nummer,
                             anzahlZaehlungen,
                             datumLetzteZaehlung,
-                            kreuzungsname)
-            );
+                            kreuzungsname));
 
             zaehlstelleKarteDTO.setZaehlartenKarte(
-                    mapZaehlungenToZaehlartenKarte(zaehlstelle.getZaehlungen())
-            );
+                    mapZaehlungenToZaehlartenKarte(zaehlstelle.getZaehlungen()));
 
             zaehlstelleKarteDTOSet.add(zaehlstelleKarteDTO);
         }
@@ -398,11 +393,14 @@ public class SucheService {
 
         final int maxHits = 3;
         final String zaehlstelle_suggest = "zaehlstelle-suggest";
-        final CompletionSuggestionBuilder suggest = SuggestBuilders.completionSuggestion("suggest").prefix(query, Fuzziness.ZERO).skipDuplicates(true).size(maxHits);
-        final SearchResponse searchResponse = this.elasticsearchOperations.suggest(new SuggestBuilder().addSuggestion(zaehlstelle_suggest, suggest), this.elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class));
+        final CompletionSuggestionBuilder suggest = SuggestBuilders.completionSuggestion("suggest").prefix(query, Fuzziness.ZERO).skipDuplicates(true)
+                .size(maxHits);
+        final SearchResponse searchResponse = this.elasticsearchOperations.suggest(new SuggestBuilder().addSuggestion(zaehlstelle_suggest, suggest),
+                this.elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class));
         final List<SucheWordSuggestDTO> result = new ArrayList<>();
 
-        final List<? extends Suggest.Suggestion.Entry.Option> options = searchResponse.getSuggest().getSuggestion(zaehlstelle_suggest).getEntries().get(0).getOptions();
+        final List<? extends Suggest.Suggestion.Entry.Option> options = searchResponse.getSuggest().getSuggestion(zaehlstelle_suggest).getEntries().get(0)
+                .getOptions();
         options.forEach(o -> {
             final SucheWordSuggestDTO suggestDTO = new SucheWordSuggestDTO();
             suggestDTO.setText(prefix + o.getText().string());
@@ -433,7 +431,7 @@ public class SucheService {
      * Bei Bedarf können diese zwei Parameter auch durch weitere Attrubute erweitert werden.
      *
      * @param zaehlstelle zu pruefen
-     * @param query       Suchwoerter
+     * @param query Suchwoerter
      * @return passende Zaehlung
      */
     public Optional<Zaehlung> checkZaehlstelleForZaehlung(final Zaehlstelle zaehlstelle, final String query) {
@@ -454,15 +452,14 @@ public class SucheService {
      * einer Zählung passt.
      *
      * @param words Liste der Suchworte
-     * @param z     Zaehlung
+     * @param z Zaehlung
      * @return gefunden = true
      */
     public boolean filterZaehlung(final List<String> words, final Zaehlung z) {
         final Optional<String> finding = words.stream()
                 .filter(
                         w -> z.getDatum().format(DATE_TIME_FORMATTER).startsWith(this.cleanseDate(w)) ||
-                                z.getSuchwoerter().stream().anyMatch(s -> s.startsWith(w))
-                )
+                                z.getSuchwoerter().stream().anyMatch(s -> s.startsWith(w)))
                 .findAny();
         return finding.isPresent();
     }

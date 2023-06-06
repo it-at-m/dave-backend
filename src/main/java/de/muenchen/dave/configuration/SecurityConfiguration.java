@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 /**
  * The central class for configuration of all security aspects.
  */
@@ -46,9 +45,9 @@ public class SecurityConfiguration {
                 .antMatchers(
                         "/lade-auswertung-spitzenstunde",
                         "/lade-auswertung-zaehlstellen-koordinate",
-                        "/lade-auswertung-visum"
-                ).permitAll()
-                // allow access to /actuator/info
+                        "/lade-auswertung-visum")
+                .permitAll()
+                // allow access to /actuator/infoZaehlungStatusUpdater
                 .antMatchers("/actuator/info").permitAll()
                 // allow access to /actuator/health for OpenShift Health Check
                 .antMatchers("/actuator/health").permitAll()
@@ -58,18 +57,23 @@ public class SecurityConfiguration {
                 .antMatchers("/actuator/health/readiness").permitAll()
                 // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
                 .antMatchers("/actuator/metrics").permitAll()
+                // h2-console
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .oauth2ResourceServer()
                 .jwt()
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
                 .jwtAuthenticationConverter(this.customJwtAuthenticationConverter);
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
         return http.build();
     }
 
     @Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(final ClientRegistrationRepository clientRegistrationRepository,
-                                                                                                  final OAuth2AuthorizedClientService authorizedClientService) {
+    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
+            final ClientRegistrationRepository clientRegistrationRepository,
+            final OAuth2AuthorizedClientService authorizedClientService) {
 
         final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
                 .builder()
@@ -78,8 +82,7 @@ public class SecurityConfiguration {
 
         final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
                 clientRegistrationRepository,
-                authorizedClientService
-        );
+                authorizedClientService);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
         return authorizedClientManager;

@@ -7,11 +7,9 @@ package de.muenchen.dave.domain.dtos;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-
+import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class OptionsDTO implements Serializable {

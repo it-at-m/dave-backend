@@ -10,15 +10,13 @@ import de.muenchen.dave.domain.mapper.DienstleisterMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.DienstleisterRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -30,8 +28,8 @@ public class DienstleisterService {
     private final IndexService indexService;
 
     public DienstleisterService(final DienstleisterRepository dienstleisterRepository,
-                                final DienstleisterMapper dienstleisterMapper,
-                                @Lazy final IndexService indexService) {
+            final DienstleisterMapper dienstleisterMapper,
+            @Lazy final IndexService indexService) {
         this.dienstleisterRepository = dienstleisterRepository;
         this.dienstleisterMapper = dienstleisterMapper;
         this.indexService = indexService;
@@ -39,13 +37,14 @@ public class DienstleisterService {
 
     /**
      * Service-Methode zum Speichern eines Dienstleisters
+     *
      * @param dienstleisterDTO neue oder geaenderte Daten eines Dienstleisters
      * @return gespeicherten Dienstleister als DTO
      */
     public DienstleisterDTO saveOrUpdateDienstleister(final DienstleisterDTO dienstleisterDTO) {
-        if(dienstleisterDTO.getId() != null) {
+        if (dienstleisterDTO.getId() != null) {
             final Optional<Dienstleister> byId = this.dienstleisterRepository.findById(dienstleisterDTO.getId());
-            if(byId.isPresent()) {
+            if (byId.isPresent()) {
                 return this.updateDienstleister(byId.get(), dienstleisterDTO);
             }
         }
@@ -66,7 +65,7 @@ public class DienstleisterService {
 
     public List<String> getDienstleisterEmailAddressByKennung(final String dienstleisterkennung) {
         final Optional<Dienstleister> dienstleister = this.dienstleisterRepository.findByKennung(dienstleisterkennung);
-        if(dienstleister.isPresent()) {
+        if (dienstleister.isPresent()) {
             return dienstleister.get().getEmailAddresses();
         } else {
             return Collections.emptyList();
@@ -75,7 +74,7 @@ public class DienstleisterService {
 
     public DienstleisterDTO loadDienstleisterByKennung(final String dienstleisterkennung) throws DataNotFoundException {
         final Optional<Dienstleister> dienstleister = this.dienstleisterRepository.findByKennung(dienstleisterkennung);
-        if(dienstleister.isPresent()) {
+        if (dienstleister.isPresent()) {
             return this.dienstleisterMapper.bean2Dto(dienstleister.get());
         } else {
             throw new DataNotFoundException(String.format("Der Dienstleister mit Kennung %s existiert nicht", dienstleisterkennung));
@@ -92,9 +91,9 @@ public class DienstleisterService {
 
     public void deleteDienstleister(final UUID id) throws BrokenInfrastructureException {
         final Optional<Dienstleister> optional = this.dienstleisterRepository.findById(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             final Dienstleister dienstleister = optional.get();
-            if(!this.indexService.existsActiveZaehlungWithDienstleisterkennung(dienstleister.getKennung())) {
+            if (!this.indexService.existsActiveZaehlungWithDienstleisterkennung(dienstleister.getKennung())) {
                 this.dienstleisterRepository.deleteById(id);
             }
         }

@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.pdf.components;
 
 import lombok.Data;
 
-
 @Data
 public class ZaehlstelleninformationenPdfComponent {
 

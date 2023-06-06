@@ -5,12 +5,10 @@
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import lombok.Data;
-
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.math.BigDecimal;
-
+import lombok.Data;
 
 /**
  * Die Hochrechnung und die hochgerechneten Werte

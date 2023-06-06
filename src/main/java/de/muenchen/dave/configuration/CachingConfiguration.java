@@ -15,10 +15,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-
 /**
  * This class provides the caches.
- * To disable the caching functionality delete this class, remove the corresponding bean creation methods
+ * To disable the caching functionality delete this class, remove the corresponding bean creation
+ * methods
  * or remove the annotation {@link EnableCaching} above the class definition.
  */
 @Configuration
@@ -34,7 +34,7 @@ public class CachingConfiguration {
     private static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
 
     // 60*60*12 = 43200 = 12h
-    private static final int MAX_IDLE_TIME_IN_SECONDS = 60*60*12;
+    private static final int MAX_IDLE_TIME_IN_SECONDS = 60 * 60 * 12;
 
     @Value("${hazelcast.instance:data_hazl_instance}")
     public String hazelcastInstanceName;
@@ -44,7 +44,7 @@ public class CachingConfiguration {
     public String openshiftServiceName;
 
     @Bean
-    @Profile({"local", "test"})
+    @Profile({ "local", "test" })
     public Config localConfig() {
 
         final Config config = new Config();
@@ -68,7 +68,7 @@ public class CachingConfiguration {
     }
 
     @Bean
-    @Profile({"dev", "kon", "prod", "hotfix", "demo"})
+    @Profile({ "dev", "kon", "prod", "hotfix", "demo" })
     public Config config() {
 
         final Config config = new Config();

@@ -4,11 +4,10 @@
  */
 package de.muenchen.dave.domain.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
@@ -17,7 +16,8 @@ public enum Zaehldauer {
     /**
      * Kurzzeiterhebung (6 bis 10 Uhr; 15 bis 19 Uhr)
      */
-    DAUER_2_X_4_STUNDEN(Arrays.asList("Kurzzeiterhebung", "Kurzzeiterhebung (2x4h)", "Kurzzeiterhebung (6 bis 10 Uhr; 15 bis 19 Uhr)", "2x4h", "2*4h", "2*4 Stunden", "2x4 Stunden", "2*4Stunden", "2x4Stunden"), 32),
+    DAUER_2_X_4_STUNDEN(Arrays.asList("Kurzzeiterhebung", "Kurzzeiterhebung (2x4h)", "Kurzzeiterhebung (6 bis 10 Uhr; 15 bis 19 Uhr)", "2x4h", "2*4h",
+            "2*4 Stunden", "2x4 Stunden", "2*4Stunden", "2x4Stunden"), 32),
 
     /**
      * 24 Stunden

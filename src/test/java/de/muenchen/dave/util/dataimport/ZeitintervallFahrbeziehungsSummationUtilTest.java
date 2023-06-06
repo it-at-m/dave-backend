@@ -1,6 +1,5 @@
 package de.muenchen.dave.util.dataimport;
 
-
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
@@ -26,7 +25,6 @@ import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-
 
 public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
@@ -110,23 +108,19 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
     @Test
     public void createDataStructureForSummation() {
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result =
-                TestUtils.privateStaticMethodCall(
-                        "createDataStructureForSummation",
-                        ZeitintervallFahrbeziehungsSummationUtil.class,
-                        ArrayUtils.toArray(List.class),
-                        ArrayUtils.toArray(zeitintervalle),
-                        Map.class
-                );
+        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result = TestUtils.privateStaticMethodCall(
+                "createDataStructureForSummation",
+                ZeitintervallFahrbeziehungsSummationUtil.class,
+                ArrayUtils.toArray(List.class),
+                ArrayUtils.toArray(zeitintervalle),
+                Map.class);
 
         ZeitintervallBaseUtil.Intervall intervall1030 = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
         ZeitintervallBaseUtil.Intervall intervall1045 = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> expected = new HashMap<>();
         expected.put(intervall1030, zeitintervalle.subList(0, 5));
         expected.put(intervall1045, zeitintervalle.subList(5, 10));
@@ -149,8 +143,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         // Fahrbeziehung Kreisverkehr
@@ -162,8 +155,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         // Keine gültige konkrete Fahrbeziehung
@@ -175,8 +167,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         // Keine gültige konkrete Fahrbeziehung
@@ -188,8 +179,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         // Keine gültige Fahrbeziehung
@@ -201,8 +191,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         // Keine gültige Fahrbeziehung
@@ -214,8 +203,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         // Keine gültige Fahrbeziehung
@@ -227,8 +215,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
     }
 
@@ -555,12 +542,10 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void getUeberFahrbeziehungSummierteZeitintervalleMap() {
         ZeitintervallBaseUtil.Intervall intervall1030 = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
         ZeitintervallBaseUtil.Intervall intervall1045 = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new HashMap<>();
         zeitintervalleGroupedByIntervall.put(intervall1030, zeitintervalle.subList(0, 5));
         zeitintervalleGroupedByIntervall.put(intervall1045, zeitintervalle.subList(5, 10));
@@ -570,8 +555,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Map.class),
                 ArrayUtils.toArray(zeitintervalleGroupedByIntervall),
-                List.class
-        );
+                List.class);
 
         final List<Zeitintervall> expected = new ArrayList<>();
 
@@ -891,16 +875,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void getSummedZeitintervallForAllFahrbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForAllFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -924,16 +906,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForAllFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -960,16 +940,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void getSummedZeitintervallForCertainVonFahrbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainVonFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(0, 5)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -994,16 +972,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainVonFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(5, 10)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -1031,16 +1007,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void getSummedZeitintervallForCertainNachFahrbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainNachFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(0, 5)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -1063,19 +1037,16 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         assertThat(result, is(expected));
 
-
         intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainNachFahrbeziehungen",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(5, 10)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -1103,16 +1074,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void getSummedZeitintervallOverAllGivenZeitintervalle() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -1136,16 +1105,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
-                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0))
-        );
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -1175,8 +1142,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
-                Set.class
-        );
+                Set.class);
 
         Set<Integer> expected = new HashSet<>();
         expected.addAll(Arrays.asList(1, 2, 3));
@@ -1190,8 +1156,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
-                Set.class
-        );
+                Set.class);
 
         Set<Integer> expected = new HashSet<>();
         expected.addAll(Arrays.asList(1, 2, 3));
@@ -1226,8 +1191,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 ZeitintervallFahrbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervallKreisverkehr),
-                Set.class
-        );
+                Set.class);
 
         expected = new HashSet<>();
         expected.addAll(Arrays.asList(99));

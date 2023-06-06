@@ -4,6 +4,9 @@ import de.muenchen.dave.domain.dtos.CsvDTO;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.GenerateCsvService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @RestController
 @Slf4j
@@ -38,7 +37,7 @@ public class GenerateCsvController {
      * Nimmt Daten aus dem Frontend entgegen und gibt eine CSV als String zurück.
      *
      * @param zaehlungId Die im Frontend ausgewählte Zählung.
-     * @param options    Die im Frontend ausgewählten Optionen.
+     * @param options Die im Frontend ausgewählten Optionen.
      * @return ResponseEntity of Type CsvDTO
      */
     @PostMapping(value = "/generate-csv")

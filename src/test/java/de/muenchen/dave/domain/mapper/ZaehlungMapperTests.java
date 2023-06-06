@@ -111,6 +111,7 @@ public class ZaehlungMapperTests {
         SucheZaehlungSuggestDTO dto = this.mapper.bean2SucheZaehlungSuggestDto(bean);
 
         assertThat(dto, hasProperty("id", equalTo(bean.getId())));
-        assertThat(dto, hasProperty("text", equalTo(bean.getDatum().format(DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT)) + StringUtils.SPACE + bean.getProjektName())));
+        assertThat(dto, hasProperty("text",
+                equalTo(bean.getDatum().format(DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT)) + StringUtils.SPACE + bean.getProjektName())));
     }
 }

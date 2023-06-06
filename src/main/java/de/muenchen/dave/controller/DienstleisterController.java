@@ -2,6 +2,9 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.services.DienstleisterService;
+import java.util.List;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,18 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.UUID;
-
 @Slf4j
 @RestController
 @RequestMapping("/dienstleister")
 public class DienstleisterController {
 
-    private final DienstleisterService dienstleisterService;
-
     private static final String REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG = "kennung";
+    private final DienstleisterService dienstleisterService;
 
     public DienstleisterController(final DienstleisterService dienstleisterService) {
         this.dienstleisterService = dienstleisterService;
@@ -41,11 +39,7 @@ public class DienstleisterController {
      * @return Der gespeicherte Dienstleister als DTO
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    @RequestMapping(
-            value = "/save",
-            method = {RequestMethod.POST, RequestMethod.PUT},
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DienstleisterDTO> saveDienstleister(@RequestBody @NotNull final DienstleisterDTO dienstleisterDTO) {
         log.debug("Dienstleister speichern: {}", dienstleisterDTO);
         try {
@@ -64,7 +58,8 @@ public class DienstleisterController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/getByDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DienstleisterDTO> getDienstleisterByKennung(@RequestParam(value = REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG) @NotNull final String dienstleisterkennung) {
+    public ResponseEntity<DienstleisterDTO> getDienstleisterByKennung(
+            @RequestParam(value = REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG) @NotNull final String dienstleisterkennung) {
         log.debug("Dienstleister laden: {}", dienstleisterkennung);
         try {
             return ResponseEntity.ok(this.dienstleisterService.loadDienstleisterByKennung(dienstleisterkennung));

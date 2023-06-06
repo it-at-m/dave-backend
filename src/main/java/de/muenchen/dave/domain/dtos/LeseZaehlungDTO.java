@@ -5,12 +5,10 @@ import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
+import lombok.Data;
 
 @Data
 public class LeseZaehlungDTO implements Serializable {

@@ -12,7 +12,6 @@ public enum Participant {
     // Mobilitätsreferat
     MOBILITAETSREFERAT(2, "Mobilitätsreferat");
 
-
     private final int participantId;
     private final String name;
 }

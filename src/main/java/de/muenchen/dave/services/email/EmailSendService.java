@@ -7,6 +7,9 @@ import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.IndexService;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -16,44 +19,38 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener Konfiguration.
+ * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener
+ * Konfiguration.
  */
 @Slf4j
 @Service
 public class EmailSendService {
 
-    @Value("${dave.email.address}")
-    private String emailAddress;
-
-    @Value("${dave.email.sender.url.adminportal}")
-    private String urlAdminportal;
-
-    @Value("${dave.email.sender.url.selfserviceportal}")
-    private String urlSelfserviceportal;
-
-    @Value("${dave.email.sender.hostname}")
-    private String serverHostname;
-
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
-
     private final EmailAddressService emailAddressService;
     private final DienstleisterService dienstleisterService;
     private final IndexService indexService;
+    @Value("${dave.email.address}")
+    private String emailAddress;
+    @Value("${dave.email.sender.url.adminportal}")
+    private String urlAdminportal;
+    @Value("${dave.email.sender.url.selfserviceportal}")
+    private String urlSelfserviceportal;
+    @Value("${dave.email.sender.hostname}")
+    private String serverHostname;
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
 
-    public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService, final @Lazy IndexService indexService) {
+    public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService,
+            final @Lazy IndexService indexService) {
         this.emailAddressService = emailAddressService;
         this.dienstleisterService = dienstleisterService;
         this.indexService = indexService;
     }
 
     /**
-     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen Teilnehmer (Participant).
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen
+     * Teilnehmer (Participant).
      *
      * @param message Die Chat-Nachricht
      */
@@ -89,7 +86,7 @@ public class EmailSendService {
 
         // Inhalt der E-Mail
         final String content = String.format("Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
-                        "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
+                "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
                 zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), zaehlstelle.getNummer(), message.getContent(), link);
 
         if (ArrayUtils.isEmpty(to)) {
@@ -122,7 +119,7 @@ public class EmailSendService {
         }
 
         // Falls Profil kon, wird der Profilname auf test geändert, damit die URL stimmt
-        if (profiles[0].equalsIgnoreCase("kon") || profiles[0].equalsIgnoreCase("konexternal") ) {
+        if (profiles[0].equalsIgnoreCase("kon") || profiles[0].equalsIgnoreCase("konexternal")) {
             profiles[0] = "test";
         }
 

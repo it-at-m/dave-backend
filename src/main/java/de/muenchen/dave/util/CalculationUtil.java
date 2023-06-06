@@ -6,14 +6,12 @@ package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -75,9 +73,8 @@ public final class CalculationUtil {
         return new BigDecimal(result);
     }
 
-
     public static Integer calculatePkwEinheiten(final LadeZaehldatumDTO ladeZaehldatum,
-                                                final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         log.debug("Calculate PkwEinheiten");
         Integer calculationResult;
         try {
@@ -97,37 +94,37 @@ public final class CalculationUtil {
     }
 
     private static BigDecimal calculatePkwEinheitenForPkw(final LadeZaehldatumDTO ladeZaehldatum,
-                                                          final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getPkw(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getPkw(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
     private static BigDecimal calculatePkwEinheitenForLkw(final LadeZaehldatumDTO ladeZaehldatum,
-                                                          final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getLkw(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getLkw(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
     private static BigDecimal calculatePkwEinheitenForLastzuege(final LadeZaehldatumDTO ladeZaehldatum,
-                                                                final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getLastzuege(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getLastzuege(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
     private static BigDecimal calculatePkwEinheitenForBusse(final LadeZaehldatumDTO ladeZaehldatum,
-                                                            final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getBusse(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getBusse(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
     private static BigDecimal calculatePkwEinheitenForKraftraeder(final LadeZaehldatumDTO ladeZaehldatum,
-                                                                  final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getKraftraeder(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getKraftraeder(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
     private static BigDecimal calculatePkwEinheitenForFahrradfahrer(final LadeZaehldatumDTO ladeZaehldatum,
-                                                                    final PkwEinheit pkwEinheit) {
+            final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getFahrradfahrer(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getFahrradfahrer(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
@@ -136,7 +133,7 @@ public final class CalculationUtil {
      * @param value1 Erster Wert
      * @param value2 Zweiter Wert
      * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null"
-     * wird dieser als Wert "0" interpretiert.
+     *         wird dieser als Wert "0" interpretiert.
      */
     public static Integer nullSafeSummation(final Integer value1, final Integer value2) {
         final Integer sum;
@@ -153,7 +150,7 @@ public final class CalculationUtil {
      * @param value1 Erster Wert
      * @param value2 Zweiter Wert
      * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null"
-     * wird dieser als Wert "0" interpretiert.
+     *         wird dieser als Wert "0" interpretiert.
      */
     public static BigDecimal nullSafeSummation(final BigDecimal value1, final BigDecimal value2) {
         final BigDecimal sum;

@@ -5,14 +5,13 @@ import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.mapper.EmailAddressMapper;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -52,9 +51,9 @@ public class EmailAddressService {
      * @return das erneuerte EmailAddressDTO
      */
     public EmailAddressDTO saveOrUpdateEmailAddress(final EmailAddressDTO emailAddressDTO) {
-        if(emailAddressDTO.getId() != null) {
+        if (emailAddressDTO.getId() != null) {
             final Optional<EmailAddress> byId = this.emailAddressRepository.findById(emailAddressDTO.getId());
-            if(byId.isPresent()) {
+            if (byId.isPresent()) {
                 return this.updateEmailAddress(byId.get(), emailAddressDTO);
             }
         }

@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.pdf.templates;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import lombok.Data;
 
-
 @Data
 public class DatentabellePdf extends BasicPdf {
 

@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import org.mapstruct.Mapper;
 
-
 @Mapper(componentModel = "spring")
 public interface FahrbeziehungMapper {
 

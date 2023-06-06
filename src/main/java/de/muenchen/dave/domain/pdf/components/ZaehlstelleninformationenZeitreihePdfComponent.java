@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.pdf.components;
 
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class ZaehlstelleninformationenZeitreihePdfComponent {

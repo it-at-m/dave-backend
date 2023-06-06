@@ -27,7 +27,6 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class ZeitintervallBaseUtilTest {
 
     private List<Zeitintervall> zeitintervalle;
@@ -110,14 +109,14 @@ class ZeitintervallBaseUtilTest {
 
     @Test
     public void createByIntervallGroupedZeitintervalle() {
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result =
-                ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(zeitintervalle);
+        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result = ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(zeitintervalle);
 
-        final ZeitintervallBaseUtil.Intervall firstIntervall =
-                new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
-        final ZeitintervallBaseUtil.Intervall secondIntervall =
-                new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
-
+        final ZeitintervallBaseUtil.Intervall firstIntervall = new ZeitintervallBaseUtil.Intervall(
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
+        final ZeitintervallBaseUtil.Intervall secondIntervall = new ZeitintervallBaseUtil.Intervall(
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         final TreeSet<ZeitintervallBaseUtil.Intervall> expectedKeys = new TreeSet<>();
         expectedKeys.add(firstIntervall);
@@ -139,8 +138,7 @@ class ZeitintervallBaseUtilTest {
                 ZeitintervallBaseUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class, Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervalle.get(zeitintervalle.size() - 1), zeitintervalle.get(zeitintervalle.size() - 2)),
-                Zeitintervall.class
-        );
+                Zeitintervall.class);
 
         final Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
@@ -202,9 +200,11 @@ class ZeitintervallBaseUtilTest {
     @Test
     public void getZeitintervalleForFahrbeziehung() {
         Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
-        ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
+        ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
         zeitintervalleGroupedByIntervall.put(intervall, zeitintervalle.subList(0, 5));
-        intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
+        intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
         zeitintervalleGroupedByIntervall.put(intervall, zeitintervalle.subList(5, 10));
 
         Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
@@ -212,13 +212,11 @@ class ZeitintervallBaseUtilTest {
         fahrbeziehung.setNach(3);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
 
-        List<Zeitintervall> result =
-                ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall);
 
         List<Zeitintervall> expected = Arrays.asList(
                 zeitintervalle.get(3),
-                zeitintervalle.get(8)
-        );
+                zeitintervalle.get(8));
         assertThat(result, is(expected));
     }
 
@@ -271,18 +269,18 @@ class ZeitintervallBaseUtilTest {
         assertThat(result, is(false));
     }
 
-//    @Test
-//    public void getPkwEinheit() {
-//        List<Zeitintervall> input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
-//        PkwEinheit result = ZeitintervallBaseUtil.getPkwEinheit(input);
-//        assertThat(result, IsNull.nullValue());
-//
-//        final PkwEinheit expected = new PkwEinheit();
-//        expected.setFahrradfahrer(BigDecimal.TEN);
-//        input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
-//        result = ZeitintervallBaseUtil.getPkwEinheit(input);
-//        assertThat(result, is(result));
-//    }
+    //    @Test
+    //    public void getPkwEinheit() {
+    //        List<Zeitintervall> input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
+    //        PkwEinheit result = ZeitintervallBaseUtil.getPkwEinheit(input);
+    //        assertThat(result, IsNull.nullValue());
+    //
+    //        final PkwEinheit expected = new PkwEinheit();
+    //        expected.setFahrradfahrer(BigDecimal.TEN);
+    //        input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
+    //        result = ZeitintervallBaseUtil.getPkwEinheit(input);
+    //        assertThat(result, is(result));
+    //    }
 
     @Test
     public void checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary() {

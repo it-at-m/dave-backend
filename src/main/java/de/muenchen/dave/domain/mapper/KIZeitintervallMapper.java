@@ -1,7 +1,13 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.KIZeitintervall;
+import de.muenchen.dave.domain.Zeitintervall;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.IsoFields;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Builder;
@@ -11,15 +17,9 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.IsoFields;
-
 /**
- * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die ONNX-Vorhersage.
+ * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die
+ * ONNX-Vorhersage.
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class KIZeitintervallMapper {
@@ -73,27 +73,27 @@ public abstract class KIZeitintervallMapper {
     protected void setDay(Zeitintervall zeitintervall, @MappingTarget KIZeitintervall kiZeitintervall) {
         final DayOfWeek day = zeitintervall.getStartUhrzeit().getDayOfWeek();
         switch (day) {
-            case MONDAY:
-                kiZeitintervall.setMontag(1);
-                break;
-            case TUESDAY:
-                kiZeitintervall.setDienstag(1);
-                break;
-            case WEDNESDAY:
-                kiZeitintervall.setMittwoch(1);
-                break;
-            case THURSDAY:
-                kiZeitintervall.setDonnerstag(1);
-                break;
-            case FRIDAY:
-                kiZeitintervall.setFreitag(1);
-                break;
-            case SATURDAY:
-                kiZeitintervall.setSamstag(1);
-                break;
-            case SUNDAY:
-                kiZeitintervall.setSonntag(1);
-                break;
+        case MONDAY:
+            kiZeitintervall.setMontag(1);
+            break;
+        case TUESDAY:
+            kiZeitintervall.setDienstag(1);
+            break;
+        case WEDNESDAY:
+            kiZeitintervall.setMittwoch(1);
+            break;
+        case THURSDAY:
+            kiZeitintervall.setDonnerstag(1);
+            break;
+        case FRIDAY:
+            kiZeitintervall.setFreitag(1);
+            break;
+        case SATURDAY:
+            kiZeitintervall.setSamstag(1);
+            break;
+        case SUNDAY:
+            kiZeitintervall.setSonntag(1);
+            break;
         }
     }
 

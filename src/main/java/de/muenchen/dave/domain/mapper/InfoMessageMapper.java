@@ -2,12 +2,11 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.InfoMessage;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-
-import java.time.LocalDate;
-import java.time.ZoneId;
 
 @Mapper(componentModel = "spring")
 public interface InfoMessageMapper {
@@ -22,7 +21,8 @@ public interface InfoMessageMapper {
         if (chatMessage.getGueltigVon() == null || chatMessage.getGueltigBis() == null) {
             dto.setGueltig(false);
         } else {
-            dto.setGueltig((chatMessage.getGueltigVon().isBefore(now) || chatMessage.getGueltigVon().isEqual(now)) && (chatMessage.getGueltigBis().isEqual(now) || chatMessage.getGueltigBis().isAfter(now)));
+            dto.setGueltig((chatMessage.getGueltigVon().isBefore(now) || chatMessage.getGueltigVon().isEqual(now))
+                    && (chatMessage.getGueltigBis().isEqual(now) || chatMessage.getGueltigBis().isAfter(now)));
         }
     }
 }

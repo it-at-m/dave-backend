@@ -1,9 +1,7 @@
 package de.muenchen.dave.domain.pdf.helper;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
-
+import lombok.Data;
 
 @Data
 public class DatentabellePdfZaehldatum {

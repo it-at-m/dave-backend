@@ -9,10 +9,6 @@ import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +17,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -34,27 +32,27 @@ public class ZeitauswahlService {
     }
 
     public ZeitauswahlDTO determinePossibleZeitauswahl(final String zaehldauer,
-                                                       final String zaehlungId,
-                                                       final boolean sonderzaehlung) {
+            final String zaehlungId,
+            final boolean sonderzaehlung) {
         final ZeitauswahlDTO optionsZeitauswahl;
         final Zaehldauer zd = Zaehldauer.valueOf(zaehldauer);
 
         switch (zd) {
-            case DAUER_2_X_4_STUNDEN:
-                optionsZeitauswahl = getZeitauswahlFor2x4h();
-                break;
-            case DAUER_13_STUNDEN:
-                optionsZeitauswahl = getZeitauswahlFor13h(sonderzaehlung);
-                break;
-            case DAUER_16_STUNDEN:
-                optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId, sonderzaehlung);
-                break;
-            case SONSTIGE:
-                optionsZeitauswahl = getZeitauswahlForSonstige(zaehlungId);
-                break;
-            default:
-                optionsZeitauswahl = getZeitauswahlFor24h();
-                break;
+        case DAUER_2_X_4_STUNDEN:
+            optionsZeitauswahl = getZeitauswahlFor2x4h();
+            break;
+        case DAUER_13_STUNDEN:
+            optionsZeitauswahl = getZeitauswahlFor13h(sonderzaehlung);
+            break;
+        case DAUER_16_STUNDEN:
+            optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId, sonderzaehlung);
+            break;
+        case SONSTIGE:
+            optionsZeitauswahl = getZeitauswahlForSonstige(zaehlungId);
+            break;
+        default:
+            optionsZeitauswahl = getZeitauswahlFor24h();
+            break;
         }
         return optionsZeitauswahl;
     }
@@ -141,24 +139,24 @@ public class ZeitauswahlService {
     private Set<Zeitblock> getAllHoursOfBlock(final Zeitblock block) {
         final Set<Zeitblock> hours = new TreeSet<>();
         switch (block) {
-            case ZB_00_06:
-                hours.addAll(getHoursOf00Bis06());
-                break;
-            case ZB_06_10:
-                hours.addAll(getHoursOf06Bis10());
-                break;
-            case ZB_10_15:
-                hours.addAll(getHoursOf10Bis15());
-                break;
-            case ZB_15_19:
-                hours.addAll(getHoursOf15Bis19());
-                break;
-            case ZB_19_24:
-                hours.addAll(getHoursOf19Bis24());
-                break;
-            default:
-                hours.addAll(getHoursOf00Bis24());
-                break;
+        case ZB_00_06:
+            hours.addAll(getHoursOf00Bis06());
+            break;
+        case ZB_06_10:
+            hours.addAll(getHoursOf06Bis10());
+            break;
+        case ZB_10_15:
+            hours.addAll(getHoursOf10Bis15());
+            break;
+        case ZB_15_19:
+            hours.addAll(getHoursOf15Bis19());
+            break;
+        case ZB_19_24:
+            hours.addAll(getHoursOf19Bis24());
+            break;
+        default:
+            hours.addAll(getHoursOf00Bis24());
+            break;
         }
         return hours;
     }
@@ -244,180 +242,180 @@ public class ZeitauswahlService {
 
         hoursMap.forEach((key, value) -> {
             switch (key) {
-                case 0:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_00_01);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_00_01);
-                    }
-                    break;
-                case 1:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_01_02);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_01_02);
-                    }
-                    break;
-                case 2:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_02_03);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_02_03);
-                    }
-                    break;
-                case 3:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_03_04);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_03_04);
-                    }
-                    break;
-                case 4:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_04_05);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_04_05);
-                    }
-                    break;
-                case 5:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_05_06);
-                        blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_05_06);
-                    }
-                    break;
-                case 6:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_06_07);
-                        blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_06_07);
-                    }
-                    break;
-                case 7:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_07_08);
-                        blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_07_08);
-                    }
-                    break;
-                case 8:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_08_09);
-                        blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_08_09);
-                    }
-                    break;
-                case 9:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_09_10);
-                        blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_09_10);
-                    }
-                    break;
-                case 10:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_10_11);
-                        blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_10_11);
-                    }
-                    break;
-                case 11:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_11_12);
-                        blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_11_12);
-                    }
-                    break;
-                case 12:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_12_13);
-                        blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_12_13);
-                    }
-                    break;
-                case 13:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_13_14);
-                        blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_13_14);
-                    }
-                    break;
-                case 14:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_14_15);
-                        blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_14_15);
-                    }
-                    break;
-                case 15:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_15_16);
-                        blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_15_16);
-                    }
-                    break;
-                case 16:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_16_17);
-                        blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_16_17);
-                    }
-                    break;
-                case 17:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_17_18);
-                        blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_17_18);
-                    }
-                    break;
-                case 18:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_18_19);
-                        blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_18_19);
-                    }
-                    break;
-                case 19:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_19_20);
-                        blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_19_20);
-                    }
-                    break;
-                case 20:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_20_21);
-                        blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_20_21);
-                    }
-                    break;
-                case 21:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_21_22);
-                        blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_21_22);
-                    }
-                    break;
-                case 22:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_22_23);
-                        blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_22_23);
-                    }
-                    break;
-                case 23:
-                    if (value.size() == 4) {
-                        hours.add(Zeitblock.ZB_23_24);
-                        blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_23_24);
-                    }
-                    break;
+            case 0:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_00_01);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_00_01);
+                }
+                break;
+            case 1:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_01_02);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_01_02);
+                }
+                break;
+            case 2:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_02_03);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_02_03);
+                }
+                break;
+            case 3:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_03_04);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_03_04);
+                }
+                break;
+            case 4:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_04_05);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_04_05);
+                }
+                break;
+            case 5:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_05_06);
+                    blocksMap.get(Zeitblock.ZB_00_06).add(Zeitblock.ZB_05_06);
+                }
+                break;
+            case 6:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_06_07);
+                    blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_06_07);
+                }
+                break;
+            case 7:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_07_08);
+                    blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_07_08);
+                }
+                break;
+            case 8:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_08_09);
+                    blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_08_09);
+                }
+                break;
+            case 9:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_09_10);
+                    blocksMap.get(Zeitblock.ZB_06_10).add(Zeitblock.ZB_09_10);
+                }
+                break;
+            case 10:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_10_11);
+                    blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_10_11);
+                }
+                break;
+            case 11:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_11_12);
+                    blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_11_12);
+                }
+                break;
+            case 12:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_12_13);
+                    blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_12_13);
+                }
+                break;
+            case 13:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_13_14);
+                    blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_13_14);
+                }
+                break;
+            case 14:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_14_15);
+                    blocksMap.get(Zeitblock.ZB_10_15).add(Zeitblock.ZB_14_15);
+                }
+                break;
+            case 15:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_15_16);
+                    blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_15_16);
+                }
+                break;
+            case 16:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_16_17);
+                    blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_16_17);
+                }
+                break;
+            case 17:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_17_18);
+                    blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_17_18);
+                }
+                break;
+            case 18:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_18_19);
+                    blocksMap.get(Zeitblock.ZB_15_19).add(Zeitblock.ZB_18_19);
+                }
+                break;
+            case 19:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_19_20);
+                    blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_19_20);
+                }
+                break;
+            case 20:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_20_21);
+                    blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_20_21);
+                }
+                break;
+            case 21:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_21_22);
+                    blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_21_22);
+                }
+                break;
+            case 22:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_22_23);
+                    blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_22_23);
+                }
+                break;
+            case 23:
+                if (value.size() == 4) {
+                    hours.add(Zeitblock.ZB_23_24);
+                    blocksMap.get(Zeitblock.ZB_19_24).add(Zeitblock.ZB_23_24);
+                }
+                break;
             }
         });
 
         blocksMap.forEach((key, value) -> {
             switch (key) {
-                case ZB_00_06:
-                    if (value.size() == 6) {
-                        blocks.add(Zeitblock.ZB_00_06);
-                    }
-                    break;
-                case ZB_06_10:
-                    if (value.size() == 4) {
-                        blocks.add(Zeitblock.ZB_06_10);
-                    }
-                    break;
-                case ZB_10_15:
-                    if (value.size() == 5) {
-                        blocks.add(Zeitblock.ZB_10_15);
-                    }
-                    break;
-                case ZB_15_19:
-                    if (value.size() == 4) {
-                        blocks.add(Zeitblock.ZB_15_19);
-                    }
-                    break;
-                case ZB_19_24:
-                    if (value.size() == 5) {
-                        blocks.add(Zeitblock.ZB_19_24);
-                    }
-                    break;
+            case ZB_00_06:
+                if (value.size() == 6) {
+                    blocks.add(Zeitblock.ZB_00_06);
+                }
+                break;
+            case ZB_06_10:
+                if (value.size() == 4) {
+                    blocks.add(Zeitblock.ZB_06_10);
+                }
+                break;
+            case ZB_10_15:
+                if (value.size() == 5) {
+                    blocks.add(Zeitblock.ZB_10_15);
+                }
+                break;
+            case ZB_15_19:
+                if (value.size() == 4) {
+                    blocks.add(Zeitblock.ZB_15_19);
+                }
+                break;
+            case ZB_19_24:
+                if (value.size() == 5) {
+                    blocks.add(Zeitblock.ZB_19_24);
+                }
+                break;
             }
         });
 

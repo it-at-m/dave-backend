@@ -6,15 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.Type;
-
+import java.time.LocalDateTime;
+import java.util.UUID;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
@@ -25,9 +18,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 @Entity
 // Definition of getter, setter, ...
@@ -39,22 +37,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(indexes = {
-        @Index(
-                name = "index_zaehlung",
-                columnList = "zaehlung_id"
-        ),
-        @Index(
-                name = "index_combined_1",
-                columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"
-        ),
-        @Index(
-                name = "index_combined_2",
-                columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"
-        ),
-        @Index(
-                name = "index_combined_3",
-                columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type"
-        )
+        @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
+        @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
+        @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
+        @Index(name = "index_combined_3", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type")
 })
 public class Zeitintervall extends BaseEntity {
 
@@ -132,5 +118,3 @@ public class Zeitintervall extends BaseEntity {
     private Fahrbeziehung fahrbeziehung;
 
 }
-
-

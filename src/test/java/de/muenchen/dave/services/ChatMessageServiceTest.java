@@ -19,7 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 
-
 public class ChatMessageServiceTest {
 
     private final ChatMessageService chatMessageService;
@@ -35,8 +34,7 @@ public class ChatMessageServiceTest {
                 this.chatMessageRepository,
                 new ChatMessageMapperImpl(),
                 this.indexService,
-                this.emailSendService
-        );
+                this.emailSendService);
     }
 
     @Test

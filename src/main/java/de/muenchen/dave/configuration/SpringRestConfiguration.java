@@ -14,7 +14,6 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
-
 @Configuration
 public class SpringRestConfiguration implements RepositoryRestConfigurer {
 
