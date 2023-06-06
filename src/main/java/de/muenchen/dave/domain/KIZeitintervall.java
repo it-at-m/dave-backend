@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain;
 
+import javax.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Range;
-
-import javax.validation.constraints.Min;
 
 /**
  * Diese Klasse stellt die für das Ausführen von Vorhersagen notwendige Repräsentation eines

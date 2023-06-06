@@ -25,30 +25,29 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.IndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.DomainValues;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private static final String BELASTUNGSPLAN_TITLE = "Belastungsplan - Zählstelle ";
-    private static final String GANGLINIE_TITLE = "Ganglinie - Zählstelle ";
-    private static final String DATENTABELLE_TITLE = "Listenausgabe - Zählstelle ";
-    private static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
     public static final String CHART_TITLE_GESAMTE_ZÄHLSTELLE = "Gesamte Zählstelle (Zulauf)";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
     public static final String CHART_TITLE_CLOSE_PARENTHESIS = ")";
+    private static final String BELASTUNGSPLAN_TITLE = "Belastungsplan - Zählstelle ";
+    private static final String GANGLINIE_TITLE = "Ganglinie - Zählstelle ";
+    private static final String DATENTABELLE_TITLE = "Listenausgabe - Zählstelle ";
+    private static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String CHART_TITLE_BLOCK = "Block";
     private static final String CHART_TITLE_UHR = "Uhr";
     private static final String UHRZEIT_23_24 = "23 - 24";
@@ -221,6 +220,54 @@ public class FillPdfBeanService {
 
     }
 
+    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO) {
+        return optionsDTO.getVonKnotenarm() != null || optionsDTO.getNachKnotenarm() != null;
+    }
+
+    /**
+     * Diese Methode gibt den jeweiligen, in den options gewählten Zeitblock zurück in der Form:
+     * "0 - 6 Uhr"
+     * "15 - 19 Uhr"
+     * "0 - 24 Uhr"
+     *
+     * @param optionsDTO Options aus dem Frontend
+     */
+    static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
+        final StringBuilder timeblock = new StringBuilder();
+        timeblock.append(optionsDTO.getZeitblock().getStart().getHour());
+        timeblock.append(StringUtils.SPACE);
+        timeblock.append(MINUS);
+        timeblock.append(StringUtils.SPACE);
+        // Bei 23 Uhr muss unterschieden werden zwischen 23:00 (=> 23 Uhr) und 23:59.999999 (24 Uhr)
+        if (optionsDTO.getZeitblock().getEnd().getHour() == UHRZEIT_HOURS_23
+                && optionsDTO.getZeitblock().getEnd().getMinute() == UHRZEIT_MINUTES_59) {
+            timeblock.append(UHRZEIT_24_STRING);
+        } else {
+            timeblock.append(optionsDTO.getZeitblock().getEnd().getHour());
+        }
+
+        timeblock.append(StringUtils.SPACE);
+        timeblock.append(CHART_TITLE_UHR);
+        return timeblock.toString();
+    }
+
+    /**
+     * Berechnet die Zellengröße für die Tabellen der Ganglinie und Zeitreihe
+     *
+     * @param tdCount Anzahl der Zellen
+     * @return Zellengröße als String in mm
+     */
+    public static String calculateCellWidth(final Integer tdCount) {
+        if (tdCount < 7) {
+            // Bei wenig Spalten => Maximale Zellenbreite setzen
+            return CELL_WIDTH_20_MM;
+        } else {
+            // Sonst dynamisch aufteilen
+            final Integer cellWidth = 160 / (tdCount + 1);
+            return (cellWidth + CELL_WIDTH_UNITS);
+        }
+    }
+
     /**
      * Erstellt den ChartTitle für das Diagramm eines Belastungsplanes.
      * Bei Tageswert wird nur Tageswert angezeigt. Bei Block und Stunde wird noch die ausgewählte Zeit
@@ -293,37 +340,6 @@ public class FillPdfBeanService {
                         chartTitle.append(")");
                     }
         return chartTitle.toString();
-    }
-
-    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO) {
-        return optionsDTO.getVonKnotenarm() != null || optionsDTO.getNachKnotenarm() != null;
-    }
-
-    /**
-     * Diese Methode gibt den jeweiligen, in den options gewählten Zeitblock zurück in der Form:
-     * "0 - 6 Uhr"
-     * "15 - 19 Uhr"
-     * "0 - 24 Uhr"
-     *
-     * @param optionsDTO Options aus dem Frontend
-     */
-    static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
-        final StringBuilder timeblock = new StringBuilder();
-        timeblock.append(optionsDTO.getZeitblock().getStart().getHour());
-        timeblock.append(StringUtils.SPACE);
-        timeblock.append(MINUS);
-        timeblock.append(StringUtils.SPACE);
-        // Bei 23 Uhr muss unterschieden werden zwischen 23:00 (=> 23 Uhr) und 23:59.999999 (24 Uhr)
-        if (optionsDTO.getZeitblock().getEnd().getHour() == UHRZEIT_HOURS_23
-                && optionsDTO.getZeitblock().getEnd().getMinute() == UHRZEIT_MINUTES_59) {
-            timeblock.append(UHRZEIT_24_STRING);
-        } else {
-            timeblock.append(optionsDTO.getZeitblock().getEnd().getHour());
-        }
-
-        timeblock.append(StringUtils.SPACE);
-        timeblock.append(CHART_TITLE_UHR);
-        return timeblock.toString();
     }
 
     /**
@@ -467,23 +483,6 @@ public class FillPdfBeanService {
         gangliniePdf.setGanglinieTables(gtList);
 
         return gangliniePdf;
-    }
-
-    /**
-     * Berechnet die Zellengröße für die Tabellen der Ganglinie und Zeitreihe
-     *
-     * @param tdCount Anzahl der Zellen
-     * @return Zellengröße als String in mm
-     */
-    public static String calculateCellWidth(final Integer tdCount) {
-        if (tdCount < 7) {
-            // Bei wenig Spalten => Maximale Zellenbreite setzen
-            return CELL_WIDTH_20_MM;
-        } else {
-            // Sonst dynamisch aufteilen
-            final Integer cellWidth = 160 / (tdCount + 1);
-            return (cellWidth.toString() + CELL_WIDTH_UNITS);
-        }
     }
 
     /**

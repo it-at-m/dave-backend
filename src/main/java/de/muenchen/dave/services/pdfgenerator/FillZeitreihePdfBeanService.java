@@ -15,14 +15,13 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.IndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FillZeitreihePdfBeanService {
@@ -30,10 +29,10 @@ public class FillZeitreihePdfBeanService {
     public static final String DOCUMENT_TITLE_PREFIX = "Zeitreihenvergleich - Zählstelle ";
     public static final String ZUSATZINFORMATIONEN_ZEITREIHE_ZAEHLSTELLENKOMMENTAR = "Zählstellenkommentar:";
     public static final DateTimeFormatter ZUSATZINFORMATIONEN_ZEITREIHE_DATETIMEFORMATTER_MMMM_YYYY = DateTimeFormatter.ofPattern("MMMM yyyy:");
-    private IndexService indexService;
-    private ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
-    private ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
-    private ZeitauswahlService zeitauswahlService;
+    private final IndexService indexService;
+    private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
+    private final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
+    private final ZeitauswahlService zeitauswahlService;
 
     public FillZeitreihePdfBeanService(final IndexService indexService,
             final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService,
@@ -43,6 +42,38 @@ public class FillZeitreihePdfBeanService {
         this.processZaehldatenZeitreiheService = processZaehldatenZeitreiheService;
         this.zeitreiheTableOptionsMapper = zeitreiheTableOptionsMapper;
         this.zeitauswahlService = zeitauswahlService;
+    }
+
+    /**
+     * Hier werden die
+     * {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent}
+     * gesetzt.
+     * Es sollen die einzelnen Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist,
+     * soll auch dieser angezeigt werden.
+     * Der Platz wird nur angezeigt wenn die Straßennamen nicht im Platznamen zu finden sind.
+     *
+     * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
+     * @param zaehlung Im Frontend ausgewählte Zählung
+     */
+    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung) {
+        // Knotenarme nach Nummer sortieren und setzen
+        final List<Knotenarm> knotenarmList = zaehlung.getKnotenarme()
+                .stream()
+                .sorted(Comparator.comparing(Knotenarm::getNummer))
+                .collect(Collectors.toList());
+        zeitreihePdf.getZaehlstelleninformationenZeitreihe().setKnotenarme(knotenarmList);
+
+        // Prüfen, ob irgendein Knotenarm im Platznamen vorkommt
+        boolean platzVorhanden = knotenarmList
+                .stream()
+                .anyMatch(knotenarm -> !zaehlung.getKreuzungsname().contains(knotenarm.getStrassenname()));
+
+        // Wenn kein Knotenarm im Platz vorkommt => Platz setzen
+        if (platzVorhanden) {
+            zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatzVorhanden(true);
+            zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatz(zaehlung.getKreuzungsname());
+        }
+
     }
 
     /**
@@ -162,37 +193,5 @@ public class FillZeitreihePdfBeanService {
         zeitreihePdf.setSindZusatzinformationenVorhanden(zusatzinformationenZeitreihePdfComponentList.size() > 0);
 
         zeitreihePdf.setZusatzinformationenZeitreihe(zusatzinformationenZeitreihePdfComponentList);
-    }
-
-    /**
-     * Hier werden die
-     * {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent}
-     * gesetzt.
-     * Es sollen die einzelnen Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist,
-     * soll auch dieser angezeigt werden.
-     * Der Platz wird nur angezeigt wenn die Straßennamen nicht im Platznamen zu finden sind.
-     *
-     * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
-     * @param zaehlung Im Frontend ausgewählte Zählung
-     */
-    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung) {
-        // Knotenarme nach Nummer sortieren und setzen
-        final List<Knotenarm> knotenarmList = zaehlung.getKnotenarme()
-                .stream()
-                .sorted(Comparator.comparing(Knotenarm::getNummer))
-                .collect(Collectors.toList());
-        zeitreihePdf.getZaehlstelleninformationenZeitreihe().setKnotenarme(knotenarmList);
-
-        // Prüfen, ob irgendein Knotenarm im Platznamen vorkommt
-        boolean platzVorhanden = knotenarmList
-                .stream()
-                .anyMatch(knotenarm -> !zaehlung.getKreuzungsname().contains(knotenarm.getStrassenname()));
-
-        // Wenn kein Knotenarm im Platz vorkommt => Platz setzen
-        if (platzVorhanden) {
-            zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatzVorhanden(true);
-            zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatz(zaehlung.getKreuzungsname());
-        }
-
     }
 }

@@ -5,20 +5,12 @@ import ai.onnxruntime.OnnxValue;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
+import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -26,6 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
 
 /**
  * Dieser Service ist für die Vorhersagen mittels ONNX-Modellen zuständig.
@@ -35,12 +34,9 @@ import java.util.stream.Collectors;
 public class KIService {
 
     private static final String TENSOR_KEY = "int64_input";
-
-    private OrtEnvironment environment;
-
-    private OrtSession session;
-
     private final KIZeitintervallMapper mapper;
+    private OrtEnvironment environment;
+    private OrtSession session;
 
     @Autowired
     public KIService(@Value("${dave.onnx.model-path}") String modelFilePath, KIZeitintervallMapper mapper) throws PredictionFailedException {
@@ -98,7 +94,8 @@ public class KIService {
         final Optional<List<Zeitintervall>> wrongDimensions = zeitintervalle.stream()
                 .filter(zeitintervall -> zeitintervall.size() != Zaehldauer.DAUER_2_X_4_STUNDEN.getAnzahlZeitintervalle())
                 .findAny();
-        if (wrongDimensions.isPresent()) throw new PredictionFailedException(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
+        if (wrongDimensions.isPresent())
+            throw new PredictionFailedException(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
 
         final long[][] predictionData = convertToOnnxCompatibleFormat(zeitintervalle);
 
@@ -149,7 +146,8 @@ public class KIService {
      */
     private long[][] runPrediction(Map<String, OnnxTensor> tensorData) throws PredictionFailedException {
         try (var result = session.run(tensorData)) {
-            if (result.size() == 0) throw new PredictionFailedException(PredictionFailedException.ONNX_NO_PREDICTION_RESULTS_ERROR);
+            if (result.size() == 0)
+                throw new PredictionFailedException(PredictionFailedException.ONNX_NO_PREDICTION_RESULTS_ERROR);
             final OnnxValue onnxValue = result.get(0);
             if (onnxValue.getType() == OnnxValue.OnnxValueType.ONNX_TYPE_UNKNOWN)
                 throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);

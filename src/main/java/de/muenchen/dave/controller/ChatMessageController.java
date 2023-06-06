@@ -4,6 +4,9 @@ import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
+import java.util.List;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,19 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.UUID;
-
 @Slf4j
 @RestController
 @RequestMapping("/chat-message")
 public class ChatMessageController {
 
-    private final ChatMessageService chatMessageService;
-
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlungId";
     private static final String CALLING_PARTICIPANT_ID = "callingParticipantId";
+    private final ChatMessageService chatMessageService;
 
     public ChatMessageController(final ChatMessageService chatMessageService) {
         this.chatMessageService = chatMessageService;

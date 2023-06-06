@@ -8,19 +8,18 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Hilfklasse zur Ermittlung der gleitenden Spitzenstunde
@@ -91,6 +90,15 @@ public class GleitenderZeitintervall {
             }
         }
         return gleitenderZeitintervall;
+    }
+
+    public static int calcNumberOfZeitintervallePerHour(final List<Zeitintervall> zeitintervalle) {
+        final var minutesPerZeitintervall = new AtomicLong(DEFAULT_MINUTES_ZEITINTERVALL);
+        zeitintervalle.stream()
+                .findFirst()
+                .ifPresent(zeitintervall -> minutesPerZeitintervall.set(
+                        zeitintervall.getStartUhrzeit().until(zeitintervall.getEndeUhrzeit(), ChronoUnit.MINUTES)));
+        return MINUTES_PER_HOUR / minutesPerZeitintervall.intValue();
     }
 
     private void add(final Zeitintervall zeitintervall) {
@@ -231,15 +239,6 @@ public class GleitenderZeitintervall {
                     .sum();
         }
         return result;
-    }
-
-    public static int calcNumberOfZeitintervallePerHour(final List<Zeitintervall> zeitintervalle) {
-        final var minutesPerZeitintervall = new AtomicLong(DEFAULT_MINUTES_ZEITINTERVALL);
-        zeitintervalle.stream()
-                .findFirst()
-                .ifPresent(zeitintervall -> minutesPerZeitintervall.set(
-                        zeitintervall.getStartUhrzeit().until(zeitintervall.getEndeUhrzeit(), ChronoUnit.MINUTES)));
-        return MINUTES_PER_HOUR / minutesPerZeitintervall.intValue();
     }
 
 }

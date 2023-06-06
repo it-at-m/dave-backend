@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch;
 
+import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.CompletionField;
@@ -7,8 +8,6 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
-
-import javax.persistence.Id;
 
 @Data
 @Document(indexName = "suggestion")

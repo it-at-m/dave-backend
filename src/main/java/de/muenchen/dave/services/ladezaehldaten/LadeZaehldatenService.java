@@ -21,14 +21,6 @@ import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.IndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -37,45 +29,35 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class LadeZaehldatenService {
 
-    private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
-
     public static final String ZEITAUSWAHL_SPITZENSTUNDE = "Spitzenstunde";
-
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_KFZ = ZEITAUSWAHL_SPITZENSTUNDE + " KFZ";
-
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_RAD = ZEITAUSWAHL_SPITZENSTUNDE + " Rad";
-
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_FUSS = ZEITAUSWAHL_SPITZENSTUNDE + " Fuß";
-
     public static final String TAGESWERT = "Tageswert";
-
     public static final String GESAMT = "Gesamt";
-
     public static final String BLOCK = "Block";
-
     public static final String STUNDE = "Stunde";
-
     public static final String SPITZENSTUNDE_TAG = "SpStdTag";
-
     public static final String SPITZENSTUNDE_TAG_KFZ = SPITZENSTUNDE_TAG + " KFZ";
-
     public static final String SPITZENSTUNDE_TAG_RAD = SPITZENSTUNDE_TAG + " Rad";
-
     public static final String SPITZENSTUNDE_TAG_FUSS = SPITZENSTUNDE_TAG + " Fuß";
-
     public static final String SPITZENSTUNDE_BLOCK = "SpStdBlock";
-
     public static final String SPITZENSTUNDE_BLOCK_KFZ = SPITZENSTUNDE_BLOCK + " KFZ";
-
     public static final String SPITZENSTUNDE_BLOCK_RAD = SPITZENSTUNDE_BLOCK + " Rad";
-
     public static final String SPITZENSTUNDE_BLOCK_FUSS = SPITZENSTUNDE_BLOCK + " Fuß";
-
+    private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
     private final ZeitintervallRepository zeitintervallRepository;
 
     private final IndexService indexService;
@@ -129,14 +111,11 @@ public class LadeZaehldatenService {
      */
     private static boolean shouldZeitintervallBeReturned(final Zeitintervall zeitintervall,
             final Zeitblock zeitblock) {
-        boolean returnZeitintervall = true;
-        if ((!Zeitblock.ZB_00_24.equals(zeitblock) && !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL))
-                && (zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ
-                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
-                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
-                        || zeitintervall.getSortingIndex() == ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY)) {
-            returnZeitintervall = false;
-        }
+        boolean returnZeitintervall = (Zeitblock.ZB_00_24.equals(zeitblock) || zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL))
+                || (zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ
+                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
+                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
+                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY);
         if (zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
                 && (SPITZENSTUNDEN_BLOCK_SORTING_INDEX.contains(zeitintervall.getSortingIndex()))) {
             returnZeitintervall = false;
@@ -363,7 +342,7 @@ public class LadeZaehldatenService {
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
-        log.debug("Types according chosen options: {}", types.toString());
+        log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
                 zaehlungId,
                 options.getZeitblock().getStart(),

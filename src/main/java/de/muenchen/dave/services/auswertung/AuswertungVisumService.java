@@ -15,17 +15,16 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -47,6 +46,64 @@ public class AuswertungVisumService {
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.zaehlungMapper = zaehlungMapper;
         this.ladeZaehldatenService = ladeZaehldatenService;
+    }
+
+    public static boolean isZaehlungRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
+        return StringUtils.equals(jahr, zaehlung.getJahr())
+                && StringUtils.equals(monat, zaehlung.getMonat());
+    }
+
+    /**
+     * Diese Methode erstellt für eine Fahrbeziehung folgende Visum-relevanten Objekte.
+     * <p>
+     * Für eine Kreuzung wird eine FahrbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und
+     * ein zweite FahrbeziehungVisum für alle Knotenarme zum nach-Knotenarm erstellt.
+     * <p>
+     * Für den Kreisverkehr wird nur eine FahrbeziehungVisum erstellt.
+     *
+     * @param fahrbeziehung Fahrbeziehung
+     * @return die Visum-relevanten Fahrbeziehungsobjekte zur Extraktion der Zeitintervalle.
+     */
+    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung) {
+        final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = new ArrayList<>();
+        FahrbeziehungVisumDTO fahrbeziehungVisum;
+        if (BooleanUtils.isTrue(fahrbeziehung.getIsKreuzung())) {
+            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
+            fahrbeziehungVisum.setVon(fahrbeziehung.getVon());
+            fahrbeziehungVisum.setNach(null);
+            fahrbeziehungenVisum.add(fahrbeziehungVisum);
+            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
+            fahrbeziehungVisum.setVon(null);
+            fahrbeziehungVisum.setNach(fahrbeziehung.getNach());
+            fahrbeziehungenVisum.add(fahrbeziehungVisum);
+        } else {
+            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
+            fahrbeziehungVisum.setVon(fahrbeziehung.getKnotenarm());
+            fahrbeziehungVisum.setNach(null);
+            fahrbeziehungenVisum.add(fahrbeziehungVisum);
+            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
+            fahrbeziehungVisum.setVon(null);
+            fahrbeziehungVisum.setNach(fahrbeziehung.getKnotenarm());
+            fahrbeziehungenVisum.add(fahrbeziehungVisum);
+        }
+        return fahrbeziehungenVisum;
+    }
+
+    /**
+     * Diese Methode erstellt die Optionen zur extraktion der Daten in Methode
+     * {@link AuswertungVisumService#ladeZaehldaten(FahrbeziehungVisumDTO, Zaehlung)}.
+     *
+     * @param fahrbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
+     * @param zaehlung zum setzen der Optionen.
+     * @return die Optionen für die Datenextraktion.
+     */
+    public static OptionsDTO createOptions(final FahrbeziehungVisumDTO fahrbeziehungVisum,
+            final Zaehlung zaehlung) {
+        final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
+        options.setVonKnotenarm(fahrbeziehungVisum.getVon());
+        options.setNachKnotenarm(fahrbeziehungVisum.getNach());
+        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        return options;
     }
 
     /**
@@ -106,64 +163,6 @@ public class AuswertungVisumService {
                 })
                 .filter(ObjectUtils::isNotEmpty)
                 .collect(Collectors.toList());
-    }
-
-    public static boolean isZaehlungRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
-        return StringUtils.equals(jahr, zaehlung.getJahr())
-                && StringUtils.equals(monat, zaehlung.getMonat());
-    }
-
-    /**
-     * Diese Methode erstellt für eine Fahrbeziehung folgende Visum-relevanten Objekte.
-     * <p>
-     * Für eine Kreuzung wird eine FahrbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und
-     * ein zweite FahrbeziehungVisum für alle Knotenarme zum nach-Knotenarm erstellt.
-     * <p>
-     * Für den Kreisverkehr wird nur eine FahrbeziehungVisum erstellt.
-     *
-     * @param fahrbeziehung Fahrbeziehung
-     * @return die Visum-relevanten Fahrbeziehungsobjekte zur Extraktion der Zeitintervalle.
-     */
-    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung) {
-        final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = new ArrayList<>();
-        FahrbeziehungVisumDTO fahrbeziehungVisum;
-        if (BooleanUtils.isTrue(fahrbeziehung.getIsKreuzung())) {
-            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(fahrbeziehung.getVon());
-            fahrbeziehungVisum.setNach(null);
-            fahrbeziehungenVisum.add(fahrbeziehungVisum);
-            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(null);
-            fahrbeziehungVisum.setNach(fahrbeziehung.getNach());
-            fahrbeziehungenVisum.add(fahrbeziehungVisum);
-        } else {
-            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(fahrbeziehung.getKnotenarm());
-            fahrbeziehungVisum.setNach(null);
-            fahrbeziehungenVisum.add(fahrbeziehungVisum);
-            fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(null);
-            fahrbeziehungVisum.setNach(fahrbeziehung.getKnotenarm());
-            fahrbeziehungenVisum.add(fahrbeziehungVisum);
-        }
-        return fahrbeziehungenVisum;
-    }
-
-    /**
-     * Diese Methode erstellt die Optionen zur extraktion der Daten in Methode
-     * {@link AuswertungVisumService#ladeZaehldaten(FahrbeziehungVisumDTO, Zaehlung)}.
-     *
-     * @param fahrbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
-     * @param zaehlung zum setzen der Optionen.
-     * @return die Optionen für die Datenextraktion.
-     */
-    public static OptionsDTO createOptions(final FahrbeziehungVisumDTO fahrbeziehungVisum,
-            final Zaehlung zaehlung) {
-        final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
-        options.setVonKnotenarm(fahrbeziehungVisum.getVon());
-        options.setNachKnotenarm(fahrbeziehungVisum.getNach());
-        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
-        return options;
     }
 
     /**

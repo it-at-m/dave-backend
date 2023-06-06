@@ -2,11 +2,10 @@ package de.muenchen.dave.domain.dtos.bearbeiten;
 
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import lombok.Data;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
 public class BearbeiteZaehlungDTO {

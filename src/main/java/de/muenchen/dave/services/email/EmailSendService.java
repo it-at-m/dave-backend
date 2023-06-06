@@ -7,6 +7,9 @@ import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.IndexService;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -16,10 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener
  * Konfiguration.
@@ -28,24 +27,19 @@ import java.util.List;
 @Service
 public class EmailSendService {
 
-    @Value("${dave.email.address}")
-    private String emailAddress;
-
-    @Value("${dave.email.sender.url.adminportal}")
-    private String urlAdminportal;
-
-    @Value("${dave.email.sender.url.selfserviceportal}")
-    private String urlSelfserviceportal;
-
-    @Value("${dave.email.sender.hostname}")
-    private String serverHostname;
-
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
-
     private final EmailAddressService emailAddressService;
     private final DienstleisterService dienstleisterService;
     private final IndexService indexService;
+    @Value("${dave.email.address}")
+    private String emailAddress;
+    @Value("${dave.email.sender.url.adminportal}")
+    private String urlAdminportal;
+    @Value("${dave.email.sender.url.selfserviceportal}")
+    private String urlSelfserviceportal;
+    @Value("${dave.email.sender.hostname}")
+    private String serverHostname;
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
 
     public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService,
             final @Lazy IndexService indexService) {

@@ -2,14 +2,13 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface DatentabelleCsvZaehldatumMapper {

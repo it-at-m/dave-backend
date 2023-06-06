@@ -17,14 +17,13 @@ import de.muenchen.dave.domain.pdf.templates.ReportPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.IndexService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -46,7 +45,11 @@ public class ReportService {
     // CSS
     private static final String PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_CUSTOM = "/pdf/templates/parts/report/datatable-custom-css.mustache";
     private static final String PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_FIXED = "/pdf/templates/parts/report/datatable-fixed-css.mustache";
-
+    private final GeneratePdfService generatePdfService;
+    private final FillPdfBeanService fillPdfBeanService;
+    private final ProcessZaehldatenService processZaehldatenService;
+    private final IndexService indexService;
+    private final LadeZaehldatumMapper ladeZaehldatumMapper;
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
     private Mustache heading1AssetMustache;
@@ -63,12 +66,6 @@ public class ReportService {
     // CSS
     private Mustache dataTableCssMustacheCustom;
     private Mustache dataTableCssMustacheFixed;
-
-    private final GeneratePdfService generatePdfService;
-    private final FillPdfBeanService fillPdfBeanService;
-    private final ProcessZaehldatenService processZaehldatenService;
-    private final IndexService indexService;
-    private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,

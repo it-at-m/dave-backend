@@ -12,15 +12,14 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -85,6 +84,57 @@ public class ProcessZaehldatenHeatmapService {
         heatmapEntry.add(klassenKategorienIndex);
         heatmapEntry.add(value);
         return heatmapEntry;
+    }
+
+    /**
+     * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
+     * befinden, wird das Diagramm in zwei Unterdiagramme aufgeteilt.
+     * Die Aufteilung der Daten für die beiden Unterdiagramme wird in der mitte der X-Achse
+     * des Gesamtdiagramms vorgenommen.
+     *
+     * @param ladeZaehldatenHeatmap Die für das Diagramm aufbereitete Daten.
+     *            Die unterteilung in Unterdiagramme ist noch nicht durchgeführt.
+     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
+     *            und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
+     */
+    public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(
+            final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+            final OptionsDTO options) {
+
+        if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
+                && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
+                && !(StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)
+                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)
+                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS))) {
+
+            // Split X axis data
+            int splittedSize = ladeZaehldatenHeatmap.getXAxisDataFirstChart().size() / SPLIT_DIVISOR;
+
+            List<List<String>> splittetXAxisData = ListUtils.partition(
+                    ladeZaehldatenHeatmap.getXAxisDataFirstChart(),
+                    splittedSize);
+            ladeZaehldatenHeatmap.setXAxisDataFirstChart(new ArrayList<>(splittetXAxisData.get(0)));
+            ladeZaehldatenHeatmap.setXAxisDataSecondChart(new ArrayList<>(splittetXAxisData.get(1)));
+
+            // Split SeriesEntries (Y Axis) data
+            splittedSize = ladeZaehldatenHeatmap.getSeriesEntriesFirstChart().size() / SPLIT_DIVISOR;
+
+            List<List<List<Integer>>> splittedSeriesEntriesData = ListUtils.partition(
+                    ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(),
+                    splittedSize);
+
+            // Der Wert für die X-Achse muss für den zweiten Graph zurück gesetzt werden.
+            // Wenn seriesEntriesFirst- und -SecondChart nicht gleich lang sind muss ein Datenfehler vorliegen
+            final List<List<Integer>> seriesEntriesFirstChart = new ArrayList<>(splittedSeriesEntriesData.get(0));
+            final List<List<Integer>> seriesEntriesSecondChart = new ArrayList<>(splittedSeriesEntriesData.get(1));
+            for (int i = 0; (i < seriesEntriesFirstChart.size() && i < seriesEntriesSecondChart.size()); i++) {
+                seriesEntriesSecondChart.get(i).set(0, seriesEntriesFirstChart.get(i).get(0));
+            }
+
+            ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
+            ladeZaehldatenHeatmap.setSeriesEntriesSecondChart(seriesEntriesSecondChart);
+        }
     }
 
     /**
@@ -229,56 +279,5 @@ public class ProcessZaehldatenHeatmapService {
                 });
         splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(ladeZaehldatenHeatmap, options);
         return ladeZaehldatenHeatmap;
-    }
-
-    /**
-     * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
-     * befinden, wird das Diagramm in zwei Unterdiagramme aufgeteilt.
-     * Die Aufteilung der Daten für die beiden Unterdiagramme wird in der mitte der X-Achse
-     * des Gesamtdiagramms vorgenommen.
-     *
-     * @param ladeZaehldatenHeatmap Die für das Diagramm aufbereitete Daten.
-     *            Die unterteilung in Unterdiagramme ist noch nicht durchgeführt.
-     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
-     *            und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
-     */
-    public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(
-            final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
-            final OptionsDTO options) {
-
-        if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
-                && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
-                && !(StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)
-                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)
-                        || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS))) {
-
-            // Split X axis data
-            int splittedSize = ladeZaehldatenHeatmap.getXAxisDataFirstChart().size() / SPLIT_DIVISOR;
-
-            List<List<String>> splittetXAxisData = ListUtils.partition(
-                    ladeZaehldatenHeatmap.getXAxisDataFirstChart(),
-                    splittedSize);
-            ladeZaehldatenHeatmap.setXAxisDataFirstChart(new ArrayList<>(splittetXAxisData.get(0)));
-            ladeZaehldatenHeatmap.setXAxisDataSecondChart(new ArrayList<>(splittetXAxisData.get(1)));
-
-            // Split SeriesEntries (Y Axis) data
-            splittedSize = ladeZaehldatenHeatmap.getSeriesEntriesFirstChart().size() / SPLIT_DIVISOR;
-
-            List<List<List<Integer>>> splittedSeriesEntriesData = ListUtils.partition(
-                    ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(),
-                    splittedSize);
-
-            // Der Wert für die X-Achse muss für den zweiten Graph zurück gesetzt werden.
-            // Wenn seriesEntriesFirst- und -SecondChart nicht gleich lang sind muss ein Datenfehler vorliegen
-            final List<List<Integer>> seriesEntriesFirstChart = new ArrayList<>(splittedSeriesEntriesData.get(0));
-            final List<List<Integer>> seriesEntriesSecondChart = new ArrayList<>(splittedSeriesEntriesData.get(1));
-            for (int i = 0; (i < seriesEntriesFirstChart.size() && i < seriesEntriesSecondChart.size()); i++) {
-                seriesEntriesSecondChart.get(i).set(0, seriesEntriesFirstChart.get(i).get(0));
-            }
-
-            ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
-            ladeZaehldatenHeatmap.setSeriesEntriesSecondChart(seriesEntriesSecondChart);
-        }
     }
 }

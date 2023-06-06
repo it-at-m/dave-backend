@@ -1,5 +1,6 @@
 package de.muenchen.dave.configuration;
 
+import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +11,6 @@ import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-
-import java.time.Duration;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "de.muenchen.dave.repositories.elasticsearch")

@@ -5,10 +5,9 @@ import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
-@Component
+//@Component
 @Slf4j
 public class ZaehlungStatusUpdater {
 

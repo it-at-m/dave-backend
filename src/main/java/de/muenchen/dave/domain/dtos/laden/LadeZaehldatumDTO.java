@@ -11,11 +11,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import de.muenchen.dave.util.CalculationUtil;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import lombok.Data;
 
 @Data
 public class LadeZaehldatumDTO implements Serializable {

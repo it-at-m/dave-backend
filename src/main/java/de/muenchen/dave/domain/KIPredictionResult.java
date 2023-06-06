@@ -20,7 +20,8 @@ public class KIPredictionResult {
      * @throws IllegalArgumentException wenn die falsche Anzahl an Elementen übergeben wurde.
      */
     public static KIPredictionResult fromArray(long[] predictionResults) throws IllegalArgumentException, ArithmeticException {
-        if (predictionResults.length != 1) throw new IllegalArgumentException("Incorrect amount of elements provided. Array must contain 1 element.");
+        if (predictionResults.length != 1)
+            throw new IllegalArgumentException("Incorrect amount of elements provided. Array must contain 1 element.");
         return new KIPredictionResult(Math.toIntExact(predictionResults[0]));
     }
 

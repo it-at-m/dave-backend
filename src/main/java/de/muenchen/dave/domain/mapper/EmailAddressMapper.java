@@ -2,9 +2,8 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.EmailAddress;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
-import org.mapstruct.Mapper;
-
 import java.util.List;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface EmailAddressMapper {

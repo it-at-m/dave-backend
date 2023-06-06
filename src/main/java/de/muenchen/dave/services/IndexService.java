@@ -23,6 +23,16 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -36,37 +46,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 public class IndexService {
 
     private static final int DEFAULT_WEIGHT = 100;
-
-    private final ZaehlstelleIndex zaehlstelleIndex;
-
-    private final CustomSuggestIndex customSuggestIndex;
-
-    private final ZaehlungMapper zaehlungMapper;
-
-    private final ZaehlstelleMapper zaehlstelleMapper;
-
-    private final ZeitauswahlService zeitauswahlService;
-
-    private final ChatMessageService messageService;
-
     private static final String ZAEHLUNG_SUCHWORT = "suchwort";
-
+    private final ZaehlstelleIndex zaehlstelleIndex;
+    private final CustomSuggestIndex customSuggestIndex;
+    private final ZaehlungMapper zaehlungMapper;
+    private final ZaehlstelleMapper zaehlstelleMapper;
+    private final ZeitauswahlService zeitauswahlService;
+    private final ChatMessageService messageService;
     @Value(value = "${elasticsearch.host}")
     private String elasticsearchHost;
 

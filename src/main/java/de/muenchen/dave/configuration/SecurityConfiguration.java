@@ -47,7 +47,7 @@ public class SecurityConfiguration {
                         "/lade-auswertung-zaehlstellen-koordinate",
                         "/lade-auswertung-visum")
                 .permitAll()
-                // allow access to /actuator/info
+                // allow access to /actuator/infoZaehlungStatusUpdater
                 .antMatchers("/actuator/info").permitAll()
                 // allow access to /actuator/health for OpenShift Health Check
                 .antMatchers("/actuator/health").permitAll()
@@ -57,12 +57,16 @@ public class SecurityConfiguration {
                 .antMatchers("/actuator/health/readiness").permitAll()
                 // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
                 .antMatchers("/actuator/metrics").permitAll()
+                // h2-console
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .oauth2ResourceServer()
                 .jwt()
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
                 .jwtAuthenticationConverter(this.customJwtAuthenticationConverter);
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
         return http.build();
     }
 

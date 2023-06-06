@@ -9,13 +9,12 @@ import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.mapper.HochrechnungsfaktorMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.HochrechnungsfaktorRepository;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class HochrechnungsfaktorService {
@@ -30,6 +29,25 @@ public class HochrechnungsfaktorService {
             final HochrechnungsfaktorMapper hochrechnungsfaktorMapper) {
         this.hochrechnungsfaktorRepository = hochrechnungsfaktorRepository;
         this.hochrechnungsfaktorMapper = hochrechnungsfaktorMapper;
+    }
+
+    /**
+     * Setzte die fachlichen Attribute des im Parameter gegebenen DTOs
+     * in der im zweiten Parameter übergebene Entität.
+     *
+     * @param hofaDto DTO
+     * @param hofaEntity Bean
+     * @return die im zweiten Parameter übergebene Entität mit den fachlichen Daten der DTO.
+     */
+    public static Hochrechnungsfaktor setDtoDataToEntity(final HochrechnungsfaktorDTO hofaDto,
+            final Hochrechnungsfaktor hofaEntity) {
+        hofaEntity.setMatrix(hofaDto.getMatrix());
+        hofaEntity.setKfz(hofaDto.getKfz());
+        hofaEntity.setSv(hofaDto.getSv());
+        hofaEntity.setGv(hofaDto.getGv());
+        hofaEntity.setActive(hofaDto.isActive());
+        hofaEntity.setDefaultFaktor(hofaDto.isDefaultFaktor());
+        return hofaEntity;
     }
 
     /**
@@ -71,25 +89,6 @@ public class HochrechnungsfaktorService {
 
     public void deleteHochrechnungsfaktor(final UUID id) {
         hochrechnungsfaktorRepository.deleteById(id);
-    }
-
-    /**
-     * Setzte die fachlichen Attribute des im Parameter gegebenen DTOs
-     * in der im zweiten Parameter übergebene Entität.
-     *
-     * @param hofaDto DTO
-     * @param hofaEntity Bean
-     * @return die im zweiten Parameter übergebene Entität mit den fachlichen Daten der DTO.
-     */
-    public static Hochrechnungsfaktor setDtoDataToEntity(final HochrechnungsfaktorDTO hofaDto,
-            final Hochrechnungsfaktor hofaEntity) {
-        hofaEntity.setMatrix(hofaDto.getMatrix());
-        hofaEntity.setKfz(hofaDto.getKfz());
-        hofaEntity.setSv(hofaDto.getSv());
-        hofaEntity.setGv(hofaDto.getGv());
-        hofaEntity.setActive(hofaDto.isActive());
-        hofaEntity.setDefaultFaktor(hofaDto.isDefaultFaktor());
-        return hofaEntity;
     }
 
 }

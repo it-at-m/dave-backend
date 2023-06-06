@@ -27,6 +27,17 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,18 +51,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -74,6 +73,248 @@ public class ProcessZaehldatenBelastungsplanService {
         this.zeitintervallRepository = zeitintervallRepository;
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.ladeZaehldatenService = ladeZaehldatenService;
+    }
+
+    /**
+     * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
+     * basisBelastungsplan.
+     * Außerdem werden in den Differenzwert-LadeBelastgunsplanDTO die Straßennamen von, wobei die Namen
+     * vom basisBelastungsplan
+     * Prio1 haben, die vom vergleichsBelastungsplan Prio2 und als default null.
+     *
+     * @param basisBelastungsplan Minuend-LadeBelastungsplanDTO
+     * @param vergleichsBelastungsplan Subtrahend-LadeBelastungsplanDTO
+     * @return Differenzwert-LadeBelastungsplanDTO
+     */
+    public static LadeBelastungsplanDTO calculateDifferenzdatenDTO(final LadeBelastungsplanDTO basisBelastungsplan,
+            final LadeBelastungsplanDTO vergleichsBelastungsplan) {
+
+        final LadeBelastungsplanDTO differenzBelastungsplanDTO = new LadeBelastungsplanDTO();
+        if (basisBelastungsplan.getValue1().isFilled()) {
+            differenzBelastungsplanDTO.setValue1(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue1(), vergleichsBelastungsplan.getValue1()));
+        } else {
+            differenzBelastungsplanDTO.setValue1(basisBelastungsplan.getValue1());
+        }
+        if (basisBelastungsplan.getValue2().isFilled()) {
+            differenzBelastungsplanDTO.setValue2(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue2(), vergleichsBelastungsplan.getValue2()));
+        } else {
+            differenzBelastungsplanDTO.setValue2(basisBelastungsplan.getValue2());
+        }
+        if (basisBelastungsplan.getValue3().isFilled()) {
+            differenzBelastungsplanDTO.setValue3(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue3(), vergleichsBelastungsplan.getValue3()));
+        } else {
+            differenzBelastungsplanDTO.setValue3(basisBelastungsplan.getValue3());
+        }
+
+        differenzBelastungsplanDTO.setKreisverkehr(basisBelastungsplan.isKreisverkehr());
+
+        final String[] streets = new String[8];
+
+        for (int i = 0; i < 8; i++) {
+            if (basisBelastungsplan.getStreets()[i] != null) {
+                streets[i] = basisBelastungsplan.getStreets()[i];
+            } else if (vergleichsBelastungsplan.getStreets()[i] != null) {
+                streets[i] = vergleichsBelastungsplan.getStreets()[i];
+            }
+        }
+
+        differenzBelastungsplanDTO.setStreets(streets);
+
+        return differenzBelastungsplanDTO;
+    }
+
+    /**
+     * Subtrahiert eine BigDecimal[][]-Matrize von einer anderen.
+     *
+     * @param basis Minuend-Matrize
+     * @param vergleich Subtrahend-Matrize
+     * @return Differenzwert-Matrize
+     */
+    public static BigDecimal[][] subtractMatrice(final BigDecimal[][] basis, final BigDecimal[][] vergleich) {
+        final int rows = basis.length;
+        final int cols = basis[0].length;
+
+        final BigDecimal[][] diff = new BigDecimal[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                diff[i][j] = basis[i][j].subtract(vergleich[i][j]);
+            }
+        }
+        return diff;
+    }
+
+    /**
+     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
+     * Belastungsplandata-Objekt
+     *
+     * @param basis Basis BelastungsplanDataDTO
+     * @param vergleich Vergleich BelastungsplanDataDTO
+     * @return Differenz BelastungsplanDataDTO
+     */
+    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
+        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        belastungsplanData.setLabel(basis.getLabel());
+        belastungsplanData.setFilled(basis.isFilled());
+        belastungsplanData.setPercent(basis.isPercent());
+        belastungsplanData.setValues(subtractMatrice(basis.getValues(), vergleich.getValues()));
+
+        belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
+        belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
+        belastungsplanData.setSumOut(subtractSums(basis.getSumOut(), vergleich.getSumOut()));
+
+        return belastungsplanData;
+    }
+
+    private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
+        final int minLength = Math.min(basis.length, vergleich.length);
+        final BigDecimal[] fff = new BigDecimal[minLength];
+        for (int i = 0; i < minLength; i++) {
+            fff[i] = basis[i].subtract(vergleich[i]);
+        }
+        return fff;
+    }
+
+    private static boolean isKreisverkehr(final Fahrbeziehung fahrbeziehung) {
+        return ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr())
+                && ObjectUtils.isEmpty(fahrbeziehung.getNach());
+    }
+
+    /**
+     * Die Grafiken im Frontend erwarten pro Fahrbeziehung einen einzelnen Wert.
+     * Um an alle Werte mittels Index zugreifen zu können ist ein 2-Stufiges Array erforderlich.
+     * Ebene 1: Enthält alle Werte für die Von-Spuren
+     * Ebene 2: Enthält die Werte für die Nach-Spur pro Von-Spur
+     * Bsp.: [
+     * [Nach_1, Nach_2, ..., Nach_8] // Von_1
+     * ...
+     * [Nach_1, Nach_2, ..., Nach_8] // Von_8
+     * ]
+     *
+     * @return mit BigDecimal.ZERO initialisierte Datenstruktur
+     */
+    private static BigDecimal[][] getEmptyDatastructure() {
+        final BigDecimal[][] datastructure = new BigDecimal[8][8];
+        Arrays.stream(datastructure).forEach(data -> Arrays.fill(data, BigDecimal.ZERO));
+        return datastructure;
+    }
+
+    private static BelastungsplanDataDTO getEmptyBelastungsplanData() {
+        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
+        data.setLabel("");
+        data.setFilled(false);
+        data.setPercent(false);
+        data.setValues(getEmptyDatastructure());
+        return data;
+    }
+
+    private static boolean isFahrbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
+        return ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getNach())
+                || ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getFahrbewegungKreisverkehr());
+    }
+
+    /**
+     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters
+     * "toRound" auf den nächsten Wert welcher im Parameter "nearestValueToRound" angegeben ist.
+     * <p>
+     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden()
+     * den Wert true besitzt.
+     * <p>
+     * Sobald der Wert im Zehnerbereich kleiner 50 wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
+     *
+     * @param toRound Auf welchem die Rundung durchgeführt werden soll.
+     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll.
+     * @param optionsDto Um auf Durchführung der Rundung zu prüfen
+     * @return den gerundeten {@link LadeZaehldatumDTO},
+     *         falls {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt.
+     *         Andernfall wird das {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
+     */
+    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChoosen(final LadeZaehldatumDTO toRound,
+            final int nearestValueToRound,
+            final OptionsDTO optionsDto) {
+        if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {
+            final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();
+            ladeZaehldatumDTO.setType(toRound.getType());
+            ladeZaehldatumDTO.setStartUhrzeit(toRound.getStartUhrzeit());
+            ladeZaehldatumDTO.setEndeUhrzeit(toRound.getEndeUhrzeit());
+            ladeZaehldatumDTO.setPkw(
+                    roundIfNotNullOrZero(toRound.getPkw(), nearestValueToRound));
+            ladeZaehldatumDTO.setLkw(
+                    roundIfNotNullOrZero(toRound.getLkw(), nearestValueToRound));
+            ladeZaehldatumDTO.setLastzuege(
+                    roundIfNotNullOrZero(toRound.getLastzuege(), nearestValueToRound));
+            ladeZaehldatumDTO.setBusse(
+                    roundIfNotNullOrZero(toRound.getBusse(), nearestValueToRound));
+            ladeZaehldatumDTO.setKraftraeder(
+                    roundIfNotNullOrZero(toRound.getKraftraeder(), nearestValueToRound));
+            ladeZaehldatumDTO.setFahrradfahrer(
+                    roundIfNotNullOrZero(toRound.getFahrradfahrer(), nearestValueToRound));
+            ladeZaehldatumDTO.setFussgaenger(
+                    roundIfNotNullOrZero(toRound.getFussgaenger(), nearestValueToRound));
+            ladeZaehldatumDTO.setPkwEinheiten(
+                    roundIfNotNullOrZero(toRound.getPkwEinheiten(), nearestValueToRound));
+            ladeZaehldatumDTO.setKfz(
+                    roundIfNotNullOrZero(toRound.getKfz(), nearestValueToRound));
+            ladeZaehldatumDTO.setSchwerverkehr(
+                    roundIfNotNullOrZero(toRound.getSchwerverkehr(), nearestValueToRound));
+            ladeZaehldatumDTO.setGueterverkehr(
+                    roundIfNotNullOrZero(toRound.getGueterverkehr(), nearestValueToRound));
+            return ladeZaehldatumDTO;
+        } else {
+            return toRound;
+        }
+    }
+
+    /**
+     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
+     * Andernfalls wird der übergebene Wert zurückgegeben.
+     * <p>
+     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
+     *
+     * @param toRound Der Wert welcher gerundet werden soll
+     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
+     * @return den gerundeten Wert oder der übergebene Wert falls keine Rundung durchgeführt wurde.
+     */
+    public static Integer roundIfNotNullOrZero(final Integer toRound, final int nearestValueToRound) {
+        final Integer roundedValue;
+        if (ObjectUtils.isNotEmpty(toRound)) {
+            roundedValue = roundIfNotNullOrZero(BigDecimal.valueOf(toRound), nearestValueToRound).intValue();
+        } else {
+            roundedValue = toRound;
+        }
+        return roundedValue;
+    }
+
+    /**
+     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
+     * Andernfalls wird der übergebene Wert zurückgegeben.
+     * <p>
+     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
+     *
+     * @param toRound Der Wert welcher gerundet werden soll
+     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
+     * @return den gerundeten Wert.
+     */
+    public static BigDecimal roundIfNotNullOrZero(final BigDecimal toRound, final int nearestValueToRound) {
+        final BigDecimal roundedValue;
+        if (ObjectUtils.isNotEmpty(toRound) && !toRound.equals(BigDecimal.ZERO)) {
+            roundedValue = toRound
+                    .divide(BigDecimal.valueOf(nearestValueToRound))
+                    .setScale(0, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(nearestValueToRound));
+        } else {
+            roundedValue = toRound;
+        }
+        return roundedValue;
+    }
+
+    public static boolean containsSortingIndexForCompleteDay(final Zeitintervall zeitintervall) {
+        return zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ)
+                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD)
+                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS);
     }
 
     /**
@@ -376,11 +617,11 @@ public class ProcessZaehldatenBelastungsplanService {
         for (int outerIndex = 0; outerIndex < values.length; outerIndex++) { // von
             final ArrayList<BigDecimal> in = new ArrayList<>();
             final ArrayList<BigDecimal> both = new ArrayList<>();
-            both.add(values[outerIndex][0]);// in den Kreis
-            both.add(values[outerIndex][2]);// aus dem Kreis
+            both.add(values[outerIndex][0]); // in den Kreis
+            both.add(values[outerIndex][2]); // aus dem Kreis
 
-            in.add(values[outerIndex][0]);// in den Kreis
-            in.add(values[outerIndex][1]);// vorbei am Arm
+            in.add(values[outerIndex][0]); // in den Kreis
+            in.add(values[outerIndex][1]); // vorbei am Arm
             listIn.put(outerIndex, in);
             listBoth.put(outerIndex, both);
         }
@@ -646,106 +887,6 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
-     * basisBelastungsplan.
-     * Außerdem werden in den Differenzwert-LadeBelastgunsplanDTO die Straßennamen von, wobei die Namen
-     * vom basisBelastungsplan
-     * Prio1 haben, die vom vergleichsBelastungsplan Prio2 und als default null.
-     *
-     * @param basisBelastungsplan Minuend-LadeBelastungsplanDTO
-     * @param vergleichsBelastungsplan Subtrahend-LadeBelastungsplanDTO
-     * @return Differenzwert-LadeBelastungsplanDTO
-     */
-    public static LadeBelastungsplanDTO calculateDifferenzdatenDTO(final LadeBelastungsplanDTO basisBelastungsplan,
-            final LadeBelastungsplanDTO vergleichsBelastungsplan) {
-
-        final LadeBelastungsplanDTO differenzBelastungsplanDTO = new LadeBelastungsplanDTO();
-        if (basisBelastungsplan.getValue1().isFilled()) {
-            differenzBelastungsplanDTO.setValue1(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue1(), vergleichsBelastungsplan.getValue1()));
-        } else {
-            differenzBelastungsplanDTO.setValue1(basisBelastungsplan.getValue1());
-        }
-        if (basisBelastungsplan.getValue2().isFilled()) {
-            differenzBelastungsplanDTO.setValue2(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue2(), vergleichsBelastungsplan.getValue2()));
-        } else {
-            differenzBelastungsplanDTO.setValue2(basisBelastungsplan.getValue2());
-        }
-        if (basisBelastungsplan.getValue3().isFilled()) {
-            differenzBelastungsplanDTO.setValue3(calculateDifferenzBelastungsplanData(basisBelastungsplan.getValue3(), vergleichsBelastungsplan.getValue3()));
-        } else {
-            differenzBelastungsplanDTO.setValue3(basisBelastungsplan.getValue3());
-        }
-
-        differenzBelastungsplanDTO.setKreisverkehr(basisBelastungsplan.isKreisverkehr());
-
-        final String[] streets = new String[8];
-
-        for (int i = 0; i < 8; i++) {
-            if (basisBelastungsplan.getStreets()[i] != null) {
-                streets[i] = basisBelastungsplan.getStreets()[i];
-            } else if (vergleichsBelastungsplan.getStreets()[i] != null) {
-                streets[i] = vergleichsBelastungsplan.getStreets()[i];
-            }
-        }
-
-        differenzBelastungsplanDTO.setStreets(streets);
-
-        return differenzBelastungsplanDTO;
-    }
-
-    /**
-     * Subtrahiert eine BigDecimal[][]-Matrize von einer anderen.
-     *
-     * @param basis Minuend-Matrize
-     * @param vergleich Subtrahend-Matrize
-     * @return Differenzwert-Matrize
-     */
-    public static BigDecimal[][] subtractMatrice(final BigDecimal[][] basis, final BigDecimal[][] vergleich) {
-        final int rows = basis.length;
-        final int cols = basis[0].length;
-
-        final BigDecimal[][] diff = new BigDecimal[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                diff[i][j] = basis[i][j].subtract(vergleich[i][j]);
-            }
-        }
-        return diff;
-    }
-
-    /**
-     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
-     * Belastungsplandata-Objekt
-     *
-     * @param basis Basis BelastungsplanDataDTO
-     * @param vergleich Vergleich BelastungsplanDataDTO
-     * @return Differenz BelastungsplanDataDTO
-     */
-    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
-        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
-        belastungsplanData.setLabel(basis.getLabel());
-        belastungsplanData.setFilled(basis.isFilled());
-        belastungsplanData.setPercent(basis.isPercent());
-        belastungsplanData.setValues(subtractMatrice(basis.getValues(), vergleich.getValues()));
-
-        belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
-        belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
-        belastungsplanData.setSumOut(subtractSums(basis.getSumOut(), vergleich.getSumOut()));
-
-        return belastungsplanData;
-    }
-
-    private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
-        final int minLength = Math.min(basis.length, vergleich.length);
-        final BigDecimal[] fff = new BigDecimal[minLength];
-        for (int i = 0; i < minLength; i++) {
-            fff[i] = basis[i].subtract(vergleich[i]);
-        }
-        return fff;
-    }
-
-    /**
      * Auf Basis der Zaehlungs-Id im Parameter wird die Zaehlung aus der DB extrahiert.
      *
      * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung}.
@@ -765,148 +906,6 @@ public class ProcessZaehldatenBelastungsplanService {
             throw new DataNotFoundException("Zaehlung not found");
         }
         return zaehlungOptional.get();
-    }
-
-    private static boolean isKreisverkehr(final Fahrbeziehung fahrbeziehung) {
-        return ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr())
-                && ObjectUtils.isEmpty(fahrbeziehung.getNach());
-    }
-
-    /**
-     * Die Grafiken im Frontend erwarten pro Fahrbeziehung einen einzelnen Wert.
-     * Um an alle Werte mittels Index zugreifen zu können ist ein 2-Stufiges Array erforderlich.
-     * Ebene 1: Enthält alle Werte für die Von-Spuren
-     * Ebene 2: Enthält die Werte für die Nach-Spur pro Von-Spur
-     * Bsp.: [
-     * [Nach_1, Nach_2, ..., Nach_8] // Von_1
-     * ...
-     * [Nach_1, Nach_2, ..., Nach_8] // Von_8
-     * ]
-     *
-     * @return mit BigDecimal.ZERO initialisierte Datenstruktur
-     */
-    private static BigDecimal[][] getEmptyDatastructure() {
-        final BigDecimal[][] datastructure = new BigDecimal[8][8];
-        Arrays.stream(datastructure).forEach(data -> Arrays.fill(data, BigDecimal.ZERO));
-        return datastructure;
-    }
-
-    private static BelastungsplanDataDTO getEmptyBelastungsplanData() {
-        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
-        data.setLabel("");
-        data.setFilled(false);
-        data.setPercent(false);
-        data.setValues(getEmptyDatastructure());
-        return data;
-    }
-
-    private static boolean isFahrbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
-        return ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getNach())
-                || ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getFahrbewegungKreisverkehr());
-    }
-
-    /**
-     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters
-     * "toRound" auf den nächsten Wert welcher im Parameter "nearestValueToRound" angegeben ist.
-     * <p>
-     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden()
-     * den Wert true besitzt.
-     * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 wird auf den nächsten 100er-Wert abgerundet.
-     * Andernfalls wird aufgerundet.
-     *
-     * @param toRound Auf welchem die Rundung durchgeführt werden soll.
-     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll.
-     * @param optionsDto Um auf Durchführung der Rundung zu prüfen
-     * @return den gerundeten {@link LadeZaehldatumDTO},
-     *         falls {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt.
-     *         Andernfall wird das {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
-     */
-    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChoosen(final LadeZaehldatumDTO toRound,
-            final int nearestValueToRound,
-            final OptionsDTO optionsDto) {
-        if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {
-            final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();
-            ladeZaehldatumDTO.setType(toRound.getType());
-            ladeZaehldatumDTO.setStartUhrzeit(toRound.getStartUhrzeit());
-            ladeZaehldatumDTO.setEndeUhrzeit(toRound.getEndeUhrzeit());
-            ladeZaehldatumDTO.setPkw(
-                    roundIfNotNullOrZero(toRound.getPkw(), nearestValueToRound));
-            ladeZaehldatumDTO.setLkw(
-                    roundIfNotNullOrZero(toRound.getLkw(), nearestValueToRound));
-            ladeZaehldatumDTO.setLastzuege(
-                    roundIfNotNullOrZero(toRound.getLastzuege(), nearestValueToRound));
-            ladeZaehldatumDTO.setBusse(
-                    roundIfNotNullOrZero(toRound.getBusse(), nearestValueToRound));
-            ladeZaehldatumDTO.setKraftraeder(
-                    roundIfNotNullOrZero(toRound.getKraftraeder(), nearestValueToRound));
-            ladeZaehldatumDTO.setFahrradfahrer(
-                    roundIfNotNullOrZero(toRound.getFahrradfahrer(), nearestValueToRound));
-            ladeZaehldatumDTO.setFussgaenger(
-                    roundIfNotNullOrZero(toRound.getFussgaenger(), nearestValueToRound));
-            ladeZaehldatumDTO.setPkwEinheiten(
-                    roundIfNotNullOrZero(toRound.getPkwEinheiten(), nearestValueToRound));
-            ladeZaehldatumDTO.setKfz(
-                    roundIfNotNullOrZero(toRound.getKfz(), nearestValueToRound));
-            ladeZaehldatumDTO.setSchwerverkehr(
-                    roundIfNotNullOrZero(toRound.getSchwerverkehr(), nearestValueToRound));
-            ladeZaehldatumDTO.setGueterverkehr(
-                    roundIfNotNullOrZero(toRound.getGueterverkehr(), nearestValueToRound));
-            return ladeZaehldatumDTO;
-        } else {
-            return toRound;
-        }
-    }
-
-    /**
-     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
-     * Andernfalls wird der übergebene Wert zurückgegeben.
-     * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
-     * Andernfalls wird aufgerundet.
-     *
-     * @param toRound Der Wert welcher gerundet werden soll
-     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
-     * @return den gerundeten Wert oder der übergebene Wert falls keine Rundung durchgeführt wurde.
-     */
-    public static Integer roundIfNotNullOrZero(final Integer toRound, final int nearestValueToRound) {
-        final Integer roundedValue;
-        if (ObjectUtils.isNotEmpty(toRound)) {
-            roundedValue = roundIfNotNullOrZero(BigDecimal.valueOf(toRound), nearestValueToRound).intValue();
-        } else {
-            roundedValue = toRound;
-        }
-        return roundedValue;
-    }
-
-    /**
-     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
-     * Andernfalls wird der übergebene Wert zurückgegeben.
-     * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
-     * Andernfalls wird aufgerundet.
-     *
-     * @param toRound Der Wert welcher gerundet werden soll
-     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
-     * @return den gerundeten Wert.
-     */
-    public static BigDecimal roundIfNotNullOrZero(final BigDecimal toRound, final int nearestValueToRound) {
-        final BigDecimal roundedValue;
-        if (ObjectUtils.isNotEmpty(toRound) && !toRound.equals(BigDecimal.ZERO)) {
-            roundedValue = toRound
-                    .divide(BigDecimal.valueOf(nearestValueToRound))
-                    .setScale(0, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(nearestValueToRound));
-        } else {
-            roundedValue = toRound;
-        }
-        return roundedValue;
-    }
-
-    public static boolean containsSortingIndexForCompleteDay(final Zeitintervall zeitintervall) {
-        return zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ)
-                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD)
-                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS);
     }
 
     @AllArgsConstructor

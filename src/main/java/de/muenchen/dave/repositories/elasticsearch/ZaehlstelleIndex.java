@@ -2,14 +2,13 @@ package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
 

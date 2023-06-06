@@ -12,14 +12,6 @@ public class WGS84 {
     private double latitude;
     private double longitude;
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
     public WGS84(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -27,6 +19,14 @@ public class WGS84 {
 
     public WGS84(UTM utm) {
         fromUTM(utm.getZone(), utm.getLetter(), utm.getEasting(), utm.getNorthing());
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public String toString() {

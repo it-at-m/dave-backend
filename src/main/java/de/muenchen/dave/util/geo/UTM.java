@@ -1,8 +1,7 @@
 package de.muenchen.dave.util.geo;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Locale;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Class representing UTM-coordinates. Based on code from stack overflow.
@@ -19,6 +18,25 @@ public class UTM {
     private double northing;
     private int zone;
     private char letter;
+
+    public UTM(int zone, char letter, double easting, double northing) {
+        this.zone = zone;
+        this.letter = Character.toUpperCase(letter);
+        this.easting = easting;
+        this.northing = northing;
+    }
+
+    public UTM(String utm) {
+        String[] parts = utm.split(StringUtils.SPACE);
+        zone = Integer.parseInt(parts[0]);
+        letter = parts[1].toUpperCase(Locale.ENGLISH).charAt(0);
+        easting = Double.parseDouble(parts[2]);
+        northing = Double.parseDouble(parts[3]);
+    }
+
+    public UTM(WGS84 wgs) {
+        fromWGS84(wgs.getLatitude(), wgs.getLongitude());
+    }
 
     public double getEasting() {
         return easting;
@@ -62,25 +80,6 @@ public class UTM {
         long lnort = Double.doubleToRawLongBits(northing);
         long x = least ^ lnort;
         return (int) (x ^ (x >>> 32));
-    }
-
-    public UTM(int zone, char letter, double easting, double northing) {
-        this.zone = zone;
-        this.letter = Character.toUpperCase(letter);
-        this.easting = easting;
-        this.northing = northing;
-    }
-
-    public UTM(String utm) {
-        String[] parts = utm.split(StringUtils.SPACE);
-        zone = Integer.parseInt(parts[0]);
-        letter = parts[1].toUpperCase(Locale.ENGLISH).charAt(0);
-        easting = Double.parseDouble(parts[2]);
-        northing = Double.parseDouble(parts[3]);
-    }
-
-    public UTM(WGS84 wgs) {
-        fromWGS84(wgs.getLatitude(), wgs.getLongitude());
     }
 
     private void fromWGS84(double latitude, double longitude) {
