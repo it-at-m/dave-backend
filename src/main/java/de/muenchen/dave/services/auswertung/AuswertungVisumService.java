@@ -16,7 +16,6 @@ import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -78,7 +77,7 @@ public class AuswertungVisumService {
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
                                 final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getFahrbeziehungen().stream()
-                                        .map(AuswertungVisumService::getFahrbeziehungenVisum)
+                                        .map(fz -> AuswertungVisumService.getFahrbeziehungenVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
                                         // Entfernen von eventuell auftretenden Duplikaten
                                         .distinct()
@@ -124,10 +123,11 @@ public class AuswertungVisumService {
      * @param fahrbeziehung Fahrbeziehung
      * @return die Visum-relevanten Fahrbeziehungsobjekte zur Extraktion der Zeitintervalle.
      */
-    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung) {
+    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung, final Zaehlung zaehlung) {
         final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = new ArrayList<>();
         FahrbeziehungVisumDTO fahrbeziehungVisum;
-        if (BooleanUtils.isTrue(fahrbeziehung.getIsKreuzung())) {
+        boolean isKreuzung = fahrbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : fahrbeziehung.getIsKreuzung();
+        if (isKreuzung) {
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
             fahrbeziehungVisum.setVon(fahrbeziehung.getVon());
             fahrbeziehungVisum.setNach(null);

@@ -53,7 +53,10 @@ class AuswertungVisumServiceTest {
         secondExpected.setNach(99);
         List<FahrbeziehungVisumDTO> expectedList = Arrays.asList(firstExpected, secondExpected);
 
-        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung), is(expectedList));
+        var zaehlung = new Zaehlung();
+        zaehlung.setKreisverkehr(false);
+
+        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Hinein
         fahrbeziehung = new Fahrbeziehung();
@@ -71,7 +74,7 @@ class AuswertungVisumServiceTest {
         secondExpected.setNach(55);
         expectedList = Arrays.asList(firstExpected, secondExpected);
 
-        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung), is(expectedList));
+        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Heraus
         fahrbeziehung = new Fahrbeziehung();
@@ -89,7 +92,7 @@ class AuswertungVisumServiceTest {
         secondExpected.setNach(56);
         expectedList = Arrays.asList(firstExpected, secondExpected);
 
-        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung), is(expectedList));
+        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Vorbei
         fahrbeziehung = new Fahrbeziehung();
@@ -107,7 +110,7 @@ class AuswertungVisumServiceTest {
         secondExpected.setNach(57);
         expectedList = Arrays.asList(firstExpected, secondExpected);
 
-        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung), is(expectedList));
+        assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
     }
 
     @Test
