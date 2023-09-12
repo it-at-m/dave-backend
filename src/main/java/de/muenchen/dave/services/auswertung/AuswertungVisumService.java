@@ -135,7 +135,7 @@ public class AuswertungVisumService {
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
                                 final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getFahrbeziehungen().stream()
-                                        .map(AuswertungVisumService::getFahrbeziehungenVisum)
+                                        .map(fz -> AuswertungVisumService.getFahrbeziehungenVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
                                         // Entfernen von eventuell auftretenden Duplikaten
                                         .distinct()
