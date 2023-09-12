@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -64,10 +63,11 @@ public class AuswertungVisumService {
      * @param fahrbeziehung Fahrbeziehung
      * @return die Visum-relevanten Fahrbeziehungsobjekte zur Extraktion der Zeitintervalle.
      */
-    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung) {
+    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung, final Zaehlung zaehlung) {
         final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = new ArrayList<>();
         FahrbeziehungVisumDTO fahrbeziehungVisum;
-        if (BooleanUtils.isTrue(fahrbeziehung.getIsKreuzung())) {
+        boolean isKreuzung = fahrbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : fahrbeziehung.getIsKreuzung();
+        if (isKreuzung) {
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
             fahrbeziehungVisum.setVon(fahrbeziehung.getVon());
             fahrbeziehungVisum.setNach(null);
