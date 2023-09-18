@@ -4,12 +4,11 @@
  */
 package de.muenchen.dave.configuration.nfcconverter;
 
-import org.apache.commons.lang3.NotImplementedException;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * ServletInputStream, der von einem Puffer ließt.

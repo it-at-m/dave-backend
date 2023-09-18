@@ -29,13 +29,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
 
-
-@SpringBootTest(
-        classes = {DaveBackendApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-                "refarch.gracefulshutdown.pre-wait-seconds=0"})
-@ActiveProfiles(profiles = {SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE})
+@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
+        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 class ZeitauswahlServiceTest {
 
@@ -65,9 +62,11 @@ class ZeitauswahlServiceTest {
             }
         }
 
-        when(zeitintervallRepository.findByZaehlungId(UUID.fromString(ladeZaehlung.getId()), Sort.by(Sort.Direction.ASC, "startUhrzeit"))).thenReturn(zeitintervalle);
+        when(zeitintervallRepository.findByZaehlungId(UUID.fromString(ladeZaehlung.getId()), Sort.by(Sort.Direction.ASC, "startUhrzeit")))
+                .thenReturn(zeitintervalle);
 
-        final ZeitauswahlDTO choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId(), false);
+        final ZeitauswahlDTO choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId(),
+                false);
 
         assertThat(choosableZeitauswahlDTO, is(notNullValue()));
         assertThat(choosableZeitauswahlDTO.getBlocks(), is(notNullValue()));

@@ -49,7 +49,6 @@ public class ProcessZaehldatenZeitreiheTest {
         return zaehlstelle;
     }
 
-
     @Test
     public void calculateOldestDate() {
         Zaehlstelle zaehlstelle = getZaehlstelleWithZaehlungen();

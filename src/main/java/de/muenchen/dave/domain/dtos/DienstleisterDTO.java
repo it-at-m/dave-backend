@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.UUID;
+import lombok.Data;
 
 // Definition of getter, setter, ...
 @Data

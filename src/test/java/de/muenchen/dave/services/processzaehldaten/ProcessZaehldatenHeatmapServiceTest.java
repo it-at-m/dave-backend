@@ -265,8 +265,7 @@ class ProcessZaehldatenHeatmapServiceTest {
                 0,
                 1,
                 10,
-                "PKW"
-        );
+                "PKW");
 
         assertThat(ladeZaehldatenHeatmap.getLegend(), is(Arrays.asList("PKW")));
         assertThat(ladeZaehldatenHeatmap.getRangeMax(), is(10));
@@ -279,8 +278,7 @@ class ProcessZaehldatenHeatmapServiceTest {
                 1,
                 2,
                 -10,
-                "LKW"
-        );
+                "LKW");
 
         assertThat(ladeZaehldatenHeatmap.getLegend(), is(Arrays.asList("PKW", "LKW")));
         assertThat(ladeZaehldatenHeatmap.getRangeMax(), is(10));
@@ -327,9 +325,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
         zaehldatenTable.setZaehldaten(zaehldaten);
 
-
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
-
 
         assertThat(ladeZaehldatenHeatmap.getLegend().size(), is(11));
         assertThat(ladeZaehldatenHeatmap.getLegend().get(0), is(ChartLegendUtil.PKW_EINHEITEN_HEATMAP));

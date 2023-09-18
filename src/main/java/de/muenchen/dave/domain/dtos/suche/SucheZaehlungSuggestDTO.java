@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.dtos.suche;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import lombok.Data;
 
-
 @Data
 public class SucheZaehlungSuggestDTO {
 

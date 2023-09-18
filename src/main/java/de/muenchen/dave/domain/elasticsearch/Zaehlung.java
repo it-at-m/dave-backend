@@ -2,6 +2,8 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.geo.CoordinateUtil;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -9,10 +11,6 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import java.time.LocalDate;
-import java.util.List;
-
 
 @Data
 @NoArgsConstructor
@@ -94,11 +92,10 @@ public class Zaehlung {
     Boolean unreadMessagesMobilitaetsreferat;
 
     Boolean unreadMessagesDienstleister;
+    String dienstleisterkennung;
 
     public CoordinateUtil.PositionUTM getPunktUtm() {
         return CoordinateUtil.transformFromWGS84ToUTM(this.punkt);
     }
-
-    String dienstleisterkennung;
 
 }

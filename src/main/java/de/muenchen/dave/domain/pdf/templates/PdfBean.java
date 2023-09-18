@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.pdf.templates;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import lombok.Data;
 
-
 @Data
 public class PdfBean implements MustacheBean {
 

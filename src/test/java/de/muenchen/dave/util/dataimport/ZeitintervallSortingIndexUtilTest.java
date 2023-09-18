@@ -11,7 +11,6 @@ import java.time.LocalTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class ZeitintervallSortingIndexUtilTest {
 
     @Test
@@ -60,7 +59,6 @@ class ZeitintervallSortingIndexUtilTest {
 
         int result = ZeitintervallSortingIndexUtil.getFirstStepSortingIndex(zeitintervall);
         assertThat(result, is(10000000));
-
 
         zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 30)));

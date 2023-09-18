@@ -14,19 +14,18 @@ import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -116,7 +115,8 @@ public class GeneratePdfService {
     }
 
     /**
-     * Befüllt die Bean mit MustacheParts und erstellt anschließend einen HTML-String für einen Belastungsplan
+     * Befüllt die Bean mit MustacheParts und erstellt anschließend einen HTML-String für einen
+     * Belastungsplan
      *
      * @param bean Bean mit Daten um das Template zu befüllen.
      * @return Belastungsplan als HTML-String
@@ -148,7 +148,8 @@ public class GeneratePdfService {
     }
 
     /**
-     * Befüllt die Bean mit MustacheParts und erstellt anschließend einen HTML-String für die Datentabelle
+     * Befüllt die Bean mit MustacheParts und erstellt anschließend einen HTML-String für die
+     * Datentabelle
      *
      * @param bean Bean mit Daten um das Template zu befüllen.
      * @return Datentabelle als HTML-String
@@ -178,7 +179,8 @@ public class GeneratePdfService {
     }
 
     /**
-     * Hier wird das entsprechende Mustache-Table-Template ausgesucht - bei 2_X_4 Stunden sind die Zellen größer als bei 24
+     * Hier wird das entsprechende Mustache-Table-Template ausgesucht - bei 2_X_4 Stunden sind die
+     * Zellen größer als bei 24
      *
      * @param bean GangliniePdf
      * @return Die befüllte mit dem MustachePart befüllte Bean
@@ -206,7 +208,7 @@ public class GeneratePdfService {
      * Steckt eine Bean in ein Mustache Template und gibt den daraus resultierenden HTML-String zurück
      *
      * @param mustache Mustache Template das befüllt werden soll
-     * @param bean     Bean mit Daten für das Template
+     * @param bean Bean mit Daten für das Template
      * @return HTML als String
      */
     public String getHtml(final Mustache mustache, final MustacheBean bean) {
@@ -294,7 +296,7 @@ public class GeneratePdfService {
      * Kompiliert die Templates
      *
      * @param path Classpath Pfad zu den Templates
-     * @param mf   MustacheFactory
+     * @param mf MustacheFactory
      * @return Kompiliertes Template
      */
     Mustache compileMustache(final String path, final MustacheFactory mf) {
@@ -317,17 +319,19 @@ public class GeneratePdfService {
     }
 
     /**
-     * Generiert eine Belastungsplan-PDF einer bestimmten Zählung mit den im Frontend gewählten Optionen und gibt diesen zurück.
+     * Generiert eine Belastungsplan-PDF einer bestimmten Zählung mit den im Frontend gewählten Optionen
+     * und gibt diesen zurück.
      *
-     * @param zaehlungId       ID der im Frontend gewählten Zählung
-     * @param options          Die im Frontend gewählten Optionen
+     * @param zaehlungId ID der im Frontend gewählten Zählung
+     * @param options Die im Frontend gewählten Optionen
      * @param chartAsBase64Png Bilddatei des Graph als Base64-PNG
-     * @param department       Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return Belastungsplan-PDF als byte[]
-     * @throws IOException           beim Erzeugen des PDF
+     * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateBelastungsplanPdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png, final String department) throws IOException, DataNotFoundException {
+    public byte[] generateBelastungsplanPdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png, final String department)
+            throws IOException, DataNotFoundException {
         final DiagrammPdf diagrammPdf = new DiagrammPdf();
         fillPdfBeanService.fillBelastungsplanPdf(diagrammPdf, zaehlungId, options, chartAsBase64Png, department);
         final String html = createBelastungsplanHTML(diagrammPdf);
@@ -336,19 +340,20 @@ public class GeneratePdfService {
     }
 
     /**
-     * Generiert eine Ganglinie-PDF einer bestimmten Zählung mit den im Frontend gewählten Optionen und gibt diese zurück.
+     * Generiert eine Ganglinie-PDF einer bestimmten Zählung mit den im Frontend gewählten Optionen und
+     * gibt diese zurück.
      *
-     * @param zaehlungId                        ID der im Frontend gewählten Zählung
-     * @param options                           Die im Frontend gewählten Optionen
-     * @param chartAsBase64Png                  Bilddatei des Graph als Base64-PNG
+     * @param zaehlungId ID der im Frontend gewählten Zählung
+     * @param options Die im Frontend gewählten Optionen
+     * @param chartAsBase64Png Bilddatei des Graph als Base64-PNG
      * @param schematischeUebersichtAsBase64Png Schematische Übersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return Ganglinie-PDF als byte[]
-     * @throws IOException           beim Erzeugen des PDF
+     * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
     public byte[] generateGangliniePdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png,
-                                       final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
+            final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final GangliniePdf gangliniePdf = new GangliniePdf();
         fillPdfBeanService.fillGangliniePdf(gangliniePdf, zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
         final String html = createGanglinieHTML(gangliniePdf);
@@ -357,19 +362,20 @@ public class GeneratePdfService {
     }
 
     /**
-     * Generiert eine Zeitreihen-PDF einer bestimmten Zählung bis zu der in den Frontendoptionen gewählten Zählung und gibt diese zurück.
+     * Generiert eine Zeitreihen-PDF einer bestimmten Zählung bis zu der in den Frontendoptionen
+     * gewählten Zählung und gibt diese zurück.
      *
-     * @param zaehlungId                        ID der im Frontend gewählten Zählung
-     * @param options                           Die im Frontend gewählten Optionen
-     * @param chartAsBase64Png                  Bilddatei des Graph als Base64-PNG
+     * @param zaehlungId ID der im Frontend gewählten Zählung
+     * @param options Die im Frontend gewählten Optionen
+     * @param chartAsBase64Png Bilddatei des Graph als Base64-PNG
      * @param schematischeUebersichtAsBase64Png schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return Zeitreihe-PDF als byte[]
-     * @throws IOException           beim Erzeugen des PDF
+     * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
     public byte[] generateZeitreihePdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png,
-                                       final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
+            final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final ZeitreihePdf zeitreihePdf = new ZeitreihePdf();
         fillZeitreihePdfBeanService.fillZeitreihePdf(zeitreihePdf, zaehlungId, chartAsBase64Png, schematischeUebersichtAsBase64Png, options, department);
         final String html = createZeitreiheHtml(zeitreihePdf);
@@ -378,17 +384,19 @@ public class GeneratePdfService {
     }
 
     /**
-     * Generiert eine Datentabelle bzw. Listenausgabe-PDF einer bestimmten Zählung mit den im Frontend gewählten Optionen und gibt diese zurück.
+     * Generiert eine Datentabelle bzw. Listenausgabe-PDF einer bestimmten Zählung mit den im Frontend
+     * gewählten Optionen und gibt diese zurück.
      *
-     * @param zaehlungId                        ID der im Frontend gewählten Zählung
-     * @param options                           Die im Frontend gewählten Optionen
+     * @param zaehlungId ID der im Frontend gewählten Zählung
+     * @param options Die im Frontend gewählten Optionen
      * @param schematischeUebersichtAsBase64Png schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @return Datentabelle-PDF aus byte[]
-     * @throws IOException           beim Erzeugen des PDF
+     * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateDatentabellePdf(final String zaehlungId, final OptionsDTO options, final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
+    public byte[] generateDatentabellePdf(final String zaehlungId, final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final String department) throws IOException, DataNotFoundException {
         final DatentabellePdf datentabellePdf = new DatentabellePdf();
         fillPdfBeanService.fillDatentabellePdf(datentabellePdf, zaehlungId, options, schematischeUebersichtAsBase64Png, department);
         final String html = createDatentabelleHTML(datentabellePdf);

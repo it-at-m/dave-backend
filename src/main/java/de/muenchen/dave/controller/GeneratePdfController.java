@@ -5,6 +5,11 @@ import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
 import de.muenchen.dave.services.pdfgenerator.ReportService;
+import java.io.IOException;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,12 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
@@ -46,7 +45,7 @@ public class GeneratePdfController {
     private final ReportService reportService;
 
     public GeneratePdfController(final GeneratePdfService generatePdfService,
-                                 final ReportService reportService) {
+            final ReportService reportService) {
         this.generatePdfService = generatePdfService;
         this.reportService = reportService;
     }
@@ -54,11 +53,12 @@ public class GeneratePdfController {
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine PDF als byte[] zurück
      *
-     * @param zaehlungId                        Die im Frontend ausgewählte Zählung.
-     * @param type                              Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ werden andere Mustache Templates verwendet.
-     * @param department                        Organisationseinheit des Benutzers
-     * @param options                           Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png                  Ein Graph als PNG in Base64.
+     * @param zaehlungId Die im Frontend ausgewählte Zählung.
+     * @param type Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ werden
+     *            andere Mustache Templates verwendet.
+     * @param department Organisationseinheit des Benutzers
+     * @param options Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png Ein Graph als PNG in Base64.
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
@@ -99,13 +99,13 @@ public class GeneratePdfController {
     /**
      * Generiert einen PDF-Report aus den gelieferten Assets
      *
-     * @param assetList  Assets für den Report
+     * @param assetList Assets für den Report
      * @param department Organisationseinheit des Benutzers
      * @return PDF-Datei
      */
     @PostMapping(value = "/generate-pdf/report")
     public ResponseEntity<byte[]> generatePdfReport(@RequestPart(value = "assets") @NotNull final List<BaseAsset> assetList,
-                                                    @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department) {
+            @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department) {
         try {
             final byte[] pdf;
             pdf = reportService.generateReportPdf(assetList, department);

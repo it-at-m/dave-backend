@@ -5,12 +5,6 @@ import de.muenchen.dave.domain.dtos.TooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +12,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -120,7 +118,7 @@ public final class IndexServiceUtils {
     /**
      * @param datum für welches der Tagestyp ermittelt werden soll.
      * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben.
-     * Andernfalls wird der Wert "Wochenende" zurückgegeben.
+     *         Andernfalls wird der Wert "Wochenende" zurückgegeben.
      */
     public static String getTagesTyp(final LocalDate datum) {
         final DayOfWeek dayOfWeek = datum.getDayOfWeek();
@@ -140,20 +138,20 @@ public final class IndexServiceUtils {
      * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
      * angezeigt.
      *
-     * @param stadtbezirk         Stadtbezirksname
-     * @param stadtbezirknummer   Stadtbezirksnummer als Long
-     * @param nummer              Zaehlstellennummer
-     * @param anzahlZaehlungen    Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
+     * @param stadtbezirk Stadtbezirksname
+     * @param stadtbezirknummer Stadtbezirksnummer als Long
+     * @param nummer Zaehlstellennummer
+     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
      * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname       Kreuzungsname als String
+     * @param kreuzungsname Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
     public static TooltipDTO createTooltip(final String stadtbezirk,
-                                           final Integer stadtbezirknummer,
-                                           final String nummer,
-                                           final Integer anzahlZaehlungen,
-                                           final String datumLetzteZaehlung,
-                                           final String kreuzungsname) {
+            final Integer stadtbezirknummer,
+            final String nummer,
+            final Integer anzahlZaehlungen,
+            final String datumLetzteZaehlung,
+            final String kreuzungsname) {
         final TooltipDTO tooltipDTO = new TooltipDTO();
         tooltipDTO.setKreuzungsname(kreuzungsname);
         tooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
@@ -169,7 +167,7 @@ public final class IndexServiceUtils {
      * falls kein expliziter Kreuzungsname gesetzt ist.
      *
      * @param kreuzungsname welcher gegebenenfalls durch die konkatenierten Straßennamen ersetzt wird.
-     * @param zaehlung      zur Extraktion der Straßennamen.
+     * @param zaehlung zur Extraktion der Straßennamen.
      * @return den Kreuzungsname oder die Straßennamen falls vorher kein Kreuzungsname gesetzt.
      */
     public static String createKreuzungsname(final String kreuzungsname, final Zaehlung zaehlung) {
