@@ -1,0 +1,398 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DAVE GEODATA EAI",
+    "description": "DAVE GEODATA EAI - Service zum Abfragen von Geoinformationen",
+    "contact": {
+      "name": "DAVE Management",
+      "email": "unbekannt@muenchen.de"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8088",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "PointFeature",
+      "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
+    },
+    {
+      "name": "Messdaten",
+      "description": "API zum Abfragen des FeatureServers für Messdaten."
+    }
+  ],
+  "paths": {
+    "/point/stadtbezirke": {
+      "post": {
+        "tags": [
+          "PointFeature"
+        ],
+        "summary": "Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.",
+        "operationId": "getStadtbezirke",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointGeometryDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messdaten": {
+      "post": {
+        "tags": [
+          "Messdaten"
+        ],
+        "summary": "Holt die Messdaten zur einer Zählstelle in einem bestimmten Zeitraum.",
+        "operationId": "getMessdaten",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetMessdatenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Messdaten erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessdatenDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messdaten/summe": {
+      "post": {
+        "tags": [
+          "Messdaten"
+        ],
+        "summary": "Holt die Summe der Messdaten zur einer Zählstelle in einem bestimmten Zeitraum.",
+        "operationId": "getMessdatenSumme",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetMessdatenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Summe der Messdaten erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessdatenDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PointGeometryDto": {
+        "required": [
+          "coordinates",
+          "type"
+        ],
+        "type": "object",
+        "description": "Die GEOJSON-Repräsentation einer Punktkoordinate.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeometryDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array",
+                "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84).",
+                "items": {
+                  "type": "number",
+                  "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84)."
+                }
+              }
+            }
+          }
+        ]
+      },
+      "InformationResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "INFORMATION_SUCCESS",
+              "INFORMATION_NEUTRAL"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalException": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FeatureCollectionDtoFeatureDtoStadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDtoStadtbezirkDto"
+            }
+          }
+        }
+      },
+      "FeatureDtoStadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "geometry": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PointGeometryDto"
+              }
+            ]
+          },
+          "properties": {
+            "$ref": "#/components/schemas/StadtbezirkDto"
+          }
+        }
+      },
+      "GeometryDto": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Definiert den Geometrietyp in der Ausprägung als Multipolygon oder als Point."
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "StadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stadtbezirkNummer": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "flaecheQm": {
+            "type": "number"
+          },
+          "ycoordinate": {
+            "type": "number"
+          },
+          "xcoordinate": {
+            "type": "number"
+          }
+        }
+      },
+      "GetMessdatenRequest": {
+        "required": [
+          "messstelleId",
+          "zeitpunktStart"
+        ],
+        "type": "object",
+        "properties": {
+          "messstelleId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "zeitpunktStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "zeitpunktEnde": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagTyp": {
+            "type": "string"
+          }
+        }
+      },
+      "MessdatenDto": {
+        "type": "object",
+        "properties": {
+          "von": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bis": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plausiInfo": {
+            "type": "string"
+          },
+          "kommentar": {
+            "type": "string"
+          },
+          "qnkkfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qpkwa": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vlkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vslkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qlkwa": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qlfw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qkrad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qsattelkfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qbus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vspkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qkfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qpkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qlkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vpkw": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}

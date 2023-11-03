@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.dtos;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,5 +1,8 @@
 package de.muenchen.dave.services.pdfgenerator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -8,14 +11,10 @@ import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfCompon
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class FillPdfBeanServiceTest {
 

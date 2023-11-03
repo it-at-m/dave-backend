@@ -162,6 +162,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
 
 
         <!-- Caching -->
@@ -389,6 +393,13 @@
             <version>2.8.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+
+
         <!-- Geo lib -->
         <dependency>
             <groupId>org.apache.sis.core</groupId>
@@ -498,6 +509,8 @@
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
                         </eclipse>
+                        <importOrder />
+                        <removeUnusedImports />
                         <trimTrailingWhitespace/>
                         <endWithNewline/>
                     </java>
@@ -534,6 +547,55 @@
                         <version>9.3</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <!-- RELEASE_VERSION -->
+                <version>7.0.1</version>
+                <!-- /RELEASE_VERSION -->
+                <executions>
+                    <execution>
+                        <id>isi-backend</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api/geodateneai.json</inputSpec>
+                            <library>webclient</library>
+                            <generatorName>java</generatorName>
+                            <output>${project.basedir}</output>
+                            <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
+
+                            <apiPackage>de.muenchen.dave.geodateneai.gen.api</apiPackage>
+                            <modelPackage>de.muenchen.dave.geodateneai.gen.model</modelPackage>
+                            <invokerPackage>de.muenchen.dave.geodateneai.gen.geodaten</invokerPackage>
+
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
+                            </importMappings>
+
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <configOptions>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                            </configOptions>
+                            <globalProperties>
+                                <supportingFiles>
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                </supportingFiles>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
