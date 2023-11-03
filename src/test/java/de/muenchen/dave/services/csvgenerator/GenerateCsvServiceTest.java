@@ -1,5 +1,8 @@
 package de.muenchen.dave.services.csvgenerator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -7,12 +10,8 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.GenerateCsvService;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Test;
 
 class GenerateCsvServiceTest {
 

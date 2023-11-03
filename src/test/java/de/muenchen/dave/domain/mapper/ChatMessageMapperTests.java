@@ -1,20 +1,19 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
 import de.muenchen.dave.domain.dtos.MessageTimeDTO;
 import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class ChatMessageMapperTests {
