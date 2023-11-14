@@ -506,6 +506,9 @@
                             <include>src/main/java/**/*.java</include> <!-- Check application code -->
                             <include>src/test/java/**/*.java</include> <!-- Check application tests code -->
                         </includes>
+                        <excludes>
+                            <exclude>src/main/java/**/geodateneai/gen/**/*.java</exclude>
+                        </excludes>
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
                         </eclipse>
@@ -529,6 +532,7 @@
                 <version>3.2.1</version>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                     <sourceDirectories>
                         <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
                     </sourceDirectories>
