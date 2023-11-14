@@ -24,13 +24,13 @@ public class MessdatenService {
      * @param messstelleId Id der angefragten Messstelle
      * @param von required Zeitpunkt der Daten.
      * @param bis optional Ende eines Zeitraums.
-     * @param tagtyp Typ des Tages
+     * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen Messdaten pro Tag
      */
-    public List<MessdatenDto> ladeMessdaten(final long messstelleId, final String von, final String bis, final String tagtyp) {
+    public List<MessdatenDto> ladeMessdaten(final long messstelleId, final String von, final String bis, final String tagesTyp) {
         final GetMessdatenRequest getMessdatenRequest = new GetMessdatenRequest();
         getMessdatenRequest.setMessstelleId(messstelleId);
-        getMessdatenRequest.setTagTyp(tagtyp);
+        getMessdatenRequest.setTagesTyp(GetMessdatenRequest.TagesTypEnum.fromValue(tagesTyp));
         getMessdatenRequest.setZeitpunktStart(LocalDate.parse(von));
         getMessdatenRequest.setZeitpunktEnde(LocalDate.parse(bis));
         Mono<ResponseEntity<List<MessdatenDto>>> messdatenWithHttpInfo = messdatenApi.getMessdatenWithHttpInfo(getMessdatenRequest);

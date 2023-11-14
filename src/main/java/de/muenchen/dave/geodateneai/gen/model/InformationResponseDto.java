@@ -10,325 +10,338 @@
  * Do not edit the class manually.
  */
 
+
 package de.muenchen.dave.geodateneai.gen.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.time.OffsetDateTime;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * InformationResponseDto
  */
 @JsonPropertyOrder({
-        InformationResponseDto.JSON_PROPERTY_TYPE,
-        InformationResponseDto.JSON_PROPERTY_TIMESTAMP,
-        InformationResponseDto.JSON_PROPERTY_TRACE_ID,
-        InformationResponseDto.JSON_PROPERTY_SPAN_ID,
-        InformationResponseDto.JSON_PROPERTY_HTTP_STATUS,
-        InformationResponseDto.JSON_PROPERTY_ORIGINAL_EXCEPTION,
-        InformationResponseDto.JSON_PROPERTY_MESSAGES
+  InformationResponseDto.JSON_PROPERTY_TYPE,
+  InformationResponseDto.JSON_PROPERTY_TIMESTAMP,
+  InformationResponseDto.JSON_PROPERTY_TRACE_ID,
+  InformationResponseDto.JSON_PROPERTY_SPAN_ID,
+  InformationResponseDto.JSON_PROPERTY_HTTP_STATUS,
+  InformationResponseDto.JSON_PROPERTY_ORIGINAL_EXCEPTION,
+  InformationResponseDto.JSON_PROPERTY_MESSAGES
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class InformationResponseDto {
-    /**
-     * Gets or Sets type
-     */
-    public enum TypeEnum {
-        ERROR("ERROR"),
+  /**
+   * Gets or Sets type
+   */
+  public enum TypeEnum {
+    ERROR("ERROR"),
+    
+    WARNING("WARNING"),
+    
+    INFORMATION_SUCCESS("INFORMATION_SUCCESS"),
+    
+    INFORMATION_NEUTRAL("INFORMATION_NEUTRAL");
 
-        WARNING("WARNING"),
+    private String value;
 
-        INFORMATION_SUCCESS("INFORMATION_SUCCESS"),
-
-        INFORMATION_NEUTRAL("INFORMATION_NEUTRAL");
-
-        private String value;
-
-        TypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static TypeEnum fromValue(String value) {
-            for (TypeEnum b : TypeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
+    TypeEnum(String value) {
+      this.value = value;
     }
 
-    public static final String JSON_PROPERTY_TYPE = "type";
-    private TypeEnum type;
-
-    public static final String JSON_PROPERTY_TIMESTAMP = "timestamp";
-    private LocalDateTime timestamp;
-
-    public static final String JSON_PROPERTY_TRACE_ID = "traceId";
-    private String traceId;
-
-    public static final String JSON_PROPERTY_SPAN_ID = "spanId";
-    private String spanId;
-
-    public static final String JSON_PROPERTY_HTTP_STATUS = "httpStatus";
-    private Integer httpStatus;
-
-    public static final String JSON_PROPERTY_ORIGINAL_EXCEPTION = "originalException";
-    private String originalException;
-
-    public static final String JSON_PROPERTY_MESSAGES = "messages";
-    private List<String> messages;
-
-    public InformationResponseDto() {
-    }
-
-    public InformationResponseDto type(TypeEnum type) {
-
-        this.type = type;
-        return this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return type
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public TypeEnum getType() {
-        return type;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setType(TypeEnum type) {
-        this.type = type;
-    }
-
-    public InformationResponseDto timestamp(LocalDateTime timestamp) {
-
-        this.timestamp = timestamp;
-        return this;
-    }
-
-    /**
-     * Get timestamp
-     *
-     * @return timestamp
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TIMESTAMP)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TIMESTAMP)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public InformationResponseDto traceId(String traceId) {
-
-        this.traceId = traceId;
-        return this;
-    }
-
-    /**
-     * Get traceId
-     *
-     * @return traceId
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TRACE_ID)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public String getTraceId() {
-        return traceId;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TRACE_ID)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setTraceId(String traceId) {
-        this.traceId = traceId;
-    }
-
-    public InformationResponseDto spanId(String spanId) {
-
-        this.spanId = spanId;
-        return this;
-    }
-
-    /**
-     * Get spanId
-     *
-     * @return spanId
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_SPAN_ID)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public String getSpanId() {
-        return spanId;
-    }
-
-    @JsonProperty(JSON_PROPERTY_SPAN_ID)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setSpanId(String spanId) {
-        this.spanId = spanId;
-    }
-
-    public InformationResponseDto httpStatus(Integer httpStatus) {
-
-        this.httpStatus = httpStatus;
-        return this;
-    }
-
-    /**
-     * Get httpStatus
-     *
-     * @return httpStatus
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_HTTP_STATUS)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public Integer getHttpStatus() {
-        return httpStatus;
-    }
-
-    @JsonProperty(JSON_PROPERTY_HTTP_STATUS)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setHttpStatus(Integer httpStatus) {
-        this.httpStatus = httpStatus;
-    }
-
-    public InformationResponseDto originalException(String originalException) {
-
-        this.originalException = originalException;
-        return this;
-    }
-
-    /**
-     * Get originalException
-     *
-     * @return originalException
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_ORIGINAL_EXCEPTION)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public String getOriginalException() {
-        return originalException;
-    }
-
-    @JsonProperty(JSON_PROPERTY_ORIGINAL_EXCEPTION)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setOriginalException(String originalException) {
-        this.originalException = originalException;
-    }
-
-    public InformationResponseDto messages(List<String> messages) {
-
-        this.messages = messages;
-        return this;
-    }
-
-    public InformationResponseDto addMessagesItem(String messagesItem) {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-        this.messages.add(messagesItem);
-        return this;
-    }
-
-    /**
-     * Get messages
-     *
-     * @return messages
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_MESSAGES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public List<String> getMessages() {
-        return messages;
-    }
-
-    @JsonProperty(JSON_PROPERTY_MESSAGES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        InformationResponseDto informationResponseDto = (InformationResponseDto) o;
-        return Objects.equals(this.type, informationResponseDto.type) &&
-                Objects.equals(this.timestamp, informationResponseDto.timestamp) &&
-                Objects.equals(this.traceId, informationResponseDto.traceId) &&
-                Objects.equals(this.spanId, informationResponseDto.spanId) &&
-                Objects.equals(this.httpStatus, informationResponseDto.httpStatus) &&
-                Objects.equals(this.originalException, informationResponseDto.originalException) &&
-                Objects.equals(this.messages, informationResponseDto.messages);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, timestamp, traceId, spanId, httpStatus, originalException, messages);
+    @JsonValue
+    public String getValue() {
+      return value;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class InformationResponseDto {\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
-        sb.append("    traceId: ").append(toIndentedString(traceId)).append("\n");
-        sb.append("    spanId: ").append(toIndentedString(spanId)).append("\n");
-        sb.append("    httpStatus: ").append(toIndentedString(httpStatus)).append("\n");
-        sb.append("    originalException: ").append(toIndentedString(originalException)).append("\n");
-        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
-        sb.append("}");
-        return sb.toString();
+      return String.valueOf(value);
     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
+    @JsonCreator
+    public static TypeEnum fromValue(String value) {
+      for (TypeEnum b : TypeEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
         }
-        return o.toString().replace("\n", "\n    ");
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
     }
+  }
+
+  public static final String JSON_PROPERTY_TYPE = "type";
+  private TypeEnum type;
+
+  public static final String JSON_PROPERTY_TIMESTAMP = "timestamp";
+  private LocalDateTime timestamp;
+
+  public static final String JSON_PROPERTY_TRACE_ID = "traceId";
+  private String traceId;
+
+  public static final String JSON_PROPERTY_SPAN_ID = "spanId";
+  private String spanId;
+
+  public static final String JSON_PROPERTY_HTTP_STATUS = "httpStatus";
+  private Integer httpStatus;
+
+  public static final String JSON_PROPERTY_ORIGINAL_EXCEPTION = "originalException";
+  private String originalException;
+
+  public static final String JSON_PROPERTY_MESSAGES = "messages";
+  private List<String> messages;
+
+  public InformationResponseDto() {
+  }
+
+  public InformationResponseDto type(TypeEnum type) {
+    
+    this.type = type;
+    return this;
+  }
+
+   /**
+   * Get type
+   * @return type
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public TypeEnum getType() {
+    return type;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setType(TypeEnum type) {
+    this.type = type;
+  }
+
+
+  public InformationResponseDto timestamp(LocalDateTime timestamp) {
+    
+    this.timestamp = timestamp;
+    return this;
+  }
+
+   /**
+   * Get timestamp
+   * @return timestamp
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TIMESTAMP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public LocalDateTime getTimestamp() {
+    return timestamp;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TIMESTAMP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setTimestamp(LocalDateTime timestamp) {
+    this.timestamp = timestamp;
+  }
+
+
+  public InformationResponseDto traceId(String traceId) {
+    
+    this.traceId = traceId;
+    return this;
+  }
+
+   /**
+   * Get traceId
+   * @return traceId
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TRACE_ID)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getTraceId() {
+    return traceId;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TRACE_ID)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setTraceId(String traceId) {
+    this.traceId = traceId;
+  }
+
+
+  public InformationResponseDto spanId(String spanId) {
+    
+    this.spanId = spanId;
+    return this;
+  }
+
+   /**
+   * Get spanId
+   * @return spanId
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPAN_ID)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getSpanId() {
+    return spanId;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPAN_ID)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpanId(String spanId) {
+    this.spanId = spanId;
+  }
+
+
+  public InformationResponseDto httpStatus(Integer httpStatus) {
+    
+    this.httpStatus = httpStatus;
+    return this;
+  }
+
+   /**
+   * Get httpStatus
+   * @return httpStatus
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_HTTP_STATUS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getHttpStatus() {
+    return httpStatus;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_HTTP_STATUS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setHttpStatus(Integer httpStatus) {
+    this.httpStatus = httpStatus;
+  }
+
+
+  public InformationResponseDto originalException(String originalException) {
+    
+    this.originalException = originalException;
+    return this;
+  }
+
+   /**
+   * Get originalException
+   * @return originalException
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ORIGINAL_EXCEPTION)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getOriginalException() {
+    return originalException;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ORIGINAL_EXCEPTION)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setOriginalException(String originalException) {
+    this.originalException = originalException;
+  }
+
+
+  public InformationResponseDto messages(List<String> messages) {
+    
+    this.messages = messages;
+    return this;
+  }
+
+  public InformationResponseDto addMessagesItem(String messagesItem) {
+    if (this.messages == null) {
+      this.messages = new ArrayList<>();
+    }
+    this.messages.add(messagesItem);
+    return this;
+  }
+
+   /**
+   * Get messages
+   * @return messages
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_MESSAGES)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public List<String> getMessages() {
+    return messages;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_MESSAGES)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setMessages(List<String> messages) {
+    this.messages = messages;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    InformationResponseDto informationResponseDto = (InformationResponseDto) o;
+    return Objects.equals(this.type, informationResponseDto.type) &&
+        Objects.equals(this.timestamp, informationResponseDto.timestamp) &&
+        Objects.equals(this.traceId, informationResponseDto.traceId) &&
+        Objects.equals(this.spanId, informationResponseDto.spanId) &&
+        Objects.equals(this.httpStatus, informationResponseDto.httpStatus) &&
+        Objects.equals(this.originalException, informationResponseDto.originalException) &&
+        Objects.equals(this.messages, informationResponseDto.messages);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, timestamp, traceId, spanId, httpStatus, originalException, messages);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class InformationResponseDto {\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    timestamp: ").append(toIndentedString(timestamp)).append("\n");
+    sb.append("    traceId: ").append(toIndentedString(traceId)).append("\n");
+    sb.append("    spanId: ").append(toIndentedString(spanId)).append("\n");
+    sb.append("    httpStatus: ").append(toIndentedString(httpStatus)).append("\n");
+    sb.append("    originalException: ").append(toIndentedString(originalException)).append("\n");
+    sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
 
 }
+

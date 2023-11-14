@@ -27,7 +27,7 @@ public class MessdatenController {
     private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelle_id";
     private static final String REQUEST_PARAMETER_VON = "von";
     private static final String REQUEST_PARAMETER_BIS = "bis";
-    private static final String REQUEST_PARAMETER_TAGTYP = "tagtyp";
+    private static final String REQUEST_PARAMETER_TAGTYP = "tagesTyp";
 
     private final MessdatenService messdatenService;
 

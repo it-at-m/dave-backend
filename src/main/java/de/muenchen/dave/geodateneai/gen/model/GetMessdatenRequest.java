@@ -10,181 +10,232 @@
  * Do not edit the class manually.
  */
 
+
 package de.muenchen.dave.geodateneai.gen.model;
 
+import java.util.Objects;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.time.LocalDate;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * GetMessdatenRequest
  */
 @JsonPropertyOrder({
-        GetMessdatenRequest.JSON_PROPERTY_MESSSTELLE_ID,
-        GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_START,
-        GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
-        GetMessdatenRequest.JSON_PROPERTY_TAG_TYP
+  GetMessdatenRequest.JSON_PROPERTY_MESSSTELLE_ID,
+  GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_START,
+  GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
+  GetMessdatenRequest.JSON_PROPERTY_TAGES_TYP
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class GetMessdatenRequest {
-    public static final String JSON_PROPERTY_MESSSTELLE_ID = "messstelleId";
-    private Long messstelleId;
+  public static final String JSON_PROPERTY_MESSSTELLE_ID = "messstelleId";
+  private Long messstelleId;
 
-    public static final String JSON_PROPERTY_ZEITPUNKT_START = "zeitpunktStart";
-    private LocalDate zeitpunktStart;
+  public static final String JSON_PROPERTY_ZEITPUNKT_START = "zeitpunktStart";
+  private LocalDate zeitpunktStart;
 
-    public static final String JSON_PROPERTY_ZEITPUNKT_ENDE = "zeitpunktEnde";
-    private LocalDate zeitpunktEnde;
+  public static final String JSON_PROPERTY_ZEITPUNKT_ENDE = "zeitpunktEnde";
+  private LocalDate zeitpunktEnde;
 
-    public static final String JSON_PROPERTY_TAG_TYP = "tagTyp";
-    private String tagTyp;
+  /**
+   * Gets or Sets tagesTyp
+   */
+  public enum TagesTypEnum {
+    WERKTAG_DI_MI_DO("WERKTAG_DI_MI_DO"),
+    
+    WERKTAG_MO_FR("WERKTAG_MO_FR"),
+    
+    SAMSTAG("SAMSTAG"),
+    
+    SONNTAG_FEIERTAG("SONNTAG_FEIERTAG"),
+    
+    WERKTAG_FERIEN("WERKTAG_FERIEN");
 
-    public GetMessdatenRequest() {
+    private String value;
+
+    TagesTypEnum(String value) {
+      this.value = value;
     }
 
-    public GetMessdatenRequest messstelleId(Long messstelleId) {
-
-        this.messstelleId = messstelleId;
-        return this;
-    }
-
-    /**
-     * Get messstelleId
-     *
-     * @return messstelleId
-     **/
-    @javax.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_MESSSTELLE_ID)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
-    public Long getMessstelleId() {
-        return messstelleId;
-    }
-
-    @JsonProperty(JSON_PROPERTY_MESSSTELLE_ID)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setMessstelleId(Long messstelleId) {
-        this.messstelleId = messstelleId;
-    }
-
-    public GetMessdatenRequest zeitpunktStart(LocalDate zeitpunktStart) {
-
-        this.zeitpunktStart = zeitpunktStart;
-        return this;
-    }
-
-    /**
-     * Get zeitpunktStart
-     *
-     * @return zeitpunktStart
-     **/
-    @javax.annotation.Nonnull
-    @JsonProperty(JSON_PROPERTY_ZEITPUNKT_START)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-
-    public LocalDate getZeitpunktStart() {
-        return zeitpunktStart;
-    }
-
-    @JsonProperty(JSON_PROPERTY_ZEITPUNKT_START)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setZeitpunktStart(LocalDate zeitpunktStart) {
-        this.zeitpunktStart = zeitpunktStart;
-    }
-
-    public GetMessdatenRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
-
-        this.zeitpunktEnde = zeitpunktEnde;
-        return this;
-    }
-
-    /**
-     * Get zeitpunktEnde
-     *
-     * @return zeitpunktEnde
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public LocalDate getZeitpunktEnde() {
-        return zeitpunktEnde;
-    }
-
-    @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setZeitpunktEnde(LocalDate zeitpunktEnde) {
-        this.zeitpunktEnde = zeitpunktEnde;
-    }
-
-    public GetMessdatenRequest tagTyp(String tagTyp) {
-
-        this.tagTyp = tagTyp;
-        return this;
-    }
-
-    /**
-     * Get tagTyp
-     *
-     * @return tagTyp
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TAG_TYP)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public String getTagTyp() {
-        return tagTyp;
-    }
-
-    @JsonProperty(JSON_PROPERTY_TAG_TYP)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setTagTyp(String tagTyp) {
-        this.tagTyp = tagTyp;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        GetMessdatenRequest getMessdatenRequest = (GetMessdatenRequest) o;
-        return Objects.equals(this.messstelleId, getMessdatenRequest.messstelleId) &&
-                Objects.equals(this.zeitpunktStart, getMessdatenRequest.zeitpunktStart) &&
-                Objects.equals(this.zeitpunktEnde, getMessdatenRequest.zeitpunktEnde) &&
-                Objects.equals(this.tagTyp, getMessdatenRequest.tagTyp);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(messstelleId, zeitpunktStart, zeitpunktEnde, tagTyp);
+    @JsonValue
+    public String getValue() {
+      return value;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class GetMessdatenRequest {\n");
-        sb.append("    messstelleId: ").append(toIndentedString(messstelleId)).append("\n");
-        sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
-        sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");
-        sb.append("    tagTyp: ").append(toIndentedString(tagTyp)).append("\n");
-        sb.append("}");
-        return sb.toString();
+      return String.valueOf(value);
     }
 
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
+    @JsonCreator
+    public static TagesTypEnum fromValue(String value) {
+      for (TagesTypEnum b : TagesTypEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
         }
-        return o.toString().replace("\n", "\n    ");
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
     }
+  }
+
+  public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
+  private TagesTypEnum tagesTyp;
+
+  public GetMessdatenRequest() {
+  }
+
+  public GetMessdatenRequest messstelleId(Long messstelleId) {
+    
+    this.messstelleId = messstelleId;
+    return this;
+  }
+
+   /**
+   * Get messstelleId
+   * @return messstelleId
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_MESSSTELLE_ID)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public Long getMessstelleId() {
+    return messstelleId;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_MESSSTELLE_ID)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setMessstelleId(Long messstelleId) {
+    this.messstelleId = messstelleId;
+  }
+
+
+  public GetMessdatenRequest zeitpunktStart(LocalDate zeitpunktStart) {
+    
+    this.zeitpunktStart = zeitpunktStart;
+    return this;
+  }
+
+   /**
+   * Get zeitpunktStart
+   * @return zeitpunktStart
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_ZEITPUNKT_START)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public LocalDate getZeitpunktStart() {
+    return zeitpunktStart;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ZEITPUNKT_START)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setZeitpunktStart(LocalDate zeitpunktStart) {
+    this.zeitpunktStart = zeitpunktStart;
+  }
+
+
+  public GetMessdatenRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
+    
+    this.zeitpunktEnde = zeitpunktEnde;
+    return this;
+  }
+
+   /**
+   * Get zeitpunktEnde
+   * @return zeitpunktEnde
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public LocalDate getZeitpunktEnde() {
+    return zeitpunktEnde;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setZeitpunktEnde(LocalDate zeitpunktEnde) {
+    this.zeitpunktEnde = zeitpunktEnde;
+  }
+
+
+  public GetMessdatenRequest tagesTyp(TagesTypEnum tagesTyp) {
+    
+    this.tagesTyp = tagesTyp;
+    return this;
+  }
+
+   /**
+   * Get tagesTyp
+   * @return tagesTyp
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public TagesTypEnum getTagesTyp() {
+    return tagesTyp;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setTagesTyp(TagesTypEnum tagesTyp) {
+    this.tagesTyp = tagesTyp;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    GetMessdatenRequest getMessdatenRequest = (GetMessdatenRequest) o;
+    return Objects.equals(this.messstelleId, getMessdatenRequest.messstelleId) &&
+        Objects.equals(this.zeitpunktStart, getMessdatenRequest.zeitpunktStart) &&
+        Objects.equals(this.zeitpunktEnde, getMessdatenRequest.zeitpunktEnde) &&
+        Objects.equals(this.tagesTyp, getMessdatenRequest.tagesTyp);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(messstelleId, zeitpunktStart, zeitpunktEnde, tagesTyp);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class GetMessdatenRequest {\n");
+    sb.append("    messstelleId: ").append(toIndentedString(messstelleId)).append("\n");
+    sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
+    sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");
+    sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
 
 }
+

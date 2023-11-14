@@ -10,128 +10,138 @@
  * Do not edit the class manually.
  */
 
+
 package de.muenchen.dave.geodateneai.gen.model;
 
+import java.util.Objects;
+import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonValue;
+import de.muenchen.dave.geodateneai.gen.model.FeatureDtoStadtbezirkDto;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  * FeatureCollectionDtoFeatureDtoStadtbezirkDto
  */
 @JsonPropertyOrder({
-        FeatureCollectionDtoFeatureDtoStadtbezirkDto.JSON_PROPERTY_TYPE,
-        FeatureCollectionDtoFeatureDtoStadtbezirkDto.JSON_PROPERTY_FEATURES
+  FeatureCollectionDtoFeatureDtoStadtbezirkDto.JSON_PROPERTY_TYPE,
+  FeatureCollectionDtoFeatureDtoStadtbezirkDto.JSON_PROPERTY_FEATURES
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class FeatureCollectionDtoFeatureDtoStadtbezirkDto {
-    public static final String JSON_PROPERTY_TYPE = "type";
-    private String type;
+  public static final String JSON_PROPERTY_TYPE = "type";
+  private String type;
 
-    public static final String JSON_PROPERTY_FEATURES = "features";
-    private List<FeatureDtoStadtbezirkDto> features;
+  public static final String JSON_PROPERTY_FEATURES = "features";
+  private List<FeatureDtoStadtbezirkDto> features;
 
-    public FeatureCollectionDtoFeatureDtoStadtbezirkDto() {
+  public FeatureCollectionDtoFeatureDtoStadtbezirkDto() {
+  }
+
+  public FeatureCollectionDtoFeatureDtoStadtbezirkDto type(String type) {
+    
+    this.type = type;
+    return this;
+  }
+
+   /**
+   * Get type
+   * @return type
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getType() {
+    return type;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TYPE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setType(String type) {
+    this.type = type;
+  }
+
+
+  public FeatureCollectionDtoFeatureDtoStadtbezirkDto features(List<FeatureDtoStadtbezirkDto> features) {
+    
+    this.features = features;
+    return this;
+  }
+
+  public FeatureCollectionDtoFeatureDtoStadtbezirkDto addFeaturesItem(FeatureDtoStadtbezirkDto featuresItem) {
+    if (this.features == null) {
+      this.features = new ArrayList<>();
     }
+    this.features.add(featuresItem);
+    return this;
+  }
 
-    public FeatureCollectionDtoFeatureDtoStadtbezirkDto type(String type) {
+   /**
+   * Get features
+   * @return features
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_FEATURES)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-        this.type = type;
-        return this;
+  public List<FeatureDtoStadtbezirkDto> getFeatures() {
+    return features;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_FEATURES)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setFeatures(List<FeatureDtoStadtbezirkDto> features) {
+    this.features = features;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    /**
-     * Get type
-     *
-     * @return type
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public String getType() {
-        return type;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    FeatureCollectionDtoFeatureDtoStadtbezirkDto featureCollectionDtoFeatureDtoStadtbezirkDto = (FeatureCollectionDtoFeatureDtoStadtbezirkDto) o;
+    return Objects.equals(this.type, featureCollectionDtoFeatureDtoStadtbezirkDto.type) &&
+        Objects.equals(this.features, featureCollectionDtoFeatureDtoStadtbezirkDto.features);
+  }
 
-    @JsonProperty(JSON_PROPERTY_TYPE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setType(String type) {
-        this.type = type;
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, features);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class FeatureCollectionDtoFeatureDtoStadtbezirkDto {\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    features: ").append(toIndentedString(features)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
     }
-
-    public FeatureCollectionDtoFeatureDtoStadtbezirkDto features(List<FeatureDtoStadtbezirkDto> features) {
-
-        this.features = features;
-        return this;
-    }
-
-    public FeatureCollectionDtoFeatureDtoStadtbezirkDto addFeaturesItem(FeatureDtoStadtbezirkDto featuresItem) {
-        if (this.features == null) {
-            this.features = new ArrayList<>();
-        }
-        this.features.add(featuresItem);
-        return this;
-    }
-
-    /**
-     * Get features
-     *
-     * @return features
-     **/
-    @javax.annotation.Nullable
-    @JsonProperty(JSON_PROPERTY_FEATURES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-    public List<FeatureDtoStadtbezirkDto> getFeatures() {
-        return features;
-    }
-
-    @JsonProperty(JSON_PROPERTY_FEATURES)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    public void setFeatures(List<FeatureDtoStadtbezirkDto> features) {
-        this.features = features;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        FeatureCollectionDtoFeatureDtoStadtbezirkDto featureCollectionDtoFeatureDtoStadtbezirkDto = (FeatureCollectionDtoFeatureDtoStadtbezirkDto) o;
-        return Objects.equals(this.type, featureCollectionDtoFeatureDtoStadtbezirkDto.type) &&
-                Objects.equals(this.features, featureCollectionDtoFeatureDtoStadtbezirkDto.features);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, features);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class FeatureCollectionDtoFeatureDtoStadtbezirkDto {\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    features: ").append(toIndentedString(features)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
+    return o.toString().replace("\n", "\n    ");
+  }
 
 }
+

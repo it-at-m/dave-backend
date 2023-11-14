@@ -1,7 +1,9 @@
 package de.muenchen.dave.geodateneai.gen.geodaten.auth;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 
