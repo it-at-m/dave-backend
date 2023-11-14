@@ -498,6 +498,8 @@
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
                         </eclipse>
+                        <importOrder />
+                        <removeUnusedImports />
                         <trimTrailingWhitespace/>
                         <endWithNewline/>
                     </java>

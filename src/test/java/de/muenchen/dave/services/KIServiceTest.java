@@ -1,24 +1,23 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.KIPredictionResult;
-import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
-import de.muenchen.dave.domain.KIZeitintervall;
-import de.muenchen.dave.exceptions.PredictionFailedException;
-import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+
+import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KIZeitintervall;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
+import de.muenchen.dave.exceptions.PredictionFailedException;
+import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class KIServiceTest {
 
