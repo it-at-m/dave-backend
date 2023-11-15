@@ -561,7 +561,7 @@
                 <!-- /RELEASE_VERSION -->
                 <executions>
                     <execution>
-                        <id>isi-backend</id>
+                        <id>dave-backend</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -571,7 +571,6 @@
                             <generatorName>java</generatorName>
                             <output>${project.basedir}</output>
                             <skipIfSpecIsUnchanged>true</skipIfSpecIsUnchanged>
-
                             <apiPackage>de.muenchen.dave.geodateneai.gen.api</apiPackage>
                             <modelPackage>de.muenchen.dave.geodateneai.gen.model</modelPackage>
                             <invokerPackage>de.muenchen.dave.geodateneai.gen.geodaten</invokerPackage>
