@@ -130,8 +130,8 @@ public class MesswerteMessquerschnittApi {
     /**
      * Holt die Messwerte als Tagesaggregat zur einer Zählstelle in einem bestimmten Zeitraum.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messwerte als Tagesaggregat erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMesswerteMessquerschnittRequest The getMesswerteMessquerschnittRequest parameter
      * @return List&lt;MesswerteTagesaggregatMessquerschnittDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -168,8 +168,8 @@ public class MesswerteMessquerschnittApi {
     /**
      * Holt die Messwerte als Tagesaggregat zur einer Zählstelle in einem bestimmten Zeitraum.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messwerte als Tagesaggregat erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMesswerteMessquerschnittRequest The getMesswerteMessquerschnittRequest parameter
      * @return List&lt;MesswerteTagesaggregatMessquerschnittDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -182,8 +182,8 @@ public class MesswerteMessquerschnittApi {
     /**
      * Holt die Messwerte als Tagesaggregat zur einer Zählstelle in einem bestimmten Zeitraum.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messwerte als Tagesaggregat erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMesswerteMessquerschnittRequest The getMesswerteMessquerschnittRequest parameter
      * @return ResponseEntity&lt;List&lt;MesswerteTagesaggregatMessquerschnittDto&gt;&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -196,8 +196,8 @@ public class MesswerteMessquerschnittApi {
     /**
      * Holt die Messwerte als Tagesaggregat zur einer Zählstelle in einem bestimmten Zeitraum.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messwerte als Tagesaggregat erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMesswerteMessquerschnittRequest The getMesswerteMessquerschnittRequest parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
