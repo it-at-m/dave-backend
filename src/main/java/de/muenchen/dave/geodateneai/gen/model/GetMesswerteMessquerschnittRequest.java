@@ -25,16 +25,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * GetMessdatenRequest
+ * GetMesswerteMessquerschnittRequest
  */
 @JsonPropertyOrder({
-  GetMessdatenRequest.JSON_PROPERTY_MESSSTELLE_ID,
-  GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_START,
-  GetMessdatenRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
-  GetMessdatenRequest.JSON_PROPERTY_TAGES_TYP
+  GetMesswerteMessquerschnittRequest.JSON_PROPERTY_MESSSTELLE_ID,
+  GetMesswerteMessquerschnittRequest.JSON_PROPERTY_ZEITPUNKT_START,
+  GetMesswerteMessquerschnittRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
+  GetMesswerteMessquerschnittRequest.JSON_PROPERTY_TAGES_TYP
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class GetMessdatenRequest {
+public class GetMesswerteMessquerschnittRequest {
   public static final String JSON_PROPERTY_MESSSTELLE_ID = "messstelleId";
   private Long messstelleId;
 
@@ -88,10 +88,10 @@ public class GetMessdatenRequest {
   public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
   private TagesTypEnum tagesTyp;
 
-  public GetMessdatenRequest() {
+  public GetMesswerteMessquerschnittRequest() {
   }
 
-  public GetMessdatenRequest messstelleId(Long messstelleId) {
+  public GetMesswerteMessquerschnittRequest messstelleId(Long messstelleId) {
     
     this.messstelleId = messstelleId;
     return this;
@@ -117,7 +117,7 @@ public class GetMessdatenRequest {
   }
 
 
-  public GetMessdatenRequest zeitpunktStart(LocalDate zeitpunktStart) {
+  public GetMesswerteMessquerschnittRequest zeitpunktStart(LocalDate zeitpunktStart) {
     
     this.zeitpunktStart = zeitpunktStart;
     return this;
@@ -143,7 +143,7 @@ public class GetMessdatenRequest {
   }
 
 
-  public GetMessdatenRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
+  public GetMesswerteMessquerschnittRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
     
     this.zeitpunktEnde = zeitpunktEnde;
     return this;
@@ -169,7 +169,7 @@ public class GetMessdatenRequest {
   }
 
 
-  public GetMessdatenRequest tagesTyp(TagesTypEnum tagesTyp) {
+  public GetMesswerteMessquerschnittRequest tagesTyp(TagesTypEnum tagesTyp) {
     
     this.tagesTyp = tagesTyp;
     return this;
@@ -202,11 +202,11 @@ public class GetMessdatenRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GetMessdatenRequest getMessdatenRequest = (GetMessdatenRequest) o;
-    return Objects.equals(this.messstelleId, getMessdatenRequest.messstelleId) &&
-        Objects.equals(this.zeitpunktStart, getMessdatenRequest.zeitpunktStart) &&
-        Objects.equals(this.zeitpunktEnde, getMessdatenRequest.zeitpunktEnde) &&
-        Objects.equals(this.tagesTyp, getMessdatenRequest.tagesTyp);
+    GetMesswerteMessquerschnittRequest getMesswerteMessquerschnittRequest = (GetMesswerteMessquerschnittRequest) o;
+    return Objects.equals(this.messstelleId, getMesswerteMessquerschnittRequest.messstelleId) &&
+        Objects.equals(this.zeitpunktStart, getMesswerteMessquerschnittRequest.zeitpunktStart) &&
+        Objects.equals(this.zeitpunktEnde, getMesswerteMessquerschnittRequest.zeitpunktEnde) &&
+        Objects.equals(this.tagesTyp, getMesswerteMessquerschnittRequest.tagesTyp);
   }
 
   @Override
@@ -217,7 +217,7 @@ public class GetMessdatenRequest {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GetMessdatenRequest {\n");
+    sb.append("class GetMesswerteMessquerschnittRequest {\n");
     sb.append("    messstelleId: ").append(toIndentedString(messstelleId)).append("\n");
     sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
     sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");
