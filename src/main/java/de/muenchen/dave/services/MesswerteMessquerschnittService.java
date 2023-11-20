@@ -1,11 +1,12 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteMessquerschnittRequest;
-import de.muenchen.dave.geodateneai.gen.model.MesswerteIntervallMessquerschnittDto;
-import de.muenchen.dave.geodateneai.gen.model.MesswerteTagesaggregatMessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittIntervallResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittRequest;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittTagesaggregatResponse;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,20 +30,18 @@ public class MesswerteMessquerschnittService {
      * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen MesswerteIntervalle pro Tag
      */
-    public List<MesswerteIntervallMessquerschnittDto> ladeMesswerteIntervall(final long messstelleId, final String von, final String bis,
+    public GetMesswerteOfMessquerschnittIntervallResponse ladeMesswerteIntervall(final long messstelleId, final String von, final String bis,
             final String tagesTyp) {
-        final GetMesswerteMessquerschnittRequest request = new GetMesswerteMessquerschnittRequest();
-        request.setMessstelleId(messstelleId);
-        request.setTagesTyp(GetMesswerteMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
+        final GetMesswerteOfMessquerschnittRequest request = new GetMesswerteOfMessquerschnittRequest();
+        // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
+        request.setMessquerschnittIds(Set.of(messstelleId, 123L));
+        request.setTagesTyp(GetMesswerteOfMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
         request.setZeitpunktStart(LocalDate.parse(von));
         request.setZeitpunktEnde(LocalDate.parse(bis));
-        Mono<ResponseEntity<List<MesswerteIntervallMessquerschnittDto>>> messwerteIntervallWithHttpInfo = messwerteMessquerschnittApi
-                .getMesswerteIntervallWithHttpInfo(request);
-        final List<MesswerteIntervallMessquerschnittDto> body = messwerteIntervallWithHttpInfo.block().getBody();
-        // Mappen auf Struktur für Charts
-
-        // Charts laden
-        return body;
+        final Mono<ResponseEntity<GetMesswerteOfMessquerschnittIntervallResponse>> messwerteIntervallWithHttpInfo = messwerteMessquerschnittApi
+                .getMesswerteIntervallWithHttpInfo(
+                        request);
+        return Objects.requireNonNull(messwerteIntervallWithHttpInfo.block()).getBody();
 
     }
 
@@ -56,20 +55,17 @@ public class MesswerteMessquerschnittService {
      * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen MesswerteTagesaggregat pro Tag
      */
-    public List<MesswerteTagesaggregatMessquerschnittDto> ladeMesswerteTagesaggregat(final long messstelleId, final String von, final String bis,
+    public GetMesswerteOfMessquerschnittTagesaggregatResponse ladeMesswerteTagesaggregat(final long messstelleId, final String von, final String bis,
             final String tagesTyp) {
-        final GetMesswerteMessquerschnittRequest request = new GetMesswerteMessquerschnittRequest();
-        request.setMessstelleId(messstelleId);
-        request.setTagesTyp(GetMesswerteMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
+        final GetMesswerteOfMessquerschnittRequest request = new GetMesswerteOfMessquerschnittRequest();
+        // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
+        request.setMessquerschnittIds(Set.of(messstelleId, 963L));
+        request.setTagesTyp(GetMesswerteOfMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
         request.setZeitpunktStart(LocalDate.parse(von));
         request.setZeitpunktEnde(LocalDate.parse(bis));
-        Mono<ResponseEntity<List<MesswerteTagesaggregatMessquerschnittDto>>> messwerteTagesaggregatWithHttpInfo = messwerteMessquerschnittApi
+        final Mono<ResponseEntity<GetMesswerteOfMessquerschnittTagesaggregatResponse>> messwerteTagesaggregatWithHttpInfo = messwerteMessquerschnittApi
                 .getMesswerteTagesaggregatWithHttpInfo(request);
-        final List<MesswerteTagesaggregatMessquerschnittDto> body = messwerteTagesaggregatWithHttpInfo.block().getBody();
-        // Mappen auf Struktur für Charts
-
-        // Charts laden
-        return body;
+        return Objects.requireNonNull(messwerteTagesaggregatWithHttpInfo.block()).getBody();
 
     }
 }

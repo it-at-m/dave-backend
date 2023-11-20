@@ -4,10 +4,9 @@
  */
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.geodateneai.gen.model.MesswerteIntervallMessquerschnittDto;
-import de.muenchen.dave.geodateneai.gen.model.MesswerteTagesaggregatMessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittIntervallResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittTagesaggregatResponse;
 import de.muenchen.dave.services.MesswerteMessquerschnittService;
-import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,8 @@ public class MesswerteMessquerschnittController {
     private final MesswerteMessquerschnittService messwerteMessquerschnittService;
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle
-     * für das Gangliniendiagramm, die Listenausgabe und die Heatmap.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm, die
+     * Listenausgabe und die Heatmap.
      *
      * @param messstelleId Die Id der angefragten Messstelle.
      * @param von required Zeitpunkt der Daten.
@@ -44,21 +43,21 @@ public class MesswerteMessquerschnittController {
      */
     @PostMapping(value = "intervall", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<MesswerteIntervallMessquerschnittDto>> ladeMesswerteIntervall(
+    public ResponseEntity<GetMesswerteOfMessquerschnittIntervallResponse> ladeMesswerteIntervall(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
             @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
             @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
         log.info("ladeMesswerteIntervall für Messstelle {} aufgerufen", messstelleId);
-        final List<MesswerteIntervallMessquerschnittDto> messwerte = messwerteMessquerschnittService.ladeMesswerteIntervall(messstelleId, von, bis, tagestyp);
+        final GetMesswerteOfMessquerschnittIntervallResponse messwerte = messwerteMessquerschnittService.ladeMesswerteIntervall(messstelleId, von, bis,
+                tagestyp);
         log.info("laden der Daten abgeschlossen.");
         log.debug("MesswerteIntervall: {}", messwerte.toString());
         return ResponseEntity.ok(messwerte);
     }
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle
-     * für den Belastungsplan.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für den Belastungsplan.
      *
      * @param messstelleId Die Id der angefragten Messstelle.
      * @param von required Zeitpunkt der Daten.
@@ -68,13 +67,13 @@ public class MesswerteMessquerschnittController {
      */
     @PostMapping(value = "tagesaggregat", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<MesswerteTagesaggregatMessquerschnittDto>> ladeMesswerteTagesaggregat(
+    public ResponseEntity<GetMesswerteOfMessquerschnittTagesaggregatResponse> ladeMesswerteTagesaggregat(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
             @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
             @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
         log.info("ladeMesswerteTagesaggregat für Messstelle {} aufgerufen", messstelleId);
-        final List<MesswerteTagesaggregatMessquerschnittDto> messwerte = messwerteMessquerschnittService.ladeMesswerteTagesaggregat(messstelleId, von, bis,
+        final GetMesswerteOfMessquerschnittTagesaggregatResponse messwerte = messwerteMessquerschnittService.ladeMesswerteTagesaggregat(messstelleId, von, bis,
                 tagestyp);
         log.info("laden der Daten abgeschlossen.");
         log.debug("MesswerteTageaggregat: {}", messwerte.toString());
