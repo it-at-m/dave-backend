@@ -27,7 +27,7 @@ public class MesswerteMessquerschnittController {
     private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelle_id";
     private static final String REQUEST_PARAMETER_VON = "von";
     private static final String REQUEST_PARAMETER_BIS = "bis";
-    private static final String REQUEST_PARAMETER_TAGESTYP = "tagesTyp";
+    private static final String REQUEST_PARAMETER_TAGESTYP = "tages_typ";
 
     private final MesswerteMessquerschnittService messwerteMessquerschnittService;
 
