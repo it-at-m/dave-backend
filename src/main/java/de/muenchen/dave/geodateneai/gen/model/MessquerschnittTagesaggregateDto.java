@@ -20,31 +20,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.TagesaggregatMessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.MesswerteTagesaggregatMessquerschnittDto;
 import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * MessquerschnittTagesaggregatDto
+ * MessquerschnittTagesaggregateDto
  */
 @JsonPropertyOrder({
-  MessquerschnittTagesaggregatDto.JSON_PROPERTY_MESSQUERSCHNITT_ID,
-  MessquerschnittTagesaggregatDto.JSON_PROPERTY_TAGESAGGREGAT
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_MESSQUERSCHNITT_ID,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_TAGESAGGREGAT
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class MessquerschnittTagesaggregatDto {
+public class MessquerschnittTagesaggregateDto {
   public static final String JSON_PROPERTY_MESSQUERSCHNITT_ID = "messquerschnittId";
   private Long messquerschnittId;
 
   public static final String JSON_PROPERTY_TAGESAGGREGAT = "tagesaggregat";
-  private Map<String, TagesaggregatMessquerschnittDto> tagesaggregat = new HashMap<>();
+  private Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat = new HashMap<>();
 
-  public MessquerschnittTagesaggregatDto() {
+  public MessquerschnittTagesaggregateDto() {
   }
 
-  public MessquerschnittTagesaggregatDto messquerschnittId(Long messquerschnittId) {
+  public MessquerschnittTagesaggregateDto messquerschnittId(Long messquerschnittId) {
     
     this.messquerschnittId = messquerschnittId;
     return this;
@@ -70,13 +70,13 @@ public class MessquerschnittTagesaggregatDto {
   }
 
 
-  public MessquerschnittTagesaggregatDto tagesaggregat(Map<String, TagesaggregatMessquerschnittDto> tagesaggregat) {
+  public MessquerschnittTagesaggregateDto tagesaggregat(Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat) {
     
     this.tagesaggregat = tagesaggregat;
     return this;
   }
 
-  public MessquerschnittTagesaggregatDto putTagesaggregatItem(String key, TagesaggregatMessquerschnittDto tagesaggregatItem) {
+  public MessquerschnittTagesaggregateDto putTagesaggregatItem(String key, MesswerteTagesaggregatMessquerschnittDto tagesaggregatItem) {
     if (this.tagesaggregat == null) {
       this.tagesaggregat = new HashMap<>();
     }
@@ -92,14 +92,14 @@ public class MessquerschnittTagesaggregatDto {
   @JsonProperty(JSON_PROPERTY_TAGESAGGREGAT)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Map<String, TagesaggregatMessquerschnittDto> getTagesaggregat() {
+  public Map<String, MesswerteTagesaggregatMessquerschnittDto> getTagesaggregat() {
     return tagesaggregat;
   }
 
 
   @JsonProperty(JSON_PROPERTY_TAGESAGGREGAT)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTagesaggregat(Map<String, TagesaggregatMessquerschnittDto> tagesaggregat) {
+  public void setTagesaggregat(Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat) {
     this.tagesaggregat = tagesaggregat;
   }
 
@@ -111,9 +111,9 @@ public class MessquerschnittTagesaggregatDto {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MessquerschnittTagesaggregatDto messquerschnittTagesaggregatDto = (MessquerschnittTagesaggregatDto) o;
-    return Objects.equals(this.messquerschnittId, messquerschnittTagesaggregatDto.messquerschnittId) &&
-        Objects.equals(this.tagesaggregat, messquerschnittTagesaggregatDto.tagesaggregat);
+    MessquerschnittTagesaggregateDto messquerschnittTagesaggregateDto = (MessquerschnittTagesaggregateDto) o;
+    return Objects.equals(this.messquerschnittId, messquerschnittTagesaggregateDto.messquerschnittId) &&
+        Objects.equals(this.tagesaggregat, messquerschnittTagesaggregateDto.tagesaggregat);
   }
 
   @Override
@@ -124,7 +124,7 @@ public class MessquerschnittTagesaggregatDto {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class MessquerschnittTagesaggregatDto {\n");
+    sb.append("class MessquerschnittTagesaggregateDto {\n");
     sb.append("    messquerschnittId: ").append(toIndentedString(messquerschnittId)).append("\n");
     sb.append("    tagesaggregat: ").append(toIndentedString(tagesaggregat)).append("\n");
     sb.append("}");

@@ -4,8 +4,8 @@
  */
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittIntervallResponse;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittTagesaggregatResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteIntervallMessquerschnittResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
 import de.muenchen.dave.services.MesswerteMessquerschnittService;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -43,13 +43,13 @@ public class MesswerteMessquerschnittController {
      */
     @PostMapping(value = "intervall", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<GetMesswerteOfMessquerschnittIntervallResponse> ladeMesswerteIntervall(
+    public ResponseEntity<GetMesswerteIntervallMessquerschnittResponse> ladeMesswerteIntervall(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
             @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
             @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
         log.info("ladeMesswerteIntervall für Messstelle {} aufgerufen", messstelleId);
-        final GetMesswerteOfMessquerschnittIntervallResponse messwerte = messwerteMessquerschnittService.ladeMesswerteIntervall(messstelleId, von, bis,
+        final GetMesswerteIntervallMessquerschnittResponse messwerte = messwerteMessquerschnittService.ladeMesswerteIntervall(messstelleId, von, bis,
                 tagestyp);
         log.info("laden der Daten abgeschlossen.");
         log.debug("MesswerteIntervall: {}", messwerte.toString());
@@ -67,13 +67,13 @@ public class MesswerteMessquerschnittController {
      */
     @PostMapping(value = "tagesaggregat", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<GetMesswerteOfMessquerschnittTagesaggregatResponse> ladeMesswerteTagesaggregat(
+    public ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse> ladeMesswerteTagesaggregat(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
             @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
             @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
         log.info("ladeMesswerteTagesaggregat für Messstelle {} aufgerufen", messstelleId);
-        final GetMesswerteOfMessquerschnittTagesaggregatResponse messwerte = messwerteMessquerschnittService.ladeMesswerteTagesaggregat(messstelleId, von, bis,
+        final GetMesswerteTagesaggregatMessquerschnittResponse messwerte = messwerteMessquerschnittService.ladeMesswerteTagesaggregat(messstelleId, von, bis,
                 tagestyp);
         log.info("laden der Daten abgeschlossen.");
         log.debug("MesswerteTageaggregat: {}", messwerte.toString());

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.MessquerschnittTagesaggregatDto;
+import de.muenchen.dave.geodateneai.gen.model.MessquerschnittTagesaggregateDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,15 +29,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * GetMesswerteOfMessquerschnittTagesaggregatResponse
+ * GetMesswerteTagesaggregatMessquerschnittResponse
  */
 @JsonPropertyOrder({
-  GetMesswerteOfMessquerschnittTagesaggregatResponse.JSON_PROPERTY_DATUM_VON,
-  GetMesswerteOfMessquerschnittTagesaggregatResponse.JSON_PROPERTY_DATUM_BIS,
-  GetMesswerteOfMessquerschnittTagesaggregatResponse.JSON_PROPERTY_MESSQUERSCHNITTE
+  GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_DATUM_VON,
+  GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_DATUM_BIS,
+  GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_MESSQUERSCHNITTE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
+public class GetMesswerteTagesaggregatMessquerschnittResponse {
   public static final String JSON_PROPERTY_DATUM_VON = "datumVon";
   private LocalDate datumVon;
 
@@ -45,12 +45,12 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
   private LocalDate datumBis;
 
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
-  private List<MessquerschnittTagesaggregatDto> messquerschnitte;
+  private List<MessquerschnittTagesaggregateDto> messquerschnitte;
 
-  public GetMesswerteOfMessquerschnittTagesaggregatResponse() {
+  public GetMesswerteTagesaggregatMessquerschnittResponse() {
   }
 
-  public GetMesswerteOfMessquerschnittTagesaggregatResponse datumVon(LocalDate datumVon) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse datumVon(LocalDate datumVon) {
     
     this.datumVon = datumVon;
     return this;
@@ -76,7 +76,7 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
   }
 
 
-  public GetMesswerteOfMessquerschnittTagesaggregatResponse datumBis(LocalDate datumBis) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse datumBis(LocalDate datumBis) {
     
     this.datumBis = datumBis;
     return this;
@@ -102,13 +102,13 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
   }
 
 
-  public GetMesswerteOfMessquerschnittTagesaggregatResponse messquerschnitte(List<MessquerschnittTagesaggregatDto> messquerschnitte) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse messquerschnitte(List<MessquerschnittTagesaggregateDto> messquerschnitte) {
     
     this.messquerschnitte = messquerschnitte;
     return this;
   }
 
-  public GetMesswerteOfMessquerschnittTagesaggregatResponse addMessquerschnitteItem(MessquerschnittTagesaggregatDto messquerschnitteItem) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse addMessquerschnitteItem(MessquerschnittTagesaggregateDto messquerschnitteItem) {
     if (this.messquerschnitte == null) {
       this.messquerschnitte = new ArrayList<>();
     }
@@ -124,14 +124,14 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public List<MessquerschnittTagesaggregatDto> getMessquerschnitte() {
+  public List<MessquerschnittTagesaggregateDto> getMessquerschnitte() {
     return messquerschnitte;
   }
 
 
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessquerschnitte(List<MessquerschnittTagesaggregatDto> messquerschnitte) {
+  public void setMessquerschnitte(List<MessquerschnittTagesaggregateDto> messquerschnitte) {
     this.messquerschnitte = messquerschnitte;
   }
 
@@ -143,10 +143,10 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GetMesswerteOfMessquerschnittTagesaggregatResponse getMesswerteOfMessquerschnittTagesaggregatResponse = (GetMesswerteOfMessquerschnittTagesaggregatResponse) o;
-    return Objects.equals(this.datumVon, getMesswerteOfMessquerschnittTagesaggregatResponse.datumVon) &&
-        Objects.equals(this.datumBis, getMesswerteOfMessquerschnittTagesaggregatResponse.datumBis) &&
-        Objects.equals(this.messquerschnitte, getMesswerteOfMessquerschnittTagesaggregatResponse.messquerschnitte);
+    GetMesswerteTagesaggregatMessquerschnittResponse getMesswerteTagesaggregatMessquerschnittResponse = (GetMesswerteTagesaggregatMessquerschnittResponse) o;
+    return Objects.equals(this.datumVon, getMesswerteTagesaggregatMessquerschnittResponse.datumVon) &&
+        Objects.equals(this.datumBis, getMesswerteTagesaggregatMessquerschnittResponse.datumBis) &&
+        Objects.equals(this.messquerschnitte, getMesswerteTagesaggregatMessquerschnittResponse.messquerschnitte);
   }
 
   @Override
@@ -157,7 +157,7 @@ public class GetMesswerteOfMessquerschnittTagesaggregatResponse {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GetMesswerteOfMessquerschnittTagesaggregatResponse {\n");
+    sb.append("class GetMesswerteTagesaggregatMessquerschnittResponse {\n");
     sb.append("    datumVon: ").append(toIndentedString(datumVon)).append("\n");
     sb.append("    datumBis: ").append(toIndentedString(datumBis)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");

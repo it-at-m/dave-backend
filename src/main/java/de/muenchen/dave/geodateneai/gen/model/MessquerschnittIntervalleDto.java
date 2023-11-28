@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.IntervallMessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.MesswerteIntervallMessquerschnittDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,24 +28,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * MessquerschnittIntervallDto
+ * MessquerschnittIntervalleDto
  */
 @JsonPropertyOrder({
-  MessquerschnittIntervallDto.JSON_PROPERTY_MESSQUERSCHNITT_ID,
-  MessquerschnittIntervallDto.JSON_PROPERTY_INTERVALLE
+  MessquerschnittIntervalleDto.JSON_PROPERTY_MESSQUERSCHNITT_ID,
+  MessquerschnittIntervalleDto.JSON_PROPERTY_INTERVALLE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class MessquerschnittIntervallDto {
+public class MessquerschnittIntervalleDto {
   public static final String JSON_PROPERTY_MESSQUERSCHNITT_ID = "messquerschnittId";
   private Long messquerschnittId;
 
   public static final String JSON_PROPERTY_INTERVALLE = "intervalle";
-  private Map<String, List<IntervallMessquerschnittDto>> intervalle = new HashMap<>();
+  private Map<String, List<MesswerteIntervallMessquerschnittDto>> intervalle = new HashMap<>();
 
-  public MessquerschnittIntervallDto() {
+  public MessquerschnittIntervalleDto() {
   }
 
-  public MessquerschnittIntervallDto messquerschnittId(Long messquerschnittId) {
+  public MessquerschnittIntervalleDto messquerschnittId(Long messquerschnittId) {
     
     this.messquerschnittId = messquerschnittId;
     return this;
@@ -71,13 +71,13 @@ public class MessquerschnittIntervallDto {
   }
 
 
-  public MessquerschnittIntervallDto intervalle(Map<String, List<IntervallMessquerschnittDto>> intervalle) {
+  public MessquerschnittIntervalleDto intervalle(Map<String, List<MesswerteIntervallMessquerschnittDto>> intervalle) {
     
     this.intervalle = intervalle;
     return this;
   }
 
-  public MessquerschnittIntervallDto putIntervalleItem(String key, List<IntervallMessquerschnittDto> intervalleItem) {
+  public MessquerschnittIntervalleDto putIntervalleItem(String key, List<MesswerteIntervallMessquerschnittDto> intervalleItem) {
     if (this.intervalle == null) {
       this.intervalle = new HashMap<>();
     }
@@ -93,14 +93,14 @@ public class MessquerschnittIntervallDto {
   @JsonProperty(JSON_PROPERTY_INTERVALLE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Map<String, List<IntervallMessquerschnittDto>> getIntervalle() {
+  public Map<String, List<MesswerteIntervallMessquerschnittDto>> getIntervalle() {
     return intervalle;
   }
 
 
   @JsonProperty(JSON_PROPERTY_INTERVALLE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setIntervalle(Map<String, List<IntervallMessquerschnittDto>> intervalle) {
+  public void setIntervalle(Map<String, List<MesswerteIntervallMessquerschnittDto>> intervalle) {
     this.intervalle = intervalle;
   }
 
@@ -112,9 +112,9 @@ public class MessquerschnittIntervallDto {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MessquerschnittIntervallDto messquerschnittIntervallDto = (MessquerschnittIntervallDto) o;
-    return Objects.equals(this.messquerschnittId, messquerschnittIntervallDto.messquerschnittId) &&
-        Objects.equals(this.intervalle, messquerschnittIntervallDto.intervalle);
+    MessquerschnittIntervalleDto messquerschnittIntervalleDto = (MessquerschnittIntervalleDto) o;
+    return Objects.equals(this.messquerschnittId, messquerschnittIntervalleDto.messquerschnittId) &&
+        Objects.equals(this.intervalle, messquerschnittIntervalleDto.intervalle);
   }
 
   @Override
@@ -125,7 +125,7 @@ public class MessquerschnittIntervallDto {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class MessquerschnittIntervallDto {\n");
+    sb.append("class MessquerschnittIntervalleDto {\n");
     sb.append("    messquerschnittId: ").append(toIndentedString(messquerschnittId)).append("\n");
     sb.append("    intervalle: ").append(toIndentedString(intervalle)).append("\n");
     sb.append("}");

@@ -1,9 +1,9 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittIntervallResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteIntervallMessquerschnittResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittRequest;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittTagesaggregatResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -30,7 +30,7 @@ public class MesswerteMessquerschnittService {
      * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen MesswerteIntervalle pro Tag
      */
-    public GetMesswerteOfMessquerschnittIntervallResponse ladeMesswerteIntervall(final long messstelleId, final String von, final String bis,
+    public GetMesswerteIntervallMessquerschnittResponse ladeMesswerteIntervall(final long messstelleId, final String von, final String bis,
             final String tagesTyp) {
         final GetMesswerteOfMessquerschnittRequest request = new GetMesswerteOfMessquerschnittRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
@@ -38,7 +38,7 @@ public class MesswerteMessquerschnittService {
         request.setTagesTyp(GetMesswerteOfMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
         request.setZeitpunktStart(LocalDate.parse(von));
         request.setZeitpunktEnde(LocalDate.parse(bis));
-        final Mono<ResponseEntity<GetMesswerteOfMessquerschnittIntervallResponse>> messwerteIntervallWithHttpInfo = messwerteMessquerschnittApi
+        final Mono<ResponseEntity<GetMesswerteIntervallMessquerschnittResponse>> messwerteIntervallWithHttpInfo = messwerteMessquerschnittApi
                 .getMesswerteIntervallWithHttpInfo(
                         request);
         return Objects.requireNonNull(messwerteIntervallWithHttpInfo.block()).getBody();
@@ -55,7 +55,7 @@ public class MesswerteMessquerschnittService {
      * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen MesswerteTagesaggregat pro Tag
      */
-    public GetMesswerteOfMessquerschnittTagesaggregatResponse ladeMesswerteTagesaggregat(final long messstelleId, final String von, final String bis,
+    public GetMesswerteTagesaggregatMessquerschnittResponse ladeMesswerteTagesaggregat(final long messstelleId, final String von, final String bis,
             final String tagesTyp) {
         final GetMesswerteOfMessquerschnittRequest request = new GetMesswerteOfMessquerschnittRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
@@ -63,7 +63,7 @@ public class MesswerteMessquerschnittService {
         request.setTagesTyp(GetMesswerteOfMessquerschnittRequest.TagesTypEnum.fromValue(tagesTyp));
         request.setZeitpunktStart(LocalDate.parse(von));
         request.setZeitpunktEnde(LocalDate.parse(bis));
-        final Mono<ResponseEntity<GetMesswerteOfMessquerschnittTagesaggregatResponse>> messwerteTagesaggregatWithHttpInfo = messwerteMessquerschnittApi
+        final Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> messwerteTagesaggregatWithHttpInfo = messwerteMessquerschnittApi
                 .getMesswerteTagesaggregatWithHttpInfo(request);
         return Objects.requireNonNull(messwerteTagesaggregatWithHttpInfo.block()).getBody();
 
