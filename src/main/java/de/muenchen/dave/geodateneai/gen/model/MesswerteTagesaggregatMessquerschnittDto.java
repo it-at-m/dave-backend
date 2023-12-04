@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * MesswerteTagesaggregatMessquerschnittDto
  */
 @JsonPropertyOrder({
+  MesswerteTagesaggregatMessquerschnittDto.JSON_PROPERTY_TAGES_TYP,
   MesswerteTagesaggregatMessquerschnittDto.JSON_PROPERTY_ANZAHL_LFW,
   MesswerteTagesaggregatMessquerschnittDto.JSON_PROPERTY_ANZAHL_KRAD,
   MesswerteTagesaggregatMessquerschnittDto.JSON_PROPERTY_ANZAHL_LKW,
@@ -64,6 +65,50 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MesswerteTagesaggregatMessquerschnittDto {
+  /**
+   * Gets or Sets tagesTyp
+   */
+  public enum TagesTypEnum {
+    WERKTAG_DI_MI_DO("WERKTAG_DI_MI_DO"),
+    
+    WERKTAG_MO_FR("WERKTAG_MO_FR"),
+    
+    SAMSTAG("SAMSTAG"),
+    
+    SONNTAG_FEIERTAG("SONNTAG_FEIERTAG"),
+    
+    WERKTAG_FERIEN("WERKTAG_FERIEN");
+
+    private String value;
+
+    TagesTypEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TagesTypEnum fromValue(String value) {
+      for (TagesTypEnum b : TagesTypEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
+
+  public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
+  private TagesTypEnum tagesTyp;
+
   public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
   private Integer anzahlLfw;
 
@@ -168,6 +213,32 @@ public class MesswerteTagesaggregatMessquerschnittDto {
 
   public MesswerteTagesaggregatMessquerschnittDto() {
   }
+
+  public MesswerteTagesaggregatMessquerschnittDto tagesTyp(TagesTypEnum tagesTyp) {
+    
+    this.tagesTyp = tagesTyp;
+    return this;
+  }
+
+   /**
+   * Get tagesTyp
+   * @return tagesTyp
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public TagesTypEnum getTagesTyp() {
+    return tagesTyp;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setTagesTyp(TagesTypEnum tagesTyp) {
+    this.tagesTyp = tagesTyp;
+  }
+
 
   public MesswerteTagesaggregatMessquerschnittDto anzahlLfw(Integer anzahlLfw) {
     
@@ -1061,7 +1132,8 @@ public class MesswerteTagesaggregatMessquerschnittDto {
       return false;
     }
     MesswerteTagesaggregatMessquerschnittDto messwerteTagesaggregatMessquerschnittDto = (MesswerteTagesaggregatMessquerschnittDto) o;
-    return Objects.equals(this.anzahlLfw, messwerteTagesaggregatMessquerschnittDto.anzahlLfw) &&
+    return Objects.equals(this.tagesTyp, messwerteTagesaggregatMessquerschnittDto.tagesTyp) &&
+        Objects.equals(this.anzahlLfw, messwerteTagesaggregatMessquerschnittDto.anzahlLfw) &&
         Objects.equals(this.anzahlKrad, messwerteTagesaggregatMessquerschnittDto.anzahlKrad) &&
         Objects.equals(this.anzahlLkw, messwerteTagesaggregatMessquerschnittDto.anzahlLkw) &&
         Objects.equals(this.anzahlBus, messwerteTagesaggregatMessquerschnittDto.anzahlBus) &&
@@ -1099,13 +1171,14 @@ public class MesswerteTagesaggregatMessquerschnittDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024, summeRadSpitzenstundeZeitblock0006, summeRadSpitzenstundeZeitblock0610, summeRadSpitzenstundeZeitblock1015, summeRadSpitzenstundeZeitblock1519, summeRadSpitzenstundeZeitblock1924, summeRadSpitzenstundeZeitblock0024, spitzenstundeKraftfahrzeugverkehrZeitblock0006, spitzenstundeKraftfahrzeugverkehrZeitblock0610, spitzenstundeKraftfahrzeugverkehrZeitblock1015, spitzenstundeKraftfahrzeugverkehrZeitblock1519, spitzenstundeKraftfahrzeugverkehrZeitblock1924, spitzenstundeKraftfahrzeugverkehrZeitblock0024, spitzenstundeRadZeitblock0006, spitzenstundeRadZeitblock0610, spitzenstundeRadZeitblock1015, spitzenstundeRadZeitblock1519, spitzenstundeRadZeitblock1924, spitzenstundeRadZeitblock0024);
+    return Objects.hash(tagesTyp, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024, summeRadSpitzenstundeZeitblock0006, summeRadSpitzenstundeZeitblock0610, summeRadSpitzenstundeZeitblock1015, summeRadSpitzenstundeZeitblock1519, summeRadSpitzenstundeZeitblock1924, summeRadSpitzenstundeZeitblock0024, spitzenstundeKraftfahrzeugverkehrZeitblock0006, spitzenstundeKraftfahrzeugverkehrZeitblock0610, spitzenstundeKraftfahrzeugverkehrZeitblock1015, spitzenstundeKraftfahrzeugverkehrZeitblock1519, spitzenstundeKraftfahrzeugverkehrZeitblock1924, spitzenstundeKraftfahrzeugverkehrZeitblock0024, spitzenstundeRadZeitblock0006, spitzenstundeRadZeitblock0610, spitzenstundeRadZeitblock1015, spitzenstundeRadZeitblock1519, spitzenstundeRadZeitblock1924, spitzenstundeRadZeitblock0024);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MesswerteTagesaggregatMessquerschnittDto {\n");
+    sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
     sb.append("    anzahlLfw: ").append(toIndentedString(anzahlLfw)).append("\n");
     sb.append("    anzahlKrad: ").append(toIndentedString(anzahlKrad)).append("\n");
     sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");
