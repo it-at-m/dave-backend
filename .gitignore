@@ -43,3 +43,4 @@ nbdist/
 
 # do not check in application profile yml
 src/**/application-*.yml
+/.openapi-generator/
