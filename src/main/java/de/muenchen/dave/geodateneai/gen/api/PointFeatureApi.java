@@ -51,8 +51,8 @@ public class PointFeatureApi {
     /**
      * Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Stadtbezirke erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param pointGeometryDto The pointGeometryDto parameter
      * @return FeatureCollectionDtoFeatureDtoStadtbezirkDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -89,8 +89,8 @@ public class PointFeatureApi {
     /**
      * Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Stadtbezirke erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param pointGeometryDto The pointGeometryDto parameter
      * @return FeatureCollectionDtoFeatureDtoStadtbezirkDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -103,8 +103,8 @@ public class PointFeatureApi {
     /**
      * Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Stadtbezirke erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param pointGeometryDto The pointGeometryDto parameter
      * @return ResponseEntity&lt;FeatureCollectionDtoFeatureDtoStadtbezirkDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -117,8 +117,8 @@ public class PointFeatureApi {
     /**
      * Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Stadtbezirke erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param pointGeometryDto The pointGeometryDto parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
