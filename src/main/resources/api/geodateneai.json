@@ -48,22 +48,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Stadtbezirke erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
                 }
               }
             }
@@ -318,10 +318,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
@@ -398,6 +398,16 @@
       "MesswerteTagesaggregatMessquerschnittDto": {
         "type": "object",
         "properties": {
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN"
+            ]
+          },
           "anzahlLfw": {
             "type": "integer",
             "format": "int32"
@@ -603,6 +613,16 @@
           "uhrzeitBis": {
             "$ref": "#/components/schemas/LocalTime"
           },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN"
+            ]
+          },
           "anzahlLfw": {
             "type": "integer",
             "format": "int32"
@@ -667,24 +687,26 @@
             "type": "integer",
             "format": "int32"
           },
-          "anzahlDetektoren": {
-            "type": "integer",
-            "format": "int32"
-          },
           "fahrzeugKlassen": {
             "type": "string"
           },
-          "kfz": {
-            "type": "boolean"
+          "detektierteVerkehrsarten": {
+            "type": "string"
           },
           "hersteller": {
             "type": "string"
           },
-          "xcoordinate": {
-            "type": "number"
+          "anzahlDetektoren": {
+            "type": "integer",
+            "format": "int32"
           },
           "ycoordinate": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
+          },
+          "xcoordinate": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -692,6 +714,9 @@
         "type": "object",
         "properties": {
           "mstId": {
+            "type": "string"
+          },
+          "name": {
             "type": "string"
           },
           "status": {
@@ -705,11 +730,9 @@
             "type": "string",
             "format": "date"
           },
-          "name": {
-            "type": "string"
-          },
-          "stadtbezirksnummer": {
-            "type": "string"
+          "stadtbezirkNummer": {
+            "type": "integer",
+            "format": "int32"
           },
           "bemerkung": {
             "type": "string"
@@ -724,11 +747,13 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
-            "type": "number"
-          },
           "ycoordinate": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
+          },
+          "xcoordinate": {
+            "type": "number",
+            "format": "double"
           }
         }
       }

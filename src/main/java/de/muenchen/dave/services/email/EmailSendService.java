@@ -6,7 +6,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class EmailSendService {
 
     private final EmailAddressService emailAddressService;
     private final DienstleisterService dienstleisterService;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     @Value("${dave.email.address}")
     private String emailAddress;
     @Value("${dave.email.sender.url.adminportal}")
@@ -42,7 +42,7 @@ public class EmailSendService {
     private String activeProfile;
 
     public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService,
-            final @Lazy IndexService indexService) {
+            final @Lazy ZaehlstelleIndexService indexService) {
         this.emailAddressService = emailAddressService;
         this.dienstleisterService = dienstleisterService;
         this.indexService = indexService;

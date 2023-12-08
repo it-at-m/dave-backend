@@ -10,7 +10,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.auswertung.AuswertungZaehlstellenKoordinateService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ class AuswertungZaehlstellenKoordinateServiceTest {
     private AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService;
 
     @MockBean
-    private IndexService indexService;
+    private ZaehlstelleIndexService indexService;
 
     @Test
     void getAuswertungZaehlstellenKoordinate() {

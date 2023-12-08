@@ -15,7 +15,7 @@ import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.time.LocalDate;
@@ -36,12 +36,12 @@ public class AuswertungSpitzenstundeService {
 
     private final ZeitintervallRepository zeitintervallRepository;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
     public AuswertungSpitzenstundeService(final ZeitintervallRepository zeitintervallRepository,
-            final IndexService indexService,
+            final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
@@ -61,7 +61,8 @@ public class AuswertungSpitzenstundeService {
      *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
      *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben darf.
      * @return die Spitzentundenauswertung
-     * @throws DataNotFoundException sobald im {@link IndexService} keine {@link Zaehlung} oder
+     * @throws DataNotFoundException sobald im {@link ZaehlstelleIndexService} keine {@link Zaehlung}
+     *             oder
      *             {@link Zaehlstelle} vorhanden ist.
      * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},

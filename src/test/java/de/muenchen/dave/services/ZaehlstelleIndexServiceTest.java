@@ -11,9 +11,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
-public class IndexServiceTest {
+public class ZaehlstelleIndexServiceTest {
 
-    private IndexService service = new IndexService(
+    private ZaehlstelleIndexService service = new ZaehlstelleIndexService(
             null,
             null,
             null,

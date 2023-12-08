@@ -14,7 +14,7 @@ import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class IndexServiceUtilsTests {
+public class ZaehlstelleIndexServiceUtilsTests {
 
     @Test
     public void testSplitStrings() {

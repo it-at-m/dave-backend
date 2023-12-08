@@ -12,7 +12,7 @@ import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTableRow;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
 import java.time.format.DateTimeFormatter;
@@ -29,12 +29,12 @@ public class FillZeitreihePdfBeanService {
     public static final String DOCUMENT_TITLE_PREFIX = "Zeitreihenvergleich - Zählstelle ";
     public static final String ZUSATZINFORMATIONEN_ZEITREIHE_ZAEHLSTELLENKOMMENTAR = "Zählstellenkommentar:";
     public static final DateTimeFormatter ZUSATZINFORMATIONEN_ZEITREIHE_DATETIMEFORMATTER_MMMM_YYYY = DateTimeFormatter.ofPattern("MMMM yyyy:");
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
     private final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
     private final ZeitauswahlService zeitauswahlService;
 
-    public FillZeitreihePdfBeanService(final IndexService indexService,
+    public FillZeitreihePdfBeanService(final ZaehlstelleIndexService indexService,
             final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService,
             final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper,
             final ZeitauswahlService zeitauswahlService) {

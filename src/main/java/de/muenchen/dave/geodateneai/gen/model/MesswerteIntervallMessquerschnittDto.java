@@ -31,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @JsonPropertyOrder({
   MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_UHRZEIT_VON,
   MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_UHRZEIT_BIS,
+  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_TAGES_TYP,
   MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_LFW,
   MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_KRAD,
   MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_LKW,
@@ -49,6 +50,50 @@ public class MesswerteIntervallMessquerschnittDto {
 
   public static final String JSON_PROPERTY_UHRZEIT_BIS = "uhrzeitBis";
   private LocalTime uhrzeitBis;
+
+  /**
+   * Gets or Sets tagesTyp
+   */
+  public enum TagesTypEnum {
+    WERKTAG_DI_MI_DO("WERKTAG_DI_MI_DO"),
+    
+    WERKTAG_MO_FR("WERKTAG_MO_FR"),
+    
+    SAMSTAG("SAMSTAG"),
+    
+    SONNTAG_FEIERTAG("SONNTAG_FEIERTAG"),
+    
+    WERKTAG_FERIEN("WERKTAG_FERIEN");
+
+    private String value;
+
+    TagesTypEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TagesTypEnum fromValue(String value) {
+      for (TagesTypEnum b : TagesTypEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
+
+  public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
+  private TagesTypEnum tagesTyp;
 
   public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
   private Integer anzahlLfw;
@@ -132,6 +177,32 @@ public class MesswerteIntervallMessquerschnittDto {
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setUhrzeitBis(LocalTime uhrzeitBis) {
     this.uhrzeitBis = uhrzeitBis;
+  }
+
+
+  public MesswerteIntervallMessquerschnittDto tagesTyp(TagesTypEnum tagesTyp) {
+    
+    this.tagesTyp = tagesTyp;
+    return this;
+  }
+
+   /**
+   * Get tagesTyp
+   * @return tagesTyp
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public TagesTypEnum getTagesTyp() {
+    return tagesTyp;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setTagesTyp(TagesTypEnum tagesTyp) {
+    this.tagesTyp = tagesTyp;
   }
 
 
@@ -405,6 +476,7 @@ public class MesswerteIntervallMessquerschnittDto {
     MesswerteIntervallMessquerschnittDto messwerteIntervallMessquerschnittDto = (MesswerteIntervallMessquerschnittDto) o;
     return Objects.equals(this.uhrzeitVon, messwerteIntervallMessquerschnittDto.uhrzeitVon) &&
         Objects.equals(this.uhrzeitBis, messwerteIntervallMessquerschnittDto.uhrzeitBis) &&
+        Objects.equals(this.tagesTyp, messwerteIntervallMessquerschnittDto.tagesTyp) &&
         Objects.equals(this.anzahlLfw, messwerteIntervallMessquerschnittDto.anzahlLfw) &&
         Objects.equals(this.anzahlKrad, messwerteIntervallMessquerschnittDto.anzahlKrad) &&
         Objects.equals(this.anzahlLkw, messwerteIntervallMessquerschnittDto.anzahlLkw) &&
@@ -419,7 +491,7 @@ public class MesswerteIntervallMessquerschnittDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(uhrzeitVon, uhrzeitBis, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr);
+    return Objects.hash(uhrzeitVon, uhrzeitBis, tagesTyp, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr);
   }
 
   @Override
@@ -428,6 +500,7 @@ public class MesswerteIntervallMessquerschnittDto {
     sb.append("class MesswerteIntervallMessquerschnittDto {\n");
     sb.append("    uhrzeitVon: ").append(toIndentedString(uhrzeitVon)).append("\n");
     sb.append("    uhrzeitBis: ").append(toIndentedString(uhrzeitBis)).append("\n");
+    sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
     sb.append("    anzahlLfw: ").append(toIndentedString(anzahlLfw)).append("\n");
     sb.append("    anzahlKrad: ").append(toIndentedString(anzahlKrad)).append("\n");
     sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");

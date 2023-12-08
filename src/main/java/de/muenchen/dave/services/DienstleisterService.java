@@ -25,11 +25,11 @@ public class DienstleisterService {
     private final DienstleisterRepository dienstleisterRepository;
     private final DienstleisterMapper dienstleisterMapper;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public DienstleisterService(final DienstleisterRepository dienstleisterRepository,
             final DienstleisterMapper dienstleisterMapper,
-            @Lazy final IndexService indexService) {
+            @Lazy final ZaehlstelleIndexService indexService) {
         this.dienstleisterRepository = dienstleisterRepository;
         this.dienstleisterMapper = dienstleisterMapper;
         this.indexService = indexService;

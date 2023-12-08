@@ -15,7 +15,7 @@ import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import java.io.IOException;
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class ReportService {
     private final GeneratePdfService generatePdfService;
     private final FillPdfBeanService fillPdfBeanService;
     private final ProcessZaehldatenService processZaehldatenService;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -70,7 +70,7 @@ public class ReportService {
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,
             final ProcessZaehldatenService processZaehldatenService,
-            final IndexService indexService,
+            final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;

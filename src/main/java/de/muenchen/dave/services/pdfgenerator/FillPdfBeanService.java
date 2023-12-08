@@ -22,7 +22,7 @@ import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.DomainValues;
 import java.time.LocalDate;
@@ -60,12 +60,12 @@ public class FillPdfBeanService {
     private static final String CELL_WIDTH_20_MM = "20mm";
     private static final String CELL_WIDTH_UNITS = "mm";
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
     private final GangliniePdfOptionsMapper gangliniePdfOptionsMapper;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
-    public FillPdfBeanService(final IndexService indexService,
+    public FillPdfBeanService(final ZaehlstelleIndexService indexService,
             final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
             final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
             final LadeZaehldatenService ladeZaehldatenService) {

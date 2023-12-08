@@ -24,7 +24,7 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.GenerateCsvService;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class GenerateCsvServiceSpringTest {
     private LadeZaehldatenService ladeZaehldatenService;
 
     @MockBean
-    private IndexService indexService;
+    private ZaehlstelleIndexService indexService;
 
     private static Zaehlung getZaehlung() {
         Zaehlung zaehlung = new Zaehlung();

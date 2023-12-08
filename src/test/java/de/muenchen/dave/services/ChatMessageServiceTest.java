@@ -22,12 +22,12 @@ public class ChatMessageServiceTest {
 
     private final ChatMessageService chatMessageService;
     private final ChatMessageRepository chatMessageRepository;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final EmailSendService emailSendService;
 
     public ChatMessageServiceTest() {
         this.chatMessageRepository = Mockito.mock(ChatMessageRepository.class);
-        this.indexService = Mockito.mock(IndexService.class);
+        this.indexService = Mockito.mock(ZaehlstelleIndexService.class);
         this.emailSendService = Mockito.mock(EmailSendService.class);
         this.chatMessageService = new ChatMessageService(
                 this.chatMessageRepository,

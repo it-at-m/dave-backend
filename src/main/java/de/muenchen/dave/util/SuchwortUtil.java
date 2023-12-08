@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -157,5 +158,23 @@ public final class SuchwortUtil {
             }
         }
         return knotenarmeSuchworte;
+    }
+
+    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean) {
+        final Set<String> suchwoerter = new HashSet<>();
+        if (StringUtils.isNotEmpty(bean.getStadtbezirk())) {
+            final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(bean.getStadtbezirk()));
+            suchwoerter.addAll(stadtbezirke);
+            if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
+                suchwoerter.add(bean.getStadtbezirk());
+            }
+        }
+        if (StringUtils.isNotEmpty(bean.getId())) {
+            suchwoerter.add(bean.getId());
+        }
+        if (StringUtils.isNotEmpty(bean.getName())) {
+            suchwoerter.add(bean.getName());
+        }
+        return suchwoerter;
     }
 }

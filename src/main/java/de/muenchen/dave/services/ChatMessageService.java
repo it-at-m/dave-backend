@@ -36,12 +36,12 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatMessageMapper chatMessageMapper;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final EmailSendService emailSendService;
 
     public ChatMessageService(final ChatMessageRepository chatMessageRepository,
             final ChatMessageMapper chatMessageMapper,
-            final IndexService indexService,
+            final ZaehlstelleIndexService indexService,
             final EmailSendService emailSendService) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatMessageMapper = chatMessageMapper;

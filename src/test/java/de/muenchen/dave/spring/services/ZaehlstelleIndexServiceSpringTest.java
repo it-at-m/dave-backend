@@ -23,7 +23,7 @@ import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,10 +41,10 @@ import org.springframework.test.context.ActiveProfiles;
         "refarch.gracefulshutdown.pre-wait-seconds=0" })
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
-public class IndexServiceSpringTest {
+public class ZaehlstelleIndexServiceSpringTest {
 
     @Autowired
-    private IndexService service;
+    private ZaehlstelleIndexService service;
 
     @MockBean
     private ZaehlstelleIndex zaehlstelleIndex;
