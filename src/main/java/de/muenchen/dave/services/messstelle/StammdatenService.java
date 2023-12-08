@@ -3,6 +3,7 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.StammdatenMapper;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.services.CustomSuggestIndexService;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,8 @@ public class StammdatenService {
 
     private final MessstelleIndex messstelleIndex;
 
+    private final CustomSuggestIndexService customSuggestIndexService;
+
     private final StammdatenMapper stammdatenMapper;
 
     public void processingMessstellen(final List<Messstelle> messstellen) {
@@ -28,44 +31,30 @@ public class StammdatenService {
         // Daten aus Dave laden
         messstellen.forEach(messstelle -> {
             log.debug("#findById");
-            messstelleIndex.findByNummer(messstelle.getNummer()).ifPresentOrElse(found -> {
-                // Daten aktualisieren
-                log.debug("#updateMessstelle");
-                final Messstelle updated = this.updateMessstelle(found, messstelle);
-                // Daten speichern
-                this.saveMessstelle(updated);
-            }, () -> {
-                // Messstelle neu anlegen
-                messstelle.setId(UUID.randomUUID().toString());
-                messstelle.getMessquerschnitte().forEach(messquerschnitt -> messquerschnitt.setId(UUID.randomUUID().toString()));
-                this.saveMessstelle(messstelle);
-            });
+            messstelleIndex.findByNummer(messstelle.getNummer()).ifPresentOrElse(found -> this.updateMessstelle(found, messstelle),
+                    () -> this.createMessstelle(messstelle));
         });
 
     }
 
-    protected Messstelle updateMessstelle(final Messstelle existingMessstelle, final Messstelle newMessstelle) {
+    protected void createMessstelle(final Messstelle newMessstelle) {
+        log.info("#createMessstelle");
+        newMessstelle.setId(UUID.randomUUID().toString());
+        newMessstelle.getMessquerschnitte().forEach(messquerschnitt -> messquerschnitt.setId(UUID.randomUUID().toString()));
+        customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
+        this.saveMessstelle(newMessstelle);
+    }
+
+    protected void updateMessstelle(final Messstelle existingMessstelle, final Messstelle newMessstelle) {
+        log.info("#updateMessstelle");
         final Messstelle updated = stammdatenMapper.updateMessstelle(existingMessstelle, newMessstelle);
-        log.debug("Aktualisierte Messstelle: " + updated);
-        return updated;
+        customSuggestIndexService.updateSuggestionsForMessstelle(updated);
+        this.saveMessstelle(updated);
     }
 
     protected void saveMessstelle(final Messstelle toSave) {
+        log.info("#saveMessstelle");
         messstelleIndex.save(toSave);
     }
 
-    /**
-     * Erzeugt für eine konkrete Zählstelle ein Set an Vorschlägen.
-     *
-     * @param messstelle neue zu verschlagwortende Messstelle
-     */
-    private void createSuggestionsForMessstelle(final Messstelle messstelle) {
-        // TODO customSuchwoerter
-        //        final String suggestId = messstelle.getId();
-        // In den Suchwörtern stehen alle Suggestions für die Zählstelle
-        //        if (CollectionUtils.isNotEmpty(messstelle.getSuchwoerter())) {
-        // TODO steht aktuell im IndexService
-        //            this.createSuggestionsFromSuchwoerter(zaehlstelle.getSuchwoerter(), suggestId);
-        //        }
-    }
 }

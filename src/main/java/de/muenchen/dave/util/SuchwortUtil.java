@@ -162,11 +162,12 @@ public final class SuchwortUtil {
 
     public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean) {
         final Set<String> suchwoerter = new HashSet<>();
-        if (StringUtils.isNotEmpty(bean.getStadtbezirk())) {
-            final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(bean.getStadtbezirk()));
+        if (ObjectUtils.isNotEmpty(bean.getStadtbezirkNummer())) {
+            final String stadtbezirk = IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer());
+            final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirk));
             suchwoerter.addAll(stadtbezirke);
             if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
-                suchwoerter.add(bean.getStadtbezirk());
+                suchwoerter.add(stadtbezirk);
             }
         }
         if (StringUtils.isNotEmpty(bean.getId())) {

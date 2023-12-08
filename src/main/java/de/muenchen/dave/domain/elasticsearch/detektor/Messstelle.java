@@ -43,25 +43,11 @@ public class Messstelle {
     @GeoPointField
     GeoPoint punkt;
 
-    //    @Field(type = FieldType.Integer)
-    //    Integer letzteZaehlungMonatNummer;
-    //
-    //    @Field(type = FieldType.Text)
-    //    String letzteZaehlungMonat;
-    //
-    //    @Field(type = FieldType.Integer)
-    //    Integer letzteZaehlungJahr;
-    //
-    //    @Field(type = FieldType.Text)
-    //    String grundLetzteZaehlung;
-    //
-    //    @Field(type = FieldType.Text)
-    String stadtbezirk;
-
     /**
      * Steuert die Sichtbarkeit der Messstelle im Datenportal.
      */
     Boolean sichtbarDatenportal;
+    Boolean geprueft;
 
     String kommentar;
 

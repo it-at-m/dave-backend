@@ -3,6 +3,7 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -49,6 +50,19 @@ public class CustomSuggestIndexService {
     }
 
     /**
+     * Erzeugt für eine konkrete Messstelle ein Set an Vorschlägen.
+     *
+     * @param messstelle neue zu verschlagwortende Messstelle
+     */
+    public void createSuggestionsForMessstelle(final Messstelle messstelle) {
+        final String suggestId = messstelle.getId();
+        // In den Suchwörtern stehen alle Suggestions für die Zählstelle
+        if (CollectionUtils.isNotEmpty(messstelle.getSuchwoerter())) {
+            this.createSuggestionsFromSuchwoerter(messstelle.getSuchwoerter(), suggestId);
+        }
+    }
+
+    /**
      * Aktualisiert für eine konkrete Zählung ein Set an Vorschlägen.
      *
      * @param zaehlung neue zu verschlagwortende Zaehlung
@@ -66,6 +80,16 @@ public class CustomSuggestIndexService {
     public void updateSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
         this.deleteAllSuggestionsByFkid(zaehlstelle.getId());
         this.createSuggestionsForZaehlstelle(zaehlstelle);
+    }
+
+    /**
+     * Aktualisiert für eine konkrete Messstelle ein Set an Vorschlägen.
+     *
+     * @param messstelle neue zu verschlagwortende Messstelle
+     */
+    public void updateSuggestionsForMessstelle(final Messstelle messstelle) {
+        this.deleteAllSuggestionsByFkid(messstelle.getId());
+        this.createSuggestionsForMessstelle(messstelle);
     }
 
     /**
