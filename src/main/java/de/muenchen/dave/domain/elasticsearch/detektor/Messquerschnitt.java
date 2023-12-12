@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
-import de.muenchen.dave.util.geo.CoordinateUtil;
 import java.time.LocalDate;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,12 +21,6 @@ public class Messquerschnitt {
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
     LocalDate datum;
 
-    //    String jahr;
-    //
-    //    String monat;
-    //
-    //    String jahreszeit;
-
     /**
      * In WGS84-Koordinatendarstellung.
      */
@@ -42,9 +35,4 @@ public class Messquerschnitt {
     String detektierteVerkehrsarten;
     String hersteller;
     Integer anzahlDetektoren;
-
-    public CoordinateUtil.PositionUTM getPunktUtm() {
-        return CoordinateUtil.transformFromWGS84ToUTM(this.punkt);
-    }
-
 }

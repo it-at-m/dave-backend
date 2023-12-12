@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
-import de.muenchen.dave.util.geo.CoordinateUtil;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +57,4 @@ public class Messstelle {
     List<String> customSuchwoerter;
 
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
-
-    public CoordinateUtil.PositionUTM getPunktUtm() {
-        return CoordinateUtil.transformFromWGS84ToUTM(punkt);
-    }
-
 }

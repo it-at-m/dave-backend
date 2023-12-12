@@ -6,7 +6,6 @@ import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.AfterMapping;
@@ -16,11 +15,11 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
-public interface StammdatenMapper {
+public interface MessstelleCronMapper {
 
     Messstelle dtoToMessstelle(MessstelleDto dto);
 
-    List<Messstelle> dtoToMessstelle(List<MessstelleDto> dto);
+    Messquerschnitt dtoToMessquerschnitt(MessquerschnittDto dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sichtbarDatenportal", ignore = true)
@@ -28,10 +27,10 @@ public interface StammdatenMapper {
     @Mapping(target = "standort", ignore = true)
     @Mapping(target = "customSuchwoerter", ignore = true)
     @Mapping(target = "geprueft", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle messstelleOld, Messstelle messstelleNew);
+    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
 
     @AfterMapping
-    default void dtoToMessstelle(@MappingTarget Messstelle bean, MessstelleDto dto) {
+    default void dtoToMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
         bean.setNummer(dto.getMstId());
 
         bean.setGeprueft(false);
@@ -56,33 +55,7 @@ public interface StammdatenMapper {
     }
 
     @AfterMapping
-    default void updateMessstelleAfterMapping(@MappingTarget Messstelle messstelleOld, Messstelle messstelleNew) {
-        // Suchworte setzen
-        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(messstelleNew);
-
-        messstelleOld.setSuchwoerter(new ArrayList<>());
-        if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
-            messstelleOld.getSuchwoerter().addAll(generatedSuchwoerter);
-        }
-
-        if (CollectionUtils.isNotEmpty(messstelleOld.getCustomSuchwoerter())) {
-            messstelleOld.getSuchwoerter().addAll(messstelleOld.getCustomSuchwoerter());
-        }
-    }
-
-    @AfterMapping
-    default void dtoToMessquerschnitt(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
+    default void dtoToMessquerschnittAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
         bean.setNummer(dto.getMstId());
     }
-
-    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt messquerschnittOld, Messquerschnitt messquerschnittNew);
-
-    List<Messquerschnitt> updateMessquerschnitt(@MappingTarget List<Messquerschnitt> messquerschnittOld, List<Messquerschnitt> messquerschnittNew);
-
-    //    SucheZaehlstelleSuggestDTO bean2SucheZaehlstelleSuggestDto(Zaehlstelle bean);
-    //
-    //    @AfterMapping
-    //    default void toSucheZaehlstelleSuggestDto(@MappingTarget SucheZaehlstelleSuggestDTO dto, Zaehlstelle bean) {
-    //        dto.setText(bean.getNummer() + StringUtils.SPACE + bean.getStadtbezirk());
-    //    }
 }
