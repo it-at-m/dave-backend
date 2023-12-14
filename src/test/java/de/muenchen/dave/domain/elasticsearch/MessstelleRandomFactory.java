@@ -33,9 +33,16 @@ public class MessstelleRandomFactory {
         messstelle.setGeprueft(fakerInstance.bool().bool());
         messstelle.setKommentar(fakerInstance.pokemon().name());
         messstelle.setStandort(fakerInstance.pokemon().location());
-        messstelle.setSuchwoerter(List.of(fakerInstance.company().buzzword(), fakerInstance.company().buzzword(), fakerInstance.company().buzzword()));
-        messstelle.setCustomSuchwoerter(
-                List.of(fakerInstance.company().buzzword(), fakerInstance.company().buzzword(), fakerInstance.company().buzzword()));
+        final List<String> suchwoerter = new ArrayList<>();
+        suchwoerter.add(fakerInstance.company().buzzword());
+        suchwoerter.add(fakerInstance.company().buzzword());
+        suchwoerter.add(fakerInstance.company().buzzword());
+        messstelle.setSuchwoerter(suchwoerter);
+        final List<String> customSuchwoerter = new ArrayList<>();
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        messstelle.setCustomSuchwoerter(customSuchwoerter);
         messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSome());
         return messstelle;
     }

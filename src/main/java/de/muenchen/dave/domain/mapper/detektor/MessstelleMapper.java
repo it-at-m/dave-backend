@@ -42,6 +42,7 @@ public interface MessstelleMapper {
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "realisierungsdatum", ignore = true)
+    @Mapping(target = "abbaudatum", ignore = true)
     @Mapping(target = "stadtbezirkNummer", ignore = true)
     @Mapping(target = "bemerkung", ignore = true)
     @Mapping(target = "datumLetztePlausibleMeldung", ignore = true)
@@ -65,23 +66,6 @@ public interface MessstelleMapper {
         }
     }
 
-    @AfterMapping
-    default void updateMessstelleByEditAfterMapping(@MappingTarget Messstelle bean, EditMessstelleDTO dto) {
-        // Suchworte setzen
-        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean);
-
-        if (CollectionUtils.isEmpty(bean.getSuchwoerter())) {
-            bean.setSuchwoerter(new ArrayList<>());
-        }
-        if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
-            bean.getSuchwoerter().addAll(generatedSuchwoerter);
-        }
-
-        if (CollectionUtils.isNotEmpty(dto.getCustomSuchwoerter())) {
-            bean.getSuchwoerter().addAll(dto.getCustomSuchwoerter());
-        }
-    }
-
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);
 
     List<ReadMessquerschnittDTO> bean2readDto(List<Messquerschnitt> bean);
@@ -93,6 +77,8 @@ public interface MessstelleMapper {
     }
 
     EditMessquerschnittDTO bean2editDto(Messquerschnitt bean);
+
+    List<EditMessquerschnittDTO> bean2editDto(List<Messquerschnitt> bean);
 
     @AfterMapping
     default void bean2editDtoAfterMapping(@MappingTarget EditMessquerschnittDTO dto, Messquerschnitt bean) {
