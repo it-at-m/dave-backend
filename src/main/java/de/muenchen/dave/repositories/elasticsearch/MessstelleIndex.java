@@ -59,5 +59,5 @@ public interface MessstelleIndex extends ElasticsearchRepository<Messstelle, Str
 
     Optional<Messstelle> findByNummer(String messstellenNummer);
 
-    Optional<Messstelle> findByMessquerschnitteId(String id);
+    Optional<Messstelle> findByMessquerschnitteId(String id); // TODO: needed?
 }

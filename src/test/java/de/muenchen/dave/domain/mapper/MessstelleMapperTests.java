@@ -29,7 +29,7 @@ public class MessstelleMapperTests {
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
-        expected.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMessung().toString());
+        expected.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMeldung().toString());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
@@ -39,7 +39,7 @@ public class MessstelleMapperTests {
         tooltip.setStadtbezirknummer(bean.getStadtbezirkNummer());
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
-        tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
+        tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMeldung().toString());
         tooltip.setDetektierteVerkehrsarten(bean.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
 
         expected.setTooltip(tooltip);

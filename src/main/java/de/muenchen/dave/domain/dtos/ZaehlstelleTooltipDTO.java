@@ -8,6 +8,10 @@ public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO, Seriali
 
     private String zaehlstellennnummer;
 
+    private String stadtbezirk = null;
+
+    private Integer stadtbezirknummer = null;
+
     private Integer anzahlZaehlungen;
 
     private String datumLetzteZaehlung;

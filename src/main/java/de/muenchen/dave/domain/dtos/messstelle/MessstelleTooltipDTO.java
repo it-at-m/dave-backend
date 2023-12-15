@@ -9,6 +9,8 @@ public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDTO, Serializ
 
     private String mstId;
     private String standort;
+    private String stadtbezirk = null;
+    private Integer stadtbezirknummer = null;
     private String realisierungsdatum;
     private String abbaudatum;
     private String datumLetztePlausibleMessung;

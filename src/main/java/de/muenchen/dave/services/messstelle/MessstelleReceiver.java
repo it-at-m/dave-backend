@@ -8,7 +8,6 @@ import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,8 @@ public class MessstelleReceiver {
     public void loadMessstellenCron() {
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
-//        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
+//        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody(); TODO: reintegrate
+        // TODO: remove
         MessstelleDto dto1 = new MessstelleDto();
         dto1.setMstId("4203");
         dto1.setName("MST 4203");
