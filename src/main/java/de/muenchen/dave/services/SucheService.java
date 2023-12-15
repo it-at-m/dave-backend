@@ -326,7 +326,7 @@ public class SucheService {
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen, final boolean noFilter, final boolean sichtbarDatenportal) {
+    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen, final boolean noFilter/*TODO: check needed?*/, final boolean sichtbarDatenportal) {
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
 
         for (final Messstelle messstelle : messstellen) {

@@ -68,7 +68,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(4)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto1 = this.service.complexSuggest("Moo", false);
+        SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", false);
         assertThat(dto1.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto1.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01"))));
@@ -79,7 +79,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto2 = this.service.complexSuggest("7.", false);
+        SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", false);
         assertThat(dto2.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto2.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01")),
@@ -92,7 +92,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(2)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto3 = this.service.complexSuggest("7. Fo", false);
+        SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", false);
         assertThat(dto3.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto3.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("03"))));
@@ -104,7 +104,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto5 = this.service.complexSuggest("13.11 Ga", false);
+        SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", false);
         assertThat(dto5.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), containsInAnyOrder(
