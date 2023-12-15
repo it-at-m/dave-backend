@@ -78,4 +78,12 @@ public enum Stadtbezirk {
                 .collect(Collectors.toMap(Stadtbezirk::getNummer, Stadtbezirk::getBezeichnung));
     }
 
+    public static String bezeichnungOf(int nummer) {
+        return Arrays.stream(Stadtbezirk.values())
+                .filter(stadtbezirk -> stadtbezirk.getNummer() == nummer)
+                .findFirst()
+                .map(Stadtbezirk::getBezeichnung)
+                .orElse("unbekannt");
+    }
+
 }

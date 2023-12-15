@@ -4,13 +4,9 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class TooltipDTO implements Serializable {
+public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO, Serializable {
 
     private String zaehlstellennnummer;
-
-    private String stadtbezirk;
-
-    private Integer stadtbezirknummer;
 
     private Integer anzahlZaehlungen;
 

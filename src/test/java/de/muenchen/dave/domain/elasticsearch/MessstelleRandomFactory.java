@@ -25,7 +25,7 @@ public class MessstelleRandomFactory {
                         .numberBetween(1, 28)));
         messstelle.setStadtbezirkNummer(fakerInstance.number().numberBetween(1, 26));
         messstelle.setBemerkung(fakerInstance.pokemon().name());
-        messstelle.setDatumLetztePlausibleMeldung(
+        messstelle.setDatumLetztePlausibleMessung(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
         messstelle.setPunkt(new GeoPoint(fakerInstance.number().randomDouble(5, 0, 5), fakerInstance.number().randomDouble(5, 0, 5)));

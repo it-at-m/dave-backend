@@ -4,13 +4,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SucheComplexSuggestsDTO {
+public class SucheComplexSuggestsMessstelleDTO {
 
     List<SucheWordSuggestDTO> wordSuggests;
-
-    List<SucheZaehlstelleSuggestDTO> zaehlstellenSuggests;
-
-    List<SucheZaehlungSuggestDTO> zaehlungenSuggests;
 
     List<SucheMessstelleSuggestDTO> messstellenSuggests;
 

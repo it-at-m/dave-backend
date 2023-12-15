@@ -42,16 +42,17 @@ public interface MessstelleIndex extends ElasticsearchRepository<Messstelle, Str
 
     Optional<Messstelle> findById(String var1);
 
-    @Query("{\"simple_query_string\": {" +
-            " \"fields\": [" +
-            "\"suchwoerter^3\"," +
-            "]," +
-            " \"query\": \"?0\"," +
-            " \"analyze_wildcard\": true," +
-            " \"default_operator\": \"AND\"," +
-            " \"lenient\": true" +
-            "}" +
-            "}")
+//    @Query("{\"simple_query_string\": {" +
+//            " \"fields\": [" +
+//            "\"suchwoerter^3\"" +
+//            "]," +
+//            " \"query\": \"?0\"," +
+//            " \"analyze_wildcard\": true," +
+//            " \"default_operator\": \"AND\"," +
+//            " \"lenient\": true" +
+//            "}" +
+//            "}")
+    @Query("{\"simple_query_string\" : {\"query\": \"?0\",\"fields\": [\"nummer\"]}}")
     Page<Messstelle> suggestSearch(String query, Pageable pageable);
 
     List<Messstelle> findAll();

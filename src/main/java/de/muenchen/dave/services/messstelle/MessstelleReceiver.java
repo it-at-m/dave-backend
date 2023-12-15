@@ -3,8 +3,10 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleCronMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
+import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -43,9 +45,27 @@ public class MessstelleReceiver {
     public void loadMessstellenCron() {
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
-        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
+//        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
+        MessstelleDto dto1 = new MessstelleDto();
+        dto1.setMstId("4203");
+        dto1.setName("MST 4203");
+        dto1.setStatus("in Betrieb");
+        dto1.setRealisierungsdatum(LocalDate.parse("2019-01-01"));
+        dto1.setStadtbezirkNummer(1);
+        dto1.setBemerkung("Bemerkung");
+        dto1.setDatumLetztePlausibleMeldung(LocalDate.parse("2019-01-01"));
+        dto1.setXcoordinate(48.1571117572882);
+        dto1.setYcoordinate(11.46706127145418);
+        MessquerschnittDto mqDto1 = new MessquerschnittDto();
+        mqDto1.setMqId("42031");
+        mqDto1.setMstId("4203");
+        MessquerschnittDto mqDto2 = new MessquerschnittDto();
+        mqDto2.setMqId("42032");
+        mqDto2.setMstId("4203");
+        dto1.setMessquerschnitte(List.of(mqDto1, mqDto2));
+
         // Stammdatenservice aufrufen
-        this.processingMessstellenCron(body);
+        this.processingMessstellenCron(List.of(dto1));
     }
 
     private void processingMessstellenCron(final List<MessstelleDto> messstellen) {
