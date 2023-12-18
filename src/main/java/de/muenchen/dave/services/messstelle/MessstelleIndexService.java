@@ -25,7 +25,7 @@ public class MessstelleIndexService {
     }
 
     public Optional<Messstelle> findByNummer(final String messstellenNummer) {
-        return messstelleIndex.findByNummer(messstellenNummer);
+        return messstelleIndex.findByMstId(messstellenNummer);
     }
 
     public Messstelle findByIdOrThrowException(final String messstelleId) {
