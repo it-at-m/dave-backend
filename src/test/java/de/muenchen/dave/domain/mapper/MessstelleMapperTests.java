@@ -26,29 +26,29 @@ class MessstelleMapperTests {
 
     @Test
     void testBean2readDto() {
-        final Messstelle bean = MessstelleRandomFactory.getOne();
+        final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
         final ReadMessstelleDTO expected = new ReadMessstelleDTO();
         expected.setId(bean.getId());
-        expected.setNummer(bean.getNummer());
+        expected.setMstId(bean.getMstId());
         expected.setName(bean.getName());
         expected.setStatus(bean.getStatus());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
-        expected.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMeldung().toString());
+        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
-        tooltip.setNummer(bean.getNummer());
+        tooltip.setMstId(bean.getMstId());
         tooltip.setStandort(bean.getStandort());
         tooltip.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer()));
         tooltip.setStadtbezirknummer(bean.getStadtbezirkNummer());
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
-        tooltip.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMeldung().toString());
+        tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         tooltip.setDetektierteVerkehrsarten(bean.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
 
         expected.setTooltip(tooltip);
@@ -67,18 +67,18 @@ class MessstelleMapperTests {
 
     @Test
     void testBean2editDto() {
-        final Messstelle bean = MessstelleRandomFactory.getOne();
+        final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
         final EditMessstelleDTO expected = new EditMessstelleDTO();
         expected.setId(bean.getId());
-        expected.setNummer(bean.getNummer());
+        expected.setMstId(bean.getMstId());
         expected.setName(bean.getName());
         expected.setStatus(bean.getStatus());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
-        expected.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMeldung().toString());
+        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
 
@@ -97,18 +97,18 @@ class MessstelleMapperTests {
 
     @Test
     void testUpdateMessstelle() {
-        final Messstelle bean = MessstelleRandomFactory.getOne();
+        final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
         final EditMessstelleDTO updatedData = new EditMessstelleDTO();
         updatedData.setId("darf nicht aktualisiert werden");
-        updatedData.setNummer("darf nicht aktualisiert werden");
+        updatedData.setMstId("darf nicht aktualisiert werden");
         updatedData.setName("darf nicht aktualisiert werden");
         updatedData.setStatus("darf nicht aktualisiert werden");
         updatedData.setBemerkung("darf nicht aktualisiert werden");
         updatedData.setStadtbezirkNummer(666);
         updatedData.setRealisierungsdatum("1999-11-11");
         updatedData.setAbbaudatum("1999-11-11");
-        updatedData.setDatumLetztePlausibleMeldung("1999-11-11");
+        updatedData.setDatumLetztePlausibleMessung("1999-11-11");
         updatedData.setLongitude(6.66);
         updatedData.setLatitude(6.66);
 
@@ -126,13 +126,13 @@ class MessstelleMapperTests {
         final Messstelle expected = new Messstelle();
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
         expected.setId(bean.getId());
-        expected.setNummer(bean.getNummer());
+        expected.setMstId(bean.getMstId());
         expected.setName(bean.getName());
         expected.setStatus(bean.getStatus());
         expected.setBemerkung(bean.getBemerkung());
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
-        expected.setDatumLetztePlausibleMeldung(bean.getDatumLetztePlausibleMeldung());
+        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setPunkt(bean.getPunkt());
 
@@ -154,17 +154,17 @@ class MessstelleMapperTests {
 
     @Test
     void teatBean2readDtoQuerschnitt() {
-        final Messquerschnitt bean = MessquerschnittRandomFactory.getOne();
+        final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
 
         final ReadMessquerschnittDTO expected = new ReadMessquerschnittDTO();
         expected.setId(bean.getId());
-        expected.setNummer(bean.getNummer());
-        expected.setDatum(bean.getDatum().toString());
+        expected.setMqId(bean.getMqId());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStrassenname(bean.getStrassenname());
         expected.setLage(bean.getLage());
-        expected.setFahrrichtung(bean.getFahrrichtung());
+        expected.setStandort(bean.getStandort());
+        expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
@@ -178,18 +178,18 @@ class MessstelleMapperTests {
     }
 
     @Test
-    void teatBean2editDtoQuerschnitt() {
-        final Messquerschnitt bean = MessquerschnittRandomFactory.getOne();
+    void testBean2editDtoQuerschnitt() {
+        final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
 
         final EditMessquerschnittDTO expected = new EditMessquerschnittDTO();
         expected.setId(bean.getId());
-        expected.setNummer(bean.getNummer());
-        expected.setDatum(bean.getDatum().toString());
+        expected.setMqId(bean.getMqId());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStrassenname(bean.getStrassenname());
         expected.setLage(bean.getLage());
-        expected.setFahrrichtung(bean.getFahrrichtung());
+        expected.setStandort(bean.getStandort());
+        expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());

@@ -38,14 +38,14 @@ public interface MessstelleMapper {
     }
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "nummer", ignore = true)
+    @Mapping(target = "mstId", ignore = true)
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "realisierungsdatum", ignore = true)
     @Mapping(target = "abbaudatum", ignore = true)
     @Mapping(target = "stadtbezirkNummer", ignore = true)
     @Mapping(target = "bemerkung", ignore = true)
-    @Mapping(target = "datumLetztePlausibleMeldung", ignore = true)
+    @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)

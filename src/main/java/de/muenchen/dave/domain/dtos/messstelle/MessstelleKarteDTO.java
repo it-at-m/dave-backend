@@ -8,7 +8,7 @@ public class MessstelleKarteDTO implements Serializable {
 
     private String id;
 
-    private String nummer;
+    private String mstId;
 
     private Double longitude;
 

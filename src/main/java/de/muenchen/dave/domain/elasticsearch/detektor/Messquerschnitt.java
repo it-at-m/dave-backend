@@ -1,11 +1,8 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
-import java.time.LocalDate;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -16,10 +13,7 @@ public class Messquerschnitt {
     @Id
     String id;
 
-    String nummer;
-
-    @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
-    LocalDate datum;
+    String mqId;
 
     /**
      * In WGS84-Koordinatendarstellung.
@@ -29,10 +23,11 @@ public class Messquerschnitt {
 
     String strassenname;
     String lage;
-    String fahrrichtung;
+    String fahrtrichtung;
     Integer anzahlFahrspuren;
     String fahrzeugKlassen;
     String detektierteVerkehrsarten;
     String hersteller;
     Integer anzahlDetektoren;
+    String standort;
 }

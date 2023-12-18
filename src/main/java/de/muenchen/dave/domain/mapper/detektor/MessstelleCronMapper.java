@@ -6,6 +6,7 @@ import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.AfterMapping;
@@ -21,6 +22,8 @@ public interface MessstelleCronMapper {
 
     Messquerschnitt dtoToMessquerschnitt(MessquerschnittDto dto);
 
+    List<Messquerschnitt> dtoToMessquerschnitt(List<MessquerschnittDto> dto);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "sichtbarDatenportal", ignore = true)
     @Mapping(target = "kommentar", ignore = true)
@@ -31,10 +34,6 @@ public interface MessstelleCronMapper {
 
     @AfterMapping
     default void dtoToMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
-        bean.setNummer(dto.getMstId());
-
-        bean.setGeprueft(false);
-
         if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
             bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         }
@@ -55,7 +54,9 @@ public interface MessstelleCronMapper {
     }
 
     @AfterMapping
-    default void dtoToMessquerschnittAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
-        bean.setNummer(dto.getMstId());
+    default void dtoToMessstelleAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
+        if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
+            bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        }
     }
 }

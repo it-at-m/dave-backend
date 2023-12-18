@@ -48,22 +48,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -677,7 +677,7 @@
           "strassenname": {
             "type": "string"
           },
-          "lageMessquerschnitt": {
+          "lage": {
             "type": "string"
           },
           "fahrtrichtung": {
@@ -737,7 +737,7 @@
           "bemerkung": {
             "type": "string"
           },
-          "datumLetztePlausibleMeldung": {
+          "datumLetztePlausibleMessung": {
             "type": "string",
             "format": "date"
           },

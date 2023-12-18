@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessquerschnittDto.JSON_PROPERTY_MQ_ID,
   MessquerschnittDto.JSON_PROPERTY_MST_ID,
   MessquerschnittDto.JSON_PROPERTY_STRASSENNAME,
-  MessquerschnittDto.JSON_PROPERTY_LAGE_MESSQUERSCHNITT,
+  MessquerschnittDto.JSON_PROPERTY_LAGE,
   MessquerschnittDto.JSON_PROPERTY_FAHRTRICHTUNG,
   MessquerschnittDto.JSON_PROPERTY_ANZAHL_FAHRSPUREN,
   MessquerschnittDto.JSON_PROPERTY_FAHRZEUG_KLASSEN,
@@ -51,8 +51,8 @@ public class MessquerschnittDto {
   public static final String JSON_PROPERTY_STRASSENNAME = "strassenname";
   private String strassenname;
 
-  public static final String JSON_PROPERTY_LAGE_MESSQUERSCHNITT = "lageMessquerschnitt";
-  private String lageMessquerschnitt;
+  public static final String JSON_PROPERTY_LAGE = "lage";
+  private String lage;
 
   public static final String JSON_PROPERTY_FAHRTRICHTUNG = "fahrtrichtung";
   private String fahrtrichtung;
@@ -159,29 +159,29 @@ public class MessquerschnittDto {
   }
 
 
-  public MessquerschnittDto lageMessquerschnitt(String lageMessquerschnitt) {
+  public MessquerschnittDto lage(String lage) {
     
-    this.lageMessquerschnitt = lageMessquerschnitt;
+    this.lage = lage;
     return this;
   }
 
    /**
-   * Get lageMessquerschnitt
-   * @return lageMessquerschnitt
+   * Get lage
+   * @return lage
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_LAGE_MESSQUERSCHNITT)
+  @JsonProperty(JSON_PROPERTY_LAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getLageMessquerschnitt() {
-    return lageMessquerschnitt;
+  public String getLage() {
+    return lage;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_LAGE_MESSQUERSCHNITT)
+  @JsonProperty(JSON_PROPERTY_LAGE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setLageMessquerschnitt(String lageMessquerschnitt) {
-    this.lageMessquerschnitt = lageMessquerschnitt;
+  public void setLage(String lage) {
+    this.lage = lage;
   }
 
 
@@ -404,7 +404,7 @@ public class MessquerschnittDto {
     return Objects.equals(this.mqId, messquerschnittDto.mqId) &&
         Objects.equals(this.mstId, messquerschnittDto.mstId) &&
         Objects.equals(this.strassenname, messquerschnittDto.strassenname) &&
-        Objects.equals(this.lageMessquerschnitt, messquerschnittDto.lageMessquerschnitt) &&
+        Objects.equals(this.lage, messquerschnittDto.lage) &&
         Objects.equals(this.fahrtrichtung, messquerschnittDto.fahrtrichtung) &&
         Objects.equals(this.anzahlFahrspuren, messquerschnittDto.anzahlFahrspuren) &&
         Objects.equals(this.fahrzeugKlassen, messquerschnittDto.fahrzeugKlassen) &&
@@ -417,7 +417,7 @@ public class MessquerschnittDto {
 
   @Override
   public int hashCode() {
-    return Objects.hash(mqId, mstId, strassenname, lageMessquerschnitt, fahrtrichtung, anzahlFahrspuren, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, anzahlDetektoren, ycoordinate, xcoordinate);
+    return Objects.hash(mqId, mstId, strassenname, lage, fahrtrichtung, anzahlFahrspuren, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, anzahlDetektoren, ycoordinate, xcoordinate);
   }
 
   @Override
@@ -427,7 +427,7 @@ public class MessquerschnittDto {
     sb.append("    mqId: ").append(toIndentedString(mqId)).append("\n");
     sb.append("    mstId: ").append(toIndentedString(mstId)).append("\n");
     sb.append("    strassenname: ").append(toIndentedString(strassenname)).append("\n");
-    sb.append("    lageMessquerschnitt: ").append(toIndentedString(lageMessquerschnitt)).append("\n");
+    sb.append("    lage: ").append(toIndentedString(lage)).append("\n");
     sb.append("    fahrtrichtung: ").append(toIndentedString(fahrtrichtung)).append("\n");
     sb.append("    anzahlFahrspuren: ").append(toIndentedString(anzahlFahrspuren)).append("\n");
     sb.append("    fahrzeugKlassen: ").append(toIndentedString(fahrzeugKlassen)).append("\n");

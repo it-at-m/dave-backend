@@ -18,7 +18,7 @@ public class Messstelle {
     @Id
     String id;
 
-    String nummer;
+    String mstId;
 
     String name;
 
@@ -35,7 +35,7 @@ public class Messstelle {
     String bemerkung;
 
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
-    LocalDate datumLetztePlausibleMeldung;
+    LocalDate datumLetztePlausibleMessung;
     /**
      * In WGS84-Koordinatendarstellung.
      */
@@ -45,16 +45,11 @@ public class Messstelle {
     /**
      * Steuert die Sichtbarkeit der Messstelle im Datenportal.
      */
-    Boolean sichtbarDatenportal;
-    Boolean geprueft;
-
+    Boolean sichtbarDatenportal = false;
+    Boolean geprueft = false;
     String kommentar;
-
     String standort;
-
     List<String> suchwoerter;
-
     List<String> customSuchwoerter;
-
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
 }

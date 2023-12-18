@@ -195,13 +195,13 @@ public final class IndexServiceUtils {
     public static MessstelleTooltipDTO createMessstelleTooltip(
             final Messstelle messstelle) {
         final MessstelleTooltipDTO tooltipDTO = new MessstelleTooltipDTO();
-        tooltipDTO.setNummer(messstelle.getNummer());
+        tooltipDTO.setMstId(messstelle.getMstId());
         tooltipDTO.setStandort(messstelle.getStandort());
         tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
         tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
         tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
         tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
-        tooltipDTO.setDatumLetztePlausibleMeldung(messstelle.getDatumLetztePlausibleMeldung().toString());
+        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
         if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
             tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
         }
