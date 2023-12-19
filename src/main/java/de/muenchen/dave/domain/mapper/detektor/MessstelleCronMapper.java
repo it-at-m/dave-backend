@@ -29,6 +29,7 @@ public interface MessstelleCronMapper {
     @Mapping(target = "kommentar", ignore = true)
     @Mapping(target = "standort", ignore = true)
     @Mapping(target = "customSuchwoerter", ignore = true)
+    @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "geprueft", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
 
@@ -41,11 +42,13 @@ public interface MessstelleCronMapper {
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean);
 
-        if (CollectionUtils.isEmpty(bean.getSuchwoerter())) {
-            bean.setSuchwoerter(new ArrayList<>());
-        }
+        bean.setSuchwoerter(new ArrayList<>());
         if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
             bean.getSuchwoerter().addAll(generatedSuchwoerter);
+        }
+
+        if (CollectionUtils.isNotEmpty(bean.getCustomSuchwoerter())) {
+            bean.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
         }
 
         if (CollectionUtils.isEmpty(bean.getMessquerschnitte())) {

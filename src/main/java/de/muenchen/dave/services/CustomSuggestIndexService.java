@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class CustomSuggestIndexService {
 
     private static final int DEFAULT_WEIGHT = 100;
-    private static final String ZAEHLUNG_SUCHWORT = "suchwort";
+    private static final String SUCHWORT = "suchwort";
     private final CustomSuggestIndex customSuggestIndex;
 
     /**
@@ -114,7 +114,7 @@ public class CustomSuggestIndexService {
             suchwoerterAsSet.forEach(element -> {
                 final Completion completion = new Completion(new String[] { element });
                 completion.setWeight(DEFAULT_WEIGHT);
-                suggestionList.add(new CustomSuggest(UUID.randomUUID().toString(), ZAEHLUNG_SUCHWORT, suggestId, completion));
+                suggestionList.add(new CustomSuggest(UUID.randomUUID().toString(), SUCHWORT, suggestId, completion));
             });
             this.customSuggestIndex.saveAll(suggestionList);
         }

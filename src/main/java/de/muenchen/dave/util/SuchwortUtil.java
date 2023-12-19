@@ -170,8 +170,8 @@ public final class SuchwortUtil {
                 suchwoerter.add(stadtbezirk);
             }
         }
-        if (StringUtils.isNotEmpty(bean.getId())) {
-            suchwoerter.add(bean.getId());
+        if (StringUtils.isNotEmpty(bean.getMstId())) {
+            suchwoerter.add(bean.getMstId());
         }
         if (StringUtils.isNotEmpty(bean.getName())) {
             suchwoerter.add(bean.getName());

@@ -53,7 +53,7 @@ public class MessstelleReceiver {
         // Daten aus Dave laden
         messstellen.forEach(messstelleDto -> {
             log.debug("#findById");
-            messstelleIndexService.findByNummer(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelleCron(found, messstelleDto),
+            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelleCron(found, messstelleDto),
                     () -> this.createMessstelleCron(messstelleDto));
         });
     }

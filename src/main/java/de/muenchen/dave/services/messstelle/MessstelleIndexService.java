@@ -24,7 +24,7 @@ public class MessstelleIndexService {
         return messstelleIndex.save(toSave);
     }
 
-    public Optional<Messstelle> findByNummer(final String messstellenNummer) {
+    public Optional<Messstelle> findByMstId(final String messstellenNummer) {
         return messstelleIndex.findByMstId(messstellenNummer);
     }
 

@@ -48,6 +48,7 @@ class MessstelleCronMapperTests {
             expected.getSuchwoerter().add(stadtbezirkBezeichnung);
         }
         expected.getSuchwoerter().add(dto.getName());
+        expected.getSuchwoerter().add(dto.getMstId());
 
         expected.setMessquerschnitte(mapper.dtoToMessquerschnitt(dto.getMessquerschnitte()));
 
@@ -76,7 +77,8 @@ class MessstelleCronMapperTests {
         final Messquerschnitt actual = this.mapper.dtoToMessquerschnitt(dto);
         Assertions.assertThat(actual)
                 .isNotNull()
-                .usingRecursiveComparison().ignoringFields("punkt")
+                .usingRecursiveComparison()
+                .ignoringFields("punkt")
                 .isEqualTo(expected);
 
         Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getXcoordinate());
@@ -100,6 +102,16 @@ class MessstelleCronMapperTests {
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setDatumLetztePlausibleMessung(updatedData.getDatumLetztePlausibleMessung());
         expected.setPunkt(new GeoPoint(updatedData.getXcoordinate(), updatedData.getYcoordinate()));
+        expected.setSuchwoerter(new ArrayList<>());
+        expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
+        expected.getSuchwoerter().add(updatedData.getMstId());
+        expected.getSuchwoerter().add(updatedData.getName());
+        final String stadtbezirk = IndexServiceUtils.getStadtbezirkBezeichnung(updatedData.getStadtbezirkNummer());
+        final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirk));
+        expected.getSuchwoerter().addAll(stadtbezirke);
+        if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
+            expected.getSuchwoerter().add(stadtbezirk);
+        }
 
         // unveraendert
         expected.setId(bean.getId());
@@ -107,7 +119,6 @@ class MessstelleCronMapperTests {
         expected.setGeprueft(bean.getGeprueft());
         expected.setKommentar(bean.getKommentar());
         expected.setStandort(bean.getStandort());
-        expected.setSuchwoerter(bean.getSuchwoerter());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
 
@@ -115,6 +126,7 @@ class MessstelleCronMapperTests {
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
+                .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
                 .isEqualTo(expected);
     }
 }
