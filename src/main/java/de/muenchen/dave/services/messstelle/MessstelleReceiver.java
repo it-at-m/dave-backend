@@ -1,3 +1,7 @@
+/*
+ * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
+ * der Landeshauptstadt München, 2023
+ */
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -10,6 +14,8 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockAssert;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,8 +45,11 @@ public class MessstelleReceiver {
      * kann in der application-xxx.yml geändert werden.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
+    @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
     @Transactional
     public void loadMessstellenCron() {
+        // To assert that the lock is held (prevents misconfiguration errors)
+        LockAssert.assertLocked();
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
         final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
