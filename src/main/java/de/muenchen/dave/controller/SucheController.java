@@ -35,7 +35,7 @@ public class SucheController {
     @GetMapping(value = "/suggest-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-                                                                      @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
+            @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.complexSuggestSichtbarDatenportal(query, noFilter);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
@@ -51,7 +51,7 @@ public class SucheController {
     @GetMapping(value = "/suggest", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-                                                           @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
+            @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, noFilter);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
@@ -67,7 +67,7 @@ public class SucheController {
     @GetMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchZaehlstelleForMapDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-                                                                                           @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
+            @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final Set<ErhebungsstelleKarteDTO> zaehlstellenForMap = this.sucheService.sucheZaehlstelleSichtbarDatenportal(query, noFilter);
             return new ResponseEntity<>(zaehlstellenForMap, HttpStatus.OK);
@@ -83,7 +83,7 @@ public class SucheController {
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-                                                                                    @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
+            @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final boolean sichbarDatenportal = false;
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, noFilter, sichbarDatenportal);

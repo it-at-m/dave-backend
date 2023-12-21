@@ -44,7 +44,7 @@ public class MessstelleReceiver {
     public void loadMessstellenCron() {
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
-//        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody(); TODO: reintegrate
+        //        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody(); TODO: reintegrate
         // TODO: remove
         MessstelleDto dto1 = new MessstelleDto();
         dto1.setMstId("4203");

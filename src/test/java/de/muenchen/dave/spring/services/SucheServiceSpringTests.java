@@ -15,8 +15,8 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -142,7 +142,7 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-//        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        //        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-//        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        //        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
     }
 
     private List<Zaehlstelle> createSampleData() {

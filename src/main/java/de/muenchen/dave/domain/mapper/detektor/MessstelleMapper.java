@@ -110,6 +110,4 @@ public interface MessstelleMapper {
         dto.setText(bean.getNummer() + StringUtils.SPACE + Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
-
-
 }

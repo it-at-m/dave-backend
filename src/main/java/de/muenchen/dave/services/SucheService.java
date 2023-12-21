@@ -217,7 +217,7 @@ public class SucheService {
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> zaehlstellen = sucheZaehlstelle(query, noFilter, sichtbarDatenportal);
-        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query, noFilter, sichtbarDatenportal);
+        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query, sichtbarDatenportal);
         return Stream.concat(zaehlstellen.stream(), messstellen.stream()).collect(Collectors.toSet());
     }
 
@@ -253,17 +253,17 @@ public class SucheService {
         return this.getZaehlstelleKarteDTOS(zaehlstellen, noFilter, sichtbarDatenportal);
     }
 
-    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
+    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query, final boolean sichtbarDatenportal) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
             messstellen = this.messstelleIndex.findAll();
         } else {
-                final String q = this.createQueryString(query);
-                log.debug("query '{}'", q);
-                messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
+            final String q = this.createQueryString(query);
+            log.debug("query '{}'", q);
+            messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
         }
-        return this.getMessstelleKarteDTOS(messstellen, noFilter, sichtbarDatenportal);
+        return this.getMessstelleKarteDTOS(messstellen, sichtbarDatenportal);
     }
 
     /**
@@ -274,7 +274,8 @@ public class SucheService {
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter, final boolean sichtbarDatenportal) {
+    private Set<ErhebungsstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter,
+            final boolean sichtbarDatenportal) {
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
 
         for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, noFilter)) {
@@ -323,10 +324,11 @@ public class SucheService {
      * liefert diese zurück
      *
      * @param messstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param sichtbarDatenportal Nur sichtbare Messstellen werden zurückgegeben
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen, final boolean noFilter/*TODO: check needed?*/, final boolean sichtbarDatenportal) {
+    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen,
+            final boolean sichtbarDatenportal) {
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
 
         for (final Messstelle messstelle : messstellen) {
