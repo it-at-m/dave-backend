@@ -5,8 +5,8 @@ import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleCronMapper;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleCronMapperImpl;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -20,9 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
-class MessstelleCronMapperTests {
+class MessstelleReceiverMapperTests {
 
-    private final MessstelleCronMapper mapper = new MessstelleCronMapperImpl();
+    private final MessstelleReceiverMapper mapper = new MessstelleReceiverMapperImpl();
 
     @Test
     void testDtoToMessstelle() {

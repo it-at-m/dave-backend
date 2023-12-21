@@ -16,7 +16,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
-public interface MessstelleCronMapper {
+public interface MessstelleReceiverMapper {
 
     Messstelle dtoToMessstelle(MessstelleDto dto);
 

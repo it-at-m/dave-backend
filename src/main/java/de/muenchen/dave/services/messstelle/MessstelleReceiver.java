@@ -5,7 +5,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleCronMapper;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
@@ -38,7 +38,7 @@ public class MessstelleReceiver {
 
     private final CustomSuggestIndexService customSuggestIndexService;
 
-    private MessstelleCronMapper messstelleMapper;
+    private MessstelleReceiverMapper messstelleReceiverMapper;
 
     /**
      * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
@@ -69,7 +69,7 @@ public class MessstelleReceiver {
 
     private void createMessstelleCron(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        final Messstelle newMessstelle = messstelleMapper.dtoToMessstelle(dto);
+        final Messstelle newMessstelle = messstelleReceiverMapper.dtoToMessstelle(dto);
         newMessstelle.setId(UUID.randomUUID().toString());
         newMessstelle.getMessquerschnitte().forEach(messquerschnitt -> messquerschnitt.setId(UUID.randomUUID().toString()));
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
@@ -78,7 +78,7 @@ public class MessstelleReceiver {
 
     private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
-        final Messstelle updated = messstelleMapper.updateMessstelle(existingMessstelle, dto);
+        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto);
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
     }

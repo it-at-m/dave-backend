@@ -35,7 +35,7 @@ public class MessstelleController {
     @GetMapping(value = "/byId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<ReadMessstelleDTO> readMessstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
-        log.debug(String.format("#readMessstelle with id %s", messstelleId));
+        log.debug("#readMessstelle with id {}", messstelleId);
         try {
             final ReadMessstelleDTO readMessstelleDTO = this.messstelleService.readMessstelleById(messstelleId);
             return ResponseEntity.ok(readMessstelleDTO);
@@ -67,7 +67,7 @@ public class MessstelleController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/edit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<EditMessstelleDTO> getBearbeiteMessstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
-        log.debug(String.format("#getBearbeiteMessstelle with id %s", messstelleId));
+        log.debug("#getBearbeiteMessstelle with id {}", messstelleId);
         try {
             final EditMessstelleDTO dto = this.messstelleService.getMessstelleToEdit(messstelleId);
             return ResponseEntity.ok(dto);
