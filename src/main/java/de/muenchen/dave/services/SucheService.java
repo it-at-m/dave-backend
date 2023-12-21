@@ -324,7 +324,7 @@ public class SucheService {
      * liefert diese zurück
      *
      * @param messstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param sichtbarDatenportal Nur sichtbare Messstellen werden zurückgegeben
+     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
     private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen,
