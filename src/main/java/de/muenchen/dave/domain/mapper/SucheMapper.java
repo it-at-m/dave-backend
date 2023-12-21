@@ -22,11 +22,11 @@ public class SucheMapper {
      * @return TooltipDTO mit allen benötigten Feldern
      */
     public static ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,
-                                                final Integer stadtbezirknummer,
-                                                final String nummer,
-                                                final Integer anzahlZaehlungen,
-                                                final String datumLetzteZaehlung,
-                                                final String kreuzungsname) {
+            final Integer stadtbezirknummer,
+            final String nummer,
+            final Integer anzahlZaehlungen,
+            final String datumLetzteZaehlung,
+            final String kreuzungsname) {
         final ZaehlstelleTooltipDTO zaehlstelleTooltipDTO = new ZaehlstelleTooltipDTO();
         zaehlstelleTooltipDTO.setKreuzungsname(kreuzungsname);
         zaehlstelleTooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
@@ -54,7 +54,8 @@ public class SucheMapper {
         tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
         tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum() == null ? "" : messstelle.getRealisierungsdatum().toString());
         tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum() == null ? "" : messstelle.getAbbaudatum().toString());
-        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMeldung() == null ? "unbekannt" : messstelle.getDatumLetztePlausibleMeldung().toString());
+        tooltipDTO.setDatumLetztePlausibleMessung(
+                messstelle.getDatumLetztePlausibleMeldung() == null ? "unbekannt" : messstelle.getDatumLetztePlausibleMeldung().toString());
         if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
             tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
         }
