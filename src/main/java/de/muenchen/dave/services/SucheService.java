@@ -178,15 +178,6 @@ public class SucheService {
         return dto;
     }
 
-    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(String query) {
-        final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
-        final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
-                .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
-                .collect(Collectors.toList());
-        log.debug("Found {} messstelle(n)", sucheMessstelleSuggestDTOS.size());
-        return sucheMessstelleSuggestDTOS;
-    }
-
     /**
      * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
      * Zaehlstellen aus dem zurückgegebenen Set.
@@ -208,10 +199,10 @@ public class SucheService {
     /**
      * Sucht alle freigegebenen Zählstellen und gibt diese an getZaehlstelleKarteDTOS weiter.
      *
-     * @param query Eine Suchquery zur Suche von Zählstellen. Bei leerer Suchquery sollen alle
-     *            Zählstellen gefunden werden.
+     * @param query Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle
+     *            Zähl-/Messstellen gefunden werden.
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return Set von befüllten ZaehlstellenDTOs der gesuchten Zählstellen
+     * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
@@ -221,6 +212,14 @@ public class SucheService {
         return Stream.concat(zaehlstellen.stream(), messstellen.stream()).collect(Collectors.toSet());
     }
 
+    /**
+     * Gibt alle Zählstellen zurück, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
     private Set<ErhebungsstelleKarteDTO> sucheZaehlstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
@@ -253,6 +252,28 @@ public class SucheService {
         return this.getZaehlstelleKarteDTOS(zaehlstellen, noFilter, sichtbarDatenportal);
     }
 
+    /**
+     * Erstellt eine Liste an Suchvorschlägen für die Messstellen, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @return Ein Set von befüllten SucheMessstelleSuggestDTOs
+     */
+    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(String query) {
+        final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
+        final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
+                .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
+                .collect(Collectors.toList());
+        log.debug("Found {} messstelle(n)", sucheMessstelleSuggestDTOS.size());
+        return sucheMessstelleSuggestDTOS;
+    }
+
+    /**
+     * Erstellt eine Liste an Messstellen, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
     private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query, final boolean sichtbarDatenportal) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
