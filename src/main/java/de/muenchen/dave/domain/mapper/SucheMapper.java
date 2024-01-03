@@ -48,14 +48,13 @@ public class SucheMapper {
     public static MessstelleTooltipDTO createMessstelleTooltip(
             final Messstelle messstelle) {
         final MessstelleTooltipDTO tooltipDTO = new MessstelleTooltipDTO();
-        tooltipDTO.setMstId(messstelle.getNummer());
+        tooltipDTO.setMstId(messstelle.getMstId());
         tooltipDTO.setStandort(messstelle.getStandort());
         tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
         tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
-        tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum() == null ? "" : messstelle.getRealisierungsdatum().toString());
-        tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum() == null ? "" : messstelle.getAbbaudatum().toString());
-        tooltipDTO.setDatumLetztePlausibleMessung(
-                messstelle.getDatumLetztePlausibleMeldung() == null ? "unbekannt" : messstelle.getDatumLetztePlausibleMeldung().toString());
+        tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
+        tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
+        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
         if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
             tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
         }

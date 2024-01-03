@@ -360,7 +360,7 @@ public class SucheService {
             erhebungsstelleKarteDTO.setId(messstelle.getId());
             erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
             erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
-            erhebungsstelleKarteDTO.setFachId(messstelle.getNummer());
+            erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
             erhebungsstelleKarteDTO.setType("messstelle");
 
             erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));

@@ -1,7 +1,6 @@
 package de.muenchen.dave.services;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.dtos.TooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Stadtbezirk;

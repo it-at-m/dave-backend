@@ -17,8 +17,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Mapper(componentModel = "spring")
 public interface MessstelleCronMapper {
 
-    Messstelle dtoToMessstelle(MessstelleDto dto);
-
     Messquerschnitt dtoToMessquerschnitt(MessquerschnittDto dto);
 
     @Mapping(target = "id", ignore = true)
@@ -31,7 +29,7 @@ public interface MessstelleCronMapper {
 
     @AfterMapping
     default void dtoToMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
-        bean.setNummer(dto.getMstId());
+        bean.setMstId(dto.getMstId());
 
         bean.setGeprueft(false);
 
@@ -56,6 +54,6 @@ public interface MessstelleCronMapper {
 
     @AfterMapping
     default void dtoToMessquerschnittAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
-        bean.setNummer(dto.getMstId());
+        bean.setMqId(dto.getMstId());
     }
 }

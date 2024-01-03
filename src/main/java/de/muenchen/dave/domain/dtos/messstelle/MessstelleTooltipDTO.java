@@ -1,10 +1,10 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import java.io.Serializable;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleTooltipDTO;
 import lombok.Data;
 
 @Data
-public class MessstelleTooltipDTO implements Serializable {
+public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
 
     private String mstId;
     private String standort;
