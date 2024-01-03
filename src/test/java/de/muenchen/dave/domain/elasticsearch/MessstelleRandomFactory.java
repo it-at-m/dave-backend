@@ -2,6 +2,7 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,10 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 public class MessstelleRandomFactory {
     private static final Faker fakerInstance = Faker.instance();
 
-    public static Messstelle getOne() {
+    public static Messstelle getMessstelle() {
         Messstelle messstelle = new Messstelle();
         messstelle.setId(UUID.randomUUID().toString());
-        messstelle.setNummer(fakerInstance.number().digits(10));
+        messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
         messstelle.setStatus(fakerInstance.starTrek().specie());
         messstelle.setRealisierungsdatum(
@@ -25,7 +26,7 @@ public class MessstelleRandomFactory {
                         .numberBetween(1, 28)));
         messstelle.setStadtbezirkNummer(fakerInstance.number().numberBetween(1, 26));
         messstelle.setBemerkung(fakerInstance.pokemon().name());
-        messstelle.setDatumLetztePlausibleMeldung(
+        messstelle.setDatumLetztePlausibleMessung(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
         messstelle.setPunkt(new GeoPoint(fakerInstance.number().randomDouble(5, 0, 5), fakerInstance.number().randomDouble(5, 0, 5)));
@@ -33,24 +34,39 @@ public class MessstelleRandomFactory {
         messstelle.setGeprueft(fakerInstance.bool().bool());
         messstelle.setKommentar(fakerInstance.pokemon().name());
         messstelle.setStandort(fakerInstance.pokemon().location());
-        messstelle.setSuchwoerter(List.of(fakerInstance.company().buzzword(), fakerInstance.company().buzzword(), fakerInstance.company().buzzword()));
-        messstelle.setCustomSuchwoerter(
-                List.of(fakerInstance.company().buzzword(), fakerInstance.company().buzzword(), fakerInstance.company().buzzword()));
-        messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSome());
+        final List<String> suchwoerter = new ArrayList<>();
+        suchwoerter.add(fakerInstance.company().buzzword());
+        suchwoerter.add(fakerInstance.company().buzzword());
+        suchwoerter.add(fakerInstance.company().buzzword());
+        messstelle.setSuchwoerter(suchwoerter);
+        final List<String> customSuchwoerter = new ArrayList<>();
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        customSuchwoerter.add(fakerInstance.company().buzzword());
+        messstelle.setCustomSuchwoerter(customSuchwoerter);
+        messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnitte());
         return messstelle;
     }
 
-    public static List<Messstelle> getSome(int some) {
-        List<Messstelle> zs = new ArrayList<>();
-
-        for (int i = 0; i < some; i++) {
-            zs.add(getOne());
-        }
-        return zs;
-    }
-
-    public static List<Messstelle> getSomeRandom() {
-        return getSome(Faker.instance().number().numberBetween(1, 10));
+    public static MessstelleDto getMessstelleDto() {
+        final MessstelleDto dto = new MessstelleDto();
+        dto.setMstId(UUID.randomUUID().toString());
+        dto.setName(fakerInstance.pokemon().name());
+        dto.setStatus(fakerInstance.pokemon().name());
+        dto.setRealisierungsdatum(
+                LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
+                        .numberBetween(1, 28)));
+        dto.setAbbaudatum(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
+                .numberBetween(1, 28)));
+        dto.setStadtbezirkNummer(fakerInstance.number().numberBetween(1, 26));
+        dto.setBemerkung(fakerInstance.pokemon().name());
+        dto.setDatumLetztePlausibleMessung(
+                LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
+                        .numberBetween(1, 28)));
+        dto.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnittDtos());
+        dto.setYcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setXcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
+        return dto;
     }
 
 }

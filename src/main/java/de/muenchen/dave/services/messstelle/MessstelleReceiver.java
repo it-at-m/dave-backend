@@ -1,16 +1,21 @@
+/*
+ * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
+ * der Landeshauptstadt München, 2023
+ */
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleCronMapper;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
-import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockAssert;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -33,39 +38,23 @@ public class MessstelleReceiver {
 
     private final CustomSuggestIndexService customSuggestIndexService;
 
-    private MessstelleCronMapper messstelleMapper;
+    private MessstelleReceiverMapper messstelleReceiverMapper;
 
     /**
      * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
      * kann in der application-xxx.yml geändert werden.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
+    @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
     @Transactional
     public void loadMessstellenCron() {
+        // To assert that the lock is held (prevents misconfiguration errors)
+        LockAssert.assertLocked();
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
-        // final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody(); TODO: reintegrate
-        // TODO: remove
-        MessstelleDto dto1 = new MessstelleDto();
-        dto1.setMstId("4203");
-        dto1.setName("MST 4203");
-        dto1.setStatus("in Betrieb");
-        dto1.setRealisierungsdatum(LocalDate.parse("2019-01-01"));
-        dto1.setStadtbezirkNummer(1);
-        dto1.setBemerkung("Bemerkung");
-        dto1.setDatumLetztePlausibleMeldung(LocalDate.parse("2019-01-01"));
-        dto1.setXcoordinate(48.1571117572882);
-        dto1.setYcoordinate(11.46706127145418);
-        MessquerschnittDto mqDto1 = new MessquerschnittDto();
-        mqDto1.setMqId("42031");
-        mqDto1.setMstId("4203");
-        MessquerschnittDto mqDto2 = new MessquerschnittDto();
-        mqDto2.setMqId("42032");
-        mqDto2.setMstId("4203");
-        dto1.setMessquerschnitte(List.of(mqDto1, mqDto2));
-
+        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
         // Stammdatenservice aufrufen
-        this.processingMessstellenCron(List.of(dto1));
+        this.processingMessstellenCron(body);
     }
 
     private void processingMessstellenCron(final List<MessstelleDto> messstellen) {
@@ -73,14 +62,14 @@ public class MessstelleReceiver {
         // Daten aus Dave laden
         messstellen.forEach(messstelleDto -> {
             log.debug("#findById");
-            messstelleIndexService.findByNummer(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelleCron(found, messstelleDto),
+            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelleCron(found, messstelleDto),
                     () -> this.createMessstelleCron(messstelleDto));
         });
     }
 
     private void createMessstelleCron(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        final Messstelle newMessstelle = messstelleMapper.dtoToMessstelle(dto);
+        final Messstelle newMessstelle = messstelleReceiverMapper.dtoToMessstelle(dto);
         newMessstelle.setId(UUID.randomUUID().toString());
         newMessstelle.getMessquerschnitte().forEach(messquerschnitt -> messquerschnitt.setId(UUID.randomUUID().toString()));
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
@@ -89,7 +78,7 @@ public class MessstelleReceiver {
 
     private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
-        final Messstelle updated = messstelleMapper.updateMessstelle(existingMessstelle, dto);
+        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto);
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
     }

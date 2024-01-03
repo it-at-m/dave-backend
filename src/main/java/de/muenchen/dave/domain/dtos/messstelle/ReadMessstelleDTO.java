@@ -9,7 +9,7 @@ public class ReadMessstelleDTO implements Serializable {
 
     private String id;
 
-    private String nummer;
+    private String mstId;
     private String name;
     private String status;
     private String bemerkung;
@@ -17,7 +17,7 @@ public class ReadMessstelleDTO implements Serializable {
 
     private String realisierungsdatum;
     private String abbaudatum;
-    private String datumLetztePlausibleMeldung;
+    private String datumLetztePlausibleMessung;
 
     private Double longitude;
     private Double latitude;

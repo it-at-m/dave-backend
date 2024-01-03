@@ -39,10 +39,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessstelleDto.JSON_PROPERTY_ABBAUDATUM,
   MessstelleDto.JSON_PROPERTY_STADTBEZIRK_NUMMER,
   MessstelleDto.JSON_PROPERTY_BEMERKUNG,
-  MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MELDUNG,
+  MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG,
   MessstelleDto.JSON_PROPERTY_MESSQUERSCHNITTE,
-  MessstelleDto.JSON_PROPERTY_YCOORDINATE,
-  MessstelleDto.JSON_PROPERTY_XCOORDINATE
+  MessstelleDto.JSON_PROPERTY_XCOORDINATE,
+  MessstelleDto.JSON_PROPERTY_YCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessstelleDto {
@@ -67,17 +67,17 @@ public class MessstelleDto {
   public static final String JSON_PROPERTY_BEMERKUNG = "bemerkung";
   private String bemerkung;
 
-  public static final String JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MELDUNG = "datumLetztePlausibleMeldung";
-  private LocalDate datumLetztePlausibleMeldung;
+  public static final String JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG = "datumLetztePlausibleMessung";
+  private LocalDate datumLetztePlausibleMessung;
 
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
   private List<MessquerschnittDto> messquerschnitte;
 
-  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
-  private Double ycoordinate;
-
   public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
   private Double xcoordinate;
+
+  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
+  private Double ycoordinate;
 
   public MessstelleDto() {
   }
@@ -264,29 +264,29 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto datumLetztePlausibleMeldung(LocalDate datumLetztePlausibleMeldung) {
+  public MessstelleDto datumLetztePlausibleMessung(LocalDate datumLetztePlausibleMessung) {
     
-    this.datumLetztePlausibleMeldung = datumLetztePlausibleMeldung;
+    this.datumLetztePlausibleMessung = datumLetztePlausibleMessung;
     return this;
   }
 
    /**
-   * Get datumLetztePlausibleMeldung
-   * @return datumLetztePlausibleMeldung
+   * Get datumLetztePlausibleMessung
+   * @return datumLetztePlausibleMessung
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MELDUNG)
+  @JsonProperty(JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public LocalDate getDatumLetztePlausibleMeldung() {
-    return datumLetztePlausibleMeldung;
+  public LocalDate getDatumLetztePlausibleMessung() {
+    return datumLetztePlausibleMessung;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MELDUNG)
+  @JsonProperty(JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDatumLetztePlausibleMeldung(LocalDate datumLetztePlausibleMeldung) {
-    this.datumLetztePlausibleMeldung = datumLetztePlausibleMeldung;
+  public void setDatumLetztePlausibleMessung(LocalDate datumLetztePlausibleMessung) {
+    this.datumLetztePlausibleMessung = datumLetztePlausibleMessung;
   }
 
 
@@ -324,32 +324,6 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto ycoordinate(Double ycoordinate) {
-    
-    this.ycoordinate = ycoordinate;
-    return this;
-  }
-
-   /**
-   * Get ycoordinate
-   * @return ycoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getYcoordinate() {
-    return ycoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setYcoordinate(Double ycoordinate) {
-    this.ycoordinate = ycoordinate;
-  }
-
-
   public MessstelleDto xcoordinate(Double xcoordinate) {
     
     this.xcoordinate = xcoordinate;
@@ -375,6 +349,32 @@ public class MessstelleDto {
     this.xcoordinate = xcoordinate;
   }
 
+
+  public MessstelleDto ycoordinate(Double ycoordinate) {
+    
+    this.ycoordinate = ycoordinate;
+    return this;
+  }
+
+   /**
+   * Get ycoordinate
+   * @return ycoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getYcoordinate() {
+    return ycoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setYcoordinate(Double ycoordinate) {
+    this.ycoordinate = ycoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -391,15 +391,15 @@ public class MessstelleDto {
         Objects.equals(this.abbaudatum, messstelleDto.abbaudatum) &&
         Objects.equals(this.stadtbezirkNummer, messstelleDto.stadtbezirkNummer) &&
         Objects.equals(this.bemerkung, messstelleDto.bemerkung) &&
-        Objects.equals(this.datumLetztePlausibleMeldung, messstelleDto.datumLetztePlausibleMeldung) &&
+        Objects.equals(this.datumLetztePlausibleMessung, messstelleDto.datumLetztePlausibleMessung) &&
         Objects.equals(this.messquerschnitte, messstelleDto.messquerschnitte) &&
-        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate) &&
-        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate);
+        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate) &&
+        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, datumLetztePlausibleMeldung, messquerschnitte, ycoordinate, xcoordinate);
+    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, datumLetztePlausibleMessung, messquerschnitte, xcoordinate, ycoordinate);
   }
 
   @Override
@@ -413,10 +413,10 @@ public class MessstelleDto {
     sb.append("    abbaudatum: ").append(toIndentedString(abbaudatum)).append("\n");
     sb.append("    stadtbezirkNummer: ").append(toIndentedString(stadtbezirkNummer)).append("\n");
     sb.append("    bemerkung: ").append(toIndentedString(bemerkung)).append("\n");
-    sb.append("    datumLetztePlausibleMeldung: ").append(toIndentedString(datumLetztePlausibleMeldung)).append("\n");
+    sb.append("    datumLetztePlausibleMessung: ").append(toIndentedString(datumLetztePlausibleMessung)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
-    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
+    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
