@@ -162,7 +162,7 @@ class MessstelleMapperTests {
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStrassenname(bean.getStrassenname());
-        expected.setLage(bean.getLage());
+        expected.setLageMessquerschnitt(bean.getLageMessquerschnitt());
         expected.setStandort(bean.getStandort());
         expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());
@@ -187,7 +187,7 @@ class MessstelleMapperTests {
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStrassenname(bean.getStrassenname());
-        expected.setLage(bean.getLage());
+        expected.setLageMessquerschnitt(bean.getLageMessquerschnitt());
         expected.setStandort(bean.getStandort());
         expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());

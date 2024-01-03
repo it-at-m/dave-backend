@@ -22,7 +22,7 @@ public class Messquerschnitt {
     GeoPoint punkt;
 
     String strassenname;
-    String lage;
+    String lageMessquerschnitt;
     String fahrtrichtung;
     Integer anzahlFahrspuren;
     String fahrzeugKlassen;

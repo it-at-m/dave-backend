@@ -66,7 +66,7 @@ class MessstelleReceiverMapperTests {
         expected.setMqId(dto.getMqId());
         expected.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         expected.setStrassenname(dto.getStrassenname());
-        expected.setLage(dto.getLage());
+        expected.setLageMessquerschnitt(dto.getLageMessquerschnitt());
         expected.setFahrtrichtung(dto.getFahrtrichtung());
         expected.setAnzahlFahrspuren(dto.getAnzahlFahrspuren());
         expected.setFahrzeugKlassen(dto.getFahrzeugKlassen());

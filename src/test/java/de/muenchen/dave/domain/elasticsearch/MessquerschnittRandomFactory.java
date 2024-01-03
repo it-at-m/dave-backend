@@ -18,7 +18,7 @@ public class MessquerschnittRandomFactory {
         messquerschnitt.setMqId(fakerInstance.number().digits(10));
         messquerschnitt.setPunkt(new GeoPoint(fakerInstance.number().randomDouble(5, 0, 5), fakerInstance.number().randomDouble(5, 0, 5)));
         messquerschnitt.setStrassenname(fakerInstance.pokemon().location());
-        messquerschnitt.setLage(fakerInstance.pokemon().location());
+        messquerschnitt.setLageMessquerschnitt(fakerInstance.pokemon().location());
         messquerschnitt.setFahrtrichtung(fakerInstance.pokemon().name());
         messquerschnitt.setAnzahlFahrspuren(fakerInstance.number().numberBetween(1, 4));
         messquerschnitt.setFahrzeugKlassen(fakerInstance.pokemon().name());
@@ -41,7 +41,7 @@ public class MessquerschnittRandomFactory {
         dto.setMqId(UUID.randomUUID().toString());
         dto.setMstId(UUID.randomUUID().toString());
         dto.setStrassenname(fakerInstance.pokemon().location());
-        dto.setLage(fakerInstance.pokemon().location());
+        dto.setLageMessquerschnitt(fakerInstance.pokemon().location());
         dto.setFahrtrichtung(fakerInstance.pokemon().location());
         dto.setAnzahlFahrspuren(fakerInstance.number().numberBetween(1, 4));
         dto.setFahrzeugKlassen(fakerInstance.pokemon().name());
