@@ -28,7 +28,7 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import java.time.LocalDate;
@@ -72,7 +72,7 @@ public class FillPdfBeanServiceSpringTest {
     private LadeZaehldatenService ladeZaehldatenService;
 
     @MockBean
-    private IndexService indexService;
+    private ZaehlstelleIndexService indexService;
 
     public static Zaehlung getZaehlung() {
         final Zaehlung zaehlung = new Zaehlung();

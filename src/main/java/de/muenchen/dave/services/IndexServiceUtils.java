@@ -2,8 +2,10 @@ package de.muenchen.dave.services;
 
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.dtos.TooltipDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -180,6 +182,30 @@ public final class IndexServiceUtils {
                     .collect(Collectors.joining(KREUZUNGSNAME_REPLACEMENT_NAME_DIVIDER));
         }
         return newKreuzungsname;
+    }
+
+    /**
+     * Erstellt ein TooltipDTO für die Metainformationen einer Messstelle.
+     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
+     * angezeigt.
+     *
+     * @param messstelle Messstelle
+     * @return MessstelleTooltipDTO
+     */
+    public static MessstelleTooltipDTO createMessstelleTooltip(
+            final Messstelle messstelle) {
+        final MessstelleTooltipDTO tooltipDTO = new MessstelleTooltipDTO();
+        tooltipDTO.setMstId(messstelle.getMstId());
+        tooltipDTO.setStandort(messstelle.getStandort());
+        tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
+        tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
+        tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
+        tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
+        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
+        if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
+            tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
+        }
+        return tooltipDTO;
     }
 
 }

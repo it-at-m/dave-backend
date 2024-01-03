@@ -22,7 +22,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     @Value(value = "${dave.radius.distance-check-meter}")
     private int radiusDistanceCheck;
 
-    public InternalZaehlungPersistierungsService(final IndexService indexService,
+    public InternalZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,

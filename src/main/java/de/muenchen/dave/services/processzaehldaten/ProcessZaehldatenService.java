@@ -11,7 +11,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.util.UUID;
@@ -29,12 +29,12 @@ public class ProcessZaehldatenService {
 
     private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public ProcessZaehldatenService(final LadeZaehldatenService ladeZaehldatenService,
             final ProcessZaehldatenSteplineService processZaehldatenSteplineService,
             final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService,
-            final IndexService indexService) {
+            final ZaehlstelleIndexService indexService) {
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.processZaehldatenSteplineService = processZaehldatenSteplineService;
         this.processZaehldatenHeatmapService = processZaehldatenHeatmapService;

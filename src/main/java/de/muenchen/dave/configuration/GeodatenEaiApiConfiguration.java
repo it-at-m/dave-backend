@@ -1,5 +1,6 @@
 package de.muenchen.dave.configuration;
 
+import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class MesswerteMessquerschnittApiConfiguration {
+public class GeodatenEaiApiConfiguration {
 
-    @Value("${messwerte.messquerschnitt.url:}")
-    public String messwerteMessquerschnittUrl;
+    @Value("${geodaten.eai.url:}")
+    public String geodatenEaiUrl;
 
     /**
      * Erstellt ein {@link MesswerteMessquerschnittApi} Bean für Requests an die Geodaten-EAI
@@ -27,8 +28,16 @@ public class MesswerteMessquerschnittApiConfiguration {
     @Profile("no-security")
     public MesswerteMessquerschnittApi messwerteMessquerschnittApi() {
         final WebClient webClient = WebClient.builder().build();
-        final ApiClient apiClient = this.messwerteMessquerschnittApiClient(webClient);
+        final ApiClient apiClient = this.geodatenEaiApiClient(webClient);
         return new MesswerteMessquerschnittApi(apiClient);
+    }
+
+    @Bean
+    @Profile("no-security")
+    public MessstelleApi messstelleApi() {
+        final WebClient webClient = WebClient.builder().build();
+        final ApiClient apiClient = this.geodatenEaiApiClient(webClient);
+        return new MessstelleApi(apiClient);
     }
 
     @Bean
@@ -36,13 +45,22 @@ public class MesswerteMessquerschnittApiConfiguration {
     public MesswerteMessquerschnittApi securedMesswerteMessquerschnittApi(final ClientRegistrationRepository clientRegistrationRepository,
             final OAuth2AuthorizedClientService authorizedClientService) {
         final WebClient webClient = this.webClient(clientRegistrationRepository, authorizedClientService);
-        final ApiClient apiClient = messwerteMessquerschnittApiClient(webClient);
+        final ApiClient apiClient = geodatenEaiApiClient(webClient);
         return new MesswerteMessquerschnittApi(apiClient);
     }
 
-    private ApiClient messwerteMessquerschnittApiClient(final WebClient webClient) {
+    @Bean
+    @Profile("!no-security")
+    public MessstelleApi securedMessstelleApi(final ClientRegistrationRepository clientRegistrationRepository,
+            final OAuth2AuthorizedClientService authorizedClientService) {
+        final WebClient webClient = this.webClient(clientRegistrationRepository, authorizedClientService);
+        final ApiClient apiClient = geodatenEaiApiClient(webClient);
+        return new MessstelleApi(apiClient);
+    }
+
+    private ApiClient geodatenEaiApiClient(final WebClient webClient) {
         final var apiClient = new ApiClient(webClient);
-        apiClient.setBasePath(messwerteMessquerschnittUrl);
+        apiClient.setBasePath(geodatenEaiUrl);
         return apiClient;
     }
 

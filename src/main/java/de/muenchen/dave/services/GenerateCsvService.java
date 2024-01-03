@@ -27,11 +27,11 @@ public class GenerateCsvService {
 
     private final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public GenerateCsvService(final LadeZaehldatenService ladeZaehldatenService,
             final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper,
-            final IndexService indexService) {
+            final ZaehlstelleIndexService indexService) {
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.datentabelleCsvZaehldatumMapper = datentabelleCsvZaehldatumMapper;
         this.indexService = indexService;

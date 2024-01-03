@@ -11,7 +11,6 @@ import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
@@ -21,15 +20,12 @@ import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -43,17 +39,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.suggest.Completion;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class IndexService {
+public class ZaehlstelleIndexService {
 
-    private static final int DEFAULT_WEIGHT = 100;
-    private static final String ZAEHLUNG_SUCHWORT = "suchwort";
     private final ZaehlstelleIndex zaehlstelleIndex;
-    private final CustomSuggestIndex customSuggestIndex;
+    private final CustomSuggestIndexService customSuggestIndexService;
     private final ZaehlungMapper zaehlungMapper;
     private final ZaehlstelleMapper zaehlstelleMapper;
     private final ZeitauswahlService zeitauswahlService;
@@ -64,16 +57,16 @@ public class IndexService {
     @Value(value = "${elasticsearch.port}")
     private String elasticsearchPort;
 
-    public IndexService(final ZeitauswahlService zeitauswahlService,
+    public ZaehlstelleIndexService(final ZeitauswahlService zeitauswahlService,
             final ZaehlstelleMapper zaehlstelleMapper,
-            final CustomSuggestIndex customSuggestIndex,
+            final CustomSuggestIndexService customSuggestIndexService,
             final ZaehlungMapper zaehlungMapper,
             final ZaehlstelleIndex zaehlstelleIndex,
             // @Lazy prevents circular dependency
             @Lazy final ChatMessageService messageService) {
         this.zeitauswahlService = zeitauswahlService;
         this.zaehlstelleMapper = zaehlstelleMapper;
-        this.customSuggestIndex = customSuggestIndex;
+        this.customSuggestIndexService = customSuggestIndexService;
         this.zaehlungMapper = zaehlungMapper;
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.messageService = messageService;
@@ -118,7 +111,7 @@ public class IndexService {
         final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto);
         zaehlstelle.setId(UUID.randomUUID().toString());
         zaehlstelle.setZaehlungen(new ArrayList<>());
-        this.createSuggestionsForZaehlstelle(zaehlstelle);
+        customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
         this.speichereZaehlstelleInDatenbank(zaehlstelle);
         return zaehlstelle.getId();
     }
@@ -144,7 +137,7 @@ public class IndexService {
             // Die Zählungen müssen erhalten bleiben
             zaehlstelle.setZaehlungen(zsto.get().getZaehlungen());
             this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
-            this.updateSuggestionsForZaehlstelle(zaehlstelle);
+            customSuggestIndexService.updateSuggestionsForZaehlstelle(zaehlstelle);
             this.speichereZaehlstelleInDatenbank(zaehlstelle);
             return zaehlstelle.getId();
         } else {
@@ -180,7 +173,7 @@ public class IndexService {
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
             final Zaehlstelle zaehlstelleUpdated = this.updateZaehlstelleWithZaehlung(zsto.get(), zaehlung);
-            this.createSuggestionsForZaehlung(zaehlung);
+            customSuggestIndexService.createSuggestionsForZaehlung(zaehlung);
             this.speichereZaehlstelleInDatenbank(zaehlstelleUpdated);
         } else {
             log.error("Keine Zählstelle zur id {} gefunden.", zaehlstelleId);
@@ -224,8 +217,7 @@ public class IndexService {
                     break;
                 }
             }
-            this.deleteAllSuggestionsByFkid(zaehlung.getId());
-            this.createSuggestionsForZaehlung(zaehlung);
+            customSuggestIndexService.updateSuggestionsForZaehlung(zaehlung);
             this.speichereZaehlstelleInDatenbank(zst);
         } else {
             log.error("Keine Zählstelle zur id {} gefunden.", zaehlstelleId);
@@ -264,7 +256,7 @@ public class IndexService {
             final List<String> suchwoerterToUpdate = new ArrayList<>(zl.getSuchwoerter());
             suchwoerterToUpdate.removeIf(persistedSuchwoerter::contains);
             if (CollectionUtils.isNotEmpty(suchwoerterToUpdate)) {
-                this.updateSuggestionsForZaehlung(zl);
+                customSuggestIndexService.updateSuggestionsForZaehlung(zl);
             }
             // Speichere Zählstelle mit erneuerter Zählung
             this.speichereZaehlstelleInDatenbank(zst);
@@ -309,7 +301,7 @@ public class IndexService {
             isDeleted = zaehlstelle.getZaehlungen().removeIf(zaehlung -> zaehlung.getId().equalsIgnoreCase(zaehlungId));
 
             // Alle Vorschläge zur Zählung ebenfalls löschen
-            this.deleteAllSuggestionsByFkid(zaehlungId);
+            customSuggestIndexService.deleteAllSuggestionsByFkid(zaehlungId);
 
             // Zählstelle speichern
             this.speichereZaehlstelleInDatenbank(zaehlstelle);
@@ -350,79 +342,6 @@ public class IndexService {
             zaehlstelle.setGrundLetzteZaehlung(letzteZaehlung.getZaehlsituation());
             zaehlstelle.setLetzteZaehlungJahr(Integer.parseInt(letzteZaehlung.getJahr()));
         }
-    }
-
-    /**
-     * Erzeugt für eine konkrete Zählstelle ein Set an Vorschlägen.
-     *
-     * @param zaehlstelle neue zu verschlagwortende Zaehlstelle
-     */
-    private void createSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
-        final String suggestId = zaehlstelle.getId();
-        // In den Suchwörtern stehen alle Suggestions für die Zählstelle
-        if (CollectionUtils.isNotEmpty(zaehlstelle.getSuchwoerter())) {
-            this.createSuggestionsFromSuchwoerter(zaehlstelle.getSuchwoerter(), suggestId);
-        }
-    }
-
-    /**
-     * Erzeugt für eine konkrete Zählung ein Set an Vorschlägen.
-     *
-     * @param zaehlung neue zu verschlagwortende Zaehlung
-     */
-    public void createSuggestionsForZaehlung(final Zaehlung zaehlung) {
-        final String suggestId = zaehlung.getId();
-        // In den Suchwörtern stehen alle Suggestions für die Zählung
-        this.createSuggestionsFromSuchwoerter(zaehlung.getSuchwoerter(), suggestId);
-    }
-
-    /**
-     * Aktualisiert für eine konkrete Zählung ein Set an Vorschlägen.
-     *
-     * @param zaehlung neue zu verschlagwortende Zaehlung
-     */
-    private void updateSuggestionsForZaehlung(final Zaehlung zaehlung) {
-        this.deleteAllSuggestionsByFkid(zaehlung.getId());
-        this.createSuggestionsForZaehlung(zaehlung);
-    }
-
-    /**
-     * Aktualistiert für eine konkrete Zählung ein Set an Vorschlägen.
-     *
-     * @param zaehlstelle neue zu verschlagwortende Zaehlung
-     */
-    private void updateSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
-        this.deleteAllSuggestionsByFkid(zaehlstelle.getId());
-        this.createSuggestionsForZaehlstelle(zaehlstelle);
-    }
-
-    /**
-     * Löscht alle Vorschläge zu einem bestimmen Fremdschlüssel.
-     *
-     * @param suggestFkid Fremdschlüssel
-     */
-    private void deleteAllSuggestionsByFkid(final String suggestFkid) {
-        this.customSuggestIndex.deleteAllByFkid(suggestFkid);
-    }
-
-    /**
-     * Erzeugt für die Suchwörter ein Set an Vorschlägen.
-     *
-     * @param suchwoerter Suchwörter einer Zählstelle oder Zählung
-     * @param suggestId ID der zugehörigen Zählstelle oder Zählung
-     */
-    private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId) {
-        if (CollectionUtils.isNotEmpty(suchwoerter)) {
-            final List<CustomSuggest> suggestionList = new ArrayList<>();
-            final Set<String> suchwoerterAsSet = new HashSet<>(suchwoerter);
-            suchwoerterAsSet.forEach(element -> {
-                final Completion completion = new Completion(new String[] { element });
-                completion.setWeight(DEFAULT_WEIGHT);
-                suggestionList.add(new CustomSuggest(UUID.randomUUID().toString(), ZAEHLUNG_SUCHWORT, suggestId, completion));
-            });
-            this.customSuggestIndex.saveAll(suggestionList);
-        }
-
     }
 
     public List<Zaehlstelle> getAllZaehlstellen() {
@@ -686,7 +605,7 @@ public class IndexService {
      */
     public void erneuereZaehlstelle(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
         this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
-        this.updateSuggestionsForZaehlstelle(zaehlstelle);
+        customSuggestIndexService.updateSuggestionsForZaehlstelle(zaehlstelle);
         this.speichereZaehlstelleInDatenbank(zaehlstelle);
     }
 
