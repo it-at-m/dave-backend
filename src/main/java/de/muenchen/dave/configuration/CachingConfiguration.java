@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Profile;
 public class CachingConfiguration {
 
     public static final String SUCHE_ERHEBUNGSSTELLE = "SUCHE_ERHEBUNGSSTELLE";
-    public static final String SUCHE_ZAEHLSTELLE_DATENPORTAL = "SUCHE_ZAEHLSTELLE_DATENPORTAL";
+    public static final String SUCHE_ERHEBUNGSSTELLE_DATENPORTAL = "SUCHE_ERHEBUNGSSTELLE_DATENPORTAL";
     public static final String LADE_PROCESSED_ZAEHLDATEN = "LADE_PROCESSED_ZAEHLDATEN";
     public static final String LADE_BELASTUNGSPLAN_DTO = "LADE_BELASTUNGSPLAN_DTO";
     public static final String LADE_ZAEHLDATEN_ZEITREIHE_DTO = "LADE_ZAEHLDATEN_ZEITREIHE_DTO";
@@ -94,7 +94,7 @@ public class CachingConfiguration {
         config.addMapConfig(this.getMapConfig(CustomUserInfoTokenServices.NAME_AUTHENTICATION_CACHE, AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS)
                 .setTimeToLiveSeconds(AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS));
         config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE, 0));
-        config.addMapConfig(this.getMapConfig(SUCHE_ZAEHLSTELLE_DATENPORTAL, 0));
+        config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, 0));
         config.addMapConfig(this.getMapConfig(LADE_BELASTUNGSPLAN_DTO, MAX_IDLE_TIME_IN_SECONDS));
         config.addMapConfig(this.getMapConfig(LADE_PROCESSED_ZAEHLDATEN, MAX_IDLE_TIME_IN_SECONDS));
         config.addMapConfig(this.getMapConfig(LADE_ZAEHLDATEN_ZEITREIHE_DTO, MAX_IDLE_TIME_IN_SECONDS));

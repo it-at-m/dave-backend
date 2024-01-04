@@ -18,4 +18,6 @@ public class ErhebungsstelleKarteDTO implements Serializable {
 
     private ErhebungsstelleTooltipDTO tooltip;
 
+    private Boolean sichtbarDatenportal;
+
 }

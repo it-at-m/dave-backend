@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
@@ -101,13 +102,13 @@ public class SucheService {
 
     /**
      * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren
-     * Zaehlstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
+     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO complexSuggestSichtbarDatenportal(final String query, final boolean noFilter) {
+    public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(final String query, final boolean noFilter) {
         final var sucheComplexSuggests = this.getComplexSuggest(query, noFilter);
         final var zaehlstellenSuggests = sucheComplexSuggests.getZaehlstellenSuggests()
                 .stream()
@@ -180,24 +181,27 @@ public class SucheService {
 
     /**
      * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
-     * Zaehlstellen aus dem zurückgegebenen Set.
+     * Zaehl-/Messstellen aus dem zurückgegebenen Set.
      * <p>
-     * Gibt alle sichtbaren Zählstellen zurück.
-     * Eine Zählstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
+     * Gibt alle sichtbaren Zähl-/Messstellen zurück.
+     * Eine Zähl-/Messstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return passende Zaehlstellen
+     * @return passende Zaehl-/Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheZaehlstelleSichtbarDatenportal(final String query, final boolean noFilter) {
-        log.debug("Zugriff auf den Service #sucheZaehlstelleSichtbarDatenportal");
-        final var sichtbarDatenportal = true;
-        return this.sucheErhebungsstelle(query, noFilter, sichtbarDatenportal);
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(final String query, final boolean noFilter) {
+        log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
+        return this.sucheErhebungsstelle(query, noFilter)
+                .stream()
+                .filter(zaehlstelleKarte -> ObjectUtils.isEmpty(zaehlstelleKarte.getSichtbarDatenportal())
+                        || zaehlstelleKarte.getSichtbarDatenportal())
+                .collect(Collectors.toSet());
     }
 
     /**
-     * Sucht alle freigegebenen Zählstellen und gibt diese an getZaehlstelleKarteDTOS weiter.
+     * Sucht alle freigegebenen Zähl-/Messstellen und gibt diese an die DTO-Erstellung weiter.
      *
      * @param query Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle
      *            Zähl-/Messstellen gefunden werden.
@@ -205,10 +209,10 @@ public class SucheService {
      * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
-        final Set<ErhebungsstelleKarteDTO> zaehlstellen = sucheZaehlstelle(query, noFilter, sichtbarDatenportal);
-        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query, sichtbarDatenportal);
+        final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstelle(query, noFilter);
+        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query);
         return Stream.concat(zaehlstellen.stream(), messstellen.stream()).collect(Collectors.toSet());
     }
 
@@ -217,10 +221,9 @@ public class SucheService {
      *
      * @param query Eine Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> sucheZaehlstelle(final String query, final boolean noFilter, final boolean sichtbarDatenportal) {
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final boolean noFilter) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -249,7 +252,7 @@ public class SucheService {
                 zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, pageable).toList();
             }
         }
-        return this.getZaehlstelleKarteDTOS(zaehlstellen, noFilter, sichtbarDatenportal);
+        return this.getZaehlstelleKarteDTOS(zaehlstellen, noFilter);
     }
 
     /**
@@ -258,7 +261,7 @@ public class SucheService {
      * @param query Eine Suchquery
      * @return Ein Set von befüllten SucheMessstelleSuggestDTOs
      */
-    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(String query) {
+    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query) {
         final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
         final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
                 .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
@@ -271,10 +274,9 @@ public class SucheService {
      * Erstellt eine Liste an Messstellen, die auf die Query passen.
      *
      * @param query Eine Suchquery
-     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query, final boolean sichtbarDatenportal) {
+    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -284,91 +286,7 @@ public class SucheService {
             log.debug("query '{}'", q);
             messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
         }
-        return this.getMessstelleKarteDTOS(messstellen, sichtbarDatenportal);
-    }
-
-    /**
-     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
-     * liefert diese zurück
-     *
-     * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return Ein Set von befüllten ZaehlstelleKarteDTOs
-     */
-    private Set<ErhebungsstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter,
-            final boolean sichtbarDatenportal) {
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
-
-        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, noFilter)) {
-            if (sichtbarDatenportal && !zaehlstelle.getSichtbarDatenportal())
-                continue;
-            Zaehlung letzeZaehlung = null;
-            if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
-                letzeZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
-            }
-
-            final String stadtbezirk = zaehlstelle.getStadtbezirk();
-            final Integer stadtbezirksnummer = zaehlstelle.getStadtbezirkNummer();
-            final String nummer = zaehlstelle.getNummer();
-            final String kreuzungsname = letzeZaehlung == null ? "" : letzeZaehlung.getKreuzungsname();
-            final Integer anzahlZaehlungen = CollectionUtils.isEmpty(zaehlstelle.getZaehlungen())
-                    ? 0
-                    : zaehlstelle.getZaehlungen().size();
-            final String datumLetzteZaehlung = zaehlstelle.getLetzteZaehlungMonat()
-                    + StringUtils.SPACE
-                    + zaehlstelle.getLetzteZaehlungJahr();
-
-            final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
-            erhebungsstelleKarteDTO.setId(zaehlstelle.getId());
-            erhebungsstelleKarteDTO.setLatitude(zaehlstelle.getPunkt().getLat());
-            erhebungsstelleKarteDTO.setLongitude(zaehlstelle.getPunkt().getLon());
-            erhebungsstelleKarteDTO.setFachId(nummer);
-            erhebungsstelleKarteDTO.setType("zaehlstelle");
-
-            erhebungsstelleKarteDTO.setTooltip(
-                    SucheMapper.createZaehlstelleTooltip(
-                            stadtbezirk,
-                            stadtbezirksnummer,
-                            nummer,
-                            anzahlZaehlungen,
-                            datumLetzteZaehlung,
-                            kreuzungsname));
-
-            erhebungsstelleKarteDTOSet.add(erhebungsstelleKarteDTO);
-        }
-
-        return erhebungsstelleKarteDTOSet;
-    }
-
-    /**
-     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
-     * liefert diese zurück
-     *
-     * @param messstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param sichtbarDatenportal Nur sichtbare Messstellen zurückgeben
-     * @return Ein Set von befüllten ZaehlstelleKarteDTOs
-     */
-    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen,
-            final boolean sichtbarDatenportal) {
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
-
-        for (final Messstelle messstelle : messstellen) {
-            if (sichtbarDatenportal && !messstelle.getSichtbarDatenportal())
-                continue;
-
-            final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
-            erhebungsstelleKarteDTO.setId(messstelle.getId());
-            erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
-            erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
-            erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
-            erhebungsstelleKarteDTO.setType("messstelle");
-
-            erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
-
-            erhebungsstelleKarteDTOSet.add(erhebungsstelleKarteDTO);
-        }
-
-        return erhebungsstelleKarteDTOSet;
+        return this.getMessstelleKarteDTOS(messstellen);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {
@@ -447,6 +365,92 @@ public class SucheService {
         return zaehlstellen.stream()
                 .filter(zaehlstelle -> CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
+     * liefert diese zurück
+     *
+     * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @return Ein Set von befüllten ZaehlstelleKarteDTOs
+     */
+    private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
+        final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
+
+        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, noFilter)) {
+            Zaehlung letzeZaehlung = null;
+            if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
+                letzeZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
+            }
+
+            final String stadtbezirk = zaehlstelle.getStadtbezirk();
+            final Integer stadtbezirksnummer = zaehlstelle.getStadtbezirkNummer();
+            final String nummer = zaehlstelle.getNummer();
+            final String kreuzungsname = letzeZaehlung == null ? "" : letzeZaehlung.getKreuzungsname();
+            final Integer anzahlZaehlungen = CollectionUtils.isEmpty(zaehlstelle.getZaehlungen())
+                    ? 0
+                    : zaehlstelle.getZaehlungen().size();
+            final String datumLetzteZaehlung = zaehlstelle.getLetzteZaehlungMonat()
+                    + StringUtils.SPACE
+                    + zaehlstelle.getLetzteZaehlungJahr();
+
+            final ZaehlstelleKarteDTO zaehlstelleKarteDTO = new ZaehlstelleKarteDTO();
+            zaehlstelleKarteDTO.setId(zaehlstelle.getId());
+            zaehlstelleKarteDTO.setLatitude(zaehlstelle.getPunkt().getLat());
+            zaehlstelleKarteDTO.setLongitude(zaehlstelle.getPunkt().getLon());
+            zaehlstelleKarteDTO.setFachId(nummer);
+            zaehlstelleKarteDTO.setType("zaehlstelle");
+            zaehlstelleKarteDTO.setSichtbarDatenportal(zaehlstelle.getSichtbarDatenportal());
+
+            zaehlstelleKarteDTO.setLetzteZaehlungId(
+                    letzeZaehlung == null
+                            ? ""
+                            : letzeZaehlung.getId());
+
+            zaehlstelleKarteDTO.setTooltip(
+                    SucheMapper.createZaehlstelleTooltip(
+                            stadtbezirk,
+                            stadtbezirksnummer,
+                            nummer,
+                            anzahlZaehlungen,
+                            datumLetzteZaehlung,
+                            kreuzungsname));
+
+            zaehlstelleKarteDTO.setZaehlartenKarte(
+                    mapZaehlungenToZaehlartenKarte(zaehlstelle.getZaehlungen()));
+
+            zaehlstelleKarteDTOSet.add(zaehlstelleKarteDTO);
+        }
+
+        return zaehlstelleKarteDTOSet;
+    }
+
+    /**
+     * Befüllt ErhebungsstelleKarteDTO mit den entsprechenden Daten der Messstelle zum Anzeigen auf
+     * einer Karte und
+     * liefert diese zurück
+     *
+     * @param messstellen messstellen, die in ErhebungsstelleKarteDTOs umgewandelt werden sollen
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
+    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen) {
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
+
+        for (final Messstelle messstelle : messstellen) {
+            final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
+            erhebungsstelleKarteDTO.setId(messstelle.getId());
+            erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
+            erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
+            erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
+            erhebungsstelleKarteDTO.setType("messstelle");
+
+            erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
+
+            erhebungsstelleKarteDTOSet.add(erhebungsstelleKarteDTO);
+        }
+
+        return erhebungsstelleKarteDTOSet;
     }
 
     /**

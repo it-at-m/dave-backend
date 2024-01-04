@@ -17,6 +17,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -117,13 +118,13 @@ public class SucheServiceSpringTests {
     public void testSucheZaehlstelleWithSonderzaehlungen() {
 
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -142,7 +143,8 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        //        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+                .get().getZaehlartenKarte(), is(expected));
     }
 
     @Test
@@ -150,13 +152,13 @@ public class SucheServiceSpringTests {
     public void testSucheZaehlstelleWithoutSonderzaehlungen() {
 
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -170,7 +172,8 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        //        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+                .get().getZaehlartenKarte(), is(expected));
     }
 
     private List<Zaehlstelle> createSampleData() {
