@@ -1,27 +1,16 @@
 package de.muenchen.dave.domain.dtos;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class ZaehlstelleKarteDTO implements Serializable {
-
-    private String id;
-
-    private String nummer;
+@EqualsAndHashCode(callSuper = true)
+public class ZaehlstelleKarteDTO extends ErhebungsstelleKarteDTO {
 
     private String letzteZaehlungId;
 
-    private Double longitude;
-
-    private Double latitude;
-
-    private TooltipDTO tooltip;
-
     private Set<ZaehlartenKarteDTO> zaehlartenKarte = new HashSet<>();
-
-    private Boolean sichtbarDatenportal;
 
 }

@@ -11,7 +11,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.services.IndexServiceUtils;
+import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public interface ZaehlstelleMapper {
         if (dto.getPunkt() != null && dto.getPunkt().getLat() > 0 && dto.getPunkt().getLon() > 0) {
             bean.setPunkt(dto.getPunkt());
         }
-        bean.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer()));
+        bean.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
 
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfZaehlstelle(bean);

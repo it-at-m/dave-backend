@@ -2,18 +2,24 @@ package de.muenchen.dave.services;
 
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.util.DaveConstants;
@@ -27,6 +33,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -44,6 +52,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class SucheService {
 
@@ -55,19 +64,13 @@ public class SucheService {
 
     private final ZaehlstelleMapper zaehlstelleMapper;
 
+    private final MessstelleIndex messstelleIndex;
+
+    private final MessstelleMapper messstelleMapper;
+
     private final ZaehlungMapper zaehlungMapper;
 
     private final ElasticsearchOperations elasticsearchOperations;
-
-    public SucheService(final ZaehlstelleIndex zaehlstelleIndex,
-            final ZaehlstelleMapper zaehlstelleMapper,
-            final ZaehlungMapper zaehlungMapper,
-            final ElasticsearchOperations elasticsearchOperations) {
-        this.zaehlstelleIndex = zaehlstelleIndex;
-        this.zaehlstelleMapper = zaehlstelleMapper;
-        this.zaehlungMapper = zaehlungMapper;
-        this.elasticsearchOperations = elasticsearchOperations;
-    }
 
     /**
      * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en,
@@ -98,15 +101,15 @@ public class SucheService {
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#complexSuggest} alle nicht sichtbaren
-     * Zaehlstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
+     * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren
+     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO complexSuggestSichtbarDatenportal(final String query, final boolean noFilter) {
-        final var sucheComplexSuggests = this.complexSuggest(query, noFilter);
+    public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(final String query, final boolean noFilter) {
+        final var sucheComplexSuggests = this.getComplexSuggest(query, noFilter);
         final var zaehlstellenSuggests = sucheComplexSuggests.getZaehlstellenSuggests()
                 .stream()
                 .filter(sucheZaehlstelleSuggest -> ObjectUtils.isEmpty(sucheZaehlstelleSuggest.getSichtbarDatenportal())
@@ -131,13 +134,13 @@ public class SucheService {
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO complexSuggest(final String query, final boolean noFilter) {
+    public SucheComplexSuggestsDTO getComplexSuggest(final String query, final boolean noFilter) {
         final String q = this.createQueryString(query);
         log.debug("query '{}'", q);
 
         final SucheComplexSuggestsDTO dto = new SucheComplexSuggestsDTO();
 
-        // die Zählstellen
+        // Zählstellen
         final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
         final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), noFilter).stream()
@@ -146,6 +149,7 @@ public class SucheService {
 
         dto.setZaehlstellenSuggests(sucheZaehlstelleSuggestDTOS);
 
+        // Zählungen
         final List<Zaehlung> zaehlungen = this.findZaehlung(zaehlstellen, query);
         final List<SucheZaehlungSuggestDTO> sucheZaehlungSuggestDtos = zaehlungen.stream()
                 .map(this.zaehlungMapper::bean2SucheZaehlungSuggestDto)
@@ -166,25 +170,30 @@ public class SucheService {
 
         dto.setZaehlungenSuggests(sucheZaehlungSuggestDtos);
 
+        // Wörter
         dto.setWordSuggests(this.getSuggestions(query));
+
+        // Messstellen
+        dto.setMessstellenSuggests(getMessstellenSuggest(q));
+
         return dto;
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#sucheZaehlstelle} alle nicht sichtbaren
-     * Zaehlstellen aus dem zurückgegebenen Set.
+     * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
+     * Zaehl-/Messstellen aus dem zurückgegebenen Set.
      * <p>
-     * Gibt alle sichtbaren Zählstellen zurück.
-     * Eine Zählstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
+     * Gibt alle sichtbaren Zähl-/Messstellen zurück.
+     * Eine Zähl-/Messstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return passende Zaehlstellen
+     * @return passende Zaehl-/Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL, key = "{#p0, #p1}")
-    public Set<ZaehlstelleKarteDTO> sucheZaehlstelleSichtbarDatenportal(final String query, final boolean noFilter) {
-        log.debug("Zugriff auf den Service #sucheZaehlstelleSichtbarDatenportal");
-        return this.sucheZaehlstelle(query, noFilter)
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(final String query, final boolean noFilter) {
+        log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
+        return this.sucheErhebungsstelle(query, noFilter)
                 .stream()
                 .filter(zaehlstelleKarte -> ObjectUtils.isEmpty(zaehlstelleKarte.getSichtbarDatenportal())
                         || zaehlstelleKarte.getSichtbarDatenportal())
@@ -192,16 +201,29 @@ public class SucheService {
     }
 
     /**
-     * Sucht alle freigegebenen Zählstellen und gibt diese an getZaehlstelleKarteDTOS weiter.
+     * Sucht alle freigegebenen Zähl-/Messstellen und gibt diese an die DTO-Erstellung weiter.
      *
-     * @param query Eine Suchquery zur Suche von Zählstellen. Bei leerer Suchquery sollen alle
-     *            Zählstellen gefunden werden.
+     * @param query Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle
+     *            Zähl-/Messstellen gefunden werden.
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return Set von befüllten ZaehlstellenDTOs der gesuchten Zählstellen
+     * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ZAEHLSTELLE, key = "{#p0, #p1}")
-    public Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final boolean noFilter) {
-        log.debug("Zugriff auf den Service #sucheZaehlstelle");
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter) {
+        log.debug("Zugriff auf den Service #sucheErhebungsstelle");
+        final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstelle(query, noFilter);
+        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query);
+        return Stream.concat(zaehlstellen.stream(), messstellen.stream()).collect(Collectors.toSet());
+    }
+
+    /**
+     * Gibt alle Zählstellen zurück, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final boolean noFilter) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -231,6 +253,40 @@ public class SucheService {
             }
         }
         return this.getZaehlstelleKarteDTOS(zaehlstellen, noFilter);
+    }
+
+    /**
+     * Erstellt eine Liste an Suchvorschlägen für die Messstellen, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @return Ein Set von befüllten SucheMessstelleSuggestDTOs
+     */
+    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query) {
+        final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
+        final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
+                .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
+                .collect(Collectors.toList());
+        log.debug("Found {} messstelle(n)", sucheMessstelleSuggestDTOS.size());
+        return sucheMessstelleSuggestDTOS;
+    }
+
+    /**
+     * Erstellt eine Liste an Messstellen, die auf die Query passen.
+     *
+     * @param query Eine Suchquery
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
+    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query) {
+        final List<Messstelle> messstellen;
+        final PageRequest pageable = PageRequest.of(0, 10000);
+        if (StringUtils.isEmpty(query)) {
+            messstellen = this.messstelleIndex.findAll();
+        } else {
+            final String q = this.createQueryString(query);
+            log.debug("query '{}'", q);
+            messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
+        }
+        return this.getMessstelleKarteDTOS(messstellen);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {
@@ -343,7 +399,8 @@ public class SucheService {
             zaehlstelleKarteDTO.setId(zaehlstelle.getId());
             zaehlstelleKarteDTO.setLatitude(zaehlstelle.getPunkt().getLat());
             zaehlstelleKarteDTO.setLongitude(zaehlstelle.getPunkt().getLon());
-            zaehlstelleKarteDTO.setNummer(nummer);
+            zaehlstelleKarteDTO.setFachId(nummer);
+            zaehlstelleKarteDTO.setType("zaehlstelle");
             zaehlstelleKarteDTO.setSichtbarDatenportal(zaehlstelle.getSichtbarDatenportal());
 
             zaehlstelleKarteDTO.setLetzteZaehlungId(
@@ -352,7 +409,7 @@ public class SucheService {
                             : letzeZaehlung.getId());
 
             zaehlstelleKarteDTO.setTooltip(
-                    IndexServiceUtils.createTooltip(
+                    SucheMapper.createZaehlstelleTooltip(
                             stadtbezirk,
                             stadtbezirksnummer,
                             nummer,
@@ -367,6 +424,33 @@ public class SucheService {
         }
 
         return zaehlstelleKarteDTOSet;
+    }
+
+    /**
+     * Befüllt ErhebungsstelleKarteDTO mit den entsprechenden Daten der Messstelle zum Anzeigen auf
+     * einer Karte und
+     * liefert diese zurück
+     *
+     * @param messstellen messstellen, die in ErhebungsstelleKarteDTOs umgewandelt werden sollen
+     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     */
+    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen) {
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
+
+        for (final Messstelle messstelle : messstellen) {
+            final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
+            erhebungsstelleKarteDTO.setId(messstelle.getId());
+            erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
+            erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
+            erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
+            erhebungsstelleKarteDTO.setType("messstelle");
+
+            erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
+
+            erhebungsstelleKarteDTOSet.add(erhebungsstelleKarteDTO);
+        }
+
+        return erhebungsstelleKarteDTOSet;
     }
 
     /**

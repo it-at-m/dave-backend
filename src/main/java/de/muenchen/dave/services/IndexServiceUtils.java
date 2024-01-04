@@ -1,11 +1,8 @@
 package de.muenchen.dave.services;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.dtos.TooltipDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -136,35 +133,6 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
-     *
-     * @param stadtbezirk Stadtbezirksname
-     * @param stadtbezirknummer Stadtbezirksnummer als Long
-     * @param nummer Zaehlstellennummer
-     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
-     * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname Kreuzungsname als String
-     * @return TooltipDTO mit allen benötigten Feldern
-     */
-    public static TooltipDTO createTooltip(final String stadtbezirk,
-            final Integer stadtbezirknummer,
-            final String nummer,
-            final Integer anzahlZaehlungen,
-            final String datumLetzteZaehlung,
-            final String kreuzungsname) {
-        final TooltipDTO tooltipDTO = new TooltipDTO();
-        tooltipDTO.setKreuzungsname(kreuzungsname);
-        tooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
-        tooltipDTO.setStadtbezirk(stadtbezirk);
-        tooltipDTO.setStadtbezirknummer(stadtbezirknummer);
-        tooltipDTO.setZaehlstellennnummer(nummer);
-        tooltipDTO.setDatumLetzteZaehlung(datumLetzteZaehlung);
-        return tooltipDTO;
-    }
-
-    /**
      * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung
      * falls kein expliziter Kreuzungsname gesetzt ist.
      *
@@ -182,30 +150,6 @@ public final class IndexServiceUtils {
                     .collect(Collectors.joining(KREUZUNGSNAME_REPLACEMENT_NAME_DIVIDER));
         }
         return newKreuzungsname;
-    }
-
-    /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Messstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
-     *
-     * @param messstelle Messstelle
-     * @return MessstelleTooltipDTO
-     */
-    public static MessstelleTooltipDTO createMessstelleTooltip(
-            final Messstelle messstelle) {
-        final MessstelleTooltipDTO tooltipDTO = new MessstelleTooltipDTO();
-        tooltipDTO.setMstId(messstelle.getMstId());
-        tooltipDTO.setStandort(messstelle.getStandort());
-        tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
-        tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
-        tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
-        tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
-        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
-        if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
-            tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
-        }
-        return tooltipDTO;
     }
 
 }

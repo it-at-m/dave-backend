@@ -4,14 +4,16 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.services.IndexServiceUtils;
+import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,7 +28,7 @@ public interface MessstelleMapper {
     default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleDTO dto, Messstelle bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setTooltip(IndexServiceUtils.createMessstelleTooltip(bean));
+        dto.setTooltip(SucheMapper.createMessstelleTooltip(bean));
     }
 
     EditMessstelleDTO bean2editDto(Messstelle bean);
@@ -84,6 +86,13 @@ public interface MessstelleMapper {
     default void bean2editDtoAfterMapping(@MappingTarget EditMessquerschnittDTO dto, Messquerschnitt bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
+    }
+
+    SucheMessstelleSuggestDTO bean2SucheMessstelleSuggestDto(Messstelle bean);
+
+    @AfterMapping
+    default void toSucheMessstelleSuggestDto(@MappingTarget SucheMessstelleSuggestDTO dto, Messstelle bean) {
+        dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
 
 }

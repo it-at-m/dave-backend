@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.SucheService;
@@ -37,7 +37,7 @@ public class SucheController {
     public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
-            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.complexSuggestSichtbarDatenportal(query, noFilter);
+            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggestSichtbarDatenportal(query, noFilter);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim suggest der Query: {}", query, e);
@@ -53,7 +53,7 @@ public class SucheController {
     public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
-            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.complexSuggest(query, noFilter);
+            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, noFilter);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim suggest der Query: {}", query, e);
@@ -66,33 +66,34 @@ public class SucheController {
 
     @GetMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ZaehlstelleKarteDTO>> searchZaehlstelleForMapDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
+            @RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
-            final Set<ZaehlstelleKarteDTO> zaehlstellenForMap = this.sucheService.sucheZaehlstelleSichtbarDatenportal(query, noFilter);
-            return new ResponseEntity<>(zaehlstellenForMap, HttpStatus.OK);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query, noFilter);
+            return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
             throw e;
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im SucheController beim Suchen der Query: {}", query, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zählstellen aufgetreten.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zähl-/Messstellen aufgetreten.");
         }
     }
 
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ZaehlstelleKarteDTO>> searchZaehlstelleForMap(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
-            final Set<ZaehlstelleKarteDTO> zaehlstellenForMap = this.sucheService.sucheZaehlstelle(query, noFilter);
-            return new ResponseEntity<>(zaehlstellenForMap, HttpStatus.OK);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, noFilter);
+            return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
             throw e;
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im SucheController beim Suchen der Query: {}", query, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zählstellen aufgetreten.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zähl-/Messstellen aufgetreten.");
         }
     }
 }
