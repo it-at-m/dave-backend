@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.dtos;
 
-import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO, Serializable {
+public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
 
     private String zaehlstellennnummer;
 

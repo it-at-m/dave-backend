@@ -1,5 +1,7 @@
 package de.muenchen.dave.domain.dtos;
 
-public interface ErhebungsstelleTooltipDTO {
+import java.io.Serializable;
+
+public interface ErhebungsstelleTooltipDTO extends Serializable {
 
 }
