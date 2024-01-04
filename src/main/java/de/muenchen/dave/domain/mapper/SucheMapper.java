@@ -53,7 +53,8 @@ public class SucheMapper {
         tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
         tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
         tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
-        tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
+        if (messstelle.getAbbaudatum() != null)
+            tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
         tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
         if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
             tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
