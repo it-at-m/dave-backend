@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
@@ -93,8 +92,7 @@ public interface MessstelleMapper {
 
     @AfterMapping
     default void toSucheMessstelleSuggestDto(@MappingTarget SucheMessstelleSuggestDTO dto, Messstelle bean) {
-        dto.setText(bean.getMstId() + StringUtils.SPACE + Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
-
 
 }
