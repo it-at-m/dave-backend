@@ -2,7 +2,7 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import javax.validation.constraints.NotNull;
@@ -32,12 +32,12 @@ public class MessstelleController {
 
     @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
             "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
-    @GetMapping(value = "/byId", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleDTO> readMessstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
-        log.debug("#readMessstelle with id {}", messstelleId);
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
+        log.debug("#readMessstelleInfo with id {}", messstelleId);
         try {
-            final ReadMessstelleDTO readMessstelleDTO = this.messstelleService.readMessstelleById(messstelleId);
+            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
             return ResponseEntity.ok(readMessstelleDTO);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
