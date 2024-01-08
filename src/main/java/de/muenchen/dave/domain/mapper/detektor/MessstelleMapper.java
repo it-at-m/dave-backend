@@ -12,6 +12,7 @@ import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -54,6 +55,10 @@ public interface MessstelleMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
 
+    default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
+        actual.setStandort(dto.getStandort());
+    }
+
     @AfterMapping
     default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto) {
         // Suchworte setzen
@@ -67,6 +72,16 @@ public interface MessstelleMapper {
         if (CollectionUtils.isNotEmpty(dto.getCustomSuchwoerter())) {
             actual.getSuchwoerter().addAll(dto.getCustomSuchwoerter());
         }
+
+        actual.getMessquerschnitte().forEach(messquerschnitt -> {
+            AtomicReference<EditMessquerschnittDTO> editMessquerschnittDTO = new AtomicReference<>(new EditMessquerschnittDTO());
+            dto.getMessquerschnitte().forEach(dto1 -> {
+                if (dto1.getMqId().equalsIgnoreCase(messquerschnitt.getMqId())) {
+                    editMessquerschnittDTO.set(dto1);
+                }
+            });
+            updateMessquerschnitt(messquerschnitt, editMessquerschnittDTO.get());
+        });
     }
 
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);
