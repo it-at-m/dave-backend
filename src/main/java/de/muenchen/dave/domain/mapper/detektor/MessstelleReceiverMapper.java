@@ -8,7 +8,9 @@ import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,23 +20,18 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Mapper(componentModel = "spring")
 public interface MessstelleReceiverMapper {
 
-    Messstelle dtoToMessstelle(MessstelleDto dto);
+    Messstelle createMessstelle(MessstelleDto dto);
 
-    Messquerschnitt dtoToMessquerschnitt(MessquerschnittDto dto);
+    Messquerschnitt createMessquerschnitte(MessquerschnittDto dto);
 
-    List<Messquerschnitt> dtoToMessquerschnitt(List<MessquerschnittDto> dto);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "sichtbarDatenportal", ignore = true)
-    @Mapping(target = "kommentar", ignore = true)
-    @Mapping(target = "standort", ignore = true)
-    @Mapping(target = "customSuchwoerter", ignore = true)
-    @Mapping(target = "suchwoerter", ignore = true)
-    @Mapping(target = "geprueft", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
+    List<Messquerschnitt> createMessquerschnitte(List<MessquerschnittDto> dto);
 
     @AfterMapping
-    default void dtoToMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
+    default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
+        if (StringUtils.isEmpty(bean.getId())) {
+            bean.setId(UUID.randomUUID().toString());
+        }
+
         if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
             bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         }
@@ -57,9 +54,27 @@ public interface MessstelleReceiverMapper {
     }
 
     @AfterMapping
-    default void dtoToMessstelleAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
+    default void createMessquerschnittAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
+        if (StringUtils.isEmpty(bean.getId())) {
+            bean.setId(UUID.randomUUID().toString());
+        }
         if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
             bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         }
     }
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "sichtbarDatenportal", ignore = true)
+    @Mapping(target = "kommentar", ignore = true)
+    @Mapping(target = "standort", ignore = true)
+    @Mapping(target = "customSuchwoerter", ignore = true)
+    @Mapping(target = "suchwoerter", ignore = true)
+    @Mapping(target = "geprueft", ignore = true)
+    @Mapping(target = "messquerschnitte", ignore = true)
+    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "standort", ignore = true)
+    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto);
+
 }

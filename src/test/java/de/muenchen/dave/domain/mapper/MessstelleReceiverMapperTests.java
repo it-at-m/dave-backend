@@ -25,7 +25,7 @@ class MessstelleReceiverMapperTests {
     private final MessstelleReceiverMapper mapper = new MessstelleReceiverMapperImpl();
 
     @Test
-    void testDtoToMessstelle() {
+    void testCreateMessstelle() {
         final MessstelleDto dto = MessstelleRandomFactory.getMessstelleDto();
 
         final Messstelle expected = new Messstelle();
@@ -50,13 +50,19 @@ class MessstelleReceiverMapperTests {
         expected.getSuchwoerter().add(dto.getName());
         expected.getSuchwoerter().add(dto.getMstId());
 
-        expected.setMessquerschnitte(mapper.dtoToMessquerschnitt(dto.getMessquerschnitte()));
+        expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
 
-        Assertions.assertThat(this.mapper.dtoToMessstelle(dto))
+        Messstelle messstelle = this.mapper.createMessstelle(dto);
+        Assertions.assertThat(messstelle)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
+                .ignoringFields("id", "messquerschnitte.id")
                 .isEqualTo(expected);
+        Assertions.assertThat(messstelle.getId())
+                .isNotNull();
+        messstelle.getMessquerschnitte().forEach(messquerschnitt -> Assertions.assertThat(messquerschnitt.getId())
+                .isNotNull());
     }
 
     @Test
@@ -74,15 +80,17 @@ class MessstelleReceiverMapperTests {
         expected.setHersteller(dto.getHersteller());
         expected.setAnzahlDetektoren(dto.getAnzahlDetektoren());
 
-        final Messquerschnitt actual = this.mapper.dtoToMessquerschnitt(dto);
+        final Messquerschnitt actual = this.mapper.createMessquerschnitte(dto);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .ignoringFields("punkt")
+                .ignoringFields("id", "punkt")
                 .isEqualTo(expected);
 
         Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getXcoordinate());
         Assertions.assertThat(actual.getPunkt().getLon()).isEqualTo(dto.getYcoordinate());
+        Assertions.assertThat(actual.getId())
+                .isNotNull();
     }
 
     @Test

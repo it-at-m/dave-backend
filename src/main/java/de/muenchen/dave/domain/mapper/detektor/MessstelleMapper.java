@@ -12,7 +12,6 @@ import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -73,15 +72,11 @@ public interface MessstelleMapper {
             actual.getSuchwoerter().addAll(dto.getCustomSuchwoerter());
         }
 
-        actual.getMessquerschnitte().forEach(messquerschnitt -> {
-            AtomicReference<EditMessquerschnittDTO> editMessquerschnittDTO = new AtomicReference<>(new EditMessquerschnittDTO());
-            dto.getMessquerschnitte().forEach(dto1 -> {
-                if (dto1.getMqId().equalsIgnoreCase(messquerschnitt.getMqId())) {
-                    editMessquerschnittDTO.set(dto1);
-                }
-            });
-            updateMessquerschnitt(messquerschnitt, editMessquerschnittDTO.get());
-        });
+        actual.getMessquerschnitte().forEach(messquerschnitt -> dto.getMessquerschnitte().forEach(dto1 -> {
+            if (dto1.getId().equalsIgnoreCase(messquerschnitt.getId())) {
+                updateMessquerschnitt(messquerschnitt, dto1);
+            }
+        }));
     }
 
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);
