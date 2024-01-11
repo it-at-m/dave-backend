@@ -22,7 +22,7 @@ public interface MessstelleReceiverMapper {
 
     Messstelle createMessstelle(MessstelleDto dto);
 
-    Messquerschnitt createMessquerschnitte(MessquerschnittDto dto);
+    Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
 
     List<Messquerschnitt> createMessquerschnitte(List<MessquerschnittDto> dto);
 

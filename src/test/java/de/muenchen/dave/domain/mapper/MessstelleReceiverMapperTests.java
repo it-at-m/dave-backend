@@ -80,7 +80,7 @@ class MessstelleReceiverMapperTests {
         expected.setHersteller(dto.getHersteller());
         expected.setAnzahlDetektoren(dto.getAnzahlDetektoren());
 
-        final Messquerschnitt actual = this.mapper.createMessquerschnitte(dto);
+        final Messquerschnitt actual = this.mapper.createMessquerschnitt(dto);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()

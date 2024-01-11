@@ -4,13 +4,16 @@
  */
 package de.muenchen.dave.services.messstelle;
 
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
+import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -23,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt
- * diese dem {@link MessstelleService} zur weiteren Verarbeitung.
- * Soll nicht auf den externen Umgebungen laufen.
+ * diese dem {@link MessstelleService} zur weiteren
+ * Verarbeitung. Soll nicht auf den externen Umgebungen laufen.
  */
 @Slf4j
 @Service
@@ -77,23 +80,27 @@ public class MessstelleReceiver {
     private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto);
-        updated.getMessquerschnitte().forEach(messquerschnitt -> {
-            if (CollectionUtils.isNotEmpty(dto.getMessquerschnitte())) {
-                dto.getMessquerschnitte().forEach(dto1 -> {
-                    boolean doesNotExist = true;
-                    if (messquerschnitt.getMqId().equalsIgnoreCase(dto1.getMqId())) {
-                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, dto1);
-                        doesNotExist = false;
-                    }
-                    if (doesNotExist) {
-                        updated.getMessquerschnitte().add(messstelleReceiverMapper.createMessquerschnitte(dto1));
-                    }
-
-                });
-            }
-        });
-
+        updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
+    }
+
+    protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(final List<Messquerschnitt> messquerschnitte,
+            final List<MessquerschnittDto> messquerschnitteDto) {
+        if (CollectionUtils.isNotEmpty(messquerschnitteDto)) {
+            messquerschnitteDto.forEach(messquerschnittDto -> {
+                final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
+                messquerschnitte.forEach(messquerschnitt -> {
+                    if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
+                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto);
+                        messquerschnittDtoDoesNotExist.set(false);
+                    }
+                });
+                if (messquerschnittDtoDoesNotExist.get()) {
+                    messquerschnitte.add(messstelleReceiverMapper.createMessquerschnitt(messquerschnittDto));
+                }
+            });
+        }
+        return messquerschnitte;
     }
 }
