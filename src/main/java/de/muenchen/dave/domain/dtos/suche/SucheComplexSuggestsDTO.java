@@ -12,4 +12,6 @@ public class SucheComplexSuggestsDTO {
 
     List<SucheZaehlungSuggestDTO> zaehlungenSuggests;
 
+    List<SucheMessstelleSuggestDTO> messstellenSuggests;
+
 }

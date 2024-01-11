@@ -1,20 +1,19 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Status;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class IndexServiceTest {
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Status;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import org.junit.jupiter.api.Test;
 
-    private IndexService service = new IndexService(
+public class ZaehlstelleIndexServiceTest {
+
+    private ZaehlstelleIndexService service = new ZaehlstelleIndexService(
             null,
             null,
             null,

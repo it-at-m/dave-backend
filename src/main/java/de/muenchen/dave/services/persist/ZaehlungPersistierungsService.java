@@ -20,7 +20,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,13 +37,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public abstract class ZaehlungPersistierungsService {
 
-    protected final IndexService indexService;
+    protected final ZaehlstelleIndexService indexService;
 
     protected final ZeitintervallPersistierungsService zeitintervallPersistierungsService;
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
-    public ZaehlungPersistierungsService(final IndexService indexService,
+    public ZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper) {
         this.indexService = indexService;

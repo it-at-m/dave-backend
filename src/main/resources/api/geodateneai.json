@@ -1,0 +1,762 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DAVE GEODATA EAI",
+    "description": "DAVE GEODATA EAI - Service zum Abfragen von Geoinformationen",
+    "contact": {
+      "name": "DAVE Management",
+      "email": "unbekannt@muenchen.de"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8088",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "PointFeature",
+      "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
+    },
+    {
+      "name": "Messstelle",
+      "description": "API zum Abfragen des FeatureServers für die Messstellen."
+    },
+    {
+      "name": "MesswerteMessquerschnitt",
+      "description": "API zum Abfragen des FeatureServers für Messwerte eines Messquerschnitts."
+    }
+  ],
+  "paths": {
+    "/point/stadtbezirke": {
+      "post": {
+        "tags": [
+          "PointFeature"
+        ],
+        "summary": "Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.",
+        "operationId": "getStadtbezirke",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PointGeometryDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messwerte/messquerschnitt/tagesaggregat": {
+      "post": {
+        "tags": [
+          "MesswerteMessquerschnitt"
+        ],
+        "summary": "Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.",
+        "operationId": "getMesswerteTagesaggregat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tagesaggregat der Messwerte erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMesswerteTagesaggregatMessquerschnittResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messwerte/messquerschnitt/intervall": {
+      "post": {
+        "tags": [
+          "MesswerteMessquerschnitt"
+        ],
+        "summary": "Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.",
+        "operationId": "getMesswerteIntervall",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "MesswerteIntervalle erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMesswerteIntervallMessquerschnittResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messstelle": {
+      "get": {
+        "tags": [
+          "Messstelle"
+        ],
+        "summary": "Holt alle relevanten Messstellen.",
+        "operationId": "getMessstellen",
+        "responses": {
+          "200": {
+            "description": "Messstellen erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessstelleDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PointGeometryDto": {
+        "required": [
+          "coordinates",
+          "type"
+        ],
+        "type": "object",
+        "description": "Die GEOJSON-Repräsentation einer Punktkoordinate.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GeometryDto"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "coordinates": {
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array",
+                "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84).",
+                "items": {
+                  "type": "number",
+                  "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84)."
+                }
+              }
+            }
+          }
+        ]
+      },
+      "InformationResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "INFORMATION_SUCCESS",
+              "INFORMATION_NEUTRAL"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalException": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FeatureCollectionDtoFeatureDtoStadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeatureDtoStadtbezirkDto"
+            }
+          }
+        }
+      },
+      "FeatureDtoStadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "geometry": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/PointGeometryDto"
+              }
+            ]
+          },
+          "properties": {
+            "$ref": "#/components/schemas/StadtbezirkDto"
+          }
+        }
+      },
+      "GeometryDto": {
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Definiert den Geometrietyp in der Ausprägung als Multipolygon oder als Point."
+          }
+        },
+        "discriminator": {
+          "propertyName": "type"
+        }
+      },
+      "StadtbezirkDto": {
+        "type": "object",
+        "properties": {
+          "objectId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stadtbezirkNummer": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "flaecheQm": {
+            "type": "number"
+          },
+          "xcoordinate": {
+            "type": "number"
+          },
+          "ycoordinate": {
+            "type": "number"
+          }
+        }
+      },
+      "GetMesswerteOfMessquerschnittRequest": {
+        "required": [
+          "messquerschnittIds",
+          "zeitpunktStart"
+        ],
+        "type": "object",
+        "properties": {
+          "messquerschnittIds": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "zeitpunktStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "zeitpunktEnde": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN"
+            ]
+          }
+        }
+      },
+      "GetMesswerteTagesaggregatMessquerschnittResponse": {
+        "type": "object",
+        "properties": {
+          "datumVon": {
+            "type": "string",
+            "format": "date"
+          },
+          "datumBis": {
+            "type": "string",
+            "format": "date"
+          },
+          "messquerschnitte": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessquerschnittTagesaggregateDto"
+            }
+          }
+        }
+      },
+      "MessquerschnittTagesaggregateDto": {
+        "type": "object",
+        "properties": {
+          "messquerschnittId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tagesaggregat": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MesswerteTagesaggregatMessquerschnittDto"
+            }
+          }
+        }
+      },
+      "MesswerteTagesaggregatMessquerschnittDto": {
+        "type": "object",
+        "properties": {
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN"
+            ]
+          },
+          "anzahlLfw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlKrad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlLkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlBus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlRad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeAllePkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeLastzug": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeGueterverkehr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeSchwerverkehr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock0006": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock0610": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock1015": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock1519": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock1924": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeRadSpitzenstundeZeitblock0024": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock0006": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock0610": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock1015": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock1519": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock1924": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeKraftfahrzeugverkehrZeitblock0024": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock0006": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock0610": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock1015": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock1519": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock1924": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "spitzenstundeRadZeitblock0024": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GetMesswerteIntervallMessquerschnittResponse": {
+        "type": "object",
+        "properties": {
+          "datumVon": {
+            "type": "string",
+            "format": "date"
+          },
+          "datumBis": {
+            "type": "string",
+            "format": "date"
+          },
+          "messquerschnitte": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessquerschnittIntervalleDto"
+            }
+          }
+        }
+      },
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nano": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MessquerschnittIntervalleDto": {
+        "type": "object",
+        "properties": {
+          "messquerschnittId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "intervalle": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/MesswerteIntervallMessquerschnittDto"
+              }
+            }
+          }
+        }
+      },
+      "MesswerteIntervallMessquerschnittDto": {
+        "type": "object",
+        "properties": {
+          "uhrzeitVon": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "uhrzeitBis": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN"
+            ]
+          },
+          "anzahlLfw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlKrad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlLkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlBus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlRad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeAllePkw": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeLastzug": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeGueterverkehr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeSchwerverkehr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summeKraftfahrzeugverkehr": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MessquerschnittDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "string"
+          },
+          "mstId": {
+            "type": "string"
+          },
+          "strassenname": {
+            "type": "string"
+          },
+          "lageMessquerschnitt": {
+            "type": "string"
+          },
+          "fahrtrichtung": {
+            "type": "string"
+          },
+          "anzahlFahrspuren": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fahrzeugKlassen": {
+            "type": "string"
+          },
+          "detektierteVerkehrsarten": {
+            "type": "string"
+          },
+          "hersteller": {
+            "type": "string"
+          },
+          "anzahlDetektoren": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "xcoordinate": {
+            "type": "number",
+            "format": "double"
+          },
+          "ycoordinate": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "MessstelleDto": {
+        "type": "object",
+        "properties": {
+          "mstId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "realisierungsdatum": {
+            "type": "string",
+            "format": "date"
+          },
+          "abbaudatum": {
+            "type": "string",
+            "format": "date"
+          },
+          "stadtbezirkNummer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bemerkung": {
+            "type": "string"
+          },
+          "datumLetztePlausibleMessung": {
+            "type": "string",
+            "format": "date"
+          },
+          "messquerschnitte": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessquerschnittDto"
+            }
+          },
+          "xcoordinate": {
+            "type": "number",
+            "format": "double"
+          },
+          "ycoordinate": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      }
+    }
+  }
+}

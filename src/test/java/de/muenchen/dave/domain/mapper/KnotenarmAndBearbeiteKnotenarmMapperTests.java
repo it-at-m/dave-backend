@@ -1,15 +1,15 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+
 import de.muenchen.dave.domain.dtos.BearbeiteKnotenarmDTORandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.KnotenarmRandomFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
 
 @Slf4j
 public class KnotenarmAndBearbeiteKnotenarmMapperTests {

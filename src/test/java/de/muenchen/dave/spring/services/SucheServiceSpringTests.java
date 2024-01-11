@@ -1,8 +1,21 @@
 package de.muenchen.dave.spring.services;
 
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.collect.Lists;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
@@ -11,6 +24,13 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.SucheService;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -23,26 +43,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
         "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
@@ -69,7 +69,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(4)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto1 = this.service.complexSuggest("Moo", false);
+        SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", false);
         assertThat(dto1.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto1.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01"))));
@@ -80,7 +80,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto2 = this.service.complexSuggest("7.", false);
+        SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", false);
         assertThat(dto2.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto2.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01")),
@@ -93,7 +93,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(2)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto3 = this.service.complexSuggest("7. Fo", false);
+        SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", false);
         assertThat(dto3.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto3.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("03"))));
@@ -105,7 +105,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto5 = this.service.complexSuggest("13.11 Ga", false);
+        SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", false);
         assertThat(dto5.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), containsInAnyOrder(
@@ -117,19 +117,19 @@ public class SucheServiceSpringTests {
     @WithMockUser(roles = { "FACHADMIN" })
     public void testSucheZaehlstelleWithSonderzaehlungen() {
 
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE)).clear();
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOS = this.service.sucheZaehlstelle("Z01", false);
-        assertThat(zaehlstelleKarteDTOS, is(notNullValue()));
-        assertThat(zaehlstelleKarteDTOS.isEmpty(), is(false));
-        assertThat(zaehlstelleKarteDTOS.size(), is(1));
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
+        assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
+        assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
+        assertThat(erhebungsstelleKarteDTOS.size(), is(1));
+        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
+        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
 
         Set<ZaehlartenKarteDTO> expected = new HashSet<>();
         ZaehlartenKarteDTO zaehlartKarte = new ZaehlartenKarteDTO();
@@ -143,26 +143,27 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+                .get().getZaehlartenKarte(), is(expected));
     }
 
     @Test
     @WithMockUser(roles = { "ANWENDER" })
     public void testSucheZaehlstelleWithoutSonderzaehlungen() {
 
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE)).clear();
-        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
         when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOS = this.service.sucheZaehlstelle("Z01", false);
-        assertThat(zaehlstelleKarteDTOS, is(notNullValue()));
-        assertThat(zaehlstelleKarteDTOS.isEmpty(), is(false));
-        assertThat(zaehlstelleKarteDTOS.size(), is(1));
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
+        assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
+        assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
+        assertThat(erhebungsstelleKarteDTOS.size(), is(1));
+        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
+        assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
 
         Set<ZaehlartenKarteDTO> expected = new HashSet<>();
         ZaehlartenKarteDTO zaehlartKarte = new ZaehlartenKarteDTO();
@@ -171,7 +172,8 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        assertThat(zaehlstelleKarteDTOS.stream().findFirst().get().getZaehlartenKarte(), is(expected));
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+                .get().getZaehlartenKarte(), is(expected));
     }
 
     private List<Zaehlstelle> createSampleData() {

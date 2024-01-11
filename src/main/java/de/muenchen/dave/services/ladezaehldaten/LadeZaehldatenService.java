@@ -18,7 +18,7 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
@@ -60,10 +60,10 @@ public class LadeZaehldatenService {
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
     private final ZeitintervallRepository zeitintervallRepository;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
-            final IndexService indexService) {
+            final ZaehlstelleIndexService indexService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
         // Kfz

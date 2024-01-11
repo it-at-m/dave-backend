@@ -1,7 +1,6 @@
 package de.muenchen.dave.services;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.dtos.TooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
@@ -131,35 +130,6 @@ public final class IndexServiceUtils {
             tagesTyp = TAGESTYP_WOCHENENDE;
         }
         return tagesTyp;
-    }
-
-    /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
-     *
-     * @param stadtbezirk Stadtbezirksname
-     * @param stadtbezirknummer Stadtbezirksnummer als Long
-     * @param nummer Zaehlstellennummer
-     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
-     * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname Kreuzungsname als String
-     * @return TooltipDTO mit allen benötigten Feldern
-     */
-    public static TooltipDTO createTooltip(final String stadtbezirk,
-            final Integer stadtbezirknummer,
-            final String nummer,
-            final Integer anzahlZaehlungen,
-            final String datumLetzteZaehlung,
-            final String kreuzungsname) {
-        final TooltipDTO tooltipDTO = new TooltipDTO();
-        tooltipDTO.setKreuzungsname(kreuzungsname);
-        tooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
-        tooltipDTO.setStadtbezirk(stadtbezirk);
-        tooltipDTO.setStadtbezirknummer(stadtbezirknummer);
-        tooltipDTO.setZaehlstellennnummer(nummer);
-        tooltipDTO.setDatumLetzteZaehlung(datumLetzteZaehlung);
-        return tooltipDTO;
     }
 
     /**

@@ -14,7 +14,7 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
@@ -35,10 +35,10 @@ public class ProcessZaehldatenZeitreiheService {
 
     private static final String FAHRBEZIEHUNG_NICHT_VORHANDEN = "\n(Fahrbez. nicht vorh.)";
     private final ZeitintervallRepository zeitintervallRepository;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final ZeitauswahlService zeitauswahlService;
 
-    public ProcessZaehldatenZeitreiheService(final IndexService indexService,
+    public ProcessZaehldatenZeitreiheService(final ZaehlstelleIndexService indexService,
             final ZeitintervallRepository zeitintervallRepository,
             final ZeitauswahlService zeitauswahlService) {
         this.zeitauswahlService = zeitauswahlService;
