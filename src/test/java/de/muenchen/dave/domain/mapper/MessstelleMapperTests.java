@@ -126,7 +126,7 @@ class MessstelleMapperTests {
         expected.setPunkt(bean.getPunkt());
 
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
-        expected.setGeprueft(updatedData.getGeprueft());
+        expected.setGeprueft(true);
         expected.setKommentar(updatedData.getKommentar());
         expected.setStandort(updatedData.getStandort());
         expected.setSuchwoerter(new ArrayList<>());
