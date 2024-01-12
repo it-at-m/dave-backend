@@ -2,9 +2,11 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +79,19 @@ public class MessstelleController {
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", messstelleId, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @GetMapping(value = "/loadAllMessstellenForOverview", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<MessstelleOverviewDTO>> getAllMessstellenForOverview() {
+        log.debug("#getAllMessstellenForOverview");
+        try {
+            return ResponseEntity.ok(this.messstelleService.getAllMessstellenForOverview());
+        } catch (final Exception e) {
+            log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstellen für die übersicht.", e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstellen aufgetreten.");
         }
     }
 }

@@ -2,6 +2,7 @@ package de.muenchen.dave.domain.mapper.detektor;
 
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
@@ -105,5 +106,9 @@ public interface MessstelleMapper {
     default void toSucheMessstelleSuggestDto(@MappingTarget SucheMessstelleSuggestDTO dto, Messstelle bean) {
         dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
+
+    MessstelleOverviewDTO bean2overviewDto(Messstelle bean);
+
+    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
 
 }

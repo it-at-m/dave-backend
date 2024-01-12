@@ -2,10 +2,12 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,5 +50,12 @@ public class MessstelleService {
         final BackendIdDTO backendIdDTO = new BackendIdDTO();
         backendIdDTO.setId(messstelle.getId());
         return backendIdDTO;
+    }
+
+    public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
+        log.debug("#getAllMessstellenForOverview");
+        final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
+        // Mapping auf MessstelleOverviewDTO
+        return messstelleMapper.bean2overviewDto(messstellen);
     }
 }
