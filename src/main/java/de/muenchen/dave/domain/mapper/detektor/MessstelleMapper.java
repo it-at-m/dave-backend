@@ -3,11 +3,11 @@ package de.muenchen.dave.domain.mapper.detektor;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.mapper.SucheMapper;
+import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +22,13 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface MessstelleMapper {
 
-    ReadMessstelleDTO bean2readDto(Messstelle bean);
+    ReadMessstelleInfoDTO bean2readDto(Messstelle bean);
 
     @AfterMapping
-    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleDTO dto, Messstelle bean) {
+    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setTooltip(SucheMapper.createMessstelleTooltip(bean));
+        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
     EditMessstelleDTO bean2editDto(Messstelle bean);
@@ -37,6 +37,7 @@ public interface MessstelleMapper {
     default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
+        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
     @Mapping(target = "id", ignore = true)
@@ -53,8 +54,13 @@ public interface MessstelleMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
 
+    default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
+        actual.setStandort(dto.getStandort());
+    }
+
     @AfterMapping
     default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto) {
+        actual.setGeprueft(true);
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual);
 
@@ -66,6 +72,12 @@ public interface MessstelleMapper {
         if (CollectionUtils.isNotEmpty(dto.getCustomSuchwoerter())) {
             actual.getSuchwoerter().addAll(dto.getCustomSuchwoerter());
         }
+
+        actual.getMessquerschnitte().forEach(messquerschnitt -> dto.getMessquerschnitte().forEach(dto1 -> {
+            if (dto1.getId().equalsIgnoreCase(messquerschnitt.getId())) {
+                updateMessquerschnitt(messquerschnitt, dto1);
+            }
+        }));
     }
 
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);
