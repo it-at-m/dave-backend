@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class Messstelle {
 
     String name;
 
-    String status;
+    MessstelleStatus status;
 
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
     LocalDate realisierungsdatum;

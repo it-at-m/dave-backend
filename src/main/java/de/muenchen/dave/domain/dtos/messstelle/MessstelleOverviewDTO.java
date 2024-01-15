@@ -8,6 +8,7 @@ public class MessstelleOverviewDTO implements Serializable {
     private String id;
     private String mstId;
     private String name;
+    private String status;
     private Boolean sichtbarDatenportal;
     private Boolean geprueft;
 }

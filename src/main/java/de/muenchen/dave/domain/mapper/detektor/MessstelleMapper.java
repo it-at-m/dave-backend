@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
@@ -61,7 +62,9 @@ public interface MessstelleMapper {
 
     @AfterMapping
     default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto) {
-        actual.setGeprueft(true);
+        if (!MessstelleStatus.IN_PLANUNG.equals(actual.getStatus())) {
+            actual.setGeprueft(true);
+        }
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual);
 
