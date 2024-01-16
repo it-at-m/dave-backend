@@ -16,6 +16,8 @@ public class ErhebungsstelleKarteDTO implements Serializable {
 
     private Double latitude;
 
+    private String status;
+
     private ErhebungsstelleTooltipDTO tooltip;
 
     private Boolean sichtbarDatenportal;
