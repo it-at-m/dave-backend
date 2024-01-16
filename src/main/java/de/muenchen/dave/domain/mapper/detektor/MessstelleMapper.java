@@ -60,6 +60,7 @@ public interface MessstelleMapper {
 
     @AfterMapping
     default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto) {
+        actual.setGeprueft(true);
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual);
 
