@@ -52,8 +52,49 @@ public class MessstelleDto {
   public static final String JSON_PROPERTY_NAME = "name";
   private String name;
 
+  /**
+   * Gets or Sets status
+   */
+  public enum StatusEnum {
+    IN_PLANUNG("IN_PLANUNG"),
+    
+    IN_BESTAND("IN_BESTAND"),
+    
+    AUSSER_BETRIEB("AUSSER_BETRIEB"),
+    
+    ABGEBAUT("ABGEBAUT"),
+    
+    UNBEKANNT("UNBEKANNT");
+
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @JsonValue
+    public String getValue() {
+      return value;
+    }
+
+    @Override
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String value) {
+      for (StatusEnum b : StatusEnum.values()) {
+        if (b.value.equals(value)) {
+          return b;
+        }
+      }
+      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+  }
+
   public static final String JSON_PROPERTY_STATUS = "status";
-  private String status;
+  private StatusEnum status;
 
   public static final String JSON_PROPERTY_REALISIERUNGSDATUM = "realisierungsdatum";
   private LocalDate realisierungsdatum;
@@ -134,7 +175,7 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto status(String status) {
+  public MessstelleDto status(StatusEnum status) {
     
     this.status = status;
     return this;
@@ -148,14 +189,14 @@ public class MessstelleDto {
   @JsonProperty(JSON_PROPERTY_STATUS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public String getStatus() {
+  public StatusEnum getStatus() {
     return status;
   }
 
 
   @JsonProperty(JSON_PROPERTY_STATUS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setStatus(String status) {
+  public void setStatus(StatusEnum status) {
     this.status = status;
   }
 

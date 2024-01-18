@@ -61,7 +61,7 @@ class MessstelleMapperTests {
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setName(bean.getName());
-        expected.setStatus(bean.getStatus());
+        expected.setStatus(bean.getStatus().toString());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
         expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
@@ -190,5 +190,4 @@ class MessstelleMapperTests {
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
-
 }
