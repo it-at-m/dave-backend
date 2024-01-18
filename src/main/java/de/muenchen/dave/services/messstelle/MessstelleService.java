@@ -30,14 +30,12 @@ public class MessstelleService {
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        // Mapping auf ReadMessstelleDto
         return messstelleMapper.bean2readDto(byIdOrThrowException);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         log.debug("#getMessstelleToEdit");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        // Mapping auf BearbeiteMessstelleDTO
         return messstelleMapper.bean2editDto(byIdOrThrowException);
     }
 
@@ -55,7 +53,6 @@ public class MessstelleService {
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
         log.debug("#getAllMessstellenForOverview");
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
-        // Mapping auf MessstelleOverviewDTO
         return messstelleMapper.bean2overviewDto(messstellen);
     }
 }
