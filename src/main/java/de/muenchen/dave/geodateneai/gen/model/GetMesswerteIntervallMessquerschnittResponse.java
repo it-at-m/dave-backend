@@ -20,8 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.MessquerschnittIntervalleDto;
-import java.time.LocalDate;
+import de.muenchen.dave.geodateneai.gen.model.MesswerteIntervallMessquerschnittDto;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,107 +31,47 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * GetMesswerteIntervallMessquerschnittResponse
  */
 @JsonPropertyOrder({
-  GetMesswerteIntervallMessquerschnittResponse.JSON_PROPERTY_DATUM_VON,
-  GetMesswerteIntervallMessquerschnittResponse.JSON_PROPERTY_DATUM_BIS,
-  GetMesswerteIntervallMessquerschnittResponse.JSON_PROPERTY_MESSQUERSCHNITTE
+  GetMesswerteIntervallMessquerschnittResponse.JSON_PROPERTY_INTERVALLE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class GetMesswerteIntervallMessquerschnittResponse {
-  public static final String JSON_PROPERTY_DATUM_VON = "datumVon";
-  private LocalDate datumVon;
-
-  public static final String JSON_PROPERTY_DATUM_BIS = "datumBis";
-  private LocalDate datumBis;
-
-  public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
-  private List<MessquerschnittIntervalleDto> messquerschnitte;
+  public static final String JSON_PROPERTY_INTERVALLE = "intervalle";
+  private List<MesswerteIntervallMessquerschnittDto> intervalle;
 
   public GetMesswerteIntervallMessquerschnittResponse() {
   }
 
-  public GetMesswerteIntervallMessquerschnittResponse datumVon(LocalDate datumVon) {
+  public GetMesswerteIntervallMessquerschnittResponse intervalle(List<MesswerteIntervallMessquerschnittDto> intervalle) {
     
-    this.datumVon = datumVon;
+    this.intervalle = intervalle;
     return this;
   }
 
-   /**
-   * Get datumVon
-   * @return datumVon
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DATUM_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public LocalDate getDatumVon() {
-    return datumVon;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_DATUM_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDatumVon(LocalDate datumVon) {
-    this.datumVon = datumVon;
-  }
-
-
-  public GetMesswerteIntervallMessquerschnittResponse datumBis(LocalDate datumBis) {
-    
-    this.datumBis = datumBis;
-    return this;
-  }
-
-   /**
-   * Get datumBis
-   * @return datumBis
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DATUM_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public LocalDate getDatumBis() {
-    return datumBis;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_DATUM_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDatumBis(LocalDate datumBis) {
-    this.datumBis = datumBis;
-  }
-
-
-  public GetMesswerteIntervallMessquerschnittResponse messquerschnitte(List<MessquerschnittIntervalleDto> messquerschnitte) {
-    
-    this.messquerschnitte = messquerschnitte;
-    return this;
-  }
-
-  public GetMesswerteIntervallMessquerschnittResponse addMessquerschnitteItem(MessquerschnittIntervalleDto messquerschnitteItem) {
-    if (this.messquerschnitte == null) {
-      this.messquerschnitte = new ArrayList<>();
+  public GetMesswerteIntervallMessquerschnittResponse addIntervalleItem(MesswerteIntervallMessquerschnittDto intervalleItem) {
+    if (this.intervalle == null) {
+      this.intervalle = new ArrayList<>();
     }
-    this.messquerschnitte.add(messquerschnitteItem);
+    this.intervalle.add(intervalleItem);
     return this;
   }
 
    /**
-   * Get messquerschnitte
-   * @return messquerschnitte
+   * Get intervalle
+   * @return intervalle
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
+  @JsonProperty(JSON_PROPERTY_INTERVALLE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public List<MessquerschnittIntervalleDto> getMessquerschnitte() {
-    return messquerschnitte;
+  public List<MesswerteIntervallMessquerschnittDto> getIntervalle() {
+    return intervalle;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
+  @JsonProperty(JSON_PROPERTY_INTERVALLE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessquerschnitte(List<MessquerschnittIntervalleDto> messquerschnitte) {
-    this.messquerschnitte = messquerschnitte;
+  public void setIntervalle(List<MesswerteIntervallMessquerschnittDto> intervalle) {
+    this.intervalle = intervalle;
   }
 
   @Override
@@ -144,23 +83,19 @@ public class GetMesswerteIntervallMessquerschnittResponse {
       return false;
     }
     GetMesswerteIntervallMessquerschnittResponse getMesswerteIntervallMessquerschnittResponse = (GetMesswerteIntervallMessquerschnittResponse) o;
-    return Objects.equals(this.datumVon, getMesswerteIntervallMessquerschnittResponse.datumVon) &&
-        Objects.equals(this.datumBis, getMesswerteIntervallMessquerschnittResponse.datumBis) &&
-        Objects.equals(this.messquerschnitte, getMesswerteIntervallMessquerschnittResponse.messquerschnitte);
+    return Objects.equals(this.intervalle, getMesswerteIntervallMessquerschnittResponse.intervalle);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datumVon, datumBis, messquerschnitte);
+    return Objects.hash(intervalle);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GetMesswerteIntervallMessquerschnittResponse {\n");
-    sb.append("    datumVon: ").append(toIndentedString(datumVon)).append("\n");
-    sb.append("    datumBis: ").append(toIndentedString(datumBis)).append("\n");
-    sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
+    sb.append("    intervalle: ").append(toIndentedString(intervalle)).append("\n");
     sb.append("}");
     return sb.toString();
   }

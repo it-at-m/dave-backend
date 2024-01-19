@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class GetMesswerteOfMessquerschnittRequest {
   public static final String JSON_PROPERTY_MESSQUERSCHNITT_IDS = "messquerschnittIds";
-  private Set<Long> messquerschnittIds = new LinkedHashSet<>();
+  private Set<String> messquerschnittIds = new LinkedHashSet<>();
 
   public static final String JSON_PROPERTY_ZEITPUNKT_START = "zeitpunktStart";
   private LocalDate zeitpunktStart;
@@ -94,13 +94,13 @@ public class GetMesswerteOfMessquerschnittRequest {
   public GetMesswerteOfMessquerschnittRequest() {
   }
 
-  public GetMesswerteOfMessquerschnittRequest messquerschnittIds(Set<Long> messquerschnittIds) {
+  public GetMesswerteOfMessquerschnittRequest messquerschnittIds(Set<String> messquerschnittIds) {
     
     this.messquerschnittIds = messquerschnittIds;
     return this;
   }
 
-  public GetMesswerteOfMessquerschnittRequest addMessquerschnittIdsItem(Long messquerschnittIdsItem) {
+  public GetMesswerteOfMessquerschnittRequest addMessquerschnittIdsItem(String messquerschnittIdsItem) {
     if (this.messquerschnittIds == null) {
       this.messquerschnittIds = new LinkedHashSet<>();
     }
@@ -116,7 +116,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_IDS)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public Set<Long> getMessquerschnittIds() {
+  public Set<String> getMessquerschnittIds() {
     return messquerschnittIds;
   }
 
@@ -124,7 +124,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   @JsonDeserialize(as = LinkedHashSet.class)
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_IDS)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setMessquerschnittIds(Set<Long> messquerschnittIds) {
+  public void setMessquerschnittIds(Set<String> messquerschnittIds) {
     this.messquerschnittIds = messquerschnittIds;
   }
 

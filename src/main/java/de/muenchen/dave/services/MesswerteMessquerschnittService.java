@@ -30,7 +30,7 @@ public class MesswerteMessquerschnittService {
      * @param tagesTyp Typ des Tages
      * @return Liste der gefundenen MesswerteIntervalle pro Tag
      */
-    public GetMesswerteIntervallMessquerschnittResponse ladeMesswerteIntervall(final long messstelleId, final String von, final String bis,
+    public GetMesswerteIntervallMessquerschnittResponse ladeMesswerteIntervall(final String messstelleId, final String von, final String bis,
             final String tagesTyp) {
         final GetMesswerteOfMessquerschnittRequest request = new GetMesswerteOfMessquerschnittRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln

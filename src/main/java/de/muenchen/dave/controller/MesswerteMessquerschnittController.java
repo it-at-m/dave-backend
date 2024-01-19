@@ -4,79 +4,53 @@
  */
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteIntervallMessquerschnittResponse;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
-import de.muenchen.dave.services.MesswerteMessquerschnittService;
-import javax.validation.constraints.NotEmpty;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.services.messstelle.GanglinieService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @RestController
-@RequestMapping("/messwerte/messquerschnitt")
 @AllArgsConstructor
 public class MesswerteMessquerschnittController {
 
-    private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelle_id";
-    private static final String REQUEST_PARAMETER_VON = "von";
-    private static final String REQUEST_PARAMETER_BIS = "bis";
-    private static final String REQUEST_PARAMETER_TAGESTYP = "tages_typ";
+    private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelleId";
 
-    private final MesswerteMessquerschnittService messwerteMessquerschnittService;
+    private final GanglinieService ganglinieService;
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm, die
-     * Listenausgabe und die Heatmap.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm.
      *
-     * @param messstelleId Die Id der angefragten Messstelle.
-     * @param von required Zeitpunkt der Daten.
-     * @param bis optional Ende eines Zeitraums.
-     * @param tagestyp Typ des Tages
-     * @return Die aufbereiteten Daten einer Messstelle für die Diagramme im Frontend.
+     * @param messstelleId Die Id der Zaehlung.
+     * @return Die aufbereiteten Daten einer Messstelle für die Gangline im Frontend.
      */
-    @PostMapping(value = "intervall", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/lade-ganglinie", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<GetMesswerteIntervallMessquerschnittResponse> ladeMesswerteIntervall(
-            @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
-            @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
-            @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
-            @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
-        log.info("ladeMesswerteIntervall für Messstelle {} aufgerufen", messstelleId);
-        final GetMesswerteIntervallMessquerschnittResponse messwerte = messwerteMessquerschnittService.ladeMesswerteIntervall(messstelleId, von, bis,
-                tagestyp);
-        log.info("laden der Daten abgeschlossen.");
-        log.debug("MesswerteIntervall: {}", messwerte.toString());
-        return ResponseEntity.ok(messwerte);
-    }
-
-    /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für den Belastungsplan.
-     *
-     * @param messstelleId Die Id der angefragten Messstelle.
-     * @param von required Zeitpunkt der Daten.
-     * @param bis optional Ende eines Zeitraums.
-     * @param tagestyp Typ des Tages
-     * @return Die aufbereiteten Daten einer Messstelle für die Diagramme im Frontend.
-     */
-    @PostMapping(value = "tagesaggregat", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Transactional(readOnly = true)
-    public ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse> ladeMesswerteTagesaggregat(
-            @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final long messstelleId,
-            @RequestParam(value = REQUEST_PARAMETER_VON) @NotEmpty final String von,
-            @RequestParam(value = REQUEST_PARAMETER_BIS) @NotEmpty final String bis,
-            @RequestParam(value = REQUEST_PARAMETER_TAGESTYP) final String tagestyp) {
-        log.info("ladeMesswerteTagesaggregat für Messstelle {} aufgerufen", messstelleId);
-        final GetMesswerteTagesaggregatMessquerschnittResponse messwerte = messwerteMessquerschnittService.ladeMesswerteTagesaggregat(messstelleId, von, bis,
-                tagestyp);
-        log.info("laden der Daten abgeschlossen.");
-        log.debug("MesswerteTageaggregat: {}", messwerte.toString());
-        return ResponseEntity.ok(messwerte);
+    public ResponseEntity<LadeProcessedZaehldatenDTO> ladeGanglinie(
+            @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final String messstelleId) {
+        try {
+            log.info("ladeGanglinie für Messstelle {} aufgerufen", messstelleId);
+            final LadeProcessedZaehldatenDTO processedZaehldaten = ganglinieService.ladeGanglinie(messstelleId);
+            log.info("laden der Daten abgeschlossen.");
+            log.debug("Messdaten: {}", processedZaehldaten.toString());
+            return ResponseEntity.ok(processedZaehldaten);
+        } catch (final DataNotFoundException exception) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
+        }
     }
 }
