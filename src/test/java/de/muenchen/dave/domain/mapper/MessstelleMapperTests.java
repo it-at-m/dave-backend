@@ -36,6 +36,11 @@ class MessstelleMapperTests {
         expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
+        expected.setStandort(bean.getStandort());
+        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
+        expected.setRealisierungsdatum(bean.getRealisierungsdatum());
+        expected.setAbbaudatum(bean.getAbbaudatum());
+        expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
