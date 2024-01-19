@@ -13,6 +13,7 @@ public class EditMessstelleDTO implements Serializable {
     private String name;
     private String status;
     private String bemerkung;
+    private String stadtbezirk;
     private Integer stadtbezirkNummer;
 
     private String realisierungsdatum;

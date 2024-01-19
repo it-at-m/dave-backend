@@ -3,6 +3,7 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,10 @@ public class MessstelleIndexService {
         log.debug("Zugriff auf #findByIdOrThrowException");
         return this.messstelleIndex.findById(messstelleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Die gesuchte Messstelle wurde nicht gefunden."));
+    }
+
+    public List<Messstelle> findAllMessstellen() {
+        return messstelleIndex.findAll();
     }
 
 }

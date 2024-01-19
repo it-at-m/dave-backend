@@ -2,10 +2,12 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,17 +27,15 @@ public class MessstelleService {
 
     private final MessstelleMapper messstelleMapper;
 
-    public ReadMessstelleDTO readMessstelleById(final String messstelleId) {
+    public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        // Mapping auf ReadMessstelleDto
         return messstelleMapper.bean2readDto(byIdOrThrowException);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         log.debug("#getMessstelleToEdit");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        // Mapping auf BearbeiteMessstelleDTO
         return messstelleMapper.bean2editDto(byIdOrThrowException);
     }
 
@@ -48,5 +48,11 @@ public class MessstelleService {
         final BackendIdDTO backendIdDTO = new BackendIdDTO();
         backendIdDTO.setId(messstelle.getId());
         return backendIdDTO;
+    }
+
+    public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
+        log.debug("#getAllMessstellenForOverview");
+        final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
+        return messstelleMapper.bean2overviewDto(messstellen);
     }
 }

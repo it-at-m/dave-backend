@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
@@ -25,13 +26,13 @@ class MessstelleReceiverMapperTests {
     private final MessstelleReceiverMapper mapper = new MessstelleReceiverMapperImpl();
 
     @Test
-    void testDtoToMessstelle() {
+    void testCreateMessstelle() {
         final MessstelleDto dto = MessstelleRandomFactory.getMessstelleDto();
 
         final Messstelle expected = new Messstelle();
         expected.setMstId(dto.getMstId());
         expected.setName(dto.getName());
-        expected.setStatus(dto.getStatus());
+        expected.setStatus(MessstelleStatus.valueOf(dto.getStatus().getValue()));
         expected.setRealisierungsdatum(dto.getRealisierungsdatum());
         expected.setAbbaudatum(dto.getAbbaudatum());
         expected.setStadtbezirkNummer(dto.getStadtbezirkNummer());
@@ -50,13 +51,19 @@ class MessstelleReceiverMapperTests {
         expected.getSuchwoerter().add(dto.getName());
         expected.getSuchwoerter().add(dto.getMstId());
 
-        expected.setMessquerschnitte(mapper.dtoToMessquerschnitt(dto.getMessquerschnitte()));
+        expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
 
-        Assertions.assertThat(this.mapper.dtoToMessstelle(dto))
+        Messstelle messstelle = this.mapper.createMessstelle(dto);
+        Assertions.assertThat(messstelle)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
+                .ignoringFields("id", "messquerschnitte.id")
                 .isEqualTo(expected);
+        Assertions.assertThat(messstelle.getId())
+                .isNotNull();
+        messstelle.getMessquerschnitte().forEach(messquerschnitt -> Assertions.assertThat(messquerschnitt.getId())
+                .isNotNull());
     }
 
     @Test
@@ -74,15 +81,17 @@ class MessstelleReceiverMapperTests {
         expected.setHersteller(dto.getHersteller());
         expected.setAnzahlDetektoren(dto.getAnzahlDetektoren());
 
-        final Messquerschnitt actual = this.mapper.dtoToMessquerschnitt(dto);
+        final Messquerschnitt actual = this.mapper.createMessquerschnitt(dto);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
-                .ignoringFields("punkt")
+                .ignoringFields("id", "punkt")
                 .isEqualTo(expected);
 
         Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getXcoordinate());
         Assertions.assertThat(actual.getPunkt().getLon()).isEqualTo(dto.getYcoordinate());
+        Assertions.assertThat(actual.getId())
+                .isNotNull();
     }
 
     @Test
@@ -95,7 +104,7 @@ class MessstelleReceiverMapperTests {
         //geandert
         expected.setMstId(updatedData.getMstId());
         expected.setName(updatedData.getName());
-        expected.setStatus(updatedData.getStatus());
+        expected.setStatus(MessstelleStatus.valueOf(updatedData.getStatus().getValue()));
         expected.setBemerkung(updatedData.getBemerkung());
         expected.setStadtbezirkNummer(updatedData.getStadtbezirkNummer());
         expected.setRealisierungsdatum(updatedData.getRealisierungsdatum());
@@ -128,5 +137,13 @@ class MessstelleReceiverMapperTests {
                 .usingRecursiveComparison()
                 .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void statusMapping() {
+        final MessstelleDto messstelleDto = MessstelleRandomFactory.getMessstelleDto();
+        messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
+        Messstelle messstelle = mapper.createMessstelle(messstelleDto);
+        Assertions.assertThat(messstelle.getStatus()).isEqualTo(MessstelleStatus.IN_BESTAND);
     }
 }
