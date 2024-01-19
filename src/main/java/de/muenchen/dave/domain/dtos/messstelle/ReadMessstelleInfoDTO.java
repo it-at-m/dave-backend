@@ -1,9 +1,9 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import java.io.Serializable;
-import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class ReadMessstelleInfoDTO implements Serializable {
