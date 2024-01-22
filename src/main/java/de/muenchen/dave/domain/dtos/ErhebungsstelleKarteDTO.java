@@ -1,4 +1,5 @@
 package de.muenchen.dave.domain.dtos;
+
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import java.io.Serializable;
 import lombok.Data;
