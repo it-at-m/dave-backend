@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class NichtPlausibleTageResponseDTO {
-    List<LocalDate> plausibleTage;
+    List<LocalDate> nichtPlausibleTage;
 }

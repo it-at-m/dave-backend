@@ -6,5 +6,5 @@ import lombok.Data;
 
 @Data
 public class NichtPlausibleTageEaiRequestDTO {
-    List<LocalDate> plausibleTage;
+    List<LocalDate> nichtPlausibleTage;
 }
