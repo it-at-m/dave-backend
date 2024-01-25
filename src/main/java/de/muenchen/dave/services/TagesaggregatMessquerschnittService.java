@@ -19,9 +19,9 @@ public class TagesaggregatMessquerschnittService {
     @Value("${geodaten.eai.url:}")
     public String geodatenEaiUrl;
 
-
     public NichtPlausibleTageResponseDTO getNichtPlausibleDatenFromEai(String messquerschnittId) {
-        NichtPlausibleTageDto eaiRequestResult = Objects.requireNonNull(tagesaggregatMessquerschnittApi.getNichtPlausibleTageWithHttpInfo(messquerschnittId).block()).getBody();
+        NichtPlausibleTageDto eaiRequestResult = Objects
+                .requireNonNull(tagesaggregatMessquerschnittApi.getNichtPlausibleTageWithHttpInfo(messquerschnittId).block()).getBody();
         return tagesaggregatMessquerschnittMapper.requestToResponse(eaiRequestResult);
     }
 }
