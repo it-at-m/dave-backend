@@ -2,6 +2,7 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
+import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ class TagesaggregatMessquerschnittMapperTest {
         ArrayList<LocalDate> listOfDates = new ArrayList<>(List.of(LocalDate.of(2024, 1, 1),
                 LocalDate.of(2024, 1, 3),
                 LocalDate.of(2024, 1, 7)));
-        final NichtPlausibleTageEaiRequestDTO requested = new NichtPlausibleTageEaiRequestDTO();
+        final NichtPlausibleTageDto requested = new NichtPlausibleTageDto();
         requested.setNichtPlausibleTage(listOfDates);
 
         final NichtPlausibleTageResponseDTO response = new NichtPlausibleTageResponseDTO();

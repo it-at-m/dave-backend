@@ -42,6 +42,14 @@ public class GeodatenEaiApiConfiguration {
     }
 
     @Bean
+    @Profile("no-security")
+    public TagesaggregatMessquerschnittApi tagesaggregatMessquerschnittApi() {
+        final WebClient webClient = WebClient.builder().build();
+        final ApiClient apiClient = this.geodatenEaiApiClient(webClient);
+        return new TagesaggregatMessquerschnittApi(apiClient);
+    }
+
+    @Bean
     @Profile("!no-security")
     public MesswerteMessquerschnittApi securedMesswerteMessquerschnittApi(final ClientRegistrationRepository clientRegistrationRepository,
             final OAuth2AuthorizedClientService authorizedClientService) {
