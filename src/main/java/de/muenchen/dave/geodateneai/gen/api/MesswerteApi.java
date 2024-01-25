@@ -29,15 +29,15 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class MesswerteMessquerschnittApi {
+public class MesswerteApi {
     private ApiClient apiClient;
 
-    public MesswerteMessquerschnittApi() {
+    public MesswerteApi() {
         this(new ApiClient());
     }
 
     @Autowired
-    public MesswerteMessquerschnittApi(ApiClient apiClient) {
+    public MesswerteApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 

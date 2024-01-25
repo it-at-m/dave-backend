@@ -21,12 +21,12 @@
       "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
     },
     {
-      "name": "Messstelle",
-      "description": "API zum Abfragen des FeatureServers für die Messstellen."
+      "name": "Messwerte",
+      "description": "API zum Abfragen des FeatureServers für Messwerte."
     },
     {
-      "name": "MesswerteMessquerschnitt",
-      "description": "API zum Abfragen des FeatureServers für Messwerte eines Messquerschnitts."
+      "name": "Messstelle",
+      "description": "API zum Abfragen des FeatureServers für die Messstellen."
     }
   ],
   "paths": {
@@ -74,7 +74,7 @@
     "/messwerte/tagesaggregat": {
       "post": {
         "tags": [
-          "MesswerteMessquerschnitt"
+          "Messwerte"
         ],
         "summary": "Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.",
         "operationId": "getMesswerteTagesaggregat",
@@ -115,7 +115,7 @@
     "/messwerte/average-per-interval": {
       "post": {
         "tags": [
-          "MesswerteMessquerschnitt"
+          "Messwerte"
         ],
         "summary": "Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.",
         "operationId": "getAverageMeasurementValuesPerInterval",
@@ -318,10 +318,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -623,11 +623,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -677,11 +677,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }

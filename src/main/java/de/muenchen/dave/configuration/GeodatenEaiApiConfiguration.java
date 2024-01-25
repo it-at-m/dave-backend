@@ -1,7 +1,7 @@
 package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
-import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
+import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,14 +22,14 @@ public class GeodatenEaiApiConfiguration {
     public String geodatenEaiUrl;
 
     /**
-     * Erstellt ein {@link MesswerteMessquerschnittApi} Bean für Requests an die Geodaten-EAI
+     * Erstellt ein {@link MesswerteApi} Bean für Requests an die Geodaten-EAI
      */
     @Bean
     @Profile("no-security")
-    public MesswerteMessquerschnittApi messwerteMessquerschnittApi() {
+    public MesswerteApi messwerteApi() {
         final WebClient webClient = WebClient.builder().build();
         final ApiClient apiClient = this.geodatenEaiApiClient(webClient);
-        return new MesswerteMessquerschnittApi(apiClient);
+        return new MesswerteApi(apiClient);
     }
 
     @Bean
@@ -42,11 +42,11 @@ public class GeodatenEaiApiConfiguration {
 
     @Bean
     @Profile("!no-security")
-    public MesswerteMessquerschnittApi securedMesswerteMessquerschnittApi(final ClientRegistrationRepository clientRegistrationRepository,
+    public MesswerteApi securedMesswerteApi(final ClientRegistrationRepository clientRegistrationRepository,
             final OAuth2AuthorizedClientService authorizedClientService) {
         final WebClient webClient = this.webClient(clientRegistrationRepository, authorizedClientService);
         final ApiClient apiClient = geodatenEaiApiClient(webClient);
-        return new MesswerteMessquerschnittApi(apiClient);
+        return new MesswerteApi(apiClient);
     }
 
     @Bean

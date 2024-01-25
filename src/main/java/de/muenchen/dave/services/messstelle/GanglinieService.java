@@ -12,7 +12,7 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
+import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
 public class GanglinieService {
 
     private final MessstelleService messstelleService;
-    private final MesswerteMessquerschnittApi messwerteMessquerschnittApi;
+    private final MesswerteApi messwerteApi;
 
     public LadeProcessedZaehldatenDTO ladeGanglinie(final String messstelleId) throws DataNotFoundException {
         log.debug("#ladeGanglinie");
@@ -63,7 +63,7 @@ public class GanglinieService {
         request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.WERKTAG_DI_MI_DO);
         request.setZeitpunktStart(LocalDate.of(2024, 1, 1));
         request.setZeitpunktEnde(LocalDate.of(2024, 1, 1));
-        final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteMessquerschnittApi
+        final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
         return Objects.requireNonNull(response.block()).getBody();
@@ -152,7 +152,7 @@ public class GanglinieService {
 
         final SeriesEntries seriesEntries = new SeriesEntries();
 
-        intervalle.stream()
+        intervalle
                 .forEach(intervall -> {
                     setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
                     seriesEntries.getSeriesEntryPkw().getYAxisData().add(intervall.getSummeAllePkw());
@@ -277,7 +277,7 @@ public class GanglinieService {
         private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
                 final StepLineSeriesEntryBaseDTO entry,
                 final Boolean isChosen) {
-            if (isChosen.booleanValue()) {
+            if (isChosen) {
                 allEntries.add(entry);
             }
         }
