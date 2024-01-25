@@ -3,7 +3,6 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.mapper.TagesaggregatMessquerschnittMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
