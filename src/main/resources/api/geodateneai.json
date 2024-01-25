@@ -71,7 +71,7 @@
         }
       }
     },
-    "/messwerte/messquerschnitt/tagesaggregat": {
+    "/messwerte/tagesaggregat": {
       "post": {
         "tags": [
           "MesswerteMessquerschnitt"
@@ -82,7 +82,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+                "$ref": "#/components/schemas/GetMeasurementValuesRequest"
               }
             }
           },
@@ -112,18 +112,18 @@
         }
       }
     },
-    "/messwerte/messquerschnitt/intervall": {
+    "/messwerte/average-per-interval": {
       "post": {
         "tags": [
           "MesswerteMessquerschnitt"
         ],
-        "summary": "Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.",
-        "operationId": "getMesswerteIntervall",
+        "summary": "Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.",
+        "operationId": "getAverageMeasurementValuesPerInterval",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+                "$ref": "#/components/schemas/GetMeasurementValuesRequest"
               }
             }
           },
@@ -135,7 +135,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMesswerteIntervallMessquerschnittResponse"
+                  "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
                 }
               }
             }
@@ -318,15 +318,15 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
       },
-      "GetMesswerteOfMessquerschnittRequest": {
+      "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
           "zeitpunktStart"
@@ -512,71 +512,79 @@
           }
         }
       },
-      "GetMesswerteIntervallMessquerschnittResponse": {
+      "AverageMeasurementValuesPerIntervalResponse": {
         "type": "object",
         "properties": {
-          "intervalle": {
+          "intervals": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MesswerteIntervallMessquerschnittDto"
+              "$ref": "#/components/schemas/MeasurementValuesPerInterval"
             }
           }
         }
       },
-      "MesswerteIntervallMessquerschnittDto": {
+      "LocalTime": {
         "type": "object",
         "properties": {
-          "intervallnummer": {
+          "hour": {
             "type": "integer",
             "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nano": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MeasurementValuesPerInterval": {
+        "type": "object",
+        "properties": {
+          "uhrzeitVon": {
+            "$ref": "#/components/schemas/LocalTime"
           },
           "anzahlLfw": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "anzahlKrad": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "anzahlLkw": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "anzahlBus": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "anzahlRad": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "summeAllePkw": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "summeLastzug": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "summeGueterverkehr": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "summeSchwerverkehr": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "summeKraftfahrzeugverkehr": {
-            "type": "integer",
-            "format": "int32"
+            "type": "number"
           },
           "prozentSchwerverkehr": {
-            "type": "number",
-            "format": "double"
+            "type": "number"
           },
           "prozentGueterverkehr": {
-            "type": "number",
-            "format": "double"
+            "type": "number"
           }
         }
       },
@@ -615,11 +623,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -669,11 +677,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }

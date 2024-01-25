@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.MesswerteIntervallMessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,50 +28,50 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * GetMesswerteIntervallMessquerschnittResponse
+ * AverageMeasurementValuesPerIntervalResponse
  */
 @JsonPropertyOrder({
-  GetMesswerteIntervallMessquerschnittResponse.JSON_PROPERTY_INTERVALLE
+  AverageMeasurementValuesPerIntervalResponse.JSON_PROPERTY_INTERVALS
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class GetMesswerteIntervallMessquerschnittResponse {
-  public static final String JSON_PROPERTY_INTERVALLE = "intervalle";
-  private List<MesswerteIntervallMessquerschnittDto> intervalle;
+public class AverageMeasurementValuesPerIntervalResponse {
+  public static final String JSON_PROPERTY_INTERVALS = "intervals";
+  private List<MeasurementValuesPerInterval> intervals;
 
-  public GetMesswerteIntervallMessquerschnittResponse() {
+  public AverageMeasurementValuesPerIntervalResponse() {
   }
 
-  public GetMesswerteIntervallMessquerschnittResponse intervalle(List<MesswerteIntervallMessquerschnittDto> intervalle) {
+  public AverageMeasurementValuesPerIntervalResponse intervals(List<MeasurementValuesPerInterval> intervals) {
     
-    this.intervalle = intervalle;
+    this.intervals = intervals;
     return this;
   }
 
-  public GetMesswerteIntervallMessquerschnittResponse addIntervalleItem(MesswerteIntervallMessquerschnittDto intervalleItem) {
-    if (this.intervalle == null) {
-      this.intervalle = new ArrayList<>();
+  public AverageMeasurementValuesPerIntervalResponse addIntervalsItem(MeasurementValuesPerInterval intervalsItem) {
+    if (this.intervals == null) {
+      this.intervals = new ArrayList<>();
     }
-    this.intervalle.add(intervalleItem);
+    this.intervals.add(intervalsItem);
     return this;
   }
 
    /**
-   * Get intervalle
-   * @return intervalle
+   * Get intervals
+   * @return intervals
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_INTERVALLE)
+  @JsonProperty(JSON_PROPERTY_INTERVALS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public List<MesswerteIntervallMessquerschnittDto> getIntervalle() {
-    return intervalle;
+  public List<MeasurementValuesPerInterval> getIntervals() {
+    return intervals;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_INTERVALLE)
+  @JsonProperty(JSON_PROPERTY_INTERVALS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setIntervalle(List<MesswerteIntervallMessquerschnittDto> intervalle) {
-    this.intervalle = intervalle;
+  public void setIntervals(List<MeasurementValuesPerInterval> intervals) {
+    this.intervals = intervals;
   }
 
   @Override
@@ -82,20 +82,20 @@ public class GetMesswerteIntervallMessquerschnittResponse {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GetMesswerteIntervallMessquerschnittResponse getMesswerteIntervallMessquerschnittResponse = (GetMesswerteIntervallMessquerschnittResponse) o;
-    return Objects.equals(this.intervalle, getMesswerteIntervallMessquerschnittResponse.intervalle);
+    AverageMeasurementValuesPerIntervalResponse averageMeasurementValuesPerIntervalResponse = (AverageMeasurementValuesPerIntervalResponse) o;
+    return Objects.equals(this.intervals, averageMeasurementValuesPerIntervalResponse.intervals);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(intervalle);
+    return Objects.hash(intervals);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GetMesswerteIntervallMessquerschnittResponse {\n");
-    sb.append("    intervalle: ").append(toIndentedString(intervalle)).append("\n");
+    sb.append("class AverageMeasurementValuesPerIntervalResponse {\n");
+    sb.append("    intervals: ").append(toIndentedString(intervals)).append("\n");
     sb.append("}");
     return sb.toString();
   }
