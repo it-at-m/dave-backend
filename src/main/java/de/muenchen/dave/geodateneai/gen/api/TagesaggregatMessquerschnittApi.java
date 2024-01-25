@@ -26,15 +26,15 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class TagesaggregatMessquerschnittControllerApi {
+public class TagesaggregatMessquerschnittApi {
     private ApiClient apiClient;
 
-    public TagesaggregatMessquerschnittControllerApi() {
+    public TagesaggregatMessquerschnittApi() {
         this(new ApiClient());
     }
 
     @Autowired
-    public TagesaggregatMessquerschnittControllerApi(ApiClient apiClient) {
+    public TagesaggregatMessquerschnittApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
