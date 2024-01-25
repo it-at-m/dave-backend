@@ -17,6 +17,10 @@
   ],
   "tags": [
     {
+      "name": "TagesaggregatMessquerschnitt",
+      "description": "API für Abfragen zum Tagesaggregat beim Messquerschnitt"
+    },
+    {
       "name": "PointFeature",
       "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
     },
@@ -156,7 +160,7 @@
     "/tagesaggregatMessquerschnitt/nichtPlausibleDaten": {
       "get": {
         "tags": [
-          "tagesaggregat-messquerschnitt-controller"
+          "TagesaggregatMessquerschnitt"
         ],
         "operationId": "getNichtPlausibleTage",
         "parameters": [
