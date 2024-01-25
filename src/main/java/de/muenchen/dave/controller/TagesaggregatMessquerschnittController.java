@@ -16,6 +16,7 @@ public class TagesaggregatMessquerschnittController {
     public static final String REQUEST_PARAM_MESSQUERSCHNITT_ID = "messquerschnittId";
 
     private final TagesaggregatMessquerschnittService tagesaggregatMessquerschnittService;
+
     @GetMapping("/nichtPlausibleTage")
     public NichtPlausibleTageResponseDTO getPlausibleTage(@RequestParam(value = REQUEST_PARAM_MESSQUERSCHNITT_ID) @NotEmpty String messquerschnittId) {
         return tagesaggregatMessquerschnittService.getNichtPlausibleDatenFromEai();
