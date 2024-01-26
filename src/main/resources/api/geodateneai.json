@@ -17,12 +17,12 @@
   ],
   "tags": [
     {
-      "name": "TagesaggregatMessquerschnitt",
-      "description": "API für Abfragen zum Tagesaggregat beim Messquerschnitt"
-    },
-    {
       "name": "PointFeature",
       "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
+    },
+    {
+      "name": "MessstelleOptionsmenuController",
+      "description": "API für Abfragen zum Tagesaggregat beim Messquerschnitt"
     },
     {
       "name": "Messstelle",
@@ -157,47 +157,6 @@
         }
       }
     },
-    "/tagesaggregatMessquerschnitt/nichtPlausibleDaten": {
-      "get": {
-        "tags": [
-          "TagesaggregatMessquerschnitt"
-        ],
-        "summary": "Holt alle nicht Plausiblen Tage.",
-        "operationId": "getNichtPlausibleTage",
-        "parameters": [
-          {
-            "name": "messquerschnittId",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/messstelle": {
       "get": {
         "tags": [
@@ -215,6 +174,47 @@
                   "items": {
                     "$ref": "#/components/schemas/MessstelleDto"
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
+      "get": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Holt alle nicht Plausiblen Tage.",
+        "operationId": "getNichtPlausibleTage",
+        "parameters": [
+          {
+            "name": "messstelle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -710,18 +710,6 @@
           }
         }
       },
-      "NichtPlausibleTageDto": {
-        "type": "object",
-        "properties": {
-          "nichtPlausibleTage": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date"
-            }
-          }
-        }
-      },
       "MessquerschnittDto": {
         "type": "object",
         "properties": {
@@ -818,6 +806,18 @@
           "ycoordinate": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "NichtPlausibleTageDto": {
+        "type": "object",
+        "properties": {
+          "nichtPlausibleTage": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
           }
         }
       }
