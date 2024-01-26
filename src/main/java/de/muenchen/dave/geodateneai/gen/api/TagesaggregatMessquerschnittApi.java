@@ -2,6 +2,7 @@ package de.muenchen.dave.geodateneai.gen.api;
 
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
+import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 
 import java.util.HashMap;
@@ -47,9 +48,10 @@ public class TagesaggregatMessquerschnittApi {
     }
 
     /**
+     * Holt alle nicht Plausiblen Tage.
      * 
-     * 
-     * <p><b>200</b> - OK
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messquerschnittId The messquerschnittId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -84,9 +86,10 @@ public class TagesaggregatMessquerschnittApi {
     }
 
     /**
+     * Holt alle nicht Plausiblen Tage.
      * 
-     * 
-     * <p><b>200</b> - OK
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messquerschnittId The messquerschnittId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -97,9 +100,10 @@ public class TagesaggregatMessquerschnittApi {
     }
 
     /**
+     * Holt alle nicht Plausiblen Tage.
      * 
-     * 
-     * <p><b>200</b> - OK
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messquerschnittId The messquerschnittId parameter
      * @return ResponseEntity&lt;NichtPlausibleTageDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -110,9 +114,10 @@ public class TagesaggregatMessquerschnittApi {
     }
 
     /**
+     * Holt alle nicht Plausiblen Tage.
      * 
-     * 
-     * <p><b>200</b> - OK
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messquerschnittId The messquerschnittId parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API

@@ -162,6 +162,7 @@
         "tags": [
           "TagesaggregatMessquerschnitt"
         ],
+        "summary": "Holt alle nicht Plausiblen Tage.",
         "operationId": "getNichtPlausibleTage",
         "parameters": [
           {
@@ -175,11 +176,21 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
