@@ -1,8 +1,8 @@
 package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
-import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
+import de.muenchen.dave.geodateneai.gen.api.MesswerteMessquerschnittApi;
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
