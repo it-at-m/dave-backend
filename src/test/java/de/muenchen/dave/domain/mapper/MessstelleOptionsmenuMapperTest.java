@@ -8,9 +8,9 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class TagesaggregatMessquerschnittMapperTest {
+class MessstelleOptionsmenuMapperTest {
 
-    private final TagesaggregatMessquerschnittMapper mapper = new TagesaggregatMessquerschnittMapperImpl();
+    private final MessstelleOptionsmenuMapper mapper = new MessstelleOptionsmenuMapperImpl();
 
     @Test
     void requestToResponse() {

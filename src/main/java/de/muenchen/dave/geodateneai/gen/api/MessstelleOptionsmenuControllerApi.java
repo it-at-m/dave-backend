@@ -27,15 +27,15 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class TagesaggregatMessquerschnittApi {
+public class MessstelleOptionsmenuControllerApi {
     private ApiClient apiClient;
 
-    public TagesaggregatMessquerschnittApi() {
+    public MessstelleOptionsmenuControllerApi() {
         this(new ApiClient());
     }
 
     @Autowired
-    public TagesaggregatMessquerschnittApi(ApiClient apiClient) {
+    public MessstelleOptionsmenuControllerApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -52,15 +52,15 @@ public class TagesaggregatMessquerschnittApi {
      * 
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param messquerschnittId The messquerschnittId parameter
+     * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec getNichtPlausibleTageRequestCreation(String messquerschnittId) throws WebClientResponseException {
+    private ResponseSpec getNichtPlausibleTageRequestCreation(String messstelleId) throws WebClientResponseException {
         Object postBody = null;
-        // verify the required parameter 'messquerschnittId' is set
-        if (messquerschnittId == null) {
-            throw new WebClientResponseException("Missing the required parameter 'messquerschnittId' when calling getNichtPlausibleTage", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+        // verify the required parameter 'messstelleId' is set
+        if (messstelleId == null) {
+            throw new WebClientResponseException("Missing the required parameter 'messstelleId' when calling getNichtPlausibleTage", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
         }
         // create path and map variables
         final Map<String, Object> pathParams = new HashMap<String, Object>();
@@ -70,7 +70,7 @@ public class TagesaggregatMessquerschnittApi {
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
-        queryParams.putAll(apiClient.parameterToMultiValueMap(null, "messquerschnittId", messquerschnittId));
+        queryParams.putAll(apiClient.parameterToMultiValueMap(null, "messstelle_id", messstelleId));
 
         final String[] localVarAccepts = { 
             "*/*"
@@ -82,7 +82,7 @@ public class TagesaggregatMessquerschnittApi {
         String[] localVarAuthNames = new String[] {  };
 
         ParameterizedTypeReference<NichtPlausibleTageDto> localVarReturnType = new ParameterizedTypeReference<NichtPlausibleTageDto>() {};
-        return apiClient.invokeAPI("/tagesaggregatMessquerschnitt/nichtPlausibleDaten", HttpMethod.GET, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        return apiClient.invokeAPI("/MessstelleOptionsmenu/nichtPlausibleDaten", HttpMethod.GET, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
@@ -90,13 +90,13 @@ public class TagesaggregatMessquerschnittApi {
      * 
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param messquerschnittId The messquerschnittId parameter
+     * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<NichtPlausibleTageDto> getNichtPlausibleTage(String messquerschnittId) throws WebClientResponseException {
+    public Mono<NichtPlausibleTageDto> getNichtPlausibleTage(String messstelleId) throws WebClientResponseException {
         ParameterizedTypeReference<NichtPlausibleTageDto> localVarReturnType = new ParameterizedTypeReference<NichtPlausibleTageDto>() {};
-        return getNichtPlausibleTageRequestCreation(messquerschnittId).bodyToMono(localVarReturnType);
+        return getNichtPlausibleTageRequestCreation(messstelleId).bodyToMono(localVarReturnType);
     }
 
     /**
@@ -104,13 +104,13 @@ public class TagesaggregatMessquerschnittApi {
      * 
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param messquerschnittId The messquerschnittId parameter
+     * @param messstelleId The messstelleId parameter
      * @return ResponseEntity&lt;NichtPlausibleTageDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<NichtPlausibleTageDto>> getNichtPlausibleTageWithHttpInfo(String messquerschnittId) throws WebClientResponseException {
+    public Mono<ResponseEntity<NichtPlausibleTageDto>> getNichtPlausibleTageWithHttpInfo(String messstelleId) throws WebClientResponseException {
         ParameterizedTypeReference<NichtPlausibleTageDto> localVarReturnType = new ParameterizedTypeReference<NichtPlausibleTageDto>() {};
-        return getNichtPlausibleTageRequestCreation(messquerschnittId).toEntity(localVarReturnType);
+        return getNichtPlausibleTageRequestCreation(messstelleId).toEntity(localVarReturnType);
     }
 
     /**
@@ -118,11 +118,11 @@ public class TagesaggregatMessquerschnittApi {
      * 
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param messquerschnittId The messquerschnittId parameter
+     * @param messstelleId The messstelleId parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec getNichtPlausibleTageWithResponseSpec(String messquerschnittId) throws WebClientResponseException {
-        return getNichtPlausibleTageRequestCreation(messquerschnittId);
+    public ResponseSpec getNichtPlausibleTageWithResponseSpec(String messstelleId) throws WebClientResponseException {
+        return getNichtPlausibleTageRequestCreation(messstelleId);
     }
 }
