@@ -184,6 +184,11 @@ public class GanglinieService {
                     setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KRAFTRAEDER);
                     setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlKrad());
 
+                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
+                    seriesEntries.getSeriesEntryRad().getYAxisData().add(intervall.getAnzahlRad());
+                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
+                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlRad());
+
                     setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
                     seriesEntries.getSeriesEntryKfz().getYAxisData().add(intervall.getSummeKraftfahrzeugverkehr());
                     setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KFZ);
@@ -239,6 +244,8 @@ public class GanglinieService {
 
         private StepLineSeriesEntryBigDecimalDTO seriesEntryKrad;
 
+        private StepLineSeriesEntryBigDecimalDTO seriesEntryRad;
+
         private StepLineSeriesEntryBigDecimalDTO seriesEntryKfz;
 
         private StepLineSeriesEntryBigDecimalDTO seriesEntrySv;
@@ -262,6 +269,8 @@ public class GanglinieService {
             seriesEntryBus.setName(ChartLegendUtil.BUSSE);
             seriesEntryKrad = new StepLineSeriesEntryBigDecimalDTO();
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
+            seriesEntryRad = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryRad.setName(ChartLegendUtil.RAD);
             seriesEntryKfz = new StepLineSeriesEntryBigDecimalDTO();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
             seriesEntrySv = new StepLineSeriesEntryBigDecimalDTO();
@@ -298,6 +307,7 @@ public class GanglinieService {
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, true);
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryBus, true);
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKrad, true);
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryRad, true);
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKfz, true);
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySv, true);
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySvProzent, true);
