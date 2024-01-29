@@ -2,6 +2,7 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class MessstelleRandomFactory {
         messstelle.setId(UUID.randomUUID().toString());
         messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
-        messstelle.setStatus(fakerInstance.starTrek().specie());
+        messstelle.setStatus(MessstelleStatus.IN_BESTAND);
         messstelle.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
@@ -52,7 +53,7 @@ public class MessstelleRandomFactory {
         final MessstelleDto dto = new MessstelleDto();
         dto.setMstId(UUID.randomUUID().toString());
         dto.setName(fakerInstance.pokemon().name());
-        dto.setStatus(fakerInstance.pokemon().name());
+        dto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
         dto.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));

@@ -720,7 +720,14 @@
             "type": "string"
           },
           "status": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "IN_PLANUNG",
+              "IN_BESTAND",
+              "AUSSER_BETRIEB",
+              "ABGEBAUT",
+              "UNBEKANNT"
+            ]
           },
           "realisierungsdatum": {
             "type": "string",
