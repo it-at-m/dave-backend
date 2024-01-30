@@ -428,8 +428,7 @@ public class SucheService {
 
     /**
      * Befüllt ErhebungsstelleKarteDTO mit den entsprechenden Daten der Messstelle zum Anzeigen auf
-     * einer Karte und
-     * liefert diese zurück
+     * einer Karte und liefert diese zurück
      *
      * @param messstellen messstellen, die in ErhebungsstelleKarteDTOs umgewandelt werden sollen
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
@@ -444,6 +443,7 @@ public class SucheService {
             erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
             erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
             erhebungsstelleKarteDTO.setType("messstelle");
+            erhebungsstelleKarteDTO.setStatus(messstelle.getStatus());
 
             erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
 
