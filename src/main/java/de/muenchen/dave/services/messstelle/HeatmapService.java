@@ -8,14 +8,13 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -32,7 +31,7 @@ public class HeatmapService {
      * @param intervalle Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeProcessedMessdatenHeatmap(final List<MeasurementValuesPerInterval> intervalle) {
+    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<MeasurementValuesPerInterval> intervalle) {
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -130,9 +129,6 @@ public class HeatmapService {
                             intervall.getUhrzeitVon().toString()));
             heatMapEntryIndex.incrementAndGet();
         });
-
-        // TODO wenn die Fußgänger schon vorgesehen werden sollen, dann muss das auch in der EAI gemacht werden
-
         return ladeZaehldatenHeatmap;
     }
 
@@ -156,7 +152,7 @@ public class HeatmapService {
      * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
      *            hinterlegt wird.
      */
-    protected void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+    protected static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
             final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value,
@@ -185,7 +181,7 @@ public class HeatmapService {
      * @param value Der Wert im entsprechenden Heatmapfeld definiert durch Spaltenindex und Zeilenindex.
      * @return Eine Liste bestehend aus Spaltenindex, Zeilenindex und dem Wert.
      */
-    protected List<Integer> createHeatMapEntry(final int heatMapEntryIndex,
+    protected static List<Integer> createHeatMapEntry(final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value) {
         final List<Integer> heatmapEntry = new ArrayList<>();

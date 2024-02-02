@@ -27,6 +27,7 @@ public class MesswerteService {
     private final MesswerteApi messwerteApi;
 
     private final GanglinieService ganglinieService;
+    private final HeatmapService heatmapService;
 
     public LadeProcessedZaehldatenDTO ladeMesswerte(final String messstelleId) {
         log.debug("#ladeMesswerte {}", messstelleId);
@@ -37,6 +38,7 @@ public class MesswerteService {
 
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
+        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
         return processedZaehldaten;
     }
 
