@@ -4,145 +4,29 @@
  */
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
-import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
-import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
-import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class GanglinieService {
 
-    private final MessstelleService messstelleService;
-    private final MesswerteApi messwerteApi;
-
-    public LadeProcessedZaehldatenDTO ladeGanglinie(final String messstelleId) throws DataNotFoundException {
+    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<MeasurementValuesPerInterval> intervalle) {
         log.debug("#ladeGanglinie");
-
-        final Set<String> messquerschnittNummern = messstelleService.getMessquerschnittNummern(messstelleId);
-
-        final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(messquerschnittNummern);
-        List<MeasurementValuesPerInterval> intervalle = response.getIntervals();
-
-        final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
-        log.debug("Process Zaehldaten Stepline");
-        processedZaehldaten.setZaehldatenStepline(
-                this.ladeProcessedZaehldatenStepline(
-                        intervalle));
-        return processedZaehldaten;
-    }
-
-    protected AverageMeasurementValuesPerIntervalResponse ladeMesswerteIntervall(final Set<String> messquerschnittIds) {
-        final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
-        // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(messquerschnittIds);
-        request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.WERKTAG_DI_MI_DO);
-        request.setZeitpunktStart(LocalDate.of(2024, 1, 1));
-        request.setZeitpunktEnde(LocalDate.of(2024, 1, 1));
-        final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
-                .getAverageMeasurementValuesPerIntervalWithHttpInfo(
-                        request);
-        return Objects.requireNonNull(response.block()).getBody();
-
-    }
-
-    private static final Integer ROUNDING_VALUE = 20;
-
-    private static final Integer ROUNDING_VALUE_PERCENT = 2;
-
-    public static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final Integer value) {
-        ladeZaehldatenStepline.setRangeMax(
-                ZaehldatenProcessingUtil.getValueRounded(
-                        Math.max(
-                                ZaehldatenProcessingUtil.getZeroIfNull(value),
-                                ladeZaehldatenStepline.getRangeMax()),
-                        ROUNDING_VALUE));
-    }
-
-    public static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final BigDecimal value) {
-        setRangeMaxRoundedToHundredInZaehldatenStepline(
-                ladeZaehldatenStepline,
-                ZaehldatenProcessingUtil.getZeroIfNull(value).intValue());
-    }
-
-    public static void setRangeMaxPercentInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final BigDecimal value) {
-        final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
-        ladeZaehldatenStepline.setRangeMaxPercent(
-                ZaehldatenProcessingUtil.getValueRounded(
-                        BigDecimal.valueOf(currentValue)
-                                .max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
-                        ROUNDING_VALUE_PERCENT));
-    }
-
-    public static void setLegendInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final String legendEntry) {
-        ladeZaehldatenStepline.setLegend(
-                ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
-                        ladeZaehldatenStepline.getLegend(),
-                        legendEntry));
-    }
-
-    public static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(0);
-    }
-
-    public static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(1);
-    }
-
-    /**
-     * Diese Methode führt die Datenaufbereitung für das Stepline-Diagramm durch.
-     * <p>
-     * Sind in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN} zu finden, so wird die Datenaufbereitung für zwei
-     * Unterdiagramme vorgenommen. Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in
-     * zwei Unterdiagramme statt und die Daten werden für ein
-     * Diagramm aufbereitet.
-     * <p>
-     * Falls keine Aufteilung in zwei Unterdiagrammme erforderlich ist, werden in der Klasse
-     * {@link LadeZaehldatenSteplineDTO} neben den Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getLegend, {@link LadeZaehldatenSteplineDTO}#getRangeMax und
-     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur
-     * die Variablen {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart sowie
-     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesFirstChart gesetzt.
-     * <p>
-     * Ist eine Aufteilung notwendig, so werden auch die Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart sowie
-     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesSecondChart gesetzt.
-     *
-     * @param intervalle Die Datengrundlage zur Aufbereitung des Stepline-Diagramms.
-     * @return Die aufbreiteten Daten für das Stepline-Diagramm entsprechend der gewählten Optionen.
-     */
-    public LadeZaehldatenSteplineDTO ladeProcessedZaehldatenStepline(final List<MeasurementValuesPerInterval> intervalle) {
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
         ladeZaehldatenStepline.setRangeMaxPercent(0);
@@ -221,6 +105,55 @@ public class GanglinieService {
                 });
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries());
         return ladeZaehldatenStepline;
+    }
+
+    private static final Integer ROUNDING_VALUE = 20;
+
+    private static final Integer ROUNDING_VALUE_PERCENT = 2;
+
+    protected static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final Integer value) {
+        ladeZaehldatenStepline.setRangeMax(
+                ZaehldatenProcessingUtil.getValueRounded(
+                        Math.max(
+                                ZaehldatenProcessingUtil.getZeroIfNull(value),
+                                ladeZaehldatenStepline.getRangeMax()),
+                        ROUNDING_VALUE));
+    }
+
+    protected static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final BigDecimal value) {
+        setRangeMaxRoundedToHundredInZaehldatenStepline(
+                ladeZaehldatenStepline,
+                ZaehldatenProcessingUtil.getZeroIfNull(value).intValue());
+    }
+
+    protected static void setRangeMaxPercentInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final BigDecimal value) {
+        final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
+        ladeZaehldatenStepline.setRangeMaxPercent(
+                ZaehldatenProcessingUtil.getValueRounded(
+                        BigDecimal.valueOf(currentValue)
+                                .max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
+                        ROUNDING_VALUE_PERCENT));
+    }
+
+    protected static void setLegendInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final String legendEntry) {
+        ladeZaehldatenStepline.setLegend(
+                ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
+                        ladeZaehldatenStepline.getLegend(),
+                        legendEntry));
+    }
+
+    protected static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(0);
+        stepLineSeriesEntry.setYAxisIndex(0);
+    }
+
+    protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(0);
+        stepLineSeriesEntry.setYAxisIndex(1);
     }
 
     /**
