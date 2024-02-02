@@ -21,6 +21,10 @@
       "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
     },
     {
+      "name": "MessstelleOptionsmenuController",
+      "description": "API für Abfragen zum vorbefüllen des OptionsMenues"
+    },
+    {
       "name": "Messstelle",
       "description": "API zum Abfragen des FeatureServers für die Messstellen."
     },
@@ -186,6 +190,47 @@
           }
         }
       }
+    },
+    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
+      "get": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Holt alle nicht Plausiblen Tage.",
+        "operationId": "getNichtPlausibleTage",
+        "parameters": [
+          {
+            "name": "messstelle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -318,10 +363,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
@@ -700,11 +745,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -754,13 +799,25 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
-            "type": "number",
-            "format": "double"
-          },
           "ycoordinate": {
             "type": "number",
             "format": "double"
+          },
+          "xcoordinate": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "NichtPlausibleTageDto": {
+        "type": "object",
+        "properties": {
+          "nichtPlausibleTage": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
           }
         }
       }
