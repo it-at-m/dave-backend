@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class MesswerteService {
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
         final AverageMeasurementValuesPerIntervalResponse body = Objects.requireNonNull(response.block()).getBody();
-        if (ObjectUtils.isEmpty(body) || ObjectUtils.isEmpty(body.getIntervals())) {
+        if (ObjectUtils.isEmpty(body) || CollectionUtils.isEmpty(body.getIntervals())) {
             throw new ResourceNotFoundException("Die Intervalle konnten nicht geladen werden");
         }
         return body;
