@@ -41,8 +41,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessstelleDto.JSON_PROPERTY_BEMERKUNG,
   MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG,
   MessstelleDto.JSON_PROPERTY_MESSQUERSCHNITTE,
-  MessstelleDto.JSON_PROPERTY_XCOORDINATE,
-  MessstelleDto.JSON_PROPERTY_YCOORDINATE
+  MessstelleDto.JSON_PROPERTY_YCOORDINATE,
+  MessstelleDto.JSON_PROPERTY_XCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessstelleDto {
@@ -114,11 +114,11 @@ public class MessstelleDto {
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
   private List<MessquerschnittDto> messquerschnitte;
 
-  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
-  private Double xcoordinate;
-
   public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
   private Double ycoordinate;
+
+  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
+  private Double xcoordinate;
 
   public MessstelleDto() {
   }
@@ -365,32 +365,6 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto xcoordinate(Double xcoordinate) {
-    
-    this.xcoordinate = xcoordinate;
-    return this;
-  }
-
-   /**
-   * Get xcoordinate
-   * @return xcoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getXcoordinate() {
-    return xcoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setXcoordinate(Double xcoordinate) {
-    this.xcoordinate = xcoordinate;
-  }
-
-
   public MessstelleDto ycoordinate(Double ycoordinate) {
     
     this.ycoordinate = ycoordinate;
@@ -416,6 +390,32 @@ public class MessstelleDto {
     this.ycoordinate = ycoordinate;
   }
 
+
+  public MessstelleDto xcoordinate(Double xcoordinate) {
+    
+    this.xcoordinate = xcoordinate;
+    return this;
+  }
+
+   /**
+   * Get xcoordinate
+   * @return xcoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getXcoordinate() {
+    return xcoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setXcoordinate(Double xcoordinate) {
+    this.xcoordinate = xcoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -434,13 +434,13 @@ public class MessstelleDto {
         Objects.equals(this.bemerkung, messstelleDto.bemerkung) &&
         Objects.equals(this.datumLetztePlausibleMessung, messstelleDto.datumLetztePlausibleMessung) &&
         Objects.equals(this.messquerschnitte, messstelleDto.messquerschnitte) &&
-        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate) &&
-        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate);
+        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate) &&
+        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, datumLetztePlausibleMessung, messquerschnitte, xcoordinate, ycoordinate);
+    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, datumLetztePlausibleMessung, messquerschnitte, ycoordinate, xcoordinate);
   }
 
   @Override
@@ -456,8 +456,8 @@ public class MessstelleDto {
     sb.append("    bemerkung: ").append(toIndentedString(bemerkung)).append("\n");
     sb.append("    datumLetztePlausibleMessung: ").append(toIndentedString(datumLetztePlausibleMessung)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
-    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
+    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

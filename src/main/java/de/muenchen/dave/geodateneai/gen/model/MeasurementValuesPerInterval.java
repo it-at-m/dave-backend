@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.muenchen.dave.geodateneai.gen.model.ModelLocalTime;
 import java.time.LocalTime;
-import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -50,40 +49,40 @@ public class MeasurementValuesPerInterval {
   private LocalTime uhrzeitVon;
 
   public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
-  private BigDecimal anzahlLfw;
+  private Integer anzahlLfw;
 
   public static final String JSON_PROPERTY_ANZAHL_KRAD = "anzahlKrad";
-  private BigDecimal anzahlKrad;
+  private Integer anzahlKrad;
 
   public static final String JSON_PROPERTY_ANZAHL_LKW = "anzahlLkw";
-  private BigDecimal anzahlLkw;
+  private Integer anzahlLkw;
 
   public static final String JSON_PROPERTY_ANZAHL_BUS = "anzahlBus";
-  private BigDecimal anzahlBus;
+  private Integer anzahlBus;
 
   public static final String JSON_PROPERTY_ANZAHL_RAD = "anzahlRad";
-  private BigDecimal anzahlRad;
+  private Integer anzahlRad;
 
   public static final String JSON_PROPERTY_SUMME_ALLE_PKW = "summeAllePkw";
-  private BigDecimal summeAllePkw;
+  private Integer summeAllePkw;
 
   public static final String JSON_PROPERTY_SUMME_LASTZUG = "summeLastzug";
-  private BigDecimal summeLastzug;
+  private Integer summeLastzug;
 
   public static final String JSON_PROPERTY_SUMME_GUETERVERKEHR = "summeGueterverkehr";
-  private BigDecimal summeGueterverkehr;
+  private Integer summeGueterverkehr;
 
   public static final String JSON_PROPERTY_SUMME_SCHWERVERKEHR = "summeSchwerverkehr";
-  private BigDecimal summeSchwerverkehr;
+  private Integer summeSchwerverkehr;
 
   public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR = "summeKraftfahrzeugverkehr";
-  private BigDecimal summeKraftfahrzeugverkehr;
+  private Integer summeKraftfahrzeugverkehr;
 
   public static final String JSON_PROPERTY_PROZENT_SCHWERVERKEHR = "prozentSchwerverkehr";
-  private BigDecimal prozentSchwerverkehr;
+  private Double prozentSchwerverkehr;
 
   public static final String JSON_PROPERTY_PROZENT_GUETERVERKEHR = "prozentGueterverkehr";
-  private BigDecimal prozentGueterverkehr;
+  private Double prozentGueterverkehr;
 
   public MeasurementValuesPerInterval() {
   }
@@ -114,7 +113,7 @@ public class MeasurementValuesPerInterval {
   }
 
 
-  public MeasurementValuesPerInterval anzahlLfw(BigDecimal anzahlLfw) {
+  public MeasurementValuesPerInterval anzahlLfw(Integer anzahlLfw) {
     
     this.anzahlLfw = anzahlLfw;
     return this;
@@ -128,19 +127,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_ANZAHL_LFW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getAnzahlLfw() {
+  public Integer getAnzahlLfw() {
     return anzahlLfw;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ANZAHL_LFW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setAnzahlLfw(BigDecimal anzahlLfw) {
+  public void setAnzahlLfw(Integer anzahlLfw) {
     this.anzahlLfw = anzahlLfw;
   }
 
 
-  public MeasurementValuesPerInterval anzahlKrad(BigDecimal anzahlKrad) {
+  public MeasurementValuesPerInterval anzahlKrad(Integer anzahlKrad) {
     
     this.anzahlKrad = anzahlKrad;
     return this;
@@ -154,19 +153,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_ANZAHL_KRAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getAnzahlKrad() {
+  public Integer getAnzahlKrad() {
     return anzahlKrad;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ANZAHL_KRAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setAnzahlKrad(BigDecimal anzahlKrad) {
+  public void setAnzahlKrad(Integer anzahlKrad) {
     this.anzahlKrad = anzahlKrad;
   }
 
 
-  public MeasurementValuesPerInterval anzahlLkw(BigDecimal anzahlLkw) {
+  public MeasurementValuesPerInterval anzahlLkw(Integer anzahlLkw) {
     
     this.anzahlLkw = anzahlLkw;
     return this;
@@ -180,19 +179,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_ANZAHL_LKW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getAnzahlLkw() {
+  public Integer getAnzahlLkw() {
     return anzahlLkw;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ANZAHL_LKW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setAnzahlLkw(BigDecimal anzahlLkw) {
+  public void setAnzahlLkw(Integer anzahlLkw) {
     this.anzahlLkw = anzahlLkw;
   }
 
 
-  public MeasurementValuesPerInterval anzahlBus(BigDecimal anzahlBus) {
+  public MeasurementValuesPerInterval anzahlBus(Integer anzahlBus) {
     
     this.anzahlBus = anzahlBus;
     return this;
@@ -206,19 +205,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_ANZAHL_BUS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getAnzahlBus() {
+  public Integer getAnzahlBus() {
     return anzahlBus;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ANZAHL_BUS)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setAnzahlBus(BigDecimal anzahlBus) {
+  public void setAnzahlBus(Integer anzahlBus) {
     this.anzahlBus = anzahlBus;
   }
 
 
-  public MeasurementValuesPerInterval anzahlRad(BigDecimal anzahlRad) {
+  public MeasurementValuesPerInterval anzahlRad(Integer anzahlRad) {
     
     this.anzahlRad = anzahlRad;
     return this;
@@ -232,19 +231,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_ANZAHL_RAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getAnzahlRad() {
+  public Integer getAnzahlRad() {
     return anzahlRad;
   }
 
 
   @JsonProperty(JSON_PROPERTY_ANZAHL_RAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setAnzahlRad(BigDecimal anzahlRad) {
+  public void setAnzahlRad(Integer anzahlRad) {
     this.anzahlRad = anzahlRad;
   }
 
 
-  public MeasurementValuesPerInterval summeAllePkw(BigDecimal summeAllePkw) {
+  public MeasurementValuesPerInterval summeAllePkw(Integer summeAllePkw) {
     
     this.summeAllePkw = summeAllePkw;
     return this;
@@ -258,19 +257,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_SUMME_ALLE_PKW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getSummeAllePkw() {
+  public Integer getSummeAllePkw() {
     return summeAllePkw;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SUMME_ALLE_PKW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSummeAllePkw(BigDecimal summeAllePkw) {
+  public void setSummeAllePkw(Integer summeAllePkw) {
     this.summeAllePkw = summeAllePkw;
   }
 
 
-  public MeasurementValuesPerInterval summeLastzug(BigDecimal summeLastzug) {
+  public MeasurementValuesPerInterval summeLastzug(Integer summeLastzug) {
     
     this.summeLastzug = summeLastzug;
     return this;
@@ -284,19 +283,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_SUMME_LASTZUG)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getSummeLastzug() {
+  public Integer getSummeLastzug() {
     return summeLastzug;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SUMME_LASTZUG)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSummeLastzug(BigDecimal summeLastzug) {
+  public void setSummeLastzug(Integer summeLastzug) {
     this.summeLastzug = summeLastzug;
   }
 
 
-  public MeasurementValuesPerInterval summeGueterverkehr(BigDecimal summeGueterverkehr) {
+  public MeasurementValuesPerInterval summeGueterverkehr(Integer summeGueterverkehr) {
     
     this.summeGueterverkehr = summeGueterverkehr;
     return this;
@@ -310,19 +309,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_SUMME_GUETERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getSummeGueterverkehr() {
+  public Integer getSummeGueterverkehr() {
     return summeGueterverkehr;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SUMME_GUETERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSummeGueterverkehr(BigDecimal summeGueterverkehr) {
+  public void setSummeGueterverkehr(Integer summeGueterverkehr) {
     this.summeGueterverkehr = summeGueterverkehr;
   }
 
 
-  public MeasurementValuesPerInterval summeSchwerverkehr(BigDecimal summeSchwerverkehr) {
+  public MeasurementValuesPerInterval summeSchwerverkehr(Integer summeSchwerverkehr) {
     
     this.summeSchwerverkehr = summeSchwerverkehr;
     return this;
@@ -336,19 +335,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_SUMME_SCHWERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getSummeSchwerverkehr() {
+  public Integer getSummeSchwerverkehr() {
     return summeSchwerverkehr;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SUMME_SCHWERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSummeSchwerverkehr(BigDecimal summeSchwerverkehr) {
+  public void setSummeSchwerverkehr(Integer summeSchwerverkehr) {
     this.summeSchwerverkehr = summeSchwerverkehr;
   }
 
 
-  public MeasurementValuesPerInterval summeKraftfahrzeugverkehr(BigDecimal summeKraftfahrzeugverkehr) {
+  public MeasurementValuesPerInterval summeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
     
     this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
     return this;
@@ -362,19 +361,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getSummeKraftfahrzeugverkehr() {
+  public Integer getSummeKraftfahrzeugverkehr() {
     return summeKraftfahrzeugverkehr;
   }
 
 
   @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setSummeKraftfahrzeugverkehr(BigDecimal summeKraftfahrzeugverkehr) {
+  public void setSummeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
     this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
   }
 
 
-  public MeasurementValuesPerInterval prozentSchwerverkehr(BigDecimal prozentSchwerverkehr) {
+  public MeasurementValuesPerInterval prozentSchwerverkehr(Double prozentSchwerverkehr) {
     
     this.prozentSchwerverkehr = prozentSchwerverkehr;
     return this;
@@ -388,19 +387,19 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_PROZENT_SCHWERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getProzentSchwerverkehr() {
+  public Double getProzentSchwerverkehr() {
     return prozentSchwerverkehr;
   }
 
 
   @JsonProperty(JSON_PROPERTY_PROZENT_SCHWERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProzentSchwerverkehr(BigDecimal prozentSchwerverkehr) {
+  public void setProzentSchwerverkehr(Double prozentSchwerverkehr) {
     this.prozentSchwerverkehr = prozentSchwerverkehr;
   }
 
 
-  public MeasurementValuesPerInterval prozentGueterverkehr(BigDecimal prozentGueterverkehr) {
+  public MeasurementValuesPerInterval prozentGueterverkehr(Double prozentGueterverkehr) {
     
     this.prozentGueterverkehr = prozentGueterverkehr;
     return this;
@@ -414,14 +413,14 @@ public class MeasurementValuesPerInterval {
   @JsonProperty(JSON_PROPERTY_PROZENT_GUETERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public BigDecimal getProzentGueterverkehr() {
+  public Double getProzentGueterverkehr() {
     return prozentGueterverkehr;
   }
 
 
   @JsonProperty(JSON_PROPERTY_PROZENT_GUETERVERKEHR)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setProzentGueterverkehr(BigDecimal prozentGueterverkehr) {
+  public void setProzentGueterverkehr(Double prozentGueterverkehr) {
     this.prozentGueterverkehr = prozentGueterverkehr;
   }
 
