@@ -25,6 +25,9 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GanglinieService {
 
+    private static final Integer ZERO = 0;
+    private static final Integer ONE = 1;
+
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<MeasurementValuesPerInterval> intervalle) {
         log.debug("#ladeGanglinie");
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
@@ -147,13 +150,13 @@ public class GanglinieService {
     }
 
     protected static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(0);
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ZERO);
     }
 
     protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(1);
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ONE);
     }
 
     /**
