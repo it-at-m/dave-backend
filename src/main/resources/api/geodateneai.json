@@ -363,10 +363,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -667,24 +667,15 @@
             "type": "integer",
             "format": "int32"
           },
-          "fahrzeugKlassen": {
-            "type": "string"
-          },
-          "detektierteVerkehrsarten": {
-            "type": "string"
-          },
-          "hersteller": {
-            "type": "string"
-          },
           "anzahlDetektoren": {
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -724,6 +715,15 @@
           "bemerkung": {
             "type": "string"
           },
+          "fahrzeugKlassen": {
+            "type": "string"
+          },
+          "detektierteVerkehrsarten": {
+            "type": "string"
+          },
+          "hersteller": {
+            "type": "string"
+          },
           "datumLetztePlausibleMessung": {
             "type": "string",
             "format": "date"
@@ -734,11 +734,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
