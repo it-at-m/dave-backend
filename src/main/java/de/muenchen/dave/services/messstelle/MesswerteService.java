@@ -28,6 +28,8 @@ public class MesswerteService {
 
     private final GanglinieService ganglinieService;
 
+    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
+
     public LadeProcessedZaehldatenDTO ladeMesswerte(final String messstelleId) {
         log.debug("#ladeMesswerte {}", messstelleId);
         final Set<String> messquerschnittNummern = messstelleService.getMessquerschnittNummern(messstelleId);
@@ -50,7 +52,7 @@ public class MesswerteService {
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
-        final AverageMeasurementValuesPerIntervalResponse body = Objects.requireNonNull(response.block()).getBody();
+        final AverageMeasurementValuesPerIntervalResponse body = Objects.requireNonNull(response.block(), ERROR_MESSAGE).getBody();
         if (ObjectUtils.isEmpty(body) || CollectionUtils.isEmpty(body.getIntervals())) {
             throw new ResourceNotFoundException("Die Intervalle konnten nicht geladen werden");
         }
