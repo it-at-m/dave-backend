@@ -41,6 +41,7 @@ class MessstelleMapperTests {
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
+        expected.setKommentar(bean.getKommentar());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
