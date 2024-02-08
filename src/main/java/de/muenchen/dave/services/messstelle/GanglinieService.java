@@ -25,6 +25,10 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GanglinieService {
 
+    private static final Integer ZERO = 0;
+    private static final Integer ONE = 1;
+
+    // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<MeasurementValuesPerInterval> intervalle) {
         log.debug("#ladeGanglinie");
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
@@ -84,9 +88,9 @@ public class GanglinieService {
                     setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeSchwerverkehr());
 
                     setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
-                    seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(intervall.getProzentSchwerverkehr());
+                    seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
                     setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, intervall.getProzentSchwerverkehr());
+                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
 
                     setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
                     seriesEntries.getSeriesEntryGv().getYAxisData().add(intervall.getSummeGueterverkehr());
@@ -94,9 +98,9 @@ public class GanglinieService {
                     setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeGueterverkehr());
 
                     setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
-                    seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(intervall.getProzentGueterverkehr());
+                    seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
                     setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
-                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, intervall.getProzentGueterverkehr());
+                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
 
                     ladeZaehldatenStepline.setXAxisDataFirstChart(
                             ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
@@ -121,13 +125,6 @@ public class GanglinieService {
                         ROUNDING_VALUE));
     }
 
-    protected static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final BigDecimal value) {
-        setRangeMaxRoundedToHundredInZaehldatenStepline(
-                ladeZaehldatenStepline,
-                ZaehldatenProcessingUtil.getZeroIfNull(value).intValue());
-    }
-
     protected static void setRangeMaxPercentInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final BigDecimal value) {
         final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
@@ -147,13 +144,13 @@ public class GanglinieService {
     }
 
     protected static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(0);
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ZERO);
     }
 
     protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(0);
-        stepLineSeriesEntry.setYAxisIndex(1);
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ONE);
     }
 
     /**
@@ -165,52 +162,52 @@ public class GanglinieService {
     @Setter
     private static class SeriesEntries {
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryPkw;
+        private StepLineSeriesEntryIntegerDTO seriesEntryPkw;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryLkw;
+        private StepLineSeriesEntryIntegerDTO seriesEntryLkw;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryLfw;
+        private StepLineSeriesEntryIntegerDTO seriesEntryLfw;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryLz;
+        private StepLineSeriesEntryIntegerDTO seriesEntryLz;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryBus;
+        private StepLineSeriesEntryIntegerDTO seriesEntryBus;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryKrad;
+        private StepLineSeriesEntryIntegerDTO seriesEntryKrad;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryRad;
+        private StepLineSeriesEntryIntegerDTO seriesEntryRad;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryKfz;
+        private StepLineSeriesEntryIntegerDTO seriesEntryKfz;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntrySv;
+        private StepLineSeriesEntryIntegerDTO seriesEntrySv;
 
         private StepLineSeriesEntryBigDecimalDTO seriesEntrySvProzent;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryGv;
+        private StepLineSeriesEntryIntegerDTO seriesEntryGv;
 
         private StepLineSeriesEntryBigDecimalDTO seriesEntryGvProzent;
 
         public SeriesEntries() {
-            seriesEntryPkw = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryPkw = new StepLineSeriesEntryIntegerDTO();
             seriesEntryPkw.setName(ChartLegendUtil.PKW);
-            seriesEntryLkw = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryLkw = new StepLineSeriesEntryIntegerDTO();
             seriesEntryLkw.setName(ChartLegendUtil.LKW);
-            seriesEntryLfw = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryLfw = new StepLineSeriesEntryIntegerDTO();
             seriesEntryLfw.setName(ChartLegendUtil.LFW);
-            seriesEntryLz = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryLz = new StepLineSeriesEntryIntegerDTO();
             seriesEntryLz.setName(ChartLegendUtil.LASTZUEGE);
-            seriesEntryBus = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryBus = new StepLineSeriesEntryIntegerDTO();
             seriesEntryBus.setName(ChartLegendUtil.BUSSE);
-            seriesEntryKrad = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryKrad = new StepLineSeriesEntryIntegerDTO();
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
-            seriesEntryRad = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryRad = new StepLineSeriesEntryIntegerDTO();
             seriesEntryRad.setName(ChartLegendUtil.RAD);
-            seriesEntryKfz = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryKfz = new StepLineSeriesEntryIntegerDTO();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
-            seriesEntrySv = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntrySv = new StepLineSeriesEntryIntegerDTO();
             seriesEntrySv.setName(ChartLegendUtil.SCHWERVERKEHR);
             seriesEntrySvProzent = new StepLineSeriesEntryBigDecimalDTO();
             seriesEntrySvProzent.setName(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-            seriesEntryGv = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryGv = new StepLineSeriesEntryIntegerDTO();
             seriesEntryGv.setName(ChartLegendUtil.GUETERVERKEHR);
             seriesEntryGvProzent = new StepLineSeriesEntryBigDecimalDTO();
             seriesEntryGvProzent.setName(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);

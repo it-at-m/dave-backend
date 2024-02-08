@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -209,22 +209,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -363,10 +363,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
@@ -596,40 +596,52 @@
             "$ref": "#/components/schemas/LocalTime"
           },
           "anzahlLfw": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "anzahlKrad": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "anzahlLkw": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "anzahlBus": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "anzahlRad": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "summeAllePkw": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "summeLastzug": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "summeGueterverkehr": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "summeSchwerverkehr": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "summeKraftfahrzeugverkehr": {
-            "type": "number"
+            "type": "integer",
+            "format": "int32"
           },
           "prozentSchwerverkehr": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
           },
           "prozentGueterverkehr": {
-            "type": "number"
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -668,11 +680,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -722,11 +734,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }

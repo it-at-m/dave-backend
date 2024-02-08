@@ -8,7 +8,6 @@ import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,8 @@ public class MesswerteService {
 
     private final GanglinieService ganglinieService;
     private final HeatmapService heatmapService;
+
+    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
     public LadeProcessedZaehldatenDTO ladeMesswerte(final String messstelleId) {
         log.debug("#ladeMesswerte {}", messstelleId);
@@ -52,12 +53,20 @@ public class MesswerteService {
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
-        final AverageMeasurementValuesPerIntervalResponse body = Objects.requireNonNull(response.block()).getBody();
-        if (ObjectUtils.isEmpty(body) || CollectionUtils.isEmpty(body.getIntervals())) {
-            throw new ResourceNotFoundException("Die Intervalle konnten nicht geladen werden");
+        final ResponseEntity<AverageMeasurementValuesPerIntervalResponse> block = response.block();
+        if (ObjectUtils.isEmpty(block)) {
+            log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
+            throw new ResourceNotFoundException(ERROR_MESSAGE);
+        }
+        final AverageMeasurementValuesPerIntervalResponse body = block.getBody();
+        if (ObjectUtils.isEmpty(body)) {
+            log.error("Body der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
+            throw new ResourceNotFoundException(ERROR_MESSAGE);
+        }
+        if (CollectionUtils.isEmpty(body.getIntervals())) {
+            log.error("Body der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> enthält keine Messwerte.");
+            throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
         return body;
-
     }
-
 }
