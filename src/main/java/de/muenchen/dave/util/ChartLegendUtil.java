@@ -42,6 +42,7 @@ public final class ChartLegendUtil {
     public static final String PKW_HEATMAP = "Personenkraftwagen";
 
     public static final String LKW_HEATMAP = "Lastkraftwagen";
+    public static final String LFW_HEATMAP = "Lieferwagen";
 
     public static final String LASTZUEGE_HEATMAP = "Lastzüge";
 
