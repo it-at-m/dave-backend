@@ -50,8 +50,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -88,8 +88,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -102,8 +102,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return ResponseEntity&lt;NichtPlausibleTageDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -116,8 +116,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API

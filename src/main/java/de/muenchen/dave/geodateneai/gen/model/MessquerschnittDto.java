@@ -33,9 +33,12 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessquerschnittDto.JSON_PROPERTY_LAGE_MESSQUERSCHNITT,
   MessquerschnittDto.JSON_PROPERTY_FAHRTRICHTUNG,
   MessquerschnittDto.JSON_PROPERTY_ANZAHL_FAHRSPUREN,
+  MessquerschnittDto.JSON_PROPERTY_FAHRZEUG_KLASSEN,
+  MessquerschnittDto.JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN,
+  MessquerschnittDto.JSON_PROPERTY_HERSTELLER,
   MessquerschnittDto.JSON_PROPERTY_ANZAHL_DETEKTOREN,
-  MessquerschnittDto.JSON_PROPERTY_XCOORDINATE,
-  MessquerschnittDto.JSON_PROPERTY_YCOORDINATE
+  MessquerschnittDto.JSON_PROPERTY_YCOORDINATE,
+  MessquerschnittDto.JSON_PROPERTY_XCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessquerschnittDto {
@@ -57,14 +60,23 @@ public class MessquerschnittDto {
   public static final String JSON_PROPERTY_ANZAHL_FAHRSPUREN = "anzahlFahrspuren";
   private Integer anzahlFahrspuren;
 
+  public static final String JSON_PROPERTY_FAHRZEUG_KLASSEN = "fahrzeugKlassen";
+  private String fahrzeugKlassen;
+
+  public static final String JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN = "detektierteVerkehrsarten";
+  private String detektierteVerkehrsarten;
+
+  public static final String JSON_PROPERTY_HERSTELLER = "hersteller";
+  private String hersteller;
+
   public static final String JSON_PROPERTY_ANZAHL_DETEKTOREN = "anzahlDetektoren";
   private Integer anzahlDetektoren;
 
-  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
-  private Double xcoordinate;
-
   public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
   private Double ycoordinate;
+
+  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
+  private Double xcoordinate;
 
   public MessquerschnittDto() {
   }
@@ -225,6 +237,84 @@ public class MessquerschnittDto {
   }
 
 
+  public MessquerschnittDto fahrzeugKlassen(String fahrzeugKlassen) {
+    
+    this.fahrzeugKlassen = fahrzeugKlassen;
+    return this;
+  }
+
+   /**
+   * Get fahrzeugKlassen
+   * @return fahrzeugKlassen
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_FAHRZEUG_KLASSEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getFahrzeugKlassen() {
+    return fahrzeugKlassen;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_FAHRZEUG_KLASSEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setFahrzeugKlassen(String fahrzeugKlassen) {
+    this.fahrzeugKlassen = fahrzeugKlassen;
+  }
+
+
+  public MessquerschnittDto detektierteVerkehrsarten(String detektierteVerkehrsarten) {
+    
+    this.detektierteVerkehrsarten = detektierteVerkehrsarten;
+    return this;
+  }
+
+   /**
+   * Get detektierteVerkehrsarten
+   * @return detektierteVerkehrsarten
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getDetektierteVerkehrsarten() {
+    return detektierteVerkehrsarten;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setDetektierteVerkehrsarten(String detektierteVerkehrsarten) {
+    this.detektierteVerkehrsarten = detektierteVerkehrsarten;
+  }
+
+
+  public MessquerschnittDto hersteller(String hersteller) {
+    
+    this.hersteller = hersteller;
+    return this;
+  }
+
+   /**
+   * Get hersteller
+   * @return hersteller
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_HERSTELLER)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public String getHersteller() {
+    return hersteller;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_HERSTELLER)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setHersteller(String hersteller) {
+    this.hersteller = hersteller;
+  }
+
+
   public MessquerschnittDto anzahlDetektoren(Integer anzahlDetektoren) {
     
     this.anzahlDetektoren = anzahlDetektoren;
@@ -248,32 +338,6 @@ public class MessquerschnittDto {
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setAnzahlDetektoren(Integer anzahlDetektoren) {
     this.anzahlDetektoren = anzahlDetektoren;
-  }
-
-
-  public MessquerschnittDto xcoordinate(Double xcoordinate) {
-    
-    this.xcoordinate = xcoordinate;
-    return this;
-  }
-
-   /**
-   * Get xcoordinate
-   * @return xcoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getXcoordinate() {
-    return xcoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setXcoordinate(Double xcoordinate) {
-    this.xcoordinate = xcoordinate;
   }
 
 
@@ -302,6 +366,32 @@ public class MessquerschnittDto {
     this.ycoordinate = ycoordinate;
   }
 
+
+  public MessquerschnittDto xcoordinate(Double xcoordinate) {
+    
+    this.xcoordinate = xcoordinate;
+    return this;
+  }
+
+   /**
+   * Get xcoordinate
+   * @return xcoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getXcoordinate() {
+    return xcoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setXcoordinate(Double xcoordinate) {
+    this.xcoordinate = xcoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -317,14 +407,17 @@ public class MessquerschnittDto {
         Objects.equals(this.lageMessquerschnitt, messquerschnittDto.lageMessquerschnitt) &&
         Objects.equals(this.fahrtrichtung, messquerschnittDto.fahrtrichtung) &&
         Objects.equals(this.anzahlFahrspuren, messquerschnittDto.anzahlFahrspuren) &&
+        Objects.equals(this.fahrzeugKlassen, messquerschnittDto.fahrzeugKlassen) &&
+        Objects.equals(this.detektierteVerkehrsarten, messquerschnittDto.detektierteVerkehrsarten) &&
+        Objects.equals(this.hersteller, messquerschnittDto.hersteller) &&
         Objects.equals(this.anzahlDetektoren, messquerschnittDto.anzahlDetektoren) &&
-        Objects.equals(this.xcoordinate, messquerschnittDto.xcoordinate) &&
-        Objects.equals(this.ycoordinate, messquerschnittDto.ycoordinate);
+        Objects.equals(this.ycoordinate, messquerschnittDto.ycoordinate) &&
+        Objects.equals(this.xcoordinate, messquerschnittDto.xcoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mqId, mstId, strassenname, lageMessquerschnitt, fahrtrichtung, anzahlFahrspuren, anzahlDetektoren, xcoordinate, ycoordinate);
+    return Objects.hash(mqId, mstId, strassenname, lageMessquerschnitt, fahrtrichtung, anzahlFahrspuren, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, anzahlDetektoren, ycoordinate, xcoordinate);
   }
 
   @Override
@@ -337,9 +430,12 @@ public class MessquerschnittDto {
     sb.append("    lageMessquerschnitt: ").append(toIndentedString(lageMessquerschnitt)).append("\n");
     sb.append("    fahrtrichtung: ").append(toIndentedString(fahrtrichtung)).append("\n");
     sb.append("    anzahlFahrspuren: ").append(toIndentedString(anzahlFahrspuren)).append("\n");
+    sb.append("    fahrzeugKlassen: ").append(toIndentedString(fahrzeugKlassen)).append("\n");
+    sb.append("    detektierteVerkehrsarten: ").append(toIndentedString(detektierteVerkehrsarten)).append("\n");
+    sb.append("    hersteller: ").append(toIndentedString(hersteller)).append("\n");
     sb.append("    anzahlDetektoren: ").append(toIndentedString(anzahlDetektoren)).append("\n");
-    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
+    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

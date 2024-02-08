@@ -39,13 +39,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessstelleDto.JSON_PROPERTY_ABBAUDATUM,
   MessstelleDto.JSON_PROPERTY_STADTBEZIRK_NUMMER,
   MessstelleDto.JSON_PROPERTY_BEMERKUNG,
-  MessstelleDto.JSON_PROPERTY_FAHRZEUG_KLASSEN,
-  MessstelleDto.JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN,
-  MessstelleDto.JSON_PROPERTY_HERSTELLER,
   MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG,
   MessstelleDto.JSON_PROPERTY_MESSQUERSCHNITTE,
-  MessstelleDto.JSON_PROPERTY_XCOORDINATE,
-  MessstelleDto.JSON_PROPERTY_YCOORDINATE
+  MessstelleDto.JSON_PROPERTY_YCOORDINATE,
+  MessstelleDto.JSON_PROPERTY_XCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessstelleDto {
@@ -111,26 +108,17 @@ public class MessstelleDto {
   public static final String JSON_PROPERTY_BEMERKUNG = "bemerkung";
   private String bemerkung;
 
-  public static final String JSON_PROPERTY_FAHRZEUG_KLASSEN = "fahrzeugKlassen";
-  private String fahrzeugKlassen;
-
-  public static final String JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN = "detektierteVerkehrsarten";
-  private String detektierteVerkehrsarten;
-
-  public static final String JSON_PROPERTY_HERSTELLER = "hersteller";
-  private String hersteller;
-
   public static final String JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG = "datumLetztePlausibleMessung";
   private LocalDate datumLetztePlausibleMessung;
 
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
   private List<MessquerschnittDto> messquerschnitte;
 
-  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
-  private Double xcoordinate;
-
   public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
   private Double ycoordinate;
+
+  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
+  private Double xcoordinate;
 
   public MessstelleDto() {
   }
@@ -317,84 +305,6 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto fahrzeugKlassen(String fahrzeugKlassen) {
-    
-    this.fahrzeugKlassen = fahrzeugKlassen;
-    return this;
-  }
-
-   /**
-   * Get fahrzeugKlassen
-   * @return fahrzeugKlassen
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_FAHRZEUG_KLASSEN)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public String getFahrzeugKlassen() {
-    return fahrzeugKlassen;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_FAHRZEUG_KLASSEN)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setFahrzeugKlassen(String fahrzeugKlassen) {
-    this.fahrzeugKlassen = fahrzeugKlassen;
-  }
-
-
-  public MessstelleDto detektierteVerkehrsarten(String detektierteVerkehrsarten) {
-    
-    this.detektierteVerkehrsarten = detektierteVerkehrsarten;
-    return this;
-  }
-
-   /**
-   * Get detektierteVerkehrsarten
-   * @return detektierteVerkehrsarten
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public String getDetektierteVerkehrsarten() {
-    return detektierteVerkehrsarten;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_DETEKTIERTE_VERKEHRSARTEN)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDetektierteVerkehrsarten(String detektierteVerkehrsarten) {
-    this.detektierteVerkehrsarten = detektierteVerkehrsarten;
-  }
-
-
-  public MessstelleDto hersteller(String hersteller) {
-    
-    this.hersteller = hersteller;
-    return this;
-  }
-
-   /**
-   * Get hersteller
-   * @return hersteller
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_HERSTELLER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public String getHersteller() {
-    return hersteller;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_HERSTELLER)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setHersteller(String hersteller) {
-    this.hersteller = hersteller;
-  }
-
-
   public MessstelleDto datumLetztePlausibleMessung(LocalDate datumLetztePlausibleMessung) {
     
     this.datumLetztePlausibleMessung = datumLetztePlausibleMessung;
@@ -455,32 +365,6 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto xcoordinate(Double xcoordinate) {
-    
-    this.xcoordinate = xcoordinate;
-    return this;
-  }
-
-   /**
-   * Get xcoordinate
-   * @return xcoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getXcoordinate() {
-    return xcoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setXcoordinate(Double xcoordinate) {
-    this.xcoordinate = xcoordinate;
-  }
-
-
   public MessstelleDto ycoordinate(Double ycoordinate) {
     
     this.ycoordinate = ycoordinate;
@@ -506,6 +390,32 @@ public class MessstelleDto {
     this.ycoordinate = ycoordinate;
   }
 
+
+  public MessstelleDto xcoordinate(Double xcoordinate) {
+    
+    this.xcoordinate = xcoordinate;
+    return this;
+  }
+
+   /**
+   * Get xcoordinate
+   * @return xcoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getXcoordinate() {
+    return xcoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setXcoordinate(Double xcoordinate) {
+    this.xcoordinate = xcoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -522,18 +432,15 @@ public class MessstelleDto {
         Objects.equals(this.abbaudatum, messstelleDto.abbaudatum) &&
         Objects.equals(this.stadtbezirkNummer, messstelleDto.stadtbezirkNummer) &&
         Objects.equals(this.bemerkung, messstelleDto.bemerkung) &&
-        Objects.equals(this.fahrzeugKlassen, messstelleDto.fahrzeugKlassen) &&
-        Objects.equals(this.detektierteVerkehrsarten, messstelleDto.detektierteVerkehrsarten) &&
-        Objects.equals(this.hersteller, messstelleDto.hersteller) &&
         Objects.equals(this.datumLetztePlausibleMessung, messstelleDto.datumLetztePlausibleMessung) &&
         Objects.equals(this.messquerschnitte, messstelleDto.messquerschnitte) &&
-        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate) &&
-        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate);
+        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate) &&
+        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, datumLetztePlausibleMessung, messquerschnitte, xcoordinate, ycoordinate);
+    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, datumLetztePlausibleMessung, messquerschnitte, ycoordinate, xcoordinate);
   }
 
   @Override
@@ -547,13 +454,10 @@ public class MessstelleDto {
     sb.append("    abbaudatum: ").append(toIndentedString(abbaudatum)).append("\n");
     sb.append("    stadtbezirkNummer: ").append(toIndentedString(stadtbezirkNummer)).append("\n");
     sb.append("    bemerkung: ").append(toIndentedString(bemerkung)).append("\n");
-    sb.append("    fahrzeugKlassen: ").append(toIndentedString(fahrzeugKlassen)).append("\n");
-    sb.append("    detektierteVerkehrsarten: ").append(toIndentedString(detektierteVerkehrsarten)).append("\n");
-    sb.append("    hersteller: ").append(toIndentedString(hersteller)).append("\n");
     sb.append("    datumLetztePlausibleMessung: ").append(toIndentedString(datumLetztePlausibleMessung)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
-    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
+    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
