@@ -7,7 +7,9 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -54,5 +56,12 @@ public class MessstelleService {
         log.debug("#getAllMessstellenForOverview");
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen);
+    }
+
+    public Set<String> getMessquerschnittNummern(final String messstelleId) {
+        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final Set<String> result = new HashSet<>();
+        messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
+        return result;
     }
 }

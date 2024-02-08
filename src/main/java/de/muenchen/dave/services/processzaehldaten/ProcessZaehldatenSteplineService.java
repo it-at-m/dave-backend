@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProcessZaehldatenSteplineService {
 
+    // Refactoring: Synergieeffekte mit GanglinienService nutzen
+
     private static final Integer ROUNDING_VALUE = 20;
 
     private static final Integer ROUNDING_VALUE_PERCENT = 2;

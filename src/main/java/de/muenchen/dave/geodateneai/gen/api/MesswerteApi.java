@@ -2,8 +2,8 @@ package de.muenchen.dave.geodateneai.gen.api;
 
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteIntervallMessquerschnittResponse;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteOfMessquerschnittRequest;
+import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
+import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
 
@@ -29,15 +29,15 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class MesswerteMessquerschnittApi {
+public class MesswerteApi {
     private ApiClient apiClient;
 
-    public MesswerteMessquerschnittApi() {
+    public MesswerteApi() {
         this(new ApiClient());
     }
 
     @Autowired
-    public MesswerteMessquerschnittApi(ApiClient apiClient) {
+    public MesswerteApi(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
@@ -50,19 +50,19 @@ public class MesswerteMessquerschnittApi {
     }
 
     /**
-     * Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.
+     * Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.
      * 
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
-     * @return GetMesswerteIntervallMessquerschnittResponse
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
+     * @return AverageMeasurementValuesPerIntervalResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec getMesswerteIntervallRequestCreation(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        Object postBody = getMesswerteOfMessquerschnittRequest;
-        // verify the required parameter 'getMesswerteOfMessquerschnittRequest' is set
-        if (getMesswerteOfMessquerschnittRequest == null) {
-            throw new WebClientResponseException("Missing the required parameter 'getMesswerteOfMessquerschnittRequest' when calling getMesswerteIntervall", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+    private ResponseSpec getAverageMeasurementValuesPerIntervalRequestCreation(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        Object postBody = getMeasurementValuesRequest;
+        // verify the required parameter 'getMeasurementValuesRequest' is set
+        if (getMeasurementValuesRequest == null) {
+            throw new WebClientResponseException("Missing the required parameter 'getMeasurementValuesRequest' when calling getAverageMeasurementValuesPerInterval", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
         }
         // create path and map variables
         final Map<String, Object> pathParams = new HashMap<String, Object>();
@@ -83,64 +83,64 @@ public class MesswerteMessquerschnittApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse>() {};
-        return apiClient.invokeAPI("/messwerte/messquerschnitt/intervall", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+        return apiClient.invokeAPI("/messwerte/average-per-interval", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
-     * Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.
+     * Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.
      * 
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
-     * @return GetMesswerteIntervallMessquerschnittResponse
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
+     * @return AverageMeasurementValuesPerIntervalResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<GetMesswerteIntervallMessquerschnittResponse> getMesswerteIntervall(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse>() {};
-        return getMesswerteIntervallRequestCreation(getMesswerteOfMessquerschnittRequest).bodyToMono(localVarReturnType);
+    public Mono<AverageMeasurementValuesPerIntervalResponse> getAverageMeasurementValuesPerInterval(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+        return getAverageMeasurementValuesPerIntervalRequestCreation(getMeasurementValuesRequest).bodyToMono(localVarReturnType);
     }
 
     /**
-     * Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.
+     * Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.
      * 
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
-     * @return ResponseEntity&lt;GetMesswerteIntervallMessquerschnittResponse&gt;
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
+     * @return ResponseEntity&lt;AverageMeasurementValuesPerIntervalResponse&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<GetMesswerteIntervallMessquerschnittResponse>> getMesswerteIntervallWithHttpInfo(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteIntervallMessquerschnittResponse>() {};
-        return getMesswerteIntervallRequestCreation(getMesswerteOfMessquerschnittRequest).toEntity(localVarReturnType);
+    public Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> getAverageMeasurementValuesPerIntervalWithHttpInfo(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+        return getAverageMeasurementValuesPerIntervalRequestCreation(getMeasurementValuesRequest).toEntity(localVarReturnType);
     }
 
     /**
-     * Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.
+     * Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.
      * 
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec getMesswerteIntervallWithResponseSpec(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        return getMesswerteIntervallRequestCreation(getMesswerteOfMessquerschnittRequest);
+    public ResponseSpec getAverageMeasurementValuesPerIntervalWithResponseSpec(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        return getAverageMeasurementValuesPerIntervalRequestCreation(getMeasurementValuesRequest);
     }
     /**
      * Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.
      * 
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
      * @return GetMesswerteTagesaggregatMessquerschnittResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec getMesswerteTagesaggregatRequestCreation(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        Object postBody = getMesswerteOfMessquerschnittRequest;
-        // verify the required parameter 'getMesswerteOfMessquerschnittRequest' is set
-        if (getMesswerteOfMessquerschnittRequest == null) {
-            throw new WebClientResponseException("Missing the required parameter 'getMesswerteOfMessquerschnittRequest' when calling getMesswerteTagesaggregat", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+    private ResponseSpec getMesswerteTagesaggregatRequestCreation(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        Object postBody = getMeasurementValuesRequest;
+        // verify the required parameter 'getMeasurementValuesRequest' is set
+        if (getMeasurementValuesRequest == null) {
+            throw new WebClientResponseException("Missing the required parameter 'getMeasurementValuesRequest' when calling getMesswerteTagesaggregat", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
         }
         // create path and map variables
         final Map<String, Object> pathParams = new HashMap<String, Object>();
@@ -162,7 +162,7 @@ public class MesswerteMessquerschnittApi {
         String[] localVarAuthNames = new String[] {  };
 
         ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
-        return apiClient.invokeAPI("/messwerte/messquerschnitt/tagesaggregat", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        return apiClient.invokeAPI("/messwerte/tagesaggregat", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
@@ -170,13 +170,13 @@ public class MesswerteMessquerschnittApi {
      * 
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
      * @return GetMesswerteTagesaggregatMessquerschnittResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<GetMesswerteTagesaggregatMessquerschnittResponse> getMesswerteTagesaggregat(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
+    public Mono<GetMesswerteTagesaggregatMessquerschnittResponse> getMesswerteTagesaggregat(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
         ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
-        return getMesswerteTagesaggregatRequestCreation(getMesswerteOfMessquerschnittRequest).bodyToMono(localVarReturnType);
+        return getMesswerteTagesaggregatRequestCreation(getMeasurementValuesRequest).bodyToMono(localVarReturnType);
     }
 
     /**
@@ -184,13 +184,13 @@ public class MesswerteMessquerschnittApi {
      * 
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
      * @return ResponseEntity&lt;GetMesswerteTagesaggregatMessquerschnittResponse&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> getMesswerteTagesaggregatWithHttpInfo(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
+    public Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> getMesswerteTagesaggregatWithHttpInfo(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
         ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
-        return getMesswerteTagesaggregatRequestCreation(getMesswerteOfMessquerschnittRequest).toEntity(localVarReturnType);
+        return getMesswerteTagesaggregatRequestCreation(getMeasurementValuesRequest).toEntity(localVarReturnType);
     }
 
     /**
@@ -198,11 +198,11 @@ public class MesswerteMessquerschnittApi {
      * 
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
-     * @param getMesswerteOfMessquerschnittRequest The getMesswerteOfMessquerschnittRequest parameter
+     * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec getMesswerteTagesaggregatWithResponseSpec(GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest) throws WebClientResponseException {
-        return getMesswerteTagesaggregatRequestCreation(getMesswerteOfMessquerschnittRequest);
+    public ResponseSpec getMesswerteTagesaggregatWithResponseSpec(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        return getMesswerteTagesaggregatRequestCreation(getMeasurementValuesRequest);
     }
 }
