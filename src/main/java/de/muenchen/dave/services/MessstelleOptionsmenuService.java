@@ -23,7 +23,6 @@ public class MessstelleOptionsmenuService {
         return messstelleOptionsmenuMapper.requestToResponse(eaiRequestResult);
     }
 
-
     // TODO Tagestyp als enum oder string? Unterschied zwischen EAI und Backend Response, 2 Dtos notwendig, mapping?
     public ChosenTagesTypValidDTO isTagesTypValid(String startDate, String endDate, String tagesTyp) {
         return Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(startDate, endDate, tagesTyp).block()).getBody();
