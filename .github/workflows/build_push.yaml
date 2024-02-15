@@ -49,6 +49,36 @@ jobs:
           images: ${{ env.REGISTRY }}/gislab-augsburg/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=ls1
+      
+      - name: Install Java and Maven
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Set up Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Clean Maven Project Version
+        id: set-version
+        run: |
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Current version: $current_version"
+          new_version=$(echo $current_version | sed 's/-SNAPSHOT//')
+          echo "New version: $new_version"
+          mvn -B versions:set -DnewVersion=$new_version
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add pom.xml
+          git commit -m "Bump main version to $new_version"
+          git push
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+
+      - name: Build with Maven
+        run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -57,4 +87,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-        
+          
