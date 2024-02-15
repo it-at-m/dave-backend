@@ -395,6 +395,7 @@ public class SucheService {
                     + StringUtils.SPACE
                     + zaehlstelle.getLetzteZaehlungJahr();
 
+            // TODO auslagern in Mapper
             final ZaehlstelleKarteDTO zaehlstelleKarteDTO = new ZaehlstelleKarteDTO();
             zaehlstelleKarteDTO.setId(zaehlstelle.getId());
             zaehlstelleKarteDTO.setLatitude(zaehlstelle.getPunkt().getLat());
@@ -437,6 +438,7 @@ public class SucheService {
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
 
         for (final Messstelle messstelle : messstellen) {
+            // TODO auslagern in Mapper
             final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
             erhebungsstelleKarteDTO.setId(messstelle.getId());
             erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
@@ -444,6 +446,7 @@ public class SucheService {
             erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
             erhebungsstelleKarteDTO.setType("messstelle");
             erhebungsstelleKarteDTO.setStatus(messstelle.getStatus());
+            erhebungsstelleKarteDTO.setSichtbarDatenportal(messstelle.getSichtbarDatenportal());
 
             erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
 
