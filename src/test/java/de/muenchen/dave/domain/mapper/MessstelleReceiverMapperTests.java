@@ -42,6 +42,9 @@ class MessstelleReceiverMapperTests {
         expected.setSichtbarDatenportal(false);
         expected.setGeprueft(false);
         expected.setSuchwoerter(new ArrayList<>());
+        expected.setHersteller(dto.getHersteller());
+        expected.setFahrzeugKlassen(dto.getFahrzeugKlassen());
+        expected.setDetektierteVerkehrsarten(dto.getDetektierteVerkehrsarten());
         final String stadtbezirkBezeichnung = IndexServiceUtils.getStadtbezirkBezeichnung(dto.getStadtbezirkNummer());
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirkBezeichnung));
         expected.getSuchwoerter().addAll(stadtbezirke);
@@ -76,9 +79,6 @@ class MessstelleReceiverMapperTests {
         expected.setLageMessquerschnitt(dto.getLageMessquerschnitt());
         expected.setFahrtrichtung(dto.getFahrtrichtung());
         expected.setAnzahlFahrspuren(dto.getAnzahlFahrspuren());
-        expected.setFahrzeugKlassen(dto.getFahrzeugKlassen());
-        expected.setDetektierteVerkehrsarten(dto.getDetektierteVerkehrsarten());
-        expected.setHersteller(dto.getHersteller());
         expected.setAnzahlDetektoren(dto.getAnzahlDetektoren());
 
         final Messquerschnitt actual = this.mapper.createMessquerschnitt(dto);
@@ -110,6 +110,9 @@ class MessstelleReceiverMapperTests {
         expected.setRealisierungsdatum(updatedData.getRealisierungsdatum());
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setDatumLetztePlausibleMessung(updatedData.getDatumLetztePlausibleMessung());
+        expected.setHersteller(updatedData.getHersteller());
+        expected.setFahrzeugKlassen(updatedData.getFahrzeugKlassen());
+        expected.setDetektierteVerkehrsarten(updatedData.getDetektierteVerkehrsarten());
         expected.setPunkt(new GeoPoint(updatedData.getXcoordinate(), updatedData.getYcoordinate()));
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
