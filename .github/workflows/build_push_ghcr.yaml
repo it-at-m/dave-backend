@@ -1,4 +1,4 @@
-name: build image and push to ghcr
+name: build image and push to ghcr.io
 
 on: 
   push:
@@ -25,6 +25,7 @@ jobs:
           argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning --display"
 
   build-and-push-image:
+    needs: compliance
     runs-on: ubuntu-latest
 
     permissions:

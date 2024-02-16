@@ -1,8 +1,6 @@
 name: compliance check and build test
 
-on:
-  push:
-    branches: [dev]
+on: [push]
 
 jobs:
   compliance:
