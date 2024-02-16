@@ -1,12 +1,45 @@
 package de.muenchen.dave.domain.mapper;
 
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.services.IndexServiceUtils;
-import org.apache.commons.collections4.CollectionUtils;
+import java.util.List;
+import java.util.Set;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
-public class SucheMapper {
+@Mapper(componentModel = "spring")
+public interface SucheMapper {
+
+    MessstelleTooltipDTO messstelleToMessstelleTooltipDTO(final Messstelle messstelle);
+
+    MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle);
+
+    Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen);
+
+    @AfterMapping
+    default void messstelleToMessstelleKarteDTOAfterMapping(@MappingTarget MessstelleKarteDTO dto, Messstelle bean) {
+        dto.setType("messstelle");
+        dto.setFachId(bean.getMstId());
+        dto.setLatitude(bean.getPunkt().getLat());
+        dto.setLongitude(bean.getPunkt().getLon());
+        dto.setTooltip(messstelleToMessstelleTooltipDTO(bean));
+    }
+
+    @AfterMapping
+    default void messstelleToMessstelleTooltipDTOAfterMapping(@MappingTarget MessstelleTooltipDTO dto, Messstelle bean) {
+        dto.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
+        dto.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
+        if (bean.getAbbaudatum() != null)
+            dto.setAbbaudatum(bean.getAbbaudatum().toString());
+        dto.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
+    }
 
     /**
      * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle.
@@ -21,7 +54,7 @@ public class SucheMapper {
      * @param kreuzungsname Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
-    public static ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,
+    default ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,
             final Integer stadtbezirknummer,
             final String nummer,
             final Integer anzahlZaehlungen,
@@ -37,29 +70,13 @@ public class SucheMapper {
         return zaehlstelleTooltipDTO;
     }
 
-    /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Messstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
-     *
-     * @param messstelle Messstelle
-     * @return MessstelleTooltipDTO
-     */
-    public static MessstelleTooltipDTO createMessstelleTooltip(
-            final Messstelle messstelle) {
-        final MessstelleTooltipDTO tooltipDTO = new MessstelleTooltipDTO();
-        tooltipDTO.setMstId(messstelle.getMstId());
-        tooltipDTO.setStandort(messstelle.getStandort());
-        tooltipDTO.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(messstelle.getStadtbezirkNummer()));
-        tooltipDTO.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
-        tooltipDTO.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
-        if (messstelle.getAbbaudatum() != null)
-            tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
-        tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
-        if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
-            tooltipDTO.setDetektierteVerkehrsarten(messstelle.getDetektierteVerkehrsarten());
-        }
-        return tooltipDTO;
-    }
+    ZaehlstelleKarteDTO zaehlstelleToZaehlstelleKarteDTO(final Zaehlstelle zaehlstelle);
 
+    @AfterMapping
+    default void zaehlstelleToZaehlstelleKarteDTOAfterMapping(@MappingTarget ZaehlstelleKarteDTO dto, Zaehlstelle bean) {
+        dto.setType("zaehlstelle");
+        dto.setFachId(bean.getNummer());
+        dto.setLatitude(bean.getPunkt().getLat());
+        dto.setLongitude(bean.getPunkt().getLon());
+    }
 }

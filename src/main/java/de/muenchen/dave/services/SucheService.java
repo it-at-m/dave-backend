@@ -5,6 +5,7 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
@@ -69,6 +70,8 @@ public class SucheService {
     private final MessstelleMapper messstelleMapper;
 
     private final ZaehlungMapper zaehlungMapper;
+
+    private final SucheMapper sucheMapper;
 
     private final ElasticsearchOperations elasticsearchOperations;
 
@@ -212,7 +215,7 @@ public class SucheService {
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final boolean noFilter) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstelle(query, noFilter);
-        final Set<ErhebungsstelleKarteDTO> messstellen = sucheMessstelle(query);
+        final Set<MessstelleKarteDTO> messstellen = sucheMessstelle(query);
         return Stream.concat(zaehlstellen.stream(), messstellen.stream()).collect(Collectors.toSet());
     }
 
@@ -276,7 +279,7 @@ public class SucheService {
      * @param query Eine Suchquery
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ErhebungsstelleKarteDTO> sucheMessstelle(final String query) {
+    private Set<MessstelleKarteDTO> sucheMessstelle(final String query) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -286,7 +289,7 @@ public class SucheService {
             log.debug("query '{}'", q);
             messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
         }
-        return this.getMessstelleKarteDTOS(messstellen);
+        return sucheMapper.messstelleToMessstelleKarteDTO(messstellen);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {
@@ -395,14 +398,7 @@ public class SucheService {
                     + StringUtils.SPACE
                     + zaehlstelle.getLetzteZaehlungJahr();
 
-            // TODO auslagern in Mapper
-            final ZaehlstelleKarteDTO zaehlstelleKarteDTO = new ZaehlstelleKarteDTO();
-            zaehlstelleKarteDTO.setId(zaehlstelle.getId());
-            zaehlstelleKarteDTO.setLatitude(zaehlstelle.getPunkt().getLat());
-            zaehlstelleKarteDTO.setLongitude(zaehlstelle.getPunkt().getLon());
-            zaehlstelleKarteDTO.setFachId(nummer);
-            zaehlstelleKarteDTO.setType("zaehlstelle");
-            zaehlstelleKarteDTO.setSichtbarDatenportal(zaehlstelle.getSichtbarDatenportal());
+            final ZaehlstelleKarteDTO zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
 
             zaehlstelleKarteDTO.setLetzteZaehlungId(
                     letzeZaehlung == null
@@ -410,7 +406,7 @@ public class SucheService {
                             : letzeZaehlung.getId());
 
             zaehlstelleKarteDTO.setTooltip(
-                    SucheMapper.createZaehlstelleTooltip(
+                    sucheMapper.createZaehlstelleTooltip(
                             stadtbezirk,
                             stadtbezirksnummer,
                             nummer,
@@ -425,35 +421,6 @@ public class SucheService {
         }
 
         return zaehlstelleKarteDTOSet;
-    }
-
-    /**
-     * Befüllt ErhebungsstelleKarteDTO mit den entsprechenden Daten der Messstelle zum Anzeigen auf
-     * einer Karte und liefert diese zurück
-     *
-     * @param messstellen messstellen, die in ErhebungsstelleKarteDTOs umgewandelt werden sollen
-     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
-     */
-    private Set<ErhebungsstelleKarteDTO> getMessstelleKarteDTOS(final List<Messstelle> messstellen) {
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOSet = new HashSet<>();
-
-        for (final Messstelle messstelle : messstellen) {
-            // TODO auslagern in Mapper
-            final ErhebungsstelleKarteDTO erhebungsstelleKarteDTO = new ErhebungsstelleKarteDTO();
-            erhebungsstelleKarteDTO.setId(messstelle.getId());
-            erhebungsstelleKarteDTO.setLatitude(messstelle.getPunkt().getLat());
-            erhebungsstelleKarteDTO.setLongitude(messstelle.getPunkt().getLon());
-            erhebungsstelleKarteDTO.setFachId(messstelle.getMstId());
-            erhebungsstelleKarteDTO.setType("messstelle");
-            erhebungsstelleKarteDTO.setStatus(messstelle.getStatus());
-            erhebungsstelleKarteDTO.setSichtbarDatenportal(messstelle.getSichtbarDatenportal());
-
-            erhebungsstelleKarteDTO.setTooltip(SucheMapper.createMessstelleTooltip(messstelle));
-
-            erhebungsstelleKarteDTOSet.add(erhebungsstelleKarteDTO);
-        }
-
-        return erhebungsstelleKarteDTOSet;
     }
 
     /**
