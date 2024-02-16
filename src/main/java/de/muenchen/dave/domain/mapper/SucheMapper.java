@@ -57,7 +57,7 @@ public class SucheMapper {
             tooltipDTO.setAbbaudatum(messstelle.getAbbaudatum().toString());
         tooltipDTO.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
         if (CollectionUtils.isNotEmpty(messstelle.getMessquerschnitte())) {
-            tooltipDTO.setDetektierteVerkehrsarten(messstelle.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
+            tooltipDTO.setDetektierteVerkehrsarten(messstelle.getDetektierteVerkehrsarten());
         }
         return tooltipDTO;
     }

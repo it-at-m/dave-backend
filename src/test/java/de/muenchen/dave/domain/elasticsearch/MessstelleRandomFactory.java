@@ -19,6 +19,9 @@ public class MessstelleRandomFactory {
         messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
         messstelle.setStatus(MessstelleStatus.IN_BESTAND);
+        messstelle.setFahrzeugKlassen(fakerInstance.pokemon().name());
+        messstelle.setDetektierteVerkehrsarten("KFZ");
+        messstelle.setHersteller(fakerInstance.pokemon().name());
         messstelle.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
@@ -54,6 +57,9 @@ public class MessstelleRandomFactory {
         dto.setMstId(UUID.randomUUID().toString());
         dto.setName(fakerInstance.pokemon().name());
         dto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
+        dto.setFahrzeugKlassen(fakerInstance.pokemon().name());
+        dto.setDetektierteVerkehrsarten("KFZ");
+        dto.setHersteller(fakerInstance.pokemon().name());
         dto.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
