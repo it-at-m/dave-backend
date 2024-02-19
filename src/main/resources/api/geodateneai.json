@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Stadtbezirke erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
                 }
               }
             }
@@ -274,22 +274,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -733,15 +733,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "fahrzeugKlassen": {
-            "type": "string"
-          },
-          "detektierteVerkehrsarten": {
-            "type": "string"
-          },
-          "hersteller": {
-            "type": "string"
-          },
           "anzahlDetektoren": {
             "type": "integer",
             "format": "int32"
@@ -788,6 +779,15 @@
             "format": "int32"
           },
           "bemerkung": {
+            "type": "string"
+          },
+          "fahrzeugKlassen": {
+            "type": "string"
+          },
+          "detektierteVerkehrsarten": {
+            "type": "string"
+          },
+          "hersteller": {
             "type": "string"
           },
           "datumLetztePlausibleMessung": {
