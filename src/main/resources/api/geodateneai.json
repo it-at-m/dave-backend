@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -226,7 +226,8 @@
                 "WERKTAG_MO_FR",
                 "SAMSTAG",
                 "SONNTAG_FEIERTAG",
-                "WERKTAG_FERIEN"
+                "WERKTAG_FERIEN",
+                "MO_SO"
               ]
             }
           }
@@ -273,22 +274,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -427,10 +428,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -464,7 +465,8 @@
               "WERKTAG_MO_FR",
               "SAMSTAG",
               "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN"
+              "WERKTAG_FERIEN",
+              "MO_SO"
             ]
           }
         }
@@ -744,11 +746,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -798,11 +800,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
