@@ -1,21 +1,14 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import java.io.Serializable;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class MessstelleKarteDTO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class MessstelleKarteDTO extends ErhebungsstelleKarteDTO {
 
-    private String id;
-
-    private String mstId;
-
-    private Double longitude;
-
-    private Double latitude;
-
-    private MessstelleTooltipDTO tooltip;
-
-    private Boolean sichtbarDatenportal;
+    private MessstelleStatus status;
 
 }
