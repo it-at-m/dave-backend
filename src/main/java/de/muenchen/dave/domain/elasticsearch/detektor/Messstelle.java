@@ -34,6 +34,9 @@ public class Messstelle {
     Integer stadtbezirkNummer;
 
     String bemerkung;
+    String fahrzeugKlassen;
+    String detektierteVerkehrsarten;
+    String hersteller;
 
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
     LocalDate datumLetztePlausibleMessung;

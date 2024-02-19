@@ -16,9 +16,6 @@ public class ReadMessquerschnittDTO implements Serializable {
     private String lageMessquerschnitt;
     private String fahrtrichtung;
     private Integer anzahlFahrspuren;
-    private String fahrzeugKlassen;
-    private String detektierteVerkehrsarten;
-    private String hersteller;
     private Integer anzahlDetektoren;
     private String standort;
 }
