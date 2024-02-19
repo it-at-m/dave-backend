@@ -125,6 +125,12 @@ public class SucheService {
                         || sucheZaehlungSuggest.getSichtbarDatenportal())
                 .collect(Collectors.toList());
         sucheComplexSuggests.setZaehlungenSuggests(zaehlungenSuggests);
+        final var messstellenSuggests = sucheComplexSuggests.getMessstellenSuggests()
+                .stream()
+                .filter(sucheMessstelleSuggest -> ObjectUtils.isEmpty(sucheMessstelleSuggest.getSichtbarDatenportal())
+                        || sucheMessstelleSuggest.getSichtbarDatenportal())
+                .collect(Collectors.toList());
+        sucheComplexSuggests.setMessstellenSuggests(messstellenSuggests);
         return sucheComplexSuggests;
     }
 
