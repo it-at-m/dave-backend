@@ -25,9 +25,6 @@ public class Messquerschnitt {
     String lageMessquerschnitt;
     String fahrtrichtung;
     Integer anzahlFahrspuren;
-    String fahrzeugKlassen;
-    String detektierteVerkehrsarten;
-    String hersteller;
     Integer anzahlDetektoren;
     String standort;
 }

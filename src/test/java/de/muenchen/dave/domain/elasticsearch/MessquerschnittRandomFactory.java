@@ -21,9 +21,6 @@ public class MessquerschnittRandomFactory {
         messquerschnitt.setLageMessquerschnitt(fakerInstance.pokemon().location());
         messquerschnitt.setFahrtrichtung(fakerInstance.pokemon().name());
         messquerschnitt.setAnzahlFahrspuren(fakerInstance.number().numberBetween(1, 4));
-        messquerschnitt.setFahrzeugKlassen(fakerInstance.pokemon().name());
-        messquerschnitt.setDetektierteVerkehrsarten("KFZ");
-        messquerschnitt.setHersteller(fakerInstance.pokemon().name());
         messquerschnitt.setAnzahlDetektoren(fakerInstance.number().numberBetween(1, 3));
         messquerschnitt.setStandort(fakerInstance.pokemon().location());
         return messquerschnitt;
@@ -44,9 +41,6 @@ public class MessquerschnittRandomFactory {
         dto.setLageMessquerschnitt(fakerInstance.pokemon().location());
         dto.setFahrtrichtung(fakerInstance.pokemon().location());
         dto.setAnzahlFahrspuren(fakerInstance.number().numberBetween(1, 4));
-        dto.setFahrzeugKlassen(fakerInstance.pokemon().name());
-        dto.setDetektierteVerkehrsarten("KFZ");
-        dto.setHersteller(fakerInstance.pokemon().name());
         dto.setAnzahlDetektoren(fakerInstance.number().numberBetween(1, 3));
         dto.setYcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
         dto.setXcoordinate(fakerInstance.number().randomDouble(5, 0, 5));

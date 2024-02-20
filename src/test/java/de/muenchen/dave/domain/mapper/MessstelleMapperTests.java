@@ -41,6 +41,10 @@ class MessstelleMapperTests {
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
+        expected.setHersteller(bean.getHersteller());
+        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setKommentar(bean.getKommentar());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
@@ -50,7 +54,7 @@ class MessstelleMapperTests {
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
-        tooltip.setDetektierteVerkehrsarten(bean.getMessquerschnitte().get(0).getDetektierteVerkehrsarten());
+        tooltip.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
         Assertions.assertThat(this.mapper.bean2readDto(bean))
                 .isNotNull()
@@ -75,6 +79,9 @@ class MessstelleMapperTests {
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
+        expected.setHersteller(bean.getHersteller());
+        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
         expected.setSichtbarDatenportal(bean.getSichtbarDatenportal());
         expected.setGeprueft(bean.getGeprueft());
@@ -99,6 +106,9 @@ class MessstelleMapperTests {
         updatedData.setName("darf nicht aktualisiert werden");
         updatedData.setStatus("darf nicht aktualisiert werden");
         updatedData.setBemerkung("darf nicht aktualisiert werden");
+        updatedData.setHersteller("darf nicht aktualisiert werden");
+        updatedData.setFahrzeugKlassen("darf nicht aktualisiert werden");
+        updatedData.setDetektierteVerkehrsarten("darf nicht aktualisiert werden");
         updatedData.setStadtbezirkNummer(666);
         updatedData.setRealisierungsdatum("1999-11-11");
         updatedData.setAbbaudatum("1999-11-11");
@@ -129,6 +139,9 @@ class MessstelleMapperTests {
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setPunkt(bean.getPunkt());
+        expected.setHersteller(bean.getHersteller());
+        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
         expected.setGeprueft(true);
@@ -160,9 +173,6 @@ class MessstelleMapperTests {
         expected.setStandort(bean.getStandort());
         expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());
-        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
-        expected.setHersteller(bean.getHersteller());
         expected.setAnzahlDetektoren(bean.getAnzahlDetektoren());
 
         Assertions.assertThat(this.mapper.bean2readDto(bean))
@@ -185,9 +195,6 @@ class MessstelleMapperTests {
         expected.setStandort(bean.getStandort());
         expected.setFahrtrichtung(bean.getFahrtrichtung());
         expected.setAnzahlFahrspuren(bean.getAnzahlFahrspuren());
-        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
-        expected.setHersteller(bean.getHersteller());
         expected.setAnzahlDetektoren(bean.getAnzahlDetektoren());
 
         Assertions.assertThat(this.mapper.bean2editDto(bean))

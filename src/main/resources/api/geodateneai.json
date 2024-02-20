@@ -21,12 +21,16 @@
       "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
     },
     {
-      "name": "Messstelle",
-      "description": "API zum Abfragen des FeatureServers für die Messstellen."
+      "name": "Messwerte",
+      "description": "API zum Abfragen des FeatureServers für Messwerte."
     },
     {
-      "name": "MesswerteMessquerschnitt",
-      "description": "API zum Abfragen des FeatureServers für Messwerte eines Messquerschnitts."
+      "name": "MessstelleOptionsmenuController",
+      "description": "API für Abfragen zum vorbefüllen des OptionsMenues"
+    },
+    {
+      "name": "Messstelle",
+      "description": "API zum Abfragen des FeatureServers für die Messstellen."
     }
   ],
   "paths": {
@@ -71,10 +75,10 @@
         }
       }
     },
-    "/messwerte/messquerschnitt/tagesaggregat": {
+    "/messwerte/tagesaggregat": {
       "post": {
         "tags": [
-          "MesswerteMessquerschnitt"
+          "Messwerte"
         ],
         "summary": "Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.",
         "operationId": "getMesswerteTagesaggregat",
@@ -82,7 +86,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+                "$ref": "#/components/schemas/GetMeasurementValuesRequest"
               }
             }
           },
@@ -112,18 +116,18 @@
         }
       }
     },
-    "/messwerte/messquerschnitt/intervall": {
+    "/messwerte/average-per-interval": {
       "post": {
         "tags": [
-          "MesswerteMessquerschnitt"
+          "Messwerte"
         ],
-        "summary": "Holt die MesswerteIntervalle zu einem Messquerschnitt in einem bestimmten Zeitraum.",
-        "operationId": "getMesswerteIntervall",
+        "summary": "Liefert die durchschnittlichen Messwerte pro Intervall zu einem oder mehreren Messquerschnitt in einem bestimmten Zeitraum oder zu einem Zeitpunkt.",
+        "operationId": "getAverageMeasurementValuesPerInterval",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GetMesswerteOfMessquerschnittRequest"
+                "$ref": "#/components/schemas/GetMeasurementValuesRequest"
               }
             }
           },
@@ -135,7 +139,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMesswerteIntervallMessquerschnittResponse"
+                  "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
                 }
               }
             }
@@ -180,6 +184,47 @@
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
+      "get": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Holt alle nicht Plausiblen Tage.",
+        "operationId": "getNichtPlausibleTage",
+        "parameters": [
+          {
+            "name": "messstelle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -326,7 +371,7 @@
           }
         }
       },
-      "GetMesswerteOfMessquerschnittRequest": {
+      "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
           "zeitpunktStart"
@@ -337,8 +382,7 @@
             "uniqueItems": true,
             "type": "array",
             "items": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           "zeitpunktStart": {
@@ -364,17 +408,9 @@
       "GetMesswerteTagesaggregatMessquerschnittResponse": {
         "type": "object",
         "properties": {
-          "datumVon": {
-            "type": "string",
-            "format": "date"
-          },
-          "datumBis": {
-            "type": "string",
-            "format": "date"
-          },
           "messquerschnitte": {
-            "type": "array",
-            "items": {
+            "type": "object",
+            "additionalProperties": {
               "$ref": "#/components/schemas/MessquerschnittTagesaggregateDto"
             }
           }
@@ -383,31 +419,6 @@
       "MessquerschnittTagesaggregateDto": {
         "type": "object",
         "properties": {
-          "messquerschnittId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tagesaggregat": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/MesswerteTagesaggregatMessquerschnittDto"
-            }
-          }
-        }
-      },
-      "MesswerteTagesaggregatMessquerschnittDto": {
-        "type": "object",
-        "properties": {
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "WERKTAG_DI_MI_DO",
-              "WERKTAG_MO_FR",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN"
-            ]
-          },
           "anzahlLfw": {
             "type": "integer",
             "format": "int32"
@@ -546,21 +557,13 @@
           }
         }
       },
-      "GetMesswerteIntervallMessquerschnittResponse": {
+      "AverageMeasurementValuesPerIntervalResponse": {
         "type": "object",
         "properties": {
-          "datumVon": {
-            "type": "string",
-            "format": "date"
-          },
-          "datumBis": {
-            "type": "string",
-            "format": "date"
-          },
-          "messquerschnitte": {
+          "intervals": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/MessquerschnittIntervalleDto"
+              "$ref": "#/components/schemas/MeasurementValuesPerInterval"
             }
           }
         }
@@ -586,42 +589,11 @@
           }
         }
       },
-      "MessquerschnittIntervalleDto": {
-        "type": "object",
-        "properties": {
-          "messquerschnittId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "intervalle": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/MesswerteIntervallMessquerschnittDto"
-              }
-            }
-          }
-        }
-      },
-      "MesswerteIntervallMessquerschnittDto": {
+      "MeasurementValuesPerInterval": {
         "type": "object",
         "properties": {
           "uhrzeitVon": {
             "$ref": "#/components/schemas/LocalTime"
-          },
-          "uhrzeitBis": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "WERKTAG_DI_MI_DO",
-              "WERKTAG_MO_FR",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN"
-            ]
           },
           "anzahlLfw": {
             "type": "integer",
@@ -662,6 +634,14 @@
           "summeKraftfahrzeugverkehr": {
             "type": "integer",
             "format": "int32"
+          },
+          "prozentSchwerverkehr": {
+            "type": "number",
+            "format": "double"
+          },
+          "prozentGueterverkehr": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -686,15 +666,6 @@
           "anzahlFahrspuren": {
             "type": "integer",
             "format": "int32"
-          },
-          "fahrzeugKlassen": {
-            "type": "string"
-          },
-          "detektierteVerkehrsarten": {
-            "type": "string"
-          },
-          "hersteller": {
-            "type": "string"
           },
           "anzahlDetektoren": {
             "type": "integer",
@@ -744,6 +715,15 @@
           "bemerkung": {
             "type": "string"
           },
+          "fahrzeugKlassen": {
+            "type": "string"
+          },
+          "detektierteVerkehrsarten": {
+            "type": "string"
+          },
+          "hersteller": {
+            "type": "string"
+          },
           "datumLetztePlausibleMessung": {
             "type": "string",
             "format": "date"
@@ -761,6 +741,18 @@
           "ycoordinate": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "NichtPlausibleTageDto": {
+        "type": "object",
+        "properties": {
+          "nichtPlausibleTage": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
           }
         }
       }

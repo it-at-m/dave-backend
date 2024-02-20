@@ -21,10 +21,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittTagesaggregateDto;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -32,87 +30,27 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * GetMesswerteTagesaggregatMessquerschnittResponse
  */
 @JsonPropertyOrder({
-  GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_DATUM_VON,
-  GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_DATUM_BIS,
   GetMesswerteTagesaggregatMessquerschnittResponse.JSON_PROPERTY_MESSQUERSCHNITTE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class GetMesswerteTagesaggregatMessquerschnittResponse {
-  public static final String JSON_PROPERTY_DATUM_VON = "datumVon";
-  private LocalDate datumVon;
-
-  public static final String JSON_PROPERTY_DATUM_BIS = "datumBis";
-  private LocalDate datumBis;
-
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
-  private List<MessquerschnittTagesaggregateDto> messquerschnitte;
+  private Map<String, MessquerschnittTagesaggregateDto> messquerschnitte = new HashMap<>();
 
   public GetMesswerteTagesaggregatMessquerschnittResponse() {
   }
 
-  public GetMesswerteTagesaggregatMessquerschnittResponse datumVon(LocalDate datumVon) {
-    
-    this.datumVon = datumVon;
-    return this;
-  }
-
-   /**
-   * Get datumVon
-   * @return datumVon
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DATUM_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public LocalDate getDatumVon() {
-    return datumVon;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_DATUM_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDatumVon(LocalDate datumVon) {
-    this.datumVon = datumVon;
-  }
-
-
-  public GetMesswerteTagesaggregatMessquerschnittResponse datumBis(LocalDate datumBis) {
-    
-    this.datumBis = datumBis;
-    return this;
-  }
-
-   /**
-   * Get datumBis
-   * @return datumBis
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_DATUM_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public LocalDate getDatumBis() {
-    return datumBis;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_DATUM_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setDatumBis(LocalDate datumBis) {
-    this.datumBis = datumBis;
-  }
-
-
-  public GetMesswerteTagesaggregatMessquerschnittResponse messquerschnitte(List<MessquerschnittTagesaggregateDto> messquerschnitte) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse messquerschnitte(Map<String, MessquerschnittTagesaggregateDto> messquerschnitte) {
     
     this.messquerschnitte = messquerschnitte;
     return this;
   }
 
-  public GetMesswerteTagesaggregatMessquerschnittResponse addMessquerschnitteItem(MessquerschnittTagesaggregateDto messquerschnitteItem) {
+  public GetMesswerteTagesaggregatMessquerschnittResponse putMessquerschnitteItem(String key, MessquerschnittTagesaggregateDto messquerschnitteItem) {
     if (this.messquerschnitte == null) {
-      this.messquerschnitte = new ArrayList<>();
+      this.messquerschnitte = new HashMap<>();
     }
-    this.messquerschnitte.add(messquerschnitteItem);
+    this.messquerschnitte.put(key, messquerschnitteItem);
     return this;
   }
 
@@ -124,14 +62,14 @@ public class GetMesswerteTagesaggregatMessquerschnittResponse {
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public List<MessquerschnittTagesaggregateDto> getMessquerschnitte() {
+  public Map<String, MessquerschnittTagesaggregateDto> getMessquerschnitte() {
     return messquerschnitte;
   }
 
 
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITTE)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessquerschnitte(List<MessquerschnittTagesaggregateDto> messquerschnitte) {
+  public void setMessquerschnitte(Map<String, MessquerschnittTagesaggregateDto> messquerschnitte) {
     this.messquerschnitte = messquerschnitte;
   }
 
@@ -144,22 +82,18 @@ public class GetMesswerteTagesaggregatMessquerschnittResponse {
       return false;
     }
     GetMesswerteTagesaggregatMessquerschnittResponse getMesswerteTagesaggregatMessquerschnittResponse = (GetMesswerteTagesaggregatMessquerschnittResponse) o;
-    return Objects.equals(this.datumVon, getMesswerteTagesaggregatMessquerschnittResponse.datumVon) &&
-        Objects.equals(this.datumBis, getMesswerteTagesaggregatMessquerschnittResponse.datumBis) &&
-        Objects.equals(this.messquerschnitte, getMesswerteTagesaggregatMessquerschnittResponse.messquerschnitte);
+    return Objects.equals(this.messquerschnitte, getMesswerteTagesaggregatMessquerschnittResponse.messquerschnitte);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(datumVon, datumBis, messquerschnitte);
+    return Objects.hash(messquerschnitte);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GetMesswerteTagesaggregatMessquerschnittResponse {\n");
-    sb.append("    datumVon: ").append(toIndentedString(datumVon)).append("\n");
-    sb.append("    datumBis: ").append(toIndentedString(datumBis)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
     sb.append("}");
     return sb.toString();

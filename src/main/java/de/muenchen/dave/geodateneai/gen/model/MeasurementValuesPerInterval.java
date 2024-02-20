@@ -26,74 +26,27 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * MesswerteIntervallMessquerschnittDto
+ * MeasurementValuesPerInterval
  */
 @JsonPropertyOrder({
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_UHRZEIT_VON,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_UHRZEIT_BIS,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_TAGES_TYP,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_LFW,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_KRAD,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_LKW,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_BUS,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_ANZAHL_RAD,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_SUMME_ALLE_PKW,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_SUMME_LASTZUG,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_SUMME_GUETERVERKEHR,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_SUMME_SCHWERVERKEHR,
-  MesswerteIntervallMessquerschnittDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR
+  MeasurementValuesPerInterval.JSON_PROPERTY_UHRZEIT_VON,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_LFW,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_KRAD,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_LKW,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_BUS,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_RAD,
+  MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_ALLE_PKW,
+  MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_LASTZUG,
+  MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_GUETERVERKEHR,
+  MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_SCHWERVERKEHR,
+  MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR,
+  MeasurementValuesPerInterval.JSON_PROPERTY_PROZENT_SCHWERVERKEHR,
+  MeasurementValuesPerInterval.JSON_PROPERTY_PROZENT_GUETERVERKEHR
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class MesswerteIntervallMessquerschnittDto {
+public class MeasurementValuesPerInterval {
   public static final String JSON_PROPERTY_UHRZEIT_VON = "uhrzeitVon";
   private LocalTime uhrzeitVon;
-
-  public static final String JSON_PROPERTY_UHRZEIT_BIS = "uhrzeitBis";
-  private LocalTime uhrzeitBis;
-
-  /**
-   * Gets or Sets tagesTyp
-   */
-  public enum TagesTypEnum {
-    WERKTAG_DI_MI_DO("WERKTAG_DI_MI_DO"),
-    
-    WERKTAG_MO_FR("WERKTAG_MO_FR"),
-    
-    SAMSTAG("SAMSTAG"),
-    
-    SONNTAG_FEIERTAG("SONNTAG_FEIERTAG"),
-    
-    WERKTAG_FERIEN("WERKTAG_FERIEN");
-
-    private String value;
-
-    TagesTypEnum(String value) {
-      this.value = value;
-    }
-
-    @JsonValue
-    public String getValue() {
-      return value;
-    }
-
-    @Override
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TagesTypEnum fromValue(String value) {
-      for (TagesTypEnum b : TagesTypEnum.values()) {
-        if (b.value.equals(value)) {
-          return b;
-        }
-      }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-  }
-
-  public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
-  private TagesTypEnum tagesTyp;
 
   public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
   private Integer anzahlLfw;
@@ -125,10 +78,16 @@ public class MesswerteIntervallMessquerschnittDto {
   public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR = "summeKraftfahrzeugverkehr";
   private Integer summeKraftfahrzeugverkehr;
 
-  public MesswerteIntervallMessquerschnittDto() {
+  public static final String JSON_PROPERTY_PROZENT_SCHWERVERKEHR = "prozentSchwerverkehr";
+  private Double prozentSchwerverkehr;
+
+  public static final String JSON_PROPERTY_PROZENT_GUETERVERKEHR = "prozentGueterverkehr";
+  private Double prozentGueterverkehr;
+
+  public MeasurementValuesPerInterval() {
   }
 
-  public MesswerteIntervallMessquerschnittDto uhrzeitVon(LocalTime uhrzeitVon) {
+  public MeasurementValuesPerInterval uhrzeitVon(LocalTime uhrzeitVon) {
     
     this.uhrzeitVon = uhrzeitVon;
     return this;
@@ -154,59 +113,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto uhrzeitBis(LocalTime uhrzeitBis) {
-    
-    this.uhrzeitBis = uhrzeitBis;
-    return this;
-  }
-
-   /**
-   * Get uhrzeitBis
-   * @return uhrzeitBis
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public LocalTime getUhrzeitBis() {
-    return uhrzeitBis;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setUhrzeitBis(LocalTime uhrzeitBis) {
-    this.uhrzeitBis = uhrzeitBis;
-  }
-
-
-  public MesswerteIntervallMessquerschnittDto tagesTyp(TagesTypEnum tagesTyp) {
-    
-    this.tagesTyp = tagesTyp;
-    return this;
-  }
-
-   /**
-   * Get tagesTyp
-   * @return tagesTyp
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public TagesTypEnum getTagesTyp() {
-    return tagesTyp;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTagesTyp(TagesTypEnum tagesTyp) {
-    this.tagesTyp = tagesTyp;
-  }
-
-
-  public MesswerteIntervallMessquerschnittDto anzahlLfw(Integer anzahlLfw) {
+  public MeasurementValuesPerInterval anzahlLfw(Integer anzahlLfw) {
     
     this.anzahlLfw = anzahlLfw;
     return this;
@@ -232,7 +139,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto anzahlKrad(Integer anzahlKrad) {
+  public MeasurementValuesPerInterval anzahlKrad(Integer anzahlKrad) {
     
     this.anzahlKrad = anzahlKrad;
     return this;
@@ -258,7 +165,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto anzahlLkw(Integer anzahlLkw) {
+  public MeasurementValuesPerInterval anzahlLkw(Integer anzahlLkw) {
     
     this.anzahlLkw = anzahlLkw;
     return this;
@@ -284,7 +191,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto anzahlBus(Integer anzahlBus) {
+  public MeasurementValuesPerInterval anzahlBus(Integer anzahlBus) {
     
     this.anzahlBus = anzahlBus;
     return this;
@@ -310,7 +217,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto anzahlRad(Integer anzahlRad) {
+  public MeasurementValuesPerInterval anzahlRad(Integer anzahlRad) {
     
     this.anzahlRad = anzahlRad;
     return this;
@@ -336,7 +243,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto summeAllePkw(Integer summeAllePkw) {
+  public MeasurementValuesPerInterval summeAllePkw(Integer summeAllePkw) {
     
     this.summeAllePkw = summeAllePkw;
     return this;
@@ -362,7 +269,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto summeLastzug(Integer summeLastzug) {
+  public MeasurementValuesPerInterval summeLastzug(Integer summeLastzug) {
     
     this.summeLastzug = summeLastzug;
     return this;
@@ -388,7 +295,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto summeGueterverkehr(Integer summeGueterverkehr) {
+  public MeasurementValuesPerInterval summeGueterverkehr(Integer summeGueterverkehr) {
     
     this.summeGueterverkehr = summeGueterverkehr;
     return this;
@@ -414,7 +321,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto summeSchwerverkehr(Integer summeSchwerverkehr) {
+  public MeasurementValuesPerInterval summeSchwerverkehr(Integer summeSchwerverkehr) {
     
     this.summeSchwerverkehr = summeSchwerverkehr;
     return this;
@@ -440,7 +347,7 @@ public class MesswerteIntervallMessquerschnittDto {
   }
 
 
-  public MesswerteIntervallMessquerschnittDto summeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
+  public MeasurementValuesPerInterval summeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
     
     this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
     return this;
@@ -465,6 +372,58 @@ public class MesswerteIntervallMessquerschnittDto {
     this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
   }
 
+
+  public MeasurementValuesPerInterval prozentSchwerverkehr(Double prozentSchwerverkehr) {
+    
+    this.prozentSchwerverkehr = prozentSchwerverkehr;
+    return this;
+  }
+
+   /**
+   * Get prozentSchwerverkehr
+   * @return prozentSchwerverkehr
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_PROZENT_SCHWERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getProzentSchwerverkehr() {
+    return prozentSchwerverkehr;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_PROZENT_SCHWERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setProzentSchwerverkehr(Double prozentSchwerverkehr) {
+    this.prozentSchwerverkehr = prozentSchwerverkehr;
+  }
+
+
+  public MeasurementValuesPerInterval prozentGueterverkehr(Double prozentGueterverkehr) {
+    
+    this.prozentGueterverkehr = prozentGueterverkehr;
+    return this;
+  }
+
+   /**
+   * Get prozentGueterverkehr
+   * @return prozentGueterverkehr
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_PROZENT_GUETERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getProzentGueterverkehr() {
+    return prozentGueterverkehr;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_PROZENT_GUETERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setProzentGueterverkehr(Double prozentGueterverkehr) {
+    this.prozentGueterverkehr = prozentGueterverkehr;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -473,34 +432,32 @@ public class MesswerteIntervallMessquerschnittDto {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    MesswerteIntervallMessquerschnittDto messwerteIntervallMessquerschnittDto = (MesswerteIntervallMessquerschnittDto) o;
-    return Objects.equals(this.uhrzeitVon, messwerteIntervallMessquerschnittDto.uhrzeitVon) &&
-        Objects.equals(this.uhrzeitBis, messwerteIntervallMessquerschnittDto.uhrzeitBis) &&
-        Objects.equals(this.tagesTyp, messwerteIntervallMessquerschnittDto.tagesTyp) &&
-        Objects.equals(this.anzahlLfw, messwerteIntervallMessquerschnittDto.anzahlLfw) &&
-        Objects.equals(this.anzahlKrad, messwerteIntervallMessquerschnittDto.anzahlKrad) &&
-        Objects.equals(this.anzahlLkw, messwerteIntervallMessquerschnittDto.anzahlLkw) &&
-        Objects.equals(this.anzahlBus, messwerteIntervallMessquerschnittDto.anzahlBus) &&
-        Objects.equals(this.anzahlRad, messwerteIntervallMessquerschnittDto.anzahlRad) &&
-        Objects.equals(this.summeAllePkw, messwerteIntervallMessquerschnittDto.summeAllePkw) &&
-        Objects.equals(this.summeLastzug, messwerteIntervallMessquerschnittDto.summeLastzug) &&
-        Objects.equals(this.summeGueterverkehr, messwerteIntervallMessquerschnittDto.summeGueterverkehr) &&
-        Objects.equals(this.summeSchwerverkehr, messwerteIntervallMessquerschnittDto.summeSchwerverkehr) &&
-        Objects.equals(this.summeKraftfahrzeugverkehr, messwerteIntervallMessquerschnittDto.summeKraftfahrzeugverkehr);
+    MeasurementValuesPerInterval measurementValuesPerInterval = (MeasurementValuesPerInterval) o;
+    return Objects.equals(this.uhrzeitVon, measurementValuesPerInterval.uhrzeitVon) &&
+        Objects.equals(this.anzahlLfw, measurementValuesPerInterval.anzahlLfw) &&
+        Objects.equals(this.anzahlKrad, measurementValuesPerInterval.anzahlKrad) &&
+        Objects.equals(this.anzahlLkw, measurementValuesPerInterval.anzahlLkw) &&
+        Objects.equals(this.anzahlBus, measurementValuesPerInterval.anzahlBus) &&
+        Objects.equals(this.anzahlRad, measurementValuesPerInterval.anzahlRad) &&
+        Objects.equals(this.summeAllePkw, measurementValuesPerInterval.summeAllePkw) &&
+        Objects.equals(this.summeLastzug, measurementValuesPerInterval.summeLastzug) &&
+        Objects.equals(this.summeGueterverkehr, measurementValuesPerInterval.summeGueterverkehr) &&
+        Objects.equals(this.summeSchwerverkehr, measurementValuesPerInterval.summeSchwerverkehr) &&
+        Objects.equals(this.summeKraftfahrzeugverkehr, measurementValuesPerInterval.summeKraftfahrzeugverkehr) &&
+        Objects.equals(this.prozentSchwerverkehr, measurementValuesPerInterval.prozentSchwerverkehr) &&
+        Objects.equals(this.prozentGueterverkehr, measurementValuesPerInterval.prozentGueterverkehr);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uhrzeitVon, uhrzeitBis, tagesTyp, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr);
+    return Objects.hash(uhrzeitVon, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, prozentSchwerverkehr, prozentGueterverkehr);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class MesswerteIntervallMessquerschnittDto {\n");
+    sb.append("class MeasurementValuesPerInterval {\n");
     sb.append("    uhrzeitVon: ").append(toIndentedString(uhrzeitVon)).append("\n");
-    sb.append("    uhrzeitBis: ").append(toIndentedString(uhrzeitBis)).append("\n");
-    sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
     sb.append("    anzahlLfw: ").append(toIndentedString(anzahlLfw)).append("\n");
     sb.append("    anzahlKrad: ").append(toIndentedString(anzahlKrad)).append("\n");
     sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");
@@ -511,6 +468,8 @@ public class MesswerteIntervallMessquerschnittDto {
     sb.append("    summeGueterverkehr: ").append(toIndentedString(summeGueterverkehr)).append("\n");
     sb.append("    summeSchwerverkehr: ").append(toIndentedString(summeSchwerverkehr)).append("\n");
     sb.append("    summeKraftfahrzeugverkehr: ").append(toIndentedString(summeKraftfahrzeugverkehr)).append("\n");
+    sb.append("    prozentSchwerverkehr: ").append(toIndentedString(prozentSchwerverkehr)).append("\n");
+    sb.append("    prozentGueterverkehr: ").append(toIndentedString(prozentGueterverkehr)).append("\n");
     sb.append("}");
     return sb.toString();
   }

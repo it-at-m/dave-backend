@@ -20,9 +20,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import de.muenchen.dave.geodateneai.gen.model.MesswerteTagesaggregatMessquerschnittDto;
-import java.util.HashMap;
-import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -30,77 +27,1029 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * MessquerschnittTagesaggregateDto
  */
 @JsonPropertyOrder({
-  MessquerschnittTagesaggregateDto.JSON_PROPERTY_MESSQUERSCHNITT_ID,
-  MessquerschnittTagesaggregateDto.JSON_PROPERTY_TAGESAGGREGAT
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_ANZAHL_LFW,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_ANZAHL_KRAD,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_ANZAHL_LKW,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_ANZAHL_BUS,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_ANZAHL_RAD,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_ALLE_PKW,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_LASTZUG,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_GUETERVERKEHR,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_SCHWERVERKEHR,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0006,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0610,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1015,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1519,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1924,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0024,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0006,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0610,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1015,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1519,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1924,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0024,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0006,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0610,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1015,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1519,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1924,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0024,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0006,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0610,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1015,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1519,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1924,
+  MessquerschnittTagesaggregateDto.JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0024
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessquerschnittTagesaggregateDto {
-  public static final String JSON_PROPERTY_MESSQUERSCHNITT_ID = "messquerschnittId";
-  private Long messquerschnittId;
+  public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
+  private Integer anzahlLfw;
 
-  public static final String JSON_PROPERTY_TAGESAGGREGAT = "tagesaggregat";
-  private Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat = new HashMap<>();
+  public static final String JSON_PROPERTY_ANZAHL_KRAD = "anzahlKrad";
+  private Integer anzahlKrad;
+
+  public static final String JSON_PROPERTY_ANZAHL_LKW = "anzahlLkw";
+  private Integer anzahlLkw;
+
+  public static final String JSON_PROPERTY_ANZAHL_BUS = "anzahlBus";
+  private Integer anzahlBus;
+
+  public static final String JSON_PROPERTY_ANZAHL_RAD = "anzahlRad";
+  private Integer anzahlRad;
+
+  public static final String JSON_PROPERTY_SUMME_ALLE_PKW = "summeAllePkw";
+  private Integer summeAllePkw;
+
+  public static final String JSON_PROPERTY_SUMME_LASTZUG = "summeLastzug";
+  private Integer summeLastzug;
+
+  public static final String JSON_PROPERTY_SUMME_GUETERVERKEHR = "summeGueterverkehr";
+  private Integer summeGueterverkehr;
+
+  public static final String JSON_PROPERTY_SUMME_SCHWERVERKEHR = "summeSchwerverkehr";
+  private Integer summeSchwerverkehr;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR = "summeKraftfahrzeugverkehr";
+  private Integer summeKraftfahrzeugverkehr;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0006 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0610 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1015 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1519 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1924 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924;
+
+  public static final String JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0024 = "summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024";
+  private Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0006 = "summeRadSpitzenstundeZeitblock0006";
+  private Integer summeRadSpitzenstundeZeitblock0006;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0610 = "summeRadSpitzenstundeZeitblock0610";
+  private Integer summeRadSpitzenstundeZeitblock0610;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1015 = "summeRadSpitzenstundeZeitblock1015";
+  private Integer summeRadSpitzenstundeZeitblock1015;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1519 = "summeRadSpitzenstundeZeitblock1519";
+  private Integer summeRadSpitzenstundeZeitblock1519;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1924 = "summeRadSpitzenstundeZeitblock1924";
+  private Integer summeRadSpitzenstundeZeitblock1924;
+
+  public static final String JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0024 = "summeRadSpitzenstundeZeitblock0024";
+  private Integer summeRadSpitzenstundeZeitblock0024;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0006 = "spitzenstundeKraftfahrzeugverkehrZeitblock0006";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock0006;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0610 = "spitzenstundeKraftfahrzeugverkehrZeitblock0610";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock0610;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1015 = "spitzenstundeKraftfahrzeugverkehrZeitblock1015";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock1015;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1519 = "spitzenstundeKraftfahrzeugverkehrZeitblock1519";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock1519;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1924 = "spitzenstundeKraftfahrzeugverkehrZeitblock1924";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock1924;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0024 = "spitzenstundeKraftfahrzeugverkehrZeitblock0024";
+  private Integer spitzenstundeKraftfahrzeugverkehrZeitblock0024;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0006 = "spitzenstundeRadZeitblock0006";
+  private Integer spitzenstundeRadZeitblock0006;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0610 = "spitzenstundeRadZeitblock0610";
+  private Integer spitzenstundeRadZeitblock0610;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1015 = "spitzenstundeRadZeitblock1015";
+  private Integer spitzenstundeRadZeitblock1015;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1519 = "spitzenstundeRadZeitblock1519";
+  private Integer spitzenstundeRadZeitblock1519;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1924 = "spitzenstundeRadZeitblock1924";
+  private Integer spitzenstundeRadZeitblock1924;
+
+  public static final String JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0024 = "spitzenstundeRadZeitblock0024";
+  private Integer spitzenstundeRadZeitblock0024;
 
   public MessquerschnittTagesaggregateDto() {
   }
 
-  public MessquerschnittTagesaggregateDto messquerschnittId(Long messquerschnittId) {
+  public MessquerschnittTagesaggregateDto anzahlLfw(Integer anzahlLfw) {
     
-    this.messquerschnittId = messquerschnittId;
+    this.anzahlLfw = anzahlLfw;
     return this;
   }
 
    /**
-   * Get messquerschnittId
-   * @return messquerschnittId
+   * Get anzahlLfw
+   * @return anzahlLfw
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_ID)
+  @JsonProperty(JSON_PROPERTY_ANZAHL_LFW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Long getMessquerschnittId() {
-    return messquerschnittId;
+  public Integer getAnzahlLfw() {
+    return anzahlLfw;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_ID)
+  @JsonProperty(JSON_PROPERTY_ANZAHL_LFW)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setMessquerschnittId(Long messquerschnittId) {
-    this.messquerschnittId = messquerschnittId;
+  public void setAnzahlLfw(Integer anzahlLfw) {
+    this.anzahlLfw = anzahlLfw;
   }
 
 
-  public MessquerschnittTagesaggregateDto tagesaggregat(Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat) {
+  public MessquerschnittTagesaggregateDto anzahlKrad(Integer anzahlKrad) {
     
-    this.tagesaggregat = tagesaggregat;
-    return this;
-  }
-
-  public MessquerschnittTagesaggregateDto putTagesaggregatItem(String key, MesswerteTagesaggregatMessquerschnittDto tagesaggregatItem) {
-    if (this.tagesaggregat == null) {
-      this.tagesaggregat = new HashMap<>();
-    }
-    this.tagesaggregat.put(key, tagesaggregatItem);
+    this.anzahlKrad = anzahlKrad;
     return this;
   }
 
    /**
-   * Get tagesaggregat
-   * @return tagesaggregat
+   * Get anzahlKrad
+   * @return anzahlKrad
   **/
   @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_TAGESAGGREGAT)
+  @JsonProperty(JSON_PROPERTY_ANZAHL_KRAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
-  public Map<String, MesswerteTagesaggregatMessquerschnittDto> getTagesaggregat() {
-    return tagesaggregat;
+  public Integer getAnzahlKrad() {
+    return anzahlKrad;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_TAGESAGGREGAT)
+  @JsonProperty(JSON_PROPERTY_ANZAHL_KRAD)
   @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setTagesaggregat(Map<String, MesswerteTagesaggregatMessquerschnittDto> tagesaggregat) {
-    this.tagesaggregat = tagesaggregat;
+  public void setAnzahlKrad(Integer anzahlKrad) {
+    this.anzahlKrad = anzahlKrad;
+  }
+
+
+  public MessquerschnittTagesaggregateDto anzahlLkw(Integer anzahlLkw) {
+    
+    this.anzahlLkw = anzahlLkw;
+    return this;
+  }
+
+   /**
+   * Get anzahlLkw
+   * @return anzahlLkw
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ANZAHL_LKW)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getAnzahlLkw() {
+    return anzahlLkw;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ANZAHL_LKW)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setAnzahlLkw(Integer anzahlLkw) {
+    this.anzahlLkw = anzahlLkw;
+  }
+
+
+  public MessquerschnittTagesaggregateDto anzahlBus(Integer anzahlBus) {
+    
+    this.anzahlBus = anzahlBus;
+    return this;
+  }
+
+   /**
+   * Get anzahlBus
+   * @return anzahlBus
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ANZAHL_BUS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getAnzahlBus() {
+    return anzahlBus;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ANZAHL_BUS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setAnzahlBus(Integer anzahlBus) {
+    this.anzahlBus = anzahlBus;
+  }
+
+
+  public MessquerschnittTagesaggregateDto anzahlRad(Integer anzahlRad) {
+    
+    this.anzahlRad = anzahlRad;
+    return this;
+  }
+
+   /**
+   * Get anzahlRad
+   * @return anzahlRad
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ANZAHL_RAD)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getAnzahlRad() {
+    return anzahlRad;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ANZAHL_RAD)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setAnzahlRad(Integer anzahlRad) {
+    this.anzahlRad = anzahlRad;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeAllePkw(Integer summeAllePkw) {
+    
+    this.summeAllePkw = summeAllePkw;
+    return this;
+  }
+
+   /**
+   * Get summeAllePkw
+   * @return summeAllePkw
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_ALLE_PKW)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeAllePkw() {
+    return summeAllePkw;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_ALLE_PKW)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeAllePkw(Integer summeAllePkw) {
+    this.summeAllePkw = summeAllePkw;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeLastzug(Integer summeLastzug) {
+    
+    this.summeLastzug = summeLastzug;
+    return this;
+  }
+
+   /**
+   * Get summeLastzug
+   * @return summeLastzug
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_LASTZUG)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeLastzug() {
+    return summeLastzug;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_LASTZUG)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeLastzug(Integer summeLastzug) {
+    this.summeLastzug = summeLastzug;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeGueterverkehr(Integer summeGueterverkehr) {
+    
+    this.summeGueterverkehr = summeGueterverkehr;
+    return this;
+  }
+
+   /**
+   * Get summeGueterverkehr
+   * @return summeGueterverkehr
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_GUETERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeGueterverkehr() {
+    return summeGueterverkehr;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_GUETERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeGueterverkehr(Integer summeGueterverkehr) {
+    this.summeGueterverkehr = summeGueterverkehr;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeSchwerverkehr(Integer summeSchwerverkehr) {
+    
+    this.summeSchwerverkehr = summeSchwerverkehr;
+    return this;
+  }
+
+   /**
+   * Get summeSchwerverkehr
+   * @return summeSchwerverkehr
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_SCHWERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeSchwerverkehr() {
+    return summeSchwerverkehr;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_SCHWERVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeSchwerverkehr(Integer summeSchwerverkehr) {
+    this.summeSchwerverkehr = summeSchwerverkehr;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
+    
+    this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehr
+   * @return summeKraftfahrzeugverkehr
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehr() {
+    return summeKraftfahrzeugverkehr;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehr(Integer summeKraftfahrzeugverkehr) {
+    this.summeKraftfahrzeugverkehr = summeKraftfahrzeugverkehr;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0006() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0006(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0610() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0610(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1015() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1015(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1519() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1519(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1924() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock1924(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024) {
+    
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024;
+    return this;
+  }
+
+   /**
+   * Get summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024
+   * @return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0024() {
+    return summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_KRAFTFAHRZEUGVERKEHR_SPITZENSTUNDE_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeKraftfahrzeugverkehrSpitzenstundeZeitblock0024(Integer summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024) {
+    this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024 = summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock0006(Integer summeRadSpitzenstundeZeitblock0006) {
+    
+    this.summeRadSpitzenstundeZeitblock0006 = summeRadSpitzenstundeZeitblock0006;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock0006
+   * @return summeRadSpitzenstundeZeitblock0006
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock0006() {
+    return summeRadSpitzenstundeZeitblock0006;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock0006(Integer summeRadSpitzenstundeZeitblock0006) {
+    this.summeRadSpitzenstundeZeitblock0006 = summeRadSpitzenstundeZeitblock0006;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock0610(Integer summeRadSpitzenstundeZeitblock0610) {
+    
+    this.summeRadSpitzenstundeZeitblock0610 = summeRadSpitzenstundeZeitblock0610;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock0610
+   * @return summeRadSpitzenstundeZeitblock0610
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock0610() {
+    return summeRadSpitzenstundeZeitblock0610;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock0610(Integer summeRadSpitzenstundeZeitblock0610) {
+    this.summeRadSpitzenstundeZeitblock0610 = summeRadSpitzenstundeZeitblock0610;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock1015(Integer summeRadSpitzenstundeZeitblock1015) {
+    
+    this.summeRadSpitzenstundeZeitblock1015 = summeRadSpitzenstundeZeitblock1015;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock1015
+   * @return summeRadSpitzenstundeZeitblock1015
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock1015() {
+    return summeRadSpitzenstundeZeitblock1015;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock1015(Integer summeRadSpitzenstundeZeitblock1015) {
+    this.summeRadSpitzenstundeZeitblock1015 = summeRadSpitzenstundeZeitblock1015;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock1519(Integer summeRadSpitzenstundeZeitblock1519) {
+    
+    this.summeRadSpitzenstundeZeitblock1519 = summeRadSpitzenstundeZeitblock1519;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock1519
+   * @return summeRadSpitzenstundeZeitblock1519
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock1519() {
+    return summeRadSpitzenstundeZeitblock1519;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock1519(Integer summeRadSpitzenstundeZeitblock1519) {
+    this.summeRadSpitzenstundeZeitblock1519 = summeRadSpitzenstundeZeitblock1519;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock1924(Integer summeRadSpitzenstundeZeitblock1924) {
+    
+    this.summeRadSpitzenstundeZeitblock1924 = summeRadSpitzenstundeZeitblock1924;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock1924
+   * @return summeRadSpitzenstundeZeitblock1924
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock1924() {
+    return summeRadSpitzenstundeZeitblock1924;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock1924(Integer summeRadSpitzenstundeZeitblock1924) {
+    this.summeRadSpitzenstundeZeitblock1924 = summeRadSpitzenstundeZeitblock1924;
+  }
+
+
+  public MessquerschnittTagesaggregateDto summeRadSpitzenstundeZeitblock0024(Integer summeRadSpitzenstundeZeitblock0024) {
+    
+    this.summeRadSpitzenstundeZeitblock0024 = summeRadSpitzenstundeZeitblock0024;
+    return this;
+  }
+
+   /**
+   * Get summeRadSpitzenstundeZeitblock0024
+   * @return summeRadSpitzenstundeZeitblock0024
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSummeRadSpitzenstundeZeitblock0024() {
+    return summeRadSpitzenstundeZeitblock0024;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUMME_RAD_SPITZENSTUNDE_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSummeRadSpitzenstundeZeitblock0024(Integer summeRadSpitzenstundeZeitblock0024) {
+    this.summeRadSpitzenstundeZeitblock0024 = summeRadSpitzenstundeZeitblock0024;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock0006(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0006) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0006 = spitzenstundeKraftfahrzeugverkehrZeitblock0006;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock0006
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock0006
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock0006() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock0006;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock0006(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0006) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0006 = spitzenstundeKraftfahrzeugverkehrZeitblock0006;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock0610(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0610) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0610 = spitzenstundeKraftfahrzeugverkehrZeitblock0610;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock0610
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock0610
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock0610() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock0610;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock0610(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0610) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0610 = spitzenstundeKraftfahrzeugverkehrZeitblock0610;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock1015(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1015) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1015 = spitzenstundeKraftfahrzeugverkehrZeitblock1015;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock1015
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock1015
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock1015() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock1015;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock1015(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1015) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1015 = spitzenstundeKraftfahrzeugverkehrZeitblock1015;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock1519(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1519) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1519 = spitzenstundeKraftfahrzeugverkehrZeitblock1519;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock1519
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock1519
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock1519() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock1519;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock1519(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1519) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1519 = spitzenstundeKraftfahrzeugverkehrZeitblock1519;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock1924(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1924) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1924 = spitzenstundeKraftfahrzeugverkehrZeitblock1924;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock1924
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock1924
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock1924() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock1924;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock1924(Integer spitzenstundeKraftfahrzeugverkehrZeitblock1924) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock1924 = spitzenstundeKraftfahrzeugverkehrZeitblock1924;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeKraftfahrzeugverkehrZeitblock0024(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0024) {
+    
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0024 = spitzenstundeKraftfahrzeugverkehrZeitblock0024;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeKraftfahrzeugverkehrZeitblock0024
+   * @return spitzenstundeKraftfahrzeugverkehrZeitblock0024
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeKraftfahrzeugverkehrZeitblock0024() {
+    return spitzenstundeKraftfahrzeugverkehrZeitblock0024;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_KRAFTFAHRZEUGVERKEHR_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeKraftfahrzeugverkehrZeitblock0024(Integer spitzenstundeKraftfahrzeugverkehrZeitblock0024) {
+    this.spitzenstundeKraftfahrzeugverkehrZeitblock0024 = spitzenstundeKraftfahrzeugverkehrZeitblock0024;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock0006(Integer spitzenstundeRadZeitblock0006) {
+    
+    this.spitzenstundeRadZeitblock0006 = spitzenstundeRadZeitblock0006;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock0006
+   * @return spitzenstundeRadZeitblock0006
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock0006() {
+    return spitzenstundeRadZeitblock0006;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0006)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock0006(Integer spitzenstundeRadZeitblock0006) {
+    this.spitzenstundeRadZeitblock0006 = spitzenstundeRadZeitblock0006;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock0610(Integer spitzenstundeRadZeitblock0610) {
+    
+    this.spitzenstundeRadZeitblock0610 = spitzenstundeRadZeitblock0610;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock0610
+   * @return spitzenstundeRadZeitblock0610
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock0610() {
+    return spitzenstundeRadZeitblock0610;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0610)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock0610(Integer spitzenstundeRadZeitblock0610) {
+    this.spitzenstundeRadZeitblock0610 = spitzenstundeRadZeitblock0610;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock1015(Integer spitzenstundeRadZeitblock1015) {
+    
+    this.spitzenstundeRadZeitblock1015 = spitzenstundeRadZeitblock1015;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock1015
+   * @return spitzenstundeRadZeitblock1015
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock1015() {
+    return spitzenstundeRadZeitblock1015;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1015)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock1015(Integer spitzenstundeRadZeitblock1015) {
+    this.spitzenstundeRadZeitblock1015 = spitzenstundeRadZeitblock1015;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock1519(Integer spitzenstundeRadZeitblock1519) {
+    
+    this.spitzenstundeRadZeitblock1519 = spitzenstundeRadZeitblock1519;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock1519
+   * @return spitzenstundeRadZeitblock1519
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock1519() {
+    return spitzenstundeRadZeitblock1519;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1519)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock1519(Integer spitzenstundeRadZeitblock1519) {
+    this.spitzenstundeRadZeitblock1519 = spitzenstundeRadZeitblock1519;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock1924(Integer spitzenstundeRadZeitblock1924) {
+    
+    this.spitzenstundeRadZeitblock1924 = spitzenstundeRadZeitblock1924;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock1924
+   * @return spitzenstundeRadZeitblock1924
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock1924() {
+    return spitzenstundeRadZeitblock1924;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK1924)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock1924(Integer spitzenstundeRadZeitblock1924) {
+    this.spitzenstundeRadZeitblock1924 = spitzenstundeRadZeitblock1924;
+  }
+
+
+  public MessquerschnittTagesaggregateDto spitzenstundeRadZeitblock0024(Integer spitzenstundeRadZeitblock0024) {
+    
+    this.spitzenstundeRadZeitblock0024 = spitzenstundeRadZeitblock0024;
+    return this;
+  }
+
+   /**
+   * Get spitzenstundeRadZeitblock0024
+   * @return spitzenstundeRadZeitblock0024
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSpitzenstundeRadZeitblock0024() {
+    return spitzenstundeRadZeitblock0024;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SPITZENSTUNDE_RAD_ZEITBLOCK0024)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSpitzenstundeRadZeitblock0024(Integer spitzenstundeRadZeitblock0024) {
+    this.spitzenstundeRadZeitblock0024 = spitzenstundeRadZeitblock0024;
   }
 
   @Override
@@ -112,21 +1061,85 @@ public class MessquerschnittTagesaggregateDto {
       return false;
     }
     MessquerschnittTagesaggregateDto messquerschnittTagesaggregateDto = (MessquerschnittTagesaggregateDto) o;
-    return Objects.equals(this.messquerschnittId, messquerschnittTagesaggregateDto.messquerschnittId) &&
-        Objects.equals(this.tagesaggregat, messquerschnittTagesaggregateDto.tagesaggregat);
+    return Objects.equals(this.anzahlLfw, messquerschnittTagesaggregateDto.anzahlLfw) &&
+        Objects.equals(this.anzahlKrad, messquerschnittTagesaggregateDto.anzahlKrad) &&
+        Objects.equals(this.anzahlLkw, messquerschnittTagesaggregateDto.anzahlLkw) &&
+        Objects.equals(this.anzahlBus, messquerschnittTagesaggregateDto.anzahlBus) &&
+        Objects.equals(this.anzahlRad, messquerschnittTagesaggregateDto.anzahlRad) &&
+        Objects.equals(this.summeAllePkw, messquerschnittTagesaggregateDto.summeAllePkw) &&
+        Objects.equals(this.summeLastzug, messquerschnittTagesaggregateDto.summeLastzug) &&
+        Objects.equals(this.summeGueterverkehr, messquerschnittTagesaggregateDto.summeGueterverkehr) &&
+        Objects.equals(this.summeSchwerverkehr, messquerschnittTagesaggregateDto.summeSchwerverkehr) &&
+        Objects.equals(this.summeKraftfahrzeugverkehr, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehr) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924) &&
+        Objects.equals(this.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024, messquerschnittTagesaggregateDto.summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock0006, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock0006) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock0610, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock0610) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock1015, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock1015) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock1519, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock1519) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock1924, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock1924) &&
+        Objects.equals(this.summeRadSpitzenstundeZeitblock0024, messquerschnittTagesaggregateDto.summeRadSpitzenstundeZeitblock0024) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock0006, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock0006) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock0610, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock0610) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock1015, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock1015) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock1519, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock1519) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock1924, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock1924) &&
+        Objects.equals(this.spitzenstundeKraftfahrzeugverkehrZeitblock0024, messquerschnittTagesaggregateDto.spitzenstundeKraftfahrzeugverkehrZeitblock0024) &&
+        Objects.equals(this.spitzenstundeRadZeitblock0006, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock0006) &&
+        Objects.equals(this.spitzenstundeRadZeitblock0610, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock0610) &&
+        Objects.equals(this.spitzenstundeRadZeitblock1015, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock1015) &&
+        Objects.equals(this.spitzenstundeRadZeitblock1519, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock1519) &&
+        Objects.equals(this.spitzenstundeRadZeitblock1924, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock1924) &&
+        Objects.equals(this.spitzenstundeRadZeitblock0024, messquerschnittTagesaggregateDto.spitzenstundeRadZeitblock0024);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(messquerschnittId, tagesaggregat);
+    return Objects.hash(anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519, summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924, summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024, summeRadSpitzenstundeZeitblock0006, summeRadSpitzenstundeZeitblock0610, summeRadSpitzenstundeZeitblock1015, summeRadSpitzenstundeZeitblock1519, summeRadSpitzenstundeZeitblock1924, summeRadSpitzenstundeZeitblock0024, spitzenstundeKraftfahrzeugverkehrZeitblock0006, spitzenstundeKraftfahrzeugverkehrZeitblock0610, spitzenstundeKraftfahrzeugverkehrZeitblock1015, spitzenstundeKraftfahrzeugverkehrZeitblock1519, spitzenstundeKraftfahrzeugverkehrZeitblock1924, spitzenstundeKraftfahrzeugverkehrZeitblock0024, spitzenstundeRadZeitblock0006, spitzenstundeRadZeitblock0610, spitzenstundeRadZeitblock1015, spitzenstundeRadZeitblock1519, spitzenstundeRadZeitblock1924, spitzenstundeRadZeitblock0024);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MessquerschnittTagesaggregateDto {\n");
-    sb.append("    messquerschnittId: ").append(toIndentedString(messquerschnittId)).append("\n");
-    sb.append("    tagesaggregat: ").append(toIndentedString(tagesaggregat)).append("\n");
+    sb.append("    anzahlLfw: ").append(toIndentedString(anzahlLfw)).append("\n");
+    sb.append("    anzahlKrad: ").append(toIndentedString(anzahlKrad)).append("\n");
+    sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");
+    sb.append("    anzahlBus: ").append(toIndentedString(anzahlBus)).append("\n");
+    sb.append("    anzahlRad: ").append(toIndentedString(anzahlRad)).append("\n");
+    sb.append("    summeAllePkw: ").append(toIndentedString(summeAllePkw)).append("\n");
+    sb.append("    summeLastzug: ").append(toIndentedString(summeLastzug)).append("\n");
+    sb.append("    summeGueterverkehr: ").append(toIndentedString(summeGueterverkehr)).append("\n");
+    sb.append("    summeSchwerverkehr: ").append(toIndentedString(summeSchwerverkehr)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehr: ").append(toIndentedString(summeKraftfahrzeugverkehr)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock0006)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock0610)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock1015)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock1519)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock1924)).append("\n");
+    sb.append("    summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024: ").append(toIndentedString(summeKraftfahrzeugverkehrSpitzenstundeZeitblock0024)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock0006: ").append(toIndentedString(summeRadSpitzenstundeZeitblock0006)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock0610: ").append(toIndentedString(summeRadSpitzenstundeZeitblock0610)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock1015: ").append(toIndentedString(summeRadSpitzenstundeZeitblock1015)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock1519: ").append(toIndentedString(summeRadSpitzenstundeZeitblock1519)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock1924: ").append(toIndentedString(summeRadSpitzenstundeZeitblock1924)).append("\n");
+    sb.append("    summeRadSpitzenstundeZeitblock0024: ").append(toIndentedString(summeRadSpitzenstundeZeitblock0024)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock0006: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock0006)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock0610: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock0610)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock1015: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock1015)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock1519: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock1519)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock1924: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock1924)).append("\n");
+    sb.append("    spitzenstundeKraftfahrzeugverkehrZeitblock0024: ").append(toIndentedString(spitzenstundeKraftfahrzeugverkehrZeitblock0024)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock0006: ").append(toIndentedString(spitzenstundeRadZeitblock0006)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock0610: ").append(toIndentedString(spitzenstundeRadZeitblock0610)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock1015: ").append(toIndentedString(spitzenstundeRadZeitblock1015)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock1519: ").append(toIndentedString(spitzenstundeRadZeitblock1519)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock1924: ").append(toIndentedString(spitzenstundeRadZeitblock1924)).append("\n");
+    sb.append("    spitzenstundeRadZeitblock0024: ").append(toIndentedString(spitzenstundeRadZeitblock0024)).append("\n");
     sb.append("}");
     return sb.toString();
   }

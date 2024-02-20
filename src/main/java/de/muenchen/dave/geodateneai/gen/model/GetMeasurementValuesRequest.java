@@ -28,18 +28,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
- * GetMesswerteOfMessquerschnittRequest
+ * GetMeasurementValuesRequest
  */
 @JsonPropertyOrder({
-  GetMesswerteOfMessquerschnittRequest.JSON_PROPERTY_MESSQUERSCHNITT_IDS,
-  GetMesswerteOfMessquerschnittRequest.JSON_PROPERTY_ZEITPUNKT_START,
-  GetMesswerteOfMessquerschnittRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
-  GetMesswerteOfMessquerschnittRequest.JSON_PROPERTY_TAGES_TYP
+  GetMeasurementValuesRequest.JSON_PROPERTY_MESSQUERSCHNITT_IDS,
+  GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_START,
+  GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
+  GetMeasurementValuesRequest.JSON_PROPERTY_TAGES_TYP
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
-public class GetMesswerteOfMessquerschnittRequest {
+public class GetMeasurementValuesRequest {
   public static final String JSON_PROPERTY_MESSQUERSCHNITT_IDS = "messquerschnittIds";
-  private Set<Long> messquerschnittIds = new LinkedHashSet<>();
+  private Set<String> messquerschnittIds = new LinkedHashSet<>();
 
   public static final String JSON_PROPERTY_ZEITPUNKT_START = "zeitpunktStart";
   private LocalDate zeitpunktStart;
@@ -91,16 +91,16 @@ public class GetMesswerteOfMessquerschnittRequest {
   public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
   private TagesTypEnum tagesTyp;
 
-  public GetMesswerteOfMessquerschnittRequest() {
+  public GetMeasurementValuesRequest() {
   }
 
-  public GetMesswerteOfMessquerschnittRequest messquerschnittIds(Set<Long> messquerschnittIds) {
+  public GetMeasurementValuesRequest messquerschnittIds(Set<String> messquerschnittIds) {
     
     this.messquerschnittIds = messquerschnittIds;
     return this;
   }
 
-  public GetMesswerteOfMessquerschnittRequest addMessquerschnittIdsItem(Long messquerschnittIdsItem) {
+  public GetMeasurementValuesRequest addMessquerschnittIdsItem(String messquerschnittIdsItem) {
     if (this.messquerschnittIds == null) {
       this.messquerschnittIds = new LinkedHashSet<>();
     }
@@ -116,7 +116,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_IDS)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public Set<Long> getMessquerschnittIds() {
+  public Set<String> getMessquerschnittIds() {
     return messquerschnittIds;
   }
 
@@ -124,12 +124,12 @@ public class GetMesswerteOfMessquerschnittRequest {
   @JsonDeserialize(as = LinkedHashSet.class)
   @JsonProperty(JSON_PROPERTY_MESSQUERSCHNITT_IDS)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setMessquerschnittIds(Set<Long> messquerschnittIds) {
+  public void setMessquerschnittIds(Set<String> messquerschnittIds) {
     this.messquerschnittIds = messquerschnittIds;
   }
 
 
-  public GetMesswerteOfMessquerschnittRequest zeitpunktStart(LocalDate zeitpunktStart) {
+  public GetMeasurementValuesRequest zeitpunktStart(LocalDate zeitpunktStart) {
     
     this.zeitpunktStart = zeitpunktStart;
     return this;
@@ -155,7 +155,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   }
 
 
-  public GetMesswerteOfMessquerschnittRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
+  public GetMeasurementValuesRequest zeitpunktEnde(LocalDate zeitpunktEnde) {
     
     this.zeitpunktEnde = zeitpunktEnde;
     return this;
@@ -181,7 +181,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   }
 
 
-  public GetMesswerteOfMessquerschnittRequest tagesTyp(TagesTypEnum tagesTyp) {
+  public GetMeasurementValuesRequest tagesTyp(TagesTypEnum tagesTyp) {
     
     this.tagesTyp = tagesTyp;
     return this;
@@ -214,11 +214,11 @@ public class GetMesswerteOfMessquerschnittRequest {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    GetMesswerteOfMessquerschnittRequest getMesswerteOfMessquerschnittRequest = (GetMesswerteOfMessquerschnittRequest) o;
-    return Objects.equals(this.messquerschnittIds, getMesswerteOfMessquerschnittRequest.messquerschnittIds) &&
-        Objects.equals(this.zeitpunktStart, getMesswerteOfMessquerschnittRequest.zeitpunktStart) &&
-        Objects.equals(this.zeitpunktEnde, getMesswerteOfMessquerschnittRequest.zeitpunktEnde) &&
-        Objects.equals(this.tagesTyp, getMesswerteOfMessquerschnittRequest.tagesTyp);
+    GetMeasurementValuesRequest getMeasurementValuesRequest = (GetMeasurementValuesRequest) o;
+    return Objects.equals(this.messquerschnittIds, getMeasurementValuesRequest.messquerschnittIds) &&
+        Objects.equals(this.zeitpunktStart, getMeasurementValuesRequest.zeitpunktStart) &&
+        Objects.equals(this.zeitpunktEnde, getMeasurementValuesRequest.zeitpunktEnde) &&
+        Objects.equals(this.tagesTyp, getMeasurementValuesRequest.tagesTyp);
   }
 
   @Override
@@ -229,7 +229,7 @@ public class GetMesswerteOfMessquerschnittRequest {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class GetMesswerteOfMessquerschnittRequest {\n");
+    sb.append("class GetMeasurementValuesRequest {\n");
     sb.append("    messquerschnittIds: ").append(toIndentedString(messquerschnittIds)).append("\n");
     sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
     sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");

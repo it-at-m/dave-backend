@@ -36,11 +36,13 @@ public final class ChartLegendUtil {
     public static final String GUETERVERKEHR_ANTEIL_PROZENT = "GV %";
 
     public static final String PKW_EINHEITEN = "Pkw-Einheiten";
+    public static final String LFW = "Lfw";
 
     // Nur fuer die Heatmap
     public static final String PKW_HEATMAP = "Personenkraftwagen";
 
     public static final String LKW_HEATMAP = "Lastkraftwagen";
+    public static final String LFW_HEATMAP = "Lieferwagen";
 
     public static final String LASTZUEGE_HEATMAP = "Lastzüge";
 
