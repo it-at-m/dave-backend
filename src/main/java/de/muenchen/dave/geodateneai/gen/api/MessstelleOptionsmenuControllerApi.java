@@ -3,6 +3,7 @@ package de.muenchen.dave.geodateneai.gen.api;
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 
@@ -51,8 +52,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -89,8 +90,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -103,8 +104,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messstelleId The messstelleId parameter
      * @return ResponseEntity&lt;NichtPlausibleTageDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -117,8 +118,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param messstelleId The messstelleId parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -131,25 +132,15 @@ public class MessstelleOptionsmenuControllerApi {
      * 
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
-     * @param startDate The startDate parameter
-     * @param endDate The endDate parameter
-     * @param tagesTyp The tagesTyp parameter
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    private ResponseSpec isTagesTypDataValidRequestCreation(String startDate, String endDate, String tagesTyp) throws WebClientResponseException {
-        Object postBody = null;
-        // verify the required parameter 'startDate' is set
-        if (startDate == null) {
-            throw new WebClientResponseException("Missing the required parameter 'startDate' when calling isTagesTypDataValid", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
-        }
-        // verify the required parameter 'endDate' is set
-        if (endDate == null) {
-            throw new WebClientResponseException("Missing the required parameter 'endDate' when calling isTagesTypDataValid", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
-        }
-        // verify the required parameter 'tagesTyp' is set
-        if (tagesTyp == null) {
-            throw new WebClientResponseException("Missing the required parameter 'tagesTyp' when calling isTagesTypDataValid", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+    private ResponseSpec isTagesTypDataValidRequestCreation(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        Object postBody = chosenTagesTypValidRequestDto;
+        // verify the required parameter 'chosenTagesTypValidRequestDto' is set
+        if (chosenTagesTypValidRequestDto == null) {
+            throw new WebClientResponseException("Missing the required parameter 'chosenTagesTypValidRequestDto' when calling isTagesTypDataValid", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
         }
         // create path and map variables
         final Map<String, Object> pathParams = new HashMap<String, Object>();
@@ -159,21 +150,19 @@ public class MessstelleOptionsmenuControllerApi {
         final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
         final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
-        queryParams.putAll(apiClient.parameterToMultiValueMap(null, "start_date", startDate));
-        queryParams.putAll(apiClient.parameterToMultiValueMap(null, "end_date", endDate));
-        queryParams.putAll(apiClient.parameterToMultiValueMap(null, "tages_typ", tagesTyp));
-
         final String[] localVarAccepts = { 
             "*/*"
         };
         final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
-        final String[] localVarContentTypes = { };
+        final String[] localVarContentTypes = { 
+            "application/json"
+        };
         final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
 
         String[] localVarAuthNames = new String[] {  };
 
         ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
-        return apiClient.invokeAPI("/MessstelleOptionsmenu/validateTagesTyp", HttpMethod.GET, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+        return apiClient.invokeAPI("/MessstelleOptionsmenu/validateTagesTyp", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
     /**
@@ -181,15 +170,13 @@ public class MessstelleOptionsmenuControllerApi {
      * 
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
-     * @param startDate The startDate parameter
-     * @param endDate The endDate parameter
-     * @param tagesTyp The tagesTyp parameter
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ChosenTagesTypValidDTO> isTagesTypDataValid(String startDate, String endDate, String tagesTyp) throws WebClientResponseException {
+    public Mono<ChosenTagesTypValidDTO> isTagesTypDataValid(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
         ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
-        return isTagesTypDataValidRequestCreation(startDate, endDate, tagesTyp).bodyToMono(localVarReturnType);
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto).bodyToMono(localVarReturnType);
     }
 
     /**
@@ -197,15 +184,13 @@ public class MessstelleOptionsmenuControllerApi {
      * 
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
-     * @param startDate The startDate parameter
-     * @param endDate The endDate parameter
-     * @param tagesTyp The tagesTyp parameter
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseEntity&lt;ChosenTagesTypValidDTO&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<ChosenTagesTypValidDTO>> isTagesTypDataValidWithHttpInfo(String startDate, String endDate, String tagesTyp) throws WebClientResponseException {
+    public Mono<ResponseEntity<ChosenTagesTypValidDTO>> isTagesTypDataValidWithHttpInfo(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
         ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
-        return isTagesTypDataValidRequestCreation(startDate, endDate, tagesTyp).toEntity(localVarReturnType);
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto).toEntity(localVarReturnType);
     }
 
     /**
@@ -213,13 +198,11 @@ public class MessstelleOptionsmenuControllerApi {
      * 
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
-     * @param startDate The startDate parameter
-     * @param endDate The endDate parameter
-     * @param tagesTyp The tagesTyp parameter
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public ResponseSpec isTagesTypDataValidWithResponseSpec(String startDate, String endDate, String tagesTyp) throws WebClientResponseException {
-        return isTagesTypDataValidRequestCreation(startDate, endDate, tagesTyp);
+    public ResponseSpec isTagesTypDataValidWithResponseSpec(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto);
     }
 }

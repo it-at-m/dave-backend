@@ -157,6 +157,47 @@
         }
       }
     },
+    "/MessstelleOptionsmenu/validateTagesTyp": {
+      "post": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
+        "operationId": "isTagesTypDataValid",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChosenTagesTypValidRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "TagesTyp erfolgreich validiert",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/messstelle": {
       "get": {
         "tags": [
@@ -191,71 +232,6 @@
         }
       }
     },
-    "/MessstelleOptionsmenu/validateTagesTyp": {
-      "get": {
-        "tags": [
-          "MessstelleOptionsmenuController"
-        ],
-        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
-        "operationId": "isTagesTypDataValid",
-        "parameters": [
-          {
-            "name": "start_date",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "end_date",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "tages_typ",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "WERKTAG_DI_MI_DO",
-                "WERKTAG_MO_FR",
-                "SAMSTAG",
-                "SONNTAG_FEIERTAG",
-                "WERKTAG_FERIEN",
-                "MO_SO"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "TagesTyp erfolgreich validiert",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/MessstelleOptionsmenu/nichtPlausibleDaten": {
       "get": {
         "tags": [
@@ -274,22 +250,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -711,6 +687,36 @@
           }
         }
       },
+      "ChosenTagesTypValidRequestDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "MO_SO"
+            ]
+          }
+        }
+      },
+      "ChosenTagesTypValidDTO": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          }
+        }
+      },
       "MessquerschnittDto": {
         "type": "object",
         "properties": {
@@ -807,14 +813,6 @@
           "ycoordinate": {
             "type": "number",
             "format": "double"
-          }
-        }
-      },
-      "ChosenTagesTypValidDTO": {
-        "type": "object",
-        "properties": {
-          "isValid": {
-            "type": "boolean"
           }
         }
       },
