@@ -27,6 +27,7 @@ public class MesswerteService {
 
     private final GanglinieService ganglinieService;
     private final HeatmapService heatmapService;
+    private final ListenausgabeService listenausgabeService;
 
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
@@ -40,6 +41,7 @@ public class MesswerteService {
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle));
         return processedZaehldaten;
     }
 
