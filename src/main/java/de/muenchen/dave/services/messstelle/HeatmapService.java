@@ -47,14 +47,6 @@ public class HeatmapService {
                     ladeZaehldatenHeatmap,
                     heatMapEntryIndex.get(),
                     klassenKategorienIndex.get(),
-                    intervall.getSummeKraftfahrzeugverkehr(),
-                    ChartLegendUtil.KFZ_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
                     intervall.getSummeGueterverkehr(),
                     ChartLegendUtil.GUETERVERKEHR_HEATMAP);
             klassenKategorienIndex.getAndIncrement();
@@ -65,6 +57,14 @@ public class HeatmapService {
                     klassenKategorienIndex.get(),
                     intervall.getSummeSchwerverkehr(),
                     ChartLegendUtil.SCHWERVERKEHR_HEATMAP);
+            klassenKategorienIndex.getAndIncrement();
+
+            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                    ladeZaehldatenHeatmap,
+                    heatMapEntryIndex.get(),
+                    klassenKategorienIndex.get(),
+                    intervall.getSummeKraftfahrzeugverkehr(),
+                    ChartLegendUtil.KFZ_HEATMAP);
             klassenKategorienIndex.getAndIncrement();
 
             insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
@@ -95,6 +95,14 @@ public class HeatmapService {
                     ladeZaehldatenHeatmap,
                     heatMapEntryIndex.get(),
                     klassenKategorienIndex.get(),
+                    intervall.getAnzahlLfw(),
+                    ChartLegendUtil.LFW_HEATMAP);
+            klassenKategorienIndex.getAndIncrement();
+
+            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                    ladeZaehldatenHeatmap,
+                    heatMapEntryIndex.get(),
+                    klassenKategorienIndex.get(),
                     intervall.getSummeLastzug(),
                     ChartLegendUtil.LASTZUEGE_HEATMAP);
             klassenKategorienIndex.getAndIncrement();
@@ -105,14 +113,6 @@ public class HeatmapService {
                     klassenKategorienIndex.get(),
                     intervall.getAnzahlLkw(),
                     ChartLegendUtil.LKW_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlLfw(),
-                    ChartLegendUtil.LFW_HEATMAP);
             klassenKategorienIndex.getAndIncrement();
 
             insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
