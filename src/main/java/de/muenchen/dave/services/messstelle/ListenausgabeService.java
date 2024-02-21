@@ -4,17 +4,20 @@
  */
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeListenausgabeMessstelleDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -25,83 +28,148 @@ public class ListenausgabeService {
     private static final Integer ONE = 1;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenTableDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervalle) {
+    public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervalle) {
         log.debug("#ladeListenausgabe");
-        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = new LadeZaehldatenTableDTO();
-        // TODO Stunden, Blöcke und Spitzenstunde berechnen
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_00_06, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_06_10, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_10_15, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_15_19, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_19_24, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-//        berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalleForFahrbeziehung)
-//                .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-        return ladeZaehldatenTableDTO;
+        final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
+        dto.getZaehldaten().addAll(calculateIntervalls(intervalle));
+        dto.getZaehldaten().addAll(calculateBlocksAndHours(intervalle));
+        // TODO Spitzenstunde berechnen
+
+        dto.setZaehldaten(dto.getZaehldaten().stream().sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
+        return dto;
     }
 
-    protected List<LadeListenausgabeMessstelleDTO> calculateSumOfBlocks(final List<MeasurementValuesPerInterval> intervalle) {
-        final List<LadeListenausgabeMessstelleDTO> dtos = new ArrayList<>();
-        final String block = "Block";
-
-        // 0000 - 0600
-        final LadeListenausgabeMessstelleDTO block0006 = calculateSum(intervalle.subList(0, 4 * 6));
-        block0006.setType(block);
-        block0006.setStartUhrzeit("00:00");
-        block0006.setEndeUhrzeit("06:00");
-        dtos.add(block0006);
-        // 0600 - 1000
-        final LadeListenausgabeMessstelleDTO block0610 = calculateSum(intervalle.subList(4 * 6, 4 * 10));
-        block0610.setType(block);
-        block0610.setStartUhrzeit("06:00");
-        block0610.setEndeUhrzeit("10:00");
-        dtos.add(block0610);
-        // 1000 - 1500
-        final LadeListenausgabeMessstelleDTO block1015 = calculateSum(intervalle.subList(4 * 10, 4 * 15));
-        block1015.setType(block);
-        block1015.setStartUhrzeit("10:00");
-        block1015.setEndeUhrzeit("15:00");
-        dtos.add(block1015);
-        // 1500 - 1900
-        final LadeListenausgabeMessstelleDTO block1519 = calculateSum(intervalle.subList(4 * 15, 4 * 19));
-        block1519.setType(block);
-        block1519.setStartUhrzeit("15:00");
-        block1519.setEndeUhrzeit("19:00");
-        dtos.add(block1519);
-        // 1900 - 2400
-        final LadeListenausgabeMessstelleDTO block1924 = calculateSum(intervalle.subList(4 * 19, 4 * 24));
-        block1924.setType(block);
-        block1924.setStartUhrzeit("19:00");
-        block1924.setEndeUhrzeit("24:00");
-        dtos.add(block1924);
-        // 0000 - 2400
-        final LadeListenausgabeMessstelleDTO block0024 = calculateSum(intervalle.subList(0, 4 * 24));
-        block0024.setType(block);
-        block0024.setStartUhrzeit("00:00");
-        block0024.setEndeUhrzeit("24:00");
-        dtos.add(block0024);
-        return dtos;
-    }
-
-    protected List<LadeListenausgabeMessstelleDTO> calculateSumOfHours(final List<MeasurementValuesPerInterval> intervalle) {
-        final List<LadeListenausgabeMessstelleDTO> dtos = new ArrayList<>();
-        final String stunde = "Stunde";
-        for(int index = 0; index < intervalle.size(); index = index+4) {
-            final LadeListenausgabeMessstelleDTO dto = calculateSum(intervalle.subList(index, index + 4));
-            dto.setType(stunde);
-            dto.setStartUhrzeit(String.format("%s:00", (index/4) < 10 ? "0"+index : index));
-            dto.setEndeUhrzeit(String.format("%s:00", ((index+4)/4) < 10 ? "0"+index : index));
+    protected List<LadeMesswerteDTO> calculateBlocksAndHours(final List<MeasurementValuesPerInterval> intervalle) {
+        // TODO Berechnung in 2 Methoden Trennen
+        final List<LadeMesswerteDTO> dtos = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            final LocalTime start = LocalTime.of(i, 0);
+            final LocalTime end;
+            if (i == 23) {
+                end = LocalTime.of(i, 59);
+            } else {
+                end = LocalTime.of(i + 1, 0);
+            }
+            final LadeMesswerteDTO dto = calculateSum(intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start, end))
+                    .collect(Collectors.toList()));
+            dto.setStartUhrzeit(start);
+            dto.setEndeUhrzeit(end);
+            dto.setType("Stunde");
+            dto.setSortingIndex(100 * (i + 1) - 5);
             dtos.add(dto);
         }
+        // 00:00 - 06:00
+        final AtomicReference<LocalTime> start = new AtomicReference<>(LocalTime.of(0, 0));
+        final AtomicReference<LocalTime> end = new AtomicReference<>(LocalTime.of(6, 0));
+        final LadeMesswerteDTO block0006 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block0006.setEndeUhrzeit(end.get());
+        block0006.setStartUhrzeit(start.get());
+        block0006.setType("Block");
+        block0006.setSortingIndex(100 * end.get().getHour() - 3);
+        dtos.add(block0006);
+
+        // 06:00 - 10:00
+        start.set(LocalTime.of(6, 0));
+        end.set(LocalTime.of(10, 0));
+        final LadeMesswerteDTO block0610 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block0610.setEndeUhrzeit(end.get());
+        block0610.setStartUhrzeit(start.get());
+        block0610.setType("Block");
+        block0610.setSortingIndex(100 * end.get().getHour() - 3);
+        dtos.add(block0610);
+
+        // 10:00 - 15:00
+        start.set(LocalTime.of(10, 0));
+        end.set(LocalTime.of(15, 0));
+        final LadeMesswerteDTO block1015 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block1015.setEndeUhrzeit(end.get());
+        block1015.setStartUhrzeit(start.get());
+        block1015.setType("Block");
+        block1015.setSortingIndex(100 * end.get().getHour() - 3);
+        dtos.add(block1015);
+
+        // 15:00 - 19:00
+        start.set(LocalTime.of(15, 0));
+        end.set(LocalTime.of(19, 0));
+        final LadeMesswerteDTO block1519 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block1519.setEndeUhrzeit(end.get());
+        block1519.setStartUhrzeit(start.get());
+        block1519.setType("Block");
+        block1519.setSortingIndex(100 * end.get().getHour() - 3);
+        dtos.add(block1519);
+
+        // 19:00 - 24:00
+        start.set(LocalTime.of(19, 0));
+        end.set(LocalTime.of(23, 59));
+        final LadeMesswerteDTO block1924 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block1924.setEndeUhrzeit(end.get());
+        block1924.setStartUhrzeit(start.get());
+        block1924.setType("Block");
+        block1924.setSortingIndex(100 * end.get().getHour() - 3);
+        dtos.add(block1924);
+
+        // 00:00 - 24:00
+        start.set(LocalTime.of(0, 0));
+        final LadeMesswerteDTO block0024 = calculateSum(
+                intervalle.stream().filter(intervall -> isTimeBetween(intervall.getUhrzeitVon(), start.get(), end.get()))
+                        .collect(Collectors.toList()));
+        block0024.setEndeUhrzeit(end.get());
+        block0024.setStartUhrzeit(start.get());
+        block0024.setType("Gesamt");
+        block0024.setSortingIndex(2400);
+        dtos.add(block0024);
+
         return dtos;
     }
 
-    protected LadeListenausgabeMessstelleDTO calculateSum(final List<MeasurementValuesPerInterval> intervalle) {
-        final LadeListenausgabeMessstelleDTO dto = new LadeListenausgabeMessstelleDTO();
+    protected boolean isTimeBetween(final LocalTime toCheck, final LocalTime start, final LocalTime end) {
+        return (toCheck.isAfter(start) || toCheck.equals(start)) && toCheck.isBefore(end);
+    }
+
+    protected List<LadeMesswerteDTO> calculateIntervalls(final List<MeasurementValuesPerInterval> intervalle) {
+        final List<LadeMesswerteDTO> dtos = new ArrayList<>();
+        intervalle.forEach(intervall -> {
+            final LadeMesswerteDTO dto = new LadeMesswerteDTO();
+            dto.setType("");
+            final String hour = String.valueOf(intervall.getUhrzeitVon().getHour());
+            String minute = String.valueOf(intervall.getUhrzeitVon().getMinute());
+            if (minute.length() == 1) {
+                minute += minute;
+            }
+            int sortingIndex = Integer.parseInt(hour + minute);
+            System.err.println(sortingIndex);
+            dto.setSortingIndex(sortingIndex);
+            dto.setStartUhrzeit(intervall.getUhrzeitVon());
+            dto.setEndeUhrzeit(intervall.getUhrzeitBis());
+            dto.setPkw(intervall.getSummeAllePkw());
+            dto.setLkw(intervall.getAnzahlLkw());
+            dto.setLfw(intervall.getAnzahlLfw());
+            dto.setLastzuege(intervall.getSummeLastzug());
+            dto.setBusse(intervall.getAnzahlBus());
+            dto.setKraftraeder(intervall.getAnzahlKrad());
+            dto.setFahrradfahrer(intervall.getAnzahlRad());
+            dto.setKfz(intervall.getSummeKraftfahrzeugverkehr());
+            dto.setSchwerverkehr(intervall.getSummeSchwerverkehr());
+            dto.setGueterverkehr(intervall.getSummeGueterverkehr());
+            dto.setAnteilSchwerverkehrAnKfzProzent(intervall.getProzentSchwerverkehr());
+            dto.setAnteilGueterverkehrAnKfzProzent(intervall.getProzentGueterverkehr());
+            dtos.add(dto);
+        });
+        return dtos;
+    }
+
+    protected LadeMesswerteDTO calculateSum(final List<MeasurementValuesPerInterval> intervalle) {
+        final LadeMesswerteDTO dto = new LadeMesswerteDTO();
         dto.setPkw(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getSummeAllePkw).sum());
         dto.setLkw(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlLkw).sum());
         dto.setLfw(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlLfw).sum());
@@ -109,7 +177,7 @@ public class ListenausgabeService {
         dto.setBusse(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlBus).sum());
         dto.setKraftraeder(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlKrad).sum());
         dto.setFahrradfahrer(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlRad).sum());
-//        dto.setFussgaenger();
+        //        dto.setFussgaenger();
         dto.setKfz(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getSummeKraftfahrzeugverkehr).sum());
         dto.setSchwerverkehr(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getSummeSchwerverkehr).sum());
         dto.setGueterverkehr(intervalle.stream().mapToInt(MeasurementValuesPerInterval::getSummeGueterverkehr).sum());

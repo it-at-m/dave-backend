@@ -165,6 +165,16 @@
         "summary": "Holt alle relevanten Messstellen.",
         "operationId": "getMessstellen",
         "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Messstellen erfolgreich abgefragt.",
             "content": {
@@ -174,16 +184,6 @@
                   "items": {
                     "$ref": "#/components/schemas/MessstelleDto"
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -593,6 +593,9 @@
         "type": "object",
         "properties": {
           "uhrzeitVon": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "uhrzeitBis": {
             "$ref": "#/components/schemas/LocalTime"
           },
           "anzahlLfw": {

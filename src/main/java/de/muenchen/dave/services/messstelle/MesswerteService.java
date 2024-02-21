@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
@@ -31,14 +31,14 @@ public class MesswerteService {
 
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
-    public LadeProcessedZaehldatenDTO ladeMesswerte(final String messstelleId) {
+    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId) {
         log.debug("#ladeMesswerte {}", messstelleId);
         final Set<String> messquerschnittNummern = messstelleService.getMessquerschnittNummern(messstelleId);
 
         final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(messquerschnittNummern);
         final List<MeasurementValuesPerInterval> intervalle = response.getIntervals();
 
-        final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
+        final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle));
