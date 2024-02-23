@@ -29,8 +29,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
  * MeasurementValuesPerInterval
  */
 @JsonPropertyOrder({
-  MeasurementValuesPerInterval.JSON_PROPERTY_UHRZEIT_VON,
-  MeasurementValuesPerInterval.JSON_PROPERTY_UHRZEIT_BIS,
+  MeasurementValuesPerInterval.JSON_PROPERTY_START_UHRZEIT,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ENDE_UHRZEIT,
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_LFW,
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_KRAD,
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_LKW,
@@ -46,11 +46,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MeasurementValuesPerInterval {
-  public static final String JSON_PROPERTY_UHRZEIT_VON = "uhrzeitVon";
-  private LocalTime uhrzeitVon;
+  public static final String JSON_PROPERTY_START_UHRZEIT = "startUhrzeit";
+  private LocalTime startUhrzeit;
 
-  public static final String JSON_PROPERTY_UHRZEIT_BIS = "uhrzeitBis";
-  private LocalTime uhrzeitBis;
+  public static final String JSON_PROPERTY_ENDE_UHRZEIT = "endeUhrzeit";
+  private LocalTime endeUhrzeit;
 
   public static final String JSON_PROPERTY_ANZAHL_LFW = "anzahlLfw";
   private Integer anzahlLfw;
@@ -91,55 +91,55 @@ public class MeasurementValuesPerInterval {
   public MeasurementValuesPerInterval() {
   }
 
-  public MeasurementValuesPerInterval uhrzeitVon(LocalTime uhrzeitVon) {
+  public MeasurementValuesPerInterval startUhrzeit(LocalTime startUhrzeit) {
     
-    this.uhrzeitVon = uhrzeitVon;
+    this.startUhrzeit = startUhrzeit;
     return this;
   }
 
    /**
-   * Get uhrzeitVon
-   * @return uhrzeitVon
+   * Get startUhrzeit
+   * @return startUhrzeit
   **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_START_UHRZEIT)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public LocalTime getUhrzeitVon() {
-    return uhrzeitVon;
+  public LocalTime getStartUhrzeit() {
+    return startUhrzeit;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_VON)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setUhrzeitVon(LocalTime uhrzeitVon) {
-    this.uhrzeitVon = uhrzeitVon;
+  @JsonProperty(JSON_PROPERTY_START_UHRZEIT)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setStartUhrzeit(LocalTime startUhrzeit) {
+    this.startUhrzeit = startUhrzeit;
   }
 
 
-  public MeasurementValuesPerInterval uhrzeitBis(LocalTime uhrzeitBis) {
+  public MeasurementValuesPerInterval endeUhrzeit(LocalTime endeUhrzeit) {
     
-    this.uhrzeitBis = uhrzeitBis;
+    this.endeUhrzeit = endeUhrzeit;
     return this;
   }
 
    /**
-   * Get uhrzeitBis
-   * @return uhrzeitBis
+   * Get endeUhrzeit
+   * @return endeUhrzeit
   **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_ENDE_UHRZEIT)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public LocalTime getUhrzeitBis() {
-    return uhrzeitBis;
+  public LocalTime getEndeUhrzeit() {
+    return endeUhrzeit;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_UHRZEIT_BIS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setUhrzeitBis(LocalTime uhrzeitBis) {
-    this.uhrzeitBis = uhrzeitBis;
+  @JsonProperty(JSON_PROPERTY_ENDE_UHRZEIT)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setEndeUhrzeit(LocalTime endeUhrzeit) {
+    this.endeUhrzeit = endeUhrzeit;
   }
 
 
@@ -463,8 +463,8 @@ public class MeasurementValuesPerInterval {
       return false;
     }
     MeasurementValuesPerInterval measurementValuesPerInterval = (MeasurementValuesPerInterval) o;
-    return Objects.equals(this.uhrzeitVon, measurementValuesPerInterval.uhrzeitVon) &&
-        Objects.equals(this.uhrzeitBis, measurementValuesPerInterval.uhrzeitBis) &&
+    return Objects.equals(this.startUhrzeit, measurementValuesPerInterval.startUhrzeit) &&
+        Objects.equals(this.endeUhrzeit, measurementValuesPerInterval.endeUhrzeit) &&
         Objects.equals(this.anzahlLfw, measurementValuesPerInterval.anzahlLfw) &&
         Objects.equals(this.anzahlKrad, measurementValuesPerInterval.anzahlKrad) &&
         Objects.equals(this.anzahlLkw, measurementValuesPerInterval.anzahlLkw) &&
@@ -481,15 +481,15 @@ public class MeasurementValuesPerInterval {
 
   @Override
   public int hashCode() {
-    return Objects.hash(uhrzeitVon, uhrzeitBis, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, prozentSchwerverkehr, prozentGueterverkehr);
+    return Objects.hash(startUhrzeit, endeUhrzeit, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, prozentSchwerverkehr, prozentGueterverkehr);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MeasurementValuesPerInterval {\n");
-    sb.append("    uhrzeitVon: ").append(toIndentedString(uhrzeitVon)).append("\n");
-    sb.append("    uhrzeitBis: ").append(toIndentedString(uhrzeitBis)).append("\n");
+    sb.append("    startUhrzeit: ").append(toIndentedString(startUhrzeit)).append("\n");
+    sb.append("    endeUhrzeit: ").append(toIndentedString(endeUhrzeit)).append("\n");
     sb.append("    anzahlLfw: ").append(toIndentedString(anzahlLfw)).append("\n");
     sb.append("    anzahlKrad: ").append(toIndentedString(anzahlKrad)).append("\n");
     sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");

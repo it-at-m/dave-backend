@@ -50,8 +50,8 @@ public class MessstelleApi {
     /**
      * Holt alle relevanten Messstellen.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messstellen erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @return List&lt;MessstelleDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
@@ -81,8 +81,8 @@ public class MessstelleApi {
     /**
      * Holt alle relevanten Messstellen.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messstellen erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @return List&lt;MessstelleDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
@@ -94,8 +94,8 @@ public class MessstelleApi {
     /**
      * Holt alle relevanten Messstellen.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messstellen erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @return ResponseEntity&lt;List&lt;MessstelleDto&gt;&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
@@ -107,8 +107,8 @@ public class MessstelleApi {
     /**
      * Holt alle relevanten Messstellen.
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - Messstellen erfolgreich abgefragt.
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */

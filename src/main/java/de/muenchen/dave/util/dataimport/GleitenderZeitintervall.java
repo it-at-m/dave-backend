@@ -95,30 +95,6 @@ public class GleitenderZeitintervall {
         return gleitenderZeitintervall;
     }
 
-    //    public static GleitenderZeitintervall createInstanceWithIndexParameterAsNewestIndex(final List<MeasurementValuesPerInterval> sortedZeitintervalle,
-    //            final int index,
-    //            final Zeitblock zeitblock) {
-    //        final var zeitintervallePerHour = sortedZeitintervalle.size() / 24;
-    //        final GleitenderZeitintervall gleitenderZeitintervall = GleitenderZeitintervall.createEmptyInstance(zeitintervallePerHour);
-    //        /*
-    //         * Rückwärtiges iterieren über die Zeitintervalle beginnend bei Position gegeben in
-    //         * Methodenparameter index.
-    //         * Die Anzahl der Iterationen definiert sich aus den Zeitintervallen pro Stunde.
-    //         * Des Weiteren werden nur die Zeitintervalle berücksichtigt die innerhalb des Parameters Zeitblock
-    //         * liegen.
-    //         */
-    //        for (int hourIndex = zeitintervallePerHour - 1; hourIndex >= 0; hourIndex--) {
-    //            final int positionZeitintervall = index - hourIndex;
-    //            if (positionZeitintervall >= 0
-    //                    && ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(sortedZeitintervalle.get(positionZeitintervall), zeitblock)) {
-    //                // Ist ein Zeitintervall gefunden, welcher innerhalb der einen Stunde und im Zeitblock liegt,
-    //                // so wird dieser in die Liste aufgenommen.
-    //                gleitenderZeitintervall.add(sortedZeitintervalle.get(positionZeitintervall));
-    //            }
-    //        }
-    //        return gleitenderZeitintervall;
-    //    }
-
     public static int calcNumberOfZeitintervallePerHour(final List<Zeitintervall> zeitintervalle) {
         final var minutesPerZeitintervall = new AtomicLong(DEFAULT_MINUTES_ZEITINTERVALL);
         zeitintervalle.stream()
