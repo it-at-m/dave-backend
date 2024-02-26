@@ -41,7 +41,7 @@ public class MesswerteService {
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle, messstelleService.isKfzMessstelle(messstelleId)));
         return processedZaehldaten;
     }
 

@@ -64,4 +64,9 @@ public class MessstelleService {
         messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
         return result;
     }
+
+    public boolean isKfzMessstelle(final String messstelleId) {
+        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        return "KFZ".equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
+    }
 }
