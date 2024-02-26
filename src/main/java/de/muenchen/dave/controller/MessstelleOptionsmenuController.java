@@ -5,6 +5,7 @@ import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.services.MessstelleOptionsmenuService;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class MessstelleOptionsmenuController {
     }
 
     @PostMapping("/validateTagesTyp")
-    public ResponseEntity<ChosenTagesTypValidDTO> isTagesTypDataValid(@RequestBody ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
+    public ResponseEntity<ChosenTagesTypValidDTO> isTagesTypDataValid(@RequestBody @NotNull ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
         final ChosenTagesTypValidDTO chosenTagesTypValidDTO = messstelleOptionsmenuService.isTagesTypValid(chosenTagesTypValidRequestDto);
         return ResponseEntity.ok(chosenTagesTypValidDTO);
     }
