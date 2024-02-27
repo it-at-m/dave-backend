@@ -3,6 +3,8 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.mapper.MessstelleOptionsmenuMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -20,5 +22,9 @@ public class MessstelleOptionsmenuService {
         final NichtPlausibleTageDto eaiRequestResult = Objects
                 .requireNonNull(messstelleOptionsmenuControllerApi.getNichtPlausibleTageWithHttpInfo(messquerschnittId).block()).getBody();
         return messstelleOptionsmenuMapper.requestToResponse(eaiRequestResult);
+    }
+
+    public ChosenTagesTypValidDTO isTagesTypValid(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
+        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
     }
 }

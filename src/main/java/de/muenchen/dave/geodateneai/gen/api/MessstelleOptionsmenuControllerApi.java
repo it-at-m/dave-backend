@@ -2,6 +2,8 @@ package de.muenchen.dave.geodateneai.gen.api;
 
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 
@@ -124,5 +126,83 @@ public class MessstelleOptionsmenuControllerApi {
      */
     public ResponseSpec getNichtPlausibleTageWithResponseSpec(String messstelleId) throws WebClientResponseException {
         return getNichtPlausibleTageRequestCreation(messstelleId);
+    }
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
+     * @return ChosenTagesTypValidDTO
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    private ResponseSpec isTagesTypDataValidRequestCreation(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        Object postBody = chosenTagesTypValidRequestDto;
+        // verify the required parameter 'chosenTagesTypValidRequestDto' is set
+        if (chosenTagesTypValidRequestDto == null) {
+            throw new WebClientResponseException("Missing the required parameter 'chosenTagesTypValidRequestDto' when calling isTagesTypDataValid", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+        }
+        // create path and map variables
+        final Map<String, Object> pathParams = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders headerParams = new HttpHeaders();
+        final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "*/*"
+        };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+        };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
+        return apiClient.invokeAPI("/MessstelleOptionsmenu/validateTagesTyp", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
+     * @return ChosenTagesTypValidDTO
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<ChosenTagesTypValidDTO> isTagesTypDataValid(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto).bodyToMono(localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
+     * @return ResponseEntity&lt;ChosenTagesTypValidDTO&gt;
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<ResponseEntity<ChosenTagesTypValidDTO>> isTagesTypDataValidWithHttpInfo(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        ParameterizedTypeReference<ChosenTagesTypValidDTO> localVarReturnType = new ParameterizedTypeReference<ChosenTagesTypValidDTO>() {};
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto).toEntity(localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
+     * @return ResponseSpec
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public ResponseSpec isTagesTypDataValidWithResponseSpec(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) throws WebClientResponseException {
+        return isTagesTypDataValidRequestCreation(chosenTagesTypValidRequestDto);
     }
 }
