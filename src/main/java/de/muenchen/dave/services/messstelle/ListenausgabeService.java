@@ -32,29 +32,23 @@ public class ListenausgabeService {
     protected static final String GESAMT = "Gesamt";
     protected static final String BLOCK = "Block";
     protected static final String STUNDE = "Stunde";
-    protected static final String SPITZENSTUNDE_TAG = "SpStdTag";
-    protected static final String SPITZENSTUNDE_TAG_KFZ = SPITZENSTUNDE_TAG + " KFZ";
-    protected static final String SPITZENSTUNDE_TAG_RAD = SPITZENSTUNDE_TAG + " Rad";
-    protected static final String SPITZENSTUNDE_BLOCK = "SpStdBlock";
-    protected static final String SPITZENSTUNDE_BLOCK_KFZ = SPITZENSTUNDE_BLOCK + " KFZ";
-    protected static final String SPITZENSTUNDE_BLOCK_RAD = SPITZENSTUNDE_BLOCK + " Rad";
 
     public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle) {
         log.debug("#ladeListenausgabe");
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
-        dto.getZaehldaten().addAll(calculateIntervalls(intervals));
-        dto.getZaehldaten().addAll(calculateHours(intervals));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateDataPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
+        dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle));
         dto.setZaehldaten(dto.getZaehldaten().stream().sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
         return dto;
     }
 
-    protected List<LadeMesswerteDTO> calculateIntervalls(final List<MeasurementValuesPerInterval> intervals) {
+    protected List<LadeMesswerteDTO> mapIntervalsToLadeMesswerteDTOs(final List<MeasurementValuesPerInterval> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         intervals.forEach(intervall -> {
             final LadeMesswerteDTO dto = ladeMesswerteMapper.measurementValuesPerIntervalToLadeMesswerteDTO(intervall);
@@ -64,7 +58,7 @@ public class ListenausgabeService {
         return dtos;
     }
 
-    protected List<LadeMesswerteDTO> calculateHours(final List<MeasurementValuesPerInterval> intervals) {
+    protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<MeasurementValuesPerInterval> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             final LocalTime start = LocalTime.of(i, 0);
@@ -86,18 +80,18 @@ public class ListenausgabeService {
         return dtos;
     }
 
-    protected List<LadeMesswerteDTO> calculateDataPerBlock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
+    protected List<LadeMesswerteDTO> calculateSpitzenstundeAndSumOfIntervalsPerBlock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
             final boolean isKfzMessstelle) {
         final List<MeasurementValuesPerInterval> necessaryIntervals = intervals.stream()
                 .filter(intervall -> MesswerteBaseUtil.isTimeWithinBlock(intervall.getStartUhrzeit(), block))
                 .collect(Collectors.toList());
         final List<LadeMesswerteDTO> ladeMesswerteDTOS = new ArrayList<>();
         ladeMesswerteDTOS.add(spitzenstundeService.calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle));
-        ladeMesswerteDTOS.add(calculateblock(block, necessaryIntervals));
+        ladeMesswerteDTOS.add(calculateSumOfIntervalsPerBlock(block, necessaryIntervals));
         return ladeMesswerteDTOS;
     }
 
-    protected LadeMesswerteDTO calculateblock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals) {
+    protected LadeMesswerteDTO calculateSumOfIntervalsPerBlock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals) {
         final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(block.getEnd().toLocalTime());
         ladeMesswerteDTO.setStartUhrzeit(block.getStart().toLocalTime());

@@ -13,14 +13,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Der Sortierindex ist erforderlich, um bei der Extraktion der {@link Zeitintervall}e einer
- * Zaehlung
- * diese in der richtigen Reihenfolge zu erhalten.
+ * Der Sortierindex ist erforderlich, um bei der Extraktion der Zeitintervalle einer
+ * Messung diese in der richtigen Reihenfolge zu erhalten.
  * <p>
  * Der Sortierindex baut sich folgendermaßen auf.
  * <p>
  * Bedeutung der Dezimalstellen im Sortierindex:
- * - Stelle 9-8 (XX0000000): Zu welchem Block gehört der Zeitintervall, Gesamt/Tagessumme oder SpStd
+ * - Stelle 9-8 (XX0000000): Zu welchem Block gehört der Messwert, Gesamt/Tagessumme oder SpStd
  * (Tag).
  * - Stelle 7 (00X000000): Die oberste Sortierreihenfolge innerhalb eines Blocks (Zeitintervall,
  * Blocksumme der SpStd).

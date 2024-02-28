@@ -28,6 +28,7 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
 
     private final MessstelleMapper messstelleMapper;
+    private static final String KFZ = "KFZ";
 
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
@@ -67,6 +68,6 @@ public class MessstelleService {
 
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        return "KFZ".equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
+        return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
     }
 }

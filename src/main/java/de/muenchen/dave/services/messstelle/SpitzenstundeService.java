@@ -19,12 +19,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class SpitzenstundeService {
 
-    protected static final String SPITZENSTUNDE_TAG = "SpStdTag";
-    protected static final String SPITZENSTUNDE_TAG_KFZ = SPITZENSTUNDE_TAG + " KFZ";
-    protected static final String SPITZENSTUNDE_TAG_RAD = SPITZENSTUNDE_TAG + " Rad";
-    protected static final String SPITZENSTUNDE_BLOCK = "SpStdBlock";
-    protected static final String SPITZENSTUNDE_BLOCK_KFZ = SPITZENSTUNDE_BLOCK + " KFZ";
-    protected static final String SPITZENSTUNDE_BLOCK_RAD = SPITZENSTUNDE_BLOCK + " Rad";
+    protected static final String SPITZENSTUNDE = "SpStd";
+    protected static final String TAG = "Tag";
+    protected static final String BLOCK = "Block";
+    protected static final String KFZ = "KFZ";
+    protected static final String RAD = "Rad";
 
     public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle) {
         LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
@@ -36,49 +35,63 @@ public class SpitzenstundeService {
             final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(List.of(i0, i1, i2, i3));
             ladeMesswerteDTO.setStartUhrzeit(i0.getStartUhrzeit());
             ladeMesswerteDTO.setEndeUhrzeit(i3.getEndeUhrzeit());
-
-            if (isKfzMessstelle) {
-                if (spitzenStunde.getKfz() == null) {
-                    spitzenStunde = ladeMesswerteDTO;
-                } else {
-                    if (ladeMesswerteDTO.getKfz() > spitzenStunde.getKfz()) {
-                        spitzenStunde = ladeMesswerteDTO;
-                    }
-                }
-            } else {
-                if (spitzenStunde.getFahrradfahrer() == null) {
-                    spitzenStunde = ladeMesswerteDTO;
-                } else {
-                    if (ladeMesswerteDTO.getFahrradfahrer() > spitzenStunde.getFahrradfahrer()) {
-                        spitzenStunde = ladeMesswerteDTO;
-                    }
-                }
-            }
+            spitzenStunde = getMaxValue(isKfzMessstelle, spitzenStunde, ladeMesswerteDTO);
         }
+        spitzenStunde.setType(getType(isKfzMessstelle, block));
+        spitzenStunde.setSortingIndex(getSortingIndex(isKfzMessstelle, block, spitzenStunde));
+        return spitzenStunde;
+    }
 
+    protected String getType(final boolean isKfzMessstelle, final Zeitblock zeitblock) {
+        final StringBuilder type = new StringBuilder(SPITZENSTUNDE);
+        if (Zeitblock.ZB_00_24.equals(zeitblock)) {
+            type.append(TAG);
+        } else {
+            type.append(BLOCK);
+        }
         if (isKfzMessstelle) {
-            if (Zeitblock.ZB_00_24.equals(block)) {
-                spitzenStunde.setType(SPITZENSTUNDE_TAG_KFZ);
-                spitzenStunde.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayKfz());
-            } else {
-                spitzenStunde.setType(SPITZENSTUNDE_BLOCK_KFZ);
-                spitzenStunde.setSortingIndex(
-                        MesswerteSortingIndexUtil.getFirstStepSortingIndex(spitzenStunde)
-                                + MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+            type.append(KFZ);
+        } else {
+            type.append(RAD);
+        }
+        return new String(type);
+    }
+
+    protected int getSortingIndex(final boolean isKfzMessstelle, final Zeitblock zeitblock, final LadeMesswerteDTO spitzenStunde) {
+        int sortingIndex;
+        if (Zeitblock.ZB_00_24.equals(zeitblock)) {
+            sortingIndex = getSortingIndexSpitzenStundeCompleteDay(isKfzMessstelle);
+        } else {
+            sortingIndex = MesswerteSortingIndexUtil.getFirstStepSortingIndex(spitzenStunde) + getSortingIndexSpitzenStundeWithinBlock(isKfzMessstelle);
+        }
+        return sortingIndex;
+    }
+
+    protected int getSortingIndexSpitzenStundeCompleteDay(final boolean isKfzMessstelle) {
+        return isKfzMessstelle ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayKfz()
+                : MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad();
+    }
+
+    protected int getSortingIndexSpitzenStundeWithinBlock(final boolean isKfzMessstelle) {
+        return isKfzMessstelle ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz()
+                : MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad();
+    }
+
+    protected LadeMesswerteDTO getMaxValue(final boolean isKfzMessstelle, final LadeMesswerteDTO actualSpitzenstunde, final LadeMesswerteDTO newValue) {
+        if (isKfzMessstelle) {
+            if (saveNewValue(actualSpitzenstunde.getKfz(), newValue.getKfz())) {
+                return newValue;
             }
         } else {
-            if (Zeitblock.ZB_00_24.equals(block)) {
-                spitzenStunde.setType(SPITZENSTUNDE_TAG_RAD);
-                spitzenStunde.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad());
-            } else {
-                spitzenStunde.setType(SPITZENSTUNDE_BLOCK_RAD);
-                spitzenStunde.setSortingIndex(
-                        MesswerteSortingIndexUtil.getFirstStepSortingIndex(spitzenStunde)
-                                + MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+            if (saveNewValue(actualSpitzenstunde.getFahrradfahrer(), newValue.getFahrradfahrer())) {
+                return newValue;
             }
         }
+        return actualSpitzenstunde;
+    }
 
-        return spitzenStunde;
+    protected boolean saveNewValue(final Integer actualMax, final Integer newValue) {
+        return actualMax == null || newValue > actualMax;
     }
 
 }

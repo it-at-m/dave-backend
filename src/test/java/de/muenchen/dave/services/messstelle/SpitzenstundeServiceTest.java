@@ -14,9 +14,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class SpitzenstundeServiceTest {
+class SpitzenstundeServiceTest {
 
-    private SpitzenstundeService spitzenstundeService = new SpitzenstundeService();
+    private final SpitzenstundeService spitzenstundeService = new SpitzenstundeService();
 
     @Test
     void calculateSpitzenstunde() {
@@ -128,7 +128,7 @@ public class SpitzenstundeServiceTest {
         LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstunde(Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true);
         Assertions.assertThat(result.getType())
-                .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE_TAG_KFZ);
+                .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE + SpitzenstundeService.TAG + SpitzenstundeService.KFZ);
         Assertions.assertThat(result.getStartUhrzeit())
                 .isNotNull().isEqualTo(interval2.getStartUhrzeit());
         Assertions.assertThat(result.getEndeUhrzeit())
@@ -141,6 +141,29 @@ public class SpitzenstundeServiceTest {
         Assertions.assertThat(result.getEndeUhrzeit())
                 .isNotNull().isEqualTo(interval5.getEndeUhrzeit());
         Assertions.assertThat(result.getType())
-                .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE_BLOCK_RAD);
+                .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE + SpitzenstundeService.BLOCK + SpitzenstundeService.RAD);
+    }
+
+    @Test
+    void getType() {
+        Assertions.assertThat(spitzenstundeService.getType(true, Zeitblock.ZB_00_24))
+                .isNotNull().isEqualTo("SpStdTagKFZ");
+
+        Assertions.assertThat(spitzenstundeService.getType(false, Zeitblock.ZB_00_24))
+                .isNotNull().isEqualTo("SpStdTagRad");
+
+        Assertions.assertThat(spitzenstundeService.getType(true, Zeitblock.ZB_00_06))
+                .isNotNull().isEqualTo("SpStdBlockKFZ");
+
+        Assertions.assertThat(spitzenstundeService.getType(false, Zeitblock.ZB_06_10))
+                .isNotNull().isEqualTo("SpStdBlockRad");
+    }
+
+    @Test
+    void saveNewValue() {
+        Assertions.assertThat(spitzenstundeService.saveNewValue(1, 2))
+                .isEqualTo(true);
+        Assertions.assertThat(spitzenstundeService.saveNewValue(3, 2))
+                .isEqualTo(false);
     }
 }
