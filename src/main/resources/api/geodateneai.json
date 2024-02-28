@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -139,7 +139,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+                  "$ref": "#/components/schemas/MeasurementValuesResponse"
                 }
               }
             }
@@ -175,22 +175,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -694,6 +694,48 @@
           "prozentGueterverkehr": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "MeasurementValuesResponse": {
+        "type": "object",
+        "properties": {
+          "averageMeasurementValuesPerIntervalResponse": {
+            "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+          },
+          "totalSumOfAllMessquerschnitte": {
+            "$ref": "#/components/schemas/TotalSumOfAllMessquerschnitte"
+          }
+        }
+      },
+      "TotalSumOfAllMessquerschnitte": {
+        "type": "object",
+        "properties": {
+          "totalSumPerMessquerschnittList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TotalSumPerMessquerschnitt"
+            }
+          }
+        }
+      },
+      "TotalSumPerMessquerschnitt": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "string"
+          },
+          "sumKfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumSv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumGv": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
