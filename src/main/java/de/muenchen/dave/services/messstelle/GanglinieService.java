@@ -105,7 +105,7 @@ public class GanglinieService {
                     ladeZaehldatenStepline.setXAxisDataFirstChart(
                             ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                                     ladeZaehldatenStepline.getXAxisDataFirstChart(),
-                                    intervall.getUhrzeitVon().toString()));
+                                    intervall.getStartUhrzeit().toString()));
                 });
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries());
         return ladeZaehldatenStepline;

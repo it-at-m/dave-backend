@@ -600,6 +600,9 @@
         }
       },
       "AverageMeasurementValuesPerIntervalResponse": {
+        "required": [
+          "intervals"
+        ],
         "type": "object",
         "properties": {
           "intervals": {
@@ -632,9 +635,16 @@
         }
       },
       "MeasurementValuesPerInterval": {
+        "required": [
+          "endeUhrzeit",
+          "startUhrzeit"
+        ],
         "type": "object",
         "properties": {
-          "uhrzeitVon": {
+          "startUhrzeit": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "endeUhrzeit": {
             "$ref": "#/components/schemas/LocalTime"
           },
           "anzahlLfw": {
