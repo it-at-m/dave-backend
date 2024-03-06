@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.muenchen.dave.geodateneai.gen.model.ModelLocalTime;
+import java.time.LocalTime;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,7 +36,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   GetMeasurementValuesRequest.JSON_PROPERTY_MESSQUERSCHNITT_IDS,
   GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_START,
   GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
-  GetMeasurementValuesRequest.JSON_PROPERTY_TAGES_TYP
+  GetMeasurementValuesRequest.JSON_PROPERTY_TAGES_TYP,
+  GetMeasurementValuesRequest.JSON_PROPERTY_ZEITINTERVALL,
+  GetMeasurementValuesRequest.JSON_PROPERTY_UHRZEIT_START,
+  GetMeasurementValuesRequest.JSON_PROPERTY_UHRZEIT_ENDE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class GetMeasurementValuesRequest {
@@ -92,6 +97,15 @@ public class GetMeasurementValuesRequest {
 
   public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
   private TagesTypEnum tagesTyp;
+
+  public static final String JSON_PROPERTY_ZEITINTERVALL = "zeitintervall";
+  private String zeitintervall;
+
+  public static final String JSON_PROPERTY_UHRZEIT_START = "uhrzeitStart";
+  private LocalTime uhrzeitStart;
+
+  public static final String JSON_PROPERTY_UHRZEIT_ENDE = "uhrzeitEnde";
+  private LocalTime uhrzeitEnde;
 
   public GetMeasurementValuesRequest() {
   }
@@ -167,9 +181,9 @@ public class GetMeasurementValuesRequest {
    * Get zeitpunktEnde
    * @return zeitpunktEnde
   **/
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public LocalDate getZeitpunktEnde() {
     return zeitpunktEnde;
@@ -177,7 +191,7 @@ public class GetMeasurementValuesRequest {
 
 
   @JsonProperty(JSON_PROPERTY_ZEITPUNKT_ENDE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setZeitpunktEnde(LocalDate zeitpunktEnde) {
     this.zeitpunktEnde = zeitpunktEnde;
   }
@@ -193,9 +207,9 @@ public class GetMeasurementValuesRequest {
    * Get tagesTyp
    * @return tagesTyp
   **/
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public TagesTypEnum getTagesTyp() {
     return tagesTyp;
@@ -203,9 +217,87 @@ public class GetMeasurementValuesRequest {
 
 
   @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setTagesTyp(TagesTypEnum tagesTyp) {
     this.tagesTyp = tagesTyp;
+  }
+
+
+  public GetMeasurementValuesRequest zeitintervall(String zeitintervall) {
+    
+    this.zeitintervall = zeitintervall;
+    return this;
+  }
+
+   /**
+   * Get zeitintervall
+   * @return zeitintervall
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_ZEITINTERVALL)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public String getZeitintervall() {
+    return zeitintervall;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ZEITINTERVALL)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setZeitintervall(String zeitintervall) {
+    this.zeitintervall = zeitintervall;
+  }
+
+
+  public GetMeasurementValuesRequest uhrzeitStart(LocalTime uhrzeitStart) {
+    
+    this.uhrzeitStart = uhrzeitStart;
+    return this;
+  }
+
+   /**
+   * Get uhrzeitStart
+   * @return uhrzeitStart
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_UHRZEIT_START)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public LocalTime getUhrzeitStart() {
+    return uhrzeitStart;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_UHRZEIT_START)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setUhrzeitStart(LocalTime uhrzeitStart) {
+    this.uhrzeitStart = uhrzeitStart;
+  }
+
+
+  public GetMeasurementValuesRequest uhrzeitEnde(LocalTime uhrzeitEnde) {
+    
+    this.uhrzeitEnde = uhrzeitEnde;
+    return this;
+  }
+
+   /**
+   * Get uhrzeitEnde
+   * @return uhrzeitEnde
+  **/
+  @javax.annotation.Nonnull
+  @JsonProperty(JSON_PROPERTY_UHRZEIT_ENDE)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+
+  public LocalTime getUhrzeitEnde() {
+    return uhrzeitEnde;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_UHRZEIT_ENDE)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  public void setUhrzeitEnde(LocalTime uhrzeitEnde) {
+    this.uhrzeitEnde = uhrzeitEnde;
   }
 
   @Override
@@ -220,12 +312,15 @@ public class GetMeasurementValuesRequest {
     return Objects.equals(this.messquerschnittIds, getMeasurementValuesRequest.messquerschnittIds) &&
         Objects.equals(this.zeitpunktStart, getMeasurementValuesRequest.zeitpunktStart) &&
         Objects.equals(this.zeitpunktEnde, getMeasurementValuesRequest.zeitpunktEnde) &&
-        Objects.equals(this.tagesTyp, getMeasurementValuesRequest.tagesTyp);
+        Objects.equals(this.tagesTyp, getMeasurementValuesRequest.tagesTyp) &&
+        Objects.equals(this.zeitintervall, getMeasurementValuesRequest.zeitintervall) &&
+        Objects.equals(this.uhrzeitStart, getMeasurementValuesRequest.uhrzeitStart) &&
+        Objects.equals(this.uhrzeitEnde, getMeasurementValuesRequest.uhrzeitEnde);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(messquerschnittIds, zeitpunktStart, zeitpunktEnde, tagesTyp);
+    return Objects.hash(messquerschnittIds, zeitpunktStart, zeitpunktEnde, tagesTyp, zeitintervall, uhrzeitStart, uhrzeitEnde);
   }
 
   @Override
@@ -236,6 +331,9 @@ public class GetMeasurementValuesRequest {
     sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
     sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");
     sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
+    sb.append("    zeitintervall: ").append(toIndentedString(zeitintervall)).append("\n");
+    sb.append("    uhrzeitStart: ").append(toIndentedString(uhrzeitStart)).append("\n");
+    sb.append("    uhrzeitEnde: ").append(toIndentedString(uhrzeitEnde)).append("\n");
     sb.append("}");
     return sb.toString();
   }

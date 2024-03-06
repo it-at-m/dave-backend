@@ -7,13 +7,12 @@ package de.muenchen.dave.domain.dtos.messstelle;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
-import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Data
 public class MessstelleOptionsDTO implements Serializable {
@@ -30,7 +29,6 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotNull
     private Zeitblock zeitblock;
 
-    @NotNull
     private GetMeasurementValuesRequest.TagesTypEnum tagesTyp;
 
     @NotNull

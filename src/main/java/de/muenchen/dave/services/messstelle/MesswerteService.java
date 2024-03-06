@@ -7,6 +7,7 @@ import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,8 +15,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -54,10 +53,9 @@ public class MesswerteService {
         } else {
             request.setZeitpunktEnde(options.getZeitraum().get(0));
         }
-        // TODO: Für Auswahl der Intervalle wird auch für die Uhrzeit ein Start und Ende benötigt
-//        options.getZeitblock();
+        request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
+        request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
 
-        // TODO: Für die Zeitauswahl Spitzenstunde wird auch noch ein boolean Feld benötigt
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
