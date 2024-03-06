@@ -1,14 +1,12 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,6 +14,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -31,11 +31,9 @@ public class MesswerteService {
 
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
-    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId) {
+    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         log.debug("#ladeMesswerte {}", messstelleId);
-        final Set<String> messquerschnittNummern = messstelleService.getMessquerschnittNummern(messstelleId);
-
-        final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(messquerschnittNummern);
+        final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(options);
         final List<MeasurementValuesPerInterval> intervalle = response.getIntervals();
 
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
@@ -45,13 +43,21 @@ public class MesswerteService {
         return processedZaehldaten;
     }
 
-    protected AverageMeasurementValuesPerIntervalResponse ladeMesswerteIntervall(final Set<String> messquerschnittIds) {
+    protected AverageMeasurementValuesPerIntervalResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
         final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(messquerschnittIds);
-        request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.WERKTAG_DI_MI_DO);
-        request.setZeitpunktStart(LocalDate.of(2024, 1, 1));
-        request.setZeitpunktEnde(LocalDate.of(2024, 1, 1));
+        request.setMessquerschnittIds(options.getMessquerschnitte());
+        request.setTagesTyp(options.getTagesTyp());
+        request.setZeitpunktStart(options.getZeitraum().get(0));
+        if (options.getZeitraum().size() == 2) {
+            request.setZeitpunktEnde(options.getZeitraum().get(1));
+        } else {
+            request.setZeitpunktEnde(options.getZeitraum().get(0));
+        }
+        // TODO: Für Auswahl der Intervalle wird auch für die Uhrzeit ein Start und Ende benötigt
+//        options.getZeitblock();
+
+        // TODO: Für die Zeitauswahl Spitzenstunde wird auch noch ein boolean Feld benötigt
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
