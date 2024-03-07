@@ -6,7 +6,6 @@ package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +28,7 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotNull
     private Zeitblock zeitblock;
 
-    private GetMeasurementValuesRequest.TagesTypEnum tagesTyp;
+    private String tagesTyp;
 
     @NotNull
     private ZaehldatenIntervall intervall;

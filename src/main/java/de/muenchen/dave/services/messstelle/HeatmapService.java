@@ -5,6 +5,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -22,16 +24,16 @@ import org.springframework.stereotype.Service;
 public class HeatmapService {
 
     /**
-     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch.
-     * Als Basis zur Datenaufbereitung dienen die im Parameter zaehldatenTable
-     * übergebenen Informationen.
-     * Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien
-     * werden in dieser Methode zur Darstellung in der Heatmap aufbereitet.
+     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch. Als Basis zur
+     * Datenaufbereitung dienen die im Parameter zaehldatenTable
+     * übergebenen Informationen. Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien
+     * werden in dieser Methode zur Darstellung in der Heatmap
+     * aufbereitet.
      *
      * @param intervalle Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<MeasurementValuesPerInterval> intervalle) {
+    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<MeasurementValuesPerInterval> intervalle, final MessstelleOptionsDTO options) {
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -40,89 +42,110 @@ public class HeatmapService {
         ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(new ArrayList<>());
         AtomicInteger heatMapEntryIndex = new AtomicInteger(0);
 
+        final FahrzeugOptionsDTO fahrzeuge = options.getFahrzeuge();
+
         intervalle.forEach(intervall -> {
             final AtomicInteger klassenKategorienIndex = new AtomicInteger(0);
 
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getSummeGueterverkehr(),
-                    ChartLegendUtil.GUETERVERKEHR_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getSummeSchwerverkehr(),
-                    ChartLegendUtil.SCHWERVERKEHR_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getSummeKraftfahrzeugverkehr(),
-                    ChartLegendUtil.KFZ_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlRad(),
-                    ChartLegendUtil.RAD_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlKrad(),
-                    ChartLegendUtil.KRAFTRAEDER_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlBus(),
-                    ChartLegendUtil.BUSSE_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlLfw(),
-                    ChartLegendUtil.LFW_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getSummeLastzug(),
-                    ChartLegendUtil.LASTZUEGE_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getAnzahlLkw(),
-                    ChartLegendUtil.LKW_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
-            insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                    ladeZaehldatenHeatmap,
-                    heatMapEntryIndex.get(),
-                    klassenKategorienIndex.get(),
-                    intervall.getSummeAllePkw(),
-                    ChartLegendUtil.PKW_HEATMAP);
-            klassenKategorienIndex.getAndIncrement();
-
+            if (fahrzeuge.isGueterverkehr()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getSummeGueterverkehr(),
+                        ChartLegendUtil.GUETERVERKEHR_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isSchwerverkehr()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getSummeSchwerverkehr(),
+                        ChartLegendUtil.SCHWERVERKEHR_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isKraftfahrzeugverkehr()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getSummeKraftfahrzeugverkehr(),
+                        ChartLegendUtil.KFZ_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isFussverkehr()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlFuss(),
+                        ChartLegendUtil.FUSSGAENGER_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isRadverkehr()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlRad(),
+                        ChartLegendUtil.RAD_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isKraftraeder()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlKrad(),
+                        ChartLegendUtil.KRAFTRAEDER_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isBusse()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlBus(),
+                        ChartLegendUtil.BUSSE_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isLieferwagen()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlLfw(),
+                        ChartLegendUtil.LFW_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isLastzuege()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getSummeLastzug(),
+                        ChartLegendUtil.LASTZUEGE_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isLastkraftwagen()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getAnzahlLkw(),
+                        ChartLegendUtil.LKW_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
+            if (fahrzeuge.isPersonenkraftwagen()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.get(),
+                        intervall.getSummeAllePkw(),
+                        ChartLegendUtil.PKW_HEATMAP);
+                klassenKategorienIndex.getAndIncrement();
+            }
             ladeZaehldatenHeatmap.setXAxisDataFirstChart(
                     ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                             ladeZaehldatenHeatmap.getXAxisDataFirstChart(),
@@ -133,20 +156,20 @@ public class HeatmapService {
     }
 
     /**
-     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in
-     * das im Parameter ladeZaehldatenHeatmap übergebenen Objekt ein.
-     * Des Weiteren wird ein Legendeneintrag für den Parameter legendEntry gesetzt,
-     * falls dieser noch nicht vorhanden ist.
-     * Zusätzlich werden die Variablen RangeMin und RangeMax gesetzt.
+     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in das im Parameter
+     * ladeZaehldatenHeatmap übergebenen Objekt ein. Des Weiteren
+     * wird ein Legendeneintrag für den Parameter legendEntry gesetzt, falls dieser noch nicht vorhanden
+     * ist. Zusätzlich werden die Variablen RangeMin und
+     * RangeMax gesetzt.
      *
      * @param ladeZaehldatenHeatmap Das Objekt in welchem die aufbereiteten Daten vorgehalten werden.
      * @param heatMapEntryIndex Spaltenindex der X-Achse zur Positionierung des Wertes aus Parameter
      *            value in Heatmap.
      * @param klassenKategorienIndex Zeilenindex der Y-Achse zur Positionierung des Wertes aus Parameter
      *            value in Heatmap.
-     * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex,
-     *            in der Heatmap dargestellt werde soll. Des Weiteren wird dieser Wert zur Ermittlung
-     *            von
+     * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in
+     *            der Heatmap dargestellt werde soll. Des
+     *            Weiteren wird dieser Wert zur Ermittlung von
      *            {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
      *            {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
      * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()

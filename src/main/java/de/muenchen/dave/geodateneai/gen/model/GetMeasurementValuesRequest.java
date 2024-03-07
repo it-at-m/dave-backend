@@ -207,9 +207,9 @@ public class GetMeasurementValuesRequest {
    * Get tagesTyp
    * @return tagesTyp
   **/
-  @javax.annotation.Nonnull
+  @javax.annotation.Nullable
   @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
 
   public TagesTypEnum getTagesTyp() {
     return tagesTyp;
@@ -217,7 +217,7 @@ public class GetMeasurementValuesRequest {
 
 
   @JsonProperty(JSON_PROPERTY_TAGES_TYP)
-  @JsonInclude(value = JsonInclude.Include.ALWAYS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
   public void setTagesTyp(TagesTypEnum tagesTyp) {
     this.tagesTyp = tagesTyp;
   }

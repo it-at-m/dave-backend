@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Stadtbezirke erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
                 }
               }
             }
@@ -250,22 +250,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -415,7 +415,6 @@
       "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
-          "tagesTyp",
           "uhrzeitEnde",
           "uhrzeitStart",
           "zeitintervall",
@@ -678,6 +677,10 @@
             "format": "int32"
           },
           "anzahlRad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlFuss": {
             "type": "integer",
             "format": "int32"
           },

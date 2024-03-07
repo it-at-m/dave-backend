@@ -6,7 +6,9 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeMesswerteMapper;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,17 +37,23 @@ public class ListenausgabeService {
     protected static final String BLOCK = "Block";
     protected static final String STUNDE = "Stunde";
 
-    public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle) {
+    public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle,
+            final MessstelleOptionsDTO options) {
         log.debug("#ladeListenausgabe");
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
         dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
         dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle));
+        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle));
+        if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())
+                && Zeitblock.ZB_00_24.equals(options.getZeitblock())) {
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle));
+        }
+
         dto.setZaehldaten(dto.getZaehldaten().stream().sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
         return dto;
     }
@@ -68,14 +78,18 @@ public class ListenausgabeService {
             } else {
                 end = LocalTime.of(i + 1, 0);
             }
-            final LadeMesswerteDTO dto = MesswerteBaseUtil.calculateSum(
-                    intervals.stream().filter(intervall -> MesswerteBaseUtil.isTimeBetweenStartAndEnd(intervall.getStartUhrzeit(), start, end))
-                            .collect(Collectors.toList()));
-            dto.setStartUhrzeit(start);
-            dto.setEndeUhrzeit(end);
-            dto.setType(STUNDE);
-            dto.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexWithinBlock(dto, TypeZeitintervall.STUNDE_KOMPLETT));
-            dtos.add(dto);
+            final List<MeasurementValuesPerInterval> relevantIntervals = intervals.stream()
+                    .filter(intervall -> MesswerteBaseUtil.isTimeBetweenStartAndEnd(intervall.getStartUhrzeit(), start, end))
+                    .collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(relevantIntervals)) {
+                final LadeMesswerteDTO dto = MesswerteBaseUtil.calculateSum(
+                        relevantIntervals);
+                dto.setStartUhrzeit(start);
+                dto.setEndeUhrzeit(end);
+                dto.setType(STUNDE);
+                dto.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexWithinBlock(dto, TypeZeitintervall.STUNDE_KOMPLETT));
+                dtos.add(dto);
+            }
         }
         return dtos;
     }

@@ -2,6 +2,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -31,22 +33,31 @@ public class MesswerteService {
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
+        validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
         final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(options);
         final List<MeasurementValuesPerInterval> intervalle = response.getIntervals();
 
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
-        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
-        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle, messstelleService.isKfzMessstelle(messstelleId)));
+        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle, options));
+        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle, options));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle, messstelleService.isKfzMessstelle(messstelleId), options));
         return processedZaehldaten;
+    }
+
+    protected void validateOptions(final MessstelleOptionsDTO options) {
+        if (options.getZeitraum().size() == 2 && StringUtils.isEmpty(options.getTagesTyp())) {
+            throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
+        }
     }
 
     protected AverageMeasurementValuesPerIntervalResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
         final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
         request.setMessquerschnittIds(options.getMessquerschnitte());
-        request.setTagesTyp(options.getTagesTyp());
+        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
+            request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
+        }
         request.setZeitpunktStart(options.getZeitraum().get(0));
         if (options.getZeitraum().size() == 2) {
             request.setZeitpunktEnde(options.getZeitraum().get(1));
@@ -55,6 +66,7 @@ public class MesswerteService {
         }
         request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
         request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
+        request.setZeitintervall(options.getIntervall().name());
 
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
