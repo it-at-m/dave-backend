@@ -66,7 +66,7 @@ public class MesswerteService {
         }
         request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
         request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
-        request.setZeitintervall(options.getIntervall().name());
+        request.setMinutesPerZeitintervall(options.getIntervall().getMinutesPerIntervall());
 
         final Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(

@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeMesswerteMapper;
@@ -43,15 +44,17 @@ public class ListenausgabeService {
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
         dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
         dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
-        dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle));
+
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())
                 && Zeitblock.ZB_00_24.equals(options.getZeitblock())) {
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle, options));
+        } else {
+            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle, options));
         }
 
         dto.setZaehldaten(dto.getZaehldaten().stream().sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
@@ -95,12 +98,14 @@ public class ListenausgabeService {
     }
 
     protected List<LadeMesswerteDTO> calculateSpitzenstundeAndSumOfIntervalsPerBlock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
-            final boolean isKfzMessstelle) {
+            final boolean isKfzMessstelle, final MessstelleOptionsDTO options) {
         final List<MeasurementValuesPerInterval> necessaryIntervals = intervals.stream()
                 .filter(intervall -> MesswerteBaseUtil.isTimeWithinBlock(intervall.getStartUhrzeit(), block))
                 .collect(Collectors.toList());
         final List<LadeMesswerteDTO> ladeMesswerteDTOS = new ArrayList<>();
-        ladeMesswerteDTOS.add(spitzenstundeService.calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle));
+        if (ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
+            ladeMesswerteDTOS.add(spitzenstundeService.calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle));
+        }
         ladeMesswerteDTOS.add(calculateSumOfIntervalsPerBlock(block, necessaryIntervals));
         return ladeMesswerteDTOS;
     }

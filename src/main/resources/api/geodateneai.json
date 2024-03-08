@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -250,22 +250,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -404,10 +404,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
@@ -415,9 +415,9 @@
       "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
+          "minutesPerZeitintervall",
           "uhrzeitEnde",
           "uhrzeitStart",
-          "zeitintervall",
           "zeitpunktEnde",
           "zeitpunktStart"
         ],
@@ -449,8 +449,9 @@
               "MO_SO"
             ]
           },
-          "zeitintervall": {
-            "type": "string"
+          "minutesPerZeitintervall": {
+            "type": "integer",
+            "format": "int32"
           },
           "uhrzeitStart": {
             "$ref": "#/components/schemas/LocalTime"
@@ -770,11 +771,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -833,11 +834,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }

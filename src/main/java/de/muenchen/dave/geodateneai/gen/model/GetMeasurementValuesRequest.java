@@ -37,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_START,
   GetMeasurementValuesRequest.JSON_PROPERTY_ZEITPUNKT_ENDE,
   GetMeasurementValuesRequest.JSON_PROPERTY_TAGES_TYP,
-  GetMeasurementValuesRequest.JSON_PROPERTY_ZEITINTERVALL,
+  GetMeasurementValuesRequest.JSON_PROPERTY_MINUTES_PER_ZEITINTERVALL,
   GetMeasurementValuesRequest.JSON_PROPERTY_UHRZEIT_START,
   GetMeasurementValuesRequest.JSON_PROPERTY_UHRZEIT_ENDE
 })
@@ -98,8 +98,8 @@ public class GetMeasurementValuesRequest {
   public static final String JSON_PROPERTY_TAGES_TYP = "tagesTyp";
   private TagesTypEnum tagesTyp;
 
-  public static final String JSON_PROPERTY_ZEITINTERVALL = "zeitintervall";
-  private String zeitintervall;
+  public static final String JSON_PROPERTY_MINUTES_PER_ZEITINTERVALL = "minutesPerZeitintervall";
+  private Integer minutesPerZeitintervall;
 
   public static final String JSON_PROPERTY_UHRZEIT_START = "uhrzeitStart";
   private LocalTime uhrzeitStart;
@@ -223,29 +223,29 @@ public class GetMeasurementValuesRequest {
   }
 
 
-  public GetMeasurementValuesRequest zeitintervall(String zeitintervall) {
+  public GetMeasurementValuesRequest minutesPerZeitintervall(Integer minutesPerZeitintervall) {
     
-    this.zeitintervall = zeitintervall;
+    this.minutesPerZeitintervall = minutesPerZeitintervall;
     return this;
   }
 
    /**
-   * Get zeitintervall
-   * @return zeitintervall
+   * Get minutesPerZeitintervall
+   * @return minutesPerZeitintervall
   **/
   @javax.annotation.Nonnull
-  @JsonProperty(JSON_PROPERTY_ZEITINTERVALL)
+  @JsonProperty(JSON_PROPERTY_MINUTES_PER_ZEITINTERVALL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
-  public String getZeitintervall() {
-    return zeitintervall;
+  public Integer getMinutesPerZeitintervall() {
+    return minutesPerZeitintervall;
   }
 
 
-  @JsonProperty(JSON_PROPERTY_ZEITINTERVALL)
+  @JsonProperty(JSON_PROPERTY_MINUTES_PER_ZEITINTERVALL)
   @JsonInclude(value = JsonInclude.Include.ALWAYS)
-  public void setZeitintervall(String zeitintervall) {
-    this.zeitintervall = zeitintervall;
+  public void setMinutesPerZeitintervall(Integer minutesPerZeitintervall) {
+    this.minutesPerZeitintervall = minutesPerZeitintervall;
   }
 
 
@@ -313,14 +313,14 @@ public class GetMeasurementValuesRequest {
         Objects.equals(this.zeitpunktStart, getMeasurementValuesRequest.zeitpunktStart) &&
         Objects.equals(this.zeitpunktEnde, getMeasurementValuesRequest.zeitpunktEnde) &&
         Objects.equals(this.tagesTyp, getMeasurementValuesRequest.tagesTyp) &&
-        Objects.equals(this.zeitintervall, getMeasurementValuesRequest.zeitintervall) &&
+        Objects.equals(this.minutesPerZeitintervall, getMeasurementValuesRequest.minutesPerZeitintervall) &&
         Objects.equals(this.uhrzeitStart, getMeasurementValuesRequest.uhrzeitStart) &&
         Objects.equals(this.uhrzeitEnde, getMeasurementValuesRequest.uhrzeitEnde);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(messquerschnittIds, zeitpunktStart, zeitpunktEnde, tagesTyp, zeitintervall, uhrzeitStart, uhrzeitEnde);
+    return Objects.hash(messquerschnittIds, zeitpunktStart, zeitpunktEnde, tagesTyp, minutesPerZeitintervall, uhrzeitStart, uhrzeitEnde);
   }
 
   @Override
@@ -331,7 +331,7 @@ public class GetMeasurementValuesRequest {
     sb.append("    zeitpunktStart: ").append(toIndentedString(zeitpunktStart)).append("\n");
     sb.append("    zeitpunktEnde: ").append(toIndentedString(zeitpunktEnde)).append("\n");
     sb.append("    tagesTyp: ").append(toIndentedString(tagesTyp)).append("\n");
-    sb.append("    zeitintervall: ").append(toIndentedString(zeitintervall)).append("\n");
+    sb.append("    minutesPerZeitintervall: ").append(toIndentedString(minutesPerZeitintervall)).append("\n");
     sb.append("    uhrzeitStart: ").append(toIndentedString(uhrzeitStart)).append("\n");
     sb.append("    uhrzeitEnde: ").append(toIndentedString(uhrzeitEnde)).append("\n");
     sb.append("}");
