@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeMesswerteMapper;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
 import java.time.LocalTime;
@@ -43,20 +44,20 @@ public class ListenausgabeService {
         log.debug("#ladeListenausgabe");
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
         dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
-        dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
-
-        if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())
-                && Zeitblock.ZB_00_24.equals(options.getZeitblock())) {
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle, options));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle, options));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle, options));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle, options));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle, options));
-            dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_24, intervals, isKfzMessstelle, options));
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            dto.getZaehldaten().add(calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzMessstelle, options));
         } else {
             dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle, options));
+            dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
+            if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())
+                    && Zeitblock.ZB_00_24.equals(options.getZeitblock())) {
+                dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_00_06, intervals, isKfzMessstelle, options));
+                dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_06_10, intervals, isKfzMessstelle, options));
+                dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_10_15, intervals, isKfzMessstelle, options));
+                dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_15_19, intervals, isKfzMessstelle, options));
+                dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(Zeitblock.ZB_19_24, intervals, isKfzMessstelle, options));
+            }
         }
-
         dto.setZaehldaten(dto.getZaehldaten().stream().sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
         return dto;
     }
@@ -103,11 +104,18 @@ public class ListenausgabeService {
                 .filter(intervall -> MesswerteBaseUtil.isTimeWithinBlock(intervall.getStartUhrzeit(), block))
                 .collect(Collectors.toList());
         final List<LadeMesswerteDTO> ladeMesswerteDTOS = new ArrayList<>();
-        if (ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
-            ladeMesswerteDTOS.add(spitzenstundeService.calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle));
-        }
+        ladeMesswerteDTOS.add(calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle, options));
         ladeMesswerteDTOS.add(calculateSumOfIntervalsPerBlock(block, necessaryIntervals));
         return ladeMesswerteDTOS;
+    }
+
+    protected LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
+            final boolean isKfzMessstelle, final MessstelleOptionsDTO options) {
+        LadeMesswerteDTO spitzenstunde = new LadeMesswerteDTO();
+        if (ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
+            spitzenstunde = spitzenstundeService.calculateSpitzenstunde(block, intervals, isKfzMessstelle);
+        }
+        return spitzenstunde;
     }
 
     protected LadeMesswerteDTO calculateSumOfIntervalsPerBlock(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals) {

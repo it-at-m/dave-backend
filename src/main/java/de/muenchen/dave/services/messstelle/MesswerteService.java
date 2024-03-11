@@ -8,6 +8,7 @@ import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import de.muenchen.dave.util.OptionsUtil;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class MesswerteService {
     private final GanglinieService ganglinieService;
     private final HeatmapService heatmapService;
     private final ListenausgabeService listenausgabeService;
+    private final SpitzenstundeService spitzenstundeService;
 
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
@@ -36,12 +38,18 @@ public class MesswerteService {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
         final AverageMeasurementValuesPerIntervalResponse response = this.ladeMesswerteIntervall(options);
-        final List<MeasurementValuesPerInterval> intervalle = response.getIntervals();
+        final List<MeasurementValuesPerInterval> intervals;
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getIntervals(),
+                    messstelleService.isKfzMessstelle(messstelleId));
+        } else {
+            intervals = response.getIntervals();
+        }
 
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
-        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle, options));
-        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle, options));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle, messstelleService.isKfzMessstelle(messstelleId), options));
+        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
+        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
         return processedZaehldaten;
     }
 

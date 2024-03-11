@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,27 @@ public class SpitzenstundeService {
     protected static final String KFZ = "KFZ";
     protected static final String RAD = "Rad";
 
+    public List<MeasurementValuesPerInterval> getIntervalsOfSpitzenstunde(final List<MeasurementValuesPerInterval> intervals,
+            final boolean isKfzMessstelle) {
+        List<MeasurementValuesPerInterval> result = new ArrayList<>();
+        LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
+        for (int index = 0; index + 3 < intervals.size(); index++) {
+            final MeasurementValuesPerInterval i0 = intervals.get(index);
+            final MeasurementValuesPerInterval i1 = intervals.get(index + 1);
+            final MeasurementValuesPerInterval i2 = intervals.get(index + 2);
+            final MeasurementValuesPerInterval i3 = intervals.get(index + 3);
+            List<MeasurementValuesPerInterval> spitzenstundeIntervals = List.of(i0, i1, i2, i3);
+            final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(spitzenstundeIntervals);
+            ladeMesswerteDTO.setStartUhrzeit(i0.getStartUhrzeit());
+            ladeMesswerteDTO.setEndeUhrzeit(i3.getEndeUhrzeit());
+            if (saveNewValue(isKfzMessstelle, spitzenStunde, ladeMesswerteDTO)) {
+                spitzenStunde = ladeMesswerteDTO;
+                result = spitzenstundeIntervals;
+            }
+        }
+        return result;
+    }
+
     public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle) {
         LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
         for (int index = 0; index + 3 < intervals.size(); index++) {
@@ -35,7 +57,9 @@ public class SpitzenstundeService {
             final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(List.of(i0, i1, i2, i3));
             ladeMesswerteDTO.setStartUhrzeit(i0.getStartUhrzeit());
             ladeMesswerteDTO.setEndeUhrzeit(i3.getEndeUhrzeit());
-            spitzenStunde = getMaxValue(isKfzMessstelle, spitzenStunde, ladeMesswerteDTO);
+            if (saveNewValue(isKfzMessstelle, spitzenStunde, ladeMesswerteDTO)) {
+                spitzenStunde = ladeMesswerteDTO;
+            }
         }
         spitzenStunde.setType(getType(isKfzMessstelle, block));
         spitzenStunde.setSortingIndex(getSortingIndex(isKfzMessstelle, block, spitzenStunde));
@@ -49,6 +73,7 @@ public class SpitzenstundeService {
         } else {
             type.append(BLOCK);
         }
+        type.append(" ");
         if (isKfzMessstelle) {
             type.append(KFZ);
         } else {
@@ -77,20 +102,17 @@ public class SpitzenstundeService {
                 : MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad();
     }
 
-    protected LadeMesswerteDTO getMaxValue(final boolean isKfzMessstelle, final LadeMesswerteDTO actualSpitzenstunde, final LadeMesswerteDTO newValue) {
+    protected boolean saveNewValue(final boolean isKfzMessstelle, final LadeMesswerteDTO actualSpitzenstunde, final LadeMesswerteDTO newValue) {
+        boolean result;
         if (isKfzMessstelle) {
-            if (saveNewValue(actualSpitzenstunde.getKfz(), newValue.getKfz())) {
-                return newValue;
-            }
+            result = isNewValueBigger(actualSpitzenstunde.getKfz(), newValue.getKfz());
         } else {
-            if (saveNewValue(actualSpitzenstunde.getFahrradfahrer(), newValue.getFahrradfahrer())) {
-                return newValue;
-            }
+            result = isNewValueBigger(actualSpitzenstunde.getFahrradfahrer(), newValue.getFahrradfahrer());
         }
-        return actualSpitzenstunde;
+        return result;
     }
 
-    protected boolean saveNewValue(final Integer actualMax, final Integer newValue) {
+    protected boolean isNewValueBigger(final Integer actualMax, final Integer newValue) {
         return actualMax == null || newValue > actualMax;
     }
 
