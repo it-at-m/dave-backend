@@ -62,7 +62,7 @@ public class MesswerteService {
     protected AverageMeasurementValuesPerIntervalResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
         final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(options.getMessquerschnitte());
+        request.setMessquerschnittIds(options.getMessquerschnittIds());
         if (StringUtils.isNotEmpty(options.getTagesTyp())) {
             request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
         }

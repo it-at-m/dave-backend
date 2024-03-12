@@ -34,5 +34,5 @@ public class MessstelleOptionsDTO implements Serializable {
     private ZaehldatenIntervall intervall;
 
     @NotNull
-    private Set<String> messquerschnitte;
+    private Set<String> messquerschnittIds;
 }
