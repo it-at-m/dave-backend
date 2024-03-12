@@ -59,7 +59,9 @@ public class GetMeasurementValuesRequest {
     
     SONNTAG_FEIERTAG("SONNTAG_FEIERTAG"),
     
-    WERKTAG_FERIEN("WERKTAG_FERIEN");
+    WERKTAG_FERIEN("WERKTAG_FERIEN"),
+    
+    MO_SO("MO_SO");
 
     private String value;
 

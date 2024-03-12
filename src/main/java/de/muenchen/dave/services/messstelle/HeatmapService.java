@@ -126,7 +126,7 @@ public class HeatmapService {
             ladeZaehldatenHeatmap.setXAxisDataFirstChart(
                     ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                             ladeZaehldatenHeatmap.getXAxisDataFirstChart(),
-                            intervall.getUhrzeitVon().toString()));
+                            intervall.getStartUhrzeit().toString()));
             heatMapEntryIndex.incrementAndGet();
         });
         return ladeZaehldatenHeatmap;

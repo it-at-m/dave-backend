@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class AverageMeasurementValuesPerIntervalResponse {
   public static final String JSON_PROPERTY_INTERVALS = "intervals";
-  private List<MeasurementValuesPerInterval> intervals;
+  private List<MeasurementValuesPerInterval> intervals = new ArrayList<>();
 
   public AverageMeasurementValuesPerIntervalResponse() {
   }
@@ -59,9 +59,9 @@ public class AverageMeasurementValuesPerIntervalResponse {
    * Get intervals
    * @return intervals
   **/
-  @javax.annotation.Nullable
+  @javax.annotation.Nonnull
   @JsonProperty(JSON_PROPERTY_INTERVALS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
 
   public List<MeasurementValuesPerInterval> getIntervals() {
     return intervals;
@@ -69,7 +69,7 @@ public class AverageMeasurementValuesPerIntervalResponse {
 
 
   @JsonProperty(JSON_PROPERTY_INTERVALS)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  @JsonInclude(value = JsonInclude.Include.ALWAYS)
   public void setIntervals(List<MeasurementValuesPerInterval> intervals) {
     this.intervals = intervals;
   }

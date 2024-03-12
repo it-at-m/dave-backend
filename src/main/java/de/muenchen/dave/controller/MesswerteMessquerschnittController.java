@@ -4,7 +4,7 @@
  */
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -34,10 +34,10 @@ public class MesswerteMessquerschnittController {
      */
     @GetMapping(value = "/lade-messwerte", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<LadeProcessedZaehldatenDTO> ladeMesswerte(
+    public ResponseEntity<LadeProcessedMesswerteDTO> ladeMesswerte(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final String messstelleId) {
         log.info("ladeMEsswerte für Messstelle {} aufgerufen", messstelleId);
-        final LadeProcessedZaehldatenDTO processedZaehldaten = messwerteService.ladeMesswerte(messstelleId);
+        final LadeProcessedMesswerteDTO processedZaehldaten = messwerteService.ladeMesswerte(messstelleId);
         log.info("Laden der Daten abgeschlossen.");
         log.debug("Messdaten: {}", processedZaehldaten.toString());
         return ResponseEntity.ok(processedZaehldaten);

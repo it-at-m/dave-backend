@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -42,10 +43,12 @@ public class GleitenderZeitintervall {
     private final int zeitintervallePerHour;
 
     private final List<Zeitintervall> zeitintervalle;
+    private final List<MeasurementValuesPerInterval> measurementValuesPerIntervals;
 
     private GleitenderZeitintervall(final int zeitintervallePerHour) {
         this.zeitintervallePerHour = zeitintervallePerHour;
         this.zeitintervalle = new ArrayList<>(zeitintervallePerHour);
+        this.measurementValuesPerIntervals = new ArrayList<>(zeitintervallePerHour);
     }
 
     private static GleitenderZeitintervall createEmptyInstance(final int zeitintervallePerHour) {
@@ -103,6 +106,10 @@ public class GleitenderZeitintervall {
 
     private void add(final Zeitintervall zeitintervall) {
         zeitintervalle.add(zeitintervall);
+    }
+
+    private void add(final MeasurementValuesPerInterval measurementValuesPerInterval) {
+        measurementValuesPerIntervals.add(measurementValuesPerInterval);
     }
 
     /**

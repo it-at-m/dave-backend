@@ -157,6 +157,47 @@
         }
       }
     },
+    "/MessstelleOptionsmenu/validateTagesTyp": {
+      "post": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
+        "operationId": "isTagesTypDataValid",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChosenTagesTypValidRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "TagesTyp erfolgreich validiert",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/messstelle": {
       "get": {
         "tags": [
@@ -209,22 +250,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -400,7 +441,8 @@
               "WERKTAG_MO_FR",
               "SAMSTAG",
               "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN"
+              "WERKTAG_FERIEN",
+              "MO_SO"
             ]
           }
         }
@@ -558,6 +600,9 @@
         }
       },
       "AverageMeasurementValuesPerIntervalResponse": {
+        "required": [
+          "intervals"
+        ],
         "type": "object",
         "properties": {
           "intervals": {
@@ -590,9 +635,16 @@
         }
       },
       "MeasurementValuesPerInterval": {
+        "required": [
+          "endeUhrzeit",
+          "startUhrzeit"
+        ],
         "type": "object",
         "properties": {
-          "uhrzeitVon": {
+          "startUhrzeit": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "endeUhrzeit": {
             "$ref": "#/components/schemas/LocalTime"
           },
           "anzahlLfw": {
@@ -642,6 +694,36 @@
           "prozentGueterverkehr": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "ChosenTagesTypValidRequestDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "MO_SO"
+            ]
+          }
+        }
+      },
+      "ChosenTagesTypValidDTO": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
           }
         }
       },
