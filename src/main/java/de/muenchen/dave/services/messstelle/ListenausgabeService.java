@@ -46,7 +46,8 @@ public class ListenausgabeService {
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
         dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzMessstelle, options).ifPresent(spitzenstunde -> dto.getZaehldaten().add(spitzenstunde));
+            calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzMessstelle, options)
+                    .ifPresent(spitzenstunde -> dto.getZaehldaten().add(spitzenstunde));
         } else {
             dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle, options));
             dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
