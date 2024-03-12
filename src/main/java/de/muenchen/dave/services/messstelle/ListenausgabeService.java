@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class ListenausgabeService {
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
         dto.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals));
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            dto.getZaehldaten().add(calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzMessstelle, options));
+            calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzMessstelle, options).ifPresent(spitzenstunde -> dto.getZaehldaten().add(spitzenstunde));
         } else {
             dto.getZaehldaten().addAll(calculateSpitzenstundeAndSumOfIntervalsPerBlock(options.getZeitblock(), intervals, isKfzMessstelle, options));
             dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
@@ -104,16 +105,16 @@ public class ListenausgabeService {
                 .filter(intervall -> MesswerteBaseUtil.isTimeWithinBlock(intervall.getStartUhrzeit(), block))
                 .collect(Collectors.toList());
         final List<LadeMesswerteDTO> ladeMesswerteDTOS = new ArrayList<>();
-        ladeMesswerteDTOS.add(calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle, options));
+        calculateSpitzenstunde(block, necessaryIntervals, isKfzMessstelle, options).ifPresent(ladeMesswerteDTOS::add);
         ladeMesswerteDTOS.add(calculateSumOfIntervalsPerBlock(block, necessaryIntervals));
         return ladeMesswerteDTOS;
     }
 
-    protected LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
+    protected Optional<LadeMesswerteDTO> calculateSpitzenstunde(final Zeitblock block, final List<MeasurementValuesPerInterval> intervals,
             final boolean isKfzMessstelle, final MessstelleOptionsDTO options) {
-        LadeMesswerteDTO spitzenstunde = new LadeMesswerteDTO();
+        Optional<LadeMesswerteDTO> spitzenstunde = Optional.empty();
         if (ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
-            spitzenstunde = spitzenstundeService.calculateSpitzenstunde(block, intervals, isKfzMessstelle);
+            spitzenstunde = Optional.of(spitzenstundeService.calculateSpitzenstunde(block, intervals, isKfzMessstelle));
         }
         return spitzenstunde;
     }
