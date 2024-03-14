@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -404,10 +404,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           }
         }
@@ -415,6 +415,10 @@
       "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
+          "minutesPerZeitintervall",
+          "uhrzeitEnde",
+          "uhrzeitStart",
+          "zeitpunktEnde",
           "zeitpunktStart"
         ],
         "type": "object",
@@ -444,6 +448,37 @@
               "WERKTAG_FERIEN",
               "MO_SO"
             ]
+          },
+          "minutesPerZeitintervall": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uhrzeitStart": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "uhrzeitEnde": {
+            "$ref": "#/components/schemas/LocalTime"
+          }
+        }
+      },
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nano": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -613,27 +648,6 @@
           }
         }
       },
-      "LocalTime": {
-        "type": "object",
-        "properties": {
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nano": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "MeasurementValuesPerInterval": {
         "required": [
           "endeUhrzeit",
@@ -664,6 +678,10 @@
             "format": "int32"
           },
           "anzahlRad": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlFuss": {
             "type": "integer",
             "format": "int32"
           },
@@ -753,11 +771,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -816,11 +834,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           }
