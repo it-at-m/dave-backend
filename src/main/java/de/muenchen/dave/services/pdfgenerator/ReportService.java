@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.LogoAsset;
+import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
@@ -152,6 +153,26 @@ public class ReportService {
                             .getDatentabellePdfZaehldaten(datatableAsset.getOptions(), datatableAsset.getZaehlungId());
                     datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
                     datatableAsset.setRandomTableId(UUID.randomUUID().toString());
+
+                    sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
+                } catch (final DataNotFoundException dataNotFoundException) {
+                    sb.append("Die Datentabelle konnte aufgrund eines technischen Fehlers nicht angezeigt werden.");
+                }
+            } else if (asset.getType().equals(AssetType.DATATABLE_MESSSTELLE)) {
+                final MessstelleDatatableAsset datatableAsset = (MessstelleDatatableAsset) asset;
+                try {
+                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanService
+                            .getDatentabellePdfMesswerte(datatableAsset.getOptions(), datatableAsset.getMstId());
+                    datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
+                    datatableAsset.setRandomTableId(UUID.randomUUID().toString());
+
+//                    DatatableAsset da = new DatatableAsset();
+//                    da.setType(AssetType.DATATABLE);
+//                    da.setText(datatableAsset.getText());
+//                    da.setRandomTableId(datatableAsset.getRandomTableId());
+//                    da.setRandomTableId(datatableAsset.getRandomTableId());
+//                    da.setDatentabelleZaehldaten(datatableAsset.getDatentabelleZaehldaten());
+//                    da.setZaehlungId(datatableAsset.getMstId());
 
                     sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
                 } catch (final DataNotFoundException dataNotFoundException) {
