@@ -114,10 +114,8 @@ public class ReportService {
         final StringBuilder sb = new StringBuilder();
 
         assetList.stream()
-                .filter(asset -> asset.getType().equals(AssetType.DATATABLE))
-                .forEach(asset -> {
-                    sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset));
-                });
+                .filter(asset -> asset.getType().equals(AssetType.DATATABLE) || asset.getType().equals(AssetType.DATATABLE_MESSSTELLE))
+                .forEach(asset -> sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset)));
 
         return sb.toString();
     }
@@ -165,14 +163,6 @@ public class ReportService {
                             .getDatentabellePdfMesswerte(datatableAsset.getOptions(), datatableAsset.getMstId());
                     datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
                     datatableAsset.setRandomTableId(UUID.randomUUID().toString());
-
-//                    DatatableAsset da = new DatatableAsset();
-//                    da.setType(AssetType.DATATABLE);
-//                    da.setText(datatableAsset.getText());
-//                    da.setRandomTableId(datatableAsset.getRandomTableId());
-//                    da.setRandomTableId(datatableAsset.getRandomTableId());
-//                    da.setDatentabelleZaehldaten(datatableAsset.getDatentabelleZaehldaten());
-//                    da.setZaehlungId(datatableAsset.getMstId());
 
                     sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
                 } catch (final DataNotFoundException dataNotFoundException) {
