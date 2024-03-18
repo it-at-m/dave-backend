@@ -36,6 +36,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_LKW,
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_BUS,
   MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_RAD,
+  MeasurementValuesPerInterval.JSON_PROPERTY_ANZAHL_FUSS,
   MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_ALLE_PKW,
   MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_LASTZUG,
   MeasurementValuesPerInterval.JSON_PROPERTY_SUMME_GUETERVERKEHR,
@@ -66,6 +67,9 @@ public class MeasurementValuesPerInterval {
 
   public static final String JSON_PROPERTY_ANZAHL_RAD = "anzahlRad";
   private Integer anzahlRad;
+
+  public static final String JSON_PROPERTY_ANZAHL_FUSS = "anzahlFuss";
+  private Integer anzahlFuss;
 
   public static final String JSON_PROPERTY_SUMME_ALLE_PKW = "summeAllePkw";
   private Integer summeAllePkw;
@@ -273,6 +277,32 @@ public class MeasurementValuesPerInterval {
   }
 
 
+  public MeasurementValuesPerInterval anzahlFuss(Integer anzahlFuss) {
+    
+    this.anzahlFuss = anzahlFuss;
+    return this;
+  }
+
+   /**
+   * Get anzahlFuss
+   * @return anzahlFuss
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_ANZAHL_FUSS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getAnzahlFuss() {
+    return anzahlFuss;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_ANZAHL_FUSS)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setAnzahlFuss(Integer anzahlFuss) {
+    this.anzahlFuss = anzahlFuss;
+  }
+
+
   public MeasurementValuesPerInterval summeAllePkw(Integer summeAllePkw) {
     
     this.summeAllePkw = summeAllePkw;
@@ -470,6 +500,7 @@ public class MeasurementValuesPerInterval {
         Objects.equals(this.anzahlLkw, measurementValuesPerInterval.anzahlLkw) &&
         Objects.equals(this.anzahlBus, measurementValuesPerInterval.anzahlBus) &&
         Objects.equals(this.anzahlRad, measurementValuesPerInterval.anzahlRad) &&
+        Objects.equals(this.anzahlFuss, measurementValuesPerInterval.anzahlFuss) &&
         Objects.equals(this.summeAllePkw, measurementValuesPerInterval.summeAllePkw) &&
         Objects.equals(this.summeLastzug, measurementValuesPerInterval.summeLastzug) &&
         Objects.equals(this.summeGueterverkehr, measurementValuesPerInterval.summeGueterverkehr) &&
@@ -481,7 +512,7 @@ public class MeasurementValuesPerInterval {
 
   @Override
   public int hashCode() {
-    return Objects.hash(startUhrzeit, endeUhrzeit, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, prozentSchwerverkehr, prozentGueterverkehr);
+    return Objects.hash(startUhrzeit, endeUhrzeit, anzahlLfw, anzahlKrad, anzahlLkw, anzahlBus, anzahlRad, anzahlFuss, summeAllePkw, summeLastzug, summeGueterverkehr, summeSchwerverkehr, summeKraftfahrzeugverkehr, prozentSchwerverkehr, prozentGueterverkehr);
   }
 
   @Override
@@ -495,6 +526,7 @@ public class MeasurementValuesPerInterval {
     sb.append("    anzahlLkw: ").append(toIndentedString(anzahlLkw)).append("\n");
     sb.append("    anzahlBus: ").append(toIndentedString(anzahlBus)).append("\n");
     sb.append("    anzahlRad: ").append(toIndentedString(anzahlRad)).append("\n");
+    sb.append("    anzahlFuss: ").append(toIndentedString(anzahlFuss)).append("\n");
     sb.append("    summeAllePkw: ").append(toIndentedString(summeAllePkw)).append("\n");
     sb.append("    summeLastzug: ").append(toIndentedString(summeLastzug)).append("\n");
     sb.append("    summeGueterverkehr: ").append(toIndentedString(summeGueterverkehr)).append("\n");

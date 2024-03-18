@@ -32,8 +32,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   StadtbezirkDto.JSON_PROPERTY_STADTBEZIRK_NUMMER,
   StadtbezirkDto.JSON_PROPERTY_NAME,
   StadtbezirkDto.JSON_PROPERTY_FLAECHE_QM,
-  StadtbezirkDto.JSON_PROPERTY_XCOORDINATE,
-  StadtbezirkDto.JSON_PROPERTY_YCOORDINATE
+  StadtbezirkDto.JSON_PROPERTY_YCOORDINATE,
+  StadtbezirkDto.JSON_PROPERTY_XCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class StadtbezirkDto {
@@ -49,11 +49,11 @@ public class StadtbezirkDto {
   public static final String JSON_PROPERTY_FLAECHE_QM = "flaecheQm";
   private BigDecimal flaecheQm;
 
-  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
-  private BigDecimal xcoordinate;
-
   public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
   private BigDecimal ycoordinate;
+
+  public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
+  private BigDecimal xcoordinate;
 
   public StadtbezirkDto() {
   }
@@ -162,32 +162,6 @@ public class StadtbezirkDto {
   }
 
 
-  public StadtbezirkDto xcoordinate(BigDecimal xcoordinate) {
-    
-    this.xcoordinate = xcoordinate;
-    return this;
-  }
-
-   /**
-   * Get xcoordinate
-   * @return xcoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public BigDecimal getXcoordinate() {
-    return xcoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setXcoordinate(BigDecimal xcoordinate) {
-    this.xcoordinate = xcoordinate;
-  }
-
-
   public StadtbezirkDto ycoordinate(BigDecimal ycoordinate) {
     
     this.ycoordinate = ycoordinate;
@@ -213,6 +187,32 @@ public class StadtbezirkDto {
     this.ycoordinate = ycoordinate;
   }
 
+
+  public StadtbezirkDto xcoordinate(BigDecimal xcoordinate) {
+    
+    this.xcoordinate = xcoordinate;
+    return this;
+  }
+
+   /**
+   * Get xcoordinate
+   * @return xcoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public BigDecimal getXcoordinate() {
+    return xcoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_XCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setXcoordinate(BigDecimal xcoordinate) {
+    this.xcoordinate = xcoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -226,13 +226,13 @@ public class StadtbezirkDto {
         Objects.equals(this.stadtbezirkNummer, stadtbezirkDto.stadtbezirkNummer) &&
         Objects.equals(this.name, stadtbezirkDto.name) &&
         Objects.equals(this.flaecheQm, stadtbezirkDto.flaecheQm) &&
-        Objects.equals(this.xcoordinate, stadtbezirkDto.xcoordinate) &&
-        Objects.equals(this.ycoordinate, stadtbezirkDto.ycoordinate);
+        Objects.equals(this.ycoordinate, stadtbezirkDto.ycoordinate) &&
+        Objects.equals(this.xcoordinate, stadtbezirkDto.xcoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(objectId, stadtbezirkNummer, name, flaecheQm, xcoordinate, ycoordinate);
+    return Objects.hash(objectId, stadtbezirkNummer, name, flaecheQm, ycoordinate, xcoordinate);
   }
 
   @Override
@@ -243,8 +243,8 @@ public class StadtbezirkDto {
     sb.append("    stadtbezirkNummer: ").append(toIndentedString(stadtbezirkNummer)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    flaecheQm: ").append(toIndentedString(flaecheQm)).append("\n");
-    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
+    sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
