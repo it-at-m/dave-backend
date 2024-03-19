@@ -22,6 +22,9 @@ public class BelastungsplanService {
         ListBelastungsplanMessquerschnitteDTO listBelastungsplanMessquerschnitteDTOClass = new ListBelastungsplanMessquerschnitteDTO();
         List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO  = new ArrayList<>();
         var messstelle = messstelleService.readMessstelleInfo(messstelleId);
+        Integer totalSumKfz = 0;
+        Integer totalSumSv = 0;
+        Integer totalSumGv = 0;
         //listBelastungsplanMessquerschnitteDTOClass.setStrassenname(messstelle.getStandort());
         listBelastungsplanMessquerschnitteDTOClass.setStrassenname("Agnes-Pockels-Bogen");
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
@@ -35,6 +38,15 @@ public class BelastungsplanService {
             ladeBelastungsplanMessquerschnittDataDTO.setDirection(getDirection(messstelle, sumOfMessquerschnitt.getMqId()));
             listBelastungsplanMessquerschnitteDTO.add(ladeBelastungsplanMessquerschnittDataDTO);
         });
+        totalSumKfz = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumKfz).sum();
+        totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumSv).sum();
+        totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumGv).sum();
+        listBelastungsplanMessquerschnitteDTOClass.setTotalKfz(totalSumKfz);
+        listBelastungsplanMessquerschnitteDTOClass.setTotalSv(totalSumSv);
+        listBelastungsplanMessquerschnitteDTOClass.setTotalGv(totalSumGv);
+        Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
+        listBelastungsplanMessquerschnitteDTOClass.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
+        listBelastungsplanMessquerschnitteDTOClass.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
         listBelastungsplanMessquerschnitteDTOClass.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
         return listBelastungsplanMessquerschnitteDTOClass;
     }
