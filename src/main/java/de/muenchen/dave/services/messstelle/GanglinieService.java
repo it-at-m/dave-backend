@@ -8,6 +8,8 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -29,7 +31,7 @@ public class GanglinieService {
     private static final Integer ONE = 1;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<MeasurementValuesPerInterval> intervalle) {
+    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<MeasurementValuesPerInterval> intervalle, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
@@ -39,75 +41,97 @@ public class GanglinieService {
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
 
         final SeriesEntries seriesEntries = new SeriesEntries();
+        final FahrzeugOptionsDTO fahrzeuge = options.getFahrzeuge();
 
         intervalle
                 .forEach(intervall -> {
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
-                    seriesEntries.getSeriesEntryPkw().getYAxisData().add(intervall.getSummeAllePkw());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.PKW);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeAllePkw());
+                    if (fahrzeuge.isPersonenkraftwagen()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
+                        seriesEntries.getSeriesEntryPkw().getYAxisData().add(intervall.getSummeAllePkw());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.PKW);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeAllePkw());
+                    }
 
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
-                    seriesEntries.getSeriesEntryLkw().getYAxisData().add(intervall.getAnzahlLkw());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LKW);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLkw());
+                    if (fahrzeuge.isLastkraftwagen()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
+                        seriesEntries.getSeriesEntryLkw().getYAxisData().add(intervall.getAnzahlLkw());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LKW);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLkw());
+                    }
 
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                    seriesEntries.getSeriesEntryLfw().getYAxisData().add(intervall.getAnzahlLfw());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLfw());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
-                    seriesEntries.getSeriesEntryLz().getYAxisData().add(intervall.getSummeLastzug());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeLastzug());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
-                    seriesEntries.getSeriesEntryBus().getYAxisData().add(intervall.getAnzahlBus());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.BUSSE);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlBus());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKrad());
-                    seriesEntries.getSeriesEntryKrad().getYAxisData().add(intervall.getAnzahlKrad());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KRAFTRAEDER);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlKrad());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
-                    seriesEntries.getSeriesEntryRad().getYAxisData().add(intervall.getAnzahlRad());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlRad());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
-                    seriesEntries.getSeriesEntryKfz().getYAxisData().add(intervall.getSummeKraftfahrzeugverkehr());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KFZ);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeKraftfahrzeugverkehr());
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntrySv());
-                    seriesEntries.getSeriesEntrySv().getYAxisData().add(intervall.getSummeSchwerverkehr());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeSchwerverkehr());
-
-                    setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
-                    seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
-
-                    setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
-                    seriesEntries.getSeriesEntryGv().getYAxisData().add(intervall.getSummeGueterverkehr());
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR);
-                    setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeGueterverkehr());
-
-                    setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
-                    seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
-                    setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
-                    setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
+                    if (fahrzeuge.isLieferwagen()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(intervall.getAnzahlLfw());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLfw());
+                    }
+                    if (fahrzeuge.isLastzuege()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
+                        seriesEntries.getSeriesEntryLz().getYAxisData().add(intervall.getSummeLastzug());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeLastzug());
+                    }
+                    if (fahrzeuge.isBusse()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
+                        seriesEntries.getSeriesEntryBus().getYAxisData().add(intervall.getAnzahlBus());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.BUSSE);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlBus());
+                    }
+                    if (fahrzeuge.isKraftraeder()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKrad());
+                        seriesEntries.getSeriesEntryKrad().getYAxisData().add(intervall.getAnzahlKrad());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KRAFTRAEDER);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlKrad());
+                    }
+                    if (fahrzeuge.isRadverkehr()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
+                        seriesEntries.getSeriesEntryRad().getYAxisData().add(intervall.getAnzahlRad());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlRad());
+                    }
+                    if (fahrzeuge.isFussverkehr()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryFuss());
+                        seriesEntries.getSeriesEntryRad().getYAxisData().add(intervall.getAnzahlFuss());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.FUSSGAENGER);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlFuss());
+                    }
+                    if (fahrzeuge.isKraftfahrzeugverkehr()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
+                        seriesEntries.getSeriesEntryKfz().getYAxisData().add(intervall.getSummeKraftfahrzeugverkehr());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KFZ);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeKraftfahrzeugverkehr());
+                    }
+                    if (fahrzeuge.isSchwerverkehr()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntrySv());
+                        seriesEntries.getSeriesEntrySv().getYAxisData().add(intervall.getSummeSchwerverkehr());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeSchwerverkehr());
+                    }
+                    if (fahrzeuge.isSchwerverkehrsanteilProzent()) {
+                        setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
+                        seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
+                        setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentSchwerverkehr()));
+                    }
+                    if (fahrzeuge.isGueterverkehr()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
+                        seriesEntries.getSeriesEntryGv().getYAxisData().add(intervall.getSummeGueterverkehr());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeGueterverkehr());
+                    }
+                    if (fahrzeuge.isGueterverkehrsanteilProzent()) {
+                        setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
+                        seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
+                        setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(intervall.getProzentGueterverkehr()));
+                    }
 
                     ladeZaehldatenStepline.setXAxisDataFirstChart(
                             ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                                     ladeZaehldatenStepline.getXAxisDataFirstChart(),
                                     intervall.getStartUhrzeit().toString()));
                 });
-        ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries());
+        ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeuge));
         return ladeZaehldatenStepline;
     }
 
@@ -176,6 +200,8 @@ public class GanglinieService {
 
         private StepLineSeriesEntryIntegerDTO seriesEntryRad;
 
+        private StepLineSeriesEntryIntegerDTO seriesEntryFuss;
+
         private StepLineSeriesEntryIntegerDTO seriesEntryKfz;
 
         private StepLineSeriesEntryIntegerDTO seriesEntrySv;
@@ -201,6 +227,8 @@ public class GanglinieService {
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
             seriesEntryRad = new StepLineSeriesEntryIntegerDTO();
             seriesEntryRad.setName(ChartLegendUtil.RAD);
+            seriesEntryFuss = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryFuss.setName(ChartLegendUtil.FUSSGAENGER);
             seriesEntryKfz = new StepLineSeriesEntryIntegerDTO();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
             seriesEntrySv = new StepLineSeriesEntryIntegerDTO();
@@ -229,20 +257,21 @@ public class GanglinieService {
          * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
          *         {@link StepLineSeriesEntryBigDecimalDTO}.
          */
-        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries() {
+        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLfw, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryBus, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKrad, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryRad, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKfz, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySv, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySvProzent, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryGv, true);
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryGvProzent, true);
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.isPersonenkraftwagen());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.isLastkraftwagen());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLfw, options.isLieferwagen());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, options.isLastzuege());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryBus, options.isBusse());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKrad, options.isKraftraeder());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryRad, options.isRadverkehr());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryFuss, options.isFussverkehr());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKfz, options.isKraftfahrzeugverkehr());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySv, options.isSchwerverkehr());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySvProzent, options.isSchwerverkehrsanteilProzent());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryGv, options.isGueterverkehr());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryGvProzent, options.isGueterverkehrsanteilProzent());
             return allEntries;
         }
 

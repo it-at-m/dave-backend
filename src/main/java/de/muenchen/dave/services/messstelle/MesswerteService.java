@@ -2,6 +2,8 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.ListBelastungsplanMessquerschnitteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
@@ -11,12 +13,13 @@ import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import de.muenchen.dave.util.OptionsUtil;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -33,33 +36,55 @@ public class MesswerteService {
     private final HeatmapService heatmapService;
     private final ListenausgabeService listenausgabeService;
     private final BelastungsplanService belastungsplanService;
+    private final SpitzenstundeService spitzenstundeService;
 
     private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
 
-    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId) {
+    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
+        validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
-        final Set<String> messquerschnittNummern = messstelleService.getMessquerschnittNummern(messstelleId);
-
-        final MeasurementValuesResponse response = this.ladeMesswerteIntervall(messquerschnittNummern);
-        final List<MeasurementValuesPerInterval> intervalle = response.getAverageMeasurementValuesPerIntervalResponse().getIntervals();
+        final MeasurementValuesResponse response = this.ladeMesswerteIntervall(options);
+        final List<MeasurementValuesPerInterval> intervals;
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getAverageMeasurementValuesPerIntervalResponse().getIntervals(),
+                    messstelleService.isKfzMessstelle(messstelleId));
+        } else {
+            intervals = response.getAverageMeasurementValuesPerIntervalResponse().getIntervals();
+        }
         final List<TotalSumPerMessquerschnitt> totalSumPerMessquerschnittList = response.getTotalSumOfAllMessquerschnitte().getTotalSumPerMessquerschnittList();
 
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
-        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervalle));
-        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervalle));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervalle, messstelleService.isKfzMessstelle(messstelleId)));
+        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
+        processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
         processedZaehldaten.setListBelastungsplanMessquerschnitteDTO(new ListBelastungsplanMessquerschnitteDTO());
         processedZaehldaten.setListBelastungsplanMessquerschnitteDTO(belastungsplanService.ladeBelastungsplan(totalSumPerMessquerschnittList, messstelleId));
         return processedZaehldaten;
     }
 
-    protected MeasurementValuesResponse ladeMesswerteIntervall(final Set<String> messquerschnittIds) {
+    protected void validateOptions(final MessstelleOptionsDTO options) {
+        if (options.getZeitraum().size() == 2 && StringUtils.isEmpty(options.getTagesTyp())) {
+            throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
+        }
+    }
+
+    protected MeasurementValuesResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
         final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(messquerschnittIds);
-        request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.WERKTAG_DI_MI_DO);
-        request.setZeitpunktStart(LocalDate.of(2024, 1, 1));
-        request.setZeitpunktEnde(LocalDate.of(2024, 1, 1));
+        request.setMessquerschnittIds(options.getMessquerschnittIds());
+        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
+            request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
+        }
+        request.setZeitpunktStart(options.getZeitraum().get(0));
+        if (options.getZeitraum().size() == 2) {
+            request.setZeitpunktEnde(options.getZeitraum().get(1));
+        } else {
+            request.setZeitpunktEnde(options.getZeitraum().get(0));
+        }
+        request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
+        request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
+        request.setMinutesPerZeitintervall(options.getIntervall().getMinutesPerIntervall());
+
         final Mono<ResponseEntity<MeasurementValuesResponse>> response = messwerteApi
                 .getAverageMeasurementValuesPerIntervalWithHttpInfo(
                         request);
