@@ -35,4 +35,17 @@ public class MessstelleOptionsDTO implements Serializable {
 
     @NotNull
     private Set<String> messquerschnittIds;
+
+    // Belastungsplan
+    @NotNull
+    private Boolean werteHundertRunden;
+    // Listenausgabe
+    @NotNull
+    private Boolean stundensumme;
+    @NotNull
+    private Boolean blocksumme;
+    @NotNull
+    private Boolean tagessumme;
+    @NotNull
+    private Boolean spitzenstunde;
 }
