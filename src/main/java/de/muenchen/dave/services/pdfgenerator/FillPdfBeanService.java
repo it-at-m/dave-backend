@@ -3,10 +3,6 @@ package de.muenchen.dave.services.pdfgenerator;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -28,7 +24,6 @@ import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -36,12 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -69,19 +62,18 @@ public class FillPdfBeanService {
 
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
-    private final MesswerteService messwerteService;
     private final GangliniePdfOptionsMapper gangliniePdfOptionsMapper;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
-    //    public FillPdfBeanService(final ZaehlstelleIndexService indexService,
-    //            final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
-    //            final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
-    //            final LadeZaehldatenService ladeZaehldatenService) {
-    //        this.indexService = indexService;
-    //        this.ladeZaehldatenService = ladeZaehldatenService;
-    //        this.gangliniePdfOptionsMapper = gangliniePdfOptionsMapper;
-    //        this.datentabellePdfZaehldatumMapper = datentabellePdfZaehldatumMapper;
-    //    }
+    public FillPdfBeanService(final ZaehlstelleIndexService indexService,
+            final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
+            final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
+            final LadeZaehldatenService ladeZaehldatenService) {
+        this.indexService = indexService;
+        this.ladeZaehldatenService = ladeZaehldatenService;
+        this.gangliniePdfOptionsMapper = gangliniePdfOptionsMapper;
+        this.datentabellePdfZaehldatumMapper = datentabellePdfZaehldatumMapper;
+    }
 
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
@@ -632,106 +624,4 @@ public class FillPdfBeanService {
                 ? StringUtils.EMPTY
                 : zaehlung.getZaehlart();
     }
-
-    // NEU wg Messstelle
-    /**
-     * Diese Methode befüllt ein Objekt der Klasse {@link DatentabellePdfZaehldaten} und gibt dieses
-     * zurück.
-     *
-     * @param options Die im Frontend ausgewählten Optionen.
-     * @param mstId ID der im Frontend ausgewählten Messstelle
-     * @return Befülltes Objekt vom Typ {@link DatentabellePdfZaehldaten}.
-     * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
-     */
-    public DatentabellePdfZaehldaten getDatentabellePdfMesswerte(final MessstelleOptionsDTO options, final String mstId) throws DataNotFoundException {
-        final LadeMesswerteListenausgabeDTO zaehldatenTable = messwerteService.ladeMesswerte(mstId, options).getZaehldatenTable();
-        final List<LadeMesswerteDTO> ladeZaehldatumDTOS = zaehldatenTable.getZaehldaten();
-
-        // Bei Tageswert soll keine Uhrzeit angezeigt werden
-        ladeZaehldatumDTOS.stream()
-                .filter(ladeZaehldatumDTO -> StringUtils.equalsIgnoreCase(ladeZaehldatumDTO.getType(), LadeZaehldatenService.TAGESWERT))
-                .forEach(ladeZaehldatumDTO -> {
-                    ladeZaehldatumDTO.setEndeUhrzeit(null);
-                    ladeZaehldatumDTO.setStartUhrzeit(null);
-                });
-
-        final DatentabellePdfZaehldaten datentabellePdfZaehldaten = new DatentabellePdfZaehldaten();
-
-        final FahrzeugOptionsDTO optionsFahrzeuge = options.getFahrzeuge();
-        datentabellePdfZaehldaten.setShowKraftfahrzeugverkehr(optionsFahrzeuge.isKraftfahrzeugverkehr());
-        datentabellePdfZaehldaten.setShowSchwerverkehr(optionsFahrzeuge.isSchwerverkehr());
-        datentabellePdfZaehldaten.setShowGueterverkehr(optionsFahrzeuge.isGueterverkehr());
-        datentabellePdfZaehldaten.setShowRadverkehr(optionsFahrzeuge.isRadverkehr());
-        datentabellePdfZaehldaten.setShowFussverkehr(optionsFahrzeuge.isFussverkehr());
-        datentabellePdfZaehldaten.setShowSchwerverkehrsanteilProzent(optionsFahrzeuge.isSchwerverkehrsanteilProzent());
-        datentabellePdfZaehldaten.setShowGueterverkehrsanteilProzent(optionsFahrzeuge.isGueterverkehrsanteilProzent());
-        datentabellePdfZaehldaten.setShowPersonenkraftwagen(optionsFahrzeuge.isPersonenkraftwagen());
-        datentabellePdfZaehldaten.setShowLastkraftwagen(optionsFahrzeuge.isLastkraftwagen());
-        datentabellePdfZaehldaten.setShowLastzuege(optionsFahrzeuge.isLastzuege());
-        datentabellePdfZaehldaten.setShowLieferwagen(optionsFahrzeuge.isLieferwagen());
-        datentabellePdfZaehldaten.setShowBusse(optionsFahrzeuge.isBusse());
-        datentabellePdfZaehldaten.setShowKraftraeder(optionsFahrzeuge.isKraftraeder());
-
-        datentabellePdfZaehldaten.setActiveTabsFahrzeugtypen(this.calcActiveTabsFahrzeugtypen(optionsFahrzeuge));
-        datentabellePdfZaehldaten.setActiveTabsFahrzeugklassen(this.calcActiveTabsFahrzeugklassen(optionsFahrzeuge));
-        datentabellePdfZaehldaten.setActiveTabsAnteile(this.calcActiveTabsAnteile(optionsFahrzeuge));
-
-        datentabellePdfZaehldaten.setZaehldatenList(this.datentabellePdfZaehldatumMapper.ladeMesswerteDTOList2beanList(ladeZaehldatumDTOS));
-        return datentabellePdfZaehldaten;
-    }
-
-    private int calcActiveTabsFahrzeugtypen(final FahrzeugOptionsDTO optionsDTO) {
-        int activeTabsFahrzeugtypen = 0;
-        if (optionsDTO.isPersonenkraftwagen()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isLastkraftwagen()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isLastzuege()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isLieferwagen()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isBusse()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isKraftraeder()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isRadverkehr()) {
-            activeTabsFahrzeugtypen++;
-        }
-        if (optionsDTO.isFussverkehr()) {
-            activeTabsFahrzeugtypen++;
-        }
-        return activeTabsFahrzeugtypen;
-    }
-
-    private int calcActiveTabsFahrzeugklassen(final FahrzeugOptionsDTO optionsDTO) {
-        int activeTabsFahrzeugklasse = 0;
-        if (optionsDTO.isKraftfahrzeugverkehr()) {
-            activeTabsFahrzeugklasse++;
-        }
-        if (optionsDTO.isSchwerverkehr()) {
-            activeTabsFahrzeugklasse++;
-        }
-        if (optionsDTO.isGueterverkehr()) {
-            activeTabsFahrzeugklasse++;
-        }
-        return activeTabsFahrzeugklasse;
-    }
-
-    private int calcActiveTabsAnteile(final FahrzeugOptionsDTO optionsDTO) {
-        int activeTabsAnteile = 0;
-        if (optionsDTO.isSchwerverkehrsanteilProzent()) {
-            activeTabsAnteile++;
-        }
-        if (optionsDTO.isGueterverkehrsanteilProzent()) {
-            activeTabsAnteile++;
-        }
-        return activeTabsAnteile;
-    }
-
 }
