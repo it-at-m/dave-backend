@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   TotalSumPerMessquerschnitt.JSON_PROPERTY_MQ_ID,
   TotalSumPerMessquerschnitt.JSON_PROPERTY_SUM_KFZ,
   TotalSumPerMessquerschnitt.JSON_PROPERTY_SUM_SV,
-  TotalSumPerMessquerschnitt.JSON_PROPERTY_SUM_GV
+  TotalSumPerMessquerschnitt.JSON_PROPERTY_SUM_GV,
+  TotalSumPerMessquerschnitt.JSON_PROPERTY_SUM_RAD
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class TotalSumPerMessquerschnitt {
@@ -45,6 +46,9 @@ public class TotalSumPerMessquerschnitt {
 
   public static final String JSON_PROPERTY_SUM_GV = "sumGv";
   private Integer sumGv;
+
+  public static final String JSON_PROPERTY_SUM_RAD = "sumRad";
+  private Integer sumRad;
 
   public TotalSumPerMessquerschnitt() {
   }
@@ -152,6 +156,32 @@ public class TotalSumPerMessquerschnitt {
     this.sumGv = sumGv;
   }
 
+
+  public TotalSumPerMessquerschnitt sumRad(Integer sumRad) {
+    
+    this.sumRad = sumRad;
+    return this;
+  }
+
+   /**
+   * Get sumRad
+   * @return sumRad
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_SUM_RAD)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Integer getSumRad() {
+    return sumRad;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_SUM_RAD)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setSumRad(Integer sumRad) {
+    this.sumRad = sumRad;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -164,12 +194,13 @@ public class TotalSumPerMessquerschnitt {
     return Objects.equals(this.mqId, totalSumPerMessquerschnitt.mqId) &&
         Objects.equals(this.sumKfz, totalSumPerMessquerschnitt.sumKfz) &&
         Objects.equals(this.sumSv, totalSumPerMessquerschnitt.sumSv) &&
-        Objects.equals(this.sumGv, totalSumPerMessquerschnitt.sumGv);
+        Objects.equals(this.sumGv, totalSumPerMessquerschnitt.sumGv) &&
+        Objects.equals(this.sumRad, totalSumPerMessquerschnitt.sumRad);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mqId, sumKfz, sumSv, sumGv);
+    return Objects.hash(mqId, sumKfz, sumSv, sumGv, sumRad);
   }
 
   @Override
@@ -180,6 +211,7 @@ public class TotalSumPerMessquerschnitt {
     sb.append("    sumKfz: ").append(toIndentedString(sumKfz)).append("\n");
     sb.append("    sumSv: ").append(toIndentedString(sumSv)).append("\n");
     sb.append("    sumGv: ").append(toIndentedString(sumGv)).append("\n");
+    sb.append("    sumRad: ").append(toIndentedString(sumRad)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -10,6 +10,7 @@ public class LadeBelastungsplanMessquerschnittDataDTO {
     private Integer sumKfz;
     private Integer sumSv;
     private Integer sumGv;
+    private Integer sumRad;
     private String direction;
 
     private BigDecimal percentSv;

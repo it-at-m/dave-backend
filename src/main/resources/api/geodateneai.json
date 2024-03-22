@@ -404,10 +404,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -754,6 +754,10 @@
           "sumGv": {
             "type": "integer",
             "format": "int32"
+          },
+          "sumRad": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -813,11 +817,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -876,11 +880,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
