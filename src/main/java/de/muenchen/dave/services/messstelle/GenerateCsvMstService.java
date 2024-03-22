@@ -85,7 +85,7 @@ public class GenerateCsvMstService {
         metaHeader.append(SEMIKOLON);
         metaHeader.append("ausgewählter Wochentag");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("ausgewählter MQ (Merkmale \"Richtung\" & „MQ-ID - Standort MQ“) bzw. \"Alle Messquerschnitte\"");
+        metaHeader.append("ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
 
         metaHeader.append(SEMIKOLON.repeat(Math.max(0, neededSemikolons - 3)));
         return new String(metaHeader);
