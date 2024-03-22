@@ -81,7 +81,7 @@ public class GenerateCsvMstService {
         metaHeader.append(SEMIKOLON);
         metaHeader.append("KFZ oder RAD");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("auswählter Messzeitraum / Einzeltag");
+        metaHeader.append("ausgewählter Messzeitraum / Einzeltag");
         metaHeader.append(SEMIKOLON);
         metaHeader.append("ausgewählter Wochentag");
         metaHeader.append(SEMIKOLON);
