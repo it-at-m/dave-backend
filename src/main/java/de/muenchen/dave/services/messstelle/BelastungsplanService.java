@@ -26,7 +26,6 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setMessstelleId(messstelleId);
         belastungsplanMessquerschnitteDTO.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
         belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getStandort());
-        belastungsplanMessquerschnitteDTO.setStrassenname("Agnes-Pockels-Bogen");
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
             LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
             ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(sumOfMessquerschnitt.getSumKfz());
