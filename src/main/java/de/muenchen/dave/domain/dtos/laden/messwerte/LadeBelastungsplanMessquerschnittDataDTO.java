@@ -1,10 +1,11 @@
 package de.muenchen.dave.domain.dtos.laden.messwerte;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class LadeBelastungsplanMessquerschnittDataDTO {
+public class LadeBelastungsplanMessquerschnittDataDTO implements Serializable {
 
     private String mqId;
     private Integer sumKfz;
