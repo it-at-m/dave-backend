@@ -1,18 +1,15 @@
 package de.muenchen.dave.services.messstelle;
 
+import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.ListBelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
-import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import de.muenchen.dave.util.OptionsUtil;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -57,7 +54,7 @@ public class MesswerteService {
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
-        processedZaehldaten.setListBelastungsplanMessquerschnitteDTO(new ListBelastungsplanMessquerschnitteDTO());
+        processedZaehldaten.setListBelastungsplanMessquerschnitteDTO(new BelastungsplanMessquerschnitteDTO());
         processedZaehldaten.setListBelastungsplanMessquerschnitteDTO(belastungsplanService.ladeBelastungsplan(totalSumPerMessquerschnittList, messstelleId));
         return processedZaehldaten;
     }

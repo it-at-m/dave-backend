@@ -18,5 +18,5 @@ public class LadeProcessedMesswerteDTO implements Serializable {
 
     LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
 
-    ListBelastungsplanMessquerschnitteDTO listBelastungsplanMessquerschnitteDTO;
+    BelastungsplanMessquerschnitteDTO listBelastungsplanMessquerschnitteDTO;
 }

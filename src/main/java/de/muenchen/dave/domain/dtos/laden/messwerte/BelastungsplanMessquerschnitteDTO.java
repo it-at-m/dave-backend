@@ -1,13 +1,12 @@
 package de.muenchen.dave.domain.dtos.laden.messwerte;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class ListBelastungsplanMessquerschnitteDTO {
+public class BelastungsplanMessquerschnitteDTO {
     List<LadeBelastungsplanMessquerschnittDataDTO> ladeBelastungsplanMessquerschnittDataDTOList = new ArrayList<>();
     String strassenname;
     String messstelleId;
