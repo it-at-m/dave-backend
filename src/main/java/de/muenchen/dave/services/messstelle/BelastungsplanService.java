@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 public class BelastungsplanService {
     private final MessstelleService messstelleService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte, final String messstelleId) {
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
+            final String messstelleId) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
         final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);

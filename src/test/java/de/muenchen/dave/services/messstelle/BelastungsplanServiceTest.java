@@ -1,6 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
@@ -16,14 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
-import static org.mockito.ArgumentMatchers.anyString;
-
-
 
 @ExtendWith(MockitoExtension.class)
 class BelastungsplanServiceTest {
@@ -55,7 +49,6 @@ class BelastungsplanServiceTest {
         totalSumPerMessquerschnitt2.setMqId("2");
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt1);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
-
 
         // expected
         LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO1 = new LadeBelastungsplanMessquerschnittDataDTO();
@@ -158,7 +151,6 @@ class BelastungsplanServiceTest {
         readMessquerschnittDTO2.setAnzahlFahrspuren(2);
         readMessquerschnittDTO2.setAnzahlDetektoren(4);
         readMessquerschnittDTO2.setStandort("Kreuzung");
-
 
         List<ReadMessquerschnittDTO> listMessquerschnitte = new ArrayList<>();
         listMessquerschnitte.add(readMessquerschnittDTO1);
