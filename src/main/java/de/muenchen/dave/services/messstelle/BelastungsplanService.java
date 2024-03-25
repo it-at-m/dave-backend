@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
 public class BelastungsplanService {
     private final MessstelleService messstelleService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte, String messstelleId) {
-        BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
-        List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
-        var messstelle = messstelleService.readMessstelleInfo(messstelleId);
-        belastungsplanMessquerschnitteDTO.setMessstelleId(messstelleId);
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte, final String messstelleId) {
+        final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
+        final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
+        final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
+        belastungsplanMessquerschnitteDTO.setMstId(messstelle.getMstId());
         belastungsplanMessquerschnitteDTO.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
         belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getStandort());
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
@@ -38,28 +38,28 @@ public class BelastungsplanService {
             ladeBelastungsplanMessquerschnittDataDTO.setDirection(getDirection(messstelle, sumOfMessquerschnitt.getMqId()));
             listBelastungsplanMessquerschnitteDTO.add(ladeBelastungsplanMessquerschnittDataDTO);
         });
-        Integer totalSumKfz = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumKfz).sum();
-        Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumSv).sum();
-        Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumGv).sum();
-        Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumRad).sum();
+        final Integer totalSumKfz = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumKfz).sum();
+        final Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumSv).sum();
+        final Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumGv).sum();
+        final Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumRad).sum();
         belastungsplanMessquerschnitteDTO.setTotalKfz(totalSumKfz);
         belastungsplanMessquerschnitteDTO.setTotalSv(totalSumSv);
         belastungsplanMessquerschnitteDTO.setTotalGv(totalSumGv);
         belastungsplanMessquerschnitteDTO.setTotalRad(totalSumRad);
-        Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
+        final Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
         belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
         belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
         belastungsplanMessquerschnitteDTO.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
         return belastungsplanMessquerschnitteDTO;
     }
 
-    protected String getDirection(ReadMessstelleInfoDTO messstelle, String messquerschnittId) {
+    protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
         ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
                 .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId)).collect(Collectors.toList()).get(0);
         return messquerschnittDto.getFahrtrichtung();
     }
 
-    protected BigDecimal calcPercentage(Integer part, Integer total) {
+    protected BigDecimal calcPercentage(final Integer part, final Integer total) {
         BigDecimal partInBigDecimal = BigDecimal.valueOf(part);
         BigDecimal totalInBigDecimal = BigDecimal.valueOf(total);
         return partInBigDecimal.divide(totalInBigDecimal, 3, RoundingMode.HALF_UP).scaleByPowerOfTen(2);

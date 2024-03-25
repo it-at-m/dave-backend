@@ -9,7 +9,7 @@ import lombok.Data;
 public class BelastungsplanMessquerschnitteDTO {
     List<LadeBelastungsplanMessquerschnittDataDTO> ladeBelastungsplanMessquerschnittDataDTOList = new ArrayList<>();
     String strassenname;
-    String messstelleId;
+    String mstId;
     Integer stadtbezirkNummer;
     Integer totalKfz;
     Integer totalSv;
