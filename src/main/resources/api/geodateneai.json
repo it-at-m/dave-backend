@@ -139,7 +139,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+                  "$ref": "#/components/schemas/MeasurementValuesResponse"
                 }
               }
             }
@@ -175,22 +175,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -404,10 +404,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -715,6 +715,52 @@
           }
         }
       },
+      "MeasurementValuesResponse": {
+        "type": "object",
+        "properties": {
+          "averageMeasurementValuesPerIntervalResponse": {
+            "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+          },
+          "totalSumOfAllMessquerschnitte": {
+            "$ref": "#/components/schemas/TotalSumOfAllMessquerschnitte"
+          }
+        }
+      },
+      "TotalSumOfAllMessquerschnitte": {
+        "type": "object",
+        "properties": {
+          "totalSumPerMessquerschnittList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TotalSumPerMessquerschnitt"
+            }
+          }
+        }
+      },
+      "TotalSumPerMessquerschnitt": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "string"
+          },
+          "sumKfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumSv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumGv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumRad": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "ChosenTagesTypValidRequestDto": {
         "type": "object",
         "properties": {
@@ -771,11 +817,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -834,11 +880,11 @@
               "$ref": "#/components/schemas/MessquerschnittDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
