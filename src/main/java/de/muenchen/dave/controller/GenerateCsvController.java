@@ -57,7 +57,7 @@ public class GenerateCsvController {
     }
 
     @PostMapping(value = "/generate-csv-mst")
-    public ResponseEntity<CsvDTO> generateCSV(
+    public ResponseEntity<CsvDTO> generateCSVMessstelle(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final String messstelleId,
             @Valid @RequestBody @NotNull final MessstelleOptionsDTO options) {
         try {
