@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.LogoAsset;
+import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
@@ -47,6 +48,7 @@ public class ReportService {
     private static final String PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_FIXED = "/pdf/templates/parts/report/datatable-fixed-css.mustache";
     private final GeneratePdfService generatePdfService;
     private final FillPdfBeanService fillPdfBeanService;
+    private final FillPdfBeanMessstelleService fillPdfBeanMessstelleService;
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
@@ -69,10 +71,12 @@ public class ReportService {
 
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,
+            final FillPdfBeanMessstelleService fillPdfBeanMessstelleService,
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.fillPdfBeanService = fillPdfBeanService;
+        this.fillPdfBeanMessstelleService = fillPdfBeanMessstelleService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
@@ -113,10 +117,8 @@ public class ReportService {
         final StringBuilder sb = new StringBuilder();
 
         assetList.stream()
-                .filter(asset -> asset.getType().equals(AssetType.DATATABLE))
-                .forEach(asset -> {
-                    sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset));
-                });
+                .filter(asset -> asset.getType().equals(AssetType.DATATABLE) || asset.getType().equals(AssetType.DATATABLE_MESSSTELLE))
+                .forEach(asset -> sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset)));
 
         return sb.toString();
     }
@@ -155,6 +157,18 @@ public class ReportService {
 
                     sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
                 } catch (final DataNotFoundException dataNotFoundException) {
+                    sb.append("Die Datentabelle konnte aufgrund eines technischen Fehlers nicht angezeigt werden.");
+                }
+            } else if (asset.getType().equals(AssetType.DATATABLE_MESSSTELLE)) {
+                final MessstelleDatatableAsset datatableAsset = (MessstelleDatatableAsset) asset;
+                try {
+                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanMessstelleService
+                            .getDatentabellePdf(datatableAsset.getOptions(), datatableAsset.getMstId());
+                    datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
+                    datatableAsset.setRandomTableId(UUID.randomUUID().toString());
+
+                    sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
+                } catch (final Exception exception) {
                     sb.append("Die Datentabelle konnte aufgrund eines technischen Fehlers nicht angezeigt werden.");
                 }
             } else if (asset.getType().equals(AssetType.ZAEHLUNGSKENNGROESSEN)) {

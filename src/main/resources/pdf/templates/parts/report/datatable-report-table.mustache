@@ -51,6 +51,11 @@
             Lz
           </th>
         {{/showLastzuege}}
+        {{#showLieferwagen}}
+          <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen-{{randomTableId}} datentabelle-lieferwagen-{{randomTableId}}">
+            Lfw
+          </th>
+        {{/showLieferwagen}}
         {{#showBusse}}
           <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen-{{randomTableId}} datentabelle-busse-{{randomTableId}}">
             Bus
@@ -124,6 +129,11 @@
               {{lastzuege}}
             </td>
           {{/showLastzuege}}
+          {{#showLieferwagen}}
+            <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen-{{randomTableId}} datentabelle-lieferwagen-{{randomTableId}}">
+              {{lfw}}
+            </td>
+          {{/showLieferwagen}}
           {{#showBusse}}
             <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen-{{randomTableId}} datentabelle-busse-{{randomTableId}}">
               {{busse}}

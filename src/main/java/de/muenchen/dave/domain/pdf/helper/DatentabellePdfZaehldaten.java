@@ -20,6 +20,8 @@ public class DatentabellePdfZaehldaten {
 
     private boolean showLastzuege;
 
+    private boolean showLieferwagen;
+
     private boolean showBusse;
 
     private boolean showKraftraeder;
@@ -116,6 +118,8 @@ public class DatentabellePdfZaehldaten {
             return "kraftraeder";
         } else if (isShowBusse()) {
             return "busse";
+        } else if (isShowLieferwagen()) {
+            return "lieferwagen";
         } else if (isShowLastzuege()) {
             return "lastzuege";
         } else if (isShowLastkraftwagen()) {
