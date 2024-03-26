@@ -2,10 +2,10 @@ package de.muenchen.dave.geodateneai.gen.api;
 
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
-import de.muenchen.dave.geodateneai.gen.model.AverageMeasurementValuesPerIntervalResponse;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
 import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public class MesswerteApi {
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
-     * @return AverageMeasurementValuesPerIntervalResponse
+     * @return MeasurementValuesResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     private ResponseSpec getAverageMeasurementValuesPerIntervalRequestCreation(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
@@ -83,7 +83,7 @@ public class MesswerteApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+        ParameterizedTypeReference<MeasurementValuesResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesResponse>() {};
         return apiClient.invokeAPI("/messwerte/average-per-interval", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
@@ -93,11 +93,11 @@ public class MesswerteApi {
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
-     * @return AverageMeasurementValuesPerIntervalResponse
+     * @return MeasurementValuesResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<AverageMeasurementValuesPerIntervalResponse> getAverageMeasurementValuesPerInterval(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+    public Mono<MeasurementValuesResponse> getAverageMeasurementValuesPerInterval(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesResponse>() {};
         return getAverageMeasurementValuesPerIntervalRequestCreation(getMeasurementValuesRequest).bodyToMono(localVarReturnType);
     }
 
@@ -107,11 +107,11 @@ public class MesswerteApi {
      * <p><b>200</b> - MesswerteIntervalle erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesRequest The getMeasurementValuesRequest parameter
-     * @return ResponseEntity&lt;AverageMeasurementValuesPerIntervalResponse&gt;
+     * @return ResponseEntity&lt;MeasurementValuesResponse&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<AverageMeasurementValuesPerIntervalResponse>> getAverageMeasurementValuesPerIntervalWithHttpInfo(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse> localVarReturnType = new ParameterizedTypeReference<AverageMeasurementValuesPerIntervalResponse>() {};
+    public Mono<ResponseEntity<MeasurementValuesResponse>> getAverageMeasurementValuesPerIntervalWithHttpInfo(GetMeasurementValuesRequest getMeasurementValuesRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesResponse>() {};
         return getAverageMeasurementValuesPerIntervalRequestCreation(getMeasurementValuesRequest).toEntity(localVarReturnType);
     }
 
