@@ -11,6 +11,8 @@ import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
 import de.muenchen.dave.util.OptionsUtil;
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,11 +74,13 @@ public class MesswerteService {
         if (StringUtils.isNotEmpty(options.getTagesTyp())) {
             request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
         }
-        request.setZeitpunktEnde(options.getZeitraum().get(0));
         if (options.getZeitraum().size() == 2) {
-            request.setZeitpunktStart(options.getZeitraum().get(1));
+            Collections.sort(options.getZeitraum());
+            request.setZeitpunktStart(options.getZeitraum().get(0));
+            request.setZeitpunktEnde(options.getZeitraum().get(1));
         } else {
             request.setZeitpunktStart(options.getZeitraum().get(0));
+            request.setZeitpunktEnde(options.getZeitraum().get(0));
         }
         request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
         request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
