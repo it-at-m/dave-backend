@@ -11,7 +11,6 @@ import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
 import de.muenchen.dave.util.OptionsUtil;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
