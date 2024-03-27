@@ -6,6 +6,8 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
+import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
+import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,5 +28,9 @@ public class MessstelleOptionsmenuService {
 
     public ChosenTagesTypValidDTO isTagesTypValid(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
         return Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
+    }
+
+    public ValidWochentageInPeriodDto getValidWochentageInPeriod(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) {
+        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodRequestDto).block(), "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
     }
 }

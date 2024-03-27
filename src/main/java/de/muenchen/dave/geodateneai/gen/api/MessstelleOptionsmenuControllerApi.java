@@ -6,6 +6,8 @@ import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
+import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
+import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -126,6 +128,84 @@ public class MessstelleOptionsmenuControllerApi {
      */
     public ResponseSpec getNichtPlausibleTageWithResponseSpec(String messstelleId) throws WebClientResponseException {
         return getNichtPlausibleTageRequestCreation(messstelleId);
+    }
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
+     * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
+     * @return ValidWochentageInPeriodDto
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    private ResponseSpec getValidWochentageInPeriodRequestCreation(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) throws WebClientResponseException {
+        Object postBody = validWochentageInPeriodRequestDto;
+        // verify the required parameter 'validWochentageInPeriodRequestDto' is set
+        if (validWochentageInPeriodRequestDto == null) {
+            throw new WebClientResponseException("Missing the required parameter 'validWochentageInPeriodRequestDto' when calling getValidWochentageInPeriod", HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), null, null, null);
+        }
+        // create path and map variables
+        final Map<String, Object> pathParams = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final HttpHeaders headerParams = new HttpHeaders();
+        final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
+
+        final String[] localVarAccepts = { 
+            "*/*"
+        };
+        final List<MediaType> localVarAccept = apiClient.selectHeaderAccept(localVarAccepts);
+        final String[] localVarContentTypes = { 
+            "application/json"
+        };
+        final MediaType localVarContentType = apiClient.selectHeaderContentType(localVarContentTypes);
+
+        String[] localVarAuthNames = new String[] {  };
+
+        ParameterizedTypeReference<ValidWochentageInPeriodDto> localVarReturnType = new ParameterizedTypeReference<ValidWochentageInPeriodDto>() {};
+        return apiClient.invokeAPI("/MessstelleOptionsmenu/validWochentageInPeriod", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
+     * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
+     * @return ValidWochentageInPeriodDto
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<ValidWochentageInPeriodDto> getValidWochentageInPeriod(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) throws WebClientResponseException {
+        ParameterizedTypeReference<ValidWochentageInPeriodDto> localVarReturnType = new ParameterizedTypeReference<ValidWochentageInPeriodDto>() {};
+        return getValidWochentageInPeriodRequestCreation(validWochentageInPeriodRequestDto).bodyToMono(localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
+     * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
+     * @return ResponseEntity&lt;ValidWochentageInPeriodDto&gt;
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public Mono<ResponseEntity<ValidWochentageInPeriodDto>> getValidWochentageInPeriodWithHttpInfo(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) throws WebClientResponseException {
+        ParameterizedTypeReference<ValidWochentageInPeriodDto> localVarReturnType = new ParameterizedTypeReference<ValidWochentageInPeriodDto>() {};
+        return getValidWochentageInPeriodRequestCreation(validWochentageInPeriodRequestDto).toEntity(localVarReturnType);
+    }
+
+    /**
+     * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
+     * 
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
+     * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
+     * @return ResponseSpec
+     * @throws WebClientResponseException if an error occurs while attempting to invoke the API
+     */
+    public ResponseSpec getValidWochentageInPeriodWithResponseSpec(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) throws WebClientResponseException {
+        return getValidWochentageInPeriodRequestCreation(validWochentageInPeriodRequestDto);
     }
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
