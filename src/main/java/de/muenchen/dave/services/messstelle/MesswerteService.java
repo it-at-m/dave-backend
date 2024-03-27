@@ -72,11 +72,11 @@ public class MesswerteService {
         if (StringUtils.isNotEmpty(options.getTagesTyp())) {
             request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
         }
-        request.setZeitpunktStart(options.getZeitraum().get(0));
+        request.setZeitpunktEnde(options.getZeitraum().get(0));
         if (options.getZeitraum().size() == 2) {
-            request.setZeitpunktEnde(options.getZeitraum().get(1));
+            request.setZeitpunktStart(options.getZeitraum().get(1));
         } else {
-            request.setZeitpunktEnde(options.getZeitraum().get(0));
+            request.setZeitpunktStart(options.getZeitraum().get(0));
         }
         request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
         request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
