@@ -20,6 +20,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
 public interface MessstelleMapper {
@@ -85,6 +86,8 @@ public interface MessstelleMapper {
                 updateMessquerschnitt(messquerschnitt, dto1);
             }
         }));
+
+        actual.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
     }
 
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);

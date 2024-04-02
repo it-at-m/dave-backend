@@ -19,6 +19,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
 class MessstelleMapperTests {
@@ -138,7 +139,7 @@ class MessstelleMapperTests {
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
-        expected.setPunkt(bean.getPunkt());
+        expected.setPunkt(new GeoPoint(updatedData.getLatitude(), updatedData.getLongitude()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());

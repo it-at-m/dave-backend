@@ -44,8 +44,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessstelleDto.JSON_PROPERTY_HERSTELLER,
   MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG,
   MessstelleDto.JSON_PROPERTY_MESSQUERSCHNITTE,
-  MessstelleDto.JSON_PROPERTY_YCOORDINATE,
-  MessstelleDto.JSON_PROPERTY_XCOORDINATE
+  MessstelleDto.JSON_PROPERTY_XCOORDINATE,
+  MessstelleDto.JSON_PROPERTY_YCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessstelleDto {
@@ -126,11 +126,11 @@ public class MessstelleDto {
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
   private List<MessquerschnittDto> messquerschnitte;
 
-  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
-  private Double ycoordinate;
-
   public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
   private Double xcoordinate;
+
+  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
+  private Double ycoordinate;
 
   public MessstelleDto() {
   }
@@ -455,32 +455,6 @@ public class MessstelleDto {
   }
 
 
-  public MessstelleDto ycoordinate(Double ycoordinate) {
-    
-    this.ycoordinate = ycoordinate;
-    return this;
-  }
-
-   /**
-   * Get ycoordinate
-   * @return ycoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getYcoordinate() {
-    return ycoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setYcoordinate(Double ycoordinate) {
-    this.ycoordinate = ycoordinate;
-  }
-
-
   public MessstelleDto xcoordinate(Double xcoordinate) {
     
     this.xcoordinate = xcoordinate;
@@ -506,6 +480,32 @@ public class MessstelleDto {
     this.xcoordinate = xcoordinate;
   }
 
+
+  public MessstelleDto ycoordinate(Double ycoordinate) {
+    
+    this.ycoordinate = ycoordinate;
+    return this;
+  }
+
+   /**
+   * Get ycoordinate
+   * @return ycoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getYcoordinate() {
+    return ycoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setYcoordinate(Double ycoordinate) {
+    this.ycoordinate = ycoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -527,13 +527,13 @@ public class MessstelleDto {
         Objects.equals(this.hersteller, messstelleDto.hersteller) &&
         Objects.equals(this.datumLetztePlausibleMessung, messstelleDto.datumLetztePlausibleMessung) &&
         Objects.equals(this.messquerschnitte, messstelleDto.messquerschnitte) &&
-        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate) &&
-        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate);
+        Objects.equals(this.xcoordinate, messstelleDto.xcoordinate) &&
+        Objects.equals(this.ycoordinate, messstelleDto.ycoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, datumLetztePlausibleMessung, messquerschnitte, ycoordinate, xcoordinate);
+    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, datumLetztePlausibleMessung, messquerschnitte, xcoordinate, ycoordinate);
   }
 
   @Override
@@ -552,8 +552,8 @@ public class MessstelleDto {
     sb.append("    hersteller: ").append(toIndentedString(hersteller)).append("\n");
     sb.append("    datumLetztePlausibleMessung: ").append(toIndentedString(datumLetztePlausibleMessung)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
-    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
+    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
