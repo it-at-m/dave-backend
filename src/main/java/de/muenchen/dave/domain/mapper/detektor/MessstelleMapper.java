@@ -118,4 +118,10 @@ public interface MessstelleMapper {
 
     List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
 
+    @AfterMapping
+    default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean) {
+        dto.setStadtbezirkNummer(String.valueOf(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+    }
+
 }

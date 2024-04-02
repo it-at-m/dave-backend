@@ -18,6 +18,8 @@ public class DatentabellePdfZaehldatum {
 
     private Integer lastzuege;
 
+    private Integer lfw;
+
     private Integer busse;
 
     private Integer kraftraeder;

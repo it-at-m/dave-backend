@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Stadtbezirke erfolgreich abgefragt.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -139,7 +139,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+                  "$ref": "#/components/schemas/MeasurementValuesResponse"
                 }
               }
             }
@@ -175,22 +175,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -415,6 +415,10 @@
       "GetMeasurementValuesRequest": {
         "required": [
           "messquerschnittIds",
+          "minutesPerZeitintervall",
+          "uhrzeitEnde",
+          "uhrzeitStart",
+          "zeitpunktEnde",
           "zeitpunktStart"
         ],
         "type": "object",
@@ -444,6 +448,37 @@
               "WERKTAG_FERIEN",
               "MO_SO"
             ]
+          },
+          "minutesPerZeitintervall": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uhrzeitStart": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "uhrzeitEnde": {
+            "$ref": "#/components/schemas/LocalTime"
+          }
+        }
+      },
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nano": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -613,27 +648,6 @@
           }
         }
       },
-      "LocalTime": {
-        "type": "object",
-        "properties": {
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nano": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "MeasurementValuesPerInterval": {
         "required": [
           "endeUhrzeit",
@@ -667,6 +681,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "anzahlFuss": {
+            "type": "integer",
+            "format": "int32"
+          },
           "summeAllePkw": {
             "type": "integer",
             "format": "int32"
@@ -694,6 +712,52 @@
           "prozentGueterverkehr": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "MeasurementValuesResponse": {
+        "type": "object",
+        "properties": {
+          "averageMeasurementValuesPerIntervalResponse": {
+            "$ref": "#/components/schemas/AverageMeasurementValuesPerIntervalResponse"
+          },
+          "totalSumOfAllMessquerschnitte": {
+            "$ref": "#/components/schemas/TotalSumOfAllMessquerschnitte"
+          }
+        }
+      },
+      "TotalSumOfAllMessquerschnitte": {
+        "type": "object",
+        "properties": {
+          "totalSumPerMessquerschnittList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TotalSumPerMessquerschnitt"
+            }
+          }
+        }
+      },
+      "TotalSumPerMessquerschnitt": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "string"
+          },
+          "sumKfz": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumSv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumGv": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sumRad": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

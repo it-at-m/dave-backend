@@ -130,8 +130,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -168,8 +168,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -182,8 +182,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseEntity&lt;ChosenTagesTypValidDTO&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -196,8 +196,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * <p><b>200</b> - TagesTyp erfolgreich validiert
+     * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API

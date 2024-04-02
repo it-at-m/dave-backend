@@ -11,12 +11,13 @@ import lombok.Getter;
 @Getter
 public enum ZaehldatenIntervall {
 
-    STUNDE_VIERTEL(1),
+    STUNDE_VIERTEL(1, 15),
 
-    STUNDE_HALB(2),
+    STUNDE_HALB(2, 30),
 
-    STUNDE_KOMPLETT(4);
+    STUNDE_KOMPLETT(4, 60);
 
     private final Integer quarterPerIntervall;
+    private final Integer minutesPerIntervall;
 
 }
