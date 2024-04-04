@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 public class MessstelleReceiverTest {
 
-    private MessstelleReceiver messstelleReceiver = new MessstelleReceiver(
+    private final MessstelleReceiver messstelleReceiver = new MessstelleReceiver(
             null,
             null,
             null,
@@ -31,13 +31,12 @@ public class MessstelleReceiverTest {
         });
 
         final List<Messquerschnitt> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
-        expected.forEach(expectedMessquerschnitt -> {
-            messquerschnitte.forEach(messquerschnitt1 -> {
-                if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
-                    expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
-                }
-            });
-        });
+        expected.forEach(expectedMessquerschnitt -> messquerschnitte.forEach(messquerschnitt1 -> {
+            if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
+                expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
+                expectedMessquerschnitt.setPunkt(messquerschnitt1.getPunkt());
+            }
+        }));
 
         final List<Messquerschnitt> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
         Assertions.assertThat(result)
@@ -64,13 +63,12 @@ public class MessstelleReceiverTest {
         messquerschnitteDto.add(addNewMessquerschnitt);
 
         final List<Messquerschnitt> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
-        expected.forEach(expectedMessquerschnitt -> {
-            messquerschnitte.forEach(messquerschnitt1 -> {
-                if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
-                    expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
-                }
-            });
-        });
+        expected.forEach(expectedMessquerschnitt -> messquerschnitte.forEach(messquerschnitt1 -> {
+            if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
+                expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
+                expectedMessquerschnitt.setPunkt(messquerschnitt1.getPunkt());
+            }
+        }));
 
         final List<Messquerschnitt> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
         Assertions.assertThat(result)
