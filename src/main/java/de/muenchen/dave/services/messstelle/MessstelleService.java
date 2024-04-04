@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
@@ -69,5 +70,11 @@ public class MessstelleService {
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
+    }
+
+    public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertung() {
+        log.debug("#getAllVisibleMessstellenForAuswertung");
+        final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
+        return messstelleMapper.bean2auswertungDto(messstellen);
     }
 }
