@@ -31,6 +31,7 @@ public class MessstelleOptionsmenuService {
     }
 
     public ValidWochentageInPeriodDto getValidWochentageInPeriod(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) {
-        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodRequestDto).block(), "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
+        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodRequestDto).block(),
+                "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
     }
 }

@@ -43,8 +43,10 @@ public class MessstelleOptionsmenuController {
     }
 
     @PostMapping("validWochentageInPeriod")
-    public ResponseEntity<ValidWochentageInPeriodDto> getValidWochentageInPeriod(@RequestBody ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) {
-        final ValidWochentageInPeriodDto validWochentageInPeriodDto = messstelleOptionsmenuService.getValidWochentageInPeriod(validWochentageInPeriodRequestDto);
+    public ResponseEntity<ValidWochentageInPeriodDto> getValidWochentageInPeriod(
+            @RequestBody ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) {
+        final ValidWochentageInPeriodDto validWochentageInPeriodDto = messstelleOptionsmenuService
+                .getValidWochentageInPeriod(validWochentageInPeriodRequestDto);
         return ResponseEntity.ok(validWochentageInPeriodDto);
     }
 }
