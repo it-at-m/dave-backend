@@ -8,12 +8,13 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDT
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und
@@ -74,7 +75,7 @@ public class MessstelleService {
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertung() {
         log.debug("#getAllVisibleMessstellenForAuswertung");
-        final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
+        final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         return messstelleMapper.bean2auswertungDto(messstellen);
     }
 }

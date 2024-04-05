@@ -129,6 +129,7 @@ public interface MessstelleMapper {
         dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
+    // TODO Test schreiben
     List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);
 
     List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
