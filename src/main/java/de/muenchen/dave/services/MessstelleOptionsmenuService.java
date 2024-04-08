@@ -1,6 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
+import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
 import de.muenchen.dave.domain.mapper.MessstelleOptionsmenuMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
@@ -30,8 +31,9 @@ public class MessstelleOptionsmenuService {
         return Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
     }
 
-    public ValidWochentageInPeriodDto getValidWochentageInPeriod(ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto) {
-        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodRequestDto).block(),
+    public ValidWochentageInPeriodDto getValidWochentageInPeriod(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
+        ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper.backendToEaiRequest(validWochentageInPeriodRequestDto);
+        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodEaiRequestDTO).block(),
                 "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
     }
 }
