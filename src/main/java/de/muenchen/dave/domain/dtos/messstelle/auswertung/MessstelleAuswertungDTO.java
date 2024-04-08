@@ -10,4 +10,5 @@ public class MessstelleAuswertungDTO implements Serializable {
     private String mstId;
     private String standort;
     private List<MessquerschnittAuswertungDTO> messquerschnitte;
+    private String detektierteVerkehrsarten;
 }

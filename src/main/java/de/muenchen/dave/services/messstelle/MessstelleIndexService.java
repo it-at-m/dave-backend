@@ -3,12 +3,11 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Die Klasse {@link MessstelleIndexService} holt alle relevanten Messstellen aus MobidaM und
@@ -39,6 +38,7 @@ public class MessstelleIndexService {
     public List<Messstelle> findAllMessstellen() {
         return messstelleIndex.findAll();
     }
+
     public List<Messstelle> findAllVisibleMessstellen() {
         return messstelleIndex.findAllBySichtbarDatenportalIsTrue();
     }
