@@ -32,7 +32,8 @@ public class MessstelleOptionsmenuService {
     }
 
     public ValidWochentageInPeriodDto getValidWochentageInPeriod(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
-        ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper.backendToEaiRequest(validWochentageInPeriodRequestDto);
+        ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper
+                .backendToEaiRequest(validWochentageInPeriodRequestDto);
         return Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodEaiRequestDTO).block(),
                 "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
     }
