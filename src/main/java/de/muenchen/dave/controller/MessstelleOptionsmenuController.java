@@ -2,9 +2,9 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
+import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodResponseDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
-import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.services.MessstelleOptionsmenuService;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -43,10 +43,10 @@ public class MessstelleOptionsmenuController {
     }
 
     @PostMapping("validWochentageInPeriod")
-    public ResponseEntity<ValidWochentageInPeriodDto> getValidWochentageInPeriod(
+    public ResponseEntity<ValidWochentageInPeriodResponseDTO> getValidWochentageInPeriod(
             @RequestBody ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
-        final ValidWochentageInPeriodDto validWochentageInPeriodDto = messstelleOptionsmenuService
+        final ValidWochentageInPeriodResponseDTO validWochentageInPeriodResponseDTO = messstelleOptionsmenuService
                 .getValidWochentageInPeriod(validWochentageInPeriodRequestDto);
-        return ResponseEntity.ok(validWochentageInPeriodDto);
+        return ResponseEntity.ok(validWochentageInPeriodResponseDTO);
     }
 }
