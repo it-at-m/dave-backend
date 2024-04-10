@@ -17,6 +17,6 @@ public class AuswertungService {
     private final MessstelleService messstelleService;
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
-        return messstelleService.getAllVisibleMessstellenForAuswertung();
+        return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
     }
 }

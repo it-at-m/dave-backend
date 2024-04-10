@@ -74,7 +74,7 @@ public class MessstelleService {
         return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
     }
 
-    public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertung() {
+    public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
         log.debug("#getAllVisibleMessstellenForAuswertung");
         final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
