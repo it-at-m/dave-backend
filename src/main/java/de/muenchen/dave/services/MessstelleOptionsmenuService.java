@@ -1,5 +1,7 @@
 package de.muenchen.dave.services;
 
+import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
+import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodResponseDTO;
@@ -28,8 +30,10 @@ public class MessstelleOptionsmenuService {
         return messstelleOptionsmenuMapper.requestToResponse(eaiRequestResult);
     }
 
-    public ChosenTagesTypValidDTO isTagesTypValid(ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
-        return Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
+    public ChosenTageValidResponseDTO isTagesTypValid(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
+        ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto = messstelleOptionsmenuMapper.backendToEaiRequest(chosenTagesTypValidEaiRequestDTO);
+        ChosenTagesTypValidDTO chosenTagesTypValidDTO = Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
+        return messstelleOptionsmenuMapper.eaiToBackendResponse(chosenTagesTypValidDTO);
     }
 
     public ValidWochentageInPeriodResponseDTO getValidWochentageInPeriod(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {

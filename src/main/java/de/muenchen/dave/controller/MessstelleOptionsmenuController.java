@@ -1,5 +1,7 @@
 package de.muenchen.dave.controller;
 
+import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
+import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodResponseDTO;
@@ -37,9 +39,9 @@ public class MessstelleOptionsmenuController {
     }
 
     @PostMapping("/validateTagesTyp")
-    public ResponseEntity<ChosenTagesTypValidDTO> isTagesTypDataValid(@RequestBody @NotNull ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto) {
-        final ChosenTagesTypValidDTO chosenTagesTypValidDTO = messstelleOptionsmenuService.isTagesTypValid(chosenTagesTypValidRequestDto);
-        return ResponseEntity.ok(chosenTagesTypValidDTO);
+    public ResponseEntity<ChosenTageValidResponseDTO> isTagesTypDataValid(@RequestBody @NotNull ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
+        final ChosenTageValidResponseDTO chosenTageValidResponseDTO = messstelleOptionsmenuService.isTagesTypValid(chosenTagesTypValidEaiRequestDTO);
+        return ResponseEntity.ok(chosenTageValidResponseDTO);
     }
 
     @PostMapping("validWochentageInPeriod")

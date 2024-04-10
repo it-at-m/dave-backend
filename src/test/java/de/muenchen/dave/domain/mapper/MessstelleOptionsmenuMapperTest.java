@@ -1,8 +1,13 @@
 package de.muenchen.dave.domain.mapper;
 
+import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
+import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodResponseDTO;
+import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
+import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
@@ -71,5 +76,40 @@ class MessstelleOptionsmenuMapperTest {
         expectedEaiRequest.setMessstelleId("12345");
 
         Assertions.assertThat(validWochentageInPeriodRequestDto).usingRecursiveComparison().isEqualTo(expectedEaiRequest);
+    }
+
+    @Test
+    void backendToEaiRequestChosenValidWochentage() {
+
+        ChosenTagesTypValidEaiRequestDTO eaiRequest = new ChosenTagesTypValidEaiRequestDTO();
+        eaiRequest.setStartDate("2022-01-01");
+        eaiRequest.setEndDate("2022-01-03");
+        eaiRequest.setTagesTyp(TagesTyp.SAMSTAG);
+
+        ChosenTagesTypValidRequestDto expectedRequest = new ChosenTagesTypValidRequestDto();
+        expectedRequest.setStartDate("2022-01-01");
+        expectedRequest.setEndDate("2022-01-03");
+        expectedRequest.setTagesTyp(ChosenTagesTypValidRequestDto.TagesTypEnum.SAMSTAG);
+
+        ChosenTagesTypValidRequestDto actualRequest = mapper.backendToEaiRequest(eaiRequest);
+
+        Assertions.assertThat(actualRequest).isNotNull();
+        Assertions.assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
+    }
+
+    @Test
+    void eaiToBackendResponseChosenValidWochentage() {
+        ChosenTagesTypValidDTO chosenTagesTypValidDTO = new ChosenTagesTypValidDTO();
+        chosenTagesTypValidDTO.setIsValid(true);
+
+        ChosenTageValidResponseDTO expectedResponse = new ChosenTageValidResponseDTO();
+        expectedResponse.setIsValid(true);
+
+        ChosenTageValidResponseDTO actualResponse = mapper.eaiToBackendResponse(chosenTagesTypValidDTO);
+
+        Assertions.assertThat(actualResponse).isNotNull();
+        Assertions.assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
+
+
     }
 }
