@@ -39,7 +39,7 @@ class MessstelleOptionsmenuMapperTest {
     }
 
     @Test
-    void eaiToBackendResponse() {
+    void eaiToBackendResponseValidWochentage() {
         ValidWochentageInPeriodDto dto = new ValidWochentageInPeriodDto();
         dto.setNumberOfValidTagesTypDiMiDo(5);
         dto.setNumberOfValidTagesTypMoFr(7);
@@ -48,7 +48,7 @@ class MessstelleOptionsmenuMapperTest {
         dto.setNumberOfValidTagesTypWerktagFerien(10);
         dto.setNumberOfValidTagesTypMoSo(15);
 
-        ValidWochentageInPeriodResponseDTO response = mapper.eaiToBackendResponse(dto);
+        ValidWochentageInPeriodResponseDTO response = mapper.eaiToBackendResponseValidWochentage(dto);
 
         ValidWochentageInPeriodResponseDTO expectedResponse = new ValidWochentageInPeriodResponseDTO();
         expectedResponse.setNumberOfValidTagesTypDiMiDo(5);
@@ -62,13 +62,13 @@ class MessstelleOptionsmenuMapperTest {
     }
 
     @Test
-    void backendToEaiRequest() {
+    void backendToEaiRequestValidWochentage() {
         ValidWochentageInPeriodEaiRequestDTO request = new ValidWochentageInPeriodEaiRequestDTO();
         request.setStartDate("2022-01-01");
         request.setEndDate("2022-01-31");
         request.setMessstelleId("12345");
 
-        ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto = mapper.backendToEaiRequest(request);
+        ValidWochentageInPeriodRequestDto validWochentageInPeriodRequestDto = mapper.backendToEaiRequestValidWochentage(request);
 
         ValidWochentageInPeriodRequestDto expectedEaiRequest = new ValidWochentageInPeriodRequestDto();
         expectedEaiRequest.setStartDate("2022-01-01");
@@ -79,7 +79,7 @@ class MessstelleOptionsmenuMapperTest {
     }
 
     @Test
-    void backendToEaiRequestChosenValidWochentage() {
+    void backendToEaiRequestChosenTageValidChosenValidWochentage() {
 
         ChosenTagesTypValidEaiRequestDTO eaiRequest = new ChosenTagesTypValidEaiRequestDTO();
         eaiRequest.setStartDate("2022-01-01");
@@ -91,21 +91,21 @@ class MessstelleOptionsmenuMapperTest {
         expectedRequest.setEndDate("2022-01-03");
         expectedRequest.setTagesTyp(ChosenTagesTypValidRequestDto.TagesTypEnum.SAMSTAG);
 
-        ChosenTagesTypValidRequestDto actualRequest = mapper.backendToEaiRequest(eaiRequest);
+        ChosenTagesTypValidRequestDto actualRequest = mapper.backendToEaiRequestChosenTageValid(eaiRequest);
 
         Assertions.assertThat(actualRequest).isNotNull();
         Assertions.assertThat(actualRequest).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
     @Test
-    void eaiToBackendResponseChosenValidWochentage() {
+    void eaiToBackendResponseChosenTageValidChosenValidWochentage() {
         ChosenTagesTypValidDTO chosenTagesTypValidDTO = new ChosenTagesTypValidDTO();
         chosenTagesTypValidDTO.setIsValid(true);
 
         ChosenTageValidResponseDTO expectedResponse = new ChosenTageValidResponseDTO();
         expectedResponse.setIsValid(true);
 
-        ChosenTageValidResponseDTO actualResponse = mapper.eaiToBackendResponse(chosenTagesTypValidDTO);
+        ChosenTageValidResponseDTO actualResponse = mapper.eaiToBackendResponseChosenTageValid(chosenTagesTypValidDTO);
 
         Assertions.assertThat(actualResponse).isNotNull();
         Assertions.assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);

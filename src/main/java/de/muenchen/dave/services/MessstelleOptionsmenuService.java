@@ -31,16 +31,16 @@ public class MessstelleOptionsmenuService {
     }
 
     public ChosenTageValidResponseDTO isTagesTypValid(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
-        ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto = messstelleOptionsmenuMapper.backendToEaiRequest(chosenTagesTypValidEaiRequestDTO);
+        ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto = messstelleOptionsmenuMapper.backendToEaiRequestChosenTageValid(chosenTagesTypValidEaiRequestDTO);
         ChosenTagesTypValidDTO chosenTagesTypValidDTO = Objects.requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
-        return messstelleOptionsmenuMapper.eaiToBackendResponse(chosenTagesTypValidDTO);
+        return messstelleOptionsmenuMapper.eaiToBackendResponseChosenTageValid(chosenTagesTypValidDTO);
     }
 
     public ValidWochentageInPeriodResponseDTO getValidWochentageInPeriod(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
         ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper
-                .backendToEaiRequest(validWochentageInPeriodRequestDto);
+                .backendToEaiRequestValidWochentage(validWochentageInPeriodRequestDto);
         ValidWochentageInPeriodDto validWochentageInPeriodDto = Objects.requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodEaiRequestDTO).block(),
                 "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben").getBody();
-        return messstelleOptionsmenuMapper.eaiToBackendResponse(validWochentageInPeriodDto);
+        return messstelleOptionsmenuMapper.eaiToBackendResponseValidWochentage(validWochentageInPeriodDto);
     }
 }

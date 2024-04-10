@@ -16,11 +16,11 @@ import org.mapstruct.Mapper;
 public interface MessstelleOptionsmenuMapper {
     NichtPlausibleTageResponseDTO requestToResponse(NichtPlausibleTageDto nichtPlausibleTageDto);
 
-    ValidWochentageInPeriodRequestDto backendToEaiRequest(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodEaiRequestDTO);
+    ValidWochentageInPeriodRequestDto backendToEaiRequestValidWochentage(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodEaiRequestDTO);
 
-    ValidWochentageInPeriodResponseDTO eaiToBackendResponse(ValidWochentageInPeriodDto validWochentageInPeriodDto);
+    ValidWochentageInPeriodResponseDTO eaiToBackendResponseValidWochentage(ValidWochentageInPeriodDto validWochentageInPeriodDto);
 
-    ChosenTagesTypValidRequestDto backendToEaiRequest(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO);
+    ChosenTagesTypValidRequestDto backendToEaiRequestChosenTageValid(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO);
 
-    ChosenTageValidResponseDTO eaiToBackendResponse(ChosenTagesTypValidDTO chosenTagesTypValidDTO);
+    ChosenTageValidResponseDTO eaiToBackendResponseChosenTageValid(ChosenTagesTypValidDTO chosenTagesTypValidDTO);
 }
