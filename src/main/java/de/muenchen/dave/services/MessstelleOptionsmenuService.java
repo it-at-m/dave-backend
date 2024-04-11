@@ -30,18 +30,18 @@ public class MessstelleOptionsmenuService {
         return messstelleOptionsmenuMapper.requestToResponse(eaiRequestResult);
     }
 
-    public ChosenTageValidResponseDTO isTagesTypValid(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
-        ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto = messstelleOptionsmenuMapper
+    public ChosenTageValidResponseDTO isTagesTypValid(final ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
+        final ChosenTagesTypValidRequestDto chosenTagesTypValidRequestDto = messstelleOptionsmenuMapper
                 .backendToEaiRequestChosenTageValid(chosenTagesTypValidEaiRequestDTO);
-        ChosenTagesTypValidDTO chosenTagesTypValidDTO = Objects
+        final ChosenTagesTypValidDTO chosenTagesTypValidDTO = Objects
                 .requireNonNull(messstelleOptionsmenuControllerApi.isTagesTypDataValidWithHttpInfo(chosenTagesTypValidRequestDto).block()).getBody();
         return messstelleOptionsmenuMapper.eaiToBackendResponseChosenTageValid(chosenTagesTypValidDTO);
     }
 
-    public ValidWochentageInPeriodResponseDTO getValidWochentageInPeriod(ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
-        ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper
+    public ValidWochentageInPeriodResponseDTO getValidWochentageInPeriod(final ValidWochentageInPeriodEaiRequestDTO validWochentageInPeriodRequestDto) {
+        final ValidWochentageInPeriodRequestDto validWochentageInPeriodEaiRequestDTO = messstelleOptionsmenuMapper
                 .backendToEaiRequestValidWochentage(validWochentageInPeriodRequestDto);
-        ValidWochentageInPeriodDto validWochentageInPeriodDto = Objects
+        final ValidWochentageInPeriodDto validWochentageInPeriodDto = Objects
                 .requireNonNull(messstelleOptionsmenuControllerApi.getValidWochentageInPeriodWithHttpInfo(validWochentageInPeriodEaiRequestDTO).block(),
                         "Die Anfrage für Valide Wochentage innerhalb eines Zeitraums hat null zurückgegeben")
                 .getBody();
