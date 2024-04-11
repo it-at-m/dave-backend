@@ -110,6 +110,5 @@ class MessstelleOptionsmenuMapperTest {
         Assertions.assertThat(actualResponse).isNotNull();
         Assertions.assertThat(actualResponse).usingRecursiveComparison().isEqualTo(expectedResponse);
 
-
     }
 }
