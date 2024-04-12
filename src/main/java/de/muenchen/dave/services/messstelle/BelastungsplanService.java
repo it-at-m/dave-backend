@@ -73,7 +73,7 @@ public class BelastungsplanService {
     }
 
     private Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
-        if(Boolean.TRUE.equals(options.getWerteHundertRunden())) {
+        if (Boolean.TRUE.equals(options.getWerteHundertRunden())) {
             return roundingService.roundIfNotNullOrZero(numberToRound, 100);
         } else {
             return numberToRound;
