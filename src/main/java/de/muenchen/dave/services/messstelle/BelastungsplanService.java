@@ -6,6 +6,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
@@ -22,9 +23,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class BelastungsplanService {
     private final MessstelleService messstelleService;
+    private final RoundingService roundingService;
 
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
-            final String messstelleId) {
+            final String messstelleId, final MessstelleOptionsDTO options) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
         final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
@@ -33,10 +35,10 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getStandort());
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
             LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
-            ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(sumOfMessquerschnitt.getSumKfz());
-            ladeBelastungsplanMessquerschnittDataDTO.setSumGv(sumOfMessquerschnitt.getSumGv());
-            ladeBelastungsplanMessquerschnittDataDTO.setSumSv(sumOfMessquerschnitt.getSumSv());
-            ladeBelastungsplanMessquerschnittDataDTO.setSumRad(sumOfMessquerschnitt.getSumRad());
+            ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(roundNumberIfNeeded(sumOfMessquerschnitt.getSumKfz(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumGv(roundNumberIfNeeded(sumOfMessquerschnitt.getSumGv(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumSv(roundNumberIfNeeded(sumOfMessquerschnitt.getSumSv(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumRad(roundNumberIfNeeded(sumOfMessquerschnitt.getSumRad(), options));
             ladeBelastungsplanMessquerschnittDataDTO.setPercentGV(calcPercentage(sumOfMessquerschnitt.getSumGv(), sumOfMessquerschnitt.getSumKfz()));
             ladeBelastungsplanMessquerschnittDataDTO.setPercentSv(calcPercentage(sumOfMessquerschnitt.getSumSv(), sumOfMessquerschnitt.getSumKfz()));
             ladeBelastungsplanMessquerschnittDataDTO.setMqId(sumOfMessquerschnitt.getMqId());
@@ -47,10 +49,10 @@ public class BelastungsplanService {
         final Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumSv).sum();
         final Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumGv).sum();
         final Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(TotalSumPerMessquerschnitt::getSumRad).sum();
-        belastungsplanMessquerschnitteDTO.setTotalKfz(totalSumKfz);
-        belastungsplanMessquerschnitteDTO.setTotalSv(totalSumSv);
-        belastungsplanMessquerschnitteDTO.setTotalGv(totalSumGv);
-        belastungsplanMessquerschnitteDTO.setTotalRad(totalSumRad);
+        belastungsplanMessquerschnitteDTO.setTotalKfz(roundNumberIfNeeded(totalSumKfz, options));
+        belastungsplanMessquerschnitteDTO.setTotalSv(roundNumberIfNeeded(totalSumSv, options));
+        belastungsplanMessquerschnitteDTO.setTotalGv(roundNumberIfNeeded(totalSumGv, options));
+        belastungsplanMessquerschnitteDTO.setTotalRad(roundNumberIfNeeded(totalSumRad, options));
         final Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
         belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
         belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
@@ -68,5 +70,13 @@ public class BelastungsplanService {
         BigDecimal partInBigDecimal = BigDecimal.valueOf(part);
         BigDecimal totalInBigDecimal = BigDecimal.valueOf(total);
         return partInBigDecimal.divide(totalInBigDecimal, 3, RoundingMode.HALF_UP).scaleByPowerOfTen(2);
+    }
+
+    private Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
+        if(Boolean.TRUE.equals(options.getWerteHundertRunden())) {
+            return roundingService.roundIfNotNullOrZero(numberToRound, 100);
+        } else {
+            return numberToRound;
+        }
     }
 }

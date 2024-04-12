@@ -56,7 +56,7 @@ public class MesswerteService {
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
         processedZaehldaten.setBelastungsplanMessquerschnitte(new BelastungsplanMessquerschnitteDTO());
-        processedZaehldaten.setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(totalSumPerMessquerschnittList, messstelleId));
+        processedZaehldaten.setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(totalSumPerMessquerschnittList, messstelleId, options));
         return processedZaehldaten;
     }
 
