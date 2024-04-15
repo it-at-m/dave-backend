@@ -163,8 +163,8 @@ public class GeneratePdfController {
             final HttpHeaders headers = getHttpHeadersForPdfFile(pdf.length);
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der PDF-Datei aufgetreten.");
+            log.error(FEHLER_PDF_ERSTELLUNG, ioe);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FEHLER_PDF_ERSTELLUNG);
         }
     }
 

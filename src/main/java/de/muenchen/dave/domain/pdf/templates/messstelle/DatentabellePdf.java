@@ -2,8 +2,10 @@ package de.muenchen.dave.domain.pdf.templates.messstelle;
 
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class DatentabellePdf extends BasicPdf {
 
     private String datentabelleTableMustachePart;

@@ -111,7 +111,6 @@ public class GeneratePdfService {
     private Mustache ganglinieCss;
     // Datentabelle
     private Mustache datentabelleTable;
-    private Mustache datentabelleMessstelleTable;
     private Mustache datentabelleCss;
     // Zeitreihe
     private Mustache zaehlstelleninformationenZeitreihe;
