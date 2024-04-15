@@ -57,7 +57,7 @@ public class GeneratePdfService {
     private static final String PDF_TEMPLATES_PARTS_GANGLINIE_CSS_MUSTACHE = "/pdf/templates/parts/ganglinie-css.mustache";
 
     // Datentabelle
-    private static final String PDF_TEMPLATES_PARTS_DATENTABELLE_TABLE_MUSTACHE = "/pdf/templates/parts/datentabelle-table.mustache";
+    private static final String PDF_TEMPLATES_PARTS_DATENTABELLE_ZAEHLSTELLE_TABLE_MUSTACHE = "/pdf/templates/parts/datentabelle-table.mustache";
     private static final String PDF_TEMPLATES_PARTS_DATENTABELLE_CSS_MUSTACHE = "/pdf/templates/parts/datentabelle-css.mustache";
 
     // Zeitreihe
@@ -111,6 +111,7 @@ public class GeneratePdfService {
     private Mustache ganglinieCss;
     // Datentabelle
     private Mustache datentabelleTable;
+    private Mustache datentabelleMessstelleTable;
     private Mustache datentabelleCss;
     // Zeitreihe
     private Mustache zaehlstelleninformationenZeitreihe;
@@ -194,6 +195,17 @@ public class GeneratePdfService {
         bean.setSchematischeUebersichtMustachePart(getHtml(this.schematischeUebersicht, bean));
 
         return getHtml(this.datentabelle, bean);
+    }
+
+    public String createDatentabelleHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf bean) {
+        fillPdfBeanMustacheParts(bean);
+        bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
+        bean.setZusatzinformationenMustachePart(getHtml(this.zusatzinformationen, bean));
+        bean.setDatentabelleCssMustachePart(getHtml(this.datentabelleCss, bean));
+        bean.setDatentabelleTableMustachePart(getHtml(this.datentabelleTable, bean));
+        bean.setSchematischeUebersichtMustachePart(getHtml(this.schematischeUebersicht, bean));
+
+        return getHtml(this.datentabelle_messstelle, bean);
     }
 
     public String createZeitreiheHtml(final ZeitreihePdf bean) {
@@ -316,7 +328,7 @@ public class GeneratePdfService {
         this.schematischeUebersicht = compileMustache(PDF_TEMPLATES_PARTS_SCHEMATISCHE_UEBERSICHT, mf);
         this.ganglinieTable = compileMustache(PDF_TEMPLATES_PARTS_GANGLINIE_TABLE_MUSTACHE, mf);
         this.ganglinieCss = compileMustache(PDF_TEMPLATES_PARTS_GANGLINIE_CSS_MUSTACHE, mf);
-        this.datentabelleTable = compileMustache(PDF_TEMPLATES_PARTS_DATENTABELLE_TABLE_MUSTACHE, mf);
+        this.datentabelleTable = compileMustache(PDF_TEMPLATES_PARTS_DATENTABELLE_ZAEHLSTELLE_TABLE_MUSTACHE, mf);
         this.datentabelleCss = compileMustache(PDF_TEMPLATES_PARTS_DATENTABELLE_CSS_MUSTACHE, mf);
         this.messstelleninformationen = compileMustache(PDF_TEMPLATES_PARTS_MESSSTELLENINFORMATIONEN_MUSTACHE, mf);
 
@@ -456,12 +468,13 @@ public class GeneratePdfService {
 
         return createPdf(html);
     }
-    //    public byte[] generateDatentabellePdf(final String zaehlungId, final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
-    //            final String department) throws IOException, DataNotFoundException {
-    //        final DatentabellePdf datentabellePdf = new DatentabellePdf();
-    //        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, zaehlungId, options, schematischeUebersichtAsBase64Png, department);
-    //        final String html = createDatentabelleHTML(datentabellePdf);
-    //
-    //        return createPdf(html);
-    //    }
+
+    public byte[] generateDatentabellePdf(final String messstelleId, final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final String department) throws IOException, DataNotFoundException {
+        final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf datentabellePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf();
+        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, options, schematischeUebersichtAsBase64Png, department);
+        final String html = createDatentabelleHTML(datentabellePdf);
+
+        return createPdf(html);
+    }
 }

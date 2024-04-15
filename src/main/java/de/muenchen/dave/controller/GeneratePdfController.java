@@ -129,8 +129,8 @@ public class GeneratePdfController {
                 pdf = generatePdfService.generateBelastungsplanPdf(messstelleId, options, chartAsBase64Png, department);
             } else if (StringUtils.equalsIgnoreCase(type, TYPE_GANGLINIE)) {
                 pdf = generatePdfService.generateGangliniePdf(messstelleId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
-                //            } else if (StringUtils.equalsIgnoreCase(type, TYPE_DATENTABELLE)) {
-                //                pdf = generatePdfService.generateDatentabellePdf(zaehlungId, options, schematischeUebersichtAsBase64Png, department);
+            } else if (StringUtils.equalsIgnoreCase(type, TYPE_DATENTABELLE)) {
+                pdf = generatePdfService.generateDatentabellePdf(messstelleId, options, schematischeUebersichtAsBase64Png, department);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, type + " nicht implementiert.");
             }

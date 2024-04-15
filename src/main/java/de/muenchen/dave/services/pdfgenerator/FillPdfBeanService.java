@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -631,7 +632,7 @@ public class FillPdfBeanService {
     public de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf fillGangliniePdf(
             final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf, final String messstelleId,
             final MessstelleOptionsDTO options, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
+            final String schematischeUebersichtAsBase64Png, final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
 
         fillBasicPdf(gangliniePdf, messstelle, department, options);
@@ -644,11 +645,11 @@ public class FillPdfBeanService {
 
         final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
         final List<LadeMesswerteDTO> messwerte = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
-        final List<de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTable> gtList = new ArrayList<>();
+        final List<GanglinieTable> gtList = new ArrayList<>();
 
         // Initialisierung vor erstem Schleifendurchlauf
-        List<de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTableColumn> gtcList = new ArrayList<>();
-        de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTable gt = new de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTable();
+        List<GanglinieTableColumn> gtcList = new ArrayList<>();
+        GanglinieTable gt = new GanglinieTable();
 
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
         this.gangliniePdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
@@ -662,7 +663,7 @@ public class FillPdfBeanService {
                     || (StringUtils.equals(messwert.getType(), LadeZaehldatenService.BLOCK)
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
 
-                final de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTableColumn gtc = new de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTableColumn();
+                final GanglinieTableColumn gtc = new GanglinieTableColumn();
 
                 // Uhrzeit setzen
                 final StringBuilder sbUhrzeit = new StringBuilder();
@@ -701,7 +702,7 @@ public class FillPdfBeanService {
                 if (gtcList.size() == MAX_ELEMENTS_IN_GANGLINIE_TABLE) {
                     gt.setGanglinieTableColumns(gtcList);
                     gtList.add(gt);
-                    gt = new de.muenchen.dave.domain.pdf.helper.messstelle.GanglinieTable();
+                    gt = new GanglinieTable();
                     gtcList = new ArrayList<>();
                 }
             }
@@ -760,6 +761,27 @@ public class FillPdfBeanService {
         return datentabellePdf;
     }
 
+    public de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf fillDatentabellePdf(
+            final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf datentabellePdf, final String messstelleId,
+            final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final String department) {
+        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+
+        fillBasicPdf(datentabellePdf, messstelle, department, options);
+
+        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
+
+        datentabellePdf.setTableTitle(createChartTitle(options, messstelle));
+
+        datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
+        datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
+
+        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, messstelleId);
+        datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
+
+        return datentabellePdf;
+    }
+
     /**
      * Diese Methode befüllt ein Objekt der Klasse {@link DatentabellePdfZaehldaten} und gibt dieses
      * zurück.
@@ -805,6 +827,30 @@ public class FillPdfBeanService {
         return datentabellePdfZaehldaten;
     }
 
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
+        final List<LadeMesswerteDTO> ladeMesswerteDTOS = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
+
+        // Bei Tageswert soll keine Uhrzeit angezeigt werden
+        ladeMesswerteDTOS.stream()
+                .filter(ladeMesswerteDTO -> StringUtils.equalsIgnoreCase(ladeMesswerteDTO.getType(), LadeZaehldatenService.TAGESWERT))
+                .forEach(ladeMesswerteDTO -> {
+                    ladeMesswerteDTO.setEndeUhrzeit(null);
+                    ladeMesswerteDTO.setStartUhrzeit(null);
+                });
+
+        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.datentabellePdfZaehldatumMapper
+                .fahrzeugOptionsToDatentabellePdfZaehldaten(fahrzeugOptions);
+
+        datentabellePdfZaehldaten.setActiveTabsFahrzeugtypen(this.calcActiveTabsFahrzeugtypen(fahrzeugOptions));
+        datentabellePdfZaehldaten.setActiveTabsFahrzeugklassen(this.calcActiveTabsFahrzeugklassen(fahrzeugOptions));
+        datentabellePdfZaehldaten.setActiveTabsAnteile(this.calcActiveTabsAnteile(fahrzeugOptions));
+
+        datentabellePdfZaehldaten.setZaehldatenList(this.datentabellePdfZaehldatumMapper.ladeMesswerteDTOList2beanList(ladeMesswerteDTOS));
+        return datentabellePdfZaehldaten;
+    }
+
     private int calcActiveTabsFahrzeugtypen(final OptionsDTO optionsDTO) {
         int activeTabsFahrzeugtypen = 0;
         if (optionsDTO.getPersonenkraftwagen()) {
@@ -831,6 +877,35 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugtypen;
     }
 
+    private int calcActiveTabsFahrzeugtypen(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsFahrzeugtypen = 0;
+        if (optionsDTO.isPersonenkraftwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLastkraftwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLastzuege()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLieferwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isBusse()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isKraftraeder()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isRadverkehr()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isFussverkehr()) {
+            activeTabsFahrzeugtypen++;
+        }
+        return activeTabsFahrzeugtypen;
+    }
+
     private int calcActiveTabsFahrzeugklassen(final OptionsDTO optionsDTO) {
         int activeTabsFahrzeugklasse = 0;
         if (optionsDTO.getKraftfahrzeugverkehr()) {
@@ -845,12 +920,37 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugklasse;
     }
 
+    private int calcActiveTabsFahrzeugklassen(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsFahrzeugklasse = 0;
+        if (optionsDTO.isKraftfahrzeugverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        if (optionsDTO.isSchwerverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        if (optionsDTO.isGueterverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        return activeTabsFahrzeugklasse;
+    }
+
     private int calcActiveTabsAnteile(final OptionsDTO optionsDTO) {
         int activeTabsAnteile = 0;
         if (optionsDTO.getSchwerverkehrsanteilProzent()) {
             activeTabsAnteile++;
         }
         if (optionsDTO.getGueterverkehrsanteilProzent()) {
+            activeTabsAnteile++;
+        }
+        return activeTabsAnteile;
+    }
+
+    private int calcActiveTabsAnteile(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsAnteile = 0;
+        if (optionsDTO.isSchwerverkehrsanteilProzent()) {
+            activeTabsAnteile++;
+        }
+        if (optionsDTO.isGueterverkehrsanteilProzent()) {
             activeTabsAnteile++;
         }
         return activeTabsAnteile;
