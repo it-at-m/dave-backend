@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -491,7 +492,7 @@ public class FillPdfBeanService {
     }
 
     public BelastungsplanPdf fillBelastungsplanPdf(final BelastungsplanPdf belastungsplanPdf, final String messstelleId,
-            final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
+            final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
         final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = this.messwerteService.ladeMesswerte(messstelle.getId(), options);
         fillBasicPdf(belastungsplanPdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
@@ -694,7 +695,7 @@ public class FillPdfBeanService {
                 }
             }
         }
-        if (gtcList.size() != 0) {
+        if (CollectionUtils.isNotEmpty(gtcList)) {
             gt.setGanglinieTableColumns(gtcList);
             gtList.add(gt);
         }
