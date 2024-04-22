@@ -142,7 +142,6 @@ public class GeneratePdfService {
     public String createBelastungsplanHTML(final BelastungsplanPdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
-        bean.setZusatzinformationenMustachePart(getHtml(this.zusatzinformationen, bean));
 
         return getHtml(this.belastungsplan_messstelle, bean);
     }
@@ -168,7 +167,6 @@ public class GeneratePdfService {
     public String createGanglinieHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
-        bean.setZusatzinformationenMustachePart(getHtml(this.zusatzinformationen, bean));
         bean.setGanglinieCssMustachePart(getHtml(this.ganglinieCss, bean));
         bean.setSchematischeUebersichtMustachePart(getHtml(this.schematischeUebersicht, bean));
 
@@ -199,7 +197,6 @@ public class GeneratePdfService {
     public String createDatentabelleHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
-        bean.setZusatzinformationenMustachePart(getHtml(this.zusatzinformationen, bean));
         bean.setDatentabelleCssMustachePart(getHtml(this.datentabelleCss, bean));
         bean.setDatentabelleTableMustachePart(getHtml(this.datentabelleTable, bean));
         bean.setSchematischeUebersichtMustachePart(getHtml(this.schematischeUebersicht, bean));

@@ -35,7 +35,6 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
-import de.muenchen.dave.util.messstelle.MessstelleBaseUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -125,11 +124,9 @@ public class FillPdfBeanService {
     }
 
     static de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf fillBasicPdf(final de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf basicPdf,
-            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO) {
+            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
-        // TODO klaeren ob die noch benötigt werde oder ob der Kommentar oben bleiben soll.
-        basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), messstelle));
-        basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO));
+        basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
 
         return basicPdf;
     }
@@ -155,22 +152,19 @@ public class FillPdfBeanService {
     }
 
     static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO) {
+            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
         if (optionsDTO.getZeitraum().size() == 2) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
-            messstelleninformationen
-                    .setWochentag(StringUtils.defaultIfEmpty(MessstelleBaseUtil.getTextOfTagesTyp(optionsDTO.getTagesTyp()), KEINE_DATEN_VORHANDEN));
         } else {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().get(0).format(DDMMYYYY));
-            // TODO Was soll bei einem einzel Tag hier angezeigt werden
-            messstelleninformationen
-                    .setWochentag(StringUtils.defaultIfEmpty(MessstelleBaseUtil.getTextOfTagesTyp(optionsDTO.getTagesTyp()), KEINE_DATEN_VORHANDEN));
         }
         messstelleninformationen.setKommentar(messstelle.getKommentar());
+        messstelleninformationen
+                .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
         return messstelleninformationen;
     }
 
@@ -259,7 +253,6 @@ public class FillPdfBeanService {
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
         } else {
-            // TODO keine Ahnung was ich genau hier machen soll
             messstelle.getMessquerschnitte().stream().filter(messquerschnitt -> options.getMessquerschnittIds().contains(messquerschnitt.getMqId()))
                     .forEach(messquerschnitt -> {
                         chartTitle.append(messquerschnitt.getMqId());
@@ -419,7 +412,7 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    public String createChartTitleZeitauswahl(final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO) throws DataNotFoundException {
+    public String createChartTitleZeitauswahl(final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
@@ -438,30 +431,24 @@ public class FillPdfBeanService {
 
                         chartTitle.append(optionsDTO.getZeitauswahl());
                         chartTitle.append(StringUtils.SPACE);
-
-                        // TODO perfomant gestallten. Nur einmal die Daten laden
                         // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
-                        //            final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId),
-                        //                    optionsDTO);
-                        //            final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
-                        //
-                        //            final Optional<LadeZaehldatumDTO> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
-                        //                    .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
-                        //                            LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
-                        //                            LadeZaehldatenService.SPITZENSTUNDE_TAG))
-                        //                    .findFirst();
-                        //            if (optSpitzenStundeBlock.isPresent()) {
-                        //                final LadeZaehldatumDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
-                        //
-                        //                chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
-                        //                chartTitle.append(StringUtils.SPACE);
-                        //                chartTitle.append(MINUS);
-                        //                chartTitle.append(StringUtils.SPACE);
-                        //                chartTitle.append(spitzenStundeBlock.getEndeUhrzeit());
-                        //                chartTitle.append(StringUtils.SPACE);
-                        //                chartTitle.append(CHART_TITLE_UHR);
-                        //                chartTitle.append(StringUtils.SPACE);
-                        //            }
+                        final Optional<LadeMesswerteDTO> optSpitzenStundeBlock = zaehldaten.stream()
+                                .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
+                                        LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
+                                        LadeZaehldatenService.SPITZENSTUNDE_TAG))
+                                .findFirst();
+                        if (optSpitzenStundeBlock.isPresent()) {
+                            final LadeMesswerteDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
+
+                            chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(MINUS);
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(spitzenStundeBlock.getEndeUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(CHART_TITLE_UHR);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
 
                         chartTitle.append("(");
                         chartTitle.append(CHART_TITLE_BLOCK);
@@ -506,13 +493,13 @@ public class FillPdfBeanService {
     public BelastungsplanPdf fillBelastungsplanPdf(final BelastungsplanPdf belastungsplanPdf, final String messstelleId,
             final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
-
-        fillBasicPdf(belastungsplanPdf, messstelle, department, options);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = this.messwerteService.ladeMesswerte(messstelle.getId(), options);
+        fillBasicPdf(belastungsplanPdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
 
         belastungsplanPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_MESSSTELLE + messstelle.getMstId());
         belastungsplanPdf.setChart(chartAsBase64Png);
 
-        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(messstelle, options));
+        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(messstelle, options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten()));
 
         return belastungsplanPdf;
     }
@@ -634,8 +621,9 @@ public class FillPdfBeanService {
             final MessstelleOptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
 
-        fillBasicPdf(gangliniePdf, messstelle, department, options);
+        fillBasicPdf(gangliniePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
 
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_MESSSTELLE + messstelle.getMstId());
         gangliniePdf.setChart(chartAsBase64Png);
@@ -643,7 +631,6 @@ public class FillPdfBeanService {
         gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
         final List<LadeMesswerteDTO> messwerte = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
         final List<GanglinieTable> gtList = new ArrayList<>();
 
@@ -766,8 +753,9 @@ public class FillPdfBeanService {
             final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
 
-        fillBasicPdf(datentabellePdf, messstelle, department, options);
+        fillBasicPdf(datentabellePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
 
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
@@ -776,7 +764,8 @@ public class FillPdfBeanService {
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, messstelleId);
+        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable()
+                .getZaehldaten());
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
 
         return datentabellePdf;
@@ -829,8 +818,10 @@ public class FillPdfBeanService {
 
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
         final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
-        final List<LadeMesswerteDTO> ladeMesswerteDTOS = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
+        return getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten());
+    }
 
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDTO> ladeMesswerteDTOS) {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeMesswerteDTOS.stream()
                 .filter(ladeMesswerteDTO -> StringUtils.equalsIgnoreCase(ladeMesswerteDTO.getType(), LadeZaehldatenService.TAGESWERT))

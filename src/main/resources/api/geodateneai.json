@@ -702,6 +702,17 @@
           "endeUhrzeit": {
             "$ref": "#/components/schemas/LocalTime"
           },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "WERKTAG_DI_MI_DO",
+              "WERKTAG_MO_FR",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "MO_SO"
+            ]
+          },
           "anzahlLfw": {
             "type": "integer",
             "format": "int32"

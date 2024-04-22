@@ -3,6 +3,7 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
@@ -57,6 +58,10 @@ public class MesswerteService {
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
         processedZaehldaten.setBelastungsplanMessquerschnitte(new BelastungsplanMessquerschnitteDTO());
         processedZaehldaten.setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(totalSumPerMessquerschnittList, messstelleId));
+        if (CollectionUtils.isNotEmpty(intervals)) {
+            processedZaehldaten.setTagesTyp(TagesTyp.valueOf(intervals.get(0).getTagesTyp().name()));
+        }
+
         return processedZaehldaten;
     }
 
