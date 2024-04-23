@@ -4,12 +4,15 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -69,5 +72,12 @@ public class MessstelleService {
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
+    }
+
+    public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
+        log.debug("#getAllVisibleMessstellenForAuswertung");
+        final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
+        final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
+        return messstelleMapper.bean2auswertungDto(sorted);
     }
 }

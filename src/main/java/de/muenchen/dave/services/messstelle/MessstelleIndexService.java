@@ -39,4 +39,8 @@ public class MessstelleIndexService {
         return messstelleIndex.findAll();
     }
 
+    public List<Messstelle> findAllVisibleMessstellen() {
+        return messstelleIndex.findAllBySichtbarDatenportalIsTrue();
+    }
+
 }

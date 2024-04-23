@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -32,7 +33,7 @@ public interface MessstelleReceiverMapper {
             bean.setId(UUID.randomUUID().toString());
         }
 
-        if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
             bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         }
 
@@ -58,7 +59,7 @@ public interface MessstelleReceiverMapper {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
-        if (dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
             bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
         }
     }

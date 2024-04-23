@@ -34,8 +34,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessquerschnittDto.JSON_PROPERTY_FAHRTRICHTUNG,
   MessquerschnittDto.JSON_PROPERTY_ANZAHL_FAHRSPUREN,
   MessquerschnittDto.JSON_PROPERTY_ANZAHL_DETEKTOREN,
-  MessquerschnittDto.JSON_PROPERTY_YCOORDINATE,
-  MessquerschnittDto.JSON_PROPERTY_XCOORDINATE
+  MessquerschnittDto.JSON_PROPERTY_XCOORDINATE,
+  MessquerschnittDto.JSON_PROPERTY_YCOORDINATE
 })
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen")
 public class MessquerschnittDto {
@@ -60,11 +60,11 @@ public class MessquerschnittDto {
   public static final String JSON_PROPERTY_ANZAHL_DETEKTOREN = "anzahlDetektoren";
   private Integer anzahlDetektoren;
 
-  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
-  private Double ycoordinate;
-
   public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
   private Double xcoordinate;
+
+  public static final String JSON_PROPERTY_YCOORDINATE = "ycoordinate";
+  private Double ycoordinate;
 
   public MessquerschnittDto() {
   }
@@ -251,32 +251,6 @@ public class MessquerschnittDto {
   }
 
 
-  public MessquerschnittDto ycoordinate(Double ycoordinate) {
-    
-    this.ycoordinate = ycoordinate;
-    return this;
-  }
-
-   /**
-   * Get ycoordinate
-   * @return ycoordinate
-  **/
-  @javax.annotation.Nullable
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-
-  public Double getYcoordinate() {
-    return ycoordinate;
-  }
-
-
-  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
-  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-  public void setYcoordinate(Double ycoordinate) {
-    this.ycoordinate = ycoordinate;
-  }
-
-
   public MessquerschnittDto xcoordinate(Double xcoordinate) {
     
     this.xcoordinate = xcoordinate;
@@ -302,6 +276,32 @@ public class MessquerschnittDto {
     this.xcoordinate = xcoordinate;
   }
 
+
+  public MessquerschnittDto ycoordinate(Double ycoordinate) {
+    
+    this.ycoordinate = ycoordinate;
+    return this;
+  }
+
+   /**
+   * Get ycoordinate
+   * @return ycoordinate
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public Double getYcoordinate() {
+    return ycoordinate;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_YCOORDINATE)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setYcoordinate(Double ycoordinate) {
+    this.ycoordinate = ycoordinate;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -318,13 +318,13 @@ public class MessquerschnittDto {
         Objects.equals(this.fahrtrichtung, messquerschnittDto.fahrtrichtung) &&
         Objects.equals(this.anzahlFahrspuren, messquerschnittDto.anzahlFahrspuren) &&
         Objects.equals(this.anzahlDetektoren, messquerschnittDto.anzahlDetektoren) &&
-        Objects.equals(this.ycoordinate, messquerschnittDto.ycoordinate) &&
-        Objects.equals(this.xcoordinate, messquerschnittDto.xcoordinate);
+        Objects.equals(this.xcoordinate, messquerschnittDto.xcoordinate) &&
+        Objects.equals(this.ycoordinate, messquerschnittDto.ycoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mqId, mstId, strassenname, lageMessquerschnitt, fahrtrichtung, anzahlFahrspuren, anzahlDetektoren, ycoordinate, xcoordinate);
+    return Objects.hash(mqId, mstId, strassenname, lageMessquerschnitt, fahrtrichtung, anzahlFahrspuren, anzahlDetektoren, xcoordinate, ycoordinate);
   }
 
   @Override
@@ -338,8 +338,8 @@ public class MessquerschnittDto {
     sb.append("    fahrtrichtung: ").append(toIndentedString(fahrtrichtung)).append("\n");
     sb.append("    anzahlFahrspuren: ").append(toIndentedString(anzahlFahrspuren)).append("\n");
     sb.append("    anzahlDetektoren: ").append(toIndentedString(anzahlDetektoren)).append("\n");
-    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
+    sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("}");
     return sb.toString();
   }
