@@ -66,7 +66,7 @@ public class FillPdfBeanService {
     private static final String GANGLINIE_TITLE_MESSSTELLE = "Ganglinie - Messstelle ";
     private static final String DATENTABELLE_TITLE_ZAEHLSTELLE = "Listenausgabe - Zählstelle ";
     private static final String DATENTABELLE_TITLE_MESSSTELLE = "Listenausgabe - Messstelle ";
-    private static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
+    public static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String CHART_TITLE_BLOCK = "Block";
     private static final String CHART_TITLE_UHR = "Uhr";
     private static final String UHRZEIT_23_24 = "23 - 24";
@@ -186,15 +186,6 @@ public class FillPdfBeanService {
         zusatzinformationen.setKommentarZaehlung(StringUtils.defaultIfEmpty(zaehlung.getKommentar(), StringUtils.EMPTY));
         zusatzinformationen.setKommentarZaehlstelle(StringUtils.defaultIfEmpty(zaehlstelle.getKommentar(), StringUtils.EMPTY));
 
-        return zusatzinformationen;
-    }
-
-    static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen, final Messstelle messstelle) {
-        // TODO umstellen auf Messstelle
-        zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(messstelle.getKommentar()));
-        zusatzinformationen
-                .setIstKommentarVorhanden(zusatzinformationen.isIstKommentarVorhandenZaehlstelle() || zusatzinformationen.isIstKommentarVorhandenZaehlung());
-        zusatzinformationen.setKommentarZaehlstelle(StringUtils.defaultIfEmpty(messstelle.getKommentar(), StringUtils.EMPTY));
         return zusatzinformationen;
     }
 
@@ -413,9 +404,13 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    public String createChartTitleZeitauswahl(final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
+    public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
+            if (optionsDTO.getZeitraum().size() > 1) {
+                chartTitle.append("Durchschnittlicher");
+                chartTitle.append(StringUtils.SPACE);
+            }
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
         } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
                 || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
@@ -500,7 +495,7 @@ public class FillPdfBeanService {
         belastungsplanPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_MESSSTELLE + messstelle.getMstId());
         belastungsplanPdf.setChart(chartAsBase64Png);
 
-        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(messstelle, options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten()));
+        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten()));
 
         return belastungsplanPdf;
     }
