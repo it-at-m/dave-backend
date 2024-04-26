@@ -15,7 +15,6 @@ public class GangliniePdf extends DiagrammPdf {
 
     private String schematischeUebersichtMustachePart;
 
-    // Breite einer Zelle in der Tabelle
     private String tableCellWidth;
 
     private String kreuzungsgeometrie;
