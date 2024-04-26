@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doReturn;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
@@ -28,10 +29,11 @@ class BelastungsplanServiceTest {
     @Mock
     MessstelleService messstelleService;
     private BelastungsplanService belastungsplanService;
+    private RoundingService roundingService;
 
     @BeforeEach
     void setup() {
-        belastungsplanService = new BelastungsplanService(messstelleService);
+        belastungsplanService = new BelastungsplanService(messstelleService, roundingService);
     }
 
     @Test
@@ -93,7 +95,8 @@ class BelastungsplanServiceTest {
 
         doReturn(getMessstelle()).when(messstelleService).readMessstelleInfo(anyString());
         //result
-        var result = belastungsplanService.ladeBelastungsplan(totalSumOfAllMessquerschnitte, "123");
+        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+        var result = belastungsplanService.ladeBelastungsplan(totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
                 .isNotNull()
