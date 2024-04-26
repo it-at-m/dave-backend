@@ -12,6 +12,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -35,6 +36,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
@@ -338,6 +340,37 @@ public class FillPdfBeanServiceSpringTest {
         zaehlung.setZaehlart(Zaehlart.Q_.toString());
         result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
         assertThat(result, is("Q_"));
+    }
+
+    @Test
+    public void createChartTitleBelastungsplan_Messstelle() throws DataNotFoundException {
+        this.init();
+
+        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+
+        options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
+        options.setZeitraum(List.of(LocalDate.now()));
+        String actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Tageswert"));
+
+        options.setZeitraum(List.of(LocalDate.now(), LocalDate.now()));
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Durchschnittlicher Tageswert"));
+
+        options.setZeitauswahl(Zeitauswahl.BLOCK.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_00_06);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Block 0 - 6 Uhr"));
+
+        options.setZeitauswahl(Zeitauswahl.STUNDE.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_04_05);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Stunde 4 - 5 Uhr"));
+
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_06_10);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, Collections.emptyList());
+        assertThat(actualChartTitle, is("Spitzenstunde KFZ (Block 6 - 10 Uhr)"));
     }
 
 }

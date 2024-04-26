@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @AllArgsConstructor
-@Profile({ "!konexternal && !prodexternal" })
+@Profile({ "!konexternal && !prodexternal && !test" })
 public class MessstelleReceiver {
 
     private MessstelleApi messstelleApi;

@@ -11,9 +11,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-class DatentabellePdfMessstelleMapperTests {
+class DatentabellePdfZaehldatumMapperTests {
 
-    private final DatentabellePdfMessstelleMapper mapper = new DatentabellePdfMessstelleMapperImpl();
+    private final DatentabellePdfZaehldatumMapper mapper = new DatentabellePdfZaehldatumMapperImpl();
 
     @Test
     void fahrzeugOptionsToDatentabellePdfZaehldaten() {

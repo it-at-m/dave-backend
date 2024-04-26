@@ -33,6 +33,11 @@ public class MessstelleService {
     private final MessstelleMapper messstelleMapper;
     private static final String KFZ = "KFZ";
 
+    public Messstelle getMessstelle(final String messstelleId) {
+        log.debug("#getMessstelle");
+        return messstelleIndexService.findByIdOrThrowException(messstelleId);
+    }
+
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
