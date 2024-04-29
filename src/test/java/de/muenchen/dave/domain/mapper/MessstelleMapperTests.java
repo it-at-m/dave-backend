@@ -5,6 +5,8 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -19,6 +21,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
 class MessstelleMapperTests {
@@ -138,7 +141,7 @@ class MessstelleMapperTests {
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
-        expected.setPunkt(bean.getPunkt());
+        expected.setPunkt(new GeoPoint(updatedData.getLatitude(), updatedData.getLongitude()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
@@ -201,5 +204,37 @@ class MessstelleMapperTests {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
+    }
+
+    @Test
+    void bean2auswertungMqDto() {
+        final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
+
+        final MessquerschnittAuswertungDTO expected = new MessquerschnittAuswertungDTO();
+        expected.setMqId(bean.getMqId());
+        expected.setStandort(bean.getStandort());
+        expected.setFahrtrichtung(bean.getFahrtrichtung());
+
+        Assertions.assertThat(this.mapper.bean2auswertungMqDto(List.of(bean)))
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(expected));
+    }
+
+    @Test
+    void bean2auswertungDto() {
+        final Messstelle bean = MessstelleRandomFactory.getMessstelle();
+
+        final MessstelleAuswertungDTO expected = new MessstelleAuswertungDTO();
+        expected.setMstId(bean.getMstId());
+        expected.setStandort(bean.getStandort());
+        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setMessquerschnitte(this.mapper.bean2auswertungMqDto(bean.getMessquerschnitte()));
+
+        Assertions.assertThat(this.mapper.bean2auswertungDto(List.of(bean)))
+                .isNotNull()
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(List.of(expected));
     }
 }

@@ -23,6 +23,8 @@ public class GanglinieTableColumn {
 
     private String lastzuege;
 
+    private String lfw;
+
     private String busse;
 
     private String kraftraeder;

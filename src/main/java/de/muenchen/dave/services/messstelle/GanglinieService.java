@@ -58,18 +58,17 @@ public class GanglinieService {
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LKW);
                         setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLkw());
                     }
-
-                    if (fahrzeuge.isLieferwagen()) {
-                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(intervall.getAnzahlLfw());
-                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLfw());
-                    }
                     if (fahrzeuge.isLastzuege()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
                         seriesEntries.getSeriesEntryLz().getYAxisData().add(intervall.getSummeLastzug());
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
                         setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getSummeLastzug());
+                    }
+                    if (fahrzeuge.isLieferwagen()) {
+                        setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(intervall.getAnzahlLfw());
+                        setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlLfw());
                     }
                     if (fahrzeuge.isBusse()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
@@ -261,8 +260,8 @@ public class GanglinieService {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.isPersonenkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.isLastkraftwagen());
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLfw, options.isLieferwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, options.isLastzuege());
+            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLfw, options.isLieferwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryBus, options.isBusse());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKrad, options.isKraftraeder());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryRad, options.isRadverkehr());

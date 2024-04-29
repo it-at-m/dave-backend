@@ -113,7 +113,6 @@ class MessstelleReceiverMapperTests {
         expected.setHersteller(updatedData.getHersteller());
         expected.setFahrzeugKlassen(updatedData.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(updatedData.getDetektierteVerkehrsarten());
-        expected.setPunkt(new GeoPoint(updatedData.getXcoordinate(), updatedData.getYcoordinate()));
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
         expected.getSuchwoerter().add(updatedData.getMstId());
@@ -132,6 +131,7 @@ class MessstelleReceiverMapperTests {
         expected.setKommentar(bean.getKommentar());
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
+        expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
 
         final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData);

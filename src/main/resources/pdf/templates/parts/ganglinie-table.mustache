@@ -179,6 +179,20 @@
         {{/ganglinieTableColumns}}
       </tr>
     {{/lastzuege}}
+    {{#lieferwagen}}
+      <tr>
+        <td>
+          <div class="ganglinie-table-cell ganglinie-table-cell-header">
+            <div class="color-box lfw"/>
+            Lfw</div>
+        </td>
+        {{#ganglinieTableColumns}}
+          <td>
+            <div class="ganglinie-table-cell ganglinie-table-cell-data">{{lfw}}</div>
+          </td>
+        {{/ganglinieTableColumns}}
+      </tr>
+    {{/lieferwagen}}
     {{#busse}}
       <tr>
         <td>

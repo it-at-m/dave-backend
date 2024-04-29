@@ -42,6 +42,8 @@ public interface MessstelleIndex extends ElasticsearchRepository<Messstelle, Str
 
     List<Messstelle> findAll();
 
+    List<Messstelle> findAllBySichtbarDatenportalIsTrue();
+
     Optional<Messstelle> findByMstId(String mstId);
 
     Optional<Messstelle> findByMessquerschnitteId(String id);

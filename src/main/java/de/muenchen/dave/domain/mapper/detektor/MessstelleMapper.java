@@ -5,6 +5,8 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -20,6 +22,7 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
 public interface MessstelleMapper {
@@ -85,6 +88,8 @@ public interface MessstelleMapper {
                 updateMessquerschnitt(messquerschnitt, dto1);
             }
         }));
+
+        actual.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
     }
 
     ReadMessquerschnittDTO bean2readDto(Messquerschnitt bean);
@@ -123,5 +128,9 @@ public interface MessstelleMapper {
         dto.setStadtbezirkNummer(String.valueOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
+
+    List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);
+
+    List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
 
 }

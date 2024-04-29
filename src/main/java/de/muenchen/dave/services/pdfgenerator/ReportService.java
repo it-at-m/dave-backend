@@ -48,7 +48,6 @@ public class ReportService {
     private static final String PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_FIXED = "/pdf/templates/parts/report/datatable-fixed-css.mustache";
     private final GeneratePdfService generatePdfService;
     private final FillPdfBeanService fillPdfBeanService;
-    private final FillPdfBeanMessstelleService fillPdfBeanMessstelleService;
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
@@ -71,12 +70,10 @@ public class ReportService {
 
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,
-            final FillPdfBeanMessstelleService fillPdfBeanMessstelleService,
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.fillPdfBeanService = fillPdfBeanService;
-        this.fillPdfBeanMessstelleService = fillPdfBeanMessstelleService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
@@ -162,8 +159,8 @@ public class ReportService {
             } else if (asset.getType().equals(AssetType.DATATABLE_MESSSTELLE)) {
                 final MessstelleDatatableAsset datatableAsset = (MessstelleDatatableAsset) asset;
                 try {
-                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanMessstelleService
-                            .getDatentabellePdf(datatableAsset.getOptions(), datatableAsset.getMstId());
+                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanService
+                            .getDatentabellePdfZaehldaten(datatableAsset.getOptions(), datatableAsset.getMstId());
                     datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
                     datatableAsset.setRandomTableId(UUID.randomUUID().toString());
 
