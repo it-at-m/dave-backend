@@ -10,16 +10,18 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.actuate.metrics.AutoConfigureMetrics;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest(classes = DaveBackendApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(classes = DaveBackendApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE })
-class SecuringWebAppTest {
+@AutoConfigureMetrics
+class SecuredWebAppTest {
 
     @Autowired
     MockMvc api;
@@ -34,14 +36,19 @@ class SecuringWebAppTest {
     ZaehlstelleIndex zaehlstelleIndex;
 
     @Test
-    void accessUnsecuredResourceLadeAuswertungSpitzenstundeThenOk() throws Exception {
+    void accessUnsecuredResourceLadeAuswertungSpitzenstundeThenBadRequest() throws Exception {
         api.perform(get("/lade-auswertung-spitzenstunde"))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
     @Test
     void accessUnsecuredResourceLadeAuswertungZaehlstellenKoordinateThenOk() throws Exception {
         api.perform(get("/lade-auswertung-zaehlstellen-koordinate"))
                 .andExpect(status().isOk());
+    }
+    @Test
+    void accessUnsecuredResourceLadeAuswertungVisumThenBadRequest() throws Exception {
+        api.perform(get("/lade-auswertung-visum"))
+                .andExpect(status().isBadRequest());
     }
     @Test
     void accessSecuredResourceRootThenUnauthorized() throws Exception {
@@ -74,8 +81,8 @@ class SecuringWebAppTest {
     }
 
     @Test
-    void accessUnsecuredResourceV3ApiDocsThenOk() throws Exception {
-        api.perform(get("/h2-console/**"))
+    void accessUnsecuredResourceH2ConsoleThenOk() throws Exception {
+        api.perform(get("/h2-console"))
                 .andExpect(status().isOk());
     }
 
