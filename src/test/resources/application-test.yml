@@ -1,14 +1,7 @@
 spring:
 
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
-
   # Spring JPA
   datasource.url: jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE
-  h2.console.enabled: true
-#  h2.console.path: /h2-console
   jpa:
     database: H2
     hibernate:
@@ -55,7 +48,6 @@ management:
     elasticsearch:
       enabled: false
 
-
 elasticsearch:
   user: elastic
   password:
@@ -64,19 +56,7 @@ elasticsearch:
   connectTimeout: 10
   socketTimeout: 30
 
-refarch.gracefulshutdown.pre-wait-seconds: 0
-
 dave:
-  zaehlung:
-    status:
-      #      Alle 5 min
-      updater: 0 0/5 * 1/1 * ?
   email:
     address: dave-dummy@muenchen.de
     password: dummy
-    url:
-      adminportal: http://localhost:8085
-      selfserviceportal: http://localhost:8086
-    receiver:
-      # Update-Intervall in Millisekunden für den Email-Abruf
-      update-interval: 5000

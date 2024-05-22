@@ -80,10 +80,4 @@ class SecuredWebAppTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void accessUnsecuredResourceH2ConsoleThenOk() throws Exception {
-        api.perform(get("/h2-console"))
-                .andExpect(status().isOk());
-    }
-
 }
