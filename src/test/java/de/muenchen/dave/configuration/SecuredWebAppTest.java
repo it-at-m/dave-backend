@@ -40,16 +40,19 @@ class SecuredWebAppTest {
         api.perform(get("/lade-auswertung-spitzenstunde"))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void accessUnsecuredResourceLadeAuswertungZaehlstellenKoordinateThenOk() throws Exception {
         api.perform(get("/lade-auswertung-zaehlstellen-koordinate"))
                 .andExpect(status().isOk());
     }
+
     @Test
     void accessUnsecuredResourceLadeAuswertungVisumThenBadRequest() throws Exception {
         api.perform(get("/lade-auswertung-visum"))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void accessSecuredResourceRootThenUnauthorized() throws Exception {
         api.perform(get("/"))
