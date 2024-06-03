@@ -1,0 +1,62 @@
+spring:
+
+  # Spring JPA
+  datasource.url: jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE
+  jpa:
+    database: H2
+    hibernate:
+      # always drop and create the db should be the best
+      # configuration for local (development) mode. this
+      # is also the default, that spring offers by convention.
+      # but here explicite:
+      ddl-auto: create-drop
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    # Logging for database operation
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost
+      client:
+        provider:
+          keycloak:
+            token-uri: http://localhost
+        registration.keycloak:
+          client-id: dave
+          client-secret:
+          authorization-grant-type: client_credentials
+
+# Config for spring actuator endpoints
+management:
+  server.port: ${server.port}
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health, info, prometheus, livenessstate, readinessstate
+      path-mapping:
+        prometheus: metrics
+  endpoint:
+    health.enabled: true
+    info.enabled: true
+    prometheus.enabled: true
+  health:
+    elasticsearch:
+      enabled: false
+
+elasticsearch:
+  user: elastic
+  password:
+  host: localhost
+  port: 9200
+  connectTimeout: 10
+  socketTimeout: 30
+
+dave:
+  email:
+    address: dave-dummy@muenchen.de
+    password: dummy
