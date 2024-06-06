@@ -17,6 +17,7 @@ import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.services.IndexServiceUtils;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -92,6 +93,7 @@ class MessstelleMapperTests {
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2MessfaehigkeitDto(bean.getMessfaehigkeiten()));
 
         Assertions.assertThat(this.mapper.bean2editDto(bean))
                 .isNotNull()
@@ -118,6 +120,7 @@ class MessstelleMapperTests {
         updatedData.setDatumLetztePlausibleMessung("1999-11-11");
         updatedData.setLongitude(6.66);
         updatedData.setLatitude(6.66);
+        updatedData.setMessfaehigkeiten(Collections.emptyList());
 
         updatedData.setSichtbarDatenportal(!bean.getSichtbarDatenportal());
         updatedData.setGeprueft(!bean.getGeprueft());
@@ -145,6 +148,7 @@ class MessstelleMapperTests {
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
 
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
         expected.setGeprueft(true);

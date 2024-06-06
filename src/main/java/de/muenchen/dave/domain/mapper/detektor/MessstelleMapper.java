@@ -2,12 +2,14 @@ package de.muenchen.dave.domain.mapper.detektor;
 
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
@@ -60,6 +62,7 @@ public interface MessstelleMapper {
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
+    @Mapping(target = "messfaehigkeiten", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
@@ -132,5 +135,9 @@ public interface MessstelleMapper {
     List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);
 
     List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
+
+    MessfaehigkeitDTO messfaehigkeitBean2MessfaehigkeitDto(Messfaehigkeit bean);
+
+    List<MessfaehigkeitDTO> messfaehigkeitBean2MessfaehigkeitDto(List<Messfaehigkeit> bean);
 
 }
