@@ -55,6 +55,7 @@ class MessstelleReceiverMapperTests {
         expected.getSuchwoerter().add(dto.getMstId());
 
         expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(mapper.createMessfaehigkeit(dto.getMessfaehigkeiten()));
 
         Messstelle messstelle = this.mapper.createMessstelle(dto);
         Assertions.assertThat(messstelle)
@@ -123,6 +124,7 @@ class MessstelleReceiverMapperTests {
         if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
             expected.getSuchwoerter().add(stadtbezirk);
         }
+        expected.setMessfaehigkeiten(this.mapper.createMessfaehigkeit(updatedData.getMessfaehigkeiten()));
 
         // unveraendert
         expected.setId(bean.getId());

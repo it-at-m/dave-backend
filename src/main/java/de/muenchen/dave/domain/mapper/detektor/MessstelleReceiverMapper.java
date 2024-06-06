@@ -1,7 +1,9 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
@@ -26,6 +28,10 @@ public interface MessstelleReceiverMapper {
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
 
     List<Messquerschnitt> createMessquerschnitte(List<MessquerschnittDto> dto);
+
+    Messfaehigkeit createMessfaehigkeit(MessfaehigkeitDto dto);
+
+    List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
     default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
