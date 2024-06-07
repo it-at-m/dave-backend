@@ -14,7 +14,10 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
+import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +31,8 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
 public interface MessstelleMapper {
+
+    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
 
     ReadMessstelleInfoDTO bean2readDto(Messstelle bean);
 
@@ -139,5 +144,15 @@ public interface MessstelleMapper {
     MessfaehigkeitDTO messfaehigkeitBean2MessfaehigkeitDto(Messfaehigkeit bean);
 
     List<MessfaehigkeitDTO> messfaehigkeitBean2MessfaehigkeitDto(List<Messfaehigkeit> bean);
+
+    @AfterMapping
+    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget MessfaehigkeitDTO dto, Messfaehigkeit bean) {
+        dto.setGueltigAb(bean.getGueltigAb().format(DATE_TIME_FORMATTER));
+        if (LocalDate.now().isAfter(bean.getGueltigBis())) {
+            dto.setGueltigBis(bean.getGueltigBis().format(DATE_TIME_FORMATTER));
+        } else {
+            dto.setGueltigBis("");
+        }
+    }
 
 }

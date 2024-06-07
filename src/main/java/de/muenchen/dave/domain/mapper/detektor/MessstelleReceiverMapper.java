@@ -7,6 +7,7 @@ import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,14 @@ public interface MessstelleReceiverMapper {
 
         if (CollectionUtils.isEmpty(bean.getMessquerschnitte())) {
             bean.setMessquerschnitte(new ArrayList<>());
+        }
+
+        if (CollectionUtils.isNotEmpty(bean.getMessfaehigkeiten())) {
+            bean.getMessfaehigkeiten().forEach(messfaehigkeit -> {
+                if (LocalDate.now().isBefore(messfaehigkeit.getGueltigBis())) {
+                    bean.setFahrzeugKlassen(messfaehigkeit.getFahrzeugklassen());
+                }
+            });
         }
     }
 

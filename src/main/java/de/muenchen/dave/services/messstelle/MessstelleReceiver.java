@@ -103,23 +103,4 @@ public class MessstelleReceiver {
         }
         return messquerschnitte;
     }
-
-    //    protected List<Messfaehigkeit> updateMessfaehigkeitOfMessstelle(final List<Messfaehigkeit> messfaehigkeiten,
-    //            final List<MessfaehigkeitDto> messfaehigkeitenDto) {
-    //        if (CollectionUtils.isNotEmpty(messfaehigkeitenDto)) {
-    //            messfaehigkeitenDto.forEach(messfaehigkeitDto -> {
-    //                final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
-    //                messfaehigkeiten.forEach(messfaehigkeit -> {
-    //                    if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
-    //                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto);
-    //                        messquerschnittDtoDoesNotExist.set(false);
-    //                    }
-    //                });
-    //                if (messquerschnittDtoDoesNotExist.get()) {
-    //                    messquerschnitte.add(messstelleReceiverMapper.createMessquerschnitt(messquerschnittDto));
-    //                }
-    //            });
-    //        }
-    //        return messquerschnitte;
-    //    }
 }
