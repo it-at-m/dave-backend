@@ -34,6 +34,6 @@ public class EditMessstelleDTO implements Serializable {
     private List<String> customSuchwoerter;
 
     private List<EditMessquerschnittDTO> messquerschnitte;
-    private List<MessfaehigkeitDTO> messfaehigkeiten;
+    private List<EditMessfaehigkeitDTO> messfaehigkeiten;
 
 }

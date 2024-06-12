@@ -45,6 +45,7 @@ class MessstelleMapperTests {
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2ReadMessfaehigkeitDto(bean.getMessfaehigkeiten()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
@@ -93,7 +94,7 @@ class MessstelleMapperTests {
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
-        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2MessfaehigkeitDto(bean.getMessfaehigkeiten()));
+        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2EditMessfaehigkeitDto(bean.getMessfaehigkeiten()));
 
         Assertions.assertThat(this.mapper.bean2editDto(bean))
                 .isNotNull()

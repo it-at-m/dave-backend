@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.dtos.messstelle.EditMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
@@ -14,6 +15,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.time.LocalDate;
@@ -141,17 +143,35 @@ public interface MessstelleMapper {
 
     List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
 
-    MessfaehigkeitDTO messfaehigkeitBean2MessfaehigkeitDto(Messfaehigkeit bean);
+    EditMessfaehigkeitDTO messfaehigkeitBean2EditMessfaehigkeitDto(Messfaehigkeit bean);
 
-    List<MessfaehigkeitDTO> messfaehigkeitBean2MessfaehigkeitDto(List<Messfaehigkeit> bean);
+    List<EditMessfaehigkeitDTO> messfaehigkeitBean2EditMessfaehigkeitDto(List<Messfaehigkeit> bean);
 
     @AfterMapping
-    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget MessfaehigkeitDTO dto, Messfaehigkeit bean) {
+    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget EditMessfaehigkeitDTO dto, Messfaehigkeit bean) {
         dto.setGueltigAb(bean.getGueltigAb().format(DATE_TIME_FORMATTER));
         if (LocalDate.now().isAfter(bean.getGueltigBis())) {
             dto.setGueltigBis(bean.getGueltigBis().format(DATE_TIME_FORMATTER));
         } else {
             dto.setGueltigBis("");
+        }
+    }
+
+    @Mapping(target = "intervall", ignore = true)
+    ReadMessfaehigkeitDTO messfaehigkeitBean2ReadMessfaehigkeitDto(Messfaehigkeit bean);
+
+    List<ReadMessfaehigkeitDTO> messfaehigkeitBean2ReadMessfaehigkeitDto(List<Messfaehigkeit> bean);
+
+    @AfterMapping
+    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget ReadMessfaehigkeitDTO dto, Messfaehigkeit bean) {
+        if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_KOMPLETT.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_HALB.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
+        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_VIERTEL.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        } else {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
         }
     }
 
