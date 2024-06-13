@@ -14,8 +14,8 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.7.8</spring.boot.version>
-        <spring.cloud.version>2021.0.5</spring.cloud.version>
+        <spring.boot.version>2.7.18</spring.boot.version>
+        <spring.cloud.version>2021.0.9</spring.cloud.version>
         <logstash.encoder>7.0.1</logstash.encoder>
         <ojdbc8.version>19.9.0.0</ojdbc8.version>
         <apache.commons.collections4>4.4</apache.commons.collections4>
@@ -36,7 +36,7 @@
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
-        <org.projectlombok.lombok.version>1.18.26</org.projectlombok.lombok.version>
+        <org.projectlombok.lombok.version>1.18.30</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
         <itm-codeformat.version>1.0.3</itm-codeformat.version>
         <shedlock.version>4.46.0</shedlock.version>
@@ -45,8 +45,8 @@
     <scm>
         <connection>scm:git:https://github.com/it-at-m/dave-backend.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/dave-backend.git</developerConnection>
-      <tag>dave-backend-1.9.0</tag>
-  </scm>
+        <tag>dave-backend-1.9.0</tag>
+    </scm>
 
     <profiles>
         <profile>
