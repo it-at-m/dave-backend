@@ -19,8 +19,8 @@
   "zaehlungen": [
     {
       "id": "5ca0b354-4b68-48f2-85ef-f054a4fd1710",
-      "datum": "05.10.1989",
-      "jahr": "1989",
+      "datum": "05.10.2023",
+      "jahr": "2023",
       "monat": "Oktober",
       "jahreszeit": "Herbst",
       "zaehlart": "N",
@@ -63,7 +63,7 @@
         "Kurzzeiterhebung",
         "N",
         "Herbst",
-        "05.10.1989",
+        "05.10.2023",
         "Menzinger Str.",
         "Wintrichring",
         "Wintrichring - Menzinger Str. - Maria-Ward-Str.",
@@ -82,7 +82,7 @@
         "2*4h",
         "2*4Stunden",
         "VZ Nymphenburg/Landshuter Allee",
-        "1989"
+        "2023"
       ],
       "pkwEinheit": {
         "pkw": 1,
