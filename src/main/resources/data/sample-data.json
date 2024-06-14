@@ -100,19 +100,19 @@
       "knotenarme": [
         {
           "nummer": 2,
-          "Strassenname": "Menzinger Str."
+          "strassenname": "Menzinger Str."
         },
         {
           "nummer": 4,
-          "Strassenname": "Menzinger Str."
+          "strassenname": "Menzinger Str."
         },
         {
           "nummer": 1,
-          "Strassenname": "Wintrichring"
+          "strassenname": "Wintrichring"
         },
         {
           "nummer": 3,
-          "Strassenname": "Maria-Ward-Str."
+          "strassenname": "Maria-Ward-Str."
         }
       ],
       "fahrbeziehungen": [
