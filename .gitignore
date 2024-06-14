@@ -42,3 +42,6 @@ nbdist/
 .java-version
 
 /.openapi-generator/
+
+# do not check in local application profile yml
+src/**/application-local.yml
