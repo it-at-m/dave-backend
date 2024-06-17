@@ -1,18 +1,25 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.dtos.messstelle.EditMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +33,8 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = "spring")
 public interface MessstelleMapper {
+
+    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
 
     ReadMessstelleInfoDTO bean2readDto(Messstelle bean);
 
@@ -60,6 +69,7 @@ public interface MessstelleMapper {
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
+    @Mapping(target = "messfaehigkeiten", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
@@ -132,5 +142,37 @@ public interface MessstelleMapper {
     List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);
 
     List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
+
+    EditMessfaehigkeitDTO messfaehigkeitBean2EditMessfaehigkeitDto(Messfaehigkeit bean);
+
+    List<EditMessfaehigkeitDTO> messfaehigkeitBean2EditMessfaehigkeitDto(List<Messfaehigkeit> bean);
+
+    @AfterMapping
+    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget EditMessfaehigkeitDTO dto, Messfaehigkeit bean) {
+        dto.setGueltigAb(bean.getGueltigAb().format(DATE_TIME_FORMATTER));
+        if (LocalDate.now().isAfter(bean.getGueltigBis())) {
+            dto.setGueltigBis(bean.getGueltigBis().format(DATE_TIME_FORMATTER));
+        } else {
+            dto.setGueltigBis("");
+        }
+    }
+
+    @Mapping(target = "intervall", ignore = true)
+    ReadMessfaehigkeitDTO messfaehigkeitBean2ReadMessfaehigkeitDto(Messfaehigkeit bean);
+
+    List<ReadMessfaehigkeitDTO> messfaehigkeitBean2ReadMessfaehigkeitDto(List<Messfaehigkeit> bean);
+
+    @AfterMapping
+    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget ReadMessfaehigkeitDTO dto, Messfaehigkeit bean) {
+        if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_KOMPLETT.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_HALB.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
+        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_VIERTEL.getMinutesPerIntervall().toString(), bean.getIntervall())) {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        } else {
+            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
+        }
+    }
 
 }

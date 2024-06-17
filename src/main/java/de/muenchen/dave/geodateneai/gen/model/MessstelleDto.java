@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MessstelleDto.JSON_PROPERTY_HERSTELLER,
   MessstelleDto.JSON_PROPERTY_DATUM_LETZTE_PLAUSIBLE_MESSUNG,
   MessstelleDto.JSON_PROPERTY_MESSQUERSCHNITTE,
+  MessstelleDto.JSON_PROPERTY_MESSFAEHIGKEITEN,
   MessstelleDto.JSON_PROPERTY_XCOORDINATE,
   MessstelleDto.JSON_PROPERTY_YCOORDINATE
 })
@@ -125,6 +127,9 @@ public class MessstelleDto {
 
   public static final String JSON_PROPERTY_MESSQUERSCHNITTE = "messquerschnitte";
   private List<MessquerschnittDto> messquerschnitte;
+
+  public static final String JSON_PROPERTY_MESSFAEHIGKEITEN = "messfaehigkeiten";
+  private List<MessfaehigkeitDto> messfaehigkeiten;
 
   public static final String JSON_PROPERTY_XCOORDINATE = "xcoordinate";
   private Double xcoordinate;
@@ -455,6 +460,40 @@ public class MessstelleDto {
   }
 
 
+  public MessstelleDto messfaehigkeiten(List<MessfaehigkeitDto> messfaehigkeiten) {
+    
+    this.messfaehigkeiten = messfaehigkeiten;
+    return this;
+  }
+
+  public MessstelleDto addMessfaehigkeitenItem(MessfaehigkeitDto messfaehigkeitenItem) {
+    if (this.messfaehigkeiten == null) {
+      this.messfaehigkeiten = new ArrayList<>();
+    }
+    this.messfaehigkeiten.add(messfaehigkeitenItem);
+    return this;
+  }
+
+   /**
+   * Get messfaehigkeiten
+   * @return messfaehigkeiten
+  **/
+  @javax.annotation.Nullable
+  @JsonProperty(JSON_PROPERTY_MESSFAEHIGKEITEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+
+  public List<MessfaehigkeitDto> getMessfaehigkeiten() {
+    return messfaehigkeiten;
+  }
+
+
+  @JsonProperty(JSON_PROPERTY_MESSFAEHIGKEITEN)
+  @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+  public void setMessfaehigkeiten(List<MessfaehigkeitDto> messfaehigkeiten) {
+    this.messfaehigkeiten = messfaehigkeiten;
+  }
+
+
   public MessstelleDto xcoordinate(Double xcoordinate) {
     
     this.xcoordinate = xcoordinate;
@@ -527,13 +566,14 @@ public class MessstelleDto {
         Objects.equals(this.hersteller, messstelleDto.hersteller) &&
         Objects.equals(this.datumLetztePlausibleMessung, messstelleDto.datumLetztePlausibleMessung) &&
         Objects.equals(this.messquerschnitte, messstelleDto.messquerschnitte) &&
+        Objects.equals(this.messfaehigkeiten, messstelleDto.messfaehigkeiten) &&
         Objects.equals(this.xcoordinate, messstelleDto.xcoordinate) &&
         Objects.equals(this.ycoordinate, messstelleDto.ycoordinate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, datumLetztePlausibleMessung, messquerschnitte, xcoordinate, ycoordinate);
+    return Objects.hash(mstId, name, status, realisierungsdatum, abbaudatum, stadtbezirkNummer, bemerkung, fahrzeugKlassen, detektierteVerkehrsarten, hersteller, datumLetztePlausibleMessung, messquerschnitte, messfaehigkeiten, xcoordinate, ycoordinate);
   }
 
   @Override
@@ -552,6 +592,7 @@ public class MessstelleDto {
     sb.append("    hersteller: ").append(toIndentedString(hersteller)).append("\n");
     sb.append("    datumLetztePlausibleMessung: ").append(toIndentedString(datumLetztePlausibleMessung)).append("\n");
     sb.append("    messquerschnitte: ").append(toIndentedString(messquerschnitte)).append("\n");
+    sb.append("    messfaehigkeiten: ").append(toIndentedString(messfaehigkeiten)).append("\n");
     sb.append("    xcoordinate: ").append(toIndentedString(xcoordinate)).append("\n");
     sb.append("    ycoordinate: ").append(toIndentedString(ycoordinate)).append("\n");
     sb.append("}");

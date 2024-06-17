@@ -1,10 +1,13 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +29,10 @@ public interface MessstelleReceiverMapper {
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
 
     List<Messquerschnitt> createMessquerschnitte(List<MessquerschnittDto> dto);
+
+    Messfaehigkeit createMessfaehigkeit(MessfaehigkeitDto dto);
+
+    List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
     default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
@@ -51,6 +58,14 @@ public interface MessstelleReceiverMapper {
 
         if (CollectionUtils.isEmpty(bean.getMessquerschnitte())) {
             bean.setMessquerschnitte(new ArrayList<>());
+        }
+
+        if (CollectionUtils.isNotEmpty(bean.getMessfaehigkeiten())) {
+            bean.getMessfaehigkeiten().forEach(messfaehigkeit -> {
+                if (LocalDate.now().isBefore(messfaehigkeit.getGueltigBis())) {
+                    bean.setFahrzeugKlassen(messfaehigkeit.getFahrzeugklassen());
+                }
+            });
         }
     }
 

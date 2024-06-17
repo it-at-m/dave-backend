@@ -49,6 +49,7 @@ public class MessstelleRandomFactory {
         customSuchwoerter.add(fakerInstance.company().buzzword());
         messstelle.setCustomSuchwoerter(customSuchwoerter);
         messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnitte());
+        messstelle.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeiten());
         return messstelle;
     }
 
@@ -73,6 +74,7 @@ public class MessstelleRandomFactory {
         dto.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnittDtos());
         dto.setYcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
         dto.setXcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeitenDtos());
         return dto;
     }
 

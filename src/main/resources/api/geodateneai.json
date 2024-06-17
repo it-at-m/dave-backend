@@ -216,22 +216,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Valide Wochentage im Zeitraum konnten ermittelt werden",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidWochentageInPeriodDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -886,6 +886,25 @@
           }
         }
       },
+      "MessfaehigkeitDto": {
+        "type": "object",
+        "properties": {
+          "gueltigAb": {
+            "type": "string",
+            "format": "date"
+          },
+          "gueltigBis": {
+            "type": "string",
+            "format": "date"
+          },
+          "fahrzeugklassen": {
+            "type": "string"
+          },
+          "intervall": {
+            "type": "string"
+          }
+        }
+      },
       "MessquerschnittDto": {
         "type": "object",
         "properties": {
@@ -973,6 +992,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MessquerschnittDto"
+            }
+          },
+          "messfaehigkeiten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessfaehigkeitDto"
             }
           },
           "xcoordinate": {
