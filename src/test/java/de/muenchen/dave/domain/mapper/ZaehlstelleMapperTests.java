@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
@@ -24,6 +25,7 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
@@ -34,7 +36,9 @@ public class ZaehlstelleMapperTests {
     @Test
     public void testBearbeiteDto2bean() {
         BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
-        Zaehlstelle bean = this.mapper.bearbeiteDto2bean(dto);
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        Mockito.when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+        Zaehlstelle bean = this.mapper.bearbeiteDto2bean(dto, stadtbezirkMapper);
 
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(bean.getStadtbezirk()));
         final List<String> expected = new ArrayList<>(dto.getCustomSuchwoerter());
@@ -49,7 +53,7 @@ public class ZaehlstelleMapperTests {
         assertThat(bean, hasProperty("punkt", equalTo(dto.getPunkt())));
 
         dto.setPunkt(null);
-        bean = this.mapper.bearbeiteDto2bean(dto);
+        bean = this.mapper.bearbeiteDto2bean(dto, stadtbezirkMapper);
         assertThat(bean, hasProperty("punkt", equalTo(new GeoPoint(dto.getLat(), dto.getLng()))));
 
         assertThat(bean, hasProperty("zaehlungen", notNullValue()));
@@ -60,7 +64,10 @@ public class ZaehlstelleMapperTests {
     @Test
     public void testBean2BearbeiteDto() {
         Zaehlstelle bean = ZaehlstelleRandomFactory.getOne();
-        BearbeiteZaehlstelleDTO dto = this.mapper.bean2bearbeiteDto(bean);
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        Mockito.when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+
+        BearbeiteZaehlstelleDTO dto = this.mapper.bean2bearbeiteDto(bean, stadtbezirkMapper);
 
         assertThat(dto, hasProperty("nummer", equalTo(bean.getNummer())));
         assertThat(dto, hasProperty("stadtbezirkNummer", equalTo(bean.getStadtbezirkNummer())));

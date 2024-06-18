@@ -16,6 +16,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -51,6 +52,7 @@ public class ZaehlstelleIndexService {
     private final ZaehlstelleMapper zaehlstelleMapper;
     private final ZeitauswahlService zeitauswahlService;
     private final ChatMessageService messageService;
+    private final StadtbezirkMapper stadtbezirkMapper;
     @Value(value = "${elasticsearch.host}")
     private String elasticsearchHost;
 
@@ -63,13 +65,15 @@ public class ZaehlstelleIndexService {
             final ZaehlungMapper zaehlungMapper,
             final ZaehlstelleIndex zaehlstelleIndex,
             // @Lazy prevents circular dependency
-            @Lazy final ChatMessageService messageService) {
+            @Lazy final ChatMessageService messageService,
+            final StadtbezirkMapper stadtbezirkMapper) {
         this.zeitauswahlService = zeitauswahlService;
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.customSuggestIndexService = customSuggestIndexService;
         this.zaehlungMapper = zaehlungMapper;
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.messageService = messageService;
+        this.stadtbezirkMapper = stadtbezirkMapper;
     }
 
     public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle) throws BrokenInfrastructureException, DataNotFoundException {
@@ -108,7 +112,8 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
     public String erstelleZaehlstelle(final BearbeiteZaehlstelleDTO zdto) throws BrokenInfrastructureException {
-        final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto);
+
+        final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
         zaehlstelle.setId(UUID.randomUUID().toString());
         zaehlstelle.setZaehlungen(new ArrayList<>());
         customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
@@ -131,7 +136,7 @@ public class ZaehlstelleIndexService {
             throws BrokenInfrastructureException, DataNotFoundException {
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
-            final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto);
+            final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
             // ID muss erhalten bleiben
             zaehlstelle.setId(zaehlstelleId);
             // Die Zählungen müssen erhalten bleiben
@@ -430,7 +435,7 @@ public class ZaehlstelleIndexService {
     }
 
     public BearbeiteZaehlstelleDTO readEditZaehlstelleDTO(final String zaehlstelleId) throws DataNotFoundException {
-        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId));
+        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId), stadtbezirkMapper);
     }
 
     /**

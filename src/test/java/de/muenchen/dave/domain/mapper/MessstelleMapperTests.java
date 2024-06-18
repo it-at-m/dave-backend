@@ -11,7 +11,6 @@ import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -21,7 +20,12 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 class MessstelleMapperTests {
@@ -36,7 +40,7 @@ class MessstelleMapperTests {
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        expected.setStadtbezirk("Schwabing-West");
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStandort(bean.getStandort());
@@ -52,14 +56,17 @@ class MessstelleMapperTests {
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
         tooltip.setStandort(bean.getStandort());
-        tooltip.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer()));
+        tooltip.setStadtbezirk("Schwabing-West");
         tooltip.setStadtbezirknummer(bean.getStadtbezirkNummer());
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         tooltip.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
-        Assertions.assertThat(this.mapper.bean2readDto(bean))
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+
+        Assertions.assertThat(this.mapper.bean2readDto(bean, stadtbezirkMapper))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -76,7 +83,7 @@ class MessstelleMapperTests {
         expected.setStatus(bean.getStatus().toString());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        expected.setStadtbezirk("Schwabing-West");
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
@@ -93,7 +100,10 @@ class MessstelleMapperTests {
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
 
-        Assertions.assertThat(this.mapper.bean2editDto(bean))
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+
+        Assertions.assertThat(this.mapper.bean2editDto(bean, stadtbezirkMapper))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -102,6 +112,8 @@ class MessstelleMapperTests {
     @Test
     void testUpdateMessstelle() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
 
         final EditMessstelleDTO updatedData = new EditMessstelleDTO();
         updatedData.setId("darf nicht aktualisiert werden");
@@ -151,7 +163,7 @@ class MessstelleMapperTests {
         expected.setKommentar(updatedData.getKommentar());
         expected.setStandort(updatedData.getStandort());
         expected.setSuchwoerter(new ArrayList<>());
-        expected.getSuchwoerter().addAll(SuchwortUtil.generateSuchworteOfMessstelle(bean));
+        expected.getSuchwoerter().addAll(SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper));
         expected.getSuchwoerter().addAll(updatedData.getCustomSuchwoerter());
         expected.setCustomSuchwoerter(updatedData.getCustomSuchwoerter());
 

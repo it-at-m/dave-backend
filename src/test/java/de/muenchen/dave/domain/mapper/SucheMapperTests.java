@@ -12,6 +12,11 @@ import de.muenchen.dave.services.IndexServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.Context;
+import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 class SucheMapperTests {
@@ -21,7 +26,9 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleTooltipDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle);
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
+        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkMapper);
 
         final MessstelleTooltipDTO expected = new MessstelleTooltipDTO();
         expected.setMstId(messstelle.getMstId());

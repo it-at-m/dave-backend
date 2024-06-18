@@ -6,6 +6,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.collections4.CollectionUtils;
+import org.mapstruct.Context;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,8 @@ public class MessstelleReceiver {
     private final CustomSuggestIndexService customSuggestIndexService;
 
     private MessstelleReceiverMapper messstelleReceiverMapper;
+
+    private final StadtbezirkMapper stadtbezirkMapper;
 
     /**
      * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
@@ -72,7 +76,7 @@ public class MessstelleReceiver {
 
     private void createMessstelleCron(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto);
+        final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         messstelleIndexService.saveMessstelle(newMessstelle);
     }
