@@ -1,5 +1,8 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -10,7 +13,6 @@ import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
-import de.muenchen.dave.services.IndexServiceUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,9 +22,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 class MessstelleReceiverMapperTests {

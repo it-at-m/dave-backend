@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.services.IndexServiceUtils;
 import java.util.List;
 import java.util.Set;
 import org.mapstruct.AfterMapping;
@@ -24,7 +23,8 @@ public interface SucheMapper {
     Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen);
 
     @AfterMapping
-    default void messstelleToMessstelleKarteDTOAfterMapping(@MappingTarget MessstelleKarteDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
+    default void messstelleToMessstelleKarteDTOAfterMapping(@MappingTarget MessstelleKarteDTO dto, Messstelle bean,
+            @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setType("messstelle");
         dto.setFachId(bean.getMstId());
         dto.setLatitude(bean.getPunkt().getLat());
@@ -33,7 +33,8 @@ public interface SucheMapper {
     }
 
     @AfterMapping
-    default void messstelleToMessstelleTooltipDTOAfterMapping(@MappingTarget MessstelleTooltipDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
+    default void messstelleToMessstelleTooltipDTOAfterMapping(@MappingTarget MessstelleTooltipDTO dto, Messstelle bean,
+            @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
         dto.setRealisierungsdatum(bean.getRealisierungsdatum().toString());

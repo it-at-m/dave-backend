@@ -1,5 +1,8 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
@@ -8,15 +11,10 @@ import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.services.IndexServiceUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.Context;
 import org.mockito.Mockito;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 class SucheMapperTests {
