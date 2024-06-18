@@ -69,5 +69,5 @@ dave:
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
 
-  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadbezirke.properties}
+  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
