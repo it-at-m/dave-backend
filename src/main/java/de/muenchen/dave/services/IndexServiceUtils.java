@@ -44,22 +44,6 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Liefert den Stadbezirksnamen für die Stadbezirksnummer.
-     *
-     * @param stadtbezirk die Nummer des Stadtbezirk.
-     * @return Die Bezeichnung des Stadtbezirks.
-     */
-    public static String getStadtbezirkBezeichnung(int stadtbezirk) {
-        Map<Integer, String> stadtbezirke = Stadtbezirk.getEnumattributesAsMap();
-        if (stadtbezirke.containsKey(stadtbezirk)) {
-            return stadtbezirke.get(stadtbezirk);
-        } else {
-            log.error("Es wurde kein Stadtbezirk mit der Nummer {} gefunden.", stadtbezirk);
-            return "";
-        }
-    }
-
-    /**
      * Ermittelt die Jahreszeit für ein Datum.
      *
      * @param d Datum

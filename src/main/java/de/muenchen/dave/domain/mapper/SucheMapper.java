@@ -19,7 +19,7 @@ public interface SucheMapper {
 
     MessstelleTooltipDTO messstelleToMessstelleTooltipDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle);
+    MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
 
     Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen);
 

@@ -140,7 +140,9 @@ class MessstelleReceiverMapperTests {
         expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
 
-        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData);
+        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()

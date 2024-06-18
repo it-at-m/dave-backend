@@ -167,7 +167,7 @@ class MessstelleMapperTests {
         expected.getSuchwoerter().addAll(updatedData.getCustomSuchwoerter());
         expected.setCustomSuchwoerter(updatedData.getCustomSuchwoerter());
 
-        Messstelle actual = this.mapper.updateMessstelle(bean, updatedData);
+        Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()

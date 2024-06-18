@@ -83,7 +83,7 @@ public class MessstelleReceiver {
 
     private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
-        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto);
+        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
@@ -96,7 +96,7 @@ public class MessstelleReceiver {
                 final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
                 messquerschnitte.forEach(messquerschnitt -> {
                     if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
-                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto);
+                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto, stadtbezirkMapper);
                         messquerschnittDtoDoesNotExist.set(false);
                     }
                 });

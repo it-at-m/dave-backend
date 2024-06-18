@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.*;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING/* , uses = StadtbezirkeHolder.class, injectionStrategy = InjectionStrategy.FIELD */)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleMapper {
 
     ReadMessstelleInfoDTO bean2readDto(Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
@@ -57,7 +57,7 @@ public interface MessstelleMapper {
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
+    Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
         actual.setStandort(dto.getStandort());

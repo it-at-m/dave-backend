@@ -68,3 +68,6 @@ dave:
         line-begins-with-strings: "Von:;Gesendet:"
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
+
+  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadbezirke.properties}
+

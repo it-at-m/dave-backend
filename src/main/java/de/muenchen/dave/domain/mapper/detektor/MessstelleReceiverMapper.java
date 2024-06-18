@@ -70,10 +70,10 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "geprueft", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
+    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
-    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto);
+    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
 }
