@@ -27,8 +27,9 @@ public class BelastungsplanService {
     private final RoundingService roundingService;
     private final SpitzenstundeService spitzenstundeService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(List<MeasurementValuesPerInterval> intervals, final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
-                                                                final String messstelleId, final MessstelleOptionsDTO options) {
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(List<MeasurementValuesPerInterval> intervals,
+            final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
+            final String messstelleId, final MessstelleOptionsDTO options) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
         final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
@@ -59,7 +60,7 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
         belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
         belastungsplanMessquerschnitteDTO.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
-        if(options.getMessquerschnittIds().size() == 1) {
+        if (options.getMessquerschnittIds().size() == 1) {
             final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzStelle);
             belastungsplanMessquerschnitteDTO.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
