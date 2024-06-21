@@ -12,11 +12,13 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,12 +30,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BelastungsplanServiceTest {
     @Mock
     MessstelleService messstelleService;
+    @Mock
+    SpitzenstundeService spitzenstundeService;
     private BelastungsplanService belastungsplanService;
     private RoundingService roundingService;
 
     @BeforeEach
     void setup() {
-        belastungsplanService = new BelastungsplanService(messstelleService, roundingService);
+        belastungsplanService = new BelastungsplanService(messstelleService, roundingService, spitzenstundeService);
     }
 
     @Test
@@ -89,14 +93,18 @@ class BelastungsplanServiceTest {
         expected.setTotalRad(30);
         expected.setTotalPercentSv(new BigDecimal("17.4"));
         expected.setTotalPercentGv(new BigDecimal("17.4"));
-        expected.setStrassenname("Hauptstraße 1");
+        expected.setStrassenname("Musterstraße");
         expected.setStadtbezirkNummer(1);
         expected.setMstId("13");
+        expected.setEndeUhrzeitSpitzenstunde(null);
+        expected.setStartUhrzeitSpitzenstunde(null);
 
         doReturn(getMessstelle()).when(messstelleService).readMessstelleInfo(anyString());
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
-        var result = belastungsplanService.ladeBelastungsplan(totalSumOfAllMessquerschnitte, "123", options);
+        options.setMessquerschnittIds(Set.of("1", "2"));
+        final MeasurementValuesPerInterval interval = new MeasurementValuesPerInterval();
+        var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
                 .isNotNull()

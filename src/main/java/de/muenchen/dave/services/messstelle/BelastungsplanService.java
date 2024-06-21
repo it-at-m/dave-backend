@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,15 +25,16 @@ import org.springframework.stereotype.Service;
 public class BelastungsplanService {
     private final MessstelleService messstelleService;
     private final RoundingService roundingService;
+    private final SpitzenstundeService spitzenstundeService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
-            final String messstelleId, final MessstelleOptionsDTO options) {
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(List<MeasurementValuesPerInterval> intervals, final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
+                                                                final String messstelleId, final MessstelleOptionsDTO options) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
         final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
         belastungsplanMessquerschnitteDTO.setMstId(messstelle.getMstId());
         belastungsplanMessquerschnitteDTO.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
-        belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getStandort());
+        belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getMessquerschnitte().get(0).getStrassenname());
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
             LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
             ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(roundNumberIfNeeded(sumOfMessquerschnitt.getSumKfz(), options));
@@ -57,6 +59,12 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
         belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
         belastungsplanMessquerschnitteDTO.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
+        if(options.getMessquerschnittIds().size() == 1) {
+            final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
+            final var spitzenstunde = spitzenstundeService.calculateSpitzenstunde(options.getZeitblock(), intervals, isKfzStelle);
+            belastungsplanMessquerschnitteDTO.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
+            belastungsplanMessquerschnitteDTO.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
+        }
         return belastungsplanMessquerschnitteDTO;
     }
 
