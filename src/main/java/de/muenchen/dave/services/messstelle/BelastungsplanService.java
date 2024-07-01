@@ -27,7 +27,7 @@ public class BelastungsplanService {
     private final RoundingService roundingService;
     private final SpitzenstundeService spitzenstundeService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(List<MeasurementValuesPerInterval> intervals,
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<MeasurementValuesPerInterval> intervals,
             final List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte,
             final String messstelleId, final MessstelleOptionsDTO options) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
@@ -35,7 +35,7 @@ public class BelastungsplanService {
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
         belastungsplanMessquerschnitteDTO.setMstId(messstelle.getMstId());
         belastungsplanMessquerschnitteDTO.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
-        belastungsplanMessquerschnitteDTO.setStrassenname(messstelle.getMessquerschnitte().get(0).getStrassenname());
+        belastungsplanMessquerschnitteDTO.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
             LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
             ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(roundNumberIfNeeded(sumOfMessquerschnitt.getSumKfz(), options));
@@ -67,6 +67,13 @@ public class BelastungsplanService {
             belastungsplanMessquerschnitteDTO.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
         }
         return belastungsplanMessquerschnitteDTO;
+    }
+
+    private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
+        if(messstelle.getMessquerschnitte().isEmpty()) {
+            return "";
+        }
+        return messstelle.getMessquerschnitte().get(0).getStrassenname();
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
