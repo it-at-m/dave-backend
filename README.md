@@ -56,6 +56,8 @@ Local requirements:
 4. If you start it for the first time then change ```ddl-auto``` to ```create```
 5. Run the Project with one of the scripts ```runLocal``` or ```runLocalNoSecurity```
 
+**OR** you can go straight to the [dave-frontend](https://github.com/it-at-m/dave-frontend/) and try out our [test stack](https://github.com/it-at-m/dave-frontend/tree/opensource/docker-compose2/stack) based on docker-compose.  
+
 ## License
 
 Distributed under the MIT License. See LICENSE for more information.
