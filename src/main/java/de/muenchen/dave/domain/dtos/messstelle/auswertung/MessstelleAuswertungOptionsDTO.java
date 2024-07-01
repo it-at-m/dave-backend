@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class MessstelleAuswertungOptionsDTO implements Serializable {
 
-    private List<String> jahre;
+    private List<Integer> jahre;
     private TagesTyp tagesTyp;
     private List<AuswertungsZeitraum> zeitraum;
     private List<String> mstIds;

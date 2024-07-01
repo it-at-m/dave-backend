@@ -39,15 +39,9 @@ public class AuswertungController {
     @PostMapping(value = "/messstelle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CsvDTO> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
-        //        try {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
-        auswertungService.generateAuswertung(options);
+        auswertungService.loadDataForEvaluation(options);
         log.info("CSV wurde erstellt");
-        // TODO Excel file zurückgeben
         return new ResponseEntity<>(HttpStatus.OK);
-        //        } catch (final DataNotFoundException exception) {
-        //            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
-        //        }
-
     }
 }
