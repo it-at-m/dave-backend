@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @AllArgsConstructor
@@ -70,7 +71,7 @@ public class BelastungsplanService {
     }
 
     private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        if (messstelle.getMessquerschnitte().isEmpty()) {
+        if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
             return "";
         }
         return messstelle.getMessquerschnitte().get(0).getStrassenname();
