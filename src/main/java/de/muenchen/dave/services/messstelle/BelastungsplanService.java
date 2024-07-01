@@ -70,7 +70,7 @@ public class BelastungsplanService {
     }
 
     private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        if(messstelle.getMessquerschnitte().isEmpty()) {
+        if (messstelle.getMessquerschnitte().isEmpty()) {
             return "";
         }
         return messstelle.getMessquerschnitte().get(0).getStrassenname();
