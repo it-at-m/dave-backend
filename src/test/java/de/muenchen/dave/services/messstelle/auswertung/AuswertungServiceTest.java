@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class AuswertungServiceTest {
+class AuswertungServiceTest {
 
     private final AuswertungService auswertungService = new AuswertungService(
             null,

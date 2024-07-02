@@ -4,8 +4,8 @@ import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesAggregateRequest;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
 import de.muenchen.dave.geodateneai.gen.model.InformationResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesAggregateResponse;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
 
 import java.util.HashMap;
@@ -134,7 +134,7 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return GetMesswerteTagesaggregatMessquerschnittResponse
+     * @return MeasurementValuesAggregateResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     private ResponseSpec getMesswerteTagesaggregatPerMessquerschnittRequestCreation(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
@@ -162,7 +162,7 @@ public class MesswerteApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return apiClient.invokeAPI("/messwerte/tagesaggregat/messquerschnitt", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
@@ -172,11 +172,11 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return GetMesswerteTagesaggregatMessquerschnittResponse
+     * @return MeasurementValuesAggregateResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<GetMesswerteTagesaggregatMessquerschnittResponse> getMesswerteTagesaggregatPerMessquerschnitt(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+    public Mono<MeasurementValuesAggregateResponse> getMesswerteTagesaggregatPerMessquerschnitt(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return getMesswerteTagesaggregatPerMessquerschnittRequestCreation(getMeasurementValuesAggregateRequest).bodyToMono(localVarReturnType);
     }
 
@@ -186,11 +186,11 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return ResponseEntity&lt;GetMesswerteTagesaggregatMessquerschnittResponse&gt;
+     * @return ResponseEntity&lt;MeasurementValuesAggregateResponse&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> getMesswerteTagesaggregatPerMessquerschnittWithHttpInfo(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+    public Mono<ResponseEntity<MeasurementValuesAggregateResponse>> getMesswerteTagesaggregatPerMessquerschnittWithHttpInfo(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return getMesswerteTagesaggregatPerMessquerschnittRequestCreation(getMeasurementValuesAggregateRequest).toEntity(localVarReturnType);
     }
 
@@ -212,7 +212,7 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return GetMesswerteTagesaggregatMessquerschnittResponse
+     * @return MeasurementValuesAggregateResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
     private ResponseSpec getMesswerteTagesaggregatPerMessstelleRequestCreation(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
@@ -240,7 +240,7 @@ public class MesswerteApi {
 
         String[] localVarAuthNames = new String[] {  };
 
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return apiClient.invokeAPI("/messwerte/tagesaggregat/messstelle", HttpMethod.POST, pathParams, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, localVarAuthNames, localVarReturnType);
     }
 
@@ -250,11 +250,11 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return GetMesswerteTagesaggregatMessquerschnittResponse
+     * @return MeasurementValuesAggregateResponse
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<GetMesswerteTagesaggregatMessquerschnittResponse> getMesswerteTagesaggregatPerMessstelle(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+    public Mono<MeasurementValuesAggregateResponse> getMesswerteTagesaggregatPerMessstelle(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return getMesswerteTagesaggregatPerMessstelleRequestCreation(getMeasurementValuesAggregateRequest).bodyToMono(localVarReturnType);
     }
 
@@ -264,11 +264,11 @@ public class MesswerteApi {
      * <p><b>200</b> - Tagesaggregat der Messwerte erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
      * @param getMeasurementValuesAggregateRequest The getMeasurementValuesAggregateRequest parameter
-     * @return ResponseEntity&lt;GetMesswerteTagesaggregatMessquerschnittResponse&gt;
+     * @return ResponseEntity&lt;MeasurementValuesAggregateResponse&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
      */
-    public Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> getMesswerteTagesaggregatPerMessstelleWithHttpInfo(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
-        ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse> localVarReturnType = new ParameterizedTypeReference<GetMesswerteTagesaggregatMessquerschnittResponse>() {};
+    public Mono<ResponseEntity<MeasurementValuesAggregateResponse>> getMesswerteTagesaggregatPerMessstelleWithHttpInfo(GetMeasurementValuesAggregateRequest getMeasurementValuesAggregateRequest) throws WebClientResponseException {
+        ParameterizedTypeReference<MeasurementValuesAggregateResponse> localVarReturnType = new ParameterizedTypeReference<MeasurementValuesAggregateResponse>() {};
         return getMesswerteTagesaggregatPerMessstelleRequestCreation(getMeasurementValuesAggregateRequest).toEntity(localVarReturnType);
     }
 

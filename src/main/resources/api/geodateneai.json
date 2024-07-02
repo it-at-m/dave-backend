@@ -52,22 +52,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Stadtbezirke erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Stadtbezirke erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
                 }
               }
             }
@@ -98,7 +98,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMesswerteTagesaggregatMessquerschnittResponse"
+                  "$ref": "#/components/schemas/MeasurementValuesAggregateResponse"
                 }
               }
             }
@@ -139,7 +139,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/GetMesswerteTagesaggregatMessquerschnittResponse"
+                  "$ref": "#/components/schemas/MeasurementValuesAggregateResponse"
                 }
               }
             }
@@ -332,22 +332,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "*/*": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -486,10 +486,10 @@
           "flaecheQm": {
             "type": "number"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number"
           }
         }
@@ -534,18 +534,7 @@
           }
         }
       },
-      "GetMesswerteTagesaggregatMessquerschnittResponse": {
-        "type": "object",
-        "properties": {
-          "messquerschnitte": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/MessquerschnittTagesaggregateDto"
-            }
-          }
-        }
-      },
-      "MessquerschnittTagesaggregateDto": {
+      "MeasurementValuesAggregateDto": {
         "type": "object",
         "properties": {
           "anzahlLfw": {
@@ -683,6 +672,17 @@
           "spitzenstundeRadZeitblock0024": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "MeasurementValuesAggregateResponse": {
+        "type": "object",
+        "properties": {
+          "measurementValues": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/MeasurementValuesAggregateDto"
+            }
           }
         }
       },
@@ -1012,11 +1012,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }
@@ -1081,11 +1081,11 @@
               "$ref": "#/components/schemas/MessfaehigkeitDto"
             }
           },
-          "ycoordinate": {
+          "xcoordinate": {
             "type": "number",
             "format": "double"
           },
-          "xcoordinate": {
+          "ycoordinate": {
             "type": "number",
             "format": "double"
           }

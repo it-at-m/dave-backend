@@ -11,8 +11,8 @@ import de.muenchen.dave.domain.mapper.GeodatenEaiMapper;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesAggregateRequest;
-import de.muenchen.dave.geodateneai.gen.model.GetMesswerteTagesaggregatMessquerschnittResponse;
-import de.muenchen.dave.geodateneai.gen.model.MessquerschnittTagesaggregateDto;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesAggregateDto;
+import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesAggregateResponse;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -49,13 +49,13 @@ public class AuswertungService {
         request.setTagesTyp(geodatenEaiMapper.backendToEai(options.getTagesTyp()));
         request.setZeitraeume(calculateZeitraeume(options.getZeitraum(), options.getJahre()));
 
-        Map<String, MessquerschnittTagesaggregateDto> response = loadData(request);
+        Map<String, MeasurementValuesAggregateDto> response = loadData(request);
         log.info(response.toString());
 
     }
 
-    protected Map<String, MessquerschnittTagesaggregateDto> loadData(final GetMeasurementValuesAggregateRequest request) {
-        final Mono<ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse>> response;
+    protected Map<String, MeasurementValuesAggregateDto> loadData(final GetMeasurementValuesAggregateRequest request) {
+        final Mono<ResponseEntity<MeasurementValuesAggregateResponse>> response;
         if (request.getMessquerschnittIdsPerMessstelle().keySet().size() == 1) {
             response = messwerteApi.getMesswerteTagesaggregatPerMessquerschnittWithHttpInfo(
                     request);
@@ -63,23 +63,23 @@ public class AuswertungService {
             response = messwerteApi.getMesswerteTagesaggregatPerMessstelleWithHttpInfo(
                     request);
         }
-        final ResponseEntity<GetMesswerteTagesaggregatMessquerschnittResponse> block = response.block();
+        final ResponseEntity<MeasurementValuesAggregateResponse> block = response.block();
         if (ObjectUtils.isEmpty(block)) {
             log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final GetMesswerteTagesaggregatMessquerschnittResponse body = block.getBody();
+        final MeasurementValuesAggregateResponse body = block.getBody();
         if (ObjectUtils.isEmpty(body)) {
-            log.error("Body der Anfrage <GetMesswerteTagesaggregatMessquerschnittResponse> ist leer.");
+            log.error("Body der Anfrage <MeasurementValuesAggregateResponse> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final Map<String, MessquerschnittTagesaggregateDto> messquerschnitte = body.getMessquerschnitte();
-        if (ObjectUtils.isEmpty(messquerschnitte)) {
-            log.error("Body der Anfrage <GetMesswerteTagesaggregatMessquerschnittResponse> enthält keine Messquerschnitte.");
+        final Map<String, MeasurementValuesAggregateDto> measurementValues = body.getMeasurementValues();
+        if (ObjectUtils.isEmpty(measurementValues)) {
+            log.error("Body der Anfrage <MeasurementValuesAggregateResponse> enthält keine Messwerte.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
 
-        return messquerschnitte;
+        return measurementValues;
     }
 
     protected Map<String, Set<String>> calculateMessquerschnittIdsPerMessstelle(final List<String> mstIds, final List<String> mqIds) {
