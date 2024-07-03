@@ -39,13 +39,13 @@ public class StadtbezirkMapperTest {
 
     @Test
     public void testBezeichnungOfWithExistingStadtbezirk() {
-        int stadtbezirkNr = fakerInstance.number().numberBetween(1, 26);
+        final int stadtbezirkNr = fakerInstance.number().numberBetween(1, 26);
         Assertions.assertThat(stadtbezirkMapper.bezeichnungOf(stadtbezirkNr)).isNotNull().isNotEmpty();
     }
 
     @Test
     public void testBezeichnungOfWithoutStadtbezirk() {
-        int stadtbezirkNr = 0;
+        final int stadtbezirkNr = 0;
         Assertions.assertThat(stadtbezirkMapper.bezeichnungOf(stadtbezirkNr)).isNotNull().isEmpty();
     }
 }

@@ -24,7 +24,7 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleTooltipDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
         final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkMapper);
 
@@ -47,7 +47,7 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleKarteDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
         final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkMapper);
         final MessstelleKarteDTO expected = new MessstelleKarteDTO();

@@ -161,7 +161,7 @@ public final class SuchwortUtil {
         return knotenarmeSuchworte;
     }
 
-    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, StadtbezirkMapper stadtbezirkMapper) {
+    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, final StadtbezirkMapper stadtbezirkMapper) {
         final Set<String> suchwoerter = new HashSet<>();
         if (ObjectUtils.isNotEmpty(bean.getStadtbezirkNummer())) {
             final String stadtbezirk = stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer());

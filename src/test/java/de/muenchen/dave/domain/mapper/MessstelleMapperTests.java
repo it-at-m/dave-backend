@@ -63,7 +63,7 @@ class MessstelleMapperTests {
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         tooltip.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
-        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
 
         Assertions.assertThat(this.mapper.bean2readDto(bean, stadtbezirkMapper))
@@ -101,7 +101,7 @@ class MessstelleMapperTests {
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
         expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2EditMessfaehigkeitDto(bean.getMessfaehigkeiten()));
 
-        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
 
         Assertions.assertThat(this.mapper.bean2editDto(bean, stadtbezirkMapper))
@@ -113,7 +113,7 @@ class MessstelleMapperTests {
     @Test
     void testUpdateMessstelle() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
-        StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
 
         final EditMessstelleDTO updatedData = new EditMessstelleDTO();
@@ -170,7 +170,7 @@ class MessstelleMapperTests {
         expected.getSuchwoerter().addAll(updatedData.getCustomSuchwoerter());
         expected.setCustomSuchwoerter(updatedData.getCustomSuchwoerter());
 
-        Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
+        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
