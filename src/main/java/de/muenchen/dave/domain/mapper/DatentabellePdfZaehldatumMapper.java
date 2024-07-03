@@ -7,7 +7,12 @@ import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.*;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Mappings;
 
 /**
  * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann.

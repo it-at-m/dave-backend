@@ -8,8 +8,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
-
-import org.mapstruct.*;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
 /**
  * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die

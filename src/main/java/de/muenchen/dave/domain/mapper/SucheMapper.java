@@ -8,8 +8,11 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import java.util.List;
 import java.util.Set;
-
-import org.mapstruct.*;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SucheMapper {
