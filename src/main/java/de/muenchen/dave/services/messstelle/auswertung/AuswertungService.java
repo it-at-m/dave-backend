@@ -89,7 +89,7 @@ public class AuswertungService {
             result.put(mstIds.get(0), Set.copyOf(mqIds));
         } else {
             // per Mst
-            mstIds.forEach(mstId -> result.put(mstId, messstelleService.getMessquerschnittNummern(mstId)));
+            mstIds.forEach(mstId -> result.put(mstId, messstelleService.getMessquerschnittIds(mstId)));
         }
         return result;
     }
