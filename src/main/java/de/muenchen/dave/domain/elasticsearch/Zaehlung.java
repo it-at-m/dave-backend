@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ public class Zaehlung {
     String id;
 
     @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.uuuu")
+    @JsonFormat(pattern = "dd.MM.yyyy")
     LocalDate datum;
 
     String jahr;

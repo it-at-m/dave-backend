@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailReceiveService {
 
-    private static final String DUMMY_EMAIL_ADDRESS = "dave-dummy@muenchen.de";
+    private static final String DUMMY_EMAIL_ADDRESS = "dave@dummy.de";
     private final ChatMessageService chatMessageService;
     private final ProcessEmailService processEmailService;
     @Value("${dave.email.address}")

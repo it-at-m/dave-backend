@@ -1,0 +1,353 @@
+{
+  "id": "aab83dc6-e2c3-4aeb-8194-165c4badeb0f",
+  "nummer": "92301",
+  "stadtbezirk": "Neuhausen-Nymphenburg",
+  "stadtbezirkNummer": 9,
+  "punkt": {
+    "lat": 48.1638493,
+    "lon": 11.5069664
+  },
+  "letzteZaehlungMonatNummer": 4,
+  "letzteZaehlungMonat": "Oktober",
+  "letzteZaehlungJahr": 2023,
+  "grundLetzteZaehlung": "",
+  "suchwoerter": [
+    "Neuhausen",
+    "Nymphenburg",
+    "Neuhausen-Nymphenburg"
+  ],
+  "zaehlungen": [
+    {
+      "id": "5ca0b354-4b68-48f2-85ef-f054a4fd1710",
+      "datum": "05.10.2023",
+      "jahr": "2023",
+      "monat": "Oktober",
+      "jahreszeit": "Herbst",
+      "zaehlart": "N",
+      "punkt": {
+        "lat": 48.1638493,
+        "lon": 11.5069664
+      },
+      "tagesTyp": "Werktag",
+      "projektNummer": "91005",
+      "projektName": "VZ Nymphenburg/Landshuter Allee",
+      "kreuzungsname": "Wintrichring - Menzinger Str. - Maria-Ward-Str.",
+      "sonderzaehlung": false,
+      "kreisverkehr": false,
+      "kategorien": [
+        "PKW",
+        "GV",
+        "PKW_EINHEIT",
+        "BUS",
+        "GV_P",
+        "SV_P",
+        "LZ",
+        "KRAD",
+        "KFZ",
+        "LKW",
+        "SV",
+        "RAD"
+      ],
+      "status": "ACTIVE",
+      "zaehlsituation": "",
+      "zaehlsituationErweitert": "",
+      "zaehlIntervall": 15,
+      "wetter": "SUNNY",
+      "zaehldauer": "DAUER_2_X_4_STUNDEN",
+      "quelle": "MANUALLY",
+      "suchwoerter": [
+        "Kurzzeiterhebung (6 bis 10 Uhr; 15 bis 19 Uhr)",
+        "Oktober",
+        "Werktag",
+        "vierarmig",
+        "Kurzzeiterhebung",
+        "N",
+        "Herbst",
+        "05.10.2023",
+        "Menzinger Str.",
+        "Wintrichring",
+        "Wintrichring - Menzinger Str. - Maria-Ward-Str.",
+        "2x4 Stunden",
+        "2x4Stunden",
+        "2x4h",
+        "Kurzzeiterhebung (2x4h)",
+        "Standardzählung",
+        "Kreuzung",
+        "Sonne",
+        "Normal",
+        "Donnerstag",
+        "2*4 Stunden",
+        "sonnig",
+        "Maria-Ward-Str.",
+        "2*4h",
+        "2*4Stunden",
+        "VZ Nymphenburg/Landshuter Allee",
+        "2023"
+      ],
+      "pkwEinheit": {
+        "pkw": 1,
+        "lkw": 2,
+        "lastzuege": 4,
+        "busse": 3.5,
+        "kraftraeder": 0.5,
+        "fahrradfahrer": 0.3
+      },
+      "geographie": [
+        "N",
+        "Standardzählung",
+        "Normal"
+      ],
+      "knotenarme": [
+        {
+          "nummer": 2,
+          "strassenname": "Menzinger Str."
+        },
+        {
+          "nummer": 4,
+          "strassenname": "Menzinger Str."
+        },
+        {
+          "nummer": 1,
+          "strassenname": "Wintrichring"
+        },
+        {
+          "nummer": 3,
+          "strassenname": "Maria-Ward-Str."
+        }
+      ],
+      "fahrbeziehungen": [
+        {
+          "id": "21ec9b5f-d3fc-4050-ad30-f751610bd421",
+          "isKreuzung": true,
+          "von": 1,
+          "nach": 2,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "aec2c1a1-0b14-4b28-88c8-4a5f91f20b2d",
+          "isKreuzung": true,
+          "von": 2,
+          "nach": 1,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "cbe64af9-353c-41f9-9d46-71dd60c5dabc",
+          "isKreuzung": true,
+          "von": 3,
+          "nach": 4,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "383da2f6-c453-4ce7-a901-e83074491020",
+          "isKreuzung": true,
+          "von": 3,
+          "nach": 2,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "79e8d31b-9feb-4335-aea9-dc7b95c564ce",
+          "isKreuzung": true,
+          "von": 1,
+          "nach": 3,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "112ede96-53f8-4169-ada8-11dda8093a5e",
+          "isKreuzung": true,
+          "von": 2,
+          "nach": 4,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "e7be5963-709d-4aa7-ac15-11a8766de7bc",
+          "isKreuzung": true,
+          "von": 4,
+          "nach": 1,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "e52613c7-e6fa-4350-8a2c-749f83afab90",
+          "isKreuzung": true,
+          "von": 4,
+          "nach": 2,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "1d62bcd3-ead3-4948-9495-b7ad17e30757",
+          "isKreuzung": true,
+          "von": 1,
+          "nach": 4,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "e2e3fa3a-6354-41b1-bd3b-2956aeb656ae",
+          "isKreuzung": true,
+          "von": 4,
+          "nach": 3,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "19cb7fec-7953-41c2-8021-4418a8009875",
+          "isKreuzung": true,
+          "von": 2,
+          "nach": 3,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        },
+        {
+          "id": "80ef96b5-24bc-474d-a759-dd638cf91cfb",
+          "isKreuzung": true,
+          "von": 3,
+          "nach": 1,
+          "vonknotvonstrnr": "0",
+          "nachknotvonstrnr": "0",
+          "von_strnr": "0",
+          "vonknotennachstrnr": "0",
+          "nachknotnachstrnr": "0",
+          "nach_strnr": "0",
+          "hochrechnungsfaktor": {
+            "matrix": "HA3",
+            "kfz": 1.84,
+            "sv": 2.11,
+            "gv": 2.11,
+            "active": false
+          }
+        }
+      ],
+      "unreadMessagesMobilitaetsreferat": false,
+      "unreadMessagesDienstleister": true
+    }
+  ],
+  "sichtbarDatenportal": true
+}
