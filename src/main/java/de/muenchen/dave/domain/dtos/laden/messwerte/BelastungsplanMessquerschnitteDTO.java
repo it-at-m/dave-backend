@@ -6,6 +6,7 @@ package de.muenchen.dave.domain.dtos.laden.messwerte;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 import lombok.Data;
 
@@ -21,4 +22,6 @@ public class BelastungsplanMessquerschnitteDTO implements Serializable {
     private Integer totalRad;
     private BigDecimal totalPercentSv;
     private BigDecimal totalPercentGv;
+    private LocalTime startUhrzeitSpitzenstunde;
+    private LocalTime endeUhrzeitSpitzenstunde;
 }

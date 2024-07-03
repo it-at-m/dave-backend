@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDT
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -115,7 +116,7 @@ public class GenerateCsvMstService {
         }
         metaData.append(SEMIKOLON);
         if (StringUtils.isNotEmpty(options.getTagesTyp())) {
-            metaData.append(options.getTagesTyp());
+            metaData.append(TagesTyp.valueOf(options.getTagesTyp()).getBeschreibung());
         }
         metaData.append(SEMIKOLON);
         // ausgewählte mq's

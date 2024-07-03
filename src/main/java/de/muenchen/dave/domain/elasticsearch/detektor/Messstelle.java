@@ -56,4 +56,5 @@ public class Messstelle {
     List<String> suchwoerter;
     List<String> customSuchwoerter;
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
+    List<Messfaehigkeit> messfaehigkeiten = new ArrayList<>();
 }

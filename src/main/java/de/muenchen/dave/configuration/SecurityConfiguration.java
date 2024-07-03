@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
@@ -61,12 +62,15 @@ public class SecurityConfiguration {
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
+                // support frames for same-origin (e.g. h2-console)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                // exlucde csrf for h2-console
+                .csrf().ignoringAntMatchers("/h2-console/**")
+                .and()
                 .oauth2ResourceServer()
                 .jwt()
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
                 .jwtAuthenticationConverter(this.customJwtAuthenticationConverter);
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
         return http.build();
     }
 

@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
@@ -33,6 +34,11 @@ public class MessstelleService {
     private final MessstelleMapper messstelleMapper;
     private static final String KFZ = "KFZ";
 
+    public Messstelle getMessstelle(final String messstelleId) {
+        log.debug("#getMessstelle");
+        return messstelleIndexService.findByIdOrThrowException(messstelleId);
+    }
+
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
@@ -42,6 +48,8 @@ public class MessstelleService {
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         log.debug("#getMessstelleToEdit");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        byIdOrThrowException.setMessfaehigkeiten(
+                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
         return messstelleMapper.bean2editDto(byIdOrThrowException);
     }
 
