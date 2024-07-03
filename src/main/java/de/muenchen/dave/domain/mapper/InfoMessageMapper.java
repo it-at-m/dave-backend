@@ -6,9 +6,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface InfoMessageMapper {
 
     InfoMessage dto2bean(InfoMessageDTO dto);

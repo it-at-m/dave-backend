@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.*;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleReceiverMapper {
 
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);

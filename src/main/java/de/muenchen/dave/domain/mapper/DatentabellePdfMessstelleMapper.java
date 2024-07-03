@@ -6,18 +6,14 @@ import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Mappings;
+import org.mapstruct.*;
 
 /**
  * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann.
  * Mustache ist eine Sprache für Templates aus denen die für die PDF benötigten HTML Strings
  * entstehen.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DatentabellePdfMessstelleMapper {
 
     String UHRZEIT_23_59 = "23:59";

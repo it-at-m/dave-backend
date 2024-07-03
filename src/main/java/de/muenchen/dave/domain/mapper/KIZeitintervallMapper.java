@@ -8,20 +8,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+
+import org.mapstruct.*;
 
 /**
  * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die
  * ONNX-Vorhersage.
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class KIZeitintervallMapper {
 
     private static final String STARTTIMESTAMP_TO_STARTSTUNDE = "StartTimestampToStartStunde";
