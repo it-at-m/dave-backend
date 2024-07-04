@@ -5,9 +5,10 @@ import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import java.util.List;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DienstleisterMapper {
 
     Dienstleister dto2bean(DienstleisterDTO dto);

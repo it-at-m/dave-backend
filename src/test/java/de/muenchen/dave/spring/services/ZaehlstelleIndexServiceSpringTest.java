@@ -20,6 +20,7 @@ import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
@@ -51,6 +52,9 @@ public class ZaehlstelleIndexServiceSpringTest {
 
     @MockBean
     private ZaehlstelleMapper zaehlstelleMapper;
+
+    @MockBean
+    private StadtbezirkMapper stadtbezirkMapper;
 
     @Test
     public void getOpenZaehlungen() throws BrokenInfrastructureException {
@@ -101,7 +105,8 @@ public class ZaehlstelleIndexServiceSpringTest {
         final BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
         final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
 
-        when(zaehlstelleMapper.bearbeiteDto2bean(dto)).thenReturn(zaehlstelle1);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing");
+        when(zaehlstelleMapper.bearbeiteDto2bean(dto, stadtbezirkMapper)).thenReturn(zaehlstelle1);
         when(zaehlstelleIndex.save(any())).thenReturn(zaehlstelle1);
 
         String id = this.service.erstelleZaehlstelle(dto);

@@ -1,0 +1,2 @@
+spring.jpa.defer-datasource-initialization: true
+spring.sql.init.data-locations: classpath:/data/sample-data.sql

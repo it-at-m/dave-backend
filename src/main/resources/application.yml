@@ -55,7 +55,7 @@ dave:
         selfserviceportal: https://dave-selfserviceportal
     receiver:
       # Server Einstellungen
-      hostname: <IMAP-Server-URL> 
+      hostname: <IMAP-Server-URL>
       protocol: imap
       port: 993
       # Default Update-Intervall in Millisekunden für den Email-Abruf
@@ -63,8 +63,11 @@ dave:
       folder-success: Erfolgreich
       folder-error: Fehlerhaft
       cut-email-body:
-      # Antwortemails ab hier bereinigen. Semikolon ist ein ODER
+        # Antwortemails ab hier bereinigen. Semikolon ist ein ODER
         line-contains-strings: "Parameter1;Parameter2;-----Ursprüngliche Nachricht-----"
         line-begins-with-strings: "Von:;Gesendet:"
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
+
+  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
+

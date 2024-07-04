@@ -13,8 +13,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ZeitintervallMapper {
 
     /**

@@ -14,8 +14,8 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.time.LocalDate;
@@ -26,32 +26,34 @@ import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
 
-    ReadMessstelleInfoDTO bean2readDto(Messstelle bean);
+    ReadMessstelleInfoDTO bean2readDto(Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
-    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean) {
+    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
-    EditMessstelleDTO bean2editDto(Messstelle bean);
+    EditMessstelleDTO bean2editDto(Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
-    default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean) {
+    default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
     @Mapping(target = "id", ignore = true)
@@ -70,19 +72,19 @@ public interface MessstelleMapper {
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "messfaehigkeiten", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto);
+    Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
         actual.setStandort(dto.getStandort());
     }
 
     @AfterMapping
-    default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto) {
+    default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         if (!MessstelleStatus.IN_PLANUNG.equals(actual.getStatus())) {
             actual.setGeprueft(true);
         }
         // Suchworte setzen
-        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual);
+        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual, stadtbezirkMapper);
 
         actual.setSuchwoerter(new ArrayList<>());
         if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
@@ -134,9 +136,9 @@ public interface MessstelleMapper {
     List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
 
     @AfterMapping
-    default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean) {
+    default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirkNummer(String.valueOf(bean.getStadtbezirkNummer()));
-        dto.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
     List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);

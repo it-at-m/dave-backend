@@ -11,8 +11,9 @@ import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleOptionsmenuMapper {
     NichtPlausibleTageResponseDTO requestToResponse(NichtPlausibleTageDto nichtPlausibleTageDto);
 
