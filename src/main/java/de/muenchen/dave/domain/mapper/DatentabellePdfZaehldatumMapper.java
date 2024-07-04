@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
@@ -18,7 +19,7 @@ import org.mapstruct.Mappings;
  * Mustache ist eine Sprache für Templates aus denen die für die PDF benötigten HTML Strings
  * entstehen.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DatentabellePdfZaehldatumMapper {
 
     String UHRZEIT_23_59 = "23:59";

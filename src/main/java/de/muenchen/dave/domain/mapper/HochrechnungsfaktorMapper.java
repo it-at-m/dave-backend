@@ -3,8 +3,9 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface HochrechnungsfaktorMapper {
 
     de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor dto2beanElastic(HochrechnungsfaktorDTO dto);

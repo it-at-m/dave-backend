@@ -4,8 +4,9 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LadeMesswerteMapper {
 
     @Mapping(target = "type", constant = "")

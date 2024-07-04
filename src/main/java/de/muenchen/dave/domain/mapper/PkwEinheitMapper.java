@@ -3,8 +3,9 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PkwEinheitMapper {
 
     de.muenchen.dave.domain.PkwEinheit bearbeiteDto2entity(PkwEinheitDTO dto);

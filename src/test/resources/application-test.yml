@@ -60,3 +60,4 @@ dave:
   email:
     address: dave-dummy@muenchen.de
     password: dummy
+  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}

@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.mapper.detektor;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
@@ -16,15 +17,17 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleReceiverMapper {
 
-    Messstelle createMessstelle(MessstelleDto dto);
+    Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
 
@@ -35,7 +38,7 @@ public interface MessstelleReceiverMapper {
     List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
-    default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto) {
+    default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
@@ -45,7 +48,7 @@ public interface MessstelleReceiverMapper {
         }
 
         // Suchworte setzen
-        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean);
+        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper);
 
         bean.setSuchwoerter(new ArrayList<>());
         if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
@@ -87,10 +90,10 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "geprueft", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto);
+    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
-    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto);
+    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
 }
