@@ -61,12 +61,15 @@ public class SecurityConfiguration {
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
+                // support frames for same-origin (e.g. h2-console)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                // exlucde csrf for h2-console
+                .csrf().ignoringAntMatchers("/h2-console/**")
+                .and()
                 .oauth2ResourceServer()
                 .jwt()
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
                 .jwtAuthenticationConverter(this.customJwtAuthenticationConverter);
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
         return http.build();
     }
 
