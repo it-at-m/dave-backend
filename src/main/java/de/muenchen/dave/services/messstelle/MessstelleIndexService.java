@@ -29,6 +29,12 @@ public class MessstelleIndexService {
         return messstelleIndex.findByMstId(messstellenNummer);
     }
 
+    public Messstelle findByMstIdOrThrowException(final String messstellenNummer) {
+        log.debug("Zugriff auf #findByMstIdOrThrowException");
+        return this.messstelleIndex.findByMstId(messstellenNummer)
+                .orElseThrow(() -> new ResourceNotFoundException("Die gesuchte Messstelle wurde nicht gefunden."));
+    }
+
     public Messstelle findByIdOrThrowException(final String messstelleId) {
         log.debug("Zugriff auf #findByIdOrThrowException");
         return this.messstelleIndex.findById(messstelleId)

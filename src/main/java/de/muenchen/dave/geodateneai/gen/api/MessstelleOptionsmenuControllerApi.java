@@ -54,8 +54,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -92,8 +92,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return NichtPlausibleTageDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -106,8 +106,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return ResponseEntity&lt;NichtPlausibleTageDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -120,8 +120,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Holt alle nicht Plausiblen Tage.
      * 
-     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Nicht Plausible Tage erfolgreich abgefragt.
      * @param messstelleId The messstelleId parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -132,8 +132,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
      * @return ValidWochentageInPeriodDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -170,8 +170,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
      * @return ValidWochentageInPeriodDto
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -184,8 +184,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
      * @return ResponseEntity&lt;ValidWochentageInPeriodDto&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -198,8 +198,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - Valide Wochentage im Zeitraum konnten ermittelt werden
      * @param validWochentageInPeriodRequestDto The validWochentageInPeriodRequestDto parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -210,8 +210,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -248,8 +248,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ChosenTagesTypValidDTO
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -262,8 +262,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseEntity&lt;ChosenTagesTypValidDTO&gt;
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API
@@ -276,8 +276,8 @@ public class MessstelleOptionsmenuControllerApi {
     /**
      * Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist
      * 
-     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * <p><b>500</b> - Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.
+     * <p><b>200</b> - TagesTyp erfolgreich validiert
      * @param chosenTagesTypValidRequestDto The chosenTagesTypValidRequestDto parameter
      * @return ResponseSpec
      * @throws WebClientResponseException if an error occurs while attempting to invoke the API

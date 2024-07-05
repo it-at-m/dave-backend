@@ -74,8 +74,8 @@ public class MessstelleService {
         return messstelleMapper.bean2overviewDto(messstellen);
     }
 
-    public Set<String> getMessquerschnittNummern(final String messstelleId) {
-        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+    public Set<String> getMessquerschnittIds(final String mstId) {
+        final Messstelle messstelle = messstelleIndexService.findByMstIdOrThrowException(mstId);
         final Set<String> result = new HashSet<>();
         messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
         return result;
