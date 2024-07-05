@@ -7,7 +7,6 @@ package de.muenchen.dave.domain.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-
 @AllArgsConstructor
 @Getter
 public enum ZaehldatenIntervall {

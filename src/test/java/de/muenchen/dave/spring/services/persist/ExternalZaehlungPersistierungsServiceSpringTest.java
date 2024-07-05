@@ -33,13 +33,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-
-@SpringBootTest(
-        classes = {DaveBackendApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-                "refarch.gracefulshutdown.pre-wait-seconds=0"})
-@ActiveProfiles(profiles = {SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE})
+@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
+        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 class ExternalZaehlungPersistierungsServiceSpringTest {
 
@@ -86,7 +83,8 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
 
         when(this.zaehlstelleIndex.findAllByStatus(anyString(), any())).thenReturn(new PageImpl<>(indexResult));
 
-        final List<ExternalZaehlungDTO> zaehlungenForExternal = this.externalZaehlungPersistierungsService.getZaehlungenForExternal(zst.getZaehlungen().get(0).getDienstleisterkennung(), false);
+        final List<ExternalZaehlungDTO> zaehlungenForExternal = this.externalZaehlungPersistierungsService
+                .getZaehlungenForExternal(zst.getZaehlungen().get(0).getDienstleisterkennung(), false);
         assertThat(zaehlungenForExternal.size(), is(3));
         assertThat(zaehlungenForExternal.get(0).getStatus(), is(Status.INSTRUCTED.name()));
         assertThat(zaehlungenForExternal.get(1).getStatus(), is(Status.CORRECTION.name()));

@@ -4,16 +4,6 @@
  */
 package de.muenchen.dave.configuration.nfcconverter;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.IteratorUtils;
-import org.apache.commons.io.IOUtils;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,7 +14,15 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.Part;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Wrapper für HttpServletRequest, der NFC-Konvertierung durchführt.
@@ -34,14 +32,11 @@ import java.util.Set;
 @Slf4j
 public class NfcRequest extends HttpServletRequestWrapper implements HttpServletRequest {
 
-    private Map<String, String[]> params;
-
-    private Cookie[] cookies;
-
-    private Map<String, List<String>> headers;
-
     @SuppressWarnings("unused")
-    private Set<String> contentTypes;
+    private final Set<String> contentTypes;
+    private Map<String, String[]> params;
+    private Cookie[] cookies;
+    private Map<String, List<String>> headers;
 
     public NfcRequest(final HttpServletRequest request, final Set<String> contentTypes) {
         super(request);
@@ -50,6 +45,7 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
         this.headers = null;
         this.contentTypes = contentTypes;
     }
+
     private void convert() {
         if (params != null) {
             return;
@@ -135,7 +131,7 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Only the username is converted to nfc. Password won't be touched!
      */
     @Override

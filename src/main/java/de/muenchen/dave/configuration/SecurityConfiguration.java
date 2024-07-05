@@ -12,13 +12,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
-
 
 /**
  * The central class for configuration of all security aspects.
@@ -46,9 +46,9 @@ public class SecurityConfiguration {
                 .antMatchers(
                         "/lade-auswertung-spitzenstunde",
                         "/lade-auswertung-zaehlstellen-koordinate",
-                        "/lade-auswertung-visum"
-                ).permitAll()
-                // allow access to /actuator/info
+                        "/lade-auswertung-visum")
+                .permitAll()
+                // allow access to /actuator/infoZaehlungStatusUpdater
                 .antMatchers("/actuator/info").permitAll()
                 // allow access to /actuator/health for OpenShift Health Check
                 .antMatchers("/actuator/health").permitAll()
@@ -58,7 +58,14 @@ public class SecurityConfiguration {
                 .antMatchers("/actuator/health/readiness").permitAll()
                 // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
                 .antMatchers("/actuator/metrics").permitAll()
+                // h2-console
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**").authenticated()
+                .and()
+                // support frames for same-origin (e.g. h2-console)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                // exlucde csrf for h2-console
+                .csrf().ignoringAntMatchers("/h2-console/**")
                 .and()
                 .oauth2ResourceServer()
                 .jwt()
@@ -68,8 +75,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(final ClientRegistrationRepository clientRegistrationRepository,
-                                                                                                  final OAuth2AuthorizedClientService authorizedClientService) {
+    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
+            final ClientRegistrationRepository clientRegistrationRepository,
+            final OAuth2AuthorizedClientService authorizedClientService) {
 
         final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
                 .builder()
@@ -78,8 +86,7 @@ public class SecurityConfiguration {
 
         final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
                 clientRegistrationRepository,
-                authorizedClientService
-        );
+                authorizedClientService);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
         return authorizedClientManager;

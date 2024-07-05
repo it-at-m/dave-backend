@@ -16,7 +16,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 
-
 public class EmailAddressServiceTest {
 
     private final EmailAddressService emailAddressService;

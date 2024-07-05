@@ -1,15 +1,14 @@
 package de.muenchen.dave.domain;
 
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import java.util.List;
 
 @Entity
 // Definition of getter, setter, ...

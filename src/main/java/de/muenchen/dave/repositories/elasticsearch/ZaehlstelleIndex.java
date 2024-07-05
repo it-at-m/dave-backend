@@ -2,51 +2,44 @@ package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-import java.util.List;
-import java.util.Optional;
-
 public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteAll();
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteAll(Iterable<? extends Zaehlstelle> var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void deleteById(String var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     void delete(Zaehlstelle var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     <S extends Zaehlstelle> S save(S var1);
 
-    @CacheEvict(value = {CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
+    @CacheEvict(value = { CachingConfiguration.SUCHE_ZAEHLSTELLE, CachingConfiguration.SUCHE_ZAEHLSTELLE_DATENPORTAL,
             CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO},
-            allEntries = true)
+            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
     <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1);
 
     Optional<Zaehlstelle> findById(String var1);

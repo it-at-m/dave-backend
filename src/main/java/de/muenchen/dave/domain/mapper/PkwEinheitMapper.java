@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import org.mapstruct.Mapper;
 
-
 @Mapper(componentModel = "spring")
 public interface PkwEinheitMapper {
 

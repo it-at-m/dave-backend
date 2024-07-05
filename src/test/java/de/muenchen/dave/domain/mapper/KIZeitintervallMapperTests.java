@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.KIZeitintervall;
-import de.muenchen.dave.domain.mapper.KIZeitintervallMapperImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -25,14 +24,14 @@ public class KIZeitintervallMapperTests {
         LocalDateTime timeStamp = LocalDateTime.of(2020, 6, 10, 5, 15);
 
         Zeitintervall zeitintervall = Zeitintervall.builder()
-            .pkw(1)
-            .lkw(2)
-            .lastzuege(30)
-            .busse(4)
-            .kraftraeder(5)
-            .fahrradfahrer(6)
-            .startUhrzeit(timeStamp)
-            .build();
+                .pkw(1)
+                .lkw(2)
+                .lastzuege(30)
+                .busse(4)
+                .kraftraeder(5)
+                .fahrradfahrer(6)
+                .startUhrzeit(timeStamp)
+                .build();
 
         // Act
         KIZeitintervall kiZeitIntervall = mapper.zeitintervallToKIZeitintervall(zeitintervall);
@@ -58,8 +57,8 @@ public class KIZeitintervallMapperTests {
         LocalDateTime timeStamp = LocalDateTime.of(1979, 6, 10, 5, 15);
 
         Zeitintervall zeitintervall = Zeitintervall.builder()
-            .startUhrzeit(timeStamp)
-            .build();
+                .startUhrzeit(timeStamp)
+                .build();
 
         // Act
         KIZeitintervall kiZeitIntervall = mapper.zeitintervallToKIZeitintervall(zeitintervall);

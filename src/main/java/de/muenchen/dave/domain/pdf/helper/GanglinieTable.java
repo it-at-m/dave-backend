@@ -1,9 +1,7 @@
 package de.muenchen.dave.domain.pdf.helper;
 
-import lombok.Data;
-
 import java.util.List;
-
+import lombok.Data;
 
 @Data
 public class GanglinieTable {

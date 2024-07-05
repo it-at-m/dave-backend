@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class FahrbeziehungUtilTest {
 
     @Test
@@ -42,7 +41,6 @@ class FahrbeziehungUtilTest {
         fahrbeziehungKreuzung2nach2.setVon(2);
         fahrbeziehungKreuzung2nach2.setNach(2);
         ladeZaehlung.getFahrbeziehungen().add(fahrbeziehungKreuzung2nach2);
-
 
         final BearbeiteFahrbeziehungDTO fahrbeziehungKreuzung2nach3 = new BearbeiteFahrbeziehungDTO();
         fahrbeziehungKreuzung2nach3.setIsKreuzung(true);

@@ -66,7 +66,6 @@ public class SuchwortUtilTests {
                 "Tageszählung", "Ganztageszählung", "Tag", "24-Stundenzählung", "24Stundenzählung", "24h", "24Stunden",
                 "Knotenarm 1", "Knotenarm 2", "Querschnitt", "zweiarmig");
 
-
         final Set<String> suchworte = SuchwortUtil.generateSuchworteOfZaehlung(zaehlung);
         assertThat(suchworte, containsInAnyOrder(expected.toArray(new String[0])));
     }

@@ -4,16 +4,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import java.time.LocalDate;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import java.time.LocalDate;
 
 @Entity
 // Definition of getter, setter, ...

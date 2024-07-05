@@ -23,7 +23,6 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 public class ZeitintervallZeitblockSummationUtilTest {
 
     private List<Zeitintervall> zeitintervalle;
@@ -166,8 +165,8 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
     @Test
     public void getSummenForFahrbeziehung() {
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall =
-                ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(zeitintervalle);
+        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
+                .createByIntervallGroupedZeitintervalle(zeitintervalle);
         final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(1);
@@ -177,8 +176,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Fahrbeziehung.class, Map.class),
                 ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
-                List.class
-        );
+                List.class);
 
         // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
         assertThat(result.size(), is(Zeitblock.values().length - 2));
@@ -242,8 +240,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
-                Optional.class
-        );
+                Optional.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -273,8 +270,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, fahrbeziehung, zeitintervalle12),
-                Optional.class
-        );
+                Optional.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -304,8 +300,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, fahrbeziehung, zeitintervalle12),
-                Optional.class
-        );
+                Optional.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -335,8 +330,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, fahrbeziehung, zeitintervalle12.subList(0, 7)),
-                Optional.class
-        );
+                Optional.class);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -366,8 +360,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, fahrbeziehung, zeitintervalle12.subList(0, 16)),
-                Optional.class
-        );
+                Optional.class);
 
         assertThat(result.isPresent(), is(false));
 
@@ -384,8 +377,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
@@ -395,8 +387,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
@@ -406,8 +397,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
@@ -417,8 +407,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
@@ -428,8 +417,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
@@ -439,8 +427,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(false));
 
         startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
@@ -450,8 +437,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
         startEndeUhrzeit.setStartUhrzeit(null);
@@ -461,8 +447,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
                 ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class
-        );
+                Boolean.class);
         assertThat(result, is(true));
 
     }
@@ -472,14 +457,12 @@ public class ZeitintervallZeitblockSummationUtilTest {
         // Zeitintervalle von 3:15 bis 4:45
         List<Zeitintervall> zeitintervalle = zeitintervalle12.subList(13, 19);
 
-        ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit result =
-                TestUtils.privateStaticMethodCall(
-                        "getStartAndEndeuhrzeit",
-                        ZeitintervallZeitblockSummationUtil.class,
-                        ArrayUtils.toArray(List.class),
-                        ArrayUtils.toArray(zeitintervalle),
-                        ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class
-                );
+        ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit result = TestUtils.privateStaticMethodCall(
+                "getStartAndEndeuhrzeit",
+                ZeitintervallZeitblockSummationUtil.class,
+                ArrayUtils.toArray(List.class),
+                ArrayUtils.toArray(zeitintervalle),
+                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class);
 
         ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit expected = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
         expected.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 3, 15));
@@ -495,8 +478,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
-                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class
-        );
+                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class);
 
         expected = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
         expected.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 3, 15));
@@ -512,8 +494,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
-                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class
-        );
+                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class);
 
         expected = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
         expected.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 15));
@@ -529,8 +510,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
-                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class
-        );
+                ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class);
 
         expected = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
 
@@ -539,4 +519,3 @@ public class ZeitintervallZeitblockSummationUtilTest {
     }
 
 }
-

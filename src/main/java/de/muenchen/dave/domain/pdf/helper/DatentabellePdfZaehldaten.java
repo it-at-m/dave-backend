@@ -1,9 +1,7 @@
 package de.muenchen.dave.domain.pdf.helper;
 
-import lombok.Data;
-
 import java.util.List;
-
+import lombok.Data;
 
 @Data
 public class DatentabellePdfZaehldaten {
@@ -58,7 +56,8 @@ public class DatentabellePdfZaehldaten {
 
     /**
      * Gibt die Spaltenbreite für Fahrzeugtypen zurück
-     * 42 steht dabei für 42% der Gesamtbreite (Fahrzeugtypen sollen in der Tabelle optimalerweise 42% einnehmen)
+     * 42 steht dabei für 42% der Gesamtbreite (Fahrzeugtypen sollen in der Tabelle optimalerweise 42%
+     * einnehmen)
      *
      * @return Prozentsatz als int
      */
@@ -68,7 +67,8 @@ public class DatentabellePdfZaehldaten {
 
     /**
      * Gibt die Spaltenbreite für Fahrzeugklassen zurück
-     * 21 steht dabei für 21% der Gesamtbreite (Fahrzeugklassen sollen in der Tabelle optimalerweise 21% einnehmen)
+     * 21 steht dabei für 21% der Gesamtbreite (Fahrzeugklassen sollen in der Tabelle optimalerweise 21%
+     * einnehmen)
      *
      * @return Prozentsatz als int
      */
@@ -89,7 +89,7 @@ public class DatentabellePdfZaehldaten {
     /**
      * Hilfsfunktion zum Berechnen der Spaltenbreite
      *
-     * @param maxWidth         Maximale Breite
+     * @param maxWidth Maximale Breite
      * @param activeCategories Kategorien bzw. Spalten, die sich diese Breite teilen
      * @return
      */

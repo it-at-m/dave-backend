@@ -10,22 +10,19 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
 public class GenerateCsvService {
 
-    private static final String SEMIKOLON = ";";
-
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
+    private static final String SEMIKOLON = ";";
     private final LadeZaehldatenService ladeZaehldatenService;
 
     private final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper;
@@ -33,8 +30,8 @@ public class GenerateCsvService {
     private final IndexService indexService;
 
     public GenerateCsvService(final LadeZaehldatenService ladeZaehldatenService,
-                              final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper,
-                              final IndexService indexService) {
+            final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper,
+            final IndexService indexService) {
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.datentabelleCsvZaehldatumMapper = datentabelleCsvZaehldatumMapper;
         this.indexService = indexService;
@@ -44,7 +41,7 @@ public class GenerateCsvService {
      * Erzeugt eine csv-Datei die der Tabelle aus der Oberflaeche entspricht.
      *
      * @param zaehlungId Id der aktuellen Zaehlung
-     * @param options    aktuell gesetzen Einstellungen
+     * @param options aktuell gesetzen Einstellungen
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
@@ -54,8 +51,7 @@ public class GenerateCsvService {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()
                 .filter(ladeZaehldatumDTO -> StringUtils.equalsIgnoreCase(ladeZaehldatumDTO.getType(), LadeZaehldatenService.TAGESWERT))
-                .forEach(ladeZaehldatumDTO ->
-                {
+                .forEach(ladeZaehldatumDTO -> {
                     ladeZaehldatumDTO.setEndeUhrzeit(null);
                     ladeZaehldatumDTO.setStartUhrzeit(null);
                 });
@@ -110,8 +106,8 @@ public class GenerateCsvService {
      * Erzeugt die Metadaten für die Tabelle
      *
      * @param metaObject enthält die Zählstelle und Zählung
-     * @param header     Zur Berechnung der Anzahl der Semikolons
-     * @param options    Zur Anzeige der Fahrbeziehung
+     * @param header Zur Berechnung der Anzahl der Semikolons
+     * @param options Zur Anzeige der Fahrbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDTO options) {
@@ -147,7 +143,6 @@ public class GenerateCsvService {
         }
         return new String(metaData);
     }
-
 
     /**
      * Erzeugt für jede Zeile aus der Tabelle eine Zeile fuer das CSV-File.

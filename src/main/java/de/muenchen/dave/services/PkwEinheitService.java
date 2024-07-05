@@ -9,10 +9,8 @@ import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
-
+import org.springframework.stereotype.Service;
 
 @Service
 public class PkwEinheitService {
@@ -22,7 +20,7 @@ public class PkwEinheitService {
     private final PkwEinheitMapper pkwEinheitMapper;
 
     public PkwEinheitService(final PkwEinheitRepository pkwEinheitRepository,
-                             final PkwEinheitMapper pkwEinheitMapper) {
+            final PkwEinheitMapper pkwEinheitMapper) {
         this.pkwEinheitRepository = pkwEinheitRepository;
         this.pkwEinheitMapper = pkwEinheitMapper;
     }
@@ -51,6 +49,5 @@ public class PkwEinheitService {
                 .map(pkwEinheitMapper::entity2bearbeiteDto)
                 .orElseThrow(() -> new DataNotFoundException("Keine PkwEinheit gefunden."));
     }
-
 
 }

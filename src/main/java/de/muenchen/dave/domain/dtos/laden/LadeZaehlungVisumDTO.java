@@ -1,11 +1,9 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.util.geo.CoordinateUtil;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
-
+import lombok.Data;
 
 @Data
 public class LadeZaehlungVisumDTO {

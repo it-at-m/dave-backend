@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -36,7 +35,8 @@ class ZeitintervallKIUtilTest {
         zeitintervall3.setFahrbeziehungId(UUID.randomUUID());
 
         // Act
-        List<List<Zeitintervall>> result = ZeitintervallKIUtil.groupZeitintervalleByFahrbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
+        List<List<Zeitintervall>> result = ZeitintervallKIUtil
+                .groupZeitintervalleByFahrbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
         result.sort(Comparator.comparingInt(List::size));
 
         // Assert
@@ -52,7 +52,8 @@ class ZeitintervallKIUtilTest {
         List<Zeitintervall> zeitintervalle = Arrays.asList(new Zeitintervall(), new Zeitintervall());
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(predictionResults, zeitintervalle));
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(predictionResults, zeitintervalle));
 
         String expectedMessage = ZeitintervallKIUtil.LIST_LENGTH_MISMATCH;
         String actualMessage = exception.getMessage();
@@ -113,7 +114,7 @@ class ZeitintervallKIUtilTest {
         assertThat(kiZeitintervalle.get(1).getFahrbeziehung(), equalTo(zeitintervall2.getFahrbeziehung()));
 
         assertThat(kiZeitintervalle.get(0).getFahrradfahrer(), equalTo(6));
-        assertThat(kiZeitintervalle.get(1).getFahrradfahrer(), equalTo(1));;
+        assertThat(kiZeitintervalle.get(1).getFahrradfahrer(), equalTo(1));
 
     }
 

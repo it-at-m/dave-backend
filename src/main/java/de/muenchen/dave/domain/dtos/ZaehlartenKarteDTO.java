@@ -4,21 +4,19 @@
  */
 package de.muenchen.dave.domain.dtos;
 
+import java.io.Serializable;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.io.Serializable;
-import java.util.Set;
-
-
 @RequiredArgsConstructor
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(exclude = {"zaehlarten"})
+@EqualsAndHashCode(exclude = { "zaehlarten" })
 public class ZaehlartenKarteDTO implements Serializable {
 
     private Double longitude;

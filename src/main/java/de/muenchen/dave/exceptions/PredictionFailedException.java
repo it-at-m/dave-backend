@@ -16,6 +16,7 @@ public class PredictionFailedException extends Exception {
     public static final String ONNX_NO_PREDICTION_RESULTS_ERROR = "No results returned by prediction";
     public static final String ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR = "Unknown result type returned";
     public static final String ONNX_RUN_MODEL_ERROR = "Error running the model";
+
     public PredictionFailedException(final String message) {
         super(message);
     }

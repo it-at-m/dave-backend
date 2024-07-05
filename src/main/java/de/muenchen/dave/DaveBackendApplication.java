@@ -25,8 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "org.springframework.data.jpa.convert.threeten",
         "de.muenchen.dave"
 })
-@EnableJpaRepositories(
-        basePackages = {"de.muenchen.dave"})
+@EnableJpaRepositories(basePackages = { "de.muenchen.dave" })
 @EnableAutoConfiguration
 @EnableScheduling
 public class DaveBackendApplication {

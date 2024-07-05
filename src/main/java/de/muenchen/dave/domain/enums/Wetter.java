@@ -1,11 +1,9 @@
 package de.muenchen.dave.domain.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Arrays;
 import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
@@ -13,7 +11,7 @@ public enum Wetter {
 
     SUNNY(Arrays.asList("sonnig", "Sonne")),
 
-    SUNNY_COLD(Arrays.asList("sonnig (kalt)")),
+    SUNNY_COLD(List.of("sonnig (kalt)")),
 
     CLOUDY(Arrays.asList("bewölkt", "wolkig")),
 

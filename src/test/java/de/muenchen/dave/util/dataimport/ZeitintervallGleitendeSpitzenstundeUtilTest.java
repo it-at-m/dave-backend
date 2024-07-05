@@ -22,7 +22,6 @@ import java.util.UUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-
 class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     private List<Zeitintervall> zeitintervalle;
@@ -67,8 +66,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
         zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
 
-        final List<Zeitintervall> result =
-                ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitintervalle);
+        final List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitintervalle);
 
         assertThat(result.size(), is(36));
 
@@ -252,7 +250,6 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
         assertThat(result.get(result.size() - 4), is(expected));
 
-
     }
 
     @Test
@@ -261,8 +258,8 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
         zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
 
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall =
-                ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(zeitintervalle);
+        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
+                .createByIntervallGroupedZeitintervalle(zeitintervalle);
         final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
         fahrbeziehung.setVon(1);
         fahrbeziehung.setNach(2);
@@ -272,8 +269,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
                 ArrayUtils.toArray(Fahrbeziehung.class, Map.class),
                 ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
-                List.class
-        );
+                List.class);
 
         assertThat(result.size(), is(18));
 
@@ -424,8 +420,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
-                ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss.class
-        );
+                ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss.class);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
