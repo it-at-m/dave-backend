@@ -7,7 +7,7 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.PkwEinheitService;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -9,7 +9,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.HochrechnungsfaktorService;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

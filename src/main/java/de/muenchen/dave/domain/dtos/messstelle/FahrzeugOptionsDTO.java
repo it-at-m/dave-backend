@@ -5,7 +5,7 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import java.io.Serializable;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

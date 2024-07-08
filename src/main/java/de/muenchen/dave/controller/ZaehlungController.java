@@ -19,7 +19,7 @@ import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

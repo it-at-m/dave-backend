@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.elasticsearch.annotations.CompletionField;

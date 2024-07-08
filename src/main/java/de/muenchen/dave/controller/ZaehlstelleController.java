@@ -11,7 +11,7 @@ import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.List;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

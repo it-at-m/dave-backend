@@ -5,8 +5,8 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDT
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

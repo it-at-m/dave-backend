@@ -8,7 +8,6 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.IntegrityCheckerConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
-import de.muenchen.dave.security.CustomUserInfoTokenServices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +30,8 @@ public class CachingConfiguration {
     public static final String LADE_BELASTUNGSPLAN_DTO = "LADE_BELASTUNGSPLAN_DTO";
     public static final String LADE_ZAEHLDATEN_ZEITREIHE_DTO = "LADE_ZAEHLDATEN_ZEITREIHE_DTO";
     public static final String READ_ZAEHLSTELLE_DTO = "READ_ZAEHLSTELLE_DTO";
-    private static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
+    public static final String NAME_AUTHENTICATION_CACHE = "authentication_cache";
+    public static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
 
     // 60*60*12 = 43200 = 12h
     private static final int MAX_IDLE_TIME_IN_SECONDS = 60 * 60 * 12;
@@ -91,7 +91,7 @@ public class CachingConfiguration {
     }
 
     private void mapConfig(final Config config) {
-        config.addMapConfig(this.getMapConfig(CustomUserInfoTokenServices.NAME_AUTHENTICATION_CACHE, AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS)
+        config.addMapConfig(this.getMapConfig(NAME_AUTHENTICATION_CACHE, AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS)
                 .setTimeToLiveSeconds(AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS));
         config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE, 0));
         config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, 0));

@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
