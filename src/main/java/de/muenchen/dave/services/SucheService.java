@@ -489,14 +489,13 @@ public class SucheService {
                 .suggest()
                 .values()
                 .stream()
+                .filter(CollectionUtils::isNotEmpty)
                 .flatMap(Collection::stream)
-                .flatMap(suggestion -> suggestion.completion().options().stream())
+                .flatMap(suggestion -> CollectionUtils.emptyIfNull(suggestion.completion().options()).stream())
                 .map(CompletionSuggestOption::text)
-                .map(suggestedText -> {
-                    final SucheWordSuggestDTO suggestDto = new SucheWordSuggestDTO();
-                    suggestDto.setText(prefix + suggestedText);
-                    return suggestDto;
-                })
+                .filter(StringUtils::isNotEmpty)
+                .map(suggestedText -> prefix + suggestedText)
+                .map(SucheWordSuggestDTO::new)
                 .toList();
     }
 
