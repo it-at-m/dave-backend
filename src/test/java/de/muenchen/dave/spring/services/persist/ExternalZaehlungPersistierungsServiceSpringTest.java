@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
@@ -18,6 +19,8 @@ import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import java.util.ArrayList;
@@ -41,11 +44,17 @@ import org.springframework.test.context.ActiveProfiles;
 @Slf4j
 class ExternalZaehlungPersistierungsServiceSpringTest {
 
-    @Autowired
-    private ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService;
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockBean
+    private MessstelleIndex messstelleIndex;
 
     @MockBean
     private ZaehlstelleIndex zaehlstelleIndex;
+
+    @Autowired
+    private ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService;
 
     @Test
     public void getZaehlungenForExternal() throws BrokenInfrastructureException {
