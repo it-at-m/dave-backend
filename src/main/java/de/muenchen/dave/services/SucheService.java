@@ -1,5 +1,9 @@
 package de.muenchen.dave.services;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.search.*;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
@@ -40,16 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.search.suggest.Suggest;
-import org.elasticsearch.search.suggest.SuggestBuilder;
-import org.elasticsearch.search.suggest.SuggestBuilders;
-import org.elasticsearch.search.suggest.completion.CompletionSuggestionBuilder;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -73,7 +70,7 @@ public class SucheService {
 
     private final SucheMapper sucheMapper;
 
-    private final ElasticsearchOperations elasticsearchOperations;
+    private final ElasticsearchClient elasticsearchClient;
 
     /**
      * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en,
@@ -452,14 +449,55 @@ public class SucheService {
         final String prefix = new String(queryBuilder);
 
         final int maxHits = 3;
-        final String zaehlstelle_suggest = "zaehlstelle-suggest";
+        final String zaehlstelleSuggest = "zaehlstelle-suggest";
+
+        /**
+         * POST music/_search
+         * {
+         *   "_source": "suggest",
+         *   "suggest": {
+         *     "song-suggest": {
+         *       "prefix": "nir",
+         *       "completion": {
+         *         "field": "suggest",
+         *         "size": 5
+         *       }
+         *     }
+         *   }
+         * }
+         *
+         *
+         *
+         */
+        final var completionSuggester = new CompletionSuggester.Builder()
+                .field("suggest")
+                .fuzzy(builder -> builder.fuzziness("0"))
+                .skipDuplicates(true)
+                .size(maxHits)
+                .build();
+        final var fieldSuggester = new FieldSuggester.Builder()
+                .prefix(query)
+                .completion(completionSuggester)
+                .build();
+        final var suggester = new Suggester.Builder()
+                .suggesters(zaehlstelleSuggest, fieldSuggester)
+                .build();
+        final var searchRequest = new SearchRequest.Builder()
+                .suggest(suggester)
+                .build();
+
+
+        elasticsearchClient.search(searchRequest, CustomSuggest.class);
+
+
+
         final CompletionSuggestionBuilder suggest = SuggestBuilders.completionSuggestion("suggest").prefix(query, Fuzziness.ZERO).skipDuplicates(true)
                 .size(maxHits);
-        final SearchResponse searchResponse = this.elasticsearchOperations.suggest(new SuggestBuilder().addSuggestion(zaehlstelle_suggest, suggest),
+        final SearchResponse searchResponse = this.elasticsearchOperations.suggest(new SuggestBuilder().addSuggestion(zaehlstelleSuggest, suggest),
                 this.elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class));
         final List<SucheWordSuggestDTO> result = new ArrayList<>();
 
-        final List<? extends Suggest.Suggestion.Entry.Option> options = searchResponse.getSuggest().getSuggestion(zaehlstelle_suggest).getEntries().get(0)
+        final List<? extends Suggest.Suggestion.Entry.Option> options = searchResponse.getSuggest().getSuggestion(zaehlstelleSuggest).getEntries().get(0)
                 .getOptions();
         options.forEach(o -> {
             final SucheWordSuggestDTO suggestDTO = new SucheWordSuggestDTO();
