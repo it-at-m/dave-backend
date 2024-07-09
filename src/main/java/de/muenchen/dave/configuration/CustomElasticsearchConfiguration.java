@@ -5,7 +5,6 @@ import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
@@ -34,7 +33,7 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
     @Value(value = "${elasticsearch.socketTimeout}")
     private int socketTimeout;
 
-    @Bean
+    @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
                 .connectedTo(this.host + ":" + this.port)

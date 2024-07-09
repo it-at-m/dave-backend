@@ -22,7 +22,7 @@ spring:
       # configuration for local (development) mode. this
       # is also the default, that spring offers by convention.
       # but here explicite:
-      ddl-auto: validate
+      ddl-auto: update
       naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     # Logging for database operation
     show-sql: false
