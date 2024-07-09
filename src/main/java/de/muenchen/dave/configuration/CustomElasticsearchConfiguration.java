@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "de.muenchen.dave.repositories.elasticsearch")
 @Slf4j
-public class ElasticsearchConfiguration {
+public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration {
 
     @Value(value = "${elasticsearch.password}")
     private String password;
@@ -34,7 +35,7 @@ public class ElasticsearchConfiguration {
     private int socketTimeout;
 
     @Bean
-    public ClientConfiguration client() {
+    public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
                 .connectedTo(this.host + ":" + this.port)
                 .withBasicAuth(this.user, this.password)
