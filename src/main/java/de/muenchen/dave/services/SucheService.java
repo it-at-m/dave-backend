@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -436,7 +437,8 @@ public class SucheService {
      * @param q text
      * @return Liste an Vorschlaegen
      */
-    private List<SucheWordSuggestDTO> getSuggestions(final String q) throws IOException {
+    @SneakyThrows
+    private List<SucheWordSuggestDTO> getSuggestions(final String q) {
         final StringBuilder queryBuilder = new StringBuilder();
         final String[] words = q.split(StringUtils.SPACE);
         final String query = words[words.length - 1];
@@ -479,7 +481,7 @@ public class SucheService {
                 .build();
 
         /**
-         * Running the query and extrakting the result:
+         * Running the query and extracting the result:
          * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
          */
         return elasticsearchClient
