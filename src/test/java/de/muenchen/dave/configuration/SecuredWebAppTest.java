@@ -10,7 +10,6 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.actuate.metrics.AutoConfigureMetrics;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest(classes = DaveBackendApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE })
-@AutoConfigureMetrics
 class SecuredWebAppTest {
 
     @Autowired

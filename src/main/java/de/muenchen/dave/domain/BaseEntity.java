@@ -19,7 +19,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -37,8 +39,9 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     @Column(name = "id", length = 36)
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Type(type = "uuid-char")
+    @GenericGenerator(name = "uuid", type = org.hibernate.id.uuid.UuidGenerator.class)
+    @UuidGenerator(style = UuidGenerator.Style.RANDOM)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
     @CreatedDate

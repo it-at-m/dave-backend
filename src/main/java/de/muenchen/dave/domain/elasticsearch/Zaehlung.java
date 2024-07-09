@@ -19,7 +19,7 @@ public class Zaehlung {
 
     String id;
 
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.uuuu")
+    @Field(type = FieldType.Date, format = {}, pattern = "dd.MM.uuuu")
     @JsonFormat(pattern = "dd.MM.yyyy")
     LocalDate datum;
 

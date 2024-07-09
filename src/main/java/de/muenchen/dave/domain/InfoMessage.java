@@ -12,7 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 // Definition of getter, setter, ...
@@ -24,7 +26,7 @@ import org.hibernate.annotations.Type;
 public class InfoMessage extends BaseEntity {
 
     @Column(name = "content")
-    @Type(type = "text")
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     private String content;
 
     @Column(name = "gueltig_von")

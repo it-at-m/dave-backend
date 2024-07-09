@@ -13,7 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 // Definition of getter, setter, ...
@@ -25,11 +27,11 @@ import org.hibernate.annotations.Type;
 public class ChatMessage extends BaseEntity {
 
     @Column(name = "zaehlung_id", nullable = false)
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID zaehlungId;
 
     @Column(name = "content")
-    @Type(type = "text")
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
     private String content;
 
     @Column(name = "participant_id")
