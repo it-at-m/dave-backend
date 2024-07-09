@@ -1,7 +1,6 @@
 package de.muenchen.dave.services;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.*;
 import com.google.common.collect.Lists;
@@ -28,14 +27,11 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.util.DaveConstants;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +43,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.suggest.response.Suggest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -71,6 +70,8 @@ public class SucheService {
     private final SucheMapper sucheMapper;
 
     private final ElasticsearchClient elasticsearchClient;
+
+    private final ElasticsearchOperations elasticsearchOperations;
 
     /**
      * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en,
@@ -429,10 +430,13 @@ public class SucheService {
     /**
      * Holt die Suggestions passend zur Query.
      *
+     * Es findet die Verwendung des Completion Suggester Anwendung:
+     * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
+     *
      * @param q text
      * @return Liste an Vorschlaegen
      */
-    private List<SucheWordSuggestDTO> getSuggestions(final String q) {
+    private List<SucheWordSuggestDTO> getSuggestions(final String q) throws IOException {
         final StringBuilder queryBuilder = new StringBuilder();
         final String[] words = q.split(StringUtils.SPACE);
         final String query = words[words.length - 1];
@@ -452,26 +456,12 @@ public class SucheService {
         final String zaehlstelleSuggest = "zaehlstelle-suggest";
 
         /**
-         * POST music/_search
-         * {
-         *   "_source": "suggest",
-         *   "suggest": {
-         *     "song-suggest": {
-         *       "prefix": "nir",
-         *       "completion": {
-         *         "field": "suggest",
-         *         "size": 5
-         *       }
-         *     }
-         *   }
-         * }
-         *
-         *
-         *
+         * Creation of query:
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
          */
         final var completionSuggester = new CompletionSuggester.Builder()
                 .field("suggest")
-                .fuzzy(builder -> builder.fuzziness("0"))
+                .fuzzy(fuzzyBuilder -> fuzzyBuilder.fuzziness("0"))
                 .skipDuplicates(true)
                 .size(maxHits)
                 .build();
@@ -483,29 +473,29 @@ public class SucheService {
                 .suggesters(zaehlstelleSuggest, fieldSuggester)
                 .build();
         final var searchRequest = new SearchRequest.Builder()
+                .index(elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class).getIndexName())
+                .source(sourceBuilder -> sourceBuilder.filter(filterBuilder -> filterBuilder.includes("suggest")))
                 .suggest(suggester)
                 .build();
 
-
-        elasticsearchClient.search(searchRequest, CustomSuggest.class);
-
-
-
-        final CompletionSuggestionBuilder suggest = SuggestBuilders.completionSuggestion("suggest").prefix(query, Fuzziness.ZERO).skipDuplicates(true)
-                .size(maxHits);
-        final SearchResponse searchResponse = this.elasticsearchOperations.suggest(new SuggestBuilder().addSuggestion(zaehlstelleSuggest, suggest),
-                this.elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class));
-        final List<SucheWordSuggestDTO> result = new ArrayList<>();
-
-        final List<? extends Suggest.Suggestion.Entry.Option> options = searchResponse.getSuggest().getSuggestion(zaehlstelleSuggest).getEntries().get(0)
-                .getOptions();
-        options.forEach(o -> {
-            final SucheWordSuggestDTO suggestDTO = new SucheWordSuggestDTO();
-            suggestDTO.setText(prefix + o.getText().string());
-            result.add(suggestDTO);
-        });
-
-        return result;
+        /**
+         * Running the query and extrakting the result:
+         * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
+         */
+        return elasticsearchClient
+                .search(searchRequest, CustomSuggest.class)
+                .suggest()
+                .values()
+                .stream()
+                .flatMap(Collection::stream)
+                .flatMap(suggestion -> suggestion.completion().options().stream())
+                .map(CompletionSuggestOption::text)
+                .map(suggestedText -> {
+                    final SucheWordSuggestDTO suggestDto = new SucheWordSuggestDTO();
+                    suggestDto.setText(prefix + suggestedText);
+                    return suggestDto;
+                })
+                .toList();
     }
 
     /**
