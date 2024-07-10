@@ -22,6 +22,8 @@ import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.SucheService;
 import java.time.LocalDate;
@@ -54,7 +56,13 @@ import org.springframework.test.context.ActiveProfiles;
 public class SucheServiceSpringTests {
 
     @MockBean
-    ZaehlstelleIndex repo;
+    private MessstelleIndex messstelleIndex;
+
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockBean
+    private ZaehlstelleIndex repo;
 
     @Autowired
     SucheService service;

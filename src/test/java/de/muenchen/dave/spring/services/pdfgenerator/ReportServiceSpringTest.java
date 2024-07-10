@@ -12,6 +12,9 @@ import de.muenchen.dave.domain.pdf.assets.HeadingAsset;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.PagebreakAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.pdfgenerator.ReportService;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +22,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
@@ -28,6 +32,15 @@ import org.springframework.test.context.ActiveProfiles;
 )
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class ReportServiceSpringTest {
+
+    @MockBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
 
     @Autowired
     ReportService reportService;
