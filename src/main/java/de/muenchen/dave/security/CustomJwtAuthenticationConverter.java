@@ -8,13 +8,15 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Service;
 
 /**
  * Ein custom {@link JwtAuthenticationConverter}, der die Authorities und die Nutzerinformationen
  * mittels {@link UserInfoDataService} vom /userinfo Endpoint des OIDC Providers bezieht.
  */
-@RequiredArgsConstructor
+@Service
 @Profile("!no-security")
+@RequiredArgsConstructor
 public class CustomJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final UserInfoDataService userInfoDataService;

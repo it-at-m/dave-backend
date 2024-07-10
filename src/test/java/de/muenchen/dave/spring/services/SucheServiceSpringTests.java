@@ -62,7 +62,7 @@ public class SucheServiceSpringTests {
     private CustomSuggestIndex customSuggestIndex;
 
     @MockBean
-    private ZaehlstelleIndex repo;
+    private ZaehlstelleIndex zaehlstelleIndex;
 
     @Autowired
     SucheService service;
@@ -77,7 +77,7 @@ public class SucheServiceSpringTests {
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0),
                 this.createSampleData().get(4)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", false);
         assertThat(dto1.getZaehlstellenSuggests(), is(not(empty())));
@@ -88,7 +88,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(0),
                 this.createSampleData().get(2),
                 this.createSampleData().get(3)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", false);
         assertThat(dto2.getZaehlstellenSuggests(), is(not(empty())));
@@ -101,7 +101,7 @@ public class SucheServiceSpringTests {
 
         resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(2)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", false);
         assertThat(dto3.getZaehlstellenSuggests(), is(not(empty())));
@@ -113,7 +113,7 @@ public class SucheServiceSpringTests {
 
         resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(3)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", false);
         assertThat(dto5.getZaehlstellenSuggests(), is(not(empty())));
@@ -132,7 +132,7 @@ public class SucheServiceSpringTests {
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
@@ -166,7 +166,7 @@ public class SucheServiceSpringTests {
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(Arrays.asList(
                 this.createSampleData().get(0)));
-        when(repo.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));

@@ -17,6 +17,8 @@ spring:
       hibernate:
         format_sql: true
   security:
+    resource:
+      user-info-uri:  http://localhost/realms/dave/protocol/openid-connect/userinfo
     oauth2:
       resourceserver:
         jwt:

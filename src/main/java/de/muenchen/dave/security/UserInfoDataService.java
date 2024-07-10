@@ -10,6 +10,8 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.http.HttpEntity;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -28,6 +31,7 @@ import java.util.concurrent.TimeUnit;
  * "Authorities" und Nutzerinformationen extrahiert.
  */
 @Slf4j
+@Service
 public class UserInfoDataService {
 
     @Data
@@ -60,11 +64,12 @@ public class UserInfoDataService {
      * Erzeugt eine neue Instanz.
      *
      * @param userInfoUri userinfo Endpoint URI
-     * @param restTemplate ein {@link RestTemplate}
+     * @param restTemplateBuilder ein {@link RestTemplateBuilder}
      */
-    public UserInfoDataService(final String userInfoUri, final RestTemplate restTemplate) {
+    public UserInfoDataService(@Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
+                               final RestTemplateBuilder restTemplateBuilder) {
         this.userInfoUri = userInfoUri;
-        this.restTemplate = restTemplate;
+        this.restTemplate = restTemplateBuilder.build();
         this.cache =
             new CaffeineCache(
                 CachingConfiguration.NAME_AUTHENTICATION_CACHE,

@@ -1,19 +1,9 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2023
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.configuration.nfcconverter;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -24,6 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
 /**
  * Wrapper für HttpServletRequest, der NFC-Konvertierung durchführt.
  *
@@ -32,11 +28,14 @@ import org.apache.commons.io.IOUtils;
 @Slf4j
 public class NfcRequest extends HttpServletRequestWrapper implements HttpServletRequest {
 
+    private Map<String, String[]> params;
+
+    private Cookie[] cookies;
+
+    private Map<String, List<String>> headers;
+
     @SuppressWarnings("unused")
     private final Set<String> contentTypes;
-    private Map<String, String[]> params;
-    private Cookie[] cookies;
-    private Map<String, List<String>> headers;
 
     public NfcRequest(final HttpServletRequest request, final Set<String> contentTypes) {
         super(request);
@@ -189,7 +188,6 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
 
     @Override
     public ServletInputStream getInputStream() throws IOException {
-
         final String encoding = getOriginalRequest().getCharacterEncoding();
 
         String content = null;
@@ -205,5 +203,4 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
     private HttpServletRequest getOriginalRequest() {
         return (HttpServletRequest) getRequest();
     }
-
 }
