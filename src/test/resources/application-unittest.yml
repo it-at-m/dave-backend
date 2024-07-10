@@ -43,24 +43,6 @@ spring:
           client-secret:
           authorization-grant-type: client_credentials
 
-# Config for spring actuator endpoints
-management:
-  server.port: ${server.port}
-  endpoints:
-    enabled-by-default: false
-    web:
-      exposure:
-        include: health, info, prometheus, livenessstate, readinessstate
-      path-mapping:
-        prometheus: metrics
-  endpoint:
-    health.enabled: true
-    info.enabled: true
-    prometheus.enabled: true
-  health:
-    elasticsearch:
-      enabled: false
-
 elasticsearch:
   user: elastic
   password:
