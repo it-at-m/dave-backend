@@ -45,7 +45,7 @@ public class CachingConfiguration {
     public String openshiftServiceName;
 
     @Bean
-    @Profile({ "local", "docker", "test" })
+    @Profile({ "local", "docker", "unittest" })
     public Config localConfig() {
 
         final Config config = new Config();
