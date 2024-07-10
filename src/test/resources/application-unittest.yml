@@ -1,5 +1,14 @@
 spring:
 
+  # Spring data rest
+  data:
+    rest:
+      # Definition of page size for PagingAndSortingRepository
+      max-page-size: 0x7fffffff
+      default-page-size: 0x7fffffff
+      return-body-on-update: true
+      return-body-on-create: true
+
   # Spring JPA
   datasource.url: jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE
   jpa:
@@ -16,10 +25,12 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    username: sa
   security:
-    resource:
-      user-info-uri:  http://localhost/realms/dave/protocol/openid-connect/userinfo
     oauth2:
+      resource:
+        user-info-uri: http://localhost/realms/dave/protocol/openid-connect/userinfo
       resourceserver:
         jwt:
           issuer-uri: http://localhost
@@ -62,4 +73,8 @@ dave:
   email:
     address: dave-dummy@muenchen.de
     password: dummy
+  messstelle:
+    #    disabled
+    cron: "-"
+    shedlock: 1m
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}

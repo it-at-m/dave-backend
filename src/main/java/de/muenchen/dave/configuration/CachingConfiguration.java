@@ -30,6 +30,7 @@ public class CachingConfiguration {
     public static final String LADE_BELASTUNGSPLAN_DTO = "LADE_BELASTUNGSPLAN_DTO";
     public static final String LADE_ZAEHLDATEN_ZEITREIHE_DTO = "LADE_ZAEHLDATEN_ZEITREIHE_DTO";
     public static final String READ_ZAEHLSTELLE_DTO = "READ_ZAEHLSTELLE_DTO";
+
     public static final String NAME_AUTHENTICATION_CACHE = "authentication_cache";
     public static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
 
