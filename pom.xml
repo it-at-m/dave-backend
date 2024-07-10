@@ -29,7 +29,7 @@
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.10</spullara.mustache.java.version>
-        <apache.sis.version>1.3</apache.sis.version>
+        <apache.sis.version>1.4</apache.sis.version>
         <org.jsoup.version>1.15.3</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>1.10.0</maven-scm-plugin.version>
@@ -42,7 +42,6 @@
         <itm-codeformat.version>1.0.3</itm-codeformat.version>
         <shedlock.version>4.46.0</shedlock.version>
         <openapi-generator-version>7.0.1</openapi-generator-version>
-        <jakarta.mail></jakarta.mail>
     </properties>
 
     <scm>
