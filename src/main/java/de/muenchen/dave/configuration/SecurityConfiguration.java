@@ -5,7 +5,10 @@
 package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.security.CustomJwtAuthenticationConverter;
+import de.muenchen.dave.security.UserInfoDataService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -29,10 +32,16 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Profile("!no-security")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+
+    public SecurityConfiguration(@Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
+                                 final RestTemplateBuilder restTemplateBuilder) {
+        this.customJwtAuthenticationConverter = new CustomJwtAuthenticationConverter(
+                new UserInfoDataService(userInfoUri, restTemplateBuilder)
+        );
+    }
 
     /**
      * Absichern der Rest-Endpunkte mit Definition der Ausnahmen.
@@ -88,21 +97,4 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    @Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
-            final ClientRegistrationRepository clientRegistrationRepository,
-            final OAuth2AuthorizedClientService authorizedClientService) {
-
-        final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
-                .builder()
-                .clientCredentials()
-                .build();
-
-        final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
-                clientRegistrationRepository,
-                authorizedClientService);
-        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-
-        return authorizedClientManager;
-    }
 }

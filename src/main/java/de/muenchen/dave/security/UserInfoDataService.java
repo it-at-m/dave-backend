@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
  * "Authorities" und Nutzerinformationen extrahiert.
  */
 @Slf4j
-@Service
 public class UserInfoDataService {
 
     @Data
@@ -41,6 +40,10 @@ public class UserInfoDataService {
 
         private Collection<SimpleGrantedAuthority> authorities;
     }
+
+    public static final String NAME_AUTHENTICATION_CACHE = "authentication_cache";
+
+    public static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
 
     public static final String CLAIM_AUTHORITIES = "authorities";
 
@@ -66,17 +69,17 @@ public class UserInfoDataService {
      * @param userInfoUri userinfo Endpoint URI
      * @param restTemplateBuilder ein {@link RestTemplateBuilder}
      */
-    public UserInfoDataService(@Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
+    public UserInfoDataService(final String userInfoUri,
                                final RestTemplateBuilder restTemplateBuilder) {
         this.userInfoUri = userInfoUri;
         this.restTemplate = restTemplateBuilder.build();
         this.cache =
             new CaffeineCache(
-                CachingConfiguration.NAME_AUTHENTICATION_CACHE,
+                NAME_AUTHENTICATION_CACHE,
                 Caffeine
                     .newBuilder()
                     .expireAfterWrite(
-                        CachingConfiguration.AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS,
+                        AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS,
                         TimeUnit.SECONDS
                     )
                     .ticker(Ticker.systemTicker())
