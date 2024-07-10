@@ -53,8 +53,8 @@ public class CacheControlConfiguration {
          */
         @Override
         protected void doFilterInternal(final HttpServletRequest request,
-                final HttpServletResponse response,
-                final FilterChain filterChain) throws ServletException, IOException {
+                                        final HttpServletResponse response,
+                                        final FilterChain filterChain) throws ServletException, IOException {
 
             final String cacheControlHeaderValue = response.getHeader(HttpHeaders.CACHE_CONTROL);
             if (StringUtils.isBlank(cacheControlHeaderValue)) {
