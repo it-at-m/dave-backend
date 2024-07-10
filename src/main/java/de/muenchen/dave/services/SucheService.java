@@ -454,7 +454,7 @@ public class SucheService {
         final int maxHits = 3;
         final String zaehlstelleSuggest = "zaehlstelle-suggest";
 
-        /**
+        /*
          * Creation of query:
          * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
          */
@@ -477,7 +477,7 @@ public class SucheService {
                 .suggest(suggester)
                 .build();
 
-        /**
+        /*
          * Running the query and extracting the result:
          * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
          */
