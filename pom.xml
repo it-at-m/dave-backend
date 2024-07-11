@@ -564,11 +564,9 @@
                             <invokerPackage>de.muenchen.dave.geodateneai.gen.geodaten</invokerPackage>
 
                             <typeMappings>
-                                <typeMapping>OffsetDateTime=LocalDateTime</typeMapping>
                                 <typeMapping>ModelLocalTime=LocalTime</typeMapping>
                             </typeMappings>
                             <importMappings>
-                                <importMapping>java.time.OffsetDateTime=java.time.LocalDateTime</importMapping>
                                 <importMapping>de.muenchen.dave.geodateneai.gen.model.ModelLocalTime=java.time.LocalTime</importMapping>
                             </importMappings>
 
