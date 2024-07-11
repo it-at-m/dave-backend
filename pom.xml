@@ -563,6 +563,8 @@
                             <modelPackage>de.muenchen.dave.geodateneai.gen.model</modelPackage>
                             <invokerPackage>de.muenchen.dave.geodateneai.gen.geodaten</invokerPackage>
 
+                            <!-- Die Mappings sind erforderlich um den Request und Response-Datentyp java.time.LocalTime verwenden zu können -->
+                            <!-- OpenApi besitzt keine interpretation des Java-Datentyp java.time.LocalTime analog zu java.time.LocalDate und java.time.LocalDateTime -->
                             <typeMappings>
                                 <typeMapping>ModelLocalTime=LocalTime</typeMapping>
                             </typeMappings>
