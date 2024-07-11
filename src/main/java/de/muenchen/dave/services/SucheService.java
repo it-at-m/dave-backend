@@ -327,7 +327,7 @@ public class SucheService {
      * @return LocalDate
      */
     private LocalDate getLocalDateOfString(final String dateAsString) {
-        final String[] splitted = this.cleanseDate(dateAsString).split("\\.");
+        final String[] splitted = this.cleanseDateAndReturnIfWordIsDateOrJustReturnWord(dateAsString).split("\\.");
         return LocalDate.of(Integer.parseInt(splitted[2]), Integer.parseInt(splitted[1]), Integer.parseInt(splitted[0]));
     }
 
@@ -428,47 +428,41 @@ public class SucheService {
      * Holt die Suggestions passend zur Query.
      *
      * Es findet die Verwendung des Completion Suggester Anwendung:
-     * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
+     * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#completion-suggester
      *
      * @param q text
      * @return Liste an Vorschlaegen
      */
     @SneakyThrows
     private List<SucheWordSuggestDTO> getSuggestions(final String q) {
-        final StringBuilder queryBuilder = new StringBuilder();
         final String[] words = q.split(StringUtils.SPACE);
         final String query = words[words.length - 1];
-
-        for (int i = 0; i < words.length - 1; i++) {
-            // es wird jedes Wort geprüft, ob es ein Datum ist
-            // und dann entsprechend aufbereitet, dass damit
-            // gesucht werden kann.
-            final String word = this.cleanseDate(words[i]);
-
-            // Wildcard für jedes Suchwort.
-            queryBuilder.append(word).append(StringUtils.SPACE);
-        }
-        final String prefix = new String(queryBuilder);
-
-        final int maxHits = 3;
-        final String zaehlstelleSuggest = "zaehlstelle-suggest";
+        final String prefix = Stream.of(words)
+                /*
+                 * Es wird jedes Wort geprüft, ob es ein Datum ist
+                 * und dann entsprechend aufbereitet, dass damit
+                 * gesucht werden kann.
+                 */
+                .map(this::cleanseDateAndReturnIfWordIsDateOrJustReturnWord)
+                .collect(Collectors.joining(StringUtils.SPACE))
+                .concat(StringUtils.SPACE);
 
         /*
-         * Creation of query:
+         * Erstellen der Query:
          * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
          */
         final var completionSuggester = new CompletionSuggester.Builder()
                 .field("suggest")
                 .fuzzy(fuzzyBuilder -> fuzzyBuilder.fuzziness("0"))
                 .skipDuplicates(true)
-                .size(maxHits)
+                .size(3)
                 .build();
         final var fieldSuggester = new FieldSuggester.Builder()
                 .prefix(query)
                 .completion(completionSuggester)
                 .build();
         final var suggester = new Suggester.Builder()
-                .suggesters(zaehlstelleSuggest, fieldSuggester)
+                .suggesters("zaehlstelle-suggest", fieldSuggester)
                 .build();
         final var searchRequest = new SearchRequest.Builder()
                 .index(elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class).getIndexName())
@@ -477,8 +471,11 @@ public class SucheService {
                 .build();
 
         /*
-         * Running the query and extracting the result:
+         * Ausführen der Query und Extrahieren der Suchwortvorschläge:
          * https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html#querying
+         *
+         * Die nachfolgenden Aufrufe der Fluent-API bilden den Aufbau der Response eines
+         * Completion-Suggester ab.
          */
         return elasticsearchClient
                 .search(searchRequest, CustomSuggest.class)
@@ -543,7 +540,7 @@ public class SucheService {
     public boolean filterZaehlung(final List<String> words, final Zaehlung z) {
         final Optional<String> finding = words.stream()
                 .filter(
-                        w -> z.getDatum().format(DATE_TIME_FORMATTER).startsWith(this.cleanseDate(w)) ||
+                        w -> z.getDatum().format(DATE_TIME_FORMATTER).startsWith(this.cleanseDateAndReturnIfWordIsDateOrJustReturnWord(w)) ||
                                 z.getSuchwoerter().stream().anyMatch(s -> s.startsWith(w)))
                 .findAny();
         return finding.isPresent();
@@ -558,18 +555,18 @@ public class SucheService {
      * @return Suchquery mit Wildcards
      */
     public String createQueryString(final String query) {
-        final StringBuilder queryBuilder = new StringBuilder();
+        final var wildcard = "* ";
         final String[] words = query.split(StringUtils.SPACE);
-        for (int i = 0; i < words.length; i++) {
-            // es wird jedes Wort geprüft, ob es ein Datum ist
-            // und dann entsprechend aufbereitet, dass damit
-            // gesucht werden kann.
-            final String word = this.cleanseDate(words[i]);
-
-            // Wildcard für jedes Suchwort.
-            queryBuilder.append(word).append("* ");
-        }
-        return queryBuilder.toString().trim();
+        return Stream.of(words)
+                /*
+                 * Es wird jedes Wort geprüft, ob es ein Datum ist
+                 * und dann entsprechend aufbereitet, dass damit
+                 * gesucht werden kann.
+                 */
+                .map(this::cleanseDateAndReturnIfWordIsDateOrJustReturnWord)
+                .collect(Collectors.joining(wildcard))
+                .concat(wildcard)
+                .trim();
     }
 
     /**
@@ -590,7 +587,7 @@ public class SucheService {
      * @param word Suchwort
      * @return korrigiertes Datum oder ursprüngliches Wort
      */
-    public String cleanseDate(final String word) {
+    public String cleanseDateAndReturnIfWordIsDateOrJustReturnWord(final String word) {
 
         if (this.isDate(word)) {
             final String[] x = word.split("\\.");
