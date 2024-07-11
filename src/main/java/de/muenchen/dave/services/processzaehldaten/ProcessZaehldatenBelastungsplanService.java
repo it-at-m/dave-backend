@@ -44,7 +44,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -753,7 +752,7 @@ public class ProcessZaehldatenBelastungsplanService {
                     })
                     .collect(Collectors.toList());
         } else {
-            return ListUtils.EMPTY_LIST;
+            return List.of();
         }
     }
 
