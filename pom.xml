@@ -26,6 +26,7 @@
         <apache.commons.validator>1.9.0</apache.commons.validator>
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.4.0</apache.commons.exec>
+        <guava>33.2.1-jre</guava>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
@@ -42,6 +43,8 @@
         <itm-codeformat.version>1.0.3</itm-codeformat.version>
         <shedlock.version>4.46.0</shedlock.version>
         <openapi-generator-version>7.7.0</openapi-generator-version>
+        <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
+        <ai.onnxruntime>1.12.0</ai.onnxruntime>
     </properties>
 
     <scm>
@@ -139,7 +142,7 @@
         <dependency>
             <groupId>com.microsoft.onnxruntime</groupId>
             <artifactId>onnxruntime</artifactId>
-            <version>1.12.0</version>
+            <version>${ai.onnxruntime}</version>
         </dependency>
 
         <!-- ElasticSearch -->
@@ -325,7 +328,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- apache commons -->
+        <!-- commons libs -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -361,6 +364,11 @@
             <artifactId>commons-exec</artifactId>
             <version>${apache.commons.exec}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava}</version>
+        </dependency>
 
         <!-- PDF -->
         <dependency>
@@ -390,22 +398,16 @@
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
-        </dependency>
 
         <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
+            <version>${openapi.jackson-databind-nullable}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
-
 
         <!-- Geo lib -->
         <dependency>
