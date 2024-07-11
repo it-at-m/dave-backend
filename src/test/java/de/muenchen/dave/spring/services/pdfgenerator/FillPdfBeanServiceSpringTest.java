@@ -59,9 +59,8 @@ import org.springframework.test.context.ActiveProfiles;
  * Resultierenden String dann hier an die entsprechende Stelle (gson.fromJson) kopieren.
  */
 @SpringBootTest(
-        classes = { DaveBackendApplication.class },
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE"}
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
 )
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class FillPdfBeanServiceSpringTest {

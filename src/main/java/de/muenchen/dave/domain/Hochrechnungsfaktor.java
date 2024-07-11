@@ -16,10 +16,12 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Table(indexes = {
-        @Index(name = "index_active", columnList = "active"),
-        @Index(name = "index_default_faktor", columnList = "default_faktor")
-})
+@Table(
+        indexes = {
+                @Index(name = "index_active", columnList = "active"),
+                @Index(name = "index_default_faktor", columnList = "default_faktor")
+        }
+)
 public class Hochrechnungsfaktor extends BaseEntity {
 
     @Column(name = "matrix", unique = true)

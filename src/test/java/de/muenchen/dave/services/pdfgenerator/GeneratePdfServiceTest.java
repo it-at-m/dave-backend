@@ -21,14 +21,9 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 @Slf4j
 class GeneratePdfServiceTest {
@@ -178,7 +173,8 @@ class GeneratePdfServiceTest {
 
         final String html = generatePdfService.getHtml(mustache, pdfBean);
 
-        assertThat(html, is("<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>"));
+        assertThat(html, is(
+                "<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>"));
     }
 
 }

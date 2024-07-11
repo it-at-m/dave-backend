@@ -5,7 +5,6 @@
 package de.muenchen.dave.security;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +40,7 @@ public final class SecurityContextInformationExtractor {
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())
                 .stream()
-                .anyMatch(grantedAuthority ->
-                        grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name())
-                );
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name()));
     }
 
     public static String getUserName() {
@@ -66,10 +63,8 @@ public final class SecurityContextInformationExtractor {
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())
                 .stream()
-                .noneMatch(grantedAuthority ->
-                        grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name())
-                                || grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.POWERUSER.name())
-                );
+                .noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name())
+                        || grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.POWERUSER.name()));
     }
 
 }

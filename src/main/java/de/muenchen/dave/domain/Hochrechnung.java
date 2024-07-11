@@ -5,9 +5,9 @@
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import java.math.BigDecimal;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.math.BigDecimal;
 import lombok.Data;
 
 /**

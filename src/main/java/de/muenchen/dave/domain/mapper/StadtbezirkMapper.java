@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.configuration.StadtbezirkMapperConfig;
-import java.util.Map;
-
 import jakarta.annotation.Resource;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;

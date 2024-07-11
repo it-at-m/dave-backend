@@ -25,10 +25,12 @@ public interface DatentabellePdfZaehldatumMapper {
     String UHRZEIT_23_59 = "23:59";
     String UHRZEIT_24_00 = "24:00";
 
-    @Mappings({
-            @Mapping(target = "endeUhrzeit", source = "ladeZaehldatumDTO.endeUhrzeit", dateFormat = "HH:mm"),
-            @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
-    })
+    @Mappings(
+        {
+                @Mapping(target = "endeUhrzeit", source = "ladeZaehldatumDTO.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
+        }
+    )
     DatentabellePdfZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDTO ladeZaehldatumDTO);
 
     @AfterMapping
@@ -40,10 +42,12 @@ public interface DatentabellePdfZaehldatumMapper {
 
     List<DatentabellePdfZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDTO> ladeZaehldatumDTOList);
 
-    @Mappings({
-            @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
-            @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
-    })
+    @Mappings(
+        {
+                @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
+        }
+    )
     DatentabellePdfZaehldatum ladeMesswerteDTO2bean(LadeMesswerteDTO dto);
 
     @AfterMapping

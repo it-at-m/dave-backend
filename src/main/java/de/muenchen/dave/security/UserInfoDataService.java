@@ -6,11 +6,11 @@ package de.muenchen.dave.security;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
-import de.muenchen.dave.configuration.CachingConfiguration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -20,11 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Service, der einen OIDC /userinfo Endpoint aufruft (mit JWT Bearer Auth) und dort die enthaltenen
@@ -70,21 +66,18 @@ public class UserInfoDataService {
      * @param restTemplateBuilder ein {@link RestTemplateBuilder}
      */
     public UserInfoDataService(final String userInfoUri,
-                               final RestTemplateBuilder restTemplateBuilder) {
+            final RestTemplateBuilder restTemplateBuilder) {
         this.userInfoUri = userInfoUri;
         this.restTemplate = restTemplateBuilder.build();
-        this.cache =
-            new CaffeineCache(
+        this.cache = new CaffeineCache(
                 NAME_AUTHENTICATION_CACHE,
                 Caffeine
-                    .newBuilder()
-                    .expireAfterWrite(
-                        AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS,
-                        TimeUnit.SECONDS
-                    )
-                    .ticker(Ticker.systemTicker())
-                    .build()
-            );
+                        .newBuilder()
+                        .expireAfterWrite(
+                                AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS,
+                                TimeUnit.SECONDS)
+                        .ticker(Ticker.systemTicker())
+                        .build());
     }
 
     /**
@@ -98,11 +91,9 @@ public class UserInfoDataService {
     public UserInfoData loadUserInfoData(final Jwt jwt) {
         // Rückgeben der UserInfoData aus Cache falls vorhanden.
         final var valueWrapper = this.cache.get(jwt.getTokenValue());
-        if (
-            ObjectUtils.isNotEmpty(valueWrapper) &&
-            ObjectUtils.isNotEmpty(valueWrapper.get()) &&
-            UserInfoData.class.equals(valueWrapper.get().getClass())
-        ) {
+        if (ObjectUtils.isNotEmpty(valueWrapper) &&
+                ObjectUtils.isNotEmpty(valueWrapper.get()) &&
+                UserInfoData.class.equals(valueWrapper.get().getClass())) {
             final var userInfoData = (UserInfoData) valueWrapper.get();
             log.debug("Resolved UserInfoData (from cache): {}", userInfoData);
             return userInfoData;
@@ -124,12 +115,10 @@ public class UserInfoDataService {
             this.cache.put(jwt.getTokenValue(), userInfoData);
         } catch (Exception exception) {
             log.error(
-                String.format(
-                    "Could not fetch user details from %s - user is granted NO authorities",
-                    this.userInfoUri
-                ),
-                exception
-            );
+                    String.format(
+                            "Could not fetch user details from %s - user is granted NO authorities",
+                            this.userInfoUri),
+                    exception);
         }
 
         return userInfoData;
@@ -139,11 +128,11 @@ public class UserInfoDataService {
      * Extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim.
      *
      * @param userInfoEndpointData erhalten vom /userinfo Endpoint.
-     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie weitere personalisierte Claims.
+     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie
+     *         weitere personalisierte Claims.
      */
     protected List<SimpleGrantedAuthority> getAuthoritiesFromUserInfoEndpointData(
-        final Map<String, Object> userInfoEndpointData
-    ) {
+            final Map<String, Object> userInfoEndpointData) {
         final var authorities = new ArrayList<SimpleGrantedAuthority>();
         if (userInfoEndpointData.containsKey(CLAIM_AUTHORITIES)) {
             authorities.addAll(this.asAuthorities(userInfoEndpointData.get(CLAIM_AUTHORITIES)));
@@ -161,11 +150,10 @@ public class UserInfoDataService {
         final var authorities = new ArrayList<SimpleGrantedAuthority>();
         if (authoritiesClaim instanceof Collection<?>) {
             authorities.addAll(
-                ((Collection<?>) authoritiesClaim).stream()
-                    .map(Object::toString)
-                    .map(SimpleGrantedAuthority::new)
-                    .toList()
-            );
+                    ((Collection<?>) authoritiesClaim).stream()
+                            .map(Object::toString)
+                            .map(SimpleGrantedAuthority::new)
+                            .toList());
         }
         return authorities;
     }
@@ -207,8 +195,8 @@ public class UserInfoDataService {
 
         @SuppressWarnings("unchecked")
         final Map<String, Object> userInfoEndpointData = restTemplate
-            .exchange(this.userInfoUri, HttpMethod.GET, entity, Map.class)
-            .getBody();
+                .exchange(this.userInfoUri, HttpMethod.GET, entity, Map.class)
+                .getBody();
         log.debug("Response from user-info Endpoint: {}", userInfoEndpointData);
 
         return userInfoEndpointData;

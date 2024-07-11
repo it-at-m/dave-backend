@@ -4,15 +4,15 @@
  */
 package de.muenchen.dave.domain;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

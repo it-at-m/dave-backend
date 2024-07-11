@@ -7,9 +7,9 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.HochrechnungsfaktorService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +45,11 @@ public class HochrechnungsfaktorController {
     }
 
     @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+    )
     public ResponseEntity<List<HochrechnungsfaktorDTO>> getAllHochrechnungsfaktoren() {
         try {
             return ResponseEntity.ok(

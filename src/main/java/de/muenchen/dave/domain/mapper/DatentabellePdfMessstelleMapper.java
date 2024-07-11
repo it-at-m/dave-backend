@@ -24,10 +24,12 @@ public interface DatentabellePdfMessstelleMapper {
     String UHRZEIT_23_59 = "23:59";
     String UHRZEIT_24_00 = "24:00";
 
-    @Mappings({
-            @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
-            @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
-    })
+    @Mappings(
+        {
+                @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
+        }
+    )
     DatentabellePdfZaehldatum ladeMesswerteDTO2bean(LadeMesswerteDTO dto);
 
     @AfterMapping

@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/messstelleOptionsmenu")
 @AllArgsConstructor
 @Slf4j
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class MessstelleOptionsmenuController {
     public static final String REQUEST_PARAM_MESSSTELLE_ID = "messstelle_id";
 

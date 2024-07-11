@@ -25,8 +25,10 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class GenerateCsvController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";

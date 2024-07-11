@@ -27,7 +27,6 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.util.DaveConstants;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;

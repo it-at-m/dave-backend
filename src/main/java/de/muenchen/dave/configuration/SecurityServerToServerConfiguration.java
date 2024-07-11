@@ -16,18 +16,15 @@ public class SecurityServerToServerConfiguration {
     @Bean
     public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
             final ClientRegistrationRepository clientRegistrationRepository,
-            final OAuth2AuthorizedClientService authorizedClientService
-    ) {
+            final OAuth2AuthorizedClientService authorizedClientService) {
         final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
                 .builder()
                 .clientCredentials()
                 .build();
 
-        final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager =
-                new AuthorizedClientServiceOAuth2AuthorizedClientManager(
-                        clientRegistrationRepository,
-                        authorizedClientService
-                );
+        final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                clientRegistrationRepository,
+                authorizedClientService);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
         return authorizedClientManager;

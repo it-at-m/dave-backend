@@ -4,8 +4,8 @@
  */
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import java.io.Serializable;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data

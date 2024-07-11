@@ -16,8 +16,6 @@ import static org.mockito.Mockito.when;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.ResponseBody;
-import co.elastic.clients.elasticsearch.core.search.Suggestion;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
@@ -33,16 +31,12 @@ import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.SucheService;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.LongStream;
-
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,15 +46,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
-import org.springframework.data.elasticsearch.core.suggest.Completion;
-import org.springframework.security.access.method.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(
-        classes = { DaveBackendApplication.class },
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE"}
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
 )
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
@@ -93,8 +84,7 @@ public class SucheServiceSpringTests {
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(
                 this.createSampleData().get(0),
-                this.createSampleData().get(4)
-        ));
+                this.createSampleData().get(4)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(elasticsearchOperations.getIndexCoordinatesFor(CustomSuggest.class)).thenReturn(IndexCoordinates.of("the-index"));
         when(elasticsearchClient.search(any(SearchRequest.class), eq(CustomSuggest.class)))
@@ -104,9 +94,7 @@ public class SucheServiceSpringTests {
                                 .took(200)
                                 .timedOut(false)
                                 .shards(shardsBuilder -> shardsBuilder.failed(0).successful(1).total(1).failures(List.of()))
-                                .hits(hitsBuilder -> hitsBuilder.hits(List.of()))
-                        )
-                );
+                                .hits(hitsBuilder -> hitsBuilder.hits(List.of()))));
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
         SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", false);
@@ -117,8 +105,7 @@ public class SucheServiceSpringTests {
         resultComplexSuggest = new PageImpl<>(List.of(
                 this.createSampleData().get(0),
                 this.createSampleData().get(2),
-                this.createSampleData().get(3)
-        ));
+                this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", false);
@@ -142,8 +129,7 @@ public class SucheServiceSpringTests {
                 Matchers.hasProperty("text", is("07.02.2008 Foop"))));
 
         resultComplexSuggest = new PageImpl<>(List.of(
-                this.createSampleData().get(3)
-        ));
+                this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
         SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", false);

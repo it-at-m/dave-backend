@@ -11,17 +11,16 @@ import de.muenchen.dave.services.email.ProcessEmailService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ProcessEmailServiceTest {
 
@@ -33,8 +32,7 @@ public class ProcessEmailServiceTest {
         this.processEmailService = new ProcessEmailService(
                 "Landeshauptstadt München;Schuh&Co.GmbH",
                 "Von:;-----Ursprüngliche Nachricht-----",
-                new ChatMessageMapperImpl()
-        );
+                new ChatMessageMapperImpl());
         this.message = Mockito.mock(Message.class);
         this.date = new Date();
     }

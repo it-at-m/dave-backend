@@ -34,8 +34,8 @@ public class ProcessEmailService {
     private final ChatMessageMapper chatMessageMapper;
 
     public ProcessEmailService(@Value("${dave.email.receiver.cut-email-body.line-contains-strings}") final String containsStrings,
-                               @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}") final String beginsWithStrings,
-                               final ChatMessageMapper chatMessageMapper) {
+            @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}") final String beginsWithStrings,
+            final ChatMessageMapper chatMessageMapper) {
         this.containsStrings = containsStrings;
         this.beginsWithStrings = beginsWithStrings;
         this.chatMessageMapper = chatMessageMapper;

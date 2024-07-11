@@ -6,11 +6,11 @@ package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
