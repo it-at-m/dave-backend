@@ -43,6 +43,12 @@ spring:
           client-secret:
           authorization-grant-type: client_credentials
 
+management:
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 elasticsearch:
   user: elastic
   password:
