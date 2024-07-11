@@ -31,7 +31,7 @@
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
         <apache.sis.version>1.4</apache.sis.version>
-        <org.jsoup.version>1.15.3</org.jsoup.version>
+        <org.jsoup.version>1.17.2</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>1.10.0</maven-scm-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
@@ -40,7 +40,6 @@
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
         <org.projectlombok.lombok.version>1.18.32</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
-        <itm-codeformat.version>1.0.3</itm-codeformat.version>
         <shedlock.version>4.46.0</shedlock.version>
         <openapi-generator-version>7.7.0</openapi-generator-version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
