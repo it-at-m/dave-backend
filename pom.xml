@@ -479,6 +479,8 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <!-- https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.2-Release-Notes#parameter-name-discovery -->
+                    <parameters>true</parameters>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -568,6 +570,7 @@
                             <inputSpec>${project.basedir}/src/main/resources/api/geodateneai.json</inputSpec>
                             <library>webclient</library>
                             <generatorName>java</generatorName>
+
                             <apiPackage>de.muenchen.dave.geodateneai.gen.api</apiPackage>
                             <modelPackage>de.muenchen.dave.geodateneai.gen.model</modelPackage>
                             <invokerPackage>de.muenchen.dave.geodateneai.gen.geodaten</invokerPackage>
