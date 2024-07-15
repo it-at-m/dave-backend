@@ -37,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -435,9 +436,10 @@ public class SucheService {
      */
     @SneakyThrows
     private List<SucheWordSuggestDTO> getSuggestions(final String q) {
-        final String[] words = q.split(StringUtils.SPACE);
-        final String query = words[words.length - 1];
-        final String prefix = Stream.of(words)
+        final String[] splittedWords = q.split(StringUtils.SPACE);
+        final String query = splittedWords[splittedWords.length - 1];
+        final String[] wordsForPrefix = ArrayUtils.subarray(splittedWords, 0, splittedWords.length - 1);
+        final String prefix = Stream.of(wordsForPrefix)
                 /*
                  * Es wird jedes Wort geprüft, ob es ein Datum ist
                  * und dann entsprechend aufbereitet, dass damit
