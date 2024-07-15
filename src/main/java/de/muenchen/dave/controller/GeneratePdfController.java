@@ -78,10 +78,10 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String charttype,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final OptionsDTO options,
-            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) @NotNull final String chartAsBase64Png,
+            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
             @RequestPart(
                     value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
-            ) @NotNull final String schematischeUebersichtAsBase64Png) {
+            ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
             if (StringUtils.equalsIgnoreCase(charttype, TYPE_BELASTUNGSPLAN)) {
@@ -125,10 +125,10 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleOptionsDTO options,
-            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) @NotNull final String chartAsBase64Png,
+            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
             @RequestPart(
                     value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
-            ) @NotNull final String schematischeUebersichtAsBase64Png) {
+            ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
             if (StringUtils.equalsIgnoreCase(type, TYPE_BELASTUNGSPLAN)) {
