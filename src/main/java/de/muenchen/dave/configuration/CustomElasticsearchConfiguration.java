@@ -31,10 +31,14 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
     @Value(value = "${elasticsearch.socketTimeout}")
     private int socketTimeout;
 
+    @Value(value = "${elasticsearch.http-ca-certificate}")
+    private String httpCaCertificate;
+
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
                 .connectedTo(this.host + ":" + this.port)
+                .usingSsl(httpCaCertificate)
                 .withBasicAuth(this.user, this.password)
                 .withConnectTimeout(Duration.ofSeconds(connectTimeout))
                 .withSocketTimeout(Duration.ofSeconds(socketTimeout))
