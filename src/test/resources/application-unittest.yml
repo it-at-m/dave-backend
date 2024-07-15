@@ -46,6 +46,7 @@ spring:
 elasticsearch:
   user: elastic
   password:
+  http-ca-certificate: xyz
   host: localhost
   port: 9200
   connectTimeout: 10
