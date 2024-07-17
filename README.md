@@ -1,5 +1,8 @@
 # Backend (Datenportal):
 
+Fork from https://github.com/it-at-m/dave-backend/ to use postgres, only used until [ Add JDBC driver for PostgreSQL #71 ](https://github.com/it-at-m/dave-backend/pull/71) is merged.
+
+
 ## About the project
 
 Dieses Repository ist eine der 5 Komponenten der Anwendung "DAVe" (Datenbank und Auswertung für Verkehrszählungen).
