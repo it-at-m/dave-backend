@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
@@ -66,6 +67,8 @@ public class SucheService {
     private final ZaehlungMapper zaehlungMapper;
 
     private final SucheMapper sucheMapper;
+
+    private final StadtbezirkMapper stadtbezirkMapper;
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -291,7 +294,7 @@ public class SucheService {
             log.debug("query '{}'", q);
             messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
         }
-        return sucheMapper.messstelleToMessstelleKarteDTO(messstellen);
+        return sucheMapper.messstelleToMessstelleKarteDTO(messstellen, stadtbezirkMapper);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {

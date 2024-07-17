@@ -21,7 +21,7 @@ public interface SucheMapper {
 
     MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen);
+    Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
     default void messstelleToMessstelleKarteDTOAfterMapping(@MappingTarget MessstelleKarteDTO dto, Messstelle bean,
