@@ -9,17 +9,19 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-@JsonIgnoreProperties(value = {
-        "startUhrzeit",
-        "endeUhrzeit",
-        "pkw",
-        "lkw",
-        "lastzuege",
-        "busse",
-        "kraftraeder",
-        "fussgaenger",
-        "pkwEinheiten"
-})
+@JsonIgnoreProperties(
+        value = {
+                "startUhrzeit",
+                "endeUhrzeit",
+                "pkw",
+                "lkw",
+                "lastzuege",
+                "busse",
+                "kraftraeder",
+                "fussgaenger",
+                "pkwEinheiten"
+        }
+)
 public class LadeZaehldatumTageswertDTO extends LadeZaehldatumDTO {
 
     private BigDecimal kfz;

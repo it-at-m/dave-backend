@@ -31,7 +31,7 @@ class GeneratePdfServiceTest {
     private GeneratePdfService generatePdfService = new GeneratePdfService(null, null);
 
     @BeforeEach
-    private void init() {
+    public void init() {
         generatePdfService.init();
     }
 

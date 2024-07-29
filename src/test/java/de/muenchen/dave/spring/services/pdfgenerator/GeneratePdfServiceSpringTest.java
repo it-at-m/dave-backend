@@ -8,6 +8,9 @@ import static org.hamcrest.Matchers.is;
 import com.openhtmltopdf.pdfboxout.visualtester.PdfVisualTester;
 import com.openhtmltopdf.pdfboxout.visualtester.PdfVisualTester.PdfCompareResult;
 import de.muenchen.dave.DaveBackendApplication;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
 import java.io.File;
 import java.io.IOException;
@@ -21,16 +24,28 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class GeneratePdfServiceSpringTest {
 
     private static final String TEST_OUTPUT_PATH = "target/unit-tests/";
+
     private static final String EXPECTED_RES_PATH = "/pdf/expected-pdfs/";
+
+    @MockBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
 
     @Autowired
     GeneratePdfService generatePdfService;

@@ -4,9 +4,9 @@ import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,8 +41,10 @@ public class ChatMessageController {
      * @param zaehlungId Die ID der Zählung
      * @return Eine Liste der Chat Nachrichten
      */
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+    )
     @GetMapping(value = "/allChatMessagesByZaehlungId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<List<ChatMessageDTO>> getAllChatMessagesByZaehlungId(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) String zaehlungId) {
@@ -64,8 +66,10 @@ public class ChatMessageController {
      * @param chatMessageDTO Die zu speichernde Nachricht
      * @return Das gespeicherte ChatMessageDTO
      */
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+    )
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ChatMessageDTO> saveChatMessage(@RequestBody @NotNull final ChatMessageDTO chatMessageDTO) {
         log.debug("Neue ChatMessage speichern: {}", chatMessageDTO.getContent());
@@ -84,8 +88,10 @@ public class ChatMessageController {
      * @param participantId Participant-ID, für den der Nachrichtenstatus geupdated werden soll.
      * @return Die geupdateten ChatMessages
      */
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+    )
     @GetMapping(value = "/updateUnreadMessages", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateUnreadMessages(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) final String zaehlungId,
             @RequestParam(value = CALLING_PARTICIPANT_ID) final Integer participantId) {

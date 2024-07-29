@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -451,7 +450,7 @@ public class LadeZaehldatenService {
                 extractedZeitintervalle.add(spitzenStunde);
             }
         } else {
-            extractedZeitintervalle = ListUtils.EMPTY_LIST;
+            extractedZeitintervalle = List.of();
         }
         return extractedZeitintervalle;
     }

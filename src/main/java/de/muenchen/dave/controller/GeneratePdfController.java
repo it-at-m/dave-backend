@@ -6,11 +6,11 @@ import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
 import de.muenchen.dave.services.pdfgenerator.ReportService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +28,10 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RestController
 @RequestMapping("/generate-pdf")
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class GeneratePdfController {
 
     public static final String TYPE_BELASTUNGSPLAN = "belastungsplan";
@@ -76,8 +78,10 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String charttype,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final OptionsDTO options,
-            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) @NotNull final String chartAsBase64Png,
-            @RequestPart(value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false) @NotNull final String schematischeUebersichtAsBase64Png) {
+            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
+            @RequestPart(
+                    value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
+            ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
             if (StringUtils.equalsIgnoreCase(charttype, TYPE_BELASTUNGSPLAN)) {
@@ -121,8 +125,10 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleOptionsDTO options,
-            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) @NotNull final String chartAsBase64Png,
-            @RequestPart(value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false) @NotNull final String schematischeUebersichtAsBase64Png) {
+            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
+            @RequestPart(
+                    value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
+            ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
             if (StringUtils.equalsIgnoreCase(type, TYPE_BELASTUNGSPLAN)) {

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
@@ -19,7 +18,7 @@ public class Zaehlung {
 
     String id;
 
-    @Field(type = FieldType.Date, format = DateFormat.custom, pattern = "dd.MM.uuuu")
+    @Field(type = FieldType.Date, format = {}, pattern = "dd.MM.uuuu")
     @JsonFormat(pattern = "dd.MM.yyyy")
     LocalDate datum;
 

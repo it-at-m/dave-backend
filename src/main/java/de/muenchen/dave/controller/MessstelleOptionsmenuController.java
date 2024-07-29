@@ -6,8 +6,8 @@ import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodEaiRequestDTO;
 import de.muenchen.dave.domain.dtos.ValidWochentageInPeriodResponseDTO;
 import de.muenchen.dave.services.MessstelleOptionsmenuService;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/messstelleOptionsmenu")
 @AllArgsConstructor
 @Slf4j
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class MessstelleOptionsmenuController {
     public static final String REQUEST_PARAM_MESSSTELLE_ID = "messstelle_id";
 

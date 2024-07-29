@@ -1,18 +1,18 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2023
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.configuration.nfcconverter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,20 +73,19 @@ public class NfcRequestFilter extends OncePerRequestFilter {
         this.contentTypes.clear();
         if (StringUtils.isEmpty(contentTypes)) {
             log.info("Disabling context-type filter.");
-
         } else {
-            final Set<String> newContentTypes = Arrays.stream(contentTypes.split(";")).map(String::trim)
+            final Set<String> newContentTypes = Arrays
+                    .stream(contentTypes.split(";"))
+                    .map(String::trim)
                     .collect(Collectors.toSet());
             this.contentTypes.addAll(newContentTypes);
             log.info("Enabled content-type filtering to NFC for: {}", getContentTypes());
-
         }
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
         log.debug("Request-Type={}", request.getClass().getName());
         log.debug("Intercepting request for URI {}", request.getRequestURI());
 
@@ -96,9 +95,10 @@ public class NfcRequestFilter extends OncePerRequestFilter {
             log.debug("Processing request {}.", request.getRequestURI());
             filterChain.doFilter(new NfcRequest(request, contentTypes), response);
         } else {
-            log.debug("Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.", contentType);
+            log.debug(
+                    "Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.",
+                    contentType);
             filterChain.doFilter(request, response);
         }
     }
-
 }

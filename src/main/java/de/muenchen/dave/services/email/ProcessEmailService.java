@@ -1,12 +1,10 @@
 package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
-import de.muenchen.dave.domain.dtos.MessageTimeDTO;
 import de.muenchen.dave.domain.enums.Participant;
-import de.muenchen.dave.domain.mapper.ChatMessageMapperImpl;
+import de.muenchen.dave.domain.mapper.ChatMessageMapper;
 import de.muenchen.dave.services.ChatMessageService;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 import javax.mail.Address;
@@ -29,11 +27,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProcessEmailService {
 
-    @Value("${dave.email.receiver.cut-email-body.line-contains-strings}")
-    private String containsStrings;
+    private final String containsStrings;
 
-    @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}")
-    private String beginsWithStrings;
+    private final String beginsWithStrings;
+
+    private final ChatMessageMapper chatMessageMapper;
+
+    public ProcessEmailService(@Value("${dave.email.receiver.cut-email-body.line-contains-strings}") final String containsStrings,
+            @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}") final String beginsWithStrings,
+            final ChatMessageMapper chatMessageMapper) {
+        this.containsStrings = containsStrings;
+        this.beginsWithStrings = beginsWithStrings;
+        this.chatMessageMapper = chatMessageMapper;
+    }
 
     /**
      * Verarbeitet eine Email zu einem {@link ChatMessageDTO}.
@@ -221,7 +227,7 @@ public class ProcessEmailService {
         final Date sentDate = msg.getSentDate();
         if (ObjectUtils.isNotEmpty(sentDate)) {
             chatMessageDTO.setMessageTimeDTO(
-                    generateMessageTimeDTO(sentDate.toInstant()
+                    chatMessageMapper.localDateTimeToMessageTimeDTO(sentDate.toInstant()
                             .atZone(ChatMessageService.ZONE)
                             .toLocalDateTime()));
         } else {
@@ -229,10 +235,5 @@ public class ProcessEmailService {
                     "Der Zeitstempel der ChatMessage erhält beim Abspeichern die aktuelle Systemzeit.");
         }
         return chatMessageDTO;
-    }
-
-    // Erstellt das MessageTimeDTO
-    private MessageTimeDTO generateMessageTimeDTO(final LocalDateTime sentDate) {
-        return (new ChatMessageMapperImpl()).localDateTimeToMessageTimeDTO(sentDate);
     }
 }

@@ -18,9 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @Slf4j
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
-        " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
-        " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
+            " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
+            " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+)
 public class SucheController {
 
     private static final String REQUEST_PARAMETER_QUERY = "query";

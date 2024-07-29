@@ -29,11 +29,15 @@ management:
       path-mapping:
         prometheus: metrics
   endpoint:
-    health.enabled: true
+    health:
+      enabled: true
+      probes:
+        enabled: true
     info.enabled: true
     prometheus.enabled: true
   info:
     env:
+      enabled: true
 info.application.name: @project.artifactId@
 info.application.version: @project.version@
 

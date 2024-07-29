@@ -12,9 +12,9 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +31,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @Slf4j
 @Validated
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class LadeZaehldatenController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";

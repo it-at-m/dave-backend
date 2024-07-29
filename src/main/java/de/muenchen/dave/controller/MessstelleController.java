@@ -6,8 +6,8 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,8 +32,10 @@ public class MessstelleController {
     private static final String REQUEST_PARAMETER_ID = "id";
     private final MessstelleService messstelleService;
 
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+    )
     @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
