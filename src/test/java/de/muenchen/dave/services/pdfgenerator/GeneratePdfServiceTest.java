@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -173,8 +174,17 @@ class GeneratePdfServiceTest {
 
         final String html = generatePdfService.getHtml(mustache, pdfBean);
 
-        assertThat(html, is(String.format(
-                "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>")));
+
+        var expected = String.format(
+                "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>"
+        );
+        if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
+            expected = String.format(
+                    "<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>"
+            );
+        }
+
+        assertThat(html, is(expected));
     }
 
 }
