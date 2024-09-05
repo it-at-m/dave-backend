@@ -22,7 +22,7 @@ spring:
       # configuration for local (development) mode. this
       # is also the default, that spring offers by convention.
       # but here explicite:
-      ddl-auto: update
+      ddl-auto: validate
       naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     # Logging for database operation
     show-sql: false
@@ -46,21 +46,21 @@ spring:
             token-uri: ${keycloak.auth-server-url}/realms/${realm}/protocol/openid-connect/token
         registration:
           keycloak:
-            client-id: <client-id>
-            client-secret: <client-secret>
+            client-id: dave
+            client-secret: 36181282-0eb1-4915-afe5-655b9ddbc427
             authorization-grant-type: client_credentials
             client-authentication-method: client_secret_post
 
 
 # Define the local keycloak realm here
-realm: <your Realm>
+realm: Dave
 keycloak:
-  auth-server-url: https://sso.dummy.de/auth
+  auth-server-url: https://ssodev.muenchen.de/auth
 
 elasticsearch:
   user: elastic
   password: TBC1XL4qgnr34CdvlWND
-  http-ca-certificate: fabf824d6ac0fe131f3429a3d5f073b7ed7be6a10bb2a94be91a717013ade0c7
+  http-ca-certificate: FA:BF:82:4D:6A:C0:FE:13:1F:34:29:A3:D5:F0:73:B7:ED:7B:E6:A1:0B:B2:A9:4B:E9:1A:71:70:13:AD:E0:C7
   host: localhost
   port: 9200
   connectTimeout: 10
@@ -74,23 +74,19 @@ dave:
       updater: 0 0/5 * 1/1 * ?
   email:
     address: dave@dummy.de
-    password: <password>
-    sender:
-      # Server Einstellungen
-      hostname: <SMTP-Mailserver-URL>
-      url:
-        adminportal: http://localhost:8085
-        selfserviceportal: http://localhost:8086
+    password: dummy
+    url:
+      adminportal: http://localhost:8085
+      selfserviceportal: http://localhost:8086
     receiver:
       # Update-Intervall in Millisekunden für den Email-Abruf
       update-interval: 5000
-      hostname: imap.dummy.de
+      hostname: imap.muenchen.de
   messstelle:
-    #    disabled
-    cron: "-"
-    # Alle 2 min
-    #    cron: 0 0/2 * 1/1 * ?
-    shedlock: 1m
+    # Alle 5 min
+    cron: 0 0/5 * 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 4m
 
 geodaten:
   eai:
