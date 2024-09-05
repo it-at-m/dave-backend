@@ -15,10 +15,10 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: Set up Node 16
-        uses: actions/setup-node@v3
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
