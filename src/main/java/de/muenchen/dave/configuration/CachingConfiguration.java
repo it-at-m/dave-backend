@@ -43,7 +43,7 @@ public class CachingConfiguration {
     public String hazelcastInstanceName;
     @Value("${hazelcast.group-name:data_hazl_group}")
     public String groupConfigName;
-    @Value("${hazelcast.openshift-service-name:dave-backend}")
+    @Value("${hazelcast.openshift-service-name:dave-backend-service}")
     public String openshiftServiceName;
 
     @Bean
