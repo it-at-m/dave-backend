@@ -14,7 +14,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>2.7.8</spring.boot.version>
+        <spring.boot.version>3.3.3</spring.boot.version>
         <spring.cloud.version>2021.0.5</spring.cloud.version>
         <logstash.encoder>7.0.1</logstash.encoder>
         <ojdbc8.version>19.9.0.0</ojdbc8.version>
