@@ -6,7 +6,6 @@ package de.muenchen.dave.configuration;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.IntegrityCheckerConfig;
-import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -106,7 +105,7 @@ public class CachingConfiguration {
 
     private void mapConfig(final Config config) {
         config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE, this.maxIdleTimeSecondsSuchergebnisse));
-        config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,this. maxIdleTimeSecondsSuchergebnisse));
+        config.addMapConfig(this.getMapConfig(SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, this.maxIdleTimeSecondsSuchergebnisse));
         config.addMapConfig(this.getMapConfig(LADE_BELASTUNGSPLAN_DTO, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(LADE_PROCESSED_ZAEHLDATEN, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(LADE_ZAEHLDATEN_ZEITREIHE_DTO, this.maxIdleTimeSecondsZaehldaten));
