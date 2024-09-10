@@ -55,20 +55,20 @@ public class CachingConfiguration {
     @Profile({ "local", "docker", "unittest" })
     public Config localConfig() {
 
-        final Config config = new Config();
+        final var config = new Config();
         config.setInstanceName(this.hazelcastInstanceName);
         config.setClusterName(this.groupConfigName);
 
         this.mapConfig(config);
 
-        final JoinConfig joinConfig = config.getNetworkConfig().getJoin();
+        final var joinConfig = config.getNetworkConfig().getJoin();
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig()
                 .setEnabled(true)
                 .addMember("127.0.0.1");
 
         // Integrity Check
-        final IntegrityCheckerConfig integrityCheckerConfig = new IntegrityCheckerConfig();
+        final var integrityCheckerConfig = new IntegrityCheckerConfig();
         integrityCheckerConfig.setEnabled(true);
         config.setIntegrityCheckerConfig(integrityCheckerConfig);
 
@@ -85,7 +85,7 @@ public class CachingConfiguration {
         log.info("Value hazelcast.max-idle-time-seconds.suchergebnisse: {}", this.maxIdleTimeSecondsSuchergebnisse);
         log.info("Value hazelcast.max-idle-time-seconds.zaehldaten; {}", this.maxIdleTimeSecondsZaehldaten);
 
-        final Config config = new Config();
+        final var config = new Config();
         config.setInstanceName(this.hazelcastInstanceName);
         config.setClusterName(this.groupConfigName);
 
@@ -97,7 +97,7 @@ public class CachingConfiguration {
                 .setProperty("service-name", this.openshiftServiceName);
 
         // Integrity Check
-        final IntegrityCheckerConfig integrityCheckerConfig = new IntegrityCheckerConfig();
+        final var integrityCheckerConfig = new IntegrityCheckerConfig();
         integrityCheckerConfig.setEnabled(true);
         config.setIntegrityCheckerConfig(integrityCheckerConfig);
 
@@ -114,7 +114,7 @@ public class CachingConfiguration {
     }
 
     private MapConfig getMapConfig(final String name, final int maxIdleTime) {
-        final MapConfig mapConfig = new MapConfig();
+        final var mapConfig = new MapConfig();
         mapConfig.setName(name);
         // Maximum time in seconds for each entry to stay idle in the map
         // 0 means infinite
