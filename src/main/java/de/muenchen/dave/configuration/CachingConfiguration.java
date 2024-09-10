@@ -118,6 +118,7 @@ public class CachingConfiguration {
         // Maximum time in seconds for each entry to stay idle in the map
         // 0 means infinite
         mapConfig.setMaxIdleSeconds(maxIdleTime);
+        mapConfig.setBackupCount(0);
         return mapConfig;
     }
 
