@@ -3,13 +3,11 @@ package de.muenchen.dave.services;
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -41,22 +39,6 @@ public final class IndexServiceUtils {
 
     public static List<String> splitStrings(String s) {
         return Splitter.on(",").omitEmptyStrings().trimResults().splitToList(s);
-    }
-
-    /**
-     * Liefert den Stadbezirksnamen für die Stadbezirksnummer.
-     *
-     * @param stadtbezirk die Nummer des Stadtbezirk.
-     * @return Die Bezeichnung des Stadtbezirks.
-     */
-    public static String getStadtbezirkBezeichnung(int stadtbezirk) {
-        Map<Integer, String> stadtbezirke = Stadtbezirk.getEnumattributesAsMap();
-        if (stadtbezirke.containsKey(stadtbezirk)) {
-            return stadtbezirke.get(stadtbezirk);
-        } else {
-            log.error("Es wurde kein Stadtbezirk mit der Nummer {} gefunden.", stadtbezirk);
-            return "";
-        }
     }
 
     /**

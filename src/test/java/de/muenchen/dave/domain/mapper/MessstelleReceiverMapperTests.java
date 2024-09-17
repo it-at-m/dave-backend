@@ -1,5 +1,8 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -10,7 +13,6 @@ import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
-import de.muenchen.dave.services.IndexServiceUtils;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
@@ -29,6 +32,8 @@ class MessstelleReceiverMapperTests {
     void testCreateMessstelle() {
         final MessstelleDto dto = MessstelleRandomFactory.getMessstelleDto();
 
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
         final Messstelle expected = new Messstelle();
         expected.setMstId(dto.getMstId());
         expected.setName(dto.getName());
@@ -45,7 +50,7 @@ class MessstelleReceiverMapperTests {
         expected.setHersteller(dto.getHersteller());
         expected.setFahrzeugKlassen(dto.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(dto.getDetektierteVerkehrsarten());
-        final String stadtbezirkBezeichnung = IndexServiceUtils.getStadtbezirkBezeichnung(dto.getStadtbezirkNummer());
+        final String stadtbezirkBezeichnung = "Schwabing-West";
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirkBezeichnung));
         expected.getSuchwoerter().addAll(stadtbezirke);
         if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
@@ -55,8 +60,9 @@ class MessstelleReceiverMapperTests {
         expected.getSuchwoerter().add(dto.getMstId());
 
         expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(mapper.createMessfaehigkeit(dto.getMessfaehigkeiten()));
 
-        Messstelle messstelle = this.mapper.createMessstelle(dto);
+        final Messstelle messstelle = this.mapper.createMessstelle(dto, stadtbezirkMapper);
         Assertions.assertThat(messstelle)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -117,12 +123,13 @@ class MessstelleReceiverMapperTests {
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
         expected.getSuchwoerter().add(updatedData.getMstId());
         expected.getSuchwoerter().add(updatedData.getName());
-        final String stadtbezirk = IndexServiceUtils.getStadtbezirkBezeichnung(updatedData.getStadtbezirkNummer());
+        final String stadtbezirk = "Schwabing-West";
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirk));
         expected.getSuchwoerter().addAll(stadtbezirke);
         if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
             expected.getSuchwoerter().add(stadtbezirk);
         }
+        expected.setMessfaehigkeiten(this.mapper.createMessfaehigkeit(updatedData.getMessfaehigkeiten()));
 
         // unveraendert
         expected.setId(bean.getId());
@@ -134,7 +141,9 @@ class MessstelleReceiverMapperTests {
         expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
 
-        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData);
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -145,8 +154,10 @@ class MessstelleReceiverMapperTests {
     @Test
     void statusMapping() {
         final MessstelleDto messstelleDto = MessstelleRandomFactory.getMessstelleDto();
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
         messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        Messstelle messstelle = mapper.createMessstelle(messstelleDto);
+        final Messstelle messstelle = mapper.createMessstelle(messstelleDto, stadtbezirkMapper);
         Assertions.assertThat(messstelle.getStatus()).isEqualTo(MessstelleStatus.IN_BESTAND);
     }
 }

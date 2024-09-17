@@ -10,8 +10,8 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,8 +29,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping(value = "/zaehlstelle")
 @RestController
 @Slf4j
-@PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-        "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())")
+@PreAuthorize(
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+)
 public class ZaehlstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
@@ -117,8 +119,10 @@ public class ZaehlstelleController {
      * @param participantId Participant bei dem ungelesene Nachrichten gefunden werden sollen
      * @return Zählstellen mit ungelesenen Nachrichten für bestimmten Participant
      */
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+    )
     @GetMapping(value = "/byUnreadMessages", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenByUnreadMessages(

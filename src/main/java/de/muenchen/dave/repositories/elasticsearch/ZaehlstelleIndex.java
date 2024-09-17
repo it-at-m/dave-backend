@@ -12,62 +12,84 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     void deleteAll();
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     void deleteAll(Iterable<? extends Zaehlstelle> var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     void deleteById(String var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     void delete(Zaehlstelle var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     <S extends Zaehlstelle> S save(S var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-            CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-            CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1);
 
     Optional<Zaehlstelle> findById(String var1);
 
-    @Query("{\"simple_query_string\": {" +
-            " \"fields\": [" +
-            "\"nummer^5\"," +
-            "\"stadtbezirk^2\"," +
-            "\"kreuzungsname^4\"," +
-            "\"suchwoerter^3\"," +
-            "\"zaehlungen.suchwoerter^3\"," +
-            "\"zaehlungen.zaehlsituation\"," +
-            "\"zaehlungen.zaehlsituationErweitert\"" +
-            "]," +
-            " \"query\": \"?0\"," +
-            " \"analyze_wildcard\": true," +
-            " \"default_operator\": \"AND\"," +
-            " \"lenient\": true" +
-            "}" +
-            "}")
+    @Query(
+        "{\"simple_query_string\": {" +
+                " \"fields\": [" +
+                "\"nummer^5\"," +
+                "\"stadtbezirk^2\"," +
+                "\"kreuzungsname^4\"," +
+                "\"suchwoerter^3\"," +
+                "\"zaehlungen.suchwoerter^3\"," +
+                "\"zaehlungen.zaehlsituation\"," +
+                "\"zaehlungen.zaehlsituationErweitert\"" +
+                "]," +
+                " \"query\": \"?0\"," +
+                " \"analyze_wildcard\": true," +
+                " \"default_operator\": \"AND\"," +
+                " \"lenient\": true" +
+                "}" +
+                "}"
+    )
     Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
-    @Query("{" +
-            "\"query_string\": {" +
-            "\"query\": " +
-            "\"?0\"" +
-            "}" +
-            "}")
+    @Query(
+        "{" +
+                "\"query_string\": {" +
+                "\"query\": " +
+                "\"?0\"" +
+                "}" +
+                "}"
+    )
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 
     List<Zaehlstelle> findAll();

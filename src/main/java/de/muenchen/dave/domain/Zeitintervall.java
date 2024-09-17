@@ -6,18 +6,18 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Index;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -25,7 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 // Definition of getter, setter, ...
@@ -36,20 +37,25 @@ import org.hibernate.annotations.Type;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(indexes = {
-        @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
-        @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
-        @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
-        @Index(name = "index_combined_3", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type")
-})
+@Table(
+        indexes = {
+                @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
+                @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
+                @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
+                @Index(
+                        name = "index_combined_3",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type"
+                )
+        }
+)
 public class Zeitintervall extends BaseEntity {
 
     @Column(name = "zaehlung_id", nullable = false)
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID zaehlungId;
 
     @Column(name = "fahrbeziehung_id")
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID fahrbeziehungId;
 
     @Column(name = "startuhrzeit")
@@ -99,22 +105,26 @@ public class Zeitintervall extends BaseEntity {
     private TypeZeitintervall type;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "faktorKfz", column = @Column(name = "hochrechnung_faktorkfz")),
-            @AttributeOverride(name = "faktorSv", column = @Column(name = "hochrechnung_faktorsv")),
-            @AttributeOverride(name = "faktorGv", column = @Column(name = "hochrechnung_faktorgv")),
-            @AttributeOverride(name = "hochrechnungKfz", column = @Column(name = "hochrechnung_hochrechnungkfz")),
-            @AttributeOverride(name = "hochrechnungSv", column = @Column(name = "hochrechnung_hochrechnungsv")),
-            @AttributeOverride(name = "hochrechnungGv", column = @Column(name = "hochrechnung_hochrechnunggv"))
-    })
+    @AttributeOverrides(
+        {
+                @AttributeOverride(name = "faktorKfz", column = @Column(name = "hochrechnung_faktorkfz")),
+                @AttributeOverride(name = "faktorSv", column = @Column(name = "hochrechnung_faktorsv")),
+                @AttributeOverride(name = "faktorGv", column = @Column(name = "hochrechnung_faktorgv")),
+                @AttributeOverride(name = "hochrechnungKfz", column = @Column(name = "hochrechnung_hochrechnungkfz")),
+                @AttributeOverride(name = "hochrechnungSv", column = @Column(name = "hochrechnung_hochrechnungsv")),
+                @AttributeOverride(name = "hochrechnungGv", column = @Column(name = "hochrechnung_hochrechnunggv"))
+        }
+    )
     private Hochrechnung hochrechnung;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "von", column = @Column(name = "fahrbeziehung_von")),
-            @AttributeOverride(name = "nach", column = @Column(name = "fahrbeziehung_nach")),
-            @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "fahrbeziehung_fahrbewegungkreisverkehr"))
-    })
+    @AttributeOverrides(
+        {
+                @AttributeOverride(name = "von", column = @Column(name = "fahrbeziehung_von")),
+                @AttributeOverride(name = "nach", column = @Column(name = "fahrbeziehung_nach")),
+                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "fahrbeziehung_fahrbewegungkreisverkehr"))
+        }
+    )
     private Fahrbeziehung fahrbeziehung;
 
 }

@@ -5,19 +5,18 @@
 package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.security.CustomJwtAuthenticationConverter;
-import lombok.RequiredArgsConstructor;
+import de.muenchen.dave.security.UserInfoDataService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  * The central class for configuration of all security aspects.
@@ -26,10 +25,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("!no-security")
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
+
+    public SecurityConfiguration(@Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
+            final RestTemplateBuilder restTemplateBuilder) {
+        this.customJwtAuthenticationConverter = new CustomJwtAuthenticationConverter(
+                new UserInfoDataService(userInfoUri, restTemplateBuilder));
+    }
 
     /**
      * Absichern der Rest-Endpunkte mit Definition der Ausnahmen.
@@ -41,50 +45,38 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http
-                .antMatcher("/**").authorizeRequests()
-                .antMatchers(
-                        "/lade-auswertung-spitzenstunde",
-                        "/lade-auswertung-zaehlstellen-koordinate",
-                        "/lade-auswertung-visum")
-                .permitAll()
-                // allow access to /actuator/infoZaehlungStatusUpdater
-                .antMatchers("/actuator/info").permitAll()
-                // allow access to /actuator/health for OpenShift Health Check
-                .antMatchers("/actuator/health").permitAll()
-                // allow access to /actuator/health/liveness for OpenShift Liveness Check
-                .antMatchers("/actuator/health/liveness").permitAll()
-                // allow access to /actuator/health/readiness for OpenShift Readiness Check
-                .antMatchers("/actuator/health/readiness").permitAll()
-                // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
-                .antMatchers("/actuator/metrics").permitAll()
-                // h2-console
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/**").authenticated()
-                .and()
-                .oauth2ResourceServer()
-                .jwt()
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/lade-auswertung-spitzenstunde"),
+                                AntPathRequestMatcher.antMatcher("/lade-auswertung-zaehlstellen-koordinate"),
+                                AntPathRequestMatcher.antMatcher("/lade-auswertung-visum"),
+                                // allow access to /actuator/info
+                                AntPathRequestMatcher.antMatcher("/actuator/info"),
+                                // allow access to /actuator/health for OpenShift Health Check
+                                AntPathRequestMatcher.antMatcher("/actuator/health"),
+                                // allow access to /actuator/health/liveness for OpenShift Liveness Check
+                                AntPathRequestMatcher.antMatcher("/actuator/health/liveness"),
+                                // allow access to /actuator/health/readiness for OpenShift Readiness Check
+                                AntPathRequestMatcher.antMatcher("/actuator/health/readiness"),
+                                // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
+                                AntPathRequestMatcher.antMatcher("/actuator/metrics"),
+                                // h2-console
+                                AntPathRequestMatcher.antMatcher("/h2-console/**"))
+                        .permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**"))
+                        .authenticated())
+                .headers(httpSecurityHeadersConfigurer ->
+                // support frames for same-origin (e.g. h2-console)
+                httpSecurityHeadersConfigurer.frameOptions(
+                        HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .csrf(httpSecurityCsrfConfigurer ->
+                // exclude csrf for h2-console
+                httpSecurityCsrfConfigurer.ignoringRequestMatchers(
+                        AntPathRequestMatcher.antMatcher("/h2-console/**")))
+                .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt ->
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
-                .jwtAuthenticationConverter(this.customJwtAuthenticationConverter);
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
+                jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter)));
         return http.build();
     }
 
-    @Bean
-    public AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager(
-            final ClientRegistrationRepository clientRegistrationRepository,
-            final OAuth2AuthorizedClientService authorizedClientService) {
-
-        final OAuth2AuthorizedClientProvider authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder
-                .builder()
-                .clientCredentials()
-                .build();
-
-        final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
-                clientRegistrationRepository,
-                authorizedClientService);
-        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-
-        return authorizedClientManager;
-    }
 }

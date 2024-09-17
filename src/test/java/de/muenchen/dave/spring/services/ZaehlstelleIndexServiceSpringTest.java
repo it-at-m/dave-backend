@@ -20,8 +20,11 @@ import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.ArrayList;
@@ -36,9 +39,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 public class ZaehlstelleIndexServiceSpringTest {
@@ -50,7 +54,16 @@ public class ZaehlstelleIndexServiceSpringTest {
     private ZaehlstelleIndex zaehlstelleIndex;
 
     @MockBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockBean
     private ZaehlstelleMapper zaehlstelleMapper;
+
+    @MockBean
+    private StadtbezirkMapper stadtbezirkMapper;
 
     @Test
     public void getOpenZaehlungen() throws BrokenInfrastructureException {
@@ -101,7 +114,8 @@ public class ZaehlstelleIndexServiceSpringTest {
         final BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
         final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
 
-        when(zaehlstelleMapper.bearbeiteDto2bean(dto)).thenReturn(zaehlstelle1);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing");
+        when(zaehlstelleMapper.bearbeiteDto2bean(dto, stadtbezirkMapper)).thenReturn(zaehlstelle1);
         when(zaehlstelleIndex.save(any())).thenReturn(zaehlstelle1);
 
         String id = this.service.erstelleZaehlstelle(dto);

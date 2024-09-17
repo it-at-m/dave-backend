@@ -8,9 +8,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LadeZaehldatumMapper {
 
     LadeAuswertungSpitzenstundeDTO ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(final LadeZaehldatumDTO ladeZaehldatumDTO);

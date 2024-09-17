@@ -22,13 +22,13 @@ jobs:
       - name: Install Java and Maven
         uses: actions/setup-java@v3
         with:
-          java-version: 11
+          java-version: 21
           distribution: "temurin"
           cache: "maven"
-      - name: Set up Node 16
-        uses: actions/setup-node@v3
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
       - name: Clean Maven Project Version
         id: set-version
         run: |

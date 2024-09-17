@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.MessageTimeDTO;
 import de.muenchen.dave.domain.enums.Participant;
+import de.muenchen.dave.domain.mapper.ChatMessageMapperImpl;
 import de.muenchen.dave.services.email.ProcessEmailService;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ProcessEmailServiceTest {
 
@@ -29,11 +29,12 @@ public class ProcessEmailServiceTest {
     private final Date date;
 
     public ProcessEmailServiceTest() {
-        this.processEmailService = new ProcessEmailService();
+        this.processEmailService = new ProcessEmailService(
+                "Landeshauptstadt München;Schuh&Co.GmbH",
+                "Von:;-----Ursprüngliche Nachricht-----",
+                new ChatMessageMapperImpl());
         this.message = Mockito.mock(Message.class);
         this.date = new Date();
-        ReflectionTestUtils.setField(processEmailService, "containsStrings", "Landeshauptstadt München;Schuh&Co.GmbH");
-        ReflectionTestUtils.setField(processEmailService, "beginsWithStrings", "Von:;-----Ursprüngliche Nachricht-----");
     }
 
     @BeforeEach

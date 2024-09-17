@@ -11,6 +11,9 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.auswertung.AuswertungSpitzenstundeService;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
@@ -22,14 +25,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 class AuswertungSpitzenstundeServiceSpringTest {
+
+    @MockBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockBean
+    private ZaehlstelleIndex zaehlstelleIndex;
 
     @Autowired
     private AuswertungSpitzenstundeService auswertungSpitzenstundeService;

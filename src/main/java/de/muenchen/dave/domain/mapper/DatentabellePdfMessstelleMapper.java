@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
@@ -17,16 +18,18 @@ import org.mapstruct.Mappings;
  * Mustache ist eine Sprache für Templates aus denen die für die PDF benötigten HTML Strings
  * entstehen.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DatentabellePdfMessstelleMapper {
 
     String UHRZEIT_23_59 = "23:59";
     String UHRZEIT_24_00 = "24:00";
 
-    @Mappings({
-            @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
-            @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
-    })
+    @Mappings(
+        {
+                @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
+        }
+    )
     DatentabellePdfZaehldatum ladeMesswerteDTO2bean(LadeMesswerteDTO dto);
 
     @AfterMapping

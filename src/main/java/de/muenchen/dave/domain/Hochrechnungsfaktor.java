@@ -1,9 +1,9 @@
 package de.muenchen.dave.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,10 +16,12 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Table(indexes = {
-        @Index(name = "index_active", columnList = "active"),
-        @Index(name = "index_default_faktor", columnList = "default_faktor")
-})
+@Table(
+        indexes = {
+                @Index(name = "index_active", columnList = "active"),
+                @Index(name = "index_default_faktor", columnList = "default_faktor")
+        }
+)
 public class Hochrechnungsfaktor extends BaseEntity {
 
     @Column(name = "matrix", unique = true)

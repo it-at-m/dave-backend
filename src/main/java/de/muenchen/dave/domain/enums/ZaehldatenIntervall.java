@@ -13,6 +13,8 @@ public enum ZaehldatenIntervall {
 
     STUNDE_VIERTEL(1, 15),
 
+    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15),
+
     STUNDE_HALB(2, 30),
 
     STUNDE_KOMPLETT(4, 60);

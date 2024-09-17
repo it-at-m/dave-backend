@@ -6,6 +6,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
@@ -32,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @AllArgsConstructor
-@Profile({ "!konexternal && !prodexternal" })
+@Profile({ "!konexternal && !prodexternal && !unittest" })
 public class MessstelleReceiver {
 
     private MessstelleApi messstelleApi;
@@ -42,6 +43,8 @@ public class MessstelleReceiver {
     private final CustomSuggestIndexService customSuggestIndexService;
 
     private MessstelleReceiverMapper messstelleReceiverMapper;
+
+    private final StadtbezirkMapper stadtbezirkMapper;
 
     /**
      * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
@@ -72,14 +75,14 @@ public class MessstelleReceiver {
 
     private void createMessstelleCron(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto);
+        final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         messstelleIndexService.saveMessstelle(newMessstelle);
     }
 
     private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
-        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto);
+        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
@@ -92,7 +95,7 @@ public class MessstelleReceiver {
                 final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
                 messquerschnitte.forEach(messquerschnitt -> {
                     if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
-                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto);
+                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto, stadtbezirkMapper);
                         messquerschnittDtoDoesNotExist.set(false);
                     }
                 });

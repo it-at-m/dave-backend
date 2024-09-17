@@ -1,8 +1,8 @@
 package de.muenchen.dave.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import java.math.BigDecimal;
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

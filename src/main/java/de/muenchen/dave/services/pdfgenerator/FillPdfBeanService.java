@@ -3,14 +3,21 @@ package de.muenchen.dave.services.pdfgenerator;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
+import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.DatentabellePdfZaehldatumMapper;
 import de.muenchen.dave.domain.mapper.GangliniePdfOptionsMapper;
+import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
@@ -21,9 +28,12 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
+import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,23 +41,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
-    public static final String CHART_TITLE_GESAMTE_ZÄHLSTELLE = "Gesamte Zählstelle (Zulauf)";
+    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
+    public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
     public static final String CHART_TITLE_CLOSE_PARENTHESIS = ")";
-    private static final String BELASTUNGSPLAN_TITLE = "Belastungsplan - Zählstelle ";
-    private static final String GANGLINIE_TITLE = "Ganglinie - Zählstelle ";
-    private static final String DATENTABELLE_TITLE = "Listenausgabe - Zählstelle ";
-    private static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
+    private static final String BELASTUNGSPLAN_TITLE_ZAEHLSTELLE = "Belastungsplan - Zählstelle ";
+    private static final String BELASTUNGSPLAN_TITLE_MESSSTELLE = "Belastungsplan - Messstelle ";
+    private static final String GANGLINIE_TITLE_ZAEHLSTELLE = "Ganglinie - Zählstelle ";
+    private static final String GANGLINIE_TITLE_MESSSTELLE = "Ganglinie - Messstelle ";
+    private static final String DATENTABELLE_TITLE_ZAEHLSTELLE = "Listenausgabe - Zählstelle ";
+    private static final String DATENTABELLE_TITLE_MESSSTELLE = "Listenausgabe - Messstelle ";
+    public static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String CHART_TITLE_BLOCK = "Block";
     private static final String CHART_TITLE_UHR = "Uhr";
     private static final String UHRZEIT_23_24 = "23 - 24";
@@ -65,15 +84,8 @@ public class FillPdfBeanService {
     private final GangliniePdfOptionsMapper gangliniePdfOptionsMapper;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
-    public FillPdfBeanService(final ZaehlstelleIndexService indexService,
-            final GangliniePdfOptionsMapper gangliniePdfOptionsMapper,
-            final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper,
-            final LadeZaehldatenService ladeZaehldatenService) {
-        this.indexService = indexService;
-        this.ladeZaehldatenService = ladeZaehldatenService;
-        this.gangliniePdfOptionsMapper = gangliniePdfOptionsMapper;
-        this.datentabellePdfZaehldatumMapper = datentabellePdfZaehldatumMapper;
-    }
+    private final MessstelleService messstelleService;
+    private final MesswerteService messwerteService;
 
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
@@ -110,7 +122,14 @@ public class FillPdfBeanService {
         basicPdf.setZaehlstelleninformationen(fillZaehlstelleninformationen(basicPdf.getZaehlstelleninformationen(), kreuzungsname, zaehlung));
 
         return basicPdf;
+    }
 
+    static de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf fillBasicPdf(final de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf basicPdf,
+            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+        fillPdfBeanWithData(basicPdf, department);
+        basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
+
+        return basicPdf;
     }
 
     /**
@@ -131,6 +150,23 @@ public class FillPdfBeanService {
         zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), KEINE_DATEN_VORHANDEN));
         return zaehlstelleninformationen;
+    }
+
+    static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
+            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        if (optionsDTO.getZeitraum().size() == 2) {
+            optionsDTO.getZeitraum().sort(LocalDate::compareTo);
+            messstelleninformationen.setMesszeitraum(
+                    String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
+        } else {
+            messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().get(0).format(DDMMYYYY));
+        }
+        messstelleninformationen.setKommentar(messstelle.getKommentar());
+        messstelleninformationen
+                .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
+        return messstelleninformationen;
     }
 
     /**
@@ -170,7 +206,7 @@ public class FillPdfBeanService {
     static String createChartTitleFahrbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
-            chartTitle.append(CHART_TITLE_GESAMTE_ZÄHLSTELLE);
+            chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
         }
         if (options.getVonKnotenarm() != null) {
             for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
@@ -204,6 +240,24 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
+    static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+        final StringBuilder chartTitle = new StringBuilder();
+        if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
+            chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
+        } else {
+            messstelle.getMessquerschnitte().stream().filter(messquerschnitt -> options.getMessquerschnittIds().contains(messquerschnitt.getMqId()))
+                    .forEach(messquerschnitt -> {
+                        chartTitle.append(messquerschnitt.getMqId());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
+                        chartTitle.append(StringUtils.SPACE);
+                    });
+        }
+        return chartTitle.toString().trim();
+    }
+
     /**
      * Konvertiert den übergebenen Parameter (bisher Integer oder BigDecimal) in einen String.
      *
@@ -233,17 +287,25 @@ public class FillPdfBeanService {
      * @param optionsDTO Options aus dem Frontend
      */
     static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
+        return getTimeblockForChartTitle(optionsDTO.getZeitblock());
+    }
+
+    static String getTimeblockForChartTitle(final MessstelleOptionsDTO optionsDTO) {
+        return getTimeblockForChartTitle(optionsDTO.getZeitblock());
+    }
+
+    static String getTimeblockForChartTitle(final Zeitblock zeitblock) {
         final StringBuilder timeblock = new StringBuilder();
-        timeblock.append(optionsDTO.getZeitblock().getStart().getHour());
+        timeblock.append(zeitblock.getStart().getHour());
         timeblock.append(StringUtils.SPACE);
         timeblock.append(MINUS);
         timeblock.append(StringUtils.SPACE);
         // Bei 23 Uhr muss unterschieden werden zwischen 23:00 (=> 23 Uhr) und 23:59.999999 (24 Uhr)
-        if (optionsDTO.getZeitblock().getEnd().getHour() == UHRZEIT_HOURS_23
-                && optionsDTO.getZeitblock().getEnd().getMinute() == UHRZEIT_MINUTES_59) {
+        if (zeitblock.getEnd().getHour() == UHRZEIT_HOURS_23
+                && zeitblock.getEnd().getMinute() == UHRZEIT_MINUTES_59) {
             timeblock.append(UHRZEIT_24_STRING);
         } else {
-            timeblock.append(optionsDTO.getZeitblock().getEnd().getHour());
+            timeblock.append(zeitblock.getEnd().getHour());
         }
 
         timeblock.append(StringUtils.SPACE);
@@ -342,6 +404,57 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
+    public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
+        final StringBuilder chartTitle = new StringBuilder();
+        if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
+            if (optionsDTO.getZeitraum().size() > 1) {
+                chartTitle.append("Durchschnittlicher");
+                chartTitle.append(StringUtils.SPACE);
+            }
+            chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
+        } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
+                || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
+                    chartTitle.append(optionsDTO.getZeitauswahl());
+                    chartTitle.append(StringUtils.SPACE);
+
+                    chartTitle.append(getTimeblockForChartTitle(optionsDTO));
+
+                } else
+            if (StringUtils.equalsAny(optionsDTO.getZeitauswahl(),
+                    Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName(),
+                    Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName(),
+                    Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName())) {
+
+                        chartTitle.append(optionsDTO.getZeitauswahl());
+                        chartTitle.append(StringUtils.SPACE);
+                        // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
+                        final Optional<LadeMesswerteDTO> optSpitzenStundeBlock = zaehldaten.stream()
+                                .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
+                                        LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
+                                        LadeZaehldatenService.SPITZENSTUNDE_TAG))
+                                .findFirst();
+                        if (optSpitzenStundeBlock.isPresent()) {
+                            final LadeMesswerteDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
+
+                            chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(MINUS);
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(spitzenStundeBlock.getEndeUhrzeit());
+                            chartTitle.append(StringUtils.SPACE);
+                            chartTitle.append(CHART_TITLE_UHR);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
+
+                        chartTitle.append("(");
+                        chartTitle.append(CHART_TITLE_BLOCK);
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(getTimeblockForChartTitle(optionsDTO));
+                        chartTitle.append(")");
+                    }
+        return chartTitle.toString();
+    }
+
     /**
      * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den
      * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
@@ -361,7 +474,7 @@ public class FillPdfBeanService {
 
         fillBasicPdf(diagrammPdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        diagrammPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        diagrammPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
         if (zaehlung.getKreisverkehr()) {
             diagrammPdf.setBelastungsplanKreisverkehr(chartAsBase64Png);
         } else {
@@ -371,6 +484,20 @@ public class FillPdfBeanService {
         diagrammPdf.setChartTitle(this.createChartTitleZeitauswahl(zaehlungId, options));
 
         return diagrammPdf;
+    }
+
+    public BelastungsplanPdf fillBelastungsplanPdf(final BelastungsplanPdf belastungsplanPdf, final String messstelleId,
+            final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) {
+        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = this.messwerteService.ladeMesswerte(messstelle.getId(), options);
+        fillBasicPdf(belastungsplanPdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+
+        belastungsplanPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_MESSSTELLE + messstelle.getMstId());
+        belastungsplanPdf.setChart(chartAsBase64Png);
+
+        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten()));
+
+        return belastungsplanPdf;
     }
 
     /**
@@ -394,7 +521,7 @@ public class FillPdfBeanService {
 
         fillBasicPdf(gangliniePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleFahrbeziehung(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
@@ -485,6 +612,105 @@ public class FillPdfBeanService {
         return gangliniePdf;
     }
 
+    public de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf fillGangliniePdf(
+            final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf, final String messstelleId,
+            final MessstelleOptionsDTO options, final String chartAsBase64Png,
+            final String schematischeUebersichtAsBase64Png, final String department) {
+        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
+
+        fillBasicPdf(gangliniePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+
+        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_MESSSTELLE + messstelle.getMstId());
+        gangliniePdf.setChart(chartAsBase64Png);
+        gangliniePdf.setChartTitle(createChartTitle(options, messstelle));
+        gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
+        gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
+
+        final List<LadeMesswerteDTO> messwerte = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
+        final List<GanglinieTable> gtList = new ArrayList<>();
+
+        // Initialisierung vor erstem Schleifendurchlauf
+        List<GanglinieTableColumn> gtcList = new ArrayList<>();
+        GanglinieTable gt = new GanglinieTable();
+
+        // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
+        this.gangliniePdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
+
+        for (final LadeMesswerteDTO messwert : messwerte) {
+            // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
+            if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.STUNDE)
+                    || StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
+                    || StringUtils.equals(messwert.getType(), LadeZaehldatenService.TAGESWERT)
+                    //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
+                    || (StringUtils.equals(messwert.getType(), LadeZaehldatenService.BLOCK)
+                            && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
+
+                final GanglinieTableColumn gtc = new GanglinieTableColumn();
+
+                // Uhrzeit setzen
+                final StringBuilder sbUhrzeit = new StringBuilder();
+                if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
+                        || StringUtils.equals(messwert.getType(), LadeZaehldatenService.TAGESWERT)
+                        || StringUtils.equals(messwert.getType(), LadeZaehldatenService.BLOCK)) {
+                    sbUhrzeit.append(messwert.getType());
+                } else if (messwert.getStartUhrzeit().getHour() == 23 && messwert.getEndeUhrzeit().getHour() == 23) {
+                    sbUhrzeit.append(UHRZEIT_23_24);
+                } else {
+                    sbUhrzeit.append(messwert.getStartUhrzeit().getHour());
+                    sbUhrzeit.append(StringUtils.SPACE);
+                    sbUhrzeit.append(MINUS);
+                    sbUhrzeit.append(StringUtils.SPACE);
+                    sbUhrzeit.append(messwert.getEndeUhrzeit().getHour());
+                }
+                gtc.setUhrzeit(sbUhrzeit.toString());
+
+                gtc.setKfz(convertZaehldata(messwert.getKfz()));
+                gtc.setSv(convertZaehldata(messwert.getSchwerverkehr()));
+                gtc.setSvAnteil(convertZaehldata(messwert.getAnteilSchwerverkehrAnKfzProzent()));
+                gtc.setGv(convertZaehldata(messwert.getGueterverkehr()));
+                gtc.setGvAnteil(convertZaehldata(messwert.getAnteilGueterverkehrAnKfzProzent()));
+                gtc.setPkw(convertZaehldata(messwert.getPkw()));
+                gtc.setLkw(convertZaehldata(messwert.getLkw()));
+                gtc.setLastzuege(convertZaehldata(messwert.getLastzuege()));
+                gtc.setBusse(convertZaehldata(messwert.getBusse()));
+                gtc.setKraftraeder(convertZaehldata(messwert.getKraftraeder()));
+                gtc.setFahrradfahrer(convertZaehldata(messwert.getFahrradfahrer()));
+                gtc.setFussgaenger(convertZaehldata(messwert.getFussgaenger()));
+                gtc.setLfw(convertZaehldata(messwert.getLfw()));
+
+                gtcList.add(gtc);
+
+                // Wenn maximale Spaltenanzahl überschritten => Tabelle speichern und neue Tabelle erstellen
+                if (gtcList.size() == MAX_ELEMENTS_IN_GANGLINIE_TABLE) {
+                    gt.setGanglinieTableColumns(gtcList);
+                    gtList.add(gt);
+                    gt = new GanglinieTable();
+                    gtcList = new ArrayList<>();
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(gtcList)) {
+            gt.setGanglinieTableColumns(gtcList);
+            gtList.add(gt);
+        }
+
+        // Wenn mehrere Tabellen vonnöten => große Zählung, Zellenbreite auf Minimum verkleinern
+        // Hier sollte später dynamisch berechnet werden wie viele Tabellen benötigt werden und die Elemente gleichmäßig in diese verteilen.
+        if (gtList.size() > 1) {
+            gangliniePdf.setTableCellWidth("11.5mm");
+            // Wenn nur eine Tabelle => Zellenbreite anpassen
+        } else {
+            final Integer gtSize = gt.getGanglinieTableColumns().size();
+
+            gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
+        }
+
+        gangliniePdf.setGanglinieTables(gtList);
+
+        return gangliniePdf;
+    }
+
     /**
      * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den
      * Templates gebraucht werden. MustacheParts werden hier noch nicht befüllt.
@@ -505,7 +731,7 @@ public class FillPdfBeanService {
 
         fillBasicPdf(datentabellePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
 
         datentabellePdf.setTableTitle(createChartTitleFahrbeziehung(options, zaehlung));
 
@@ -514,6 +740,29 @@ public class FillPdfBeanService {
 
         final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.getDatentabellePdfZaehldaten(options, zaehlungId);
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
+
+        return datentabellePdf;
+    }
+
+    public de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf fillDatentabellePdf(
+            final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf datentabellePdf, final String messstelleId,
+            final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final String department) {
+        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
+
+        fillBasicPdf(datentabellePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+
+        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
+
+        datentabellePdf.setTableTitle(createChartTitle(options, messstelle));
+
+        datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
+        datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
+
+        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable()
+                .getZaehldaten());
+        datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
 
         return datentabellePdf;
     }
@@ -563,6 +812,32 @@ public class FillPdfBeanService {
         return datentabellePdfZaehldaten;
     }
 
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
+        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
+        return getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten());
+    }
+
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDTO> ladeMesswerteDTOS) {
+        // Bei Tageswert soll keine Uhrzeit angezeigt werden
+        ladeMesswerteDTOS.stream()
+                .filter(ladeMesswerteDTO -> StringUtils.equalsIgnoreCase(ladeMesswerteDTO.getType(), LadeZaehldatenService.TAGESWERT))
+                .forEach(ladeMesswerteDTO -> {
+                    ladeMesswerteDTO.setEndeUhrzeit(null);
+                    ladeMesswerteDTO.setStartUhrzeit(null);
+                });
+
+        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.datentabellePdfZaehldatumMapper
+                .fahrzeugOptionsToDatentabellePdfZaehldaten(fahrzeugOptions);
+
+        datentabellePdfZaehldaten.setActiveTabsFahrzeugtypen(this.calcActiveTabsFahrzeugtypen(fahrzeugOptions));
+        datentabellePdfZaehldaten.setActiveTabsFahrzeugklassen(this.calcActiveTabsFahrzeugklassen(fahrzeugOptions));
+        datentabellePdfZaehldaten.setActiveTabsAnteile(this.calcActiveTabsAnteile(fahrzeugOptions));
+
+        datentabellePdfZaehldaten.setZaehldatenList(this.datentabellePdfZaehldatumMapper.ladeMesswerteDTOList2beanList(ladeMesswerteDTOS));
+        return datentabellePdfZaehldaten;
+    }
+
     private int calcActiveTabsFahrzeugtypen(final OptionsDTO optionsDTO) {
         int activeTabsFahrzeugtypen = 0;
         if (optionsDTO.getPersonenkraftwagen()) {
@@ -589,6 +864,35 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugtypen;
     }
 
+    private int calcActiveTabsFahrzeugtypen(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsFahrzeugtypen = 0;
+        if (optionsDTO.isPersonenkraftwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLastkraftwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLastzuege()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isLieferwagen()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isBusse()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isKraftraeder()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isRadverkehr()) {
+            activeTabsFahrzeugtypen++;
+        }
+        if (optionsDTO.isFussverkehr()) {
+            activeTabsFahrzeugtypen++;
+        }
+        return activeTabsFahrzeugtypen;
+    }
+
     private int calcActiveTabsFahrzeugklassen(final OptionsDTO optionsDTO) {
         int activeTabsFahrzeugklasse = 0;
         if (optionsDTO.getKraftfahrzeugverkehr()) {
@@ -603,12 +907,37 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugklasse;
     }
 
+    private int calcActiveTabsFahrzeugklassen(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsFahrzeugklasse = 0;
+        if (optionsDTO.isKraftfahrzeugverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        if (optionsDTO.isSchwerverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        if (optionsDTO.isGueterverkehr()) {
+            activeTabsFahrzeugklasse++;
+        }
+        return activeTabsFahrzeugklasse;
+    }
+
     private int calcActiveTabsAnteile(final OptionsDTO optionsDTO) {
         int activeTabsAnteile = 0;
         if (optionsDTO.getSchwerverkehrsanteilProzent()) {
             activeTabsAnteile++;
         }
         if (optionsDTO.getGueterverkehrsanteilProzent()) {
+            activeTabsAnteile++;
+        }
+        return activeTabsAnteile;
+    }
+
+    private int calcActiveTabsAnteile(final FahrzeugOptionsDTO optionsDTO) {
+        int activeTabsAnteile = 0;
+        if (optionsDTO.isSchwerverkehrsanteilProzent()) {
+            activeTabsAnteile++;
+        }
+        if (optionsDTO.isGueterverkehrsanteilProzent()) {
             activeTabsAnteile++;
         }
         return activeTabsAnteile;

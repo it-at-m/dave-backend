@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {{{globalCssMustachePart}}}
+</head>
+<body>
+{{{logoMustachePart}}}
+{{{footerMustachePart}}}
+<!-- Metainformationen -->
+<h4>{{documentTitle}}</h4>
+{{{messstelleninformationenMustachePart}}}
+<h5>{{chartTitle}}</h5>
+{{#chart}}
+  <img style="width: 95%" src="{{chart}}"/>
+{{/chart}}
+</body>
+</html>

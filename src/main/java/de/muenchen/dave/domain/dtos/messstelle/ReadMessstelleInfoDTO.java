@@ -23,4 +23,5 @@ public class ReadMessstelleInfoDTO implements Serializable {
     private LocalDate abbaudatum;
     private String kommentar;
     private List<ReadMessquerschnittDTO> messquerschnitte;
+    private List<ReadMessfaehigkeitDTO> messfaehigkeiten;
 }

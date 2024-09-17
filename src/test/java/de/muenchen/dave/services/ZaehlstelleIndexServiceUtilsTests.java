@@ -23,13 +23,6 @@ public class ZaehlstelleIndexServiceUtilsTests {
     }
 
     @Test
-    public void testLeseStadtbezirk() {
-        assertThat(IndexServiceUtils.getStadtbezirkBezeichnung(10), is(equalTo("Moosach")));
-        assertThat(IndexServiceUtils.getStadtbezirkBezeichnung(6), is(equalTo("Sendling")));
-        assertThat(IndexServiceUtils.getStadtbezirkBezeichnung(20), is(equalTo("Hadern")));
-    }
-
-    @Test
     public void testJahreszeitenDetector() {
         LocalDate w1 = LocalDate.of(2019, 1, 1);
         LocalDate w2 = LocalDate.of(2019, 12, 1);

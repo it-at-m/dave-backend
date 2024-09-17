@@ -1,5 +1,8 @@
 package de.muenchen.dave.domain.mapper;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
@@ -11,16 +14,16 @@ import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
-import de.muenchen.dave.services.IndexServiceUtils;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
@@ -36,7 +39,7 @@ class MessstelleMapperTests {
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        expected.setStadtbezirk("Schwabing-West");
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStandort(bean.getStandort());
@@ -44,6 +47,7 @@ class MessstelleMapperTests {
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
         expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2ReadMessfaehigkeitDto(bean.getMessfaehigkeiten()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
@@ -52,14 +56,17 @@ class MessstelleMapperTests {
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
         tooltip.setStandort(bean.getStandort());
-        tooltip.setStadtbezirk(IndexServiceUtils.getStadtbezirkBezeichnung(bean.getStadtbezirkNummer()));
+        tooltip.setStadtbezirk("Schwabing-West");
         tooltip.setStadtbezirknummer(bean.getStadtbezirkNummer());
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         tooltip.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
-        Assertions.assertThat(this.mapper.bean2readDto(bean))
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+
+        Assertions.assertThat(this.mapper.bean2readDto(bean, stadtbezirkMapper))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -76,7 +83,7 @@ class MessstelleMapperTests {
         expected.setStatus(bean.getStatus().toString());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk(Stadtbezirk.bezeichnungOf(bean.getStadtbezirkNummer()));
+        expected.setStadtbezirk("Schwabing-West");
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
@@ -92,8 +99,12 @@ class MessstelleMapperTests {
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
+        expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2EditMessfaehigkeitDto(bean.getMessfaehigkeiten()));
 
-        Assertions.assertThat(this.mapper.bean2editDto(bean))
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+
+        Assertions.assertThat(this.mapper.bean2editDto(bean, stadtbezirkMapper))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -102,6 +113,8 @@ class MessstelleMapperTests {
     @Test
     void testUpdateMessstelle() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
+        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
+        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
 
         final EditMessstelleDTO updatedData = new EditMessstelleDTO();
         updatedData.setId("darf nicht aktualisiert werden");
@@ -118,6 +131,7 @@ class MessstelleMapperTests {
         updatedData.setDatumLetztePlausibleMessung("1999-11-11");
         updatedData.setLongitude(6.66);
         updatedData.setLatitude(6.66);
+        updatedData.setMessfaehigkeiten(Collections.emptyList());
 
         updatedData.setSichtbarDatenportal(!bean.getSichtbarDatenportal());
         updatedData.setGeprueft(!bean.getGeprueft());
@@ -145,17 +159,18 @@ class MessstelleMapperTests {
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
 
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
         expected.setGeprueft(true);
         expected.setKommentar(updatedData.getKommentar());
         expected.setStandort(updatedData.getStandort());
         expected.setSuchwoerter(new ArrayList<>());
-        expected.getSuchwoerter().addAll(SuchwortUtil.generateSuchworteOfMessstelle(bean));
+        expected.getSuchwoerter().addAll(SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper));
         expected.getSuchwoerter().addAll(updatedData.getCustomSuchwoerter());
         expected.setCustomSuchwoerter(updatedData.getCustomSuchwoerter());
 
-        Messstelle actual = this.mapper.updateMessstelle(bean, updatedData);
+        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
