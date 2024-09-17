@@ -83,7 +83,8 @@ public class CachingConfiguration {
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         config.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
                 //If we dont set a specific name, it would call -all- services within a namespace
-                .setProperty("service-name", this.openshiftServiceName);
+                .setProperty("service-name", this.openshiftServiceName)
+                .setProperty("namespace", this.hazelcastInstanceName);
 
         // Integrity Check
         final IntegrityCheckerConfig integrityCheckerConfig = new IntegrityCheckerConfig();
