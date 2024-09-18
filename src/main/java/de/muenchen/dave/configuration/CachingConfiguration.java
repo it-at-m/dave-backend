@@ -45,7 +45,7 @@ public class CachingConfiguration {
     public String groupConfigName;
     @Value("${hazelcast.openshift-service-name:backend}")
     public String openshiftServiceName;
-    @Value("${hazelcast.openshift-namespace}")
+    @Value("${hazelcast.openshift-namespace:dave}")
     public String openshiftNamespace;
 
     @Bean
