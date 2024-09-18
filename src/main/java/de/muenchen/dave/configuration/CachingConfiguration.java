@@ -45,6 +45,8 @@ public class CachingConfiguration {
     public String groupConfigName;
     @Value("${hazelcast.openshift-service-name:backend}")
     public String openshiftServiceName;
+    @Value("${hazelcast.openshift-namespace}")
+    public String openshiftNamespace;
 
     @Bean
     @Profile({ "local", "docker", "unittest" })
@@ -84,7 +86,7 @@ public class CachingConfiguration {
         config.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
                 //If we dont set a specific name, it would call -all- services within a namespace
                 .setProperty("service-name", this.openshiftServiceName)
-                .setProperty("namespace", this.hazelcastInstanceName);
+                .setProperty("namespace", this.openshiftNamespace);
 
         // Integrity Check
         final IntegrityCheckerConfig integrityCheckerConfig = new IntegrityCheckerConfig();
