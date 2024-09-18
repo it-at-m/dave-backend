@@ -43,6 +43,8 @@ public class CachingConfiguration {
     public String groupConfigName;
     @Value("${hazelcast.openshift-service-name:backend}")
     public String openshiftServiceName;
+    @Value("${hazelcast.openshift-namespace:dave}")
+    public String openshiftNamespace;
     // 60*60*12 = 7200 = 2h
     @Value("${hazelcast.max-idle-time-seconds.suchergebnisse:7200}")
     public int maxIdleTimeSecondsSuchergebnisse;
@@ -93,7 +95,8 @@ public class CachingConfiguration {
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         config.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
                 //If we dont set a specific name, it would call -all- services within a namespace
-                .setProperty("service-name", this.openshiftServiceName);
+                .setProperty("service-name", this.openshiftServiceName)
+                .setProperty("namespace", this.openshiftNamespace);
 
         // Integrity Check
         final var integrityCheckerConfig = new IntegrityCheckerConfig();
