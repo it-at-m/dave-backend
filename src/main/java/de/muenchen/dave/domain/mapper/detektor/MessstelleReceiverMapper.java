@@ -43,8 +43,23 @@ public interface MessstelleReceiverMapper {
             bean.setId(UUID.randomUUID().toString());
         }
 
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
-            bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
+            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
+        }
+
+        // TODO workaround solange Datenqualitaet mist ist
+        if (ObjectUtils.isEmpty(dto.getStadtbezirkNummer())) {
+            bean.setStadtbezirkNummer(999);
+        }
+
+        // TODO workaround solange Datenqualitaet mist ist
+        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
+            bean.setDatumLetztePlausibleMessung(LocalDate.MAX);
+        }
+
+        // TODO workaround solange Datenqualitaet mist ist
+        if (ObjectUtils.isEmpty(dto.getRealisierungsdatum())) {
+            bean.setRealisierungsdatum(LocalDate.MAX);
         }
 
         // Suchworte setzen
@@ -77,8 +92,8 @@ public interface MessstelleReceiverMapper {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
-            bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
+            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
     }
 

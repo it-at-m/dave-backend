@@ -72,8 +72,8 @@ public class MessstelleRandomFactory {
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
         dto.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnittDtos());
-        dto.setYcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
-        dto.setXcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setLatitude(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setLongitude(fakerInstance.number().randomDouble(5, 0, 5));
         dto.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeitenDtos());
         return dto;
     }

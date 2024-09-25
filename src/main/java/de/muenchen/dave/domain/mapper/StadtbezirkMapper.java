@@ -17,6 +17,6 @@ public class StadtbezirkMapper {
     private Map<String, String> stadtbezirkeMap;
 
     public String bezeichnungOf(@NonNull Integer stadtbezirkNummer) {
-        return stadtbezirkeMap.get(stadtbezirkNummer.toString());
+        return stadtbezirkeMap.getOrDefault(stadtbezirkNummer.toString(), "Unbekannt");
     }
 }

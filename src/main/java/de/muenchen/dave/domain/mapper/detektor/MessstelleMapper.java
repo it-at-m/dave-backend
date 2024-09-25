@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
@@ -83,6 +84,12 @@ public interface MessstelleMapper {
         if (!MessstelleStatus.IN_PLANUNG.equals(actual.getStatus())) {
             actual.setGeprueft(true);
         }
+
+        // TODO workaround solange Datenqualitaet mist ist
+        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
+            actual.setDatumLetztePlausibleMessung(LocalDate.MAX);
+        }
+
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(actual, stadtbezirkMapper);
 

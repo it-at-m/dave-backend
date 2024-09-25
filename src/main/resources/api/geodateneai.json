@@ -17,10 +17,6 @@
   ],
   "tags": [
     {
-      "name": "PointFeature",
-      "description": "API zum Abfragen des FeatureServers für Punkt-Koordinaten."
-    },
-    {
       "name": "Messwerte",
       "description": "API zum Abfragen des FeatureServers für Messwerte."
     },
@@ -34,53 +30,12 @@
     }
   ],
   "paths": {
-    "/point/stadtbezirke": {
-      "post": {
-        "tags": [
-          "PointFeature"
-        ],
-        "summary": "Holt die Stadtbezirke die sich mit dem Punkt (im Standard EPSG:4326 (WGS84)) überschneiden.",
-        "operationId": "getStadtbezirke",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PointGeometryDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Stadtbezirke erfolgreich abgefragt.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/FeatureCollectionDtoFeatureDtoStadtbezirkDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/messwerte/tagesaggregat/messstelle": {
       "post": {
         "tags": [
           "Messwerte"
         ],
-        "summary": "Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.",
+        "summary": "Holt das Tagesaggregat der Messwerte pro Messstelle im angegebenen Zeitraum.",
         "operationId": "getMesswerteTagesaggregatPerMessstelle",
         "requestBody": {
           "content": {
@@ -94,9 +49,9 @@
         },
         "responses": {
           "200": {
-            "description": "Tagesaggregat der Messwerte erfolgreich abgefragt.",
+            "description": "Tagesaggregat der Messwerte pro Messstelle erfolgreich abgefragt.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/MeasurementValuesAggregateResponse"
                 }
@@ -106,7 +61,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -121,7 +76,7 @@
         "tags": [
           "Messwerte"
         ],
-        "summary": "Holt das Tagesaggregat der Messwerte zu einem Messquerschnitt in einem bestimmten Zeitraum.",
+        "summary": "Holt das Tagesaggregat der Messwerte pro Messquerschnitt einer Messstelle im angegebenen Zeitraum.",
         "operationId": "getMesswerteTagesaggregatPerMessquerschnitt",
         "requestBody": {
           "content": {
@@ -135,9 +90,9 @@
         },
         "responses": {
           "200": {
-            "description": "Tagesaggregat der Messwerte erfolgreich abgefragt.",
+            "description": "Tagesaggregat der Messwerte pro Messquerschnitt erfolgreich abgefragt.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/MeasurementValuesAggregateResponse"
                 }
@@ -147,7 +102,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -178,7 +133,7 @@
           "200": {
             "description": "MesswerteIntervalle erfolgreich abgefragt.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/MeasurementValuesResponse"
                 }
@@ -188,7 +143,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -219,7 +174,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -229,7 +184,7 @@
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
                 }
@@ -260,7 +215,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -270,7 +225,7 @@
           "200": {
             "description": "Valide Wochentage im Zeitraum konnten ermittelt werden",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidWochentageInPeriodDto"
                 }
@@ -291,7 +246,7 @@
           "200": {
             "description": "Messstellen erfolgreich abgefragt.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -304,7 +259,7 @@
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
                 }
@@ -332,22 +287,22 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
           },
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
-              "*/*": {
+              "application/hal+json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -358,142 +313,6 @@
   },
   "components": {
     "schemas": {
-      "PointGeometryDto": {
-        "required": [
-          "coordinates",
-          "type"
-        ],
-        "type": "object",
-        "description": "Die GEOJSON-Repräsentation einer Punktkoordinate.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GeometryDto"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "coordinates": {
-                "maxItems": 2,
-                "minItems": 2,
-                "type": "array",
-                "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84).",
-                "items": {
-                  "type": "number",
-                  "description": "Die Punktkoordinate ([x,y] bzw. [longitude, latitude]) im Standard EPSG:4326 (WGS84)."
-                }
-              }
-            }
-          }
-        ]
-      },
-      "InformationResponseDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "ERROR",
-              "WARNING",
-              "INFORMATION_SUCCESS",
-              "INFORMATION_NEUTRAL"
-            ]
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "traceId": {
-            "type": "string"
-          },
-          "spanId": {
-            "type": "string"
-          },
-          "httpStatus": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "originalException": {
-            "type": "string"
-          },
-          "messages": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "FeatureCollectionDtoFeatureDtoStadtbezirkDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "features": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FeatureDtoStadtbezirkDto"
-            }
-          }
-        }
-      },
-      "FeatureDtoStadtbezirkDto": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string"
-          },
-          "geometry": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/PointGeometryDto"
-              }
-            ]
-          },
-          "properties": {
-            "$ref": "#/components/schemas/StadtbezirkDto"
-          }
-        }
-      },
-      "GeometryDto": {
-        "required": [
-          "type"
-        ],
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "Definiert den Geometrietyp in der Ausprägung als Multipolygon oder als Point."
-          }
-        },
-        "discriminator": {
-          "propertyName": "type"
-        }
-      },
-      "StadtbezirkDto": {
-        "type": "object",
-        "properties": {
-          "objectId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "stadtbezirkNummer": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "flaecheQm": {
-            "type": "number"
-          },
-          "xcoordinate": {
-            "type": "number"
-          },
-          "ycoordinate": {
-            "type": "number"
-          }
-        }
-      },
       "GetMeasurementValuesAggregateRequest": {
         "required": [
           "messquerschnittIdsPerMessstelle",
@@ -531,6 +350,43 @@
               "WERKTAG_FERIEN",
               "MO_SO"
             ]
+          }
+        }
+      },
+      "InformationResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "INFORMATION_SUCCESS",
+              "INFORMATION_NEUTRAL"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalException": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1012,11 +868,11 @@
             "type": "integer",
             "format": "int32"
           },
-          "xcoordinate": {
+          "longitude": {
             "type": "number",
             "format": "double"
           },
-          "ycoordinate": {
+          "latitude": {
             "type": "number",
             "format": "double"
           }
@@ -1026,9 +882,6 @@
         "type": "object",
         "properties": {
           "mstId": {
-            "type": "string"
-          },
-          "name": {
             "type": "string"
           },
           "status": {
@@ -1049,12 +902,19 @@
             "type": "string",
             "format": "date"
           },
+          "name": {
+            "type": "string"
+          },
           "stadtbezirkNummer": {
             "type": "integer",
             "format": "int32"
           },
           "bemerkung": {
             "type": "string"
+          },
+          "datumLetztePlausibleMessung": {
+            "type": "string",
+            "format": "date"
           },
           "fahrzeugKlassen": {
             "type": "string"
@@ -1065,9 +925,13 @@
           "hersteller": {
             "type": "string"
           },
-          "datumLetztePlausibleMessung": {
-            "type": "string",
-            "format": "date"
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
           },
           "messquerschnitte": {
             "type": "array",
@@ -1080,14 +944,6 @@
             "items": {
               "$ref": "#/components/schemas/MessfaehigkeitDto"
             }
-          },
-          "xcoordinate": {
-            "type": "number",
-            "format": "double"
-          },
-          "ycoordinate": {
-            "type": "number",
-            "format": "double"
           }
         }
       },
