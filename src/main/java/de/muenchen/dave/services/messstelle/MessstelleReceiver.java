@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.services.messstelle;
 
+import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
@@ -53,34 +54,40 @@ public class MessstelleReceiver {
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
     @Transactional
+    @LogExecutionTime
     public void loadMessstellenCron() {
         // To assert that the lock is held (prevents misconfiguration errors)
         LockAssert.assertLocked();
         log.info("#loadMessstellen from MobidaM");
         // Daten aus MobidaM laden
-        final List<MessstelleDto> body = Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
+        final List<MessstelleDto> body = loadMessstellen();
         // Stammdatenservice aufrufen
-        this.processingMessstellenCron(body);
+        this.processingMessstellen(body);
     }
 
-    private void processingMessstellenCron(final List<MessstelleDto> messstellen) {
+    @LogExecutionTime
+    private List<MessstelleDto> loadMessstellen() {
+        return Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
+    }
+
+    private void processingMessstellen(final List<MessstelleDto> messstellen) {
         log.debug("#processingMessstellenCron");
         // Daten aus Dave laden
         messstellen.forEach(messstelleDto -> {
             log.debug("#findById");
-            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelleCron(found, messstelleDto),
-                    () -> this.createMessstelleCron(messstelleDto));
+            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelle(found, messstelleDto),
+                    () -> this.createMessstelle(messstelleDto));
         });
     }
 
-    private void createMessstelleCron(final MessstelleDto dto) {
+    private void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
         final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         messstelleIndexService.saveMessstelle(newMessstelle);
     }
 
-    private void updateMessstelleCron(final Messstelle existingMessstelle, final MessstelleDto dto) {
+    private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
