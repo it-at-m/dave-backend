@@ -15,8 +15,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
+import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -47,20 +46,20 @@ class BelastungsplanServiceTest {
     @Test
     void ladeBelastungsplan() {
         // setup
-        List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt1 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt1.setSumGv(50);
-        totalSumPerMessquerschnitt1.setSumKfz(200);
-        totalSumPerMessquerschnitt1.setSumRad(20);
-        totalSumPerMessquerschnitt1.setSumSv(30);
-        totalSumPerMessquerschnitt1.setMqId("1");
+        List<IntervallDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervallDto totalSumPerMessquerschnitt1 = new IntervallDto();
+        totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
+        totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
+        totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt1.setMqId(1);
 
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt2 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt2.setSumGv(30);
-        totalSumPerMessquerschnitt2.setSumKfz(100);
-        totalSumPerMessquerschnitt2.setSumRad(10);
-        totalSumPerMessquerschnitt2.setSumSv(50);
-        totalSumPerMessquerschnitt2.setMqId("2");
+        IntervallDto totalSumPerMessquerschnitt2 = new IntervallDto();
+        totalSumPerMessquerschnitt2.setSummeGueterverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
+        totalSumPerMessquerschnitt2.setAnzahlRad(BigDecimal.valueOf(10));
+        totalSumPerMessquerschnitt2.setSummeSchwerverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt2.setMqId(2);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt1);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
@@ -107,7 +106,7 @@ class BelastungsplanServiceTest {
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1", "2"));
-        final MeasurementValuesPerInterval interval = new MeasurementValuesPerInterval();
+        final IntervallDto interval = new IntervallDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
@@ -119,20 +118,20 @@ class BelastungsplanServiceTest {
     @Test
     void ladeBelastungsplanWithSpitzenstunde() {
         // setup
-        List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt1 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt1.setSumGv(50);
-        totalSumPerMessquerschnitt1.setSumKfz(200);
-        totalSumPerMessquerschnitt1.setSumRad(20);
-        totalSumPerMessquerschnitt1.setSumSv(30);
-        totalSumPerMessquerschnitt1.setMqId("1");
+        List<IntervallDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervallDto totalSumPerMessquerschnitt1 = new IntervallDto();
+        totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
+        totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
+        totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt1.setMqId(1);
 
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt2 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt2.setSumGv(30);
-        totalSumPerMessquerschnitt2.setSumKfz(100);
-        totalSumPerMessquerschnitt2.setSumRad(10);
-        totalSumPerMessquerschnitt2.setSumSv(50);
-        totalSumPerMessquerschnitt2.setMqId("2");
+        IntervallDto totalSumPerMessquerschnitt2 = new IntervallDto();
+        totalSumPerMessquerschnitt2.setSummeGueterverkehr((BigDecimal.valueOf(30)));
+        totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr((BigDecimal.valueOf(100)));
+        totalSumPerMessquerschnitt2.setAnzahlRad((BigDecimal.valueOf(10)));
+        totalSumPerMessquerschnitt2.setSummeSchwerverkehr((BigDecimal.valueOf(50)));
+        totalSumPerMessquerschnitt2.setMqId(2);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt1);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
@@ -200,7 +199,7 @@ class BelastungsplanServiceTest {
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
 
-        final MeasurementValuesPerInterval interval = new MeasurementValuesPerInterval();
+        final IntervallDto interval = new IntervallDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)

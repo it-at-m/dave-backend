@@ -35,7 +35,7 @@ class ZaehldatenProcessingUtilTest {
 
     @Test
     public void nullsafeCast() {
-        assertThat(ZaehldatenProcessingUtil.nullsafeCast(new BigDecimal(10)), is(new Integer(10)));
+        assertThat(ZaehldatenProcessingUtil.nullsafeCast(new BigDecimal(10)), is(Integer.valueOf(10)));
         assertThat(ZaehldatenProcessingUtil.nullsafeCast(null), is(IsNull.nullValue()));
     }
 

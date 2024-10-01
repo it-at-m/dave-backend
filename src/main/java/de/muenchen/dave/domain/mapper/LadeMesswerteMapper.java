@@ -1,10 +1,12 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LadeMesswerteMapper {
@@ -24,5 +26,13 @@ public interface LadeMesswerteMapper {
     @Mapping(target = "gueterverkehr", source = "summeGueterverkehr")
     @Mapping(target = "anteilSchwerverkehrAnKfzProzent", source = "prozentSchwerverkehr")
     @Mapping(target = "anteilGueterverkehrAnKfzProzent", source = "prozentGueterverkehr")
-    LadeMesswerteDTO measurementValuesPerIntervalToLadeMesswerteDTO(final MeasurementValuesPerInterval bean);
+    LadeMesswerteDTO measurementValuesPerIntervalToLadeMesswerteDTO(final IntervallDto bean);
+
+    @AfterMapping
+    default void measurementValuesPerIntervalToLadeMesswerteDTO(
+            final IntervallDto bean,
+            @MappingTarget final LadeMesswerteDTO target) {
+        target.setStartUhrzeit(bean.getDatumUhrzeitVon().toLocalTime());
+        target.setEndeUhrzeit(bean.getDatumUhrzeitBis().toLocalTime());
+    }
 }

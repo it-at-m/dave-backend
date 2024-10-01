@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.domain.enums;
 
+import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,15 +12,18 @@ import lombok.Getter;
 @Getter
 public enum ZaehldatenIntervall {
 
-    STUNDE_VIERTEL(1, 15),
+    STUNDE_VIERTEL(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15),
 
-    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15),
+    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15,MesswertRequestDto.IntervalInMinutesEnum._15),
 
-    STUNDE_HALB(2, 30),
+    STUNDE_HALB(2, 30, MesswertRequestDto.IntervalInMinutesEnum._30),
 
-    STUNDE_KOMPLETT(4, 60);
+    STUNDE_KOMPLETT(4, 60, MesswertRequestDto.IntervalInMinutesEnum._30);
 
     private final Integer quarterPerIntervall;
+
     private final Integer minutesPerIntervall;
+
+    private final MesswertRequestDto.IntervalInMinutesEnum messwertIntervalInMinutes;
 
 }

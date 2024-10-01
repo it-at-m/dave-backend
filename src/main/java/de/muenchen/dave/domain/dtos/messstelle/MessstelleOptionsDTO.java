@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.domain.dtos.messstelle;
 
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +29,7 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotNull
     private Zeitblock zeitblock;
 
-    private String tagesTyp;
+    private TagesTyp tagesTyp;
 
     @NotNull
     private ZaehldatenIntervall intervall;

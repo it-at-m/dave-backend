@@ -7,10 +7,9 @@ import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
-import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
-import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
+import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.util.OptionsUtil;
 import java.util.Collections;
 import java.util.List;
@@ -42,15 +41,18 @@ public class MesswerteService {
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
-        final MeasurementValuesResponse response = this.ladeMesswerteIntervall(options);
-        final List<MeasurementValuesPerInterval> intervals;
+        final IntervalResponseDto response = this.ladeMesswerteIntervall(options);
+        final List<IntervallDto> intervals;
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getAverageMeasurementValuesPerIntervalResponse().getIntervals(),
-                    messstelleService.isKfzMessstelle(messstelleId));
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getMeanOfMqIdForEachIntervalByMesstag(), messstelleService.isKfzMessstelle(messstelleId));
         } else {
-            intervals = response.getAverageMeasurementValuesPerIntervalResponse().getIntervals();
+            intervals = response.getMeanOfMqIdForEachIntervalByMesstag();
         }
-        final List<TotalSumPerMessquerschnitt> totalSumPerMessquerschnittList = response.getTotalSumOfAllMessquerschnitte().getTotalSumPerMessquerschnittList();
+        final List<IntervallDto> totalSumPerMessquerschnittList = response
+                .getMeanOfIntervalsForEachMqIdByMesstag()
+                .stream()
+                .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
+                .toList();
 
         final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
@@ -66,53 +68,49 @@ public class MesswerteService {
     }
 
     protected void validateOptions(final MessstelleOptionsDTO options) {
-        if (options.getZeitraum().size() == 2 && StringUtils.isEmpty(options.getTagesTyp())) {
+        if (options.getZeitraum().size() == 2 && ObjectUtils.isEmpty(options.getTagesTyp())) {
             throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
         }
     }
 
-    protected MeasurementValuesResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
-        final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
+    protected IntervalResponseDto ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
+        final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(options.getMessquerschnittIds());
-        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
-            request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
+        request.setMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());
+        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+            request.setTagesTyp(options.getTagesTyp().getMesswertTyp());
+        } else {
+            request.setTagesTyp(MesswertRequestDto.TagesTypEnum.DTV);
         }
         if (options.getZeitraum().size() == 2) {
             Collections.sort(options.getZeitraum());
-            request.setZeitpunktStart(options.getZeitraum().get(0));
-            request.setZeitpunktEnde(options.getZeitraum().get(1));
+            request.setStartDate(options.getZeitraum().get(0));
+            request.setEndDate(options.getZeitraum().get(1));
         } else {
-            request.setZeitpunktStart(options.getZeitraum().get(0));
-            request.setZeitpunktEnde(options.getZeitraum().get(0));
+            request.setStartDate(options.getZeitraum().get(0));
+            request.setEndDate(options.getZeitraum().get(0));
         }
-        request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
-        request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
-        request.setMinutesPerZeitintervall(options.getIntervall().getMinutesPerIntervall());
+        request.setStartTime(options.getZeitblock().getStart().toLocalTime());
+        request.setEndTime(options.getZeitblock().getEnd().toLocalTime());
+        request.setIntervalInMinutes(options.getIntervall().getMesswertIntervalInMinutes());
 
-        final Mono<ResponseEntity<MeasurementValuesResponse>> response = messwerteApi
-                .getAverageMeasurementValuesPerIntervalWithHttpInfo(
-                        request);
-        final ResponseEntity<MeasurementValuesResponse> block = response.block();
+        final Mono<ResponseEntity<IntervalResponseDto>> response = messwerteApi.getIntervalleWithHttpInfo(request);
+        final ResponseEntity<IntervalResponseDto> block = response.block();
         if (ObjectUtils.isEmpty(block)) {
             log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final MeasurementValuesResponse body = block.getBody();
+        final IntervalResponseDto body = block.getBody();
         if (ObjectUtils.isEmpty(body)) {
             log.error("Body der Anfrage <MeasurementValuesResponse> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        if (ObjectUtils.isEmpty(body.getAverageMeasurementValuesPerIntervalResponse())) {
+        if (ObjectUtils.isEmpty(body.getMeanOfMqIdForEachIntervalByMesstag())) {
             log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine AverageMeasurementValuesPerInterval.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        if (ObjectUtils.isEmpty(body.getTotalSumOfAllMessquerschnitte())) {
+        if (ObjectUtils.isEmpty(body.getMeanOfIntervalsForEachMqIdByMesstag())) {
             log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine TotalSumOfAllMessquerschnitte.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (CollectionUtils.isEmpty(body.getAverageMeasurementValuesPerIntervalResponse().getIntervals())) {
-            log.error("Body der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> enthält keine Messwerte.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
         return body;

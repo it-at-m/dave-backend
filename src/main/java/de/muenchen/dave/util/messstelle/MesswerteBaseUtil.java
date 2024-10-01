@@ -6,7 +6,7 @@ package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalTime;
@@ -42,18 +42,18 @@ public final class MesswerteBaseUtil {
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));
     }
 
-    public static LadeMesswerteDTO calculateSum(final List<MeasurementValuesPerInterval> intervals) {
+    public static LadeMesswerteDTO calculateSum(final List<IntervallDto> intervals) {
         final LadeMesswerteDTO dto = new LadeMesswerteDTO();
-        dto.setPkw(intervals.stream().mapToInt(MeasurementValuesPerInterval::getSummeAllePkw).sum());
-        dto.setLkw(intervals.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlLkw).sum());
-        dto.setLfw(intervals.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlLfw).sum());
-        dto.setLastzuege(intervals.stream().mapToInt(MeasurementValuesPerInterval::getSummeLastzug).sum());
-        dto.setBusse(intervals.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlBus).sum());
-        dto.setKraftraeder(intervals.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlKrad).sum());
-        dto.setFahrradfahrer(intervals.stream().mapToInt(MeasurementValuesPerInterval::getAnzahlRad).sum());
-        dto.setKfz(intervals.stream().mapToInt(MeasurementValuesPerInterval::getSummeKraftfahrzeugverkehr).sum());
-        dto.setSchwerverkehr(intervals.stream().mapToInt(MeasurementValuesPerInterval::getSummeSchwerverkehr).sum());
-        dto.setGueterverkehr(intervals.stream().mapToInt(MeasurementValuesPerInterval::getSummeGueterverkehr).sum());
+        dto.setPkw(intervals.stream().mapToInt(interval -> interval.getSummeAllePkw().intValue()).sum());
+        dto.setLkw(intervals.stream().mapToInt(interval -> interval.getAnzahlLkw().intValue()).sum());
+        dto.setLfw(intervals.stream().mapToInt(interval -> interval.getAnzahlLfw().intValue()).sum());
+        dto.setLastzuege(intervals.stream().mapToInt(interval -> interval.getSummeLastzug().intValue()).sum());
+        dto.setBusse(intervals.stream().mapToInt(interval -> interval.getAnzahlBus().intValue()).sum());
+        dto.setKraftraeder(intervals.stream().mapToInt(interval -> interval.getAnzahlKrad().intValue()).sum());
+        dto.setFahrradfahrer(intervals.stream().mapToInt(interval -> interval.getAnzahlRad().intValue()).sum());
+        dto.setKfz(intervals.stream().mapToInt(interval -> interval.getSummeKraftfahrzeugverkehr().intValue()).sum());
+        dto.setSchwerverkehr(intervals.stream().mapToInt(interval -> interval.getSummeSchwerverkehr().intValue()).sum());
+        dto.setGueterverkehr(intervals.stream().mapToInt(interval -> interval.getSummeGueterverkehr().intValue()).sum());
         dto.setAnteilSchwerverkehrAnKfzProzent(calculateAnteilProzent(dto.getSchwerverkehr(), dto.getKfz()));
         dto.setAnteilGueterverkehrAnKfzProzent(calculateAnteilProzent(dto.getGueterverkehr(), dto.getKfz()));
         return dto;

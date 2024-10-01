@@ -12,7 +12,7 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeMesswerteMapper;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
+import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
@@ -39,7 +39,7 @@ public class ListenausgabeService {
     protected static final String BLOCK = "Block";
     protected static final String STUNDE = "Stunde";
 
-    public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<MeasurementValuesPerInterval> intervals, final boolean isKfzMessstelle,
+    public LadeMesswerteListenausgabeDTO ladeListenausgabe(final List<IntervallDto> intervals, final boolean isKfzMessstelle,
             final MessstelleOptionsDTO options) {
         log.debug("#ladeListenausgabe");
         final LadeMesswerteListenausgabeDTO dto = new LadeMesswerteListenausgabeDTO();
@@ -58,11 +58,11 @@ public class ListenausgabeService {
             }
             if (Boolean.TRUE.equals(options.getBlocksumme())
                     || (Boolean.TRUE.equals(options.getSpitzenstunde()) && ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall()))) {
-                final List<MeasurementValuesPerInterval> intervalsWithinZeitblock0006 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_00_06);
-                final List<MeasurementValuesPerInterval> intervalsWithinZeitblock0610 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_06_10);
-                final List<MeasurementValuesPerInterval> intervalsWithinZeitblock1015 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_10_15);
-                final List<MeasurementValuesPerInterval> intervalsWithinZeitblock1519 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_15_19);
-                final List<MeasurementValuesPerInterval> intervalsWithinZeitblock1924 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_19_24);
+                final List<IntervallDto> intervalsWithinZeitblock0006 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_00_06);
+                final List<IntervallDto> intervalsWithinZeitblock0610 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_06_10);
+                final List<IntervallDto> intervalsWithinZeitblock1015 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_10_15);
+                final List<IntervallDto> intervalsWithinZeitblock1519 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_15_19);
+                final List<IntervallDto> intervalsWithinZeitblock1924 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_19_24);
 
                 if (Boolean.TRUE.equals(options.getBlocksumme())) {
                     dto.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock0006, Zeitblock.ZB_00_06));
@@ -84,7 +84,7 @@ public class ListenausgabeService {
         }
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())) {
-            final List<MeasurementValuesPerInterval> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+            final List<IntervallDto> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
             if (Boolean.TRUE.equals(options.getStundensumme())) {
                 dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
@@ -97,7 +97,7 @@ public class ListenausgabeService {
         }
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
-            final List<MeasurementValuesPerInterval> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+            final List<IntervallDto> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
             if (Boolean.TRUE.equals(options.getStundensumme())) {
                 dto.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
@@ -106,7 +106,7 @@ public class ListenausgabeService {
         return dto;
     }
 
-    protected List<LadeMesswerteDTO> mapIntervalsToLadeMesswerteDTOs(final List<MeasurementValuesPerInterval> intervals) {
+    protected List<LadeMesswerteDTO> mapIntervalsToLadeMesswerteDTOs(final List<IntervallDto> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         intervals.forEach(intervall -> {
             final LadeMesswerteDTO dto = ladeMesswerteMapper.measurementValuesPerIntervalToLadeMesswerteDTO(intervall);
@@ -116,7 +116,7 @@ public class ListenausgabeService {
         return dtos;
     }
 
-    protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<MeasurementValuesPerInterval> intervals) {
+    protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<IntervallDto> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             final LocalTime start = LocalTime.of(i, 0);
@@ -126,7 +126,7 @@ public class ListenausgabeService {
             } else {
                 end = LocalTime.of(i + 1, 0);
             }
-            final List<MeasurementValuesPerInterval> relevantIntervals = getIntervalsWithinRange(intervals, start, end);
+            final List<IntervallDto> relevantIntervals = getIntervalsWithinRange(intervals, start, end);
             if (CollectionUtils.isNotEmpty(relevantIntervals)) {
                 final LadeMesswerteDTO dto = MesswerteBaseUtil.calculateSum(
                         relevantIntervals);
@@ -140,12 +140,12 @@ public class ListenausgabeService {
         return dtos;
     }
 
-    protected LadeMesswerteDTO calculateSpitzenstunde(final List<MeasurementValuesPerInterval> intervals,
+    protected LadeMesswerteDTO calculateSpitzenstunde(final List<IntervallDto> intervals,
             final boolean isKfzMessstelle, final Zeitblock zeitblock) {
         return spitzenstundeService.calculateSpitzenstunde(zeitblock, intervals, isKfzMessstelle);
     }
 
-    protected LadeMesswerteDTO calculateSumOfIntervalsPerBlock(final List<MeasurementValuesPerInterval> intervals,
+    protected LadeMesswerteDTO calculateSumOfIntervalsPerBlock(final List<IntervallDto> intervals,
             final Zeitblock zeitblock) {
         final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(zeitblock.getEnd().toLocalTime());
@@ -155,7 +155,7 @@ public class ListenausgabeService {
         return ladeMesswerteDTO;
     }
 
-    protected LadeMesswerteDTO calculateTagessumme(final List<MeasurementValuesPerInterval> intervals,
+    protected LadeMesswerteDTO calculateTagessumme(final List<IntervallDto> intervals,
             final MessstelleOptionsDTO options) {
         final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(options.getZeitblock().getEnd().toLocalTime());
@@ -165,16 +165,16 @@ public class ListenausgabeService {
         return ladeMesswerteDTO;
     }
 
-    protected List<MeasurementValuesPerInterval> getIntervalsWithinZeitblock(final List<MeasurementValuesPerInterval> intervals, final Zeitblock block) {
+    protected List<IntervallDto> getIntervalsWithinZeitblock(final List<IntervallDto> intervals, final Zeitblock block) {
         return intervals.stream()
-                .filter(interval -> MesswerteBaseUtil.isTimeWithinBlock(interval.getStartUhrzeit(), block))
+                .filter(interval -> MesswerteBaseUtil.isTimeWithinBlock(interval.getDatumUhrzeitVon().toLocalTime(), block))
                 .collect(Collectors.toList());
     }
 
-    protected List<MeasurementValuesPerInterval> getIntervalsWithinRange(final List<MeasurementValuesPerInterval> intervals, final LocalTime start,
+    protected List<IntervallDto> getIntervalsWithinRange(final List<IntervallDto> intervals, final LocalTime start,
             final LocalTime end) {
         return intervals.stream()
-                .filter(intervall -> MesswerteBaseUtil.isTimeBetweenStartAndEnd(intervall.getStartUhrzeit(), start, end))
+                .filter(intervall -> MesswerteBaseUtil.isTimeBetweenStartAndEnd(intervall.getDatumUhrzeitVon().toLocalTime(), start, end))
                 .collect(Collectors.toList());
     }
 }

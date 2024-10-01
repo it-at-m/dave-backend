@@ -42,7 +42,7 @@ public class AuswertungController {
     public ResponseEntity<CsvDTO> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
-        auswertungService.loadDataForEvaluation(options);
+        //auswertungService.loadDataForEvaluation(options);
         log.info("CSV wurde erstellt");
         return new ResponseEntity<>(HttpStatus.OK);
     }

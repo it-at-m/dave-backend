@@ -11,10 +11,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(
-            null,
-            null,
-            null);
+    private final AuswertungService auswertungService = new AuswertungService(null);
 
     @Test
     void calculateZeitraeume() {

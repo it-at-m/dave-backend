@@ -115,8 +115,8 @@ public class GenerateCsvMstService {
             }
         }
         metaData.append(SEMIKOLON);
-        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
-            metaData.append(TagesTyp.valueOf(options.getTagesTyp()).getBeschreibung());
+        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+            metaData.append(options.getTagesTyp().getBeschreibung());
         }
         metaData.append(SEMIKOLON);
         // ausgewählte mq's

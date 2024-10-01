@@ -89,7 +89,7 @@ class MessstelleOptionsmenuMapperTest {
         ChosenTagesTypValidRequestDto expectedRequest = new ChosenTagesTypValidRequestDto();
         expectedRequest.setStartDate("2022-01-01");
         expectedRequest.setEndDate("2022-01-03");
-        expectedRequest.setTagesTyp(ChosenTagesTypValidRequestDto.TagesTypEnum.SAMSTAG);
+        expectedRequest.setMobidamTagesTyp(ChosenTagesTypValidRequestDto.MobidamTagesTypEnum.SAMSTAG);
 
         ChosenTagesTypValidRequestDto actualRequest = mapper.backendToEaiRequestChosenTageValid(eaiRequest);
 
