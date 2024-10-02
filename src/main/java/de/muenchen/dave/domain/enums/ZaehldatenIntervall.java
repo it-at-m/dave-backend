@@ -12,18 +12,20 @@ import lombok.Getter;
 @Getter
 public enum ZaehldatenIntervall {
 
-    STUNDE_VIERTEL(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15),
+    STUNDE_VIERTEL(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15, TypeZeitintervall.STUNDE_VIERTEL),
 
-    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15),
+    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15, TypeZeitintervall.STUNDE_VIERTEL),
 
-    STUNDE_HALB(2, 30, MesswertRequestDto.IntervalInMinutesEnum._30),
+    STUNDE_HALB(2, 30, MesswertRequestDto.IntervalInMinutesEnum._30, TypeZeitintervall.STUNDE_HALB),
 
-    STUNDE_KOMPLETT(4, 60, MesswertRequestDto.IntervalInMinutesEnum._30);
+    STUNDE_KOMPLETT(4, 60, MesswertRequestDto.IntervalInMinutesEnum._60, TypeZeitintervall.STUNDE_KOMPLETT);
 
     private final Integer quarterPerIntervall;
 
     private final Integer minutesPerIntervall;
 
     private final MesswertRequestDto.IntervalInMinutesEnum messwertIntervalInMinutes;
+
+    private final TypeZeitintervall typeZeitintervall;
 
 }
