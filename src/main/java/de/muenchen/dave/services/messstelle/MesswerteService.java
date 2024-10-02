@@ -40,29 +40,32 @@ public class MesswerteService {
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
+
         final IntervalResponseDto response = this.ladeMesswerteIntervall(options);
         final List<IntervalDto> intervals;
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getMeanOfMqIdForEachIntervalByMesstag(),
-                    messstelleService.isKfzMessstelle(messstelleId));
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
+                    response.getMeanOfMqIdForEachIntervalByMesstag(),
+                    messstelleService.isKfzMessstelle(messstelleId),
+                    options.getIntervall());
         } else {
             intervals = response.getMeanOfMqIdForEachIntervalByMesstag();
         }
-        final List<IntervalDto> totalSumPerMessquerschnittList = response
+
+        final List<IntervalDto> meanPerMessquerschnitt = response
                 .getMeanOfIntervalsForEachMqIdByMesstag()
                 .stream()
                 .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
                 .toList();
 
-        final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
+        final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
-        processedZaehldaten.setBelastungsplanMessquerschnitte(new BelastungsplanMessquerschnitteDTO());
         processedZaehldaten
-                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, totalSumPerMessquerschnittList, messstelleId, options));
+                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
         if (CollectionUtils.isNotEmpty(intervals)) {
-            processedZaehldaten.setTagesTyp(TagesTyp.valueOf(intervals.get(0).getTagesTyp().name()));
+            processedZaehldaten.setTagesTyp(TagesTyp.valueOf(intervals.getFirst().getTagesTyp().name()));
         }
         return processedZaehldaten;
     }

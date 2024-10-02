@@ -286,10 +286,12 @@ class SpitzenstundeServiceTest {
     }
 
     @Test
-    void isNewValueBigger() {
-        Assertions.assertThat(spitzenstundeService.isNewValueBigger(1, 2))
+    void isNewValueLarger() {
+        Assertions.assertThat(spitzenstundeService.isNewValueLarger(1, 2))
                 .isEqualTo(true);
-        Assertions.assertThat(spitzenstundeService.isNewValueBigger(3, 2))
+        Assertions.assertThat(spitzenstundeService.isNewValueLarger(3, 2))
                 .isEqualTo(false);
+        Assertions.assertThat(spitzenstundeService.isNewValueLarger(null, 2))
+                .isEqualTo(true);
     }
 }
