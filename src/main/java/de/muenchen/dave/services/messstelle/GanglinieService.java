@@ -28,7 +28,12 @@ import org.springframework.stereotype.Service;
 public class GanglinieService {
 
     private static final Integer ZERO = 0;
+
     private static final Integer ONE = 1;
+
+    private static final Integer ROUNDING_VALUE = 20;
+
+    private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervalle, final MessstelleOptionsDTO options) {
@@ -90,7 +95,7 @@ public class GanglinieService {
                     }
                     if (fahrzeuge.isFussverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryFuss());
-                        //seriesEntries.getSeriesEntryRad().getYAxisData().add(intervall.getAnzahlFuss());
+                        //seriesEntries.getSeriesEntryFuss().getYAxisData().add(intervall.getAnzahlFuss());
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.FUSSGAENGER);
                         //setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlFuss());
                     }
@@ -133,10 +138,6 @@ public class GanglinieService {
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeuge));
         return ladeZaehldatenStepline;
     }
-
-    private static final Integer ROUNDING_VALUE = 20;
-
-    private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     protected static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final Integer value) {
