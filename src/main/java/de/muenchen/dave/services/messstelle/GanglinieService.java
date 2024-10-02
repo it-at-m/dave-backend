@@ -36,7 +36,7 @@ public class GanglinieService {
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervalle, final MessstelleOptionsDTO options) {
+    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
@@ -48,7 +48,7 @@ public class GanglinieService {
         final SeriesEntries seriesEntries = new SeriesEntries();
         final FahrzeugOptionsDTO fahrzeuge = options.getFahrzeuge();
 
-        intervalle
+        intervals
                 .forEach(intervall -> {
                     if (fahrzeuge.isPersonenkraftwagen()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());

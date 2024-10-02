@@ -30,10 +30,10 @@ public class HeatmapService {
      * werden in dieser Methode zur Darstellung in der Heatmap
      * aufbereitet.
      *
-     * @param intervalle Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
+     * @param intervals Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<IntervalDto> intervalle, final MessstelleOptionsDTO options) {
+    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -44,7 +44,7 @@ public class HeatmapService {
 
         final FahrzeugOptionsDTO fahrzeuge = options.getFahrzeuge();
 
-        intervalle.forEach(intervall -> {
+        intervals.forEach(intervall -> {
             final AtomicInteger klassenKategorienIndex = new AtomicInteger(0);
 
             if (fahrzeuge.isGueterverkehr()) {

@@ -16,6 +16,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,7 @@ public class MesswerteService {
                     messstelleService.isKfzMessstelle(messstelleId),
                     options.getIntervall());
         } else {
-            intervals = response.getMeanOfMqIdForEachIntervalByMesstag();
+            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
         }
 
         final List<IntervalDto> meanPerMessquerschnitt = response
