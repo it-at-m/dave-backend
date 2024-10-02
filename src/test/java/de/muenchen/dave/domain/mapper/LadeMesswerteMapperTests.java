@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class LadeMesswerteMapperTests {
 
     @Test
     void testMeasurementValuesPerIntervalToLadeMesswerteDTO() {
-        final IntervallDto bean = new IntervallDto();
+        final IntervalDto bean = new IntervalDto();
         bean.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.MIN));
         bean.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
         bean.setAnzahlLfw(BigDecimal.valueOf(0));

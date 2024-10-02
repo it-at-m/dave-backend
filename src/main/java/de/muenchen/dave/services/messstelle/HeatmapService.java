@@ -7,7 +7,7 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class HeatmapService {
      * @param intervalle Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<IntervallDto> intervalle, final MessstelleOptionsDTO options) {
+    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<IntervalDto> intervalle, final MessstelleOptionsDTO options) {
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -74,15 +74,17 @@ public class HeatmapService {
                         ChartLegendUtil.KFZ_HEATMAP);
                 klassenKategorienIndex.getAndIncrement();
             }
-            /*if (fahrzeuge.isFussverkehr()) {
-                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                        ladeZaehldatenHeatmap,
-                        heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlFuss(),
-                        ChartLegendUtil.FUSSGAENGER_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
-            }*/
+            /*
+             * if (fahrzeuge.isFussverkehr()) {
+             * insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+             * ladeZaehldatenHeatmap,
+             * heatMapEntryIndex.get(),
+             * klassenKategorienIndex.get(),
+             * intervall.getAnzahlFuss(),
+             * ChartLegendUtil.FUSSGAENGER_HEATMAP);
+             * klassenKategorienIndex.getAndIncrement();
+             * }
+             */
             if (fahrzeuge.isRadverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,

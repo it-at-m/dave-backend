@@ -6,7 +6,7 @@ package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalTime;
@@ -42,7 +42,7 @@ public final class MesswerteBaseUtil {
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));
     }
 
-    public static LadeMesswerteDTO calculateSum(final List<IntervallDto> intervals) {
+    public static LadeMesswerteDTO calculateSum(final List<IntervalDto> intervals) {
         final LadeMesswerteDTO dto = new LadeMesswerteDTO();
         dto.setPkw(intervals.stream().mapToInt(interval -> interval.getSummeAllePkw().intValue()).sum());
         dto.setLkw(intervals.stream().mapToInt(interval -> interval.getAnzahlLkw().intValue()).sum());

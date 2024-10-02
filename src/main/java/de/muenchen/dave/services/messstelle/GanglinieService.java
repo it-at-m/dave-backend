@@ -10,7 +10,7 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ public class GanglinieService {
     private static final Integer ONE = 1;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervallDto> intervalle, final MessstelleOptionsDTO options) {
+    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervalle, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);

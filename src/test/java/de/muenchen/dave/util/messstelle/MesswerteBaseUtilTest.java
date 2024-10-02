@@ -5,7 +5,7 @@
 package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,7 +16,7 @@ class MesswerteBaseUtilTest {
 
     @Test
     void calculateSum() {
-        final IntervallDto interval1 = new IntervallDto();
+        final IntervalDto interval1 = new IntervalDto();
         interval1.setAnzahlLfw(BigDecimal.valueOf(1));
         interval1.setAnzahlKrad(BigDecimal.valueOf(2));
         interval1.setAnzahlLkw(BigDecimal.valueOf(3));
@@ -30,7 +30,7 @@ class MesswerteBaseUtilTest {
         interval1.setProzentSchwerverkehr(BigDecimal.valueOf(1.1D));
         interval1.setProzentGueterverkehr(BigDecimal.valueOf(2.2D));
 
-        final IntervallDto interval2 = new IntervallDto();
+        final IntervalDto interval2 = new IntervalDto();
         interval2.setAnzahlLfw(BigDecimal.valueOf(1));
         interval2.setAnzahlKrad(BigDecimal.valueOf(2));
         interval2.setAnzahlLkw(BigDecimal.valueOf(3));

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,9 +27,9 @@ class SpitzenstundeServiceTest {
     void calculateSpitzenstunde() {
         int index = 0;
 
-        final IntervallDto interval0 = new IntervallDto();
-        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 0)));
-        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 15)));
+        final IntervalDto interval0 = new IntervalDto();
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0)));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 15)));
         interval0.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval0.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval0.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -41,10 +41,10 @@ class SpitzenstundeServiceTest {
         interval0.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval0.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval1 = new IntervallDto();
+        final IntervalDto interval1 = new IntervalDto();
         index++;
-        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 15)));
-        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 30)));
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 15)));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
         interval1.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval1.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval1.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -56,10 +56,10 @@ class SpitzenstundeServiceTest {
         interval1.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval2 = new IntervallDto();
+        final IntervalDto interval2 = new IntervalDto();
         index++;
-        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 30)));
-        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 45)));
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 45)));
         interval2.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval2.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval2.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -71,10 +71,10 @@ class SpitzenstundeServiceTest {
         interval2.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval3 = new IntervallDto();
+        final IntervalDto interval3 = new IntervalDto();
         index++;
-        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 45)));
-        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 0)));
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 45)));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
         interval3.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval3.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval3.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -86,10 +86,10 @@ class SpitzenstundeServiceTest {
         interval3.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval4 = new IntervallDto();
+        final IntervalDto interval4 = new IntervalDto();
         index++;
-        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 0)));
-        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 15)));
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 15)));
         interval4.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval4.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval4.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -101,10 +101,10 @@ class SpitzenstundeServiceTest {
         interval4.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval4.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval5 = new IntervallDto();
+        final IntervalDto interval5 = new IntervalDto();
         index++;
-        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 15)));
-        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 30)));
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 15)));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
         interval5.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval5.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval5.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -116,9 +116,9 @@ class SpitzenstundeServiceTest {
         interval5.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval5.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval6 = new IntervallDto();
-        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 30)));
-        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 45)));
+        final IntervalDto interval6 = new IntervalDto();
+        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
+        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 45)));
         interval6.setAnzahlLfw(BigDecimal.valueOf(0));
         interval6.setAnzahlKrad(BigDecimal.valueOf(0));
         interval6.setAnzahlLkw(BigDecimal.valueOf(0));
@@ -153,9 +153,9 @@ class SpitzenstundeServiceTest {
     void getIntervalsOfSpitzenstunde() {
         int index = 0;
 
-        final IntervallDto interval0 = new IntervallDto();
-        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 0)));
-        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 15)));
+        final IntervalDto interval0 = new IntervalDto();
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0)));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 15)));
         interval0.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval0.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval0.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -167,10 +167,10 @@ class SpitzenstundeServiceTest {
         interval0.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval0.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval1 = new IntervallDto();
+        final IntervalDto interval1 = new IntervalDto();
         index++;
-        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 15)));
-        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 30)));
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 15)));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
         interval1.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval1.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval1.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -182,10 +182,10 @@ class SpitzenstundeServiceTest {
         interval1.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval2 = new IntervallDto();
+        final IntervalDto interval2 = new IntervalDto();
         index++;
-        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 30)));
-        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 45)));
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 45)));
         interval2.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval2.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval2.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -197,10 +197,10 @@ class SpitzenstundeServiceTest {
         interval2.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval3 = new IntervallDto();
+        final IntervalDto interval3 = new IntervalDto();
         index++;
-        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(0, 45)));
-        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 0)));
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 45)));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
         interval3.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval3.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval3.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -212,10 +212,10 @@ class SpitzenstundeServiceTest {
         interval3.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval4 = new IntervallDto();
+        final IntervalDto interval4 = new IntervalDto();
         index++;
-        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 0)));
-        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 15)));
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 15)));
         interval4.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval4.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval4.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -227,10 +227,10 @@ class SpitzenstundeServiceTest {
         interval4.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval4.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval5 = new IntervallDto();
+        final IntervalDto interval5 = new IntervalDto();
         index++;
-        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 15)));
-        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 30)));
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 15)));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
         interval5.setAnzahlLfw(BigDecimal.valueOf(1 + index));
         interval5.setAnzahlKrad(BigDecimal.valueOf(2 + index));
         interval5.setAnzahlLkw(BigDecimal.valueOf(3 + index));
@@ -242,9 +242,9 @@ class SpitzenstundeServiceTest {
         interval5.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
         interval5.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
 
-        final IntervallDto interval6 = new IntervallDto();
-        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 30)));
-        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(),LocalTime.of(1, 45)));
+        final IntervalDto interval6 = new IntervalDto();
+        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
+        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 45)));
         interval6.setAnzahlLfw(BigDecimal.valueOf(0));
         interval6.setAnzahlKrad(BigDecimal.valueOf(0));
         interval6.setAnzahlLkw(BigDecimal.valueOf(0));
@@ -256,7 +256,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        List<IntervallDto> result = spitzenstundeService
+        List<IntervalDto> result = spitzenstundeService
                 .getIntervalsOfSpitzenstunde(List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true);
         Assertions.assertThat(result)
                 .isNotNull()

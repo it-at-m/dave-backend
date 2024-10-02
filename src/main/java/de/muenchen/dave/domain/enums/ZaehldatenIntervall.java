@@ -14,7 +14,7 @@ public enum ZaehldatenIntervall {
 
     STUNDE_VIERTEL(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15),
 
-    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15,MesswertRequestDto.IntervalInMinutesEnum._15),
+    STUNDE_VIERTEL_EINGESCHRAENKT(1, 15, MesswertRequestDto.IntervalInMinutesEnum._15),
 
     STUNDE_HALB(2, 30, MesswertRequestDto.IntervalInMinutesEnum._30),
 

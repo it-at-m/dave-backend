@@ -6,7 +6,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
 import java.util.ArrayList;
@@ -26,15 +26,15 @@ public class SpitzenstundeService {
     protected static final String KFZ = "KFZ";
     protected static final String RAD = "Rad";
 
-    public List<IntervallDto> getIntervalsOfSpitzenstunde(final List<IntervallDto> intervals,
+    public List<IntervalDto> getIntervalsOfSpitzenstunde(final List<IntervalDto> intervals,
             final boolean isKfzMessstelle) {
-        List<IntervallDto> result = new ArrayList<>();
+        List<IntervalDto> result = new ArrayList<>();
         LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
         for (int index = 0; index + 3 < intervals.size(); index++) {
-            final IntervallDto i0 = intervals.get(index);
-            final IntervallDto i1 = intervals.get(index + 1);
-            final IntervallDto i2 = intervals.get(index + 2);
-            final IntervallDto i3 = intervals.get(index + 3);
+            final var i0 = intervals.get(index);
+            final var i1 = intervals.get(index + 1);
+            final var i2 = intervals.get(index + 2);
+            final var i3 = intervals.get(index + 3);
             final var spitzenstundeIntervals = List.of(i0, i1, i2, i3);
             final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(spitzenstundeIntervals);
             ladeMesswerteDTO.setStartUhrzeit(i0.getDatumUhrzeitVon().toLocalTime());
@@ -47,13 +47,13 @@ public class SpitzenstundeService {
         return result;
     }
 
-    public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<IntervallDto> intervals, final boolean isKfzMessstelle) {
+    public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<IntervalDto> intervals, final boolean isKfzMessstelle) {
         LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
         for (int index = 0; index + 3 < intervals.size(); index++) {
-            final IntervallDto i0 = intervals.get(index);
-            final IntervallDto i1 = intervals.get(index + 1);
-            final IntervallDto i2 = intervals.get(index + 2);
-            final IntervallDto i3 = intervals.get(index + 3);
+            final var i0 = intervals.get(index);
+            final var i1 = intervals.get(index + 1);
+            final var i2 = intervals.get(index + 2);
+            final var i3 = intervals.get(index + 3);
             final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(List.of(i0, i1, i2, i3));
             ladeMesswerteDTO.setStartUhrzeit(i0.getDatumUhrzeitVon().toLocalTime());
             ladeMesswerteDTO.setEndeUhrzeit(i3.getDatumUhrzeitVon().toLocalTime());

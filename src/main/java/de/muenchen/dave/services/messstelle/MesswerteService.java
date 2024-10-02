@@ -7,8 +7,8 @@ import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.util.OptionsUtil;
 import java.util.Collections;
@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -42,13 +41,14 @@ public class MesswerteService {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
         final IntervalResponseDto response = this.ladeMesswerteIntervall(options);
-        final List<IntervallDto> intervals;
+        final List<IntervalDto> intervals;
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getMeanOfMqIdForEachIntervalByMesstag(), messstelleService.isKfzMessstelle(messstelleId));
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getMeanOfMqIdForEachIntervalByMesstag(),
+                    messstelleService.isKfzMessstelle(messstelleId));
         } else {
             intervals = response.getMeanOfMqIdForEachIntervalByMesstag();
         }
-        final List<IntervallDto> totalSumPerMessquerschnittList = response
+        final List<IntervalDto> totalSumPerMessquerschnittList = response
                 .getMeanOfIntervalsForEachMqIdByMesstag()
                 .stream()
                 .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())

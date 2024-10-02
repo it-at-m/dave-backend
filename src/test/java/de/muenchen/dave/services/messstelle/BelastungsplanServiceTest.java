@@ -15,7 +15,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.geodateneai.gen.model.IntervallDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -46,15 +46,15 @@ class BelastungsplanServiceTest {
     @Test
     void ladeBelastungsplan() {
         // setup
-        List<IntervallDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        IntervallDto totalSumPerMessquerschnitt1 = new IntervallDto();
+        List<IntervalDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervalDto totalSumPerMessquerschnitt1 = new IntervalDto();
         totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
         totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
         totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
         totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
         totalSumPerMessquerschnitt1.setMqId(1);
 
-        IntervallDto totalSumPerMessquerschnitt2 = new IntervallDto();
+        IntervalDto totalSumPerMessquerschnitt2 = new IntervalDto();
         totalSumPerMessquerschnitt2.setSummeGueterverkehr(BigDecimal.valueOf(30));
         totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
         totalSumPerMessquerschnitt2.setAnzahlRad(BigDecimal.valueOf(10));
@@ -106,7 +106,7 @@ class BelastungsplanServiceTest {
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1", "2"));
-        final IntervallDto interval = new IntervallDto();
+        final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
@@ -118,15 +118,15 @@ class BelastungsplanServiceTest {
     @Test
     void ladeBelastungsplanWithSpitzenstunde() {
         // setup
-        List<IntervallDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        IntervallDto totalSumPerMessquerschnitt1 = new IntervallDto();
+        List<IntervalDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervalDto totalSumPerMessquerschnitt1 = new IntervalDto();
         totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
         totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
         totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
         totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
         totalSumPerMessquerschnitt1.setMqId(1);
 
-        IntervallDto totalSumPerMessquerschnitt2 = new IntervallDto();
+        IntervalDto totalSumPerMessquerschnitt2 = new IntervalDto();
         totalSumPerMessquerschnitt2.setSummeGueterverkehr((BigDecimal.valueOf(30)));
         totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr((BigDecimal.valueOf(100)));
         totalSumPerMessquerschnitt2.setAnzahlRad((BigDecimal.valueOf(10)));
@@ -199,7 +199,7 @@ class BelastungsplanServiceTest {
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
 
-        final IntervallDto interval = new IntervallDto();
+        final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
