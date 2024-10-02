@@ -43,15 +43,7 @@ public class MesswerteService {
         log.debug("#ladeMesswerte {}", messstelleId);
 
         final IntervalResponseDto response = this.ladeMesswerteIntervall(options);
-        final List<IntervalDto> intervals;
-        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
-                    response.getMeanOfMqIdForEachIntervalByMesstag(),
-                    messstelleService.isKfzMessstelle(messstelleId),
-                    options.getIntervall());
-        } else {
-            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
-        }
+        final List<IntervalDto> intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
 
         final List<IntervalDto> meanPerMessquerschnitt = response
                 .getMeanOfIntervalsForEachMqIdByMesstag()

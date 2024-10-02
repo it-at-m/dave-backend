@@ -90,18 +90,39 @@ public class SpitzenstundeService {
         return intervalsSpitzenstunde;
     }
 
-    public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<IntervalDto> intervals, final boolean isKfzMessstelle) {
+    public LadeMesswerteDTO calculateSpitzenstunde(final Zeitblock block, final List<IntervalDto> intervals, final boolean isKfzMessstelle,
+            final ZaehldatenIntervall intervalSize) {
+        final int quarterPerHour;
+        if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
+            quarterPerHour = 4;
+        } else if (ZaehldatenIntervall.STUNDE_HALB == intervalSize) {
+            quarterPerHour = 2;
+        } else {
+            quarterPerHour = 1;
+        }
         LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
-        for (int index = 0; index + 3 < intervals.size(); index++) {
-            final var i0 = intervals.get(index);
-            final var i1 = intervals.get(index + 1);
-            final var i2 = intervals.get(index + 2);
-            final var i3 = intervals.get(index + 3);
-            final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(List.of(i0, i1, i2, i3));
-            ladeMesswerteDTO.setStartUhrzeit(i0.getDatumUhrzeitVon().toLocalTime());
-            ladeMesswerteDTO.setEndeUhrzeit(i3.getDatumUhrzeitVon().toLocalTime());
-            if (isValueToCheckAgainstCurrentSpitzenstundeLarger(isKfzMessstelle, spitzenStunde, ladeMesswerteDTO)) {
-                spitzenStunde = ladeMesswerteDTO;
+        for (int index = 0; index + quarterPerHour < intervals.size(); index++) {
+            final var intervalsToCheckForSpitzenstunde = new ArrayList<IntervalDto>();
+            if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
+                intervalsToCheckForSpitzenstunde.addAll(
+                        List.of(
+                                intervals.get(index),
+                                intervals.get(index + 1),
+                                intervals.get(index + 2),
+                                intervals.get(index + 3)));
+            } else if (ZaehldatenIntervall.STUNDE_HALB == intervalSize) {
+                intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index), intervals.get(index + 1)));
+            } else {
+                // ZaehldatenIntervall.STUNDE_KOMPLETT
+                intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index)));
+            }
+            final var firstInterval = intervalsToCheckForSpitzenstunde.getFirst();
+            final var lastInterval = intervalsToCheckForSpitzenstunde.getLast();
+            final var ladeMesswerteDto = MesswerteBaseUtil.calculateSum(intervalsToCheckForSpitzenstunde);
+            ladeMesswerteDto.setStartUhrzeit(firstInterval.getDatumUhrzeitVon().toLocalTime());
+            ladeMesswerteDto.setEndeUhrzeit(lastInterval.getDatumUhrzeitVon().toLocalTime());
+            if (isValueToCheckAgainstCurrentSpitzenstundeLarger(isKfzMessstelle, spitzenStunde, ladeMesswerteDto)) {
+                spitzenStunde = ladeMesswerteDto;
             }
         }
         spitzenStunde.setType(getType(isKfzMessstelle, block));

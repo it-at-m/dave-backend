@@ -15,6 +15,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -194,7 +195,7 @@ class BelastungsplanServiceTest {
         spitzenStunde.setGueterverkehr(30);
         spitzenStunde.setAnteilSchwerverkehrAnKfzProzent(12.0);
         spitzenStunde.setAnteilGueterverkehrAnKfzProzent(4.5);
-        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstunde(any(), anyList(), any(boolean.class));
+        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstunde(any(), anyList(), any(boolean.class), any(ZaehldatenIntervall.class));
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));

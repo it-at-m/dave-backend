@@ -5,6 +5,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 
 import java.math.BigDecimal;
@@ -131,7 +132,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
         LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstunde(Zeitblock.ZB_00_24,
-                List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true);
+                List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true, ZaehldatenIntervall.STUNDE_VIERTEL);
         Assertions.assertThat(result.getType())
                 .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE + SpitzenstundeService.TAG + " " + SpitzenstundeService.KFZ);
         Assertions.assertThat(result.getStartUhrzeit())
@@ -140,7 +141,7 @@ class SpitzenstundeServiceTest {
                 .isNotNull().isEqualTo(interval5.getDatumUhrzeitBis().toLocalTime());
 
         result = spitzenstundeService.calculateSpitzenstunde(Zeitblock.ZB_00_06,
-                List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), false);
+                List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), false, ZaehldatenIntervall.STUNDE_VIERTEL);
         Assertions.assertThat(result.getStartUhrzeit())
                 .isNotNull().isEqualTo(interval2.getDatumUhrzeitVon().toLocalTime());
         Assertions.assertThat(result.getEndeUhrzeit())
