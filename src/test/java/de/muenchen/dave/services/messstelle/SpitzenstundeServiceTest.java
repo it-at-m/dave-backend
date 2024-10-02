@@ -135,16 +135,16 @@ class SpitzenstundeServiceTest {
         Assertions.assertThat(result.getType())
                 .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE + SpitzenstundeService.TAG + " " + SpitzenstundeService.KFZ);
         Assertions.assertThat(result.getStartUhrzeit())
-                .isNotNull().isEqualTo(interval2.getDatumUhrzeitVon());
+                .isNotNull().isEqualTo(interval2.getDatumUhrzeitVon().toLocalTime());
         Assertions.assertThat(result.getEndeUhrzeit())
-                .isNotNull().isEqualTo(interval5.getDatumUhrzeitBis());
+                .isNotNull().isEqualTo(interval5.getDatumUhrzeitBis().toLocalTime());
 
         result = spitzenstundeService.calculateSpitzenstunde(Zeitblock.ZB_00_06,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), false);
         Assertions.assertThat(result.getStartUhrzeit())
-                .isNotNull().isEqualTo(interval2.getDatumUhrzeitVon());
+                .isNotNull().isEqualTo(interval2.getDatumUhrzeitVon().toLocalTime());
         Assertions.assertThat(result.getEndeUhrzeit())
-                .isNotNull().isEqualTo(interval5.getDatumUhrzeitBis());
+                .isNotNull().isEqualTo(interval5.getDatumUhrzeitBis().toLocalTime());
         Assertions.assertThat(result.getType())
                 .isNotNull().isEqualTo(SpitzenstundeService.SPITZENSTUNDE + SpitzenstundeService.BLOCK + " " + SpitzenstundeService.RAD);
     }

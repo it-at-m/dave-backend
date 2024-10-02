@@ -10,8 +10,12 @@ import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
+import org.apache.commons.lang3.ObjectUtils;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleOptionsmenuMapper {
@@ -21,7 +25,18 @@ public interface MessstelleOptionsmenuMapper {
 
     ValidWochentageInPeriodResponseDTO eaiToBackendResponseValidWochentage(ValidWochentageInPeriodDto validWochentageInPeriodDto);
 
+    @Mapping(target = "tagesTyp", ignore = true)
     ChosenTagesTypValidRequestDto backendToEaiRequestChosenTageValid(ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO);
+
+    @AfterMapping
+    default void backendToEaiRequestChosenTageValid(
+            @MappingTarget final ChosenTagesTypValidRequestDto target,
+            final ChosenTagesTypValidEaiRequestDTO source) {
+        final var tagesTyp = ObjectUtils.isNotEmpty(source.getTagesTyp())
+                ? ChosenTagesTypValidRequestDto.TagesTypEnum.valueOf(source.getTagesTyp().name())
+                : null;
+        target.setTagesTyp(tagesTyp);
+    }
 
     ChosenTageValidResponseDTO eaiToBackendResponseChosenTageValid(ChosenTagesTypValidDTO chosenTagesTypValidDTO);
 }
