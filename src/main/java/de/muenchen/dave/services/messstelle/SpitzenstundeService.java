@@ -27,7 +27,7 @@ public class SpitzenstundeService {
     protected static final String KFZ = "KFZ";
     protected static final String RAD = "Rad";
 
-    public List<LadeMesswerteDTO> getIntervalsOfSpitzenstunde(
+    public List<IntervalDto> getIntervalsOfSpitzenstunde(
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
             final ZaehldatenIntervall intervalSize) {
@@ -66,10 +66,7 @@ public class SpitzenstundeService {
                 intervalsSpitzenstunde = intervalsToCheckForSpitzenstunde;
             }
         }
-        return intervalsSpitzenstunde
-                .stream()
-                .map(interval -> MesswerteBaseUtil.calculateSum(List.of(interval)))
-                .toList();
+        return intervalsSpitzenstunde;
     }
 
     public LadeMesswerteDTO calculateSpitzenstunde(
@@ -105,7 +102,7 @@ public class SpitzenstundeService {
             final var lastInterval = intervalsToCheckForSpitzenstunde.getLast();
             final var ladeMesswerteDto = MesswerteBaseUtil.calculateSum(intervalsToCheckForSpitzenstunde);
             ladeMesswerteDto.setStartUhrzeit(firstInterval.getDatumUhrzeitVon().toLocalTime());
-            ladeMesswerteDto.setEndeUhrzeit(lastInterval.getDatumUhrzeitVon().toLocalTime());
+            ladeMesswerteDto.setEndeUhrzeit(lastInterval.getDatumUhrzeitBis().toLocalTime());
             if (isValueToCheckAgainstCurrentSpitzenstundeLarger(isKfzMessstelle, spitzenStunde, ladeMesswerteDto)) {
                 spitzenStunde = ladeMesswerteDto;
             }

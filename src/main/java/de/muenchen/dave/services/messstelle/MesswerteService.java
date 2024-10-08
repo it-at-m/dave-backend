@@ -12,6 +12,8 @@ import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 
 import java.util.Collections;
 import java.util.List;
+
+import de.muenchen.dave.util.OptionsUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,7 +43,17 @@ public class MesswerteService {
         log.debug("#ladeMesswerte {}", messstelleId);
 
         final IntervalResponseDto response = this.ladeMesswerteIntervalle(options);
-        final List<IntervalDto> intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
+        final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
+        final List<IntervalDto> intervals;
+
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
+                    response.getMeanOfMqIdForEachIntervalByMesstag(),
+                    isKfzMessstelle,
+                    options.getIntervall());
+        } else {
+            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
+        }
 
         final List<IntervalDto> meanPerMessquerschnitt = response
                 .getMeanOfIntervalsForEachMqIdByMesstag()
@@ -52,7 +64,7 @@ public class MesswerteService {
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
         processedZaehldaten
                 .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
         if (CollectionUtils.isNotEmpty(intervals)) {

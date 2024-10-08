@@ -33,10 +33,13 @@ import org.springframework.stereotype.Service;
 public class ListenausgabeService {
 
     private final LadeMesswerteMapper ladeMesswerteMapper;
+
     private final SpitzenstundeService spitzenstundeService;
 
     protected static final String GESAMT = "Gesamt";
+
     protected static final String BLOCK = "Block";
+
     protected static final String STUNDE = "Stunde";
 
     public LadeMesswerteListenausgabeDTO ladeListenausgabe(
@@ -73,6 +76,7 @@ public class ListenausgabeService {
                     ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock1519, Zeitblock.ZB_15_19));
                     ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock1924, Zeitblock.ZB_19_24));
                 }
+
                 if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
                     ladeMesswerteListenausgabe.getZaehldaten()
                             .add(calculateSpitzenstunde(intervals, isKfzMessstelle, options.getZeitblock(), options.getIntervall()));
@@ -110,8 +114,12 @@ public class ListenausgabeService {
                 ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
         }
-        ladeMesswerteListenausgabe.setZaehldaten(ladeMesswerteListenausgabe.getZaehldaten().stream()
-                .sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex)).collect(Collectors.toList()));
+
+        final var messwerteSortedBySortingIndex = ladeMesswerteListenausgabe.getZaehldaten().stream()
+                .sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex))
+                .toList();
+
+        ladeMesswerteListenausgabe.setZaehldaten(messwerteSortedBySortingIndex);
         return ladeMesswerteListenausgabe;
     }
 
