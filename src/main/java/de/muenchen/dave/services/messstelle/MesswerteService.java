@@ -1,6 +1,5 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
@@ -10,7 +9,7 @@ import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
-import de.muenchen.dave.util.OptionsUtil;
+
 import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,6 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -42,7 +40,7 @@ public class MesswerteService {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
 
-        final IntervalResponseDto response = this.ladeMesswerteIntervall(options);
+        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options);
         final List<IntervalDto> intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
 
         final List<IntervalDto> meanPerMessquerschnitt = response
@@ -69,7 +67,7 @@ public class MesswerteService {
         }
     }
 
-    protected IntervalResponseDto ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
+    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options) {
         final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
         request.setMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());
@@ -90,13 +88,12 @@ public class MesswerteService {
         request.setEndTime(options.getZeitblock().getEnd().toLocalTime());
         request.setIntervalInMinutes(options.getIntervall().getMesswertIntervalInMinutes());
 
-        final Mono<ResponseEntity<IntervalResponseDto>> response = messwerteApi.getIntervalleWithHttpInfo(request);
-        final ResponseEntity<IntervalResponseDto> block = response.block();
-        if (ObjectUtils.isEmpty(block)) {
+        final ResponseEntity<IntervalResponseDto> response = messwerteApi.getIntervalleWithHttpInfo(request).block();
+        if (ObjectUtils.isEmpty(response)) {
             log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final IntervalResponseDto body = block.getBody();
+        final IntervalResponseDto body = response.getBody();
         if (ObjectUtils.isEmpty(body)) {
             log.error("Body der Anfrage <MeasurementValuesResponse> ist leer.");
             throw new ResourceNotFoundException(ERROR_MESSAGE);

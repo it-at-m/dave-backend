@@ -93,12 +93,14 @@ public class GanglinieService {
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
                         setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlRad().intValue());
                     }
+                    /*
                     if (fahrzeuge.isFussverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryFuss());
-                        //seriesEntries.getSeriesEntryFuss().getYAxisData().add(intervall.getAnzahlFuss());
+                        seriesEntries.getSeriesEntryFuss().getYAxisData().add(intervall.getAnzahlFuss());
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.FUSSGAENGER);
-                        //setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlFuss());
+                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, intervall.getAnzahlFuss());
                     }
+                    */
                     if (fahrzeuge.isKraftfahrzeugverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
                         seriesEntries.getSeriesEntryKfz().getYAxisData().add(intervall.getSummeKraftfahrzeugverkehr().intValue());

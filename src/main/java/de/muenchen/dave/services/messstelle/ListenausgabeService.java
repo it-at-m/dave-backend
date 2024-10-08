@@ -149,6 +149,15 @@ public class ListenausgabeService {
         return dtos;
     }
 
+    protected List<LadeMesswerteDTO> getIntervalsOfSpitzenstunde(
+            final List<IntervalDto> intervals,
+            final boolean isKfzMessstelle,
+            final ZaehldatenIntervall intervalSize
+
+    ) {
+        return spitzenstundeService.getIntervalsOfSpitzenstunde(intervals, isKfzMessstelle, intervalSize);
+    }
+
     protected LadeMesswerteDTO calculateSpitzenstunde(
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
