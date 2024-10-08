@@ -2,6 +2,7 @@ package de.muenchen.dave.services.pdfgenerator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -20,6 +21,7 @@ import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTes
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -138,18 +140,34 @@ class FillPdfBeanServiceTest {
     @Test
     void fillMessstelleninformationen() {
         final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        final MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
+        MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final String tagesTyp = TagesTyp.SAMSTAG.name();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
-        optionsDTO.setZeitraum(List.of(LocalDate.now()));
+        final ArrayList<LocalDate> localDates = new ArrayList<>();
+        localDates.add(LocalDate.now());
+        localDates.add(LocalDate.now());
+        optionsDTO.setZeitraum(localDates);
 
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
-        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().get(0).format(DDMMYYYY)));
+        assertThat(informationen.getMesszeitraum(),
+                is(String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(0).format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
+        assertThat(informationen.isWochentagNeeded(), is(true));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
+
+        informationen = new MessstelleninformationenPdfComponent();
+        optionsDTO.setZeitraum(List.of(LocalDate.now()));
+        FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
+        assertThat(informationen.getStandort(), is(messstelle.getStandort()));
+        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().get(0).format(DDMMYYYY)));
+        assertThat(informationen.isWochentagNeeded(), is(false));
+        assertThat(informationen.getWochentag(), is(nullValue()));
+        assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
+
     }
 
     @Test
