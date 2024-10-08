@@ -5,14 +5,180 @@
 package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class MesswerteBaseUtilTest {
+
+    @Test
+    void isIntervalWithingZeitblock() {
+        var interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 0, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        var result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 30, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 9, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 9, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithingZeitblock(interval, Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+    }
+
+    @Test
+    void isTimeWithinZeitblock() {
+        var result = MesswerteBaseUtil.isTimeWithinZeitblock(LocalTime.of(10, 0, 0), Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinZeitblock(LocalTime.of(10, 15, 0), Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinZeitblock(LocalTime.of(9, 59, 59, 999999999), Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+
+        result = MesswerteBaseUtil.isTimeWithinZeitblock(LocalTime.of(11, 0, 0), Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinZeitblock(LocalTime.of(11, 0, 0, 1), Zeitblock.ZB_10_11);
+        Assertions.assertThat(result).isFalse();
+    }
+
+    @Test
+    void isIntervalWithinStartAndEnd() {
+        var interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 0, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        var result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 30, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 9, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 9, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 10, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+
+        interval.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 10, 45, 0));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
+        result = MesswerteBaseUtil.isIntervalWithinStartAndEnd(
+                interval,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+    }
+
+    @Test
+    void isTimeWithinStartAndEnd() {
+        var result = MesswerteBaseUtil.isTimeWithinStartAndEnd(
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinStartAndEnd(
+                LocalTime.of(10, 15, 0),
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinStartAndEnd(
+                LocalTime.of(9, 59, 59, 999999999),
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+
+        result = MesswerteBaseUtil.isTimeWithinStartAndEnd(
+                LocalTime.of(11, 0, 0),
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isTrue();
+
+        result = MesswerteBaseUtil.isTimeWithinStartAndEnd(
+                LocalTime.of(11, 0, 0, 1),
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(11, 0, 0));
+        Assertions.assertThat(result).isFalse();
+    }
 
     @Test
     void calculateSum() {
