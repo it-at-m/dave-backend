@@ -187,14 +187,13 @@ public class ListenausgabeService {
 
     protected List<IntervalDto> getIntervalsWithinZeitblock(final List<IntervalDto> intervals, final Zeitblock block) {
         return intervals.stream()
-                .filter(interval -> MesswerteBaseUtil.isTimeWithinBlock(interval.getDatumUhrzeitVon().toLocalTime(), block))
+                .filter(interval -> MesswerteBaseUtil.isIntervalWithingZeitblock(interval, block))
                 .collect(Collectors.toList());
     }
 
-    protected List<IntervalDto> getIntervalsWithinRange(final List<IntervalDto> intervals, final LocalTime start,
-            final LocalTime end) {
+    protected List<IntervalDto> getIntervalsWithinRange(final List<IntervalDto> intervals, final LocalTime start, final LocalTime end) {
         return intervals.stream()
-                .filter(intervall -> MesswerteBaseUtil.isTimeBetweenStartAndEnd(intervall.getDatumUhrzeitVon().toLocalTime(), start, end))
+                .filter(intervall -> MesswerteBaseUtil.isIntervalWithinStartAndEnd(intervall, start, end))
                 .collect(Collectors.toList());
     }
 }

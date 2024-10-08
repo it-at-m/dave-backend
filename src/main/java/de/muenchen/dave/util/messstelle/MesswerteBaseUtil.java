@@ -17,19 +17,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {
 
-    public static boolean isTimeWithinBlock(final LocalTime toCheck, final Zeitblock block) {
-        return isTimeBetweenStartAndEnd(toCheck, block.getStart().toLocalTime(), block.getEnd().toLocalTime());
+    public static boolean isIntervalWithingZeitblock(final IntervalDto interval, final Zeitblock zeitblock) {
+        return isTimeWithinZeitblock(interval.getDatumUhrzeitVon().toLocalTime(), zeitblock)
+                && isTimeWithinZeitblock(interval.getDatumUhrzeitBis().toLocalTime(), zeitblock);
     }
 
-    public static boolean isTimeBetweenStartAndEnd(final LocalTime toCheck, final LocalTime start, final LocalTime end) {
-        return (toCheck.isAfter(start) || toCheck.equals(start)) && toCheck.isBefore(end);
+    protected static boolean isTimeWithinZeitblock(final LocalTime toCheck, final Zeitblock zeitblock) {
+        return isTimeWithinStartAndEnd(toCheck, zeitblock.getStart().toLocalTime(), zeitblock.getEnd().toLocalTime());
+    }
+
+    public static boolean isIntervalWithinStartAndEnd(final IntervalDto interval, final LocalTime start, final LocalTime end) {
+        return isTimeWithinStartAndEnd(interval.getDatumUhrzeitVon().toLocalTime(), start, end)
+                && isTimeWithinStartAndEnd(interval.getDatumUhrzeitBis().toLocalTime(), start, end);
+    }
+
+    protected static boolean isTimeWithinStartAndEnd(final LocalTime toCheck, final LocalTime start, final LocalTime end) {
+        return (toCheck.isAfter(start) || toCheck.equals(start))
+                && (toCheck.isBefore(end) || toCheck.equals(end));
     }
 
     public static boolean isZeitintervallWithinZeitblock(final LadeMesswerteDTO zeitintervall, final Zeitblock zeitblock) {
         return isZeitintervallWithinTimeParameters(zeitintervall, zeitblock.getStart().toLocalTime(), zeitblock.getEnd().toLocalTime());
     }
 
-    private static boolean isZeitintervallWithinTimeParameters(final LadeMesswerteDTO zeitintervall,
+    private static boolean isZeitintervallWithinTimeParameters(
+            final LadeMesswerteDTO zeitintervall,
             final LocalTime startTime,
             final LocalTime endTime) {
         return (zeitintervall.getStartUhrzeit().equals(startTime) || zeitintervall.getStartUhrzeit().isAfter(startTime))

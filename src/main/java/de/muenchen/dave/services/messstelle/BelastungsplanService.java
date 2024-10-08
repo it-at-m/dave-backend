@@ -28,9 +28,11 @@ public class BelastungsplanService {
     private final RoundingService roundingService;
     private final SpitzenstundeService spitzenstundeService;
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(final List<IntervalDto> intervals,
+    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
+            final List<IntervalDto> intervals,
             final List<IntervalDto> totalSumOfAllMessquerschnitte,
-            final String messstelleId, final MessstelleOptionsDTO options) {
+            final String messstelleId,
+            final MessstelleOptionsDTO options) {
         final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
         final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
