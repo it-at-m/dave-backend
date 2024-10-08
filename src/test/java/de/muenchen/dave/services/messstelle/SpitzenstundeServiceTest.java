@@ -433,7 +433,7 @@ class SpitzenstundeServiceTest {
     }
 
     @Test
-    void getIntervalsOfSpitzenstunde() {
+    void getIntervalsOfSpitzenstundeStundeViertel() {
         int index = 0;
 
         final IntervalDto interval0 = new IntervalDto();
@@ -553,6 +553,252 @@ class SpitzenstundeServiceTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(List.of(interval2, interval3, interval4, interval5));
+    }
+
+    @Test
+    void getIntervalsOfSpitzenstundeStundeHalb() {
+        int index = 0;
+
+        final IntervalDto interval0 = new IntervalDto();
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0)));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
+        interval0.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval0.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval0.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval0.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval0.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval0.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval0.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval0.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval0.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval0.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval1 = new IntervalDto();
+        index++;
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval1.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval1.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval1.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval1.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval1.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval1.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval1.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval1.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval1.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval2 = new IntervalDto();
+        index++;
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
+        interval2.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval2.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval2.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval2.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval2.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval2.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval2.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval2.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval2.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval3 = new IntervalDto();
+        index++;
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 30)));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 0)));
+        interval3.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval3.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval3.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval3.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval3.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval3.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval3.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval3.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval3.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval4 = new IntervalDto();
+        index++;
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 0)));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 30)));
+        interval4.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval4.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval4.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval4.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval4.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval4.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval4.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval4.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval4.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval4.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval5 = new IntervalDto();
+        index++;
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 30)));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(3, 0)));
+        interval5.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval5.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval5.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval5.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval5.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval5.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval5.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval5.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval5.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval5.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval6 = new IntervalDto();
+        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(3, 0)));
+        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(3, 30)));
+        interval6.setAnzahlLfw(BigDecimal.valueOf(0));
+        interval6.setAnzahlKrad(BigDecimal.valueOf(0));
+        interval6.setAnzahlLkw(BigDecimal.valueOf(0));
+        interval6.setAnzahlBus(BigDecimal.valueOf(0));
+        interval6.setAnzahlRad(BigDecimal.valueOf(0));
+        interval6.setSummeAllePkw(BigDecimal.valueOf(0));
+        interval6.setSummeLastzug(BigDecimal.valueOf(0));
+        interval6.setSummeGueterverkehr(BigDecimal.valueOf(0));
+        interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
+        interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
+
+        List<IntervalDto> result = spitzenstundeService
+                .getIntervalsOfSpitzenstunde(List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true,
+                        ZaehldatenIntervall.STUNDE_HALB);
+        Assertions.assertThat(result)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(interval4, interval5));
+
+        result = spitzenstundeService.getIntervalsOfSpitzenstunde(List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), false,
+                ZaehldatenIntervall.STUNDE_HALB);
+        Assertions.assertThat(result)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(interval4, interval5));
+    }
+
+    @Test
+    void getIntervalsOfSpitzenstundeStundeKomplett() {
+        int index = 0;
+
+        final IntervalDto interval0 = new IntervalDto();
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0)));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval0.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval0.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval0.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval0.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval0.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval0.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval0.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval0.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval0.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval0.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval1 = new IntervalDto();
+        index++;
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 0)));
+        interval1.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval1.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval1.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval1.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval1.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval1.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval1.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval1.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval1.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval2 = new IntervalDto();
+        index++;
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(2, 0)));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(3, 0)));
+        interval2.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval2.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval2.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval2.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval2.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval2.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval2.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval2.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval2.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval3 = new IntervalDto();
+        index++;
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(3, 0)));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(4, 0)));
+        interval3.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval3.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval3.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval3.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval3.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval3.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval3.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval3.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval3.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval4 = new IntervalDto();
+        index++;
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(4, 0)));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 0)));
+        interval4.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval4.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval4.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval4.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval4.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval4.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval4.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval4.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval4.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval4.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval5 = new IntervalDto();
+        index++;
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(5, 0)));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0)));
+        interval5.setAnzahlLfw(BigDecimal.valueOf(1 + index));
+        interval5.setAnzahlKrad(BigDecimal.valueOf(2 + index));
+        interval5.setAnzahlLkw(BigDecimal.valueOf(3 + index));
+        interval5.setAnzahlBus(BigDecimal.valueOf(4 + index));
+        interval5.setAnzahlRad(BigDecimal.valueOf(5 + index));
+        interval5.setSummeAllePkw(BigDecimal.valueOf(6 + index));
+        interval5.setSummeLastzug(BigDecimal.valueOf(7 + index));
+        interval5.setSummeGueterverkehr(BigDecimal.valueOf(8 + index));
+        interval5.setSummeSchwerverkehr(BigDecimal.valueOf(9 + index));
+        interval5.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10 + index));
+
+        final IntervalDto interval6 = new IntervalDto();
+        interval6.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0)));
+        interval6.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 0)));
+        interval6.setAnzahlLfw(BigDecimal.valueOf(0));
+        interval6.setAnzahlKrad(BigDecimal.valueOf(0));
+        interval6.setAnzahlLkw(BigDecimal.valueOf(0));
+        interval6.setAnzahlBus(BigDecimal.valueOf(0));
+        interval6.setAnzahlRad(BigDecimal.valueOf(0));
+        interval6.setSummeAllePkw(BigDecimal.valueOf(0));
+        interval6.setSummeLastzug(BigDecimal.valueOf(0));
+        interval6.setSummeGueterverkehr(BigDecimal.valueOf(0));
+        interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
+        interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
+
+        List<IntervalDto> result = spitzenstundeService
+                .getIntervalsOfSpitzenstunde(List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), true,
+                        ZaehldatenIntervall.STUNDE_KOMPLETT);
+        Assertions.assertThat(result)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(interval5));
+
+        result = spitzenstundeService.getIntervalsOfSpitzenstunde(List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6), false,
+                ZaehldatenIntervall.STUNDE_KOMPLETT);
+        Assertions.assertThat(result)
+                .isNotNull()
+                .usingRecursiveComparison()
+                .isEqualTo(List.of(interval5));
     }
 
     @Test
