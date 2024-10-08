@@ -14,4 +14,6 @@ public class MessstelleninformationenPdfComponent {
     private String wochentag;
 
     private String kommentar;
+
+    private boolean wochentagNeeded;
 }
