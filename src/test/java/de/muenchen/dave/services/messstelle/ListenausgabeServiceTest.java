@@ -36,7 +36,7 @@ class ListenausgabeServiceTest {
     }
 
     @Test
-    void ladeListenausgabe() {
+    void ladeListenausgabeZeitauswahlSpitzenstunde() {
         int index = 0;
 
         final IntervalDto interval0 = new IntervalDto();
@@ -148,11 +148,27 @@ class ListenausgabeServiceTest {
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         final var result = listenausgabeService.ladeListenausgabe(intervals, true, options);
 
-        final var expected = new LadeMesswerteListenausgabeDTO();
+        final var expectedSpitzenstunde = new LadeMesswerteDTO();
+        expectedSpitzenstunde.setType("SpStdBlock KFZ");
+        expectedSpitzenstunde.setSortingIndex(12000000);
+        expectedSpitzenstunde.setStartUhrzeit(LocalTime.of(2, 0, 0));
+        expectedSpitzenstunde.setEndeUhrzeit(LocalTime.of(3, 0, 0));
+        expectedSpitzenstunde.setPkw(21);
+        expectedSpitzenstunde.setLkw(15);
+        expectedSpitzenstunde.setLfw(11);
+        expectedSpitzenstunde.setLastzuege(23);
+        expectedSpitzenstunde.setBusse(17);
+        expectedSpitzenstunde.setKraftraeder(13);
+        expectedSpitzenstunde.setFahrradfahrer(19);
+        expectedSpitzenstunde.setFussgaenger(null);
+        expectedSpitzenstunde.setKfz(29);
+        expectedSpitzenstunde.setSchwerverkehr(27);
+        expectedSpitzenstunde.setGueterverkehr(25);
+        expectedSpitzenstunde.setAnteilSchwerverkehrAnKfzProzent(93.1);
+        expectedSpitzenstunde.setAnteilGueterverkehrAnKfzProzent(86.2);
 
-        Assertions.assertThat(result)
-                .isNotNull()
-                .isEqualTo(expected);
+        Assertions.assertThat(result.getZaehldaten().size()).isEqualTo(8);
+        Assertions.assertThat(result.getZaehldaten().getLast()).isEqualTo(expectedSpitzenstunde);
     }
 
     @Test
