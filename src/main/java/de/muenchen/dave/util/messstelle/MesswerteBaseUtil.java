@@ -64,9 +64,12 @@ public final class MesswerteBaseUtil {
         dto.setBusse(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlBus(), BigDecimal.ZERO).intValue()).sum());
         dto.setKraftraeder(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlKrad(), BigDecimal.ZERO).intValue()).sum());
         dto.setFahrradfahrer(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue()).sum());
-        dto.setKfz(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue()).sum());
-        dto.setSchwerverkehr(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue()).sum());
-        dto.setGueterverkehr(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue()).sum());
+        dto.setKfz(
+                intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue()).sum());
+        dto.setSchwerverkehr(
+                intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue()).sum());
+        dto.setGueterverkehr(
+                intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue()).sum());
         dto.setAnteilSchwerverkehrAnKfzProzent(calculateAnteilProzent(dto.getSchwerverkehr(), dto.getKfz()));
         dto.setAnteilGueterverkehrAnKfzProzent(calculateAnteilProzent(dto.getGueterverkehr(), dto.getKfz()));
         return dto;
@@ -75,10 +78,10 @@ public final class MesswerteBaseUtil {
     protected static double calculateAnteilProzent(final Integer dividend, final Integer divisor) {
         return divisor == null || divisor == 0
                 ? 0D
-                :BigDecimal.valueOf(ObjectUtils.defaultIfNull(dividend, 0))
-                .divide(BigDecimal.valueOf(divisor))
-                .multiply(BigDecimal.valueOf(100))
-                .setScale(1, RoundingMode.HALF_UP)
-                .doubleValue();
+                : BigDecimal.valueOf(ObjectUtils.defaultIfNull(dividend, 0))
+                        .divide(BigDecimal.valueOf(divisor))
+                        .multiply(BigDecimal.valueOf(100))
+                        .setScale(1, RoundingMode.HALF_UP)
+                        .doubleValue();
     }
 }

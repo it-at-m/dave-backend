@@ -67,7 +67,8 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
         if (options.getMessquerschnittIds().size() == 1) {
             final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
-            final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(options.getZeitblock(), intervals, isKfzStelle, options.getIntervall());
+            final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(options.getZeitblock(), intervals, isKfzStelle,
+                    options.getIntervall());
             belastungsplanMessquerschnitteDTO.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
             belastungsplanMessquerschnitteDTO.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
         }

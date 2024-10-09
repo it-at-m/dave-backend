@@ -30,7 +30,6 @@ class ListenausgabeServiceTest {
     @Mock
     private SpitzenstundeService spitzenstundeService;
 
-
     @BeforeEach
     public void beforeEach() {
         listenausgabeService = new ListenausgabeService(new LadeMesswerteMapperImpl(), spitzenstundeService);
@@ -64,7 +63,8 @@ class ListenausgabeServiceTest {
         interval5.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 11, 0, 0));
         interval5.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
 
-        var result = listenausgabeService.calculateSumOfIntervalsAndAddBlockSpecificDataToResult(List.of(interval0, interval1, interval2, interval3, interval4, interval5), Zeitblock.ZB_10_11);
+        var result = listenausgabeService.calculateSumOfIntervalsAndAddBlockSpecificDataToResult(
+                List.of(interval0, interval1, interval2, interval3, interval4, interval5), Zeitblock.ZB_10_11);
 
         final var expected = new LadeMesswerteDTO();
         expected.setType("Block");
@@ -169,12 +169,12 @@ class ListenausgabeServiceTest {
         interval5.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
 
         final var intervals = List.of(interval0, interval1, interval2, interval3, interval4, interval5);
-        final var result  = listenausgabeService.getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_10_11);
+        final var result = listenausgabeService.getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_10_11);
 
         Assertions.assertThat(result)
                 .isNotNull()
                 .isNotEmpty()
-                .isEqualTo(List.of( interval1, interval2, interval3, interval4));
+                .isEqualTo(List.of(interval1, interval2, interval3, interval4));
     }
 
     @Test
@@ -199,12 +199,12 @@ class ListenausgabeServiceTest {
         interval5.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 11, 15, 0));
 
         final var intervals = List.of(interval0, interval1, interval2, interval3, interval4, interval5);
-        final var result  = listenausgabeService.getIntervalsWithinRange(intervals, LocalTime.of(10,0,0), LocalTime.of(11,0,0));
+        final var result = listenausgabeService.getIntervalsWithinRange(intervals, LocalTime.of(10, 0, 0), LocalTime.of(11, 0, 0));
 
         Assertions.assertThat(result)
                 .isNotNull()
                 .isNotEmpty()
-                .isEqualTo(List.of( interval1, interval2, interval3, interval4));
+                .isEqualTo(List.of(interval1, interval2, interval3, interval4));
 
     }
 

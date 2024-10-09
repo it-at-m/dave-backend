@@ -819,22 +819,22 @@ class SpitzenstundeServiceTest {
 
     @Test
     void getSortingIndex() {
-        var result = spitzenstundeService.getSortingIndex(true, Zeitblock.ZB_00_24,  null);
+        var result = spitzenstundeService.getSortingIndex(true, Zeitblock.ZB_00_24, null);
         Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ);
 
-        result = spitzenstundeService.getSortingIndex(false, Zeitblock.ZB_00_24,  null);
+        result = spitzenstundeService.getSortingIndex(false, Zeitblock.ZB_00_24, null);
         Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD);
 
         final var spitzenStunde = new LadeMesswerteDTO();
-        spitzenStunde.setStartUhrzeit(LocalTime.of(6,15,0));
-        spitzenStunde.setEndeUhrzeit(LocalTime.of(6,30,0));
-        result = spitzenstundeService.getSortingIndex(true, null,  spitzenStunde);
+        spitzenStunde.setStartUhrzeit(LocalTime.of(6, 15, 0));
+        spitzenStunde.setEndeUhrzeit(LocalTime.of(6, 30, 0));
+        result = spitzenstundeService.getSortingIndex(true, null, spitzenStunde);
         Assertions
                 .assertThat(result)
                 .isNotNull()
                 .isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_ZB_06_10 + MesswerteSortingIndexUtil.SORTING_INDEX_SECOND_SPITZEN_STUNDE_KFZ);
 
-        result = spitzenstundeService.getSortingIndex(false, null,  spitzenStunde);
+        result = spitzenstundeService.getSortingIndex(false, null, spitzenStunde);
         Assertions
                 .assertThat(result)
                 .isNotNull()
