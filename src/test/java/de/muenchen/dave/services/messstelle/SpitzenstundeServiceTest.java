@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -814,6 +815,48 @@ class SpitzenstundeServiceTest {
 
         Assertions.assertThat(spitzenstundeService.getType(false, Zeitblock.ZB_06_10))
                 .isNotNull().isEqualTo("SpStdBlock Rad");
+    }
+
+    @Test
+    void getSortingIndex() {
+        var result = spitzenstundeService.getSortingIndex(true, Zeitblock.ZB_00_24,  null);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ);
+
+        result = spitzenstundeService.getSortingIndex(false, Zeitblock.ZB_00_24,  null);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD);
+
+        final var spitzenStunde = new LadeMesswerteDTO();
+        spitzenStunde.setStartUhrzeit(LocalTime.of(6,15,0));
+        spitzenStunde.setEndeUhrzeit(LocalTime.of(6,30,0));
+        result = spitzenstundeService.getSortingIndex(true, null,  spitzenStunde);
+        Assertions
+                .assertThat(result)
+                .isNotNull()
+                .isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_ZB_06_10 + MesswerteSortingIndexUtil.SORTING_INDEX_SECOND_SPITZEN_STUNDE_KFZ);
+
+        result = spitzenstundeService.getSortingIndex(false, null,  spitzenStunde);
+        Assertions
+                .assertThat(result)
+                .isNotNull()
+                .isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_ZB_06_10 + MesswerteSortingIndexUtil.SORTING_INDEX_SECOND_SPITZEN_STUNDE_RAD);
+    }
+
+    @Test
+    void getSortingIndexSpitzenStundeCompleteDay() {
+        var result = spitzenstundeService.getSortingIndexSpitzenStundeCompleteDay(true);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ);
+
+        result = spitzenstundeService.getSortingIndexSpitzenStundeCompleteDay(false);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD);
+    }
+
+    @Test
+    void getSortingIndexSpitzenStundeWithinBlock() {
+        var result = spitzenstundeService.getSortingIndexSpitzenStundeWithinBlock(true);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SECOND_SPITZEN_STUNDE_KFZ);
+
+        result = spitzenstundeService.getSortingIndexSpitzenStundeWithinBlock(false);
+        Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SECOND_SPITZEN_STUNDE_RAD);
     }
 
     @Test

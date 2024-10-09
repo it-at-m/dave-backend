@@ -139,12 +139,14 @@ public class SpitzenstundeService {
     }
 
     protected int getSortingIndexSpitzenStundeCompleteDay(final boolean isKfzMessstelle) {
-        return isKfzMessstelle ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayKfz()
+        return isKfzMessstelle
+                ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayKfz()
                 : MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad();
     }
 
     protected int getSortingIndexSpitzenStundeWithinBlock(final boolean isKfzMessstelle) {
-        return isKfzMessstelle ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz()
+        return isKfzMessstelle
+                ? MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz()
                 : MesswerteSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad();
     }
 
