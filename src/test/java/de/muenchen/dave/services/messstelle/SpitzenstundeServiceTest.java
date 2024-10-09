@@ -817,6 +817,38 @@ class SpitzenstundeServiceTest {
     }
 
     @Test
+    void isValueToCheckAgainstCurrentSpitzenstundeLarger() {
+        final var valueToCheck = new LadeMesswerteDTO();
+        valueToCheck.setKfz(1000);
+        valueToCheck.setFahrradfahrer(900);
+        final var currentSpitzenstunde = new LadeMesswerteDTO();
+        currentSpitzenstunde.setKfz(999);
+        currentSpitzenstunde.setFahrradfahrer(899);
+        var result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(true, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isTrue();
+        result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(false, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isTrue();
+
+        valueToCheck.setKfz(1000);
+        valueToCheck.setFahrradfahrer(900);
+        currentSpitzenstunde.setKfz(1000);
+        currentSpitzenstunde.setFahrradfahrer(900);
+        result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(true, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isFalse();
+        result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(false, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isFalse();
+
+        valueToCheck.setKfz(999);
+        valueToCheck.setFahrradfahrer(899);
+        currentSpitzenstunde.setKfz(1000);
+        currentSpitzenstunde.setFahrradfahrer(900);
+        result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(true, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isFalse();
+        result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(false, currentSpitzenstunde, valueToCheck);
+        Assertions.assertThat(result).isNotNull().isFalse();
+    }
+
+    @Test
     void isNewValueLarger() {
         Assertions.assertThat(spitzenstundeService.isNewValueLarger(1, 2))
                 .isEqualTo(true);

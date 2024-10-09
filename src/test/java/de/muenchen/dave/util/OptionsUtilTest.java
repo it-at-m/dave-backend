@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class OptionsUtilTest {
 
     @Test
-    public void isZeitauswahlSpitzenstunde() {
+    public void isZitteitauswahlSpitzenstunde() {
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName()), is(true));
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName()), is(true));
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName()), is(true));
