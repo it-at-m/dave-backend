@@ -132,7 +132,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstunde(
+        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -146,7 +146,7 @@ class SpitzenstundeServiceTest {
         Assertions.assertThat(result.getKfz())
                 .isNotNull().isEqualTo(54);
 
-        result = spitzenstundeService.calculateSpitzenstunde(
+        result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_06,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 false,
@@ -268,7 +268,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstunde(
+        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -282,7 +282,7 @@ class SpitzenstundeServiceTest {
         Assertions.assertThat(result.getKfz())
                 .isNotNull().isEqualTo(29);
 
-        result = spitzenstundeService.calculateSpitzenstunde(
+        result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_06,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 false,
@@ -404,7 +404,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstunde(
+        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -418,7 +418,7 @@ class SpitzenstundeServiceTest {
         Assertions.assertThat(result.getKfz())
                 .isNotNull().isEqualTo(15);
 
-        result = spitzenstundeService.calculateSpitzenstunde(
+        result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_06,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 false,

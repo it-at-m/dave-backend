@@ -69,7 +69,7 @@ public class SpitzenstundeService {
         return intervalsSpitzenstunde;
     }
 
-    public LadeMesswerteDTO calculateSpitzenstunde(
+    public LadeMesswerteDTO calculateSpitzenstundeAndAddBlockSpecificDataToResult(
             final Zeitblock block,
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,

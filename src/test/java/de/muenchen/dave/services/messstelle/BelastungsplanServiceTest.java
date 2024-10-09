@@ -195,7 +195,7 @@ class BelastungsplanServiceTest {
         spitzenStunde.setGueterverkehr(30);
         spitzenStunde.setAnteilSchwerverkehrAnKfzProzent(12.0);
         spitzenStunde.setAnteilGueterverkehrAnKfzProzent(4.5);
-        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstunde(any(), anyList(), any(boolean.class), any(ZaehldatenIntervall.class));
+        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstundeAndAddBlockSpecificDataToResult(any(), anyList(), any(boolean.class), any(ZaehldatenIntervall.class));
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
