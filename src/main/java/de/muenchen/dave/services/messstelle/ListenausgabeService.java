@@ -150,8 +150,7 @@ public class ListenausgabeService {
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())
                 && Boolean.TRUE.equals(options.getStundensumme())
-                && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
-        ) {
+                && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
             final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
             ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
         }
