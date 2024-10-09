@@ -160,12 +160,14 @@ public class FillPdfBeanService {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
+            messstelleninformationen.setWochentagNeeded(true);
+            messstelleninformationen
+                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
         } else {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().get(0).format(DDMMYYYY));
+            messstelleninformationen.setWochentagNeeded(false);
         }
         messstelleninformationen.setKommentar(messstelle.getKommentar());
-        messstelleninformationen
-                .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
         return messstelleninformationen;
     }
 
