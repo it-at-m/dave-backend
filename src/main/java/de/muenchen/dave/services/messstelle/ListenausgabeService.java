@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.services.messstelle;
 
+import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -129,7 +130,7 @@ public class ListenausgabeService {
         }
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())) {
-            final List<IntervalDto> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+            final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
             if (Boolean.TRUE.equals(options.getStundensumme())) {
                 ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
@@ -147,11 +148,12 @@ public class ListenausgabeService {
             }
         }
 
-        if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
-            final List<IntervalDto> necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
-            if (Boolean.TRUE.equals(options.getStundensumme())) {
-                ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
-            }
+        if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())
+                && Boolean.TRUE.equals(options.getStundensumme())
+                && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
+        ) {
+            final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+            ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
         }
 
         final var messwerteSortedBySortingIndex = ladeMesswerteListenausgabe.getZaehldaten()
