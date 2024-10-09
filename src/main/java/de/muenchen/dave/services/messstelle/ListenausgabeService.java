@@ -154,7 +154,8 @@ public class ListenausgabeService {
             }
         }
 
-        final var messwerteSortedBySortingIndex = ladeMesswerteListenausgabe.getZaehldaten().stream()
+        final var messwerteSortedBySortingIndex = ladeMesswerteListenausgabe.getZaehldaten()
+                .stream()
                 .sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex))
                 .toList();
 
