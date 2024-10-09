@@ -14,5 +14,6 @@ class OptionsUtilTest {
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName()), is(true));
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName()), is(true));
         assertThat(OptionsUtil.isZeitauswahlSpitzenstunde(Zeitauswahl.TAGESWERT.getCapitalizedName()), is(false));
+        assertThat(OptionsUtil.isZeitauswahlSpitzenstunde("some-other-string"), is(false));
     }
 }
