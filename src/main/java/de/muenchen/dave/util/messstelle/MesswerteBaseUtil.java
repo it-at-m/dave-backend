@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {
@@ -56,23 +57,28 @@ public final class MesswerteBaseUtil {
 
     public static LadeMesswerteDTO calculateSum(final List<IntervalDto> intervals) {
         final LadeMesswerteDTO dto = new LadeMesswerteDTO();
-        dto.setPkw(intervals.stream().mapToInt(interval -> interval.getSummeAllePkw().intValue()).sum());
-        dto.setLkw(intervals.stream().mapToInt(interval -> interval.getAnzahlLkw().intValue()).sum());
-        dto.setLfw(intervals.stream().mapToInt(interval -> interval.getAnzahlLfw().intValue()).sum());
-        dto.setLastzuege(intervals.stream().mapToInt(interval -> interval.getSummeLastzug().intValue()).sum());
-        dto.setBusse(intervals.stream().mapToInt(interval -> interval.getAnzahlBus().intValue()).sum());
-        dto.setKraftraeder(intervals.stream().mapToInt(interval -> interval.getAnzahlKrad().intValue()).sum());
-        dto.setFahrradfahrer(intervals.stream().mapToInt(interval -> interval.getAnzahlRad().intValue()).sum());
-        dto.setKfz(intervals.stream().mapToInt(interval -> interval.getSummeKraftfahrzeugverkehr().intValue()).sum());
-        dto.setSchwerverkehr(intervals.stream().mapToInt(interval -> interval.getSummeSchwerverkehr().intValue()).sum());
-        dto.setGueterverkehr(intervals.stream().mapToInt(interval -> interval.getSummeGueterverkehr().intValue()).sum());
+        dto.setPkw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeAllePkw(), BigDecimal.ZERO).intValue()).sum());
+        dto.setLkw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlLkw(), BigDecimal.ZERO).intValue()).sum());
+        dto.setLfw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlLfw(), BigDecimal.ZERO).intValue()).sum());
+        dto.setLastzuege(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeLastzug(), BigDecimal.ZERO).intValue()).sum());
+        dto.setBusse(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlBus(), BigDecimal.ZERO).intValue()).sum());
+        dto.setKraftraeder(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlKrad(), BigDecimal.ZERO).intValue()).sum());
+        dto.setFahrradfahrer(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue()).sum());
+        dto.setKfz(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue()).sum());
+        dto.setSchwerverkehr(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue()).sum());
+        dto.setGueterverkehr(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue()).sum());
         dto.setAnteilSchwerverkehrAnKfzProzent(calculateAnteilProzent(dto.getSchwerverkehr(), dto.getKfz()));
         dto.setAnteilGueterverkehrAnKfzProzent(calculateAnteilProzent(dto.getGueterverkehr(), dto.getKfz()));
         return dto;
     }
 
     protected static double calculateAnteilProzent(final Integer dividend, final Integer divisor) {
-        final double percentage = (Double.valueOf(dividend) / divisor) * 100;
-        return BigDecimal.valueOf(percentage).setScale(1, RoundingMode.HALF_UP).doubleValue();
+        return divisor == null || divisor == 0
+                ? 0D
+                :BigDecimal.valueOf(ObjectUtils.defaultIfNull(dividend, 0))
+                .divide(BigDecimal.valueOf(divisor))
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(1, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }

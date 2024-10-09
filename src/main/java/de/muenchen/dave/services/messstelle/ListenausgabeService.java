@@ -70,11 +70,16 @@ public class ListenausgabeService {
                 final var intervalsWithinZeitblock1924 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_19_24);
 
                 if (Boolean.TRUE.equals(options.getBlocksumme())) {
-                    ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock0006, Zeitblock.ZB_00_06));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock0610, Zeitblock.ZB_06_10));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock1015, Zeitblock.ZB_10_15));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock1519, Zeitblock.ZB_15_19));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(intervalsWithinZeitblock1924, Zeitblock.ZB_19_24));
+                    ladeMesswerteListenausgabe.getZaehldaten().add(
+                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0006, Zeitblock.ZB_00_06));
+                    ladeMesswerteListenausgabe.getZaehldaten().add(
+                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0610, Zeitblock.ZB_06_10));
+                    ladeMesswerteListenausgabe.getZaehldaten().add(
+                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1015, Zeitblock.ZB_10_15));
+                    ladeMesswerteListenausgabe.getZaehldaten().add(
+                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1519, Zeitblock.ZB_15_19));
+                    ladeMesswerteListenausgabe.getZaehldaten().add(
+                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1924, Zeitblock.ZB_19_24));
                 }
 
                 if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
@@ -104,7 +109,7 @@ public class ListenausgabeService {
                         .add(calculateSpitzenstunde(necessaryIntervals, isKfzMessstelle, options.getZeitblock(), options.getIntervall()));
             }
             if (Boolean.TRUE.equals(options.getBlocksumme())) {
-                ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsPerBlock(necessaryIntervals, options.getZeitblock()));
+                ladeMesswerteListenausgabe.getZaehldaten().add(calculateSumOfIntervalsAndAddBlockSpecificDataToResult(necessaryIntervals, options.getZeitblock()));
             }
         }
 
@@ -165,9 +170,10 @@ public class ListenausgabeService {
         return spitzenstundeService.calculateSpitzenstunde(zeitblock, intervals, isKfzMessstelle, intervalSize);
     }
 
-    protected LadeMesswerteDTO calculateSumOfIntervalsPerBlock(final List<IntervalDto> intervals,
+    protected LadeMesswerteDTO calculateSumOfIntervalsAndAddBlockSpecificDataToResult(
+            final List<IntervalDto> intervalsOfZeitblock,
             final Zeitblock zeitblock) {
-        final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
+        final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervalsOfZeitblock);
         ladeMesswerteDTO.setEndeUhrzeit(zeitblock.getEnd().toLocalTime());
         ladeMesswerteDTO.setStartUhrzeit(zeitblock.getStart().toLocalTime());
         ladeMesswerteDTO.setType(BLOCK);
@@ -175,7 +181,8 @@ public class ListenausgabeService {
         return ladeMesswerteDTO;
     }
 
-    protected LadeMesswerteDTO calculateTagessumme(final List<IntervalDto> intervals,
+    protected LadeMesswerteDTO calculateTagessumme(
+            final List<IntervalDto> intervals,
             final MessstelleOptionsDTO options) {
         final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(options.getZeitblock().getEnd().toLocalTime());

@@ -236,6 +236,22 @@ class MesswerteBaseUtilTest {
         Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(1, 40))
                 .isNotNull()
                 .isEqualTo(2.5D);
+
+        Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(null, 40))
+                .isNotNull()
+                .isEqualTo(0);
+
+        Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(0, 40))
+                .isNotNull()
+                .isEqualTo(0);
+
+        Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(1, 0))
+                .isNotNull()
+                .isEqualTo(0D);
+
+        Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(1, null))
+                .isNotNull()
+                .isEqualTo(0D);
     }
 
 }
