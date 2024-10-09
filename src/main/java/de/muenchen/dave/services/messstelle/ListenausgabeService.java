@@ -48,7 +48,7 @@ public class ListenausgabeService {
             final MessstelleOptionsDTO options) {
         log.debug("#ladeListenausgabe");
         final var ladeMesswerteListenausgabe = new LadeMesswerteListenausgabeDTO();
-        ladeMesswerteListenausgabe.getZaehldaten().addAll(mapIntervalsToLadeMesswerteDTOs(intervals, options.getIntervall()));
+        ladeMesswerteListenausgabe.getZaehldaten().addAll(ladeMesswerteMapper.interval2LadeMesswerte(intervals, options.getIntervall()));
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
@@ -160,16 +160,6 @@ public class ListenausgabeService {
 
         ladeMesswerteListenausgabe.setZaehldaten(messwerteSortedBySortingIndex);
         return ladeMesswerteListenausgabe;
-    }
-
-    protected List<LadeMesswerteDTO> mapIntervalsToLadeMesswerteDTOs(final List<IntervalDto> intervals, final ZaehldatenIntervall zeitintervall) {
-        final List<LadeMesswerteDTO> dtos = new ArrayList<>();
-        intervals.forEach(intervall -> {
-            final LadeMesswerteDTO dto = ladeMesswerteMapper.measurementValuesPerIntervalToLadeMesswerteDTO(intervall);
-            dto.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexWithinBlock(dto, zeitintervall.getTypeZeitintervall()));
-            dtos.add(dto);
-        });
-        return dtos;
     }
 
     protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<IntervalDto> intervals) {

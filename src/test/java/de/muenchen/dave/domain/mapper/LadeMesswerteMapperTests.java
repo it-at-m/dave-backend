@@ -52,7 +52,7 @@ class LadeMesswerteMapperTests {
         expected.setAnteilSchwerverkehrAnKfzProzent(bean.getProzentSchwerverkehr().doubleValue());
         expected.setAnteilGueterverkehrAnKfzProzent(bean.getProzentGueterverkehr().doubleValue());
 
-        Assertions.assertThat(this.mapper.measurementValuesPerIntervalToLadeMesswerteDTO(bean))
+        Assertions.assertThat(this.mapper.interval2LadeMesswerte(bean))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringFields("sortingIndex", "fussgaenger")
