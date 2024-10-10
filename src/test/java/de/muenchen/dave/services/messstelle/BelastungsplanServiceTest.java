@@ -34,14 +34,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class BelastungsplanServiceTest {
     @Mock
     MessstelleService messstelleService;
+
     @Mock
     SpitzenstundeService spitzenstundeService;
+
     private BelastungsplanService belastungsplanService;
-    private RoundingService roundingService;
 
     @BeforeEach
     void setup() {
-        belastungsplanService = new BelastungsplanService(messstelleService, roundingService, spitzenstundeService);
+        belastungsplanService = new BelastungsplanService(messstelleService, new RoundingService(), spitzenstundeService);
     }
 
     @Test
@@ -224,6 +225,51 @@ class BelastungsplanServiceTest {
         Assertions.assertThat(result).isEqualTo(expected);
     }
 
+    @Test
+    void roundNumberToHundredIfNeeded() {
+        final var options = new MessstelleOptionsDTO();
+
+        options.setWerteHundertRunden(true);
+        var result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
+        Assertions.assertThat(result).isNull();
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(0, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(1, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(49, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(50, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(99, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(100, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(false);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
+        Assertions.assertThat(result).isNull();
+
+        options.setWerteHundertRunden(false);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(101);
+    }
+
     ReadMessstelleInfoDTO getMessstelle() {
         ReadMessstelleInfoDTO readMessstelleInfoDTO = new ReadMessstelleInfoDTO();
         readMessstelleInfoDTO.setId("123");
@@ -272,4 +318,5 @@ class BelastungsplanServiceTest {
 
         return readMessstelleInfoDTO;
     }
+
 }

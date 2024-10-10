@@ -41,10 +41,11 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitteDTO.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
         totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
             LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
-            ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(roundNumberIfNeeded(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumGv(roundNumberIfNeeded(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumSv(roundNumberIfNeeded(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumRad(roundNumberIfNeeded(sumOfMessquerschnitt.getAnzahlRad().intValue(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(
+                    roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumGv(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumSv(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), options));
+            ladeBelastungsplanMessquerschnittDataDTO.setSumRad(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getAnzahlRad().intValue(), options));
             ladeBelastungsplanMessquerschnittDataDTO.setPercentGV(
                     calcPercentage(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue()));
             ladeBelastungsplanMessquerschnittDataDTO.setPercentSv(
@@ -57,10 +58,10 @@ public class BelastungsplanService {
         final Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeSchwerverkehr().intValue()).sum();
         final Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeGueterverkehr().intValue()).sum();
         final Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getAnzahlRad().intValue()).sum();
-        belastungsplanMessquerschnitteDTO.setTotalKfz(roundNumberIfNeeded(totalSumKfz, options));
-        belastungsplanMessquerschnitteDTO.setTotalSv(roundNumberIfNeeded(totalSumSv, options));
-        belastungsplanMessquerschnitteDTO.setTotalGv(roundNumberIfNeeded(totalSumGv, options));
-        belastungsplanMessquerschnitteDTO.setTotalRad(roundNumberIfNeeded(totalSumRad, options));
+        belastungsplanMessquerschnitteDTO.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
+        belastungsplanMessquerschnitteDTO.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
+        belastungsplanMessquerschnitteDTO.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
+        belastungsplanMessquerschnitteDTO.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
         final Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
         belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
         belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
@@ -94,7 +95,7 @@ public class BelastungsplanService {
         return partInBigDecimal.divide(totalInBigDecimal, 3, RoundingMode.HALF_UP).scaleByPowerOfTen(2);
     }
 
-    private Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
+    protected Integer roundNumberToHundredIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
         if (Boolean.TRUE.equals(options.getWerteHundertRunden())) {
             return roundingService.roundIfNotNullOrZero(numberToRound, 100);
         } else {
