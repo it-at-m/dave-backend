@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenSteplineService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.math.BigDecimal;
@@ -20,13 +21,15 @@ import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GanglinieService {
 
     private static final Integer ZERO = 0;
@@ -36,6 +39,8 @@ public class GanglinieService {
     private static final Integer ROUNDING_VALUE = 20;
 
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
+
+    private final ProcessZaehldatenSteplineService processZaehldatenSteplineService;
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
@@ -133,6 +138,7 @@ public class GanglinieService {
                 });
 
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeugOptions));
+        processZaehldatenSteplineService.splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(ladeZaehldatenStepline, options);
         return ladeZaehldatenStepline;
     }
 
