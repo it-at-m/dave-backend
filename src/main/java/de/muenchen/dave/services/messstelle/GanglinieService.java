@@ -123,10 +123,12 @@ public class GanglinieService {
                         setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, interval.getProzentGueterverkehr());
                     }
 
-                    ladeZaehldatenStepline.setXAxisDataFirstChart(
-                            ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
-                                    ladeZaehldatenStepline.getXAxisDataFirstChart(),
-                                    interval.getDatumUhrzeitVon().toLocalTime().toString()));
+                    final var currentXAxisData =  ladeZaehldatenStepline.getXAxisDataFirstChart();
+                    final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
+                            currentXAxisData,
+                            interval.getDatumUhrzeitVon().toLocalTime().toString()
+                    );
+                    ladeZaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
                 });
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeugOptions));
         return ladeZaehldatenStepline;
