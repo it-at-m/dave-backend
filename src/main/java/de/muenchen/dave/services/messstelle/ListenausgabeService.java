@@ -62,12 +62,14 @@ public class ListenausgabeService {
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())
                 && Zeitblock.ZB_00_24.equals(options.getZeitblock())) {
+
             if (Boolean.TRUE.equals(options.getTagessumme())) {
                 ladeMesswerteListenausgabe.getZaehldaten().add(calculateTagessumme(intervals, options));
             }
-            if (Boolean.TRUE.equals(options.getStundensumme())) {
+            if (Boolean.TRUE.equals(options.getStundensumme()) && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
                 ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(intervals));
             }
+
             if (Boolean.TRUE.equals(options.getBlocksumme()) || (Boolean.TRUE.equals(options.getSpitzenstunde()))) {
                 final var intervalsWithinZeitblock0006 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_00_06);
                 final var intervalsWithinZeitblock0610 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_06_10);
@@ -131,9 +133,11 @@ public class ListenausgabeService {
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())) {
             final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+
             if (Boolean.TRUE.equals(options.getStundensumme()) && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
                 ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
+
             if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
                 var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                         options.getZeitblock(),
@@ -142,6 +146,7 @@ public class ListenausgabeService {
                         options.getIntervall());
                 ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
             }
+
             if (Boolean.TRUE.equals(options.getBlocksumme())) {
                 ladeMesswerteListenausgabe.getZaehldaten()
                         .add(calculateSumOfIntervalsAndAddBlockSpecificDataToResult(necessaryIntervals, options.getZeitblock()));
