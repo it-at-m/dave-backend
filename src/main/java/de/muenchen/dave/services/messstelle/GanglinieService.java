@@ -16,6 +16,8 @@ import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,109 +54,127 @@ public class GanglinieService {
                 .forEach(interval -> {
                     if (fahrzeugOptions.isPersonenkraftwagen()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
-                        seriesEntries.getSeriesEntryPkw().getYAxisData().add(interval.getSummeAllePkw().intValue());
+                        seriesEntries.getSeriesEntryPkw().getYAxisData().add(getIntValueIfNotNull(interval.getSummeAllePkw()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.PKW);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getSummeAllePkw().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getSummeAllePkw()));
                     }
                     if (fahrzeugOptions.isLastkraftwagen()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
-                        seriesEntries.getSeriesEntryLkw().getYAxisData().add(interval.getAnzahlLkw().intValue());
+                        seriesEntries.getSeriesEntryLkw().getYAxisData().add(getIntValueIfNotNull(interval.getAnzahlLkw()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LKW);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getAnzahlLkw().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getAnzahlLkw()));
                     }
                     if (fahrzeugOptions.isLastzuege()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
-                        seriesEntries.getSeriesEntryLz().getYAxisData().add(interval.getSummeLastzug().intValue());
+                        seriesEntries.getSeriesEntryLz().getYAxisData().add(getIntValueIfNotNull(interval.getSummeLastzug()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getSummeLastzug().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getSummeLastzug()));
                     }
                     if (fahrzeugOptions.isLieferwagen()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(interval.getAnzahlLfw().intValue());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(getIntValueIfNotNull(interval.getAnzahlLfw()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getAnzahlLfw().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getAnzahlLfw()));
                     }
                     if (fahrzeugOptions.isBusse()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
-                        seriesEntries.getSeriesEntryBus().getYAxisData().add(interval.getAnzahlBus().intValue());
+                        seriesEntries.getSeriesEntryBus().getYAxisData().add(getIntValueIfNotNull(interval.getAnzahlBus()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.BUSSE);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getAnzahlBus().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getAnzahlBus()));
                     }
                     if (fahrzeugOptions.isKraftraeder()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKrad());
-                        seriesEntries.getSeriesEntryKrad().getYAxisData().add(interval.getAnzahlKrad().intValue());
+                        seriesEntries.getSeriesEntryKrad().getYAxisData().add(getIntValueIfNotNull(interval.getAnzahlKrad()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KRAFTRAEDER);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getAnzahlKrad().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getAnzahlKrad()));
                     }
                     if (fahrzeugOptions.isRadverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
-                        seriesEntries.getSeriesEntryRad().getYAxisData().add(interval.getAnzahlRad().intValue());
+                        seriesEntries.getSeriesEntryRad().getYAxisData().add(getIntValueIfNotNull(interval.getAnzahlRad()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getAnzahlRad().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getAnzahlRad()));
                     }
                     if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
-                        seriesEntries.getSeriesEntryKfz().getYAxisData().add(interval.getSummeKraftfahrzeugverkehr().intValue());
+                        seriesEntries.getSeriesEntryKfz().getYAxisData().add(getIntValueIfNotNull(interval.getSummeKraftfahrzeugverkehr()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KFZ);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getSummeKraftfahrzeugverkehr().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getSummeKraftfahrzeugverkehr()));
                     }
                     if (fahrzeugOptions.isSchwerverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntrySv());
-                        seriesEntries.getSeriesEntrySv().getYAxisData().add(interval.getSummeSchwerverkehr().intValue());
+                        seriesEntries.getSeriesEntrySv().getYAxisData().add(getIntValueIfNotNull(interval.getSummeSchwerverkehr()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getSummeSchwerverkehr().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getSummeSchwerverkehr()));
                     }
                     if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
                         setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
-                        seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(BigDecimal.valueOf(interval.getProzentSchwerverkehr().intValue()));
+                        seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(interval.getProzentSchwerverkehr());
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-                        setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(interval.getProzentSchwerverkehr().intValue()));
+                        setRangeMaxPercentRoundedToTwoInZaehldatenStepline(ladeZaehldatenStepline, interval.getProzentSchwerverkehr());
                     }
                     if (fahrzeugOptions.isGueterverkehr()) {
                         setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
-                        seriesEntries.getSeriesEntryGv().getYAxisData().add(interval.getSummeGueterverkehr().intValue());
+                        seriesEntries.getSeriesEntryGv().getYAxisData().add(getIntValueIfNotNull(interval.getSummeGueterverkehr()));
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR);
-                        setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, interval.getSummeGueterverkehr().intValue());
+                        setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, getIntValueIfNotNull(interval.getSummeGueterverkehr()));
                     }
                     if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
                         setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
                         seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(interval.getProzentGueterverkehr());
                         setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
-                        setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, interval.getProzentGueterverkehr());
+                        setRangeMaxPercentRoundedToTwoInZaehldatenStepline(ladeZaehldatenStepline, interval.getProzentGueterverkehr());
                     }
 
-                    final var currentXAxisData =  ladeZaehldatenStepline.getXAxisDataFirstChart();
+                    final var currentXAxisData = ladeZaehldatenStepline.getXAxisDataFirstChart();
                     final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                             currentXAxisData,
-                            interval.getDatumUhrzeitVon().toLocalTime().toString()
-                    );
+                            interval.getDatumUhrzeitVon().toLocalTime().toString());
                     ladeZaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
                 });
+
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeugOptions));
         return ladeZaehldatenStepline;
     }
 
-    protected static void setRangeMaxRoundedToHundredInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+    protected static void setRangeMaxRoundedToTwentyInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final Integer value) {
-        ladeZaehldatenStepline.setRangeMax(
-                ZaehldatenProcessingUtil.getValueRounded(
-                        Math.max(
-                                ZaehldatenProcessingUtil.getZeroIfNull(value),
-                                ladeZaehldatenStepline.getRangeMax()),
-                        ROUNDING_VALUE));
+        final var currentValue = ladeZaehldatenStepline.getRangeMax();
+        final Integer newRoundedValue;
+        if (Objects.isNull(currentValue)) {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    ZaehldatenProcessingUtil.getZeroIfNull(value),
+                    ROUNDING_VALUE);
+        } else {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    Math.max(
+                            ZaehldatenProcessingUtil.getZeroIfNull(value),
+                            ladeZaehldatenStepline.getRangeMax()),
+                    ROUNDING_VALUE);
+        }
+        ladeZaehldatenStepline.setRangeMax(newRoundedValue);
     }
 
-    protected static void setRangeMaxPercentInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+    protected static void setRangeMaxPercentRoundedToTwoInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final BigDecimal value) {
-        final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
-        ladeZaehldatenStepline.setRangeMaxPercent(
-                ZaehldatenProcessingUtil.getValueRounded(
-                        BigDecimal.valueOf(currentValue)
-                                .max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
-                        ROUNDING_VALUE_PERCENT));
+
+        final var currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
+        final Integer newRoundedValue;
+        if (Objects.isNull(currentValue)) {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    ZaehldatenProcessingUtil.getZeroIfNull(value),
+                    ROUNDING_VALUE_PERCENT);
+        } else {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    BigDecimal.valueOf(currentValue).max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
+                    ROUNDING_VALUE_PERCENT);
+        }
+        ladeZaehldatenStepline.setRangeMaxPercent(newRoundedValue);
     }
 
-    protected static void setLegendInZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+    protected static void setLegendInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final String legendEntry) {
         ladeZaehldatenStepline.setLegend(
                 ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
@@ -170,6 +190,12 @@ public class GanglinieService {
     protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ZERO);
         stepLineSeriesEntry.setYAxisIndex(ONE);
+    }
+
+    protected Integer getIntValueIfNotNull(final BigDecimal value) {
+        return value == null
+                ? null
+                : value.intValue();
     }
 
     /**
@@ -236,7 +262,8 @@ public class GanglinieService {
             seriesEntryGvProzent.setName(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
         }
 
-        private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
+        private static void addSeriesToAllEntriesIfChosen(
+                final List<StepLineSeriesEntryBaseDTO> allEntries,
                 final StepLineSeriesEntryBaseDTO entry,
                 final Boolean isChosen) {
             if (isChosen) {
