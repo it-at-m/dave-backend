@@ -1047,6 +1047,152 @@ class ListenausgabeServiceTest {
     }
 
     @Test
+    void ladeListenausgabeZeitauswahlBlockWithStundensummeAndIntervallHalbeStundeAndSpitzenstundeAndBlocksumme() {
+        final var intervals = new ArrayList<IntervalDto>();
+
+        var interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 30)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 30)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 0)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 0)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 30)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 30)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 0)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 30)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(8, 30)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 0)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 0)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 30)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        interval = new IntervalDto();
+        interval.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(9, 30)));
+        interval.setDatumUhrzeitBis(LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0)));
+        interval.setAnzahlLfw(BigDecimal.valueOf(1));
+        interval.setAnzahlKrad(BigDecimal.valueOf(1));
+        interval.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval.setAnzahlBus(BigDecimal.valueOf(1));
+        interval.setAnzahlRad(BigDecimal.valueOf(1));
+        interval.setSummeAllePkw(BigDecimal.valueOf(1));
+        interval.setSummeLastzug(BigDecimal.valueOf(1));
+        interval.setSummeGueterverkehr(BigDecimal.valueOf(9));
+        interval.setSummeSchwerverkehr(BigDecimal.valueOf(9));
+        interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
+        intervals.add(interval);
+
+        final var options = new MessstelleOptionsDTO();
+        options.setZeitauswahl("Block");
+        options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
+        options.setStundensumme(true);
+        options.setBlocksumme(true);
+        options.setSpitzenstunde(true);
+        options.setZeitblock(Zeitblock.ZB_06_10);
+        final var result = listenausgabeService.ladeListenausgabe(intervals, true, options);
+
+        final var expectedNumberOfIntervals =
+                // Halbstunden Intervalle für 24h
+                8
+                        // Stundensummen
+                        + 4
+                        // Blocksummen
+                        + 1
+                        // Spitzenstunde Block
+                        + 1;
+
+        Assertions.assertThat(result.getZaehldaten().size()).isEqualTo(expectedNumberOfIntervals);
+    }
+
+    @Test
     void calculateSumOfIntervalsPerHour() {
         final var interval0 = new IntervalDto();
         interval0.setAnzahlLkw(BigDecimal.valueOf(1));
