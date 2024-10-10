@@ -100,13 +100,13 @@ class GanglinieServiceTest {
         optionsFahrzeuge.setLastkraftwagen(true);
         optionsFahrzeuge.setLastzuege(true);
         optionsFahrzeuge.setBusse(true);
-        optionsFahrzeuge.setKraftraeder(false);
+        optionsFahrzeuge.setKraftraeder(true);
         options.setFahrzeuge(optionsFahrzeuge);
 
         final var result = ganglinieService.ladeGanglinie(intervals, options);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(20);
         expected.setRangeMaxPercent(14);
         expected.setXAxisDataFirstChart(List.of("00:00", "00:30", "01:00"));
@@ -138,6 +138,12 @@ class GanglinieServiceTest {
         seriesEntry = new StepLineSeriesEntryIntegerDTO();
         seriesEntry.setName("Busse");
         seriesEntry.setYAxisData(List.of(4, 5, 6));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Krad");
+        seriesEntry.setYAxisData(List.of(2, 3, 4));
         seriesEntry.setXAxisIndex(0);
         seriesEntry.setYAxisIndex(0);
         seriesEntries.add(seriesEntry);

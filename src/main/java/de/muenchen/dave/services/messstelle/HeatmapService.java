@@ -12,6 +12,7 @@ import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -43,100 +44,90 @@ public class HeatmapService {
         ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(new ArrayList<>());
         AtomicInteger heatMapEntryIndex = new AtomicInteger(0);
 
-        final FahrzeugOptionsDTO fahrzeuge = options.getFahrzeuge();
+        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
 
         intervals.forEach(intervall -> {
             final AtomicInteger klassenKategorienIndex = new AtomicInteger(0);
 
-            if (fahrzeuge.isGueterverkehr()) {
+            if (fahrzeugOptions.isGueterverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getSummeGueterverkehr().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getSummeGueterverkehr()) ? null : intervall.getSummeGueterverkehr().intValue(),
                         ChartLegendUtil.GUETERVERKEHR_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isSchwerverkehr()) {
+            if (fahrzeugOptions.isSchwerverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getSummeSchwerverkehr().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getSummeSchwerverkehr()) ? null : intervall.getSummeSchwerverkehr().intValue(),
                         ChartLegendUtil.SCHWERVERKEHR_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isKraftfahrzeugverkehr()) {
+            if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getSummeKraftfahrzeugverkehr().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getSummeKraftfahrzeugverkehr()) ? null : intervall.getSummeKraftfahrzeugverkehr().intValue(),
                         ChartLegendUtil.KFZ_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isRadverkehr()) {
+            if (fahrzeugOptions.isRadverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlRad().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlRad()) ? null : intervall.getAnzahlRad().intValue(),
                         ChartLegendUtil.RAD_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isKraftraeder()) {
+            if (fahrzeugOptions.isKraftraeder()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlKrad().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlKrad()) ? null : intervall.getAnzahlKrad().intValue(),
                         ChartLegendUtil.KRAFTRAEDER_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isBusse()) {
+            if (fahrzeugOptions.isBusse()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlBus().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlBus()) ? null : intervall.getAnzahlBus().intValue(),
                         ChartLegendUtil.BUSSE_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isLieferwagen()) {
+            if (fahrzeugOptions.isLieferwagen()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlLfw().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlLfw()) ? null : intervall.getAnzahlLfw().intValue(),
                         ChartLegendUtil.LFW_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isLastzuege()) {
+            if (fahrzeugOptions.isLastzuege()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getSummeLastzug().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getSummeLastzug()) ? null : intervall.getSummeLastzug().intValue(),
                         ChartLegendUtil.LASTZUEGE_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isLastkraftwagen()) {
+            if (fahrzeugOptions.isLastkraftwagen()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getAnzahlLkw().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlLkw()) ? null : intervall.getAnzahlLkw().intValue(),
                         ChartLegendUtil.LKW_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
-            if (fahrzeuge.isPersonenkraftwagen()) {
+            if (fahrzeugOptions.isPersonenkraftwagen()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
                         heatMapEntryIndex.get(),
-                        klassenKategorienIndex.get(),
-                        intervall.getSummeAllePkw().intValue(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getSummeAllePkw()) ? null : intervall.getSummeAllePkw().intValue(),
                         ChartLegendUtil.PKW_HEATMAP);
-                klassenKategorienIndex.getAndIncrement();
             }
             ladeZaehldatenHeatmap.setXAxisDataFirstChart(
                     ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
