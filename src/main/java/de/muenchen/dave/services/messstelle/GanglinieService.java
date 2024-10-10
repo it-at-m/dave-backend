@@ -40,8 +40,6 @@ public class GanglinieService {
 
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
-    private final ProcessZaehldatenSteplineService processZaehldatenSteplineService;
-
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
@@ -138,7 +136,6 @@ public class GanglinieService {
                 });
 
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeugOptions));
-        processZaehldatenSteplineService.splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(ladeZaehldatenStepline, options);
         return ladeZaehldatenStepline;
     }
 
@@ -227,8 +224,6 @@ public class GanglinieService {
 
         private StepLineSeriesEntryIntegerDTO seriesEntryRad;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryFuss;
-
         private StepLineSeriesEntryIntegerDTO seriesEntryKfz;
 
         private StepLineSeriesEntryIntegerDTO seriesEntrySv;
@@ -254,8 +249,6 @@ public class GanglinieService {
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
             seriesEntryRad = new StepLineSeriesEntryIntegerDTO();
             seriesEntryRad.setName(ChartLegendUtil.RAD);
-            seriesEntryFuss = new StepLineSeriesEntryIntegerDTO();
-            seriesEntryFuss.setName(ChartLegendUtil.FUSSGAENGER);
             seriesEntryKfz = new StepLineSeriesEntryIntegerDTO();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
             seriesEntrySv = new StepLineSeriesEntryIntegerDTO();
@@ -294,7 +287,6 @@ public class GanglinieService {
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryBus, options.isBusse());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKrad, options.isKraftraeder());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryRad, options.isRadverkehr());
-            addSeriesToAllEntriesIfChosen(allEntries, seriesEntryFuss, options.isFussverkehr());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryKfz, options.isKraftfahrzeugverkehr());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySv, options.isSchwerverkehr());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntrySvProzent, options.isSchwerverkehrsanteilProzent());

@@ -2,6 +2,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -31,7 +32,7 @@ class GanglinieServiceTest {
 
     @BeforeEach
     public void beforeEach() {
-        ganglinieService = new GanglinieService(new ProcessZaehldatenSteplineService());
+        ganglinieService = new GanglinieService();
     }
 
     @Test
@@ -49,6 +50,8 @@ class GanglinieServiceTest {
         interval0.setSummeGueterverkehr(BigDecimal.valueOf(8));
         interval0.setSummeSchwerverkehr(BigDecimal.valueOf(9));
         interval0.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(10));
+        interval0.setProzentGueterverkehr(BigDecimal.valueOf(11));
+        interval0.setProzentSchwerverkehr(BigDecimal.valueOf(12));
 
         final IntervalDto interval1 = new IntervalDto();
         interval1.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 30)));
@@ -63,6 +66,8 @@ class GanglinieServiceTest {
         interval1.setSummeGueterverkehr(BigDecimal.valueOf(9));
         interval1.setSummeSchwerverkehr(BigDecimal.valueOf(10));
         interval1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(11));
+        interval1.setProzentGueterverkehr(BigDecimal.valueOf(12));
+        interval1.setProzentSchwerverkehr(BigDecimal.valueOf(13));
 
         final IntervalDto interval2 = new IntervalDto();
         interval2.setDatumUhrzeitVon(LocalDateTime.of(LocalDate.now(), LocalTime.of(1, 0)));
@@ -77,6 +82,8 @@ class GanglinieServiceTest {
         interval2.setSummeGueterverkehr(BigDecimal.valueOf(10));
         interval2.setSummeSchwerverkehr(BigDecimal.valueOf(11));
         interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(12));
+        interval2.setProzentGueterverkehr(BigDecimal.valueOf(13));
+        interval2.setProzentSchwerverkehr(BigDecimal.valueOf(14));
 
         final var intervals = List.of(interval0, interval1, interval2);
         final var options = new MessstelleOptionsDTO();
@@ -99,7 +106,79 @@ class GanglinieServiceTest {
         final var result = ganglinieService.ladeGanglinie(intervals, options);
 
         final var expected = new LadeZaehldatenSteplineDTO();
+        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setRangeMax(20);
+        expected.setRangeMaxPercent(14);
+        expected.setXAxisDataFirstChart(List.of("00:00", "00:30", "01:00"));
+        var seriesEntries = new ArrayList<StepLineSeriesEntryBaseDTO>();
+        var seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Pkw");
+        seriesEntry.setYAxisData(List.of(6,7,8));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Lkw");
+        seriesEntry.setYAxisData(List.of(3,4,5));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Lz");
+        seriesEntry.setYAxisData(List.of(7,8,9));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Lfw");
+        seriesEntry.setYAxisData(List.of(1,2,3));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Busse");
+        seriesEntry.setYAxisData(List.of(4,5,6));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Rad");
+        seriesEntry.setYAxisData(List.of(5,6,7));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("Kfz");
+        seriesEntry.setYAxisData(List.of(10,11,12));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("SV");
+        seriesEntry.setYAxisData(List.of(9,10,11));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        var seriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
+        seriesEntryBigDecimal.setName("SV %");
+        seriesEntryBigDecimal.setYAxisData(List.of(BigDecimal.valueOf(12), BigDecimal.valueOf(13), BigDecimal.valueOf(14)));
+        seriesEntryBigDecimal.setXAxisIndex(0);
+        seriesEntryBigDecimal.setYAxisIndex(1);
+        seriesEntries.add(seriesEntryBigDecimal);
+        seriesEntry = new StepLineSeriesEntryIntegerDTO();
+        seriesEntry.setName("GV");
+        seriesEntry.setYAxisData(List.of(8,9,10));
+        seriesEntry.setXAxisIndex(0);
+        seriesEntry.setYAxisIndex(0);
+        seriesEntries.add(seriesEntry);
+        seriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
+        seriesEntryBigDecimal.setName("GV %");
+        seriesEntryBigDecimal.setYAxisData(List.of(BigDecimal.valueOf(11), BigDecimal.valueOf(12), BigDecimal.valueOf(13)));
+        seriesEntryBigDecimal.setXAxisIndex(0);
+        seriesEntryBigDecimal.setYAxisIndex(1);
+        seriesEntries.add(seriesEntryBigDecimal);
 
+        expected.setSeriesEntriesFirstChart(seriesEntries);
         Assertions.assertThat(result).isEqualTo(expected);
 
     }
