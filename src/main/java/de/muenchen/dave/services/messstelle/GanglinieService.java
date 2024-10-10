@@ -38,15 +38,15 @@ public class GanglinieService {
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
-        final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
         ladeZaehldatenStepline.setRangeMaxPercent(0);
         ladeZaehldatenStepline.setLegend(new ArrayList<>());
         ladeZaehldatenStepline.setXAxisDataFirstChart(new ArrayList<>());
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
 
-        final SeriesEntries seriesEntries = new SeriesEntries();
-        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final var seriesEntries = new SeriesEntries();
+        final var fahrzeugOptions = options.getFahrzeuge();
 
         intervals
                 .forEach(interval -> {
