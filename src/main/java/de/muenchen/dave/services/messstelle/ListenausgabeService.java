@@ -131,10 +131,10 @@ public class ListenausgabeService {
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())) {
             final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
-            if (Boolean.TRUE.equals(options.getStundensumme())) {
+            if (Boolean.TRUE.equals(options.getStundensumme()) && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
                 ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
             }
-            if (Boolean.TRUE.equals(options.getSpitzenstunde()) && ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
+            if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
                 var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                         options.getZeitblock(),
                         necessaryIntervals,
