@@ -14,13 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HeatmapService {
 
     /**
@@ -74,17 +75,6 @@ public class HeatmapService {
                         ChartLegendUtil.KFZ_HEATMAP);
                 klassenKategorienIndex.getAndIncrement();
             }
-            /*
-             * if (fahrzeuge.isFussverkehr()) {
-             * insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-             * ladeZaehldatenHeatmap,
-             * heatMapEntryIndex.get(),
-             * klassenKategorienIndex.get(),
-             * intervall.getAnzahlFuss(),
-             * ChartLegendUtil.FUSSGAENGER_HEATMAP);
-             * klassenKategorienIndex.getAndIncrement();
-             * }
-             */
             if (fahrzeuge.isRadverkehr()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
@@ -177,7 +167,8 @@ public class HeatmapService {
      * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
      *            hinterlegt wird.
      */
-    protected static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+    protected static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+            final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
             final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value,
@@ -187,10 +178,10 @@ public class HeatmapService {
                         ladeZaehldatenHeatmap.getLegend(),
                         legendEntry));
         final int nullCheckedValue = ObjectUtils.defaultIfNull(value, 0);
-        ladeZaehldatenHeatmap.setRangeMin(
-                Math.min(nullCheckedValue, ladeZaehldatenHeatmap.getRangeMin()));
-        ladeZaehldatenHeatmap.setRangeMax(
-                Math.max(nullCheckedValue, ladeZaehldatenHeatmap.getRangeMax()));
+        final int currentRangeMin = ObjectUtils.defaultIfNull(ladeZaehldatenHeatmap.getRangeMin(), 0);
+        ladeZaehldatenHeatmap.setRangeMin(Math.min(nullCheckedValue, currentRangeMin));
+        final int currentRangeMax = ObjectUtils.defaultIfNull(ladeZaehldatenHeatmap.getRangeMax(), 0);
+        ladeZaehldatenHeatmap.setRangeMax(Math.max(nullCheckedValue, currentRangeMax));
         ladeZaehldatenHeatmap.getSeriesEntriesFirstChart().add(
                 createHeatMapEntry(
                         heatMapEntryIndex,
@@ -206,10 +197,11 @@ public class HeatmapService {
      * @param value Der Wert im entsprechenden Heatmapfeld definiert durch Spaltenindex und Zeilenindex.
      * @return Eine Liste bestehend aus Spaltenindex, Zeilenindex und dem Wert.
      */
-    protected static List<Integer> createHeatMapEntry(final int heatMapEntryIndex,
+    protected static List<Integer> createHeatMapEntry(
+            final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value) {
-        final List<Integer> heatmapEntry = new ArrayList<>();
+        final var heatmapEntry = new ArrayList<Integer>();
         heatmapEntry.add(heatMapEntryIndex);
         heatmapEntry.add(klassenKategorienIndex);
         heatmapEntry.add(value);
