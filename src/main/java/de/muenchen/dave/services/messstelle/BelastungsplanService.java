@@ -13,6 +13,7 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -49,49 +50,81 @@ public class BelastungsplanService {
                 .stream()
                 .map(sumOfMessquerschnitt -> {
                     LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
-                    final var sumKfz = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue(), options);
+
+                    final var kfz = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue();
+                    final var sumKfz = roundNumberToHundredIfNeeded(kfz, options);
                     messquerschnitt.setSumKfz(sumKfz);
-                    final var sumGv = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), options);
+
+                    final var gv = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeGueterverkehr(), BigDecimal.ZERO).intValue();
+                    final var sumGv = roundNumberToHundredIfNeeded(gv, options);
                     messquerschnitt.setSumGv(sumGv);
-                    final var sumSv = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), options);
+
+                    final var sv = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue();
+                    final var sumSv = roundNumberToHundredIfNeeded(sv, options);
                     messquerschnitt.setSumSv(sumSv);
-                    final var sumRad = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getAnzahlRad().intValue(), options);
+
+                    final var rad = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getAnzahlRad(), BigDecimal.ZERO).intValue();
+                    final var sumRad = roundNumberToHundredIfNeeded(rad, options);
                     messquerschnitt.setSumRad(sumRad);
-                    final var percentGv = calcPercentage(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(),
-                            sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue());
+
+                    final var percentGv = calcPercentage(gv, kfz);
                     messquerschnitt.setPercentGV(percentGv);
-                    final var percentSv = calcPercentage(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(),
-                            sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue());
+
+                    final var percentSv = calcPercentage(sv, kfz);
                     messquerschnitt.setPercentSv(percentSv);
+
                     final var mqId = sumOfMessquerschnitt.getMqId().toString();
                     messquerschnitt.setMqId(mqId);
+
                     final var direction = getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString());
                     messquerschnitt.setDirection(direction);
+
                     return messquerschnitt;
                 })
                 .toList();
-
-        final Integer totalSumKfz = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeKraftfahrzeugverkehr().intValue()).sum();
-        final Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeSchwerverkehr().intValue()).sum();
-        final Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeGueterverkehr().intValue()).sum();
-        final Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getAnzahlRad().intValue()).sum();
-
-
-        belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
-        belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
-        belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
-        belastungsplanMessquerschnitte.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
-        final Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
-        belastungsplanMessquerschnitte.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
-        belastungsplanMessquerschnitte.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
         belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(messquerschnitte);
+
+        final Integer totalSumKfz = totalSumOfAllMessquerschnitte
+                .stream()
+                .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue())
+                .sum();
+        belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
+
+        final Integer totalSumSv = totalSumOfAllMessquerschnitte
+                .stream()
+                .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue())
+                .sum();
+        belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
+
+        final Integer totalSumGv = totalSumOfAllMessquerschnitte
+                .stream()
+                .mapToInt(interval ->  ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
+                .sum();
+        belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
+
+        final Integer totalSumRad = totalSumOfAllMessquerschnitte
+                .stream()
+                .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue())
+                .sum();
+        belastungsplanMessquerschnitte.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
+
+        final var totalSum = totalSumGv + totalSumKfz + totalSumSv;
+        final var totalPercentageGv = calcPercentage(totalSumGv, totalSum);
+        belastungsplanMessquerschnitte.setTotalPercentGv(totalPercentageGv);
+        final var totalPercentageSv = calcPercentage(totalSumSv, totalSum);
+        belastungsplanMessquerschnitte.setTotalPercentSv(totalPercentageSv);
+
         if (options.getMessquerschnittIds().size() == 1) {
             final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
-            final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(options.getZeitblock(), intervals, isKfzStelle,
+            final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                    options.getZeitblock(),
+                    intervals,
+                    isKfzStelle,
                     options.getIntervall());
             belastungsplanMessquerschnitte.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
             belastungsplanMessquerschnitte.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
         }
+
         return belastungsplanMessquerschnitte;
     }
 
