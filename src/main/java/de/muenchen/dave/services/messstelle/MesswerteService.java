@@ -45,15 +45,14 @@ public class MesswerteService {
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
-                    response.getMeanOfMqIdForEachIntervalByMesstag(),
+                    ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag()),
                     isKfzMessstelle,
                     options.getIntervall());
         } else {
             intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
         }
 
-        final List<IntervalDto> meanPerMessquerschnitt = response
-                .getMeanOfIntervalsForEachMqIdByMesstag()
+        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
                 .stream()
                 .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
                 .toList();
@@ -98,23 +97,11 @@ public class MesswerteService {
         request.setIntervalInMinutes(options.getIntervall().getMesswertIntervalInMinutes());
 
         final ResponseEntity<IntervalResponseDto> response = messwerteApi.getIntervalleWithHttpInfo(request).block();
-        if (ObjectUtils.isEmpty(response)) {
-            log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
+
+        if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
+            log.error("Die Response beinhaltet keine Daten");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final IntervalResponseDto body = response.getBody();
-        if (ObjectUtils.isEmpty(body)) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> ist leer.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (ObjectUtils.isEmpty(body.getMeanOfMqIdForEachIntervalByMesstag())) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine AverageMeasurementValuesPerInterval.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (ObjectUtils.isEmpty(body.getMeanOfIntervalsForEachMqIdByMesstag())) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine TotalSumOfAllMessquerschnitte.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        return body;
+        return response.getBody();
     }
 }

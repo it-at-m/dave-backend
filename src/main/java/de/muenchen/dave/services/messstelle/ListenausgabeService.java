@@ -19,6 +19,7 @@ import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -74,55 +75,78 @@ public class ListenausgabeService {
                 final var intervalsWithinZeitblock1924 = getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_19_24);
 
                 if (Boolean.TRUE.equals(options.getBlocksumme())) {
-                    ladeMesswerteListenausgabe.getZaehldaten().add(
-                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0006, Zeitblock.ZB_00_06));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(
-                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0610, Zeitblock.ZB_06_10));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(
-                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1015, Zeitblock.ZB_10_15));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(
-                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1519, Zeitblock.ZB_15_19));
-                    ladeMesswerteListenausgabe.getZaehldaten().add(
-                            calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1924, Zeitblock.ZB_19_24));
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock0006)) {
+                        ladeMesswerteListenausgabe.getZaehldaten().add(
+                                calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0006, Zeitblock.ZB_00_06));
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock0610)) {
+                        ladeMesswerteListenausgabe.getZaehldaten().add(
+                                calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock0610, Zeitblock.ZB_06_10));
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1015)) {
+                        ladeMesswerteListenausgabe.getZaehldaten().add(
+                                calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1015, Zeitblock.ZB_10_15));
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1519)) {
+                        ladeMesswerteListenausgabe.getZaehldaten().add(
+                                calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1519, Zeitblock.ZB_15_19));
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1924)) {
+                        ladeMesswerteListenausgabe.getZaehldaten().add(
+                                calculateSumOfIntervalsAndAddBlockSpecificDataToResult(intervalsWithinZeitblock1924, Zeitblock.ZB_19_24));
+                    }
                 }
 
                 if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
-                    var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            options.getZeitblock(),
-                            intervals,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-                    spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            Zeitblock.ZB_00_06,
-                            intervalsWithinZeitblock0006,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-                    spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            Zeitblock.ZB_06_10,
-                            intervalsWithinZeitblock0610,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-                    spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            Zeitblock.ZB_10_15,
-                            intervalsWithinZeitblock1015,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-                    spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            Zeitblock.ZB_15_19,
-                            intervalsWithinZeitblock1519,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-                    spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                            Zeitblock.ZB_19_24,
-                            intervalsWithinZeitblock1924,
-                            isKfzMessstelle,
-                            options.getIntervall());
-                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    LadeMesswerteDTO spitzenstunde;
+                    if (CollectionUtils.isNotEmpty(intervals)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                options.getZeitblock(),
+                                intervals,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock0006)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                Zeitblock.ZB_00_06,
+                                intervalsWithinZeitblock0006,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock0610)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                Zeitblock.ZB_06_10,
+                                intervalsWithinZeitblock0610,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1015)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                Zeitblock.ZB_10_15,
+                                intervalsWithinZeitblock1015,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1519)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                Zeitblock.ZB_15_19,
+                                intervalsWithinZeitblock1519,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
+                    if (CollectionUtils.isNotEmpty(intervalsWithinZeitblock1924)) {
+                        spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                                Zeitblock.ZB_19_24,
+                                intervalsWithinZeitblock1924,
+                                isKfzMessstelle,
+                                options.getIntervall());
+                        ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                    }
                 }
             }
         }

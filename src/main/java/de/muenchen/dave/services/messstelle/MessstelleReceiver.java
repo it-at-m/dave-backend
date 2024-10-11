@@ -70,10 +70,12 @@ public class MessstelleReceiver {
     private void processingMessstellen(final List<MessstelleDto> messstellen) {
         log.debug("#processingMessstellenCron");
         // Daten aus Dave laden
-        messstellen.forEach(messstelleDto -> {
+        messstellen.parallelStream().forEach(messstelleDto -> {
             log.debug("#findById");
-            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelle(found, messstelleDto),
-                    () -> this.createMessstelle(messstelleDto));
+            messstelleIndexService.findByMstId(messstelleDto.getMstId())
+                    .ifPresentOrElse(
+                            found -> this.updateMessstelle(found, messstelleDto),
+                            () -> this.createMessstelle(messstelleDto));
         });
     }
 

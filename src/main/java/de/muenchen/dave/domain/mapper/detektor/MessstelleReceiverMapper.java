@@ -48,19 +48,19 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        // TODO workaround solange Datenqualitaet mist ist
+        // TODO workaround solange Datenqualitaet nicht geklärt ist
         if (ObjectUtils.isEmpty(dto.getStadtbezirkNummer())) {
             bean.setStadtbezirkNummer(999);
         }
 
-        // TODO workaround solange Datenqualitaet mist ist
+        // TODO workaround solange Datenqualitaet nicht geklärt ist
         if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            bean.setDatumLetztePlausibleMessung(LocalDate.MAX);
+            bean.setDatumLetztePlausibleMessung(LocalDate.of(9999, 12, 31));
         }
 
-        // TODO workaround solange Datenqualitaet mist ist
+        // TODO workaround solange Datenqualitaet nicht geklärt ist
         if (ObjectUtils.isEmpty(dto.getRealisierungsdatum())) {
-            bean.setRealisierungsdatum(LocalDate.MAX);
+            bean.setRealisierungsdatum(LocalDate.of(9999, 12, 31));
         }
 
         // Suchworte setzen
