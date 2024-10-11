@@ -53,16 +53,6 @@ public interface MessstelleReceiverMapper {
             bean.setStadtbezirkNummer(999);
         }
 
-        // TODO workaround solange Datenqualitaet nicht geklärt ist
-        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            bean.setDatumLetztePlausibleMessung(LocalDate.of(9999, 12, 31));
-        }
-
-        // TODO workaround solange Datenqualitaet nicht geklärt ist
-        if (ObjectUtils.isEmpty(dto.getRealisierungsdatum())) {
-            bean.setRealisierungsdatum(LocalDate.of(9999, 12, 31));
-        }
-
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper);
 
