@@ -44,6 +44,7 @@ public class MesswerteService {
         final List<IntervalDto> intervals;
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
             intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
                     ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag()),
                     isKfzMessstelle,
