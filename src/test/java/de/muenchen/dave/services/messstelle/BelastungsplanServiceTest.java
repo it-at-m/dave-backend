@@ -5,6 +5,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -196,8 +198,11 @@ class BelastungsplanServiceTest {
         spitzenStunde.setGueterverkehr(30);
         spitzenStunde.setAnteilSchwerverkehrAnKfzProzent(12.0);
         spitzenStunde.setAnteilGueterverkehrAnKfzProzent(4.5);
-        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstundeAndAddBlockSpecificDataToResult(any(), anyList(), any(boolean.class),
-                any(ZaehldatenIntervall.class));
+        Mockito.when(spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                any(),
+                anyList(),
+                anyBoolean(),
+                any())).thenReturn(spitzenStunde);
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
