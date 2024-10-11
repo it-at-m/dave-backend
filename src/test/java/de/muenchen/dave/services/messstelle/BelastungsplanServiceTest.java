@@ -202,7 +202,8 @@ class BelastungsplanServiceTest {
                 any(),
                 anyList(),
                 anyBoolean(),
-                any())).thenReturn(spitzenStunde);
+                any()))
+                .thenReturn(spitzenStunde);
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
