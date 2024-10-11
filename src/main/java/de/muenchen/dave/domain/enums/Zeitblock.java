@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
- * Oracle-DBs koennen nicht mit der columnDefintion 'TIME' umgehen. Daher ist es noetig gewesen, die Zeitintervalle mit einem konkreten Datum zu speichern. Per
- * Default wird sonst immer das aktuelle Datum verwendet, was dazu fuehrt, dass die Intervalle nicht mehr anhand des Uhrzeit gefunden werden koennen. Daher wird
+ * Oracle-DBs koennen nicht mit der columnDefintion 'TIME' umgehen. Daher ist es noetig gewesen, die
+ * Zeitintervalle mit einem konkreten Datum zu speichern. Per
+ * Default wird sonst immer das aktuelle Datum verwendet, was dazu fuehrt, dass die Intervalle nicht
+ * mehr anhand des Uhrzeit gefunden werden koennen. Daher wird
  * nun immer nach dem #DaveConstants.DEFAULT_LOCALDATE + der Zeit des Intervalls gesucht.
  */
 @AllArgsConstructor

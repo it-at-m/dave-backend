@@ -25,8 +25,8 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
-                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class AuswertungController {
 

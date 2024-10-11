@@ -18,7 +18,8 @@ public class ZaehlungskenngroessenData implements Comparable<Zaehlungskenngroess
     private String fussgaenger;
 
     /**
-     * Listen mit Objekten der Klasse ZaehlungskenngroessenData sollen nach type in der Reihenfolge des unten erstellten order-Arrays sortiert werden.
+     * Listen mit Objekten der Klasse ZaehlungskenngroessenData sollen nach type in der Reihenfolge des
+     * unten erstellten order-Arrays sortiert werden.
      *
      * @param o Zu vergleichendes Objekt
      * @return Vergleichsergebnis

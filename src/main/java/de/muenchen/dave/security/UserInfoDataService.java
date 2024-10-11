@@ -29,7 +29,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service, der einen OIDC /userinfo Endpoint aufruft (mit JWT Bearer Auth) und dort die enthaltenen "Authorities" und Nutzerinformationen extrahiert.
+ * Service, der einen OIDC /userinfo Endpoint aufruft (mit JWT Bearer Auth) und dort die enthaltenen
+ * "Authorities" und Nutzerinformationen extrahiert.
  */
 @Slf4j
 public class UserInfoDataService {
@@ -49,7 +50,7 @@ public class UserInfoDataService {
     /**
      * Erzeugt eine neue Instanz.
      *
-     * @param userInfoUri         userinfo Endpoint URI
+     * @param userInfoUri userinfo Endpoint URI
      * @param restTemplateBuilder ein {@link RestTemplateBuilder}
      */
     public UserInfoDataService(final String userInfoUri,
@@ -68,7 +69,8 @@ public class UserInfoDataService {
     }
 
     /**
-     * Ruft den /userinfo Endpoint und extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim sowie weitere personalisierte Claims.
+     * Ruft den /userinfo Endpoint und extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim
+     * sowie weitere personalisierte Claims.
      *
      * @param jwt der JWT
      * @return die {@link GrantedAuthority}s sowie weitere personalisierte Claims.
@@ -113,7 +115,8 @@ public class UserInfoDataService {
      * Extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim.
      *
      * @param userInfoEndpointData erhalten vom /userinfo Endpoint.
-     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie weitere personalisierte Claims.
+     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie
+     *         weitere personalisierte Claims.
      */
     protected List<SimpleGrantedAuthority> getAuthoritiesFromUserInfoEndpointData(
             final Map<String, Object> userInfoEndpointData) {
@@ -177,7 +180,8 @@ public class UserInfoDataService {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + jwt.getTokenValue());
         final var entity = new HttpEntity<String>(headers);
 
-        @SuppressWarnings("unchecked") final Map<String, Object> userInfoEndpointData = restTemplate
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> userInfoEndpointData = restTemplate
                 .exchange(this.userInfoUri, HttpMethod.GET, entity, Map.class)
                 .getBody();
         log.debug("Response from user-info Endpoint: {}", userInfoEndpointData);

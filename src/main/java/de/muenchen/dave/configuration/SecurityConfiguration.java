@@ -66,16 +66,16 @@ public class SecurityConfiguration {
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/**"))
                         .authenticated())
                 .headers(httpSecurityHeadersConfigurer ->
-                        // support frames for same-origin (e.g. h2-console)
-                        httpSecurityHeadersConfigurer.frameOptions(
-                                HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                // support frames for same-origin (e.g. h2-console)
+                httpSecurityHeadersConfigurer.frameOptions(
+                        HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(httpSecurityCsrfConfigurer ->
-                        // exclude csrf for h2-console
-                        httpSecurityCsrfConfigurer.ignoringRequestMatchers(
-                                AntPathRequestMatcher.antMatcher("/h2-console/**")))
+                // exclude csrf for h2-console
+                httpSecurityCsrfConfigurer.ignoringRequestMatchers(
+                        AntPathRequestMatcher.antMatcher("/h2-console/**")))
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt ->
-                        // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
-                        jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter)));
+                // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
+                jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter)));
         return http.build();
     }
 

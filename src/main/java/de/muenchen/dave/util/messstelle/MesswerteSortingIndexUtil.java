@@ -14,19 +14,26 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 
 /**
- * Der Sortierindex ist erforderlich, um bei der Extraktion der Zeitintervalle einer Messung diese in der richtigen Reihenfolge zu erhalten.
+ * Der Sortierindex ist erforderlich, um bei der Extraktion der Zeitintervalle einer Messung diese
+ * in der richtigen Reihenfolge zu erhalten.
  * <p>
  * Der Sortierindex baut sich folgendermaßen auf.
  * <p>
  * Bedeutung der Dezimalstellen im Sortierindex:
- * - Stelle 9-8 (XX0000000): Zu welchem Block gehört der Messwert, Gesamt/Tagessumme oder SpStd (Tag).
- * - Stelle 7 (00X000000): Die oberste Sortierreihenfolge innerhalb eines Blocks (Zeitintervall, Blocksumme der SpStd).
- * - Stelle 6-4 (000XXX000): Der Index ermittelt aus der Endeuhrzeit auf Basis der Viertelstundenintervalle eines Tages.
- * - Stelle 3-1 (000000XXX): Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_VIERTEL} und {@link TypeZeitintervall#STUNDE_HALB} wird der Index der
- * Startuhrzeit ermittelt. Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_KOMPLETT} wird der Index der Endeuhrzeit ermittelt.
+ * - Stelle 9-8 (XX0000000): Zu welchem Block gehört der Messwert, Gesamt/Tagessumme oder SpStd
+ * (Tag).
+ * - Stelle 7 (00X000000): Die oberste Sortierreihenfolge innerhalb eines Blocks (Zeitintervall,
+ * Blocksumme der SpStd).
+ * - Stelle 6-4 (000XXX000): Der Index ermittelt aus der Endeuhrzeit auf Basis der
+ * Viertelstundenintervalle eines Tages.
+ * - Stelle 3-1 (000000XXX): Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_VIERTEL}
+ * und {@link TypeZeitintervall#STUNDE_HALB} wird der Index der
+ * Startuhrzeit ermittelt. Für Zeitintervalle des Typs {@link TypeZeitintervall#STUNDE_KOMPLETT}
+ * wird der Index der Endeuhrzeit ermittelt.
  *
  * <p>
- * 00:00 - 00:15 = 011001000 ... 00:45 - 01:00 = 011004003 00:00 - 01:00 Stunde = 011004004 ... 02:15 - 03:15 SpStd (Block) 012000000 00:00 - 06:00 Block
+ * 00:00 - 00:15 = 011001000 ... 00:45 - 01:00 = 011004003 00:00 - 01:00 Stunde = 011004004 ...
+ * 02:15 - 03:15 SpStd (Block) 012000000 00:00 - 06:00 Block
  * 013000000 ... 13:45 - 14:45 SpStd (Tag) 060000000 00:00 - 24:00 Gesamt/Tagessumme 070000000
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -87,7 +94,8 @@ public final class MesswerteSortingIndexUtil {
     public static final int SORTING_INDEX_BLOCK_SPEZIAL = 100000000;
 
     /**
-     * Summand zur Indexermittlung für {@link Zeitintervall}e welche nicht als Blocksumme oder Spitzenstunde innerhalb eines {@link Zeitblock}s dienen.
+     * Summand zur Indexermittlung für {@link Zeitintervall}e welche nicht als Blocksumme oder
+     * Spitzenstunde innerhalb eines {@link Zeitblock}s dienen.
      */
     public static final int SORTING_INDEX_SECOND_STEP_INTERVALL = 1000000;
 
@@ -114,10 +122,12 @@ public final class MesswerteSortingIndexUtil {
     public static final int FACTOR_END_TIME = 1000;
 
     /**
-     * Diese Methode ermittelt Sortierindex für einen LadeMesswerteDTO innerhalb eines {@link Zeitblock}.
+     * Diese Methode ermittelt Sortierindex für einen LadeMesswerteDTO innerhalb eines
+     * {@link Zeitblock}.
      *
      * @param ladeMesswerteDto Das LadeMesswerteDTO für den der Index ermittelt werden soll.
-     * @return 0 falls der LadeMesswerteDTO nicht in einem {@link Zeitblock} vorkommt, ansonsten der Indexwert.
+     * @return 0 falls der LadeMesswerteDTO nicht in einem {@link Zeitblock} vorkommt, ansonsten der
+     *         Indexwert.
      */
     public static int getSortingIndexWithinBlock(final LadeMesswerteDTO ladeMesswerteDto, final TypeZeitintervall type) {
         int sortingIndex = 0;
@@ -134,10 +144,12 @@ public final class MesswerteSortingIndexUtil {
     }
 
     /**
-     * Diese Methode ermittelt den Summand zur Indexermittlung um den {@link Zeitintervall} dem entsprechenden {@link Zeitblock} zuordnen zu können.
+     * Diese Methode ermittelt den Summand zur Indexermittlung um den {@link Zeitintervall} dem
+     * entsprechenden {@link Zeitblock} zuordnen zu können.
      *
      * @param ladeMesswerteDto Das LadeMesswerteDTO für den der Index ermittelt werden soll.
-     * @return 0 falls der LadeMesswerteDTO nicht in einen entsprechenden {@link Zeitblock} verortet werden kann ansonsten der Indexsummand des Zeitblocks.
+     * @return 0 falls der LadeMesswerteDTO nicht in einen entsprechenden {@link Zeitblock} verortet
+     *         werden kann ansonsten der Indexsummand des Zeitblocks.
      */
     public static int getFirstStepSortingIndex(final LadeMesswerteDTO ladeMesswerteDto) {
         int sortingIndex = 0;
@@ -156,9 +168,11 @@ public final class MesswerteSortingIndexUtil {
     }
 
     /**
-     * Diese Methode ermittelt den Summand zur Indexermittlung um den {@link Zeitintervall} als Blocksumme oder als eigentlichen Intervall zuordnen zu können.
+     * Diese Methode ermittelt den Summand zur Indexermittlung um den {@link Zeitintervall} als
+     * Blocksumme oder als eigentlichen Intervall zuordnen zu können.
      *
-     * @return 0 falls der LadeMesswerteDTO nicht als Zeitblock oder normaler Intervall interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
+     * @return 0 falls der LadeMesswerteDTO nicht als Zeitblock oder normaler Intervall interpretiert
+     *         werden kann. Ansonsten der entsprechende Indexsummand.
      */
     public static int getSecondStepSortingIndex(final TypeZeitintervall type) {
         int sortingIndex = 0;
@@ -173,11 +187,13 @@ public final class MesswerteSortingIndexUtil {
     }
 
     /**
-     * Diese Methode ermittelt den Summand zur Indexermittlung für den {@link Zeitintervall}, damit die Reihenfolge der normalen Intervalle innerhalb eines
+     * Diese Methode ermittelt den Summand zur Indexermittlung für den {@link Zeitintervall}, damit die
+     * Reihenfolge der normalen Intervalle innerhalb eines
      * Blocks erstellt werden kann.
      *
      * @param ladeMesswerteDto Das LadeMesswerteDTO für den der Index ermittelt werden soll.
-     * @return 0 falls der LadeMesswerteDTO nicht als normaler Intervall interpretiert werden kann. Ansonsten der entsprechende Indexsummand.
+     * @return 0 falls der LadeMesswerteDTO nicht als normaler Intervall interpretiert werden kann.
+     *         Ansonsten der entsprechende Indexsummand.
      */
     public static int getThirdAndFourthStepSortingIndex(final LadeMesswerteDTO ladeMesswerteDto, final TypeZeitintervall type) {
         int sortingIndex = 0;
@@ -228,7 +244,8 @@ public final class MesswerteSortingIndexUtil {
     }
 
     /**
-     * Mit dieser Methode wird der Sortierindex für die angefangenen Viertelstunden eines Tages ermittelt.
+     * Mit dieser Methode wird der Sortierindex für die angefangenen Viertelstunden eines Tages
+     * ermittelt.
      *
      * @param time für die der Viertelstundenindex ermittelt werden soll.
      * @return Den Index der angefangenen Viertelstunde eines Tages.

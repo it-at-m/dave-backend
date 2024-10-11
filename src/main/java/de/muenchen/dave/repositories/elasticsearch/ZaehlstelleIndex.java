@@ -65,32 +65,32 @@ public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, S
     Optional<Zaehlstelle> findById(String var1);
 
     @Query(
-            "{\"simple_query_string\": {" +
-                    " \"fields\": [" +
-                    "\"nummer^5\"," +
-                    "\"stadtbezirk^2\"," +
-                    "\"kreuzungsname^4\"," +
-                    "\"suchwoerter^3\"," +
-                    "\"zaehlungen.suchwoerter^3\"," +
-                    "\"zaehlungen.zaehlsituation\"," +
-                    "\"zaehlungen.zaehlsituationErweitert\"" +
-                    "]," +
-                    " \"query\": \"?0\"," +
-                    " \"analyze_wildcard\": true," +
-                    " \"default_operator\": \"AND\"," +
-                    " \"lenient\": true" +
-                    "}" +
-                    "}"
+        "{\"simple_query_string\": {" +
+                " \"fields\": [" +
+                "\"nummer^5\"," +
+                "\"stadtbezirk^2\"," +
+                "\"kreuzungsname^4\"," +
+                "\"suchwoerter^3\"," +
+                "\"zaehlungen.suchwoerter^3\"," +
+                "\"zaehlungen.zaehlsituation\"," +
+                "\"zaehlungen.zaehlsituationErweitert\"" +
+                "]," +
+                " \"query\": \"?0\"," +
+                " \"analyze_wildcard\": true," +
+                " \"default_operator\": \"AND\"," +
+                " \"lenient\": true" +
+                "}" +
+                "}"
     )
     Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
     @Query(
-            "{" +
-                    "\"query_string\": {" +
-                    "\"query\": " +
-                    "\"?0\"" +
-                    "}" +
-                    "}"
+        "{" +
+                "\"query_string\": {" +
+                "\"query\": " +
+                "\"?0\"" +
+                "}" +
+                "}"
     )
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 

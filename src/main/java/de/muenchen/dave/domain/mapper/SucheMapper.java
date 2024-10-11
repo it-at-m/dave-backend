@@ -46,14 +46,15 @@ public interface SucheMapper {
     }
 
     /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle. Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte angezeigt.
+     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle. Das DTO wird im Frontend als
+     * MouseOver bei einem Marker in der Karte angezeigt.
      *
-     * @param stadtbezirk         Stadtbezirksname
-     * @param stadtbezirknummer   Stadtbezirksnummer als Long
-     * @param nummer              Zaehlstellennummer
-     * @param anzahlZaehlungen    Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
+     * @param stadtbezirk Stadtbezirksname
+     * @param stadtbezirknummer Stadtbezirksnummer als Long
+     * @param nummer Zaehlstellennummer
+     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
      * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname       Kreuzungsname als String
+     * @param kreuzungsname Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
     default ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,

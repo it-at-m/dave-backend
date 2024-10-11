@@ -48,7 +48,8 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte Fahrbeziehung besitzt
+     * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
+     * Fahrbeziehung besitzt
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options
@@ -76,9 +77,9 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Befüllt das übergebene ladeZaehldatenZeitreiheDTO Objekt mit den Zeitreihe-Daten
      *
-     * @param options                    Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @param ladeZaehldatenZeitreiheDTO Objekt, das befüllt werden soll
-     * @param ladeZaehldatumDTO          Objekt mit den Werten
+     * @param ladeZaehldatumDTO Objekt mit den Werten
      */
     static void fillLadeZaehldatenZeitreiheDTO(final OptionsDTO options, final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
             final LadeZaehldatumDTO ladeZaehldatumDTO) {
@@ -111,8 +112,8 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Ermittelt einen Gesamtwert auf KFZ, Fussgänger und Fahrradfahrer und gibt diesen zurück
      *
-     * @param kfz           Wert für Kraftfahrzeuge
-     * @param fussgaenger   Wert für Fussgänger
+     * @param kfz Wert für Kraftfahrzeuge
+     * @param fussgaenger Wert für Fussgänger
      * @param fahrradfahrer Wert für Fahrradfahrer
      * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
      */
@@ -129,13 +130,15 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Berechnet das "älteste Datum" nach dem gesucht werden soll. Wenn in den Optionen keine Vergleichszählung gewählt wurde, wird das Datum der drittletzten
-     * Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden. Ansonsten das Datum der zweitletzten Zählung bzw. wenn auch diese nicht vorhanden, dann der
+     * Berechnet das "älteste Datum" nach dem gesucht werden soll. Wenn in den Optionen keine
+     * Vergleichszählung gewählt wurde, wird das Datum der drittletzten
+     * Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden. Ansonsten das Datum der zweitletzten
+     * Zählung bzw. wenn auch diese nicht vorhanden, dann der
      * aktuellen Zählung.
      *
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      * @param currentDate Datum der aktuell im Frontend gewählten Zählung
-     * @param options     Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @return
      */
     static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {
@@ -177,9 +180,9 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Lädt die Daten für eine Zeitreihe und gibt diese zurück
      *
-     * @param zaehlstelleId     Die ID der im Frontend ausgewählten Zählstelle
+     * @param zaehlstelleId Die ID der im Frontend ausgewählten Zählstelle
      * @param currentZaehlungId Die ID der im Frontend ausgewählten Zählung
-     * @param options           Optionen aus dem Frontend
+     * @param options Optionen aus dem Frontend
      * @return Zeitreihendaten als LadeZaehldatenZeitreiheDTO
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
@@ -236,18 +239,20 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Filtert die Zaehlungen aus der Zaehlstelle heraus, die in der Zeitreihe angezeigt werden sollen und gibt diese als Stream zurück. Die Zaehlungen werden
-     * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert. Gewählte Zählungen müssen alle der folgenden Kriterien
+     * Filtert die Zaehlungen aus der Zaehlstelle heraus, die in der Zeitreihe angezeigt werden sollen
+     * und gibt diese als Stream zurück. Die Zaehlungen werden
+     * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
+     * Gewählte Zählungen müssen alle der folgenden Kriterien
      * erfüllen:
      * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (inkl.)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
      *
-     * @param zaehlstelle     Zählstelle mit allen Zählungen
+     * @param zaehlstelle Zählstelle mit allen Zählungen
      * @param currentZaehlung Im Frontend ausgewählten Zählung
-     * @param options         Optionen aus dem Frontend
-     * @param zeitauswahlDTO  ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
+     * @param options Optionen aus dem Frontend
+     * @param zeitauswahlDTO ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
      * @return Stream der gefilterten Zählungen
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,

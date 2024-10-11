@@ -48,9 +48,9 @@ public class HochrechnungsfaktorController {
 
     @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize(
-            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-                    "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
-                    "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
     )
     public ResponseEntity<List<HochrechnungsfaktorDTO>> getAllHochrechnungsfaktoren() {
         try {

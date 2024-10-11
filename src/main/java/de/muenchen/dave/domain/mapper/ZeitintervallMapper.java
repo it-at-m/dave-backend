@@ -20,9 +20,12 @@ import java.util.Locale;
 public interface ZeitintervallMapper {
 
     /**
-     * Die vorgehaltene {@link ZeitintervallDTO}#getStartUhrzeit() und {@link ZeitintervallDTO}#getEndeUhrzeit() ist im Format
-     * {@link DaveConstants}#ZEITINTERVALL_TIME_FORMAT hinterlegt. Diese Methode erweitert die Uhrzeit um das Datum {@link DaveConstants#DEFAULT_LOCALDATE}
-     * damit in der eigentlichen Mappermethode ein Parsing von String nach {@link LocalDateTime} durchgeführt werden kann.
+     * Die vorgehaltene {@link ZeitintervallDTO}#getStartUhrzeit() und
+     * {@link ZeitintervallDTO}#getEndeUhrzeit() ist im Format
+     * {@link DaveConstants}#ZEITINTERVALL_TIME_FORMAT hinterlegt. Diese Methode erweitert die Uhrzeit
+     * um das Datum {@link DaveConstants#DEFAULT_LOCALDATE}
+     * damit in der eigentlichen Mappermethode ein Parsing von String nach {@link LocalDateTime}
+     * durchgeführt werden kann.
      *
      * @param zeitintervalle als Dto.
      */

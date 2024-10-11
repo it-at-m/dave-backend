@@ -26,7 +26,8 @@ public class AuswertungZaehlstellenKoordinateService {
     }
 
     /**
-     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDTO} für jede vorhandene {@link Zaehlstelle}
+     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDTO} für jede vorhandene
+     *         {@link Zaehlstelle}
      */
     public List<LadeAuswertungZaehlstelleKoordinateDTO> getAuswertungZaehlstellenKoordinate() {
         return indexService.getAllZaehlstellen().stream()

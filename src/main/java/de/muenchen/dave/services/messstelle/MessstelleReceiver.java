@@ -28,7 +28,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt diese dem {@link MessstelleService} zur weiteren
+ * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt
+ * diese dem {@link MessstelleService} zur weiteren
  * Verarbeitung. Soll nicht auf den externen Umgebungen laufen.
  */
 @Slf4j
@@ -44,7 +45,8 @@ public class MessstelleReceiver {
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
     /**
-     * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht, kann in der application-xxx.yml geändert werden.
+     * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
+     * kann in der application-xxx.yml geändert werden.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")

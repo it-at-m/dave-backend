@@ -26,17 +26,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HeatmapService {
 
     /**
-     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in das im Parameter ladeZaehldatenHeatmap übergebenen Objekt ein. Des Weiteren
-     * wird ein Legendeneintrag für den Parameter legendEntry gesetzt, falls dieser noch nicht vorhanden ist. Zusätzlich werden die Variablen RangeMin und
+     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in das im Parameter
+     * ladeZaehldatenHeatmap übergebenen Objekt ein. Des Weiteren
+     * wird ein Legendeneintrag für den Parameter legendEntry gesetzt, falls dieser noch nicht vorhanden
+     * ist. Zusätzlich werden die Variablen RangeMin und
      * RangeMax gesetzt.
      *
-     * @param ladeZaehldatenHeatmap  Das Objekt in welchem die aufbereiteten Daten vorgehalten werden.
-     * @param heatMapEntryIndex      Spaltenindex der X-Achse zur Positionierung des Wertes aus Parameter value in Heatmap.
-     * @param klassenKategorienIndex Zeilenindex der Y-Achse zur Positionierung des Wertes aus Parameter value in Heatmap.
-     * @param value                  Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in der Heatmap dargestellt werde soll. Des
-     *                               Weiteren wird dieser Wert zur Ermittlung von {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
-     *                               {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
-     * @param legendEntry            Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend() hinterlegt wird.
+     * @param ladeZaehldatenHeatmap Das Objekt in welchem die aufbereiteten Daten vorgehalten werden.
+     * @param heatMapEntryIndex Spaltenindex der X-Achse zur Positionierung des Wertes aus Parameter
+     *            value in Heatmap.
+     * @param klassenKategorienIndex Zeilenindex der Y-Achse zur Positionierung des Wertes aus Parameter
+     *            value in Heatmap.
+     * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in
+     *            der Heatmap dargestellt werde soll. Des
+     *            Weiteren wird dieser Wert zur Ermittlung von
+     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
+     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
+     * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
+     *            hinterlegt wird.
      */
     protected static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
             final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
@@ -63,9 +70,9 @@ public class HeatmapService {
     /**
      * Erstellt einen einzelnen Eintrag in der Heatmap.
      *
-     * @param heatMapEntryIndex      Der Spaltenindex in der Heatmap
+     * @param heatMapEntryIndex Der Spaltenindex in der Heatmap
      * @param klassenKategorienIndex Der Zeilenindex in der Heatmap
-     * @param value                  Der Wert im entsprechenden Heatmapfeld definiert durch Spaltenindex und Zeilenindex.
+     * @param value Der Wert im entsprechenden Heatmapfeld definiert durch Spaltenindex und Zeilenindex.
      * @return Eine Liste bestehend aus Spaltenindex, Zeilenindex und dem Wert.
      */
     protected static List<Integer> createHeatMapEntry(
@@ -80,8 +87,10 @@ public class HeatmapService {
     }
 
     /**
-     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch. Als Basis zur Datenaufbereitung dienen die im Parameter zaehldatenTable
-     * übergebenen Informationen. Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien werden in dieser Methode zur Darstellung in der Heatmap
+     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch. Als Basis zur
+     * Datenaufbereitung dienen die im Parameter zaehldatenTable
+     * übergebenen Informationen. Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien
+     * werden in dieser Methode zur Darstellung in der Heatmap
      * aufbereitet.
      *
      * @param intervals Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.

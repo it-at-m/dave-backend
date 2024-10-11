@@ -32,8 +32,8 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @Validated
 @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class LadeZaehldatenController {
 
@@ -56,10 +56,11 @@ public class LadeZaehldatenController {
     }
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für das Gangliniendiagramm, die Listenausgabe und für die Heatmap.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für das Gangliniendiagramm, die
+     * Listenausgabe und für die Heatmap.
      *
      * @param zaehlungId Die Id der Zaehlung.
-     * @param options    Die im Frontend gewählten Optionen.
+     * @param options Die im Frontend gewählten Optionen.
      * @return Die aufbereiteten Daten einer Zaehlung für die Diagramme im Frontend.
      */
     @PostMapping(value = "/lade-zaehldaten-processed", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,7 +85,7 @@ public class LadeZaehldatenController {
      * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für den Belastungsplan.
      *
      * @param zaehlungId Die Id der Zaehlung.
-     * @param options    Die im Frontend gewählten Optionen.
+     * @param options Die im Frontend gewählten Optionen.
      * @return Die aufbereiteten Daten einer Zaehlung für den Belastungsplan im Frontend.
      */
     @PostMapping(value = "/lade-belastungsplan", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -108,9 +109,10 @@ public class LadeZaehldatenController {
      * Rest-Endpunkt zur Bereitstellung der Daten einer Zählstelle für die Zeitreihe
      *
      * @param zaehlstelleId Die Id der Zaehlstelle.
-     * @param zaehlungId    Die Id der im Frontend ausgewaehlten Zaehlung.
-     * @param options       Die im Frontend gewählten Optionen.
-     * @return Die aufbereiteten Daten aller Zählungen einer Zählstelle innerhalb eines bestimmten Zeitintervalls.
+     * @param zaehlungId Die Id der im Frontend ausgewaehlten Zaehlung.
+     * @param options Die im Frontend gewählten Optionen.
+     * @return Die aufbereiteten Daten aller Zählungen einer Zählstelle innerhalb eines bestimmten
+     *         Zeitintervalls.
      */
     @PostMapping(value = "/lade-zeitreihe", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)

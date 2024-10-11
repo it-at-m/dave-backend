@@ -31,7 +31,8 @@ public class InfoMessageService {
     }
 
     /**
-     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene {@link InfoMessageDTO}s als Liste zurück, beginnend mit der neusten aktiven
+     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene {@link InfoMessageDTO}s als
+     * Liste zurück, beginnend mit der neusten aktiven
      * InfoMessage.
      *
      * @param infoMessageDTO Das {@link InfoMessageDTO} zum Speichern.

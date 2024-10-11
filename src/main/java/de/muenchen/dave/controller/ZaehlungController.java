@@ -116,8 +116,8 @@ public class ZaehlungController {
     }
 
     @PreAuthorize(
-            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @GetMapping(value = "/getZaehlungenForExternal", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ExternalZaehlungDTO>> getZaehlungenForExternal() {
@@ -131,8 +131,8 @@ public class ZaehlungController {
     }
 
     @PreAuthorize(
-            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/saveExternal", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BackendIdDTO> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDTO zaehlung) {
@@ -151,8 +151,8 @@ public class ZaehlungController {
 
     // Wird sowohl von intern, als auch von extern genutzt
     @PreAuthorize(
-            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/updateStatus", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BackendIdDTO> updateStatus(@RequestBody @NotNull final UpdateStatusDTO updateZaehlung) {

@@ -38,7 +38,7 @@ public class GenerateCsvMstService {
      * Erzeugt eine csv-Datei die der Tabelle aus der Oberflaeche entspricht.
      *
      * @param messstelleId Id der aktuellen Messstelle
-     * @param options      aktuell gesetzen Einstellungen
+     * @param options aktuell gesetzen Einstellungen
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
@@ -96,8 +96,8 @@ public class GenerateCsvMstService {
      * Erzeugt die Metadaten für die Tabelle
      *
      * @param messstelle die Messstelle
-     * @param header     Zur Berechnung der Anzahl der Semikolons
-     * @param options    Zur Anzeige der Fahrbeziehung
+     * @param header Zur Berechnung der Anzahl der Semikolons
+     * @param options Zur Anzeige der Fahrbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options) {

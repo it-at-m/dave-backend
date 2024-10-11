@@ -47,7 +47,7 @@ public class ProcessEmailService {
      *
      * @param message die zu verarbeitende Email
      * @return das generierte {@link ChatMessageDTO}
-     * @throws IOException        Fehler bei der Verbindung zum Postfach
+     * @throws IOException Fehler bei der Verbindung zum Postfach
      * @throws MessagingException allgemeiner E-Mail Fehler
      */
     public ChatMessageDTO processEmail(final Message message) throws IOException, MessagingException {
@@ -60,7 +60,7 @@ public class ProcessEmailService {
      *
      * @param message die Nachricht
      * @return der verarbeitete Inhalt
-     * @throws IOException        Fehler bei der Verbindung zum Postfach
+     * @throws IOException Fehler bei der Verbindung zum Postfach
      * @throws MessagingException allgemeiner E-Mail Fehler
      */
     private String processContent(final Part message) throws MessagingException, IOException {
@@ -110,8 +110,10 @@ public class ProcessEmailService {
     }
 
     /**
-     * Verarbeitet den Plain-Text-Inhalt wie folgt: Jede Zeile wird auf ein Match mit einem String aus der Konfiguration geprüft. Falls es eine Übereinstimmung
-     * gibt, wird der restliche Inhalt (Signatur oder ursprüngliche Nachricht) verworfen. Zuletzt werden führende und anhängende Leerzeichen und Zeilenumbrüche
+     * Verarbeitet den Plain-Text-Inhalt wie folgt: Jede Zeile wird auf ein Match mit einem String aus
+     * der Konfiguration geprüft. Falls es eine Übereinstimmung
+     * gibt, wird der restliche Inhalt (Signatur oder ursprüngliche Nachricht) verworfen. Zuletzt werden
+     * führende und anhängende Leerzeichen und Zeilenumbrüche
      * entfernt.
      *
      * @param content Plain-Text-Inhalt
@@ -150,12 +152,13 @@ public class ProcessEmailService {
     }
 
     /**
-     * Diese Methode verarbeitet MultipartMessages. Da aus technischem Aufwand keine Anhänge unterstützt werden, wird einfach nur der erste Teil der Nachricht
+     * Diese Methode verarbeitet MultipartMessages. Da aus technischem Aufwand keine Anhänge unterstützt
+     * werden, wird einfach nur der erste Teil der Nachricht
      * verarbeitet, da dieser dem Hauptteil entspricht.
      *
      * @param multipartMessage die zu verarbeitende Nachricht
      * @return der verarbeitete Inhalt der Nachricht
-     * @throws IOException        Fehler bei der Verbindung zum Postfach
+     * @throws IOException Fehler bei der Verbindung zum Postfach
      * @throws MessagingException allgemeiner E-Mail Fehler
      */
     private String processMultipartMessage(final MimeMultipart multipartMessage) throws MessagingException, IOException {
@@ -179,7 +182,7 @@ public class ProcessEmailService {
     /**
      * Generiert aus einer {@link Message} ein {@link ChatMessageDTO}.
      *
-     * @param msg            die Nachricht aus der Email
+     * @param msg die Nachricht aus der Email
      * @param messageContent der Inhalt aus der Nachricht
      * @return das generierte {@link ChatMessageDTO}
      * @throws MessagingException allgemeiner E-Mail Fehler

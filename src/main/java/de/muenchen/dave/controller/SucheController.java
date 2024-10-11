@@ -20,9 +20,9 @@ import java.util.Set;
 @RestController
 @Slf4j
 @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
-                " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
-                " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
+            " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
+            " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
 )
 public class SucheController {
 

@@ -58,9 +58,9 @@ public class InfoMessageController {
      * @return Die InfoMessage
      */
     @PreAuthorize(
-            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
-                    " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
-                    " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
     )
     @GetMapping(value = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)

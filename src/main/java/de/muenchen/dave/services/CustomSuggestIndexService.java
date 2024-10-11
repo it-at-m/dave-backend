@@ -106,7 +106,7 @@ public class CustomSuggestIndexService {
      * Erzeugt für die Suchwörter ein Set an Vorschlägen.
      *
      * @param suchwoerter Suchwörter einer Zählstelle oder Zählung
-     * @param suggestId   ID der zugehörigen Zählstelle oder Zählung
+     * @param suggestId ID der zugehörigen Zählstelle oder Zählung
      */
     private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId) {
         if (CollectionUtils.isNotEmpty(suchwoerter)) {

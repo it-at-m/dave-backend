@@ -27,7 +27,8 @@ public class EmailAddressService {
     }
 
     /**
-     * Lädt eine Email-Adresse zu einer Participant ID. Falls sie noch nicht existiert, wird eine neues EmailAddressDTO mit leerem Wert für die Email-Adresse
+     * Lädt eine Email-Adresse zu einer Participant ID. Falls sie noch nicht existiert, wird eine neues
+     * EmailAddressDTO mit leerem Wert für die Email-Adresse
      * zurückgegeben.
      *
      * @param participantId Die ID des Participants
@@ -71,7 +72,8 @@ public class EmailAddressService {
     }
 
     /**
-     * Lädt die Email-Adressen. Falls sie noch nicht existiert, wird eine neues EmailAddressDTO mit leerem Wert für die Email-Adresse zurückgegeben.
+     * Lädt die Email-Adressen. Falls sie noch nicht existiert, wird eine neues EmailAddressDTO mit
+     * leerem Wert für die Email-Adresse zurückgegeben.
      *
      * @return geladenes EmailAddressDTO
      */

@@ -16,7 +16,8 @@ import org.mapstruct.Mappings;
 import java.util.List;
 
 /**
- * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann. Mustache ist eine Sprache für Templates aus denen die für die PDF benötigten HTML
+ * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann. Mustache ist eine Sprache
+ * für Templates aus denen die für die PDF benötigten HTML
  * Strings entstehen.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
@@ -26,10 +27,10 @@ public interface DatentabellePdfZaehldatumMapper {
     String UHRZEIT_24_00 = "24:00";
 
     @Mappings(
-            {
-                    @Mapping(target = "endeUhrzeit", source = "ladeZaehldatumDTO.endeUhrzeit", dateFormat = "HH:mm"),
-                    @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
-            }
+        {
+                @Mapping(target = "endeUhrzeit", source = "ladeZaehldatumDTO.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
+        }
     )
     DatentabellePdfZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDTO ladeZaehldatumDTO);
 
@@ -43,10 +44,10 @@ public interface DatentabellePdfZaehldatumMapper {
     List<DatentabellePdfZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDTO> ladeZaehldatumDTOList);
 
     @Mappings(
-            {
-                    @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
-                    @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
-            }
+        {
+                @Mapping(target = "endeUhrzeit", source = "dto.endeUhrzeit", dateFormat = "HH:mm"),
+                @Mapping(target = "startUhrzeit", source = "dto.startUhrzeit", dateFormat = "HH:mm"),
+        }
     )
     DatentabellePdfZaehldatum ladeMesswerteDTO2bean(LadeMesswerteDTO dto);
 

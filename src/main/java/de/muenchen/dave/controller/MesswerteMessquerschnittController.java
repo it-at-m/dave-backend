@@ -30,7 +30,8 @@ public class MesswerteMessquerschnittController {
     private final MesswerteService messwerteService;
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm, die Heatmap und die Listenausgabe.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm, die
+     * Heatmap und die Listenausgabe.
      *
      * @param messstelleId Die Id der Messstelle.
      * @return Die aufbereiteten Daten einer Messstelle für die Gangline im Frontend.

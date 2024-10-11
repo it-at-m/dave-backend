@@ -46,12 +46,15 @@ public class FillZeitreihePdfBeanService {
     }
 
     /**
-     * Hier werden die {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent} gesetzt. Es sollen die einzelnen
-     * Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist, soll auch dieser angezeigt werden. Der Platz wird nur angezeigt wenn die
+     * Hier werden die
+     * {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent}
+     * gesetzt. Es sollen die einzelnen
+     * Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist, soll auch dieser
+     * angezeigt werden. Der Platz wird nur angezeigt wenn die
      * Straßennamen nicht im Platznamen zu finden sind.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
-     * @param zaehlung     Im Frontend ausgewählte Zählung
+     * @param zaehlung Im Frontend ausgewählte Zählung
      */
     public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung) {
         // Knotenarme nach Nummer sortieren und setzen
@@ -77,12 +80,12 @@ public class FillZeitreihePdfBeanService {
     /**
      * Befüllt eine ZeitreihePdf mit allen benötigten Informationen
      *
-     * @param zeitreihePdf                      ZeitreihePdf, die befüllt werden soll
-     * @param zaehlungId                        ID der aktuellen Zählung im Frontend
-     * @param chartAsBase64Png                  Diagramm als PNG in Base64
+     * @param zeitreihePdf ZeitreihePdf, die befüllt werden soll
+     * @param zaehlungId ID der aktuellen Zählung im Frontend
+     * @param chartAsBase64Png Diagramm als PNG in Base64
      * @param schematischeUebersichtAsBase64Png schematische Uebersicht als Base64
-     * @param options                           Optionen aus dem Frontend
-     * @param department                        OU des Benutzers
+     * @param options Optionen aus dem Frontend
+     * @param department OU des Benutzers
      * @return Die befüllte ZeitreihePdf
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung/Zaehldaten gefunden wurden
      */
@@ -113,8 +116,8 @@ public class FillZeitreihePdfBeanService {
      * Lädt die ZeitreiheDaten und wandelt sie in eine Liste von ZeitreiheTableRow um.
      *
      * @param zaehlstelleId ID der aktuellen Zählstelle im Frontend
-     * @param zaehlungId    ID der aktuellen Zählung im Frontend
-     * @param options       Optionen aus dem Frontend
+     * @param zaehlungId ID der aktuellen Zählung im Frontend
+     * @param options Optionen aus dem Frontend
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
@@ -154,13 +157,14 @@ public class FillZeitreihePdfBeanService {
     }
 
     /**
-     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt. Es sollen der Zählstellenkommentar und alle Kommtare zu allen ausgewählten
+     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt. Es sollen der
+     * Zählstellenkommentar und alle Kommtare zu allen ausgewählten
      * Zählungen erscheinen, insofern gesetzt.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
-     * @param zaehlung     Aktuell im Frontend gesetzte Zählung
-     * @param options      Optionen aus dem Frontend
-     * @param zaehlstelle  Im Frontend gewählte Zählstelle
+     * @param zaehlung Aktuell im Frontend gesetzte Zählung
+     * @param options Optionen aus dem Frontend
+     * @param zaehlstelle Im Frontend gewählte Zählstelle
      */
     public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung, final OptionsDTO options,
             final Zaehlstelle zaehlstelle) {

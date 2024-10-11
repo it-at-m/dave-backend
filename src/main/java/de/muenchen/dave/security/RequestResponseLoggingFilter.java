@@ -51,7 +51,8 @@ public class RequestResponseLoggingFilter implements Filter {
     }
 
     /**
-     * The method logs the username extracted out of the {@link SecurityContext}, the kind of HTTP-Request, the targeted URI and the response http status code.
+     * The method logs the username extracted out of the {@link SecurityContext}, the kind of
+     * HTTP-Request, the targeted URI and the response http status code.
      * {@inheritDoc}
      */
     @Override
@@ -86,7 +87,7 @@ public class RequestResponseLoggingFilter implements Filter {
     private boolean checkForLogging(final HttpServletRequest httpServletRequest) {
         return this.requestLoggingMode.equals(REQUEST_LOGGING_MODE_ALL)
                 || (this.requestLoggingMode.equals(REQUEST_LOGGING_MODE_CHANGING)
-                && CHANGING_METHODS.contains(httpServletRequest.getMethod()));
+                        && CHANGING_METHODS.contains(httpServletRequest.getMethod()));
     }
 
 }

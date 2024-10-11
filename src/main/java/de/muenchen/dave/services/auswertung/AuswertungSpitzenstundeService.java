@@ -54,17 +54,21 @@ public class AuswertungSpitzenstundeService {
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
      *
      * @param zaehlstellenNummer der Zählstelle für welche die Zähung stattgefunden hat.
-     * @param zaehlart           der Zählung.
-     * @param zaehldatum         der Zählung.
-     * @param zeitblock          für welchen die Spitzentundeauswertung gemacht werden soll.
-     * @param zeitauswahl        welche die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                           {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
-     *                           haben darf.
+     * @param zaehlart der Zählung.
+     * @param zaehldatum der Zählung.
+     * @param zeitblock für welchen die Spitzentundeauswertung gemacht werden soll.
+     * @param zeitauswahl welche die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
+     *            haben darf.
      * @return die Spitzentundenauswertung
-     * @throws DataNotFoundException         sobald im {@link ZaehlstelleIndexService} keine {@link Zaehlung} oder {@link Zaehlstelle} vorhanden ist.
-     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
+     * @throws DataNotFoundException sobald im {@link ZaehlstelleIndexService} keine {@link Zaehlung}
+     *             oder {@link Zaehlstelle} vorhanden ist.
+     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
      */
     public List<LadeAuswertungSpitzenstundeDTO> getAuswertungSpitzenstunde(final String zaehlstellenNummer,
             final Zaehlart zaehlart,
@@ -100,17 +104,22 @@ public class AuswertungSpitzenstundeService {
     /**
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
      *
-     * @param zaehlung     Zaehlung
-     * @param zeitblock    für welchen die Spitzentundeauswertung gemacht werden soll.
-     * @param zeitauswahl  welche die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                     {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
-     *                     darf.
-     * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen Kreisverkehr extrahiert werden sollen, anderfalls false.
+     * @param zaehlung Zaehlung
+     * @param zeitblock für welchen die Spitzentundeauswertung gemacht werden soll.
+     * @param zeitauswahl welche die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
+     *            darf.
+     * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
+     *            Kreisverkehr extrahiert werden sollen, anderfalls false.
      * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
-     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
-     * @throws DataNotFoundException         falls keine Spitzenstunde für den gewählten Zeitblock gefunden wurde.
+     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
+     * @throws DataNotFoundException falls keine Spitzenstunde für den gewählten Zeitblock gefunden
+     *             wurde.
      */
     public List<LadeAuswertungSpitzenstundeDTO> getSpitzenstunden(final Zaehlung zaehlung,
             final Zeitblock zeitblock,
@@ -122,19 +131,21 @@ public class AuswertungSpitzenstundeService {
                 zeitblock,
                 typeSpitzenstunde,
                 kreisverkehr).stream()
-                .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
-                .collect(Collectors.toList());
+                        .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
+                        .collect(Collectors.toList());
     }
 
     /**
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
      *
-     * @param zaehlungId        ID der Zaehlung
-     * @param zeitblock         für welchen die Spitzentundeauswertung gemacht werden soll.
-     * @param typeSpitzenstunde welche die Ausprägung {@link TypeZeitintervall#SPITZENSTUNDE_KFZ}, {@link TypeZeitintervall#SPITZENSTUNDE_RAD} oder
-     *                          {@link TypeZeitintervall#SPITZENSTUNDE_FUSS} haben darf.
-     * @param kreisverkehr      hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen Kreisverkehr extrahiert werden sollen, anderfalls
-     *                          false.
+     * @param zaehlungId ID der Zaehlung
+     * @param zeitblock für welchen die Spitzentundeauswertung gemacht werden soll.
+     * @param typeSpitzenstunde welche die Ausprägung {@link TypeZeitintervall#SPITZENSTUNDE_KFZ},
+     *            {@link TypeZeitintervall#SPITZENSTUNDE_RAD} oder
+     *            {@link TypeZeitintervall#SPITZENSTUNDE_FUSS} haben darf.
+     * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
+     *            Kreisverkehr extrahiert werden sollen, anderfalls
+     *            false.
      * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
      * @throws DataNotFoundException falls keine Spitzenstunde gefunden wurde.
      */
@@ -176,10 +187,11 @@ public class AuswertungSpitzenstundeService {
     }
 
     /**
-     * Diese Methode führt ein Mapping des {@link Zeitintervall}s auf {@link LadeAuswertungSpitzenstundeDTO} durch.
+     * Diese Methode führt ein Mapping des {@link Zeitintervall}s auf
+     * {@link LadeAuswertungSpitzenstundeDTO} durch.
      *
      * @param spitzenstunde als {@link Zeitintervall}.
-     * @param pkwEinheit    als {@link PkwEinheit}
+     * @param pkwEinheit als {@link PkwEinheit}
      * @return {@link LadeAuswertungSpitzenstundeDTO} des {@link Zeitintervall}s.
      */
     public LadeAuswertungSpitzenstundeDTO mapToAuswertungSpitzenstundeDTO(final Zeitintervall spitzenstunde,
@@ -196,10 +208,12 @@ public class AuswertungSpitzenstundeService {
     }
 
     /**
-     * Ermittelt den Sortierindex der Spitzenstunde abhängig vom {@link Zeitblock} und von {@link TypeZeitintervall} betreffend die Spitzenstunde. Der in dieser
-     * Methode erstellte Sortierindex identifiziert somit die relevante Spitzenstunde für den gewählten Zeitblock.
+     * Ermittelt den Sortierindex der Spitzenstunde abhängig vom {@link Zeitblock} und von
+     * {@link TypeZeitintervall} betreffend die Spitzenstunde. Der in dieser
+     * Methode erstellte Sortierindex identifiziert somit die relevante Spitzenstunde für den gewählten
+     * Zeitblock.
      *
-     * @param zeitblock         als {@link Zeitblock}
+     * @param zeitblock als {@link Zeitblock}
      * @param typeSpitzenstunde als {@link TypeZeitintervall}
      * @return der Sortierindex welcher auch im {@link Zeitintervall} der Spitzenstunde hinterlegt ist.
      */
@@ -223,13 +237,16 @@ public class AuswertungSpitzenstundeService {
     }
 
     /**
-     * @param zeitauswahl welche die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                    {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
-     *                    darf.
+     * @param zeitauswahl welche die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
+     *            darf.
      * @return den {@link TypeZeitintervall} welcher der Zeitauswahl entspricht.
-     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *                                       {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
+     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
      */
     public TypeZeitintervall getRelevantTypeZeitintervallFromZeitauswahl(final String zeitauswahl) throws IncorrectZeitauswahlException {
         final TypeZeitintervall typeSpitzenstunde;

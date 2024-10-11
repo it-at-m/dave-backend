@@ -42,7 +42,8 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Führt einen Cast von BigDecimal zu Integer mit den dazugehörigen Informationsverlust durch. Falls der Parameterwert "null" entspricht wird auch eine
+     * Führt einen Cast von BigDecimal zu Integer mit den dazugehörigen Informationsverlust durch. Falls
+     * der Parameterwert "null" entspricht wird auch eine
      * "null" zurückgegeben.
      *
      * @param value zum Cast auf Integer.
@@ -53,9 +54,10 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Diese Methode fügt der List im ersten Parameter den Wert im zweiten Parameter an, falls dieser noch nicht im ersten Parameter vorhanden ist.
+     * Diese Methode fügt der List im ersten Parameter den Wert im zweiten Parameter an, falls dieser
+     * noch nicht im ersten Parameter vorhanden ist.
      *
-     * @param xAxisData  zum Anfügen des zweiten Parameterwertes.
+     * @param xAxisData zum Anfügen des zweiten Parameterwertes.
      * @param xAxisValue zum Anfügen an den ersten Parameter.
      * @return den um den zweiten Parameter erweiterten ersten Parameter.
      */
@@ -70,7 +72,8 @@ public final class ZaehldatenProcessingUtil {
     /**
      * @param valueToRound zum Runden auf den im zweiten Parameter genannten Rundungsschritt.
      * @param roundingStep auf dem Aufgerundet werden soll.
-     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu rundende Wert 0, so wird auf den Rundungsschritt
+     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu
+     *         rundende Wert 0, so wird auf den Rundungsschritt
      *         aufgerundet.
      */
     public static Integer getValueRounded(final BigDecimal valueToRound, final int roundingStep) {
@@ -85,7 +88,8 @@ public final class ZaehldatenProcessingUtil {
     /**
      * @param valueToRound zum Runden auf den im zweiten Parameter genannten Rundungsschritt.
      * @param roundingStep auf dem Aufgerundet werden soll.
-     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu rundende Wert 0, so wird auf den Rundungsschritt
+     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu
+     *         rundende Wert 0, so wird auf den Rundungsschritt
      *         aufgerundet.
      */
     public static Integer getValueRounded(final int valueToRound, final int roundingStep) {
@@ -101,7 +105,8 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu erstellen.
+     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu
+     * erstellen.
      *
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.

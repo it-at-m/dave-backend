@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Die Klasse {@link EmailReceiveService} checkt neue Emails im Postfach der technischen E-Mail-Adresse und verarbeitet diese.
+ * Die Klasse {@link EmailReceiveService} checkt neue Emails im Postfach der technischen
+ * E-Mail-Adresse und verarbeitet diese.
  */
 @Slf4j
 @Service
@@ -54,8 +55,10 @@ public class EmailReceiveService {
     }
 
     /**
-     * Diese Methode verbindet sich mit dem EMail-Postfach und verarbeitet alle neuen E-Mails. Wie oft gecheckt wird, kann in der application.yml geändert
-     * werden. Falls keine E-Mail Adresse oder die dummy-Email-Adresse konfiguriert ist, wird nichts getan.
+     * Diese Methode verbindet sich mit dem EMail-Postfach und verarbeitet alle neuen E-Mails. Wie oft
+     * gecheckt wird, kann in der application.yml geändert
+     * werden. Falls keine E-Mail Adresse oder die dummy-Email-Adresse konfiguriert ist, wird nichts
+     * getan.
      */
     @Scheduled(fixedDelayString = "${dave.email.receiver.update-interval}")
     public void checkEmails() {

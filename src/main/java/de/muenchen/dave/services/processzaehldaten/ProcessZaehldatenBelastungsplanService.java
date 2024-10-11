@@ -76,11 +76,13 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des basisBelastungsplan. Außerdem werden in den
-     * Differenzwert-LadeBelastgunsplanDTO die Straßennamen von, wobei die Namen vom basisBelastungsplan Prio1 haben, die vom vergleichsBelastungsplan Prio2 und
+     * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
+     * basisBelastungsplan. Außerdem werden in den
+     * Differenzwert-LadeBelastgunsplanDTO die Straßennamen von, wobei die Namen vom basisBelastungsplan
+     * Prio1 haben, die vom vergleichsBelastungsplan Prio2 und
      * als default null.
      *
-     * @param basisBelastungsplan      Minuend-LadeBelastungsplanDTO
+     * @param basisBelastungsplan Minuend-LadeBelastungsplanDTO
      * @param vergleichsBelastungsplan Subtrahend-LadeBelastungsplanDTO
      * @return Differenzwert-LadeBelastungsplanDTO
      */
@@ -124,7 +126,7 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Subtrahiert eine BigDecimal[][]-Matrize von einer anderen.
      *
-     * @param basis     Minuend-Matrize
+     * @param basis Minuend-Matrize
      * @param vergleich Subtrahend-Matrize
      * @return Differenzwert-Matrize
      */
@@ -143,9 +145,10 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein Belastungsplandata-Objekt
+     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
+     * Belastungsplandata-Objekt
      *
-     * @param basis     Basis BelastungsplanDataDTO
+     * @param basis Basis BelastungsplanDataDTO
      * @param vergleich Vergleich BelastungsplanDataDTO
      * @return Differenz BelastungsplanDataDTO
      */
@@ -178,8 +181,10 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Die Grafiken im Frontend erwarten pro Fahrbeziehung einen einzelnen Wert. Um an alle Werte mittels Index zugreifen zu können ist ein 2-Stufiges Array
-     * erforderlich. Ebene 1: Enthält alle Werte für die Von-Spuren Ebene 2: Enthält die Werte für die Nach-Spur pro Von-Spur Bsp.: [ [Nach_1, Nach_2, ...,
+     * Die Grafiken im Frontend erwarten pro Fahrbeziehung einen einzelnen Wert. Um an alle Werte
+     * mittels Index zugreifen zu können ist ein 2-Stufiges Array
+     * erforderlich. Ebene 1: Enthält alle Werte für die Von-Spuren Ebene 2: Enthält die Werte für die
+     * Nach-Spur pro Von-Spur Bsp.: [ [Nach_1, Nach_2, ...,
      * Nach_8] // Von_1 ... [Nach_1, Nach_2, ..., Nach_8] // Von_8 ]
      *
      * @return mit BigDecimal.ZERO initialisierte Datenstruktur
@@ -205,17 +210,21 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound" auf den nächsten Wert welcher im Parameter
+     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound"
+     * auf den nächsten Wert welcher im Parameter
      * "nearestValueToRound" angegeben ist.
      * <p>
-     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt.
+     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden() den Wert true
+     * besitzt.
      * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 wird auf den nächsten 100er-Wert abgerundet. Andernfalls wird aufgerundet.
+     * Sobald der Wert im Zehnerbereich kleiner 50 wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
      *
-     * @param toRound             Auf welchem die Rundung durchgeführt werden soll.
+     * @param toRound Auf welchem die Rundung durchgeführt werden soll.
      * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll.
-     * @param optionsDto          Um auf Durchführung der Rundung zu prüfen
-     * @return den gerundeten {@link LadeZaehldatumDTO}, falls {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
+     * @param optionsDto Um auf Durchführung der Rundung zu prüfen
+     * @return den gerundeten {@link LadeZaehldatumDTO}, falls
+     *         {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
      *         {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
      */
     public static LadeZaehldatumDTO roundToNearestIfRoundingIsChoosen(final LadeZaehldatumDTO toRound,
@@ -255,11 +264,13 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist. Andernfalls wird der übergebene Wert zurückgegeben.
+     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
+     * Andernfalls wird der übergebene Wert zurückgegeben.
      * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet. Andernfalls wird aufgerundet.
+     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
      *
-     * @param toRound             Der Wert welcher gerundet werden soll
+     * @param toRound Der Wert welcher gerundet werden soll
      * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
      * @return den gerundeten Wert oder der übergebene Wert falls keine Rundung durchgeführt wurde.
      */
@@ -274,11 +285,13 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist. Andernfalls wird der übergebene Wert zurückgegeben.
+     * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
+     * Andernfalls wird der übergebene Wert zurückgegeben.
      * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet. Andernfalls wird aufgerundet.
+     * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
+     * Andernfalls wird aufgerundet.
      *
-     * @param toRound             Der Wert welcher gerundet werden soll
+     * @param toRound Der Wert welcher gerundet werden soll
      * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
      * @return den gerundeten Wert.
      */
@@ -305,10 +318,10 @@ public class ProcessZaehldatenBelastungsplanService {
      * Ansprungsmethode, die unterscheidet, ob Differenzdaten berechnet werden müssen oder nicht
      *
      * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung} und {@link Zeitintervall}e.
-     * @param options    Die durch den User im Frontend gewählten Optionen.
+     * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Belastungsplan.
      * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung}
-     *                               * nicht aus den DBs extrahiert werden kann.
+     *             * nicht aus den DBs extrahiert werden kann.
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
     public LadeBelastungsplanDTO getBelastungsplanDTO(final String zaehlungId,
@@ -330,19 +343,25 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Diese Methode führt die Datenaufbereitung für den Belastungsplan durch.
      * <p>
-     * Als Basis zur Datenaufbereitung wird bei {@link OptionsDTO}#getZeitauswahl() vom Typ {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} die
-     * Spitzenstunde des {@link OptionsDTO}#getZeitblock() verwendet. Ist der {@link Zeitblock#ZB_00_24} gewählt, so wird die Spitzenstunde des Tages verwendet.
-     * Ist bei {@link OptionsDTO}#getZeitauswahl() der Wert {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
+     * Als Basis zur Datenaufbereitung wird bei {@link OptionsDTO}#getZeitauswahl() vom Typ
+     * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} die
+     * Spitzenstunde des {@link OptionsDTO}#getZeitblock() verwendet. Ist der {@link Zeitblock#ZB_00_24}
+     * gewählt, so wird die Spitzenstunde des Tages verwendet.
+     * Ist bei {@link OptionsDTO}#getZeitauswahl() der Wert
+     * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
      * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Fahrbeziehung}.
      * <p>
-     * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die erste Dimension stellt die von Knotenarme dar. In der
-     * zweiten Dimesion werden alle nach Knotenarme vorgehalten. Die im Array hinterlegten Werte entsprechen somit den Verkehr fließend von einem Knotenarm zu
+     * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die
+     * erste Dimension stellt die von Knotenarme dar. In der
+     * zweiten Dimesion werden alle nach Knotenarme vorgehalten. Die im Array hinterlegten Werte
+     * entsprechen somit den Verkehr fließend von einem Knotenarm zu
      * einem anderen oder den selben Knotenarm.
      *
      * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung} und {@link Zeitintervall}e.
-     * @param options    Die durch den User im Frontend gewählten Optionen.
+     * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Belastungsplan.
-     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus den DBs extrahiert werden kann.
+     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus
+     *             den DBs extrahiert werden kann.
      */
     public LadeBelastungsplanDTO ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
@@ -411,9 +430,9 @@ public class ProcessZaehldatenBelastungsplanService {
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(options.getZeitauswahl()) && List.of(Zaehldauer.DAUER_2_X_4_STUNDEN.toString(),
                 Zaehldauer.DAUER_13_STUNDEN.toString(), Zaehldauer.DAUER_16_STUNDEN.toString()).contains(zaehlung.getZaehldauer())) {
             Stream.of(
-                            ladeBelastungsplanSum.getValue1(),
-                            ladeBelastungsplanSum.getValue2(),
-                            ladeBelastungsplanSum.getValue3()).filter(v -> "RAD".equals(v.getLabel()))
+                    ladeBelastungsplanSum.getValue1(),
+                    ladeBelastungsplanSum.getValue2(),
+                    ladeBelastungsplanSum.getValue3()).filter(v -> "RAD".equals(v.getLabel()))
                     .forEach(v -> v.setLabel("RAD (KI-Hochrechnung)"));
         }
 
@@ -430,10 +449,11 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Reichert das übergebene LadeBelastungsplanDTO-Objekt um die Summen der einzelnen Knotenarme an.
      *
-     * @param ladeBelastungsplan LadeBelastungsplanDTO-Objekt, welches um die Summen angereichert werden soll
-     * @param dataKfz            Datengrundlage von KFZ zur Berechnung der %-Anteile
-     * @param dataSv             Datengrundlage von SV zur Berechnung der SV%-Anteile
-     * @param dataGv             Datengrundlage von GV zur Berechnung der GV%-Anteile
+     * @param ladeBelastungsplan LadeBelastungsplanDTO-Objekt, welches um die Summen angereichert werden
+     *            soll
+     * @param dataKfz Datengrundlage von KFZ zur Berechnung der %-Anteile
+     * @param dataSv Datengrundlage von SV zur Berechnung der SV%-Anteile
+     * @param dataGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um alle Summen erweiterte LadeBelastungsplanDTO-Objekt zurück
      */
     private LadeBelastungsplanDTO calculateSumsForLadeBelastungsplanDto(final LadeBelastungsplanDTO ladeBelastungsplan, final BelastungsplanDataDTO dataKfz,
@@ -486,10 +506,10 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Reichert das übergebene BelastungsplanDataDTO-Objekt um die Summen der einzelnen Knotenarme an.
      *
-     * @param data    BelastungsplanDataDTO-Objekt, welches um die Summen angereichert werden soll
+     * @param data BelastungsplanDataDTO-Objekt, welches um die Summen angereichert werden soll
      * @param sumsKfz Datengrundlage von KFZ zur Berechnung der %-Anteile
-     * @param sumsSv  Datengrundlage von SV zur Berechnung der SV%-Anteile
-     * @param sumsGv  Datengrundlage von GV zur Berechnung der GV%-Anteile
+     * @param sumsSv Datengrundlage von SV zur Berechnung der SV%-Anteile
+     * @param sumsGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um die Summen erweiterte BelastungsplanDataDTO-Objekt zurück
      */
     private BelastungsplanDataDTO calculateSumsForBelastungsplanDataDto(final BelastungsplanDataDTO data, final Map<String, BigDecimal[]> sumsKfz,
@@ -548,7 +568,7 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Berechnet pro Summe den Prozentwert
      *
-     * @param sumsKfz    Summen von KFZ
+     * @param sumsKfz Summen von KFZ
      * @param sumsSvOrGv Summen von SV oder GV
      * @return Summen von SV% oder GV%
      */
@@ -563,7 +583,7 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Berechnet den Prozentwert pro ArrayElement
      *
-     * @param kfz    kfz
+     * @param kfz kfz
      * @param svOrGv sv oder gv
      * @return Array
      */
@@ -580,7 +600,8 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Berechnet aus eine zweidimensionalen Array die einzelnen Summen (Einfahrend, Ausfahren, Beide zusammen) pro Knotenarm für Kreisverkehre.
+     * Berechnet aus eine zweidimensionalen Array die einzelnen Summen (Einfahrend, Ausfahren, Beide
+     * zusammen) pro Knotenarm für Kreisverkehre.
      *
      * @param values Werte des Kreisverkehrs pro Knotenarm
      * @return Map mit den einzelnen Summen pro Knotenarm
@@ -627,11 +648,12 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Lädt zwei zu vergleichende Zählungen als LadeBelastungsplanDTO, subtrahiert diese voneinander und gibt den daraus resultierenden LadeBelastungsplanDTO
+     * Lädt zwei zu vergleichende Zählungen als LadeBelastungsplanDTO, subtrahiert diese voneinander und
+     * gibt den daraus resultierenden LadeBelastungsplanDTO
      * zurück.
      *
      * @param zaehlungId ID f. Basis-Belastungsplan
-     * @param options    Optionen, in denen die ID für den Vergleichs-Belastungsplan vorhanden ist
+     * @param options Optionen, in denen die ID für den Vergleichs-Belastungsplan vorhanden ist
      * @return Differenzbelastungsplan
      * @throws DataNotFoundException beim Laden der Zaehldaten aus der DB
      */
@@ -666,12 +688,14 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      * <p>
-     * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert. Diese Spitzenstunde dient mit der
-     * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
+     * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert.
+     * Diese Spitzenstunde dient mit der
+     * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als
+     * Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
      * Zeitintervalle je Fahrbeziehung.
      *
      * @param zaehlung zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options  zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(final Zaehlung zaehlung,
@@ -730,10 +754,11 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Liefert eine {@link BelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den Belastungsplan
+     * Liefert eine {@link BelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den
+     * Belastungsplan
      *
      * @param zaehldatenJeFahrbeziehung aus der DB ermittelten Werte
-     * @param zaehlung                  wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
+     * @param zaehlung wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
      * @return eine Map mit Key: Fahrzeug und Value:BelastungsplanDataDTO.
      */
     public Map<Fahrzeug, BelastungsplanDataDTO> getBelastungsplanData(final Map<Fahrbeziehung, TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung,
@@ -862,7 +887,8 @@ public class ProcessZaehldatenBelastungsplanService {
      *
      * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung}.
      * @return die {@link Zaehlung} zur Zaehlungs-ID.
-     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus den DBs extrahiert werden kann.
+     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus
+     *             den DBs extrahiert werden kann.
      */
     public Zaehlung findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
         final Optional<Zaehlstelle> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(zaehlungId);

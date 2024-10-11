@@ -199,7 +199,8 @@ public class GanglinieService {
     }
 
     /**
-     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
+     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
+     * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
      * aufgliedert und vorhält.
      */
     @Getter
@@ -267,10 +268,12 @@ public class GanglinieService {
         }
 
         /**
-         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO} entsprechend der im Parameter options gewählten
+         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
+         * entsprechend der im Parameter options gewählten
          * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
-         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}.
+         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
+         *         {@link StepLineSeriesEntryBigDecimalDTO}.
          */
         public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();

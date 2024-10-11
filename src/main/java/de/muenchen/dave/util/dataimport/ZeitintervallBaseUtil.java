@@ -37,10 +37,12 @@ public final class ZeitintervallBaseUtil {
     public static final LocalDateTime TIME_VALUE_FOUND_START_OF_DAY = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0));
 
     /**
-     * Diese Methode erstellt die grundlegende Datenstruktur zur weiteren Verarbeitung der {@link Zeitintervall}e.
+     * Diese Methode erstellt die grundlegende Datenstruktur zur weiteren Verarbeitung der
+     * {@link Zeitintervall}e.
      *
      * @param zeitintervalle Die Zeitintervalle aus denen die Datenstruktur erstellt werden soll.
-     * @return Datenstruktur mit {@link Zeitintervall}e gruppiert nach den entsprechenden {@link Intervall}en.
+     * @return Datenstruktur mit {@link Zeitintervall}e gruppiert nach den entsprechenden
+     *         {@link Intervall}en.
      */
     public static Map<Intervall, List<Zeitintervall>> createByIntervallGroupedZeitintervalle(final List<Zeitintervall> zeitintervalle) {
         final Map<Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
@@ -126,8 +128,9 @@ public final class ZeitintervallBaseUtil {
     }
 
     /**
-     * @param fahrbeziehung                    Die {@link Fahrbeziehung} der betroffenen Zeitintervalle.
-     * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall} gruppierten {@link Zeitintervall}e.
+     * @param fahrbeziehung Die {@link Fahrbeziehung} der betroffenen Zeitintervalle.
+     * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall}
+     *            gruppierten {@link Zeitintervall}e.
      * @return Alle {@link Zeitintervall}e welche die {@link Fahrbeziehung} besitzen.
      */
     public static List<Zeitintervall> getZeitintervalleForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
@@ -162,7 +165,7 @@ public final class ZeitintervallBaseUtil {
     public static Zeitintervall checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(final Zeitintervall zeitintervall) {
         if ((zeitintervall.getEndeUhrzeit().equals(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX)))
                 || (zeitintervall.getEndeUhrzeit().isBefore(zeitintervall.getStartUhrzeit())
-                && zeitintervall.getEndeUhrzeit().equals(TIME_VALUE_FOUND_START_OF_DAY))) {
+                        && zeitintervall.getEndeUhrzeit().equals(TIME_VALUE_FOUND_START_OF_DAY))) {
             zeitintervall.setEndeUhrzeit(TIME_VALUE_FOUND_END_OF_DAY);
         }
         return zeitintervall;

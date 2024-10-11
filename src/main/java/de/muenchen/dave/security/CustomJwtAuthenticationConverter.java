@@ -10,7 +10,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * Ein custom {@link JwtAuthenticationConverter}, der die Authorities und die Nutzerinformationen mittels {@link UserInfoDataService} vom /userinfo Endpoint des
+ * Ein custom {@link JwtAuthenticationConverter}, der die Authorities und die Nutzerinformationen
+ * mittels {@link UserInfoDataService} vom /userinfo Endpoint des
  * OIDC Providers bezieht.
  */
 @Profile("!no-security")

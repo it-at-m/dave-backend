@@ -88,7 +88,8 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Zählstelle im Index speichern. Sollte Elasticsearch nicht erreichbar sein, dann wird eine entsprechende Exception geworfen und eine Fehlermeldung
+     * Zählstelle im Index speichern. Sollte Elasticsearch nicht erreichbar sein, dann wird eine
+     * entsprechende Exception geworfen und eine Fehlermeldung
      * geloggt.
      *
      * @param zaehlstelle zu Speichernede Zaehlstelle
@@ -122,14 +123,15 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Speichert die Daten zur Zählstelle, wenn diese erneuert wurden. Es wird erwartet, dass immer alle Werte zur Zählung übergeben werden, auch welche, die
+     * Speichert die Daten zur Zählstelle, wenn diese erneuert wurden. Es wird erwartet, dass immer alle
+     * Werte zur Zählung übergeben werden, auch welche, die
      * nicht verändert wurden. Werden diese nicht übergebn, so entstehen (ungewollt) leere Attribute.
      *
-     * @param zdto          DTO der Zählstelle
+     * @param zdto DTO der Zählstelle
      * @param zaehlstelleId ID der Zählstelle
      * @return ID der Zählstelle
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
-     * @throws DataNotFoundException         Wenn die Daten nicht geladen werden konnten
+     * @throws DataNotFoundException Wenn die Daten nicht geladen werden konnten
      */
     public String erneuereZaehlstelle(final BearbeiteZaehlstelleDTO zdto, final String zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
@@ -153,11 +155,11 @@ public class ZaehlstelleIndexService {
     /**
      * Erstellt eine neue Zählung, updatet die entsprechende Zählstelle und speichert alles im Index.
      *
-     * @param zdto          DTO der Zaehlung
+     * @param zdto DTO der Zaehlung
      * @param zaehlstelleId ID der Zählstelle
      * @return die {@link Zaehlung}#getId()
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
-     * @throws DataNotFoundException         Bei Ladefehlern
+     * @throws DataNotFoundException Bei Ladefehlern
      */
     public Zaehlung erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
@@ -189,11 +191,11 @@ public class ZaehlstelleIndexService {
      * Erneuert die {@link Zaehlung} welche an der {@link Zaehlstelle}
      * - identifiziert entsprechend des Parameters zaehlstelleId - angefügt ist.
      *
-     * @param zdto          zur Erneuerung in der {@link Zaehlstelle}.
+     * @param zdto zur Erneuerung in der {@link Zaehlstelle}.
      * @param zaehlstelleId zur Identifikation der {@link Zaehlstelle}.
      * @return aktualisierte Zaehlung
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
-     * @throws DataNotFoundException         Bei Ladefehlern
+     * @throws DataNotFoundException Bei Ladefehlern
      */
     public Zaehlung erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
@@ -233,9 +235,10 @@ public class ZaehlstelleIndexService {
      * Erneuert die {@link Zaehlung} welche an der {@link Zaehlstelle}
      * - identifiziert entsprechend des Parameters zaehlstelleId - angefügt ist.
      * <p>
-     * Falls die zu erneuernde {@link Zaehlung} mehr Suchwörter beinhaltet als die bisherige persistierte Zählung, so werden die neuen Suchwörter persistiert.
+     * Falls die zu erneuernde {@link Zaehlung} mehr Suchwörter beinhaltet als die bisherige
+     * persistierte Zählung, so werden die neuen Suchwörter persistiert.
      *
-     * @param zl            zur Erneuerung in der {@link Zaehlstelle}.
+     * @param zl zur Erneuerung in der {@link Zaehlstelle}.
      * @param zaehlstelleId zur Identifikation der {@link Zaehlstelle}.
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
@@ -266,11 +269,12 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Setzt den Status des übergebenen Dienstleisters auf den übergebenen Wert, sodass dieser eine Benachrichtigung im Frontend sehen kann.
+     * Setzt den Status des übergebenen Dienstleisters auf den übergebenen Wert, sodass dieser eine
+     * Benachrichtigung im Frontend sehen kann.
      *
-     * @param zaehlungId  Zaehlungsid
+     * @param zaehlungId Zaehlungsid
      * @param participant Chat-Teilnehmer
-     * @param status      boolean
+     * @param status boolean
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
     public void setUnreadMessagesInZaehlungForParticipant(final String zaehlungId, final Participant participant, final Boolean status)
@@ -313,11 +317,12 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Erneuert die Parameter einer Zählstelle, die von der letzten Zählung abhängig sind. Dabei ist es irrelevant, ob die übergebene Zählung die letzte Zählung
+     * Erneuert die Parameter einer Zählstelle, die von der letzten Zählung abhängig sind. Dabei ist es
+     * irrelevant, ob die übergebene Zählung die letzte Zählung
      * ist.
      *
      * @param zaehlstelle Zaehlstelle
-     * @param zaehlung    Zaehlung
+     * @param zaehlung Zaehlung
      * @return geaenderte Zaehlstelle
      */
     public Zaehlstelle updateZaehlstelleWithZaehlung(final Zaehlstelle zaehlstelle, final Zaehlung zaehlung) {
@@ -434,11 +439,12 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Aufbau der Zaehlstellennummer Stelle 1 und 2: Stadtbezirksnummer ohne fuehrende 0 Stelle 3 und 4: Stadtbezirksviertelnummer Stelle 5 und 6: laufende
+     * Aufbau der Zaehlstellennummer Stelle 1 und 2: Stadtbezirksnummer ohne fuehrende 0 Stelle 3 und 4:
+     * Stadtbezirksviertelnummer Stelle 5 und 6: laufende
      * Nummer (wird aus DB geholt)
      *
      * @param partOfzaehlstelleId Ersten 3-4 Zeichen der Zaehlstellennummer (ohne fuehrende 0)
-     * @param stadtbezirksnummer  Nummer des Stadtbezirks der Zaehlstelle
+     * @param stadtbezirksnummer Nummer des Stadtbezirks der Zaehlstelle
      * @return naechste Zaehlstellennummer
      */
     public NextZaehlstellennummerDTO getNextZaehlstellennummer(final String partOfzaehlstelleId, final Integer stadtbezirksnummer) {
@@ -460,11 +466,12 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Ermittelt alle Zaehlungen, die für den Dienstleister relevant sind. Relevante Zählungen haben einen der folgenden Status: Status.COUNTING,
+     * Ermittelt alle Zaehlungen, die für den Dienstleister relevant sind. Relevante Zählungen haben
+     * einen der folgenden Status: Status.COUNTING,
      * Status.CORRECTION, Status.INSTRUCTED
      *
      * @param diensleisterkennung Kennung des Dienstleisters
-     * @param isFachadmin         Ist der User ein Fachadmin?
+     * @param isFachadmin Ist der User ein Fachadmin?
      * @return Liste mit allen für Extern relevanten Zählungen
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
@@ -487,7 +494,7 @@ public class ZaehlstelleIndexService {
             final String or = " OR ";
             final String field = "zaehlungen.status:";
             final StringBuilder query = new StringBuilder();
-            for (int index = 0; index < status.length; ) {
+            for (int index = 0; index < status.length;) {
                 query.append(field);
                 query.append(status[index]);
                 index++;
@@ -529,7 +536,8 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Ermittelt alle Zaehlungen, die noch nicht freigegeben sind. Relevante Zählungen haben einen der folgenden Status: Status.COUNTING, Status.CORRECTION,
+     * Ermittelt alle Zaehlungen, die noch nicht freigegeben sind. Relevante Zählungen haben einen der
+     * folgenden Status: Status.COUNTING, Status.CORRECTION,
      * Status.INSTRUCTED, Status.ACCOMPLISHED und Status.CREATED
      *
      * @return Liste mit allen relevanten Zählungen
@@ -554,7 +562,7 @@ public class ZaehlstelleIndexService {
             final String or = " OR ";
             final String field = "zaehlungen.status:";
             final StringBuilder query = new StringBuilder();
-            for (int index = 0; index < status.length; ) {
+            for (int index = 0; index < status.length;) {
                 query.append(field);
                 query.append(status[index]);
                 index++;
@@ -633,10 +641,12 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt diese zurück
+     * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt
+     * diese zurück
      *
      * @param participantId Participant, bei dem ungelesene Nachrichten vorliegen
-     * @return LadeZaehlstelleWithUnreadMessageDTOs bei denen für einen bestimmten Participant ungelesene Nachrichten vorliegen
+     * @return LadeZaehlstelleWithUnreadMessageDTOs bei denen für einen bestimmten Participant
+     *         ungelesene Nachrichten vorliegen
      */
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages(final int participantId) {
         final List<Zaehlstelle> zaehlstellen;

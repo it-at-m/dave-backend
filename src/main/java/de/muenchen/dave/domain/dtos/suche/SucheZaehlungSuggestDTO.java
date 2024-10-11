@@ -13,7 +13,8 @@ public class SucheZaehlungSuggestDTO {
     String zaehlstelleId;
 
     /**
-     * Zeigt ob Zählstelle der Zählung im Datenportal sichtbar ist. {@link Zaehlstelle#getSichtbarDatenportal()}
+     * Zeigt ob Zählstelle der Zählung im Datenportal sichtbar ist.
+     * {@link Zaehlstelle#getSichtbarDatenportal()}
      */
     Boolean sichtbarDatenportal;
 

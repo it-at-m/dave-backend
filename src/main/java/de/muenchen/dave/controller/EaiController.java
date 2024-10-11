@@ -31,7 +31,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen werden.
+ * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen
+ * werden.
  */
 @RestController
 @Slf4j
@@ -70,12 +71,14 @@ public class EaiController {
      * Rest-Endpunkt zur Bereitstellung der Spitzenstundenauswertung.
      *
      * @param zaehlstellenNummer der Zählstelle für welche die Zähung stattgefunden hat.
-     * @param zaehlart           der Zählung.
-     * @param zaehldatum         der Zählung.
-     * @param zeitblock          der Zählung.
-     * @param zeitauswahl        darf nur die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *                           {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
-     *                           annehmen.
+     * @param zaehlart der Zählung.
+     * @param zaehldatum der Zählung.
+     * @param zeitblock der Zählung.
+     * @param zeitauswahl darf nur die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
+     *            annehmen.
      * @return die Spitzenstundenauswertung.
      */
     @GetMapping(value = "/lade-auswertung-spitzenstunde", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -130,7 +133,7 @@ public class EaiController {
     /**
      * Rest-Endpunkt zum Bereitstellung aller Zählungen eines bestimmten Monatszeitraums für Visum.
      *
-     * @param jahr  welches ausgewertet werden soll.
+     * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
      * @return die {@link LadeAuswertungZaehlstelleKoordinateDTO} je vorhandener Zählstelle.
      */

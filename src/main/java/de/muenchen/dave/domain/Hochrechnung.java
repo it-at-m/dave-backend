@@ -12,7 +12,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * Die Hochrechnung und die hochgerechneten Werte zur Ermittlung des Tageswert einer Zaehlung vom Typ {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
+ * Die Hochrechnung und die hochgerechneten Werte zur Ermittlung des Tageswert einer Zaehlung vom
+ * Typ {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
  */
 @Embeddable
 @Data

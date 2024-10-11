@@ -85,7 +85,8 @@ public class SucheService {
     private final ElasticsearchOperations elasticsearchOperations;
 
     /**
-     * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en, die nach Koordinaten gruppierten Zaehlarten.
+     * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en, die nach Koordinaten
+     * gruppierten Zaehlarten.
      *
      * @param zaehlungen zum ermitteln nach Koordinate gruppierten Zählarten.
      * @return die nach Koordinaten gruppierten Zaehlarten.
@@ -112,10 +113,11 @@ public class SucheService {
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren Zaehl-/Messstellen- und Zaehlungssuggests aus dem
+     * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren
+     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem
      * zurückgegebenen Objekt.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
@@ -143,10 +145,11 @@ public class SucheService {
     }
 
     /**
-     * Erstellt eine Vorschlagsliste für die "search as you type" Suche. Diese besteht aus Suchvorschlägen, Vorschläge für eine bestimmte Suchstelle und
+     * Erstellt eine Vorschlagsliste für die "search as you type" Suche. Diese besteht aus
+     * Suchvorschlägen, Vorschläge für eine bestimmte Suchstelle und
      * Vorschläge für eine bestimmte Zählung.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
@@ -196,11 +199,13 @@ public class SucheService {
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren Zaehl-/Messstellen aus dem zurückgegebenen Set.
+     * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
+     * Zaehl-/Messstellen aus dem zurückgegebenen Set.
      * <p>
-     * Gibt alle sichtbaren Zähl-/Messstellen zurück. Eine Zähl-/Messstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
+     * Gibt alle sichtbaren Zähl-/Messstellen zurück. Eine Zähl-/Messstelle gilt als unsichtbar sobald
+     * das Attribut "sichtbarDatenportal" false ist.
      *
-     * @param query    Suchquery
+     * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return passende Zaehl-/Messstellen
      */
@@ -217,7 +222,8 @@ public class SucheService {
     /**
      * Sucht alle freigegebenen Zähl-/Messstellen und gibt diese an die DTO-Erstellung weiter.
      *
-     * @param query    Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle Zähl-/Messstellen gefunden werden.
+     * @param query Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle
+     *            Zähl-/Messstellen gefunden werden.
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
@@ -232,7 +238,7 @@ public class SucheService {
     /**
      * Gibt alle Zählstellen zurück, die auf die Query passen.
      *
-     * @param query    Eine Suchquery
+     * @param query Eine Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
@@ -340,12 +346,14 @@ public class SucheService {
     }
 
     /**
-     * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden hier ausgefiltert. Desweiteren darf ein normaler Anwender
-     * keine Sonderzählungen sehen, diese werden ebenfalls ausgefiltert. Wenn eine Zählstelle nach dem Filtern keine Zählungen mehr enthält, so wird dies auch
+     * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden
+     * hier ausgefiltert. Desweiteren darf ein normaler Anwender
+     * keine Sonderzählungen sehen, diese werden ebenfalls ausgefiltert. Wenn eine Zählstelle nach dem
+     * Filtern keine Zählungen mehr enthält, so wird dies auch
      * entfernt.
      *
      * @param zaehlstellen zu filtern
-     * @param noFilter     Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Liste mit erlaubten Záhlstellen
      */
     private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
@@ -378,10 +386,11 @@ public class SucheService {
     }
 
     /**
-     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und liefert diese zurück
+     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
+     * liefert diese zurück
      *
      * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param noFilter     Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
     private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
@@ -501,7 +510,7 @@ public class SucheService {
     /**
      * Findet alle Zählungen, die zur Suchanfrage passen könnten.
      *
-     * @param pz    zeahlstellen
+     * @param pz zeahlstellen
      * @param query suchanfrage
      * @return liste zaehlungen
      */
@@ -514,11 +523,13 @@ public class SucheService {
     }
 
     /**
-     * Check die Zählstelle, ob sich darin Zählungen befinden, die direkt angezeigt werden können. Im ersten Schritt werden hierfür das Datum und der
-     * Projektname hergenommen. Bei Bedarf können diese zwei Parameter auch durch weitere Attrubute erweitert werden.
+     * Check die Zählstelle, ob sich darin Zählungen befinden, die direkt angezeigt werden können. Im
+     * ersten Schritt werden hierfür das Datum und der
+     * Projektname hergenommen. Bei Bedarf können diese zwei Parameter auch durch weitere Attrubute
+     * erweitert werden.
      *
      * @param zaehlstelle zu pruefen
-     * @param query       Suchwoerter
+     * @param query Suchwoerter
      * @return passende Zaehlung
      */
     public Optional<Zaehlung> checkZaehlstelleForZaehlung(final Zaehlstelle zaehlstelle, final String query) {
@@ -538,7 +549,7 @@ public class SucheService {
      * Prüft, ob eines der Suchworte auf die angegebenen Attribute einer Zählung passt.
      *
      * @param words Liste der Suchworte
-     * @param z     Zaehlung
+     * @param z Zaehlung
      * @return gefunden = true
      */
     public boolean filterZaehlung(final List<String> words, final Zaehlung z) {
@@ -551,7 +562,8 @@ public class SucheService {
     }
 
     /**
-     * Erstellt den Query String mit suffix Wildcards. Dadurch muss der Anwender sich gar keine Gedanken machen, ob er jetzt eine Wildcard benötigt, oder
+     * Erstellt den Query String mit suffix Wildcards. Dadurch muss der Anwender sich gar keine Gedanken
+     * machen, ob er jetzt eine Wildcard benötigt, oder
      * nicht.
      *
      * @param query Suchquery
@@ -583,7 +595,8 @@ public class SucheService {
     }
 
     /**
-     * Fügt in ein Datum führende Nullen ein und ergänzt das Jahr ggf. um die Tausender. Wenn es sich nicht um ein Datum handelt, dann wird einfach der String
+     * Fügt in ein Datum führende Nullen ein und ergänzt das Jahr ggf. um die Tausender. Wenn es sich
+     * nicht um ein Datum handelt, dann wird einfach der String
      * wieder zurück gegeben.
      *
      * @param word Suchwort

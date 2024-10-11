@@ -21,7 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und aktualisiert die in Dave gespeichereten Daten.
+ * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und
+ * aktualisiert die in Dave gespeichereten Daten.
  */
 @Slf4j
 @Service

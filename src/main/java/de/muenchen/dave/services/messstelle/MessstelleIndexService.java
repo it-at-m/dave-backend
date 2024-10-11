@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Die Klasse {@link MessstelleIndexService} holt alle relevanten Messstellen aus MobidaM und aktualisiert die in Dave gespeichereten Daten.
+ * Die Klasse {@link MessstelleIndexService} holt alle relevanten Messstellen aus MobidaM und
+ * aktualisiert die in Dave gespeichereten Daten.
  */
 @Slf4j
 @Service

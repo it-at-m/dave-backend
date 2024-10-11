@@ -31,58 +31,74 @@ public class BelastungsplanService {
 
     private final SpitzenstundeService spitzenstundeService;
 
-    private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
-                ? ""
-                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
-    }
-
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
             final List<IntervalDto> intervals,
             final List<IntervalDto> totalSumOfAllMessquerschnitte,
             final String messstelleId,
             final MessstelleOptionsDTO options) {
-        final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitteDTO = new BelastungsplanMessquerschnitteDTO();
-        final List<LadeBelastungsplanMessquerschnittDataDTO> listBelastungsplanMessquerschnitteDTO = new ArrayList<>();
+
+        final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitte = new BelastungsplanMessquerschnitteDTO();
+
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
-        belastungsplanMessquerschnitteDTO.setMstId(messstelle.getMstId());
-        belastungsplanMessquerschnitteDTO.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
-        belastungsplanMessquerschnitteDTO.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
-        totalSumOfAllMessquerschnitte.forEach(sumOfMessquerschnitt -> {
-            LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO = new LadeBelastungsplanMessquerschnittDataDTO();
-            ladeBelastungsplanMessquerschnittDataDTO.setSumKfz(
-                    roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumGv(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumSv(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setSumRad(roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getAnzahlRad().intValue(), options));
-            ladeBelastungsplanMessquerschnittDataDTO.setPercentGV(
-                    calcPercentage(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue()));
-            ladeBelastungsplanMessquerschnittDataDTO.setPercentSv(
-                    calcPercentage(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue()));
-            ladeBelastungsplanMessquerschnittDataDTO.setMqId(sumOfMessquerschnitt.getMqId().toString());
-            ladeBelastungsplanMessquerschnittDataDTO.setDirection(getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString()));
-            listBelastungsplanMessquerschnitteDTO.add(ladeBelastungsplanMessquerschnittDataDTO);
-        });
+
+        belastungsplanMessquerschnitte.setMstId(messstelle.getMstId());
+        belastungsplanMessquerschnitte.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
+        belastungsplanMessquerschnitte.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
+
+        final var messquerschnitte = totalSumOfAllMessquerschnitte
+                .stream()
+                .map(sumOfMessquerschnitt -> {
+                    LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
+                    final var sumKfz = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue(), options);
+                    messquerschnitt.setSumKfz(sumKfz);
+                    final var sumGv = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(), options);
+                    messquerschnitt.setSumGv(sumGv);
+                    final var sumSv = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(), options);
+                    messquerschnitt.setSumSv(sumSv);
+                    final var sumRad = roundNumberToHundredIfNeeded(sumOfMessquerschnitt.getAnzahlRad().intValue(), options);
+                    messquerschnitt.setSumRad(sumRad);
+                    final var percentGv = calcPercentage(sumOfMessquerschnitt.getSummeGueterverkehr().intValue(),
+                            sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue());
+                    messquerschnitt.setPercentGV(percentGv);
+                    final var percentSv = calcPercentage(sumOfMessquerschnitt.getSummeSchwerverkehr().intValue(),
+                            sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr().intValue());
+                    messquerschnitt.setPercentSv(percentSv);
+                    final var mqId = sumOfMessquerschnitt.getMqId().toString();
+                    messquerschnitt.setMqId(mqId);
+                    final var direction = getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString());
+                    messquerschnitt.setDirection(direction);
+                    return messquerschnitt;
+                })
+                .toList();
+
         final Integer totalSumKfz = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeKraftfahrzeugverkehr().intValue()).sum();
         final Integer totalSumSv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeSchwerverkehr().intValue()).sum();
         final Integer totalSumGv = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getSummeGueterverkehr().intValue()).sum();
         final Integer totalSumRad = totalSumOfAllMessquerschnitte.stream().mapToInt(interval -> interval.getAnzahlRad().intValue()).sum();
-        belastungsplanMessquerschnitteDTO.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
-        belastungsplanMessquerschnitteDTO.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
-        belastungsplanMessquerschnitteDTO.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
-        belastungsplanMessquerschnitteDTO.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
+
+
+        belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
+        belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
+        belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
+        belastungsplanMessquerschnitte.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
         final Integer totalSum = totalSumGv + totalSumKfz + totalSumSv;
-        belastungsplanMessquerschnitteDTO.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
-        belastungsplanMessquerschnitteDTO.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
-        belastungsplanMessquerschnitteDTO.setLadeBelastungsplanMessquerschnittDataDTOList(listBelastungsplanMessquerschnitteDTO);
+        belastungsplanMessquerschnitte.setTotalPercentGv(calcPercentage(totalSumGv, totalSum));
+        belastungsplanMessquerschnitte.setTotalPercentSv(calcPercentage(totalSumSv, totalSum));
+        belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(messquerschnitte);
         if (options.getMessquerschnittIds().size() == 1) {
             final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(options.getZeitblock(), intervals, isKfzStelle,
                     options.getIntervall());
-            belastungsplanMessquerschnitteDTO.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
-            belastungsplanMessquerschnitteDTO.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
+            belastungsplanMessquerschnitte.setStartUhrzeitSpitzenstunde(spitzenstunde.getStartUhrzeit());
+            belastungsplanMessquerschnitte.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
         }
-        return belastungsplanMessquerschnitteDTO;
+        return belastungsplanMessquerschnitte;
+    }
+
+    protected static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
+        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
+                ? ""
+                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {

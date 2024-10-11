@@ -33,9 +33,10 @@ public class HochrechnungsfaktorService {
     }
 
     /**
-     * Setzte die fachlichen Attribute des im Parameter gegebenen DTOs in der im zweiten Parameter übergebene Entität.
+     * Setzte die fachlichen Attribute des im Parameter gegebenen DTOs in der im zweiten Parameter
+     * übergebene Entität.
      *
-     * @param hofaDto    DTO
+     * @param hofaDto DTO
      * @param hofaEntity Bean
      * @return die im zweiten Parameter übergebene Entität mit den fachlichen Daten der DTO.
      */
@@ -51,9 +52,11 @@ public class HochrechnungsfaktorService {
     }
 
     /**
-     * Diese Methode speichert/aktualisiert einen {@link Hochrechnungsfaktor} in der Relationalen Datenbank.
+     * Diese Methode speichert/aktualisiert einen {@link Hochrechnungsfaktor} in der Relationalen
+     * Datenbank.
      * <p>
-     * Die Aktualisierung findet statt, sobald im DTO eine Id vorhanden ist. Ansonsten wird ein neues Objekt angelegt.
+     * Die Aktualisierung findet statt, sobald im DTO eine Id vorhanden ist. Ansonsten wird ein neues
+     * Objekt angelegt.
      *
      * @param hochrechnungsfaktorDTO hochrechnungsfaktorDTO
      * @return die gespeicherte {@link Hochrechnungsfaktor} als {@link HochrechnungsfaktorDTO}.

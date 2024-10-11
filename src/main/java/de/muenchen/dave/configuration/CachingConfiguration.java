@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 /**
- * This class provides the caches. To disable the caching functionality delete this class, remove the corresponding bean creation methods or remove the
+ * This class provides the caches. To disable the caching functionality delete this class, remove
+ * the corresponding bean creation methods or remove the
  * annotation {@link EnableCaching} above the class definition.
  */
 @Configuration

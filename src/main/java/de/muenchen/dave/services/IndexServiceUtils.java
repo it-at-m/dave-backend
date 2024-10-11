@@ -99,7 +99,8 @@ public final class IndexServiceUtils {
 
     /**
      * @param datum für welches der Tagestyp ermittelt werden soll.
-     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben. Andernfalls wird der Wert "Wochenende" zurückgegeben.
+     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben. Andernfalls wird
+     *         der Wert "Wochenende" zurückgegeben.
      */
     public static String getTagesTyp(final LocalDate datum) {
         final DayOfWeek dayOfWeek = datum.getDayOfWeek();
@@ -115,10 +116,11 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung falls kein expliziter Kreuzungsname gesetzt ist.
+     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung falls
+     * kein expliziter Kreuzungsname gesetzt ist.
      *
      * @param kreuzungsname welcher gegebenenfalls durch die konkatenierten Straßennamen ersetzt wird.
-     * @param zaehlung      zur Extraktion der Straßennamen.
+     * @param zaehlung zur Extraktion der Straßennamen.
      * @return den Kreuzungsname oder die Straßennamen falls vorher kein Kreuzungsname gesetzt.
      */
     public static String createKreuzungsname(final String kreuzungsname, final Zaehlung zaehlung) {

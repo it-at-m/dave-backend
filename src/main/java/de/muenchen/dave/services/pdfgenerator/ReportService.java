@@ -105,7 +105,8 @@ public class ReportService {
     }
 
     /**
-     * Hier werden die flexiblen Anteile der CSS erstellt, die für die Datentabellen notwendig sind. Jede Datentabelle benötigt hier einen eigenen CSS Anteil
+     * Hier werden die flexiblen Anteile der CSS erstellt, die für die Datentabellen notwendig sind.
+     * Jede Datentabelle benötigt hier einen eigenen CSS Anteil
      * für Spaltenbreite etc.
      *
      * @param assetList Liste der im Frontend generierten Assets

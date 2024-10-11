@@ -46,7 +46,8 @@ public class KIService {
     }
 
     /**
-     * Diese Methode initialisiert die zur Vorhersage notwendige ONNX-Session und lädt hierzu das Modell aus dem Classpath in eine ONNXSession.
+     * Diese Methode initialisiert die zur Vorhersage notwendige ONNX-Session und lädt hierzu das Modell
+     * aus dem Classpath in eine ONNXSession.
      *
      * @param modelFilePath Pfad zum zu nutzenden ONNX-Modell innerhalb des Classpaths.
      */
@@ -65,10 +66,12 @@ public class KIService {
     }
 
     /**
-     * Diese Methode berechnet für eine zweidimensionale Liste von Zeitintervallen einer Zählung (d.h. für jede Fahrbeziehung der Zählung eine Liste von
+     * Diese Methode berechnet für eine zweidimensionale Liste von Zeitintervallen einer Zählung (d.h.
+     * für jede Fahrbeziehung der Zählung eine Liste von
      * Zeitintervallen) die resultierenden Tagessummen der einzelnen Fahrzeugklassen.
      *
-     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Fahrbeziehungen in Form einer zweidimensionalen Liste
+     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Fahrbeziehungen in Form einer
+     *            zweidimensionalen Liste
      * @return Ergebnisse als Array von KIPredictionResult
      * @throws PredictionFailedException wenn Eingabedaten falsche Dimension aufweisen
      */
@@ -104,7 +107,8 @@ public class KIService {
     }
 
     /**
-     * Diese Methode wandelt die zweidimensionale Liste von Zeitintervallen in ein ONNX-kompatibles long[][]-Array um
+     * Diese Methode wandelt die zweidimensionale Liste von Zeitintervallen in ein ONNX-kompatibles
+     * long[][]-Array um
      *
      * @param zeitintervalle Inputdaten zur Vorhersage als zweidimensionale Liste von Zeitintervallen
      * @return Inputdaten zur Vorhersage als long[][]
@@ -119,8 +123,9 @@ public class KIService {
     }
 
     /**
-     * @param inputData zweidimensionales long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2. Ebene: Zählungdaten der einzelnen Fahrzeugtypen der
-     *                  Fahrbeziehung)
+     * @param inputData zweidimensionales long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
+     *            Ebene: Zählungdaten der einzelnen Fahrzeugtypen der
+     *            Fahrbeziehung)
      * @return Map von OnnxTensor's, die zur Vorhersage benötigt wird.
      * @throws PredictionFailedException wenn bei der Erstellung des Tensors ein Fehler aufgetreten ist.
      */
@@ -136,10 +141,12 @@ public class KIService {
 
     /**
      * @param tensorData Inputdaten in Form einer Map von String zu OnnxTensor
-     * @return Ergebnisse der Berechnung als long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2. Ebene: Tagessummen der einzelnen Fahrzeugtypen der
+     * @return Ergebnisse der Berechnung als long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
+     *         Ebene: Tagessummen der einzelnen Fahrzeugtypen der
      *         Fahrbeziehung)
-     * @throws PredictionFailedException wenn eine Inkompatibilität der Daten zum Modell vorliegt oder kein bzw. ein Ergebnis unbekannten Formates
-     *                                   zurückgeliefert wurde.
+     * @throws PredictionFailedException wenn eine Inkompatibilität der Daten zum Modell vorliegt oder
+     *             kein bzw. ein Ergebnis unbekannten Formates
+     *             zurückgeliefert wurde.
      */
     private long[][] runPrediction(Map<String, OnnxTensor> tensorData) throws PredictionFailedException {
         try (var result = session.run(tensorData)) {

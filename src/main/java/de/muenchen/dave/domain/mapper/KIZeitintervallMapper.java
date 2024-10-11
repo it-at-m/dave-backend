@@ -20,7 +20,8 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
 
 /**
- * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die ONNX-Vorhersage.
+ * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die
+ * ONNX-Vorhersage.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class KIZeitintervallMapper {

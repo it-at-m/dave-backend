@@ -72,7 +72,8 @@ public class Zeitintervall extends BaseEntity {
     private LocalDateTime endeUhrzeit;
 
     /**
-     * Der Index ist erforderlich um bei der Datenextraktion die korrekte Reihenfolge zu erhalten. Der Index wird vor der Persistierung mit der Klasse
+     * Der Index ist erforderlich um bei der Datenextraktion die korrekte Reihenfolge zu erhalten. Der
+     * Index wird vor der Persistierung mit der Klasse
      * {@link ZeitintervallSortingIndexUtil} ermittelt.
      */
     @Column(name = "sortingindex")
@@ -105,24 +106,24 @@ public class Zeitintervall extends BaseEntity {
 
     @Embedded
     @AttributeOverrides(
-            {
-                    @AttributeOverride(name = "faktorKfz", column = @Column(name = "hochrechnung_faktorkfz")),
-                    @AttributeOverride(name = "faktorSv", column = @Column(name = "hochrechnung_faktorsv")),
-                    @AttributeOverride(name = "faktorGv", column = @Column(name = "hochrechnung_faktorgv")),
-                    @AttributeOverride(name = "hochrechnungKfz", column = @Column(name = "hochrechnung_hochrechnungkfz")),
-                    @AttributeOverride(name = "hochrechnungSv", column = @Column(name = "hochrechnung_hochrechnungsv")),
-                    @AttributeOverride(name = "hochrechnungGv", column = @Column(name = "hochrechnung_hochrechnunggv"))
-            }
+        {
+                @AttributeOverride(name = "faktorKfz", column = @Column(name = "hochrechnung_faktorkfz")),
+                @AttributeOverride(name = "faktorSv", column = @Column(name = "hochrechnung_faktorsv")),
+                @AttributeOverride(name = "faktorGv", column = @Column(name = "hochrechnung_faktorgv")),
+                @AttributeOverride(name = "hochrechnungKfz", column = @Column(name = "hochrechnung_hochrechnungkfz")),
+                @AttributeOverride(name = "hochrechnungSv", column = @Column(name = "hochrechnung_hochrechnungsv")),
+                @AttributeOverride(name = "hochrechnungGv", column = @Column(name = "hochrechnung_hochrechnunggv"))
+        }
     )
     private Hochrechnung hochrechnung;
 
     @Embedded
     @AttributeOverrides(
-            {
-                    @AttributeOverride(name = "von", column = @Column(name = "fahrbeziehung_von")),
-                    @AttributeOverride(name = "nach", column = @Column(name = "fahrbeziehung_nach")),
-                    @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "fahrbeziehung_fahrbewegungkreisverkehr"))
-            }
+        {
+                @AttributeOverride(name = "von", column = @Column(name = "fahrbeziehung_von")),
+                @AttributeOverride(name = "nach", column = @Column(name = "fahrbeziehung_nach")),
+                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "fahrbeziehung_fahrbewegungkreisverkehr"))
+        }
     )
     private Fahrbeziehung fahrbeziehung;
 
