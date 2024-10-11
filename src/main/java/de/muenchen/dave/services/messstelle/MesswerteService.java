@@ -65,7 +65,7 @@ public class MesswerteService {
         processedZaehldaten
                 .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
         if (CollectionUtils.isNotEmpty(intervals)) {
-            processedZaehldaten.setTagesTyp(TagesTyp.valueOf(intervals.getFirst().getTagesTyp().name()));
+            processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
         return processedZaehldaten;
     }

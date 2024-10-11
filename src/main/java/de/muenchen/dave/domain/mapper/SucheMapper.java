@@ -32,6 +32,7 @@ public interface SucheMapper {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
         dto.setTooltip(messstelleToMessstelleTooltipDTO(bean, stadtbezirkMapper));
+        dto.setSichtbarDatenportal(true);
     }
 
     @AfterMapping
