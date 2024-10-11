@@ -19,12 +19,15 @@ import java.util.stream.Collectors;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BelastungsplanService {
+
     private final MessstelleService messstelleService;
     private final RoundingService roundingService;
     private final SpitzenstundeService spitzenstundeService;
