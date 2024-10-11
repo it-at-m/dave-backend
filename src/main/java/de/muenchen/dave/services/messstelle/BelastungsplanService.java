@@ -98,7 +98,7 @@ public class BelastungsplanService {
 
         final Integer totalSumGv = totalSumOfAllMessquerschnitte
                 .stream()
-                .mapToInt(interval ->  ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
+                .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
 
