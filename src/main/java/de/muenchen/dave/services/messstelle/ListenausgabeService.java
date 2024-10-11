@@ -48,7 +48,7 @@ public class ListenausgabeService {
         final var ladeMesswerteListenausgabe = new LadeMesswerteListenausgabeDTO();
         ladeMesswerteListenausgabe.getZaehldaten().addAll(ladeMesswerteMapper.interval2LadeMesswerte(intervals, options.getIntervall()));
 
-        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+        if (CollectionUtils.isNotEmpty(intervals) && OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                     options.getZeitblock(),
                     intervals,
@@ -153,23 +153,24 @@ public class ListenausgabeService {
 
         if (StringUtils.equalsIgnoreCase(options.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())) {
             final var necessaryIntervals = getIntervalsWithinZeitblock(intervals, options.getZeitblock());
+            if (CollectionUtils.isNotEmpty(necessaryIntervals)) {
+                if (Boolean.TRUE.equals(options.getStundensumme()) && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
+                    ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
+                }
 
-            if (Boolean.TRUE.equals(options.getStundensumme()) && !ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())) {
-                ladeMesswerteListenausgabe.getZaehldaten().addAll(calculateSumOfIntervalsPerHour(necessaryIntervals));
-            }
+                if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
+                    var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                            options.getZeitblock(),
+                            necessaryIntervals,
+                            isKfzMessstelle,
+                            options.getIntervall());
+                    ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
+                }
 
-            if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
-                var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
-                        options.getZeitblock(),
-                        necessaryIntervals,
-                        isKfzMessstelle,
-                        options.getIntervall());
-                ladeMesswerteListenausgabe.getZaehldaten().add(spitzenstunde);
-            }
-
-            if (Boolean.TRUE.equals(options.getBlocksumme())) {
-                ladeMesswerteListenausgabe.getZaehldaten()
-                        .add(calculateSumOfIntervalsAndAddBlockSpecificDataToResult(necessaryIntervals, options.getZeitblock()));
+                if (Boolean.TRUE.equals(options.getBlocksumme())) {
+                    ladeMesswerteListenausgabe.getZaehldaten()
+                            .add(calculateSumOfIntervalsAndAddBlockSpecificDataToResult(necessaryIntervals, options.getZeitblock()));
+                }
             }
         }
 
