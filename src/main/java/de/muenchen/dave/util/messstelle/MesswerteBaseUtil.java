@@ -75,12 +75,12 @@ public final class MesswerteBaseUtil {
         return dto;
     }
 
-    protected static double calculateAnteilProzent(final Integer dividend, final Integer divisor) {
+    public static double calculateAnteilProzent(final Integer dividend, final Integer divisor) {
         return divisor == null || divisor == 0
                 ? 0D
                 : BigDecimal.valueOf(ObjectUtils.defaultIfNull(dividend, 0))
                         .divide(BigDecimal.valueOf(divisor), 3, RoundingMode.HALF_UP)
-                        .multiply(BigDecimal.valueOf(100))
+                        .scaleByPowerOfTen(2)
                         .doubleValue();
     }
 }

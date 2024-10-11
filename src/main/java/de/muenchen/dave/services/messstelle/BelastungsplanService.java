@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -77,22 +78,22 @@ public class BelastungsplanService {
     }
 
     private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
-            return "";
-        }
-        return messstelle.getMessquerschnitte().get(0).getStrassenname();
+        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
+                ? ""
+                :  messstelle.getMessquerschnitte().getFirst().getStrassenname();
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
         ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
-                .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId)).collect(Collectors.toList()).get(0);
+                .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId))
+                .toList()
+                .getFirst();
         return messquerschnittDto.getFahrtrichtung();
     }
 
-    protected BigDecimal calcPercentage(final Integer part, final Integer total) {
-        BigDecimal partInBigDecimal = BigDecimal.valueOf(part);
-        BigDecimal totalInBigDecimal = BigDecimal.valueOf(total);
-        return partInBigDecimal.divide(totalInBigDecimal, 3, RoundingMode.HALF_UP).scaleByPowerOfTen(2);
+    protected BigDecimal calcPercentage(final Integer dividend, final Integer divisor) {
+        final var percentage = MesswerteBaseUtil.calculateAnteilProzent(dividend, divisor);
+        return BigDecimal.valueOf(percentage).setScale(1, RoundingMode.HALF_UP);
     }
 
     protected Integer roundNumberToHundredIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
