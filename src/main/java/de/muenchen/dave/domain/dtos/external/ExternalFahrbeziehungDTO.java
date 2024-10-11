@@ -2,8 +2,9 @@ package de.muenchen.dave.domain.dtos.external;
 
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class ExternalFahrbeziehungDTO {

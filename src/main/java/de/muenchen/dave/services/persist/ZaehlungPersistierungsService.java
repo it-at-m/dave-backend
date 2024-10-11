@@ -22,16 +22,17 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -57,8 +58,8 @@ public abstract class ZaehlungPersistierungsService {
      * @param updateStatusDto enthält die Id und den neuen Status
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim Speichern der Zaehlstelle
-     * @throws DataNotFoundException Beim Laden der Zaehlstelle
-     * @throws PlausibilityException Beim Pruefen der Daten
+     * @throws DataNotFoundException         Beim Laden der Zaehlstelle
+     * @throws PlausibilityException         Beim Pruefen der Daten
      */
     public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
@@ -98,9 +99,9 @@ public abstract class ZaehlungPersistierungsService {
     /**
      * Diese Methode erstellt die {@link Hochrechnung} für den {@link Zeitintervall}.
      *
-     * @param zeitintervall für dem die Hochrechnung erstellt werden soll.
+     * @param zeitintervall          für dem die Hochrechnung erstellt werden soll.
      * @param hochrechnungsfaktorDto zur Ermittlung der hochgerechneten Werte.
-     * @param zaehldauer Zaehldauer als String
+     * @param zaehldauer             Zaehldauer als String
      * @return die {@link Hochrechnung}.
      */
     public Hochrechnung createHochrechnung(final Zeitintervall zeitintervall,
@@ -118,7 +119,7 @@ public abstract class ZaehlungPersistierungsService {
         final Hochrechnung hochrechnung = new Hochrechnung();
         if (StringUtils.equalsAny(zaehldauer, Zaehldauer.DAUER_16_STUNDEN.toString(), Zaehldauer.DAUER_13_STUNDEN.toString())
                 && (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_10_15)
-                        || ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24))) {
+                || ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24))) {
             hochrechnung.setFaktorKfz(BigDecimal.ZERO);
             hochrechnung.setFaktorSv(BigDecimal.ZERO);
             hochrechnung.setFaktorGv(BigDecimal.ZERO);
@@ -134,8 +135,7 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     /**
-     * Diese Methode ermittelt aus den {@link Zeitintervall}en, die darin repräsentierten
-     * Fahrzeugklassen und Fahrzeugkategorien.
+     * Diese Methode ermittelt aus den {@link Zeitintervall}en, die darin repräsentierten Fahrzeugklassen und Fahrzeugkategorien.
      *
      * @param zeitintervalle zur Ermittlung der Fahrzeugklassen und Fahrzeugkategorien.
      * @return die Fahrzeugklassen und Fahrzeugkategorien abhängig von den {@link Zeitintervall}en.

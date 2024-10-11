@@ -5,8 +5,9 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import jakarta.validation.constraints.NotNull;
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class FahrzeugOptionsDTO implements Serializable {

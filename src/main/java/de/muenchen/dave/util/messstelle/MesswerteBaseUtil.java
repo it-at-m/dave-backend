@@ -7,13 +7,14 @@ package de.muenchen.dave.util.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalTime;
 import java.util.List;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {
@@ -23,7 +24,7 @@ public final class MesswerteBaseUtil {
                 && isTimeWithinZeitblock(interval.getDatumUhrzeitBis().toLocalTime(), zeitblock);
     }
 
-    protected static boolean isTimeWithinZeitblock(final LocalTime toCheck, final Zeitblock zeitblock) {
+    static boolean isTimeWithinZeitblock(final LocalTime toCheck, final Zeitblock zeitblock) {
         return isTimeWithinStartAndEnd(toCheck, zeitblock.getStart().toLocalTime(), zeitblock.getEnd().toLocalTime());
     }
 
@@ -32,7 +33,7 @@ public final class MesswerteBaseUtil {
                 && isTimeWithinStartAndEnd(interval.getDatumUhrzeitBis().toLocalTime(), start, end);
     }
 
-    protected static boolean isTimeWithinStartAndEnd(final LocalTime toCheck, final LocalTime start, final LocalTime end) {
+    static boolean isTimeWithinStartAndEnd(final LocalTime toCheck, final LocalTime start, final LocalTime end) {
         return (toCheck.isAfter(start) || toCheck.equals(start))
                 && (toCheck.isBefore(end) || toCheck.equals(end));
     }
@@ -79,8 +80,8 @@ public final class MesswerteBaseUtil {
         return divisor == null || divisor == 0
                 ? 0D
                 : BigDecimal.valueOf(ObjectUtils.defaultIfNull(dividend, 0))
-                        .divide(BigDecimal.valueOf(divisor), 3, RoundingMode.HALF_UP)
-                        .scaleByPowerOfTen(2)
-                        .doubleValue();
+                .divide(BigDecimal.valueOf(divisor), 3, RoundingMode.HALF_UP)
+                .scaleByPowerOfTen(2)
+                .doubleValue();
     }
 }

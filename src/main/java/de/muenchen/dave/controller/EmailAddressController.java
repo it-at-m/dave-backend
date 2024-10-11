@@ -4,8 +4,10 @@ import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.email.EmailAddressService;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

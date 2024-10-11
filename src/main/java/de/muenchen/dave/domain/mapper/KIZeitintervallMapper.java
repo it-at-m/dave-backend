@@ -2,12 +2,6 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.KIZeitintervall;
 import de.muenchen.dave.domain.Zeitintervall;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.IsoFields;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Builder;
@@ -18,9 +12,15 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.IsoFields;
+
 /**
- * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die
- * ONNX-Vorhersage.
+ * Diese Klasse realisiert das Mapping zwischen Zeitintervall-Objekten und der für die ONNX-Vorhersage.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, unmappedTargetPolicy = ReportingPolicy.ERROR)
 public abstract class KIZeitintervallMapper {

@@ -10,8 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Range;
 
 /**
- * Diese Klasse stellt die für das Ausführen von Vorhersagen notwendige Repräsentation eines
- * Zeitintervalls dar.
+ * Diese Klasse stellt die für das Ausführen von Vorhersagen notwendige Repräsentation eines Zeitintervalls dar.
  */
 @Data
 @AllArgsConstructor
@@ -52,8 +51,8 @@ public class KIZeitintervall {
     int sonntag = 0;
 
     /**
-     * Diese Methode wandelt ein KIZeitintervall-Objekt in ein Array mit primitivem long-Typ um, damit
-     * die ONNX-Runtime (int64) dieses zur Vorhersage verwenden kann.
+     * Diese Methode wandelt ein KIZeitintervall-Objekt in ein Array mit primitivem long-Typ um, damit die ONNX-Runtime (int64) dieses zur Vorhersage verwenden
+     * kann.
      *
      * @return Das KIZeitintervall als long[]-Repräsentation.
      */

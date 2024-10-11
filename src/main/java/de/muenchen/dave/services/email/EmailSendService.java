@@ -7,9 +7,6 @@ import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -19,9 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener
- * Konfiguration.
+ * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener Konfiguration.
  */
 @Slf4j
 @Service
@@ -50,8 +50,7 @@ public class EmailSendService {
     }
 
     /**
-     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen
-     * Teilnehmer (Participant).
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen Teilnehmer (Participant).
      *
      * @param message Die Chat-Nachricht
      */
@@ -87,7 +86,7 @@ public class EmailSendService {
 
         // Inhalt der E-Mail
         final String content = String.format("Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
-                "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
+                        "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
                 zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), zaehlstelle.getNummer(), message.getContent(), link);
 
         if (ArrayUtils.isEmpty(to)) {

@@ -7,6 +7,9 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,12 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 /**
- * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage
- * entsprechend den Fahrbeziehungen.
+ * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage entsprechend den Fahrbeziehungen.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallKIUtil {
@@ -27,13 +27,10 @@ public final class ZeitintervallKIUtil {
     public static final String LIST_LENGTH_MISMATCH = "Mismatch in list size of predictionResults and firstZeitintervalleOfFahrbeziehungen";
 
     /**
-     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Fahrbeziehung) für die
-     * KI-Tagessummen.
+     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Fahrbeziehung) für die KI-Tagessummen.
      *
-     * @param predictionResults Liste von KIPredictionResults, wobei für jede Fahrbeziehung ein
-     *            KIPredictionResult enthalten ist.
-     * @param firstZeitintervalleOfFahrbeziehungen List mit je einem importierten Zeitintervall pro
-     *            Fahrbeziehung
+     * @param predictionResults                    Liste von KIPredictionResults, wobei für jede Fahrbeziehung ein KIPredictionResult enthalten ist.
+     * @param firstZeitintervalleOfFahrbeziehungen List mit je einem importierten Zeitintervall pro Fahrbeziehung
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
     public static List<Zeitintervall> createKIZeitintervalleFromKIPredictionResults(List<KIPredictionResult> predictionResults,
@@ -48,8 +45,7 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Fahrbeziehung und gibt diese als
-     * zweidimensionale Liste von Zeitintervallen zurück.
+     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Fahrbeziehung und gibt diese als zweidimensionale Liste von Zeitintervallen zurück.
      *
      * @param zeitintervalle Zu gruppierende Liste von Zeitintervallen
      * @return Über fahrbeziehungId-gruppierte Listen als zweidimensionale Liste
@@ -71,14 +67,12 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Erstellt ein zu persistierendes Zeitintervall aus einem KIPredictionResult und einem
-     * Zeitintervall.
+     * Erstellt ein zu persistierendes Zeitintervall aus einem KIPredictionResult und einem Zeitintervall.
      *
      * @param predictionResult KIPredictionResult, dass die Tagessummen der Fahrzeugtypen enthält
-     * @param zeitintervall Zeitintervall zur Übertragung der ZaehlungID, FahrbeziehungID und
-     *            Fahrbeziehung
-     * @return Zeitintervall vom Typ TypeZeitintervall.GESAMT_KI, dass die Tageshochrechnungen für
-     *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der Hochrechnung) enthält.
+     * @param zeitintervall    Zeitintervall zur Übertragung der ZaehlungID, FahrbeziehungID und Fahrbeziehung
+     * @return Zeitintervall vom Typ TypeZeitintervall.GESAMT_KI, dass die Tageshochrechnungen für einzelne Fahrzeugtypen sowie -klassen (innerhalb der
+     *         Hochrechnung) enthält.
      */
     private static Zeitintervall createKIZeitintervallFromKIPredictionResult(KIPredictionResult predictionResult, Zeitintervall zeitintervall) {
         final Zeitintervall kiZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
@@ -118,7 +112,7 @@ public final class ZeitintervallKIUtil {
      * Setzt in den Gesamt-Zeitintervallen die Spalte Hochrechnung Rad mit den KI-Hochrechnugen.
      *
      * @param allZeitintervalle Zeitintervalle (wird noch nach Typ Gesamt gefiltert)
-     * @param kiIntervalle Durch die KI hochgerechnete Gesamtsummen für die Fahrbeziehungen
+     * @param kiIntervalle      Durch die KI hochgerechnete Gesamtsummen für die Fahrbeziehungen
      */
     public static void mergeKiHochrechnungInGesamt(List<Zeitintervall> allZeitintervalle, List<Zeitintervall> kiIntervalle) {
         allZeitintervalle.stream()
@@ -130,8 +124,7 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Die KI-berechnet nur A nach B Fahrbeziehungen. Anreicherung um die Fahrbeziehungen A nach alle
-     * und alle nach B
+     * Die KI-berechnet nur A nach B Fahrbeziehungen. Anreicherung um die Fahrbeziehungen A nach alle und alle nach B
      *
      * @param kiIntervalle Zeitintervalle mit den A nach B Fahrbeziehungen
      */

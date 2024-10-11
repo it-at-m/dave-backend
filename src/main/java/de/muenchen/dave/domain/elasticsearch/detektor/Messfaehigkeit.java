@@ -1,10 +1,11 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
-import java.time.LocalDate;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

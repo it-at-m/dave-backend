@@ -11,6 +11,11 @@ import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -19,10 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -31,8 +32,7 @@ public final class ZaehldatenProcessingUtil {
     public static final DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
-     * Diese Methoder gibt {@link LadeZaehldatumDTO}#getStartUhrzeit() als
-     * String zurück.
+     * Diese Methoder gibt {@link LadeZaehldatumDTO}#getStartUhrzeit() als String zurück.
      *
      * @param ladeZaehldatum zur Erstellung des Startuhrzeitstrings.
      * @return die Startuhrzeig als String.
@@ -42,8 +42,8 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Führt einen Cast von BigDecimal zu Integer mit den dazugehörigen Informationsverlust durch.
-     * Falls der Parameterwert "null" entspricht wird auch eine "null" zurückgegeben.
+     * Führt einen Cast von BigDecimal zu Integer mit den dazugehörigen Informationsverlust durch. Falls der Parameterwert "null" entspricht wird auch eine
+     * "null" zurückgegeben.
      *
      * @param value zum Cast auf Integer.
      * @return den Integerwert, andernfalls "null" falls Parameterwert "null".
@@ -53,10 +53,9 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Diese Methode fügt der List im ersten Parameter den Wert im zweiten Parameter an,
-     * falls dieser noch nicht im ersten Parameter vorhanden ist.
+     * Diese Methode fügt der List im ersten Parameter den Wert im zweiten Parameter an, falls dieser noch nicht im ersten Parameter vorhanden ist.
      *
-     * @param xAxisData zum Anfügen des zweiten Parameterwertes.
+     * @param xAxisData  zum Anfügen des zweiten Parameterwertes.
      * @param xAxisValue zum Anfügen an den ersten Parameter.
      * @return den um den zweiten Parameter erweiterten ersten Parameter.
      */
@@ -71,8 +70,8 @@ public final class ZaehldatenProcessingUtil {
     /**
      * @param valueToRound zum Runden auf den im zweiten Parameter genannten Rundungsschritt.
      * @param roundingStep auf dem Aufgerundet werden soll.
-     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück.
-     *         Ist der zu rundende Wert 0, so wird auf den Rundungsschritt aufgerundet.
+     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu rundende Wert 0, so wird auf den Rundungsschritt
+     *         aufgerundet.
      */
     public static Integer getValueRounded(final BigDecimal valueToRound, final int roundingStep) {
         final Integer roundedValue = valueToRound
@@ -86,8 +85,8 @@ public final class ZaehldatenProcessingUtil {
     /**
      * @param valueToRound zum Runden auf den im zweiten Parameter genannten Rundungsschritt.
      * @param roundingStep auf dem Aufgerundet werden soll.
-     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück.
-     *         Ist der zu rundende Wert 0, so wird auf den Rundungsschritt aufgerundet.
+     * @return Diese Methode gibt den um den Rundungsschritt aufgerundeten Wert zurück. Ist der zu rundende Wert 0, so wird auf den Rundungsschritt
+     *         aufgerundet.
      */
     public static Integer getValueRounded(final int valueToRound, final int roundingStep) {
         return getValueRounded(BigDecimal.valueOf(valueToRound), roundingStep);
@@ -102,8 +101,7 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu
-     * erstellen.
+     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu erstellen.
      *
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.

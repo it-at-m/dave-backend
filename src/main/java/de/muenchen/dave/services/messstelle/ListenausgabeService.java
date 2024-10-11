@@ -4,7 +4,6 @@
  */
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -17,31 +16,28 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @AllArgsConstructor
 public class ListenausgabeService {
 
-    private final LadeMesswerteMapper ladeMesswerteMapper;
-
-    private final SpitzenstundeService spitzenstundeService;
-
     protected static final String GESAMT = "Gesamt";
-
     protected static final String BLOCK = "Block";
-
     protected static final String STUNDE = "Stunde";
+    private final LadeMesswerteMapper ladeMesswerteMapper;
+    private final SpitzenstundeService spitzenstundeService;
 
     public LadeMesswerteListenausgabeDTO ladeListenausgabe(
             final List<IntervalDto> intervals,

@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.pdf.helper;
 
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import lombok.Data;
+
 import java.util.Arrays;
 import java.util.List;
-import lombok.Data;
 
 @Data
 public class ZaehlungskenngroessenData implements Comparable<ZaehlungskenngroessenData> {
@@ -17,8 +18,7 @@ public class ZaehlungskenngroessenData implements Comparable<Zaehlungskenngroess
     private String fussgaenger;
 
     /**
-     * Listen mit Objekten der Klasse ZaehlungskenngroessenData sollen nach type in der Reihenfolge des
-     * unten erstellten order-Arrays sortiert werden.
+     * Listen mit Objekten der Klasse ZaehlungskenngroessenData sollen nach type in der Reihenfolge des unten erstellten order-Arrays sortiert werden.
      *
      * @param o Zu vergleichendes Objekt
      * @return Vergleichsergebnis

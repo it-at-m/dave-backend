@@ -25,11 +25,6 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,6 +32,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -64,7 +65,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param zaehlungId zu löschende Zählung
      * @return gelöscht/nicht gelÖscht
-     * @throws DataNotFoundException beim Loeschen der Zaehlung aus dem Index
+     * @throws DataNotFoundException         beim Loeschen der Zaehlung aus dem Index
      * @throws BrokenInfrastructureException beim Loeschen der Zaehlung aus dem Index
      */
     @Transactional
@@ -82,11 +83,11 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     /**
      * In der Methode wird die Zaehlung im Elasticsearch-Server gespeichert.
      *
-     * @param zaehlungDto die Zaehlung zum speichern.
+     * @param zaehlungDto   die Zaehlung zum speichern.
      * @param zaehlstelleId die Id der dazugehörigen Zählstelle
      * @return die Id der gespeicherten Zaehlung.
      * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException Beim Schreiben in den Index
+     * @throws DataNotFoundException         Beim Schreiben in den Index
      */
     @Transactional
     public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
@@ -117,14 +118,13 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * In der Methode wird die Zaehlung im Elasticsearch-Server und es werden die Zeitintervalle
-     * in der relationalen Datenbank gespeichert.
+     * In der Methode wird die Zaehlung im Elasticsearch-Server und es werden die Zeitintervalle in der relationalen Datenbank gespeichert.
      *
-     * @param zaehlungDto die Zaehlung zum speichern.
+     * @param zaehlungDto   die Zaehlung zum speichern.
      * @param zaehlstelleId die Id der dazugehörigen Zählstelle
      * @return die Id der gespeicherten Zaehlung.
      * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException Beim Schreiben/Laden in/aus den/dem Index
+     * @throws DataNotFoundException         Beim Schreiben/Laden in/aus den/dem Index
      */
     @Transactional
     public BackendIdDTO saveZaehlungWithZeitintervalle(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
@@ -178,8 +178,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die {@link Hochrechnung}
      * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
      *
-     * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
-     * @param zaehlung zum Setzen der zusätzlichen Daten.
+     * @param zeitintervall    in welchem die zusätzlichen Informationen gesetzt werden sollen.
+     * @param zaehlung         zum Setzen der zusätzlichen Daten.
      * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
@@ -202,10 +202,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode gibt die {@link Fahrbeziehung} der {@link Zaehlung} zurück, welche
-     * durch die {@link BearbeiteFahrbeziehungDTO} repräsentiert wird.
+     * Diese Methode gibt die {@link Fahrbeziehung} der {@link Zaehlung} zurück, welche durch die {@link BearbeiteFahrbeziehungDTO} repräsentiert wird.
      *
-     * @param zaehlung aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
+     * @param zaehlung         aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
      * @param fahrbeziehungDto welche die Basis zum Suchen der {@link Fahrbeziehung} darstellt.
      * @return die gefundene {@link Fahrbeziehung}.
      */
@@ -217,13 +216,12 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe
-     * Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
+     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs
+     * repräsentieren.
      *
      * @param fahrbeziehungDto zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @param fahrbeziehung zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @return true falls die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs
-     *         repräsentiert wird.
+     * @param fahrbeziehung    zur Prüfung auf repräsentation der selben Fahrbeziehung.
+     * @return true falls die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentiert wird.
      */
     public boolean isSameFahrbeziehung(final BearbeiteFahrbeziehungDTO fahrbeziehungDto,
             final Fahrbeziehung fahrbeziehung) {
@@ -239,8 +237,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode setzt die zuletzt persistierte PKW-Einheit aus der relationalen Datenbank
-     * in der im Parameter übergebenen {@link BearbeiteZaehlungDTO}.
+     * Diese Methode setzt die zuletzt persistierte PKW-Einheit aus der relationalen Datenbank in der im Parameter übergebenen {@link BearbeiteZaehlungDTO}.
      *
      * @param zaehlungDto zum setzen der PKW-Einheiten.
      * @return {@link BearbeiteZaehlungDTO} des Parameters mit der gesetzten PKW-Einheit.
@@ -252,13 +249,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
-     * einen {@link Zeitintervall}.
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen
-     *            an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
-     *         {@link Zeitintervall}
+     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
@@ -278,16 +272,13 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Die Methode ermittelt die Koordinate für die Zaehlung auf Basis der im ersten Parameter
-     * übergebenen Distanz.
+     * Die Methode ermittelt die Koordinate für die Zaehlung auf Basis der im ersten Parameter übergebenen Distanz.
      *
      * @param radiusDistanceCheck Der Radius für die Prüfung der Distanz.
-     * @param zaehlstelle Die {@link Zaehlstelle} zur Prüfung des Abstands zur {@link Zaehlung}.
-     * @param zaehlung Die {@link Zaehlung} zur Prüfung des Abstands zur {@link Zaehlstelle}.
-     * @return die Koordinate der {@link Zaehlstelle}, falls die Koordinate der {@link Zaehlung}
-     *         sich innerhalb des durch den Radius definierten Umkreis um die {@link Zaehlstelle}
-     *         befindet.
-     *         Ansonsten wird die Koordinate der {@link Zaehlung} zurückgegeben.
+     * @param zaehlstelle         Die {@link Zaehlstelle} zur Prüfung des Abstands zur {@link Zaehlung}.
+     * @param zaehlung            Die {@link Zaehlung} zur Prüfung des Abstands zur {@link Zaehlstelle}.
+     * @return die Koordinate der {@link Zaehlstelle}, falls die Koordinate der {@link Zaehlung} sich innerhalb des durch den Radius definierten Umkreis um die
+     *         {@link Zaehlstelle} befindet. Ansonsten wird die Koordinate der {@link Zaehlung} zurückgegeben.
      */
     public GeoPoint getKoordinateZaehlstelleWhenZaehlungWithinDistance(final double radiusDistanceCheck,
             final Zaehlstelle zaehlstelle,

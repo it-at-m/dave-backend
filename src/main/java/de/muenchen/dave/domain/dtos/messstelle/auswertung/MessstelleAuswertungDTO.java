@@ -1,8 +1,9 @@
 package de.muenchen.dave.domain.dtos.messstelle.auswertung;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
-import lombok.Data;
 
 @Data
 public class MessstelleAuswertungDTO implements Serializable {

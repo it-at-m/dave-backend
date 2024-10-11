@@ -9,8 +9,6 @@ import de.muenchen.dave.services.pdfgenerator.ReportService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +23,15 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/generate-pdf")
 @PreAuthorize(
-    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class GeneratePdfController {
 
@@ -62,13 +63,12 @@ public class GeneratePdfController {
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine PDF als byte[] zurück
      *
-     * @param zaehlungId Die im Frontend ausgewählte Zählung.
-     * @param charttype Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ
-     *            werden
-     *            andere Mustache Templates verwendet.
-     * @param department Organisationseinheit des Benutzers
-     * @param options Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png Ein Graph als PNG in Base64.
+     * @param zaehlungId                        Die im Frontend ausgewählte Zählung.
+     * @param charttype                         Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ werden andere Mustache Templates
+     *                                          verwendet.
+     * @param department                        Organisationseinheit des Benutzers
+     * @param options                           Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png                  Ein Graph als PNG in Base64.
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
@@ -110,12 +110,12 @@ public class GeneratePdfController {
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine PDF als byte[] zurück
      *
-     * @param messstelleId Die im Frontend ausgewählte Messstelle.
-     * @param type Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ werden
-     *            andere Mustache Templates verwendet.
-     * @param department Organisationseinheit des Benutzers
-     * @param options Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png Ein Graph als PNG in Base64.
+     * @param messstelleId                      Die im Frontend ausgewählte Messstelle.
+     * @param type                              Der angeforderte PDF Typ (z. B. Belastungsplan, Ganglinie, ...). Je nach Typ werden andere Mustache Templates
+     *                                          verwendet.
+     * @param department                        Organisationseinheit des Benutzers
+     * @param options                           Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png                  Ein Graph als PNG in Base64.
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
@@ -156,7 +156,7 @@ public class GeneratePdfController {
     /**
      * Generiert einen PDF-Report aus den gelieferten Assets
      *
-     * @param assetList Assets für den Report
+     * @param assetList  Assets für den Report
      * @param department Organisationseinheit des Benutzers
      * @return PDF-Datei
      */

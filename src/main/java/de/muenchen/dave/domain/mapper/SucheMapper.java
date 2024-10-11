@@ -6,13 +6,14 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import java.util.List;
-import java.util.Set;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
+
+import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SucheMapper {
@@ -45,16 +46,14 @@ public interface SucheMapper {
     }
 
     /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
+     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle. Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte angezeigt.
      *
-     * @param stadtbezirk Stadtbezirksname
-     * @param stadtbezirknummer Stadtbezirksnummer als Long
-     * @param nummer Zaehlstellennummer
-     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
+     * @param stadtbezirk         Stadtbezirksname
+     * @param stadtbezirknummer   Stadtbezirksnummer als Long
+     * @param nummer              Zaehlstellennummer
+     * @param anzahlZaehlungen    Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
      * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname Kreuzungsname als String
+     * @param kreuzungsname       Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
     default ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,

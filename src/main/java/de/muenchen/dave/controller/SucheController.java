@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.SucheService;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Set;
+
 @RestController
 @Slf4j
 @PreAuthorize(
-    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
 )
 public class SucheController {
 

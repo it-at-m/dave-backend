@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOp
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,13 +18,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequestMapping(value = "/auswertung")
 @RestController
 @Slf4j
 @AllArgsConstructor
 @PreAuthorize(
-    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class AuswertungController {
 

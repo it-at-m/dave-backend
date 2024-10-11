@@ -15,8 +15,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -29,9 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.util.List;
+
 /**
- * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen
- * werden.
+ * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen werden.
  */
 @RestController
 @Slf4j
@@ -70,13 +70,12 @@ public class EaiController {
      * Rest-Endpunkt zur Bereitstellung der Spitzenstundenauswertung.
      *
      * @param zaehlstellenNummer der Zählstelle für welche die Zähung stattgefunden hat.
-     * @param zaehlart der Zählung.
-     * @param zaehldatum der Zählung.
-     * @param zeitblock der Zählung.
-     * @param zeitauswahl darf nur die Ausprägung
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} annehmen.
+     * @param zaehlart           der Zählung.
+     * @param zaehldatum         der Zählung.
+     * @param zeitblock          der Zählung.
+     * @param zeitauswahl        darf nur die Ausprägung {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *                           {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
+     *                           annehmen.
      * @return die Spitzenstundenauswertung.
      */
     @GetMapping(value = "/lade-auswertung-spitzenstunde", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -131,7 +130,7 @@ public class EaiController {
     /**
      * Rest-Endpunkt zum Bereitstellung aller Zählungen eines bestimmten Monatszeitraums für Visum.
      *
-     * @param jahr welches ausgewertet werden soll.
+     * @param jahr  welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
      * @return die {@link LadeAuswertungZaehlstelleKoordinateDTO} je vorhandener Zählstelle.
      */

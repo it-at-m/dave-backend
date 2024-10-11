@@ -1,11 +1,12 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import java.time.LocalDate;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Getter

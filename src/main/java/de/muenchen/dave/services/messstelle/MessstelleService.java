@@ -10,33 +10,29 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
- * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und
- * aktualisiert die in Dave gespeichereten Daten.
+ * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und aktualisiert die in Dave gespeichereten Daten.
  */
 @Slf4j
 @Service
 @AllArgsConstructor
 public class MessstelleService {
 
-    private final MessstelleIndexService messstelleIndexService;
-
-    private final CustomSuggestIndexService customSuggestIndexService;
-
-    private final MessstelleMapper messstelleMapper;
-
-    private final StadtbezirkMapper stadtbezirkMapper;
-
     private static final String KFZ = "KFZ";
+    private final MessstelleIndexService messstelleIndexService;
+    private final CustomSuggestIndexService customSuggestIndexService;
+    private final MessstelleMapper messstelleMapper;
+    private final StadtbezirkMapper stadtbezirkMapper;
 
     public Messstelle getMessstelle(final String messstelleId) {
         log.debug("#getMessstelle");

@@ -2,8 +2,10 @@ package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +35,12 @@ public interface MessstelleIndex extends ElasticsearchRepository<Messstelle, Str
     Optional<Messstelle> findById(String var1);
 
     @Query(
-        "{\"simple_query_string\" : {" +
-                "\"query\": \"?0\"," +
-                "\"fields\": [\"suchwoerter^3\"]," +
-                "\"analyze_wildcard\": true," +
-                "\"default_operator\": \"AND\"," +
-                "\"lenient\": true}}"
+            "{\"simple_query_string\" : {" +
+                    "\"query\": \"?0\"," +
+                    "\"fields\": [\"suchwoerter^3\"]," +
+                    "\"analyze_wildcard\": true," +
+                    "\"default_operator\": \"AND\"," +
+                    "\"lenient\": true}}"
     )
     Page<Messstelle> suggestSearch(String query, Pageable pageable);
 

@@ -14,10 +14,11 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -42,16 +43,13 @@ public class ProcessZaehldatenService {
     }
 
     /**
-     * Diese Methode gibt die Zaehldaten in aufbereiter Form zur Darstellung in der Listenausgabe,
-     * in der Heatmap und im Stepline-Diagramm zurück.
+     * Diese Methode gibt die Zaehldaten in aufbereiter Form zur Darstellung in der Listenausgabe, in der Heatmap und im Stepline-Diagramm zurück.
      * <p>
-     * Die Aufbereitung der Zaehldaten wird so durchgeführt, damit die Daten im Frontend nur noch an
-     * die entsprechende Komponente übergeben werden müssen.
+     * Die Aufbereitung der Zaehldaten wird so durchgeführt, damit die Daten im Frontend nur noch an die entsprechende Komponente übergeben werden müssen.
      *
      * @param zaehlungId Die Id der Zaehlung.
-     * @param options Die durch den User im Frontend gewählten Optionen.
-     * @return Die aufbereiteten Zaehldaten zur Darstellung in der Listenausgabe,
-     *         in der Heatmap und im Stepline-Diagramm.
+     * @param options    Die durch den User im Frontend gewählten Optionen.
+     * @return Die aufbereiteten Zaehldaten zur Darstellung in der Listenausgabe, in der Heatmap und im Stepline-Diagramm.
      * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
@@ -82,8 +80,8 @@ public class ProcessZaehldatenService {
     }
 
     /**
-     * Liefert die Zählungskenngrößen einer Zählung. Hier sollen die Werte für KFZ, GV, SV, Rad und Fuss
-     * (jeweils sofern vorhanden) für folgende Zeitblöcke geholt werden:
+     * Liefert die Zählungskenngrößen einer Zählung. Hier sollen die Werte für KFZ, GV, SV, Rad und Fuss (jeweils sofern vorhanden) für folgende Zeitblöcke
+     * geholt werden:
      * - Spitzenstunden KFZ (sofern vorhanden)
      * - Spitzenstunden RAD (sofern vorhanden)
      * - Spitzenstunden FUSS (sofern vorhanden)

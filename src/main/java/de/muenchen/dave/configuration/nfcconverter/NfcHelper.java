@@ -6,9 +6,11 @@ package de.muenchen.dave.configuration.nfcconverter;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -117,11 +119,9 @@ public class NfcHelper {
     }
 
     /**
-     * Konvertieren der Header eines {@link HttpServletRequest} von Strings in die kanonische
-     * Unicode-Normalform (NFC).
+     * Konvertieren der Header eines {@link HttpServletRequest} von Strings in die kanonische Unicode-Normalform (NFC).
      *
-     * @param originalRequest Der {@link HttpServletRequest} zur Extraktion und Konvertierung der
-     *            Header.
+     * @param originalRequest Der {@link HttpServletRequest} zur Extraktion und Konvertierung der Header.
      * @return Map mit normalisierten Inhalt.
      * @see #nfcConverter(String)
      * @see Normalizer#normalize(CharSequence, Normalizer.Form)

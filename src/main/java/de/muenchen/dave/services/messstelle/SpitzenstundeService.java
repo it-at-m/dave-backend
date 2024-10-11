@@ -10,11 +10,12 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -54,7 +55,7 @@ public class SpitzenstundeService {
                 intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index), intervals.get(index + 1)));
             } else {
                 // ZaehldatenIntervall.STUNDE_KOMPLETT
-                intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index)));
+                intervalsToCheckForSpitzenstunde.add(intervals.get(index));
             }
             final var firstInterval = intervalsToCheckForSpitzenstunde.getFirst();
             final var lastInterval = intervalsToCheckForSpitzenstunde.getLast();
@@ -96,7 +97,7 @@ public class SpitzenstundeService {
                 intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index), intervals.get(index + 1)));
             } else {
                 // ZaehldatenIntervall.STUNDE_KOMPLETT
-                intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index)));
+                intervalsToCheckForSpitzenstunde.add(intervals.get(index));
             }
             final var firstInterval = intervalsToCheckForSpitzenstunde.getFirst();
             final var lastInterval = intervalsToCheckForSpitzenstunde.getLast();

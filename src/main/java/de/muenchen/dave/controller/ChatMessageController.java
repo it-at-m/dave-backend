@@ -5,8 +5,6 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -35,15 +36,14 @@ public class ChatMessageController {
     }
 
     /**
-     * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und
-     * Admin-Portal).
+     * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und Admin-Portal).
      *
      * @param zaehlungId Die ID der Zählung
      * @return Eine Liste der Chat Nachrichten
      */
     @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @GetMapping(value = "/allChatMessagesByZaehlungId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
@@ -67,8 +67,8 @@ public class ChatMessageController {
      * @return Das gespeicherte ChatMessageDTO
      */
     @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ChatMessageDTO> saveChatMessage(@RequestBody @NotNull final ChatMessageDTO chatMessageDTO) {
@@ -84,13 +84,13 @@ public class ChatMessageController {
     /**
      * Rest-Endpunkt um den Status ungelesener Nachrichten zu updaten.
      *
-     * @param zaehlungId Zählungs-ID, in der der Nachrichtenstatus geupdated werden soll.
+     * @param zaehlungId    Zählungs-ID, in der der Nachrichtenstatus geupdated werden soll.
      * @param participantId Participant-ID, für den der Nachrichtenstatus geupdated werden soll.
      * @return Die geupdateten ChatMessages
      */
     @PreAuthorize(
-        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
-                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+            "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                    " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @GetMapping(value = "/updateUnreadMessages", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateUnreadMessages(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) final String zaehlungId,

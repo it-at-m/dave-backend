@@ -12,10 +12,11 @@ import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @Slf4j

@@ -7,6 +7,7 @@ package de.muenchen.dave.domain.enums;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

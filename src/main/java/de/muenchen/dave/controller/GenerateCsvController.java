@@ -26,8 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 @Validated
 @PreAuthorize(
-    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class GenerateCsvController {
 
@@ -41,7 +41,7 @@ public class GenerateCsvController {
      * Nimmt Daten aus dem Frontend entgegen und gibt eine CSV als String zurück.
      *
      * @param zaehlungId Die im Frontend ausgewählte Zählung.
-     * @param options Die im Frontend ausgewählten Optionen.
+     * @param options    Die im Frontend ausgewählten Optionen.
      * @return ResponseEntity of Type CsvDTO
      */
     @PostMapping(value = "/generate-csv")

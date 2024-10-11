@@ -13,9 +13,6 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -26,9 +23,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
- * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt
- * diese dem {@link MessstelleService} zur weiteren
+ * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt diese dem {@link MessstelleService} zur weiteren
  * Verarbeitung. Soll nicht auf den externen Umgebungen laufen.
  */
 @Slf4j
@@ -37,19 +37,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Profile({ "!konexternal && !prodexternal && !unittest" })
 public class MessstelleReceiver {
 
-    private MessstelleApi messstelleApi;
-
     private final MessstelleIndexService messstelleIndexService;
-
     private final CustomSuggestIndexService customSuggestIndexService;
-
+    private final StadtbezirkMapper stadtbezirkMapper;
+    private MessstelleApi messstelleApi;
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
-    private final StadtbezirkMapper stadtbezirkMapper;
-
     /**
-     * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
-     * kann in der application-xxx.yml geändert werden.
+     * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht, kann in der application-xxx.yml geändert werden.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")

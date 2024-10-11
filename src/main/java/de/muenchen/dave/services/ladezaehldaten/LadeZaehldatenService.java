@@ -21,6 +21,13 @@ import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -29,12 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -101,20 +102,19 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode gibt an ob ein Zeitintervall nach der Datenextraktion weiterverarbeitet werden
-     * soll.
+     * Diese Methode gibt an ob ein Zeitintervall nach der Datenextraktion weiterverarbeitet werden soll.
      *
      * @param zeitintervall welcher geprüft werden soll.
-     * @param zeitblock der für die Prüfung benötigt wird.
+     * @param zeitblock     der für die Prüfung benötigt wird.
      * @return false falls der Zeitintervall nicht weiterverarbeitet werden soll andernfalls true.
      */
     private static boolean shouldZeitintervallBeReturned(final Zeitintervall zeitintervall,
             final Zeitblock zeitblock) {
         boolean returnZeitintervall = (Zeitblock.ZB_00_24.equals(zeitblock) || zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL))
                 || (zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ
-                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
-                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
-                        && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY);
+                && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD
+                && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS
+                && zeitintervall.getSortingIndex() != ZeitintervallSortingIndexUtil.SORTING_INDEX_GESAMT_DAY);
         if (zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
                 && (SPITZENSTUNDEN_BLOCK_SORTING_INDEX.contains(zeitintervall.getSortingIndex()))) {
             returnZeitintervall = false;
@@ -123,14 +123,12 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach
-     * {@link LadeZaehldatumDTO} statt.
-     * Beim Mapping werden die Informationen in {@link OptionsDTO} berücksichtigt.
+     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach {@link LadeZaehldatumDTO} statt. Beim Mapping werden die Informationen in
+     * {@link OptionsDTO} berücksichtigt.
      *
      * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDTO}.
-     * @param pkwEinheit als {@link PkwEinheit}
-     * @param options die {@link OptionsDTO} zur Berücksichtigung der Art
-     *            und Weise des Mappings.
+     * @param pkwEinheit    als {@link PkwEinheit}
+     * @param options       die {@link OptionsDTO} zur Berücksichtigung der Art und Weise des Mappings.
      * @return das gemappte {@link LadeZaehldatumDTO}.
      */
     public static LadeZaehldatumDTO mapToZaehldatum(final Zeitintervall zeitintervall,
@@ -208,9 +206,8 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die
-     * {@link TypeZeitintervall}e ermittelt, um die korrekten {@link Zeitintervall}e
-     * aus der Datenbank extrahieren zu können.
+     * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die {@link TypeZeitintervall}e ermittelt, um die korrekten {@link Zeitintervall}e aus der
+     * Datenbank extrahieren zu können.
      *
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.
@@ -232,7 +229,7 @@ public class LadeZaehldatenService {
             }
             if (ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
                     || (!ZaehldatenIntervall.STUNDE_KOMPLETT.equals(options.getIntervall())
-                            && BooleanUtils.isTrue(options.getStundensumme()))) {
+                    && BooleanUtils.isTrue(options.getStundensumme()))) {
                 types.add(TypeZeitintervall.STUNDE_KOMPLETT);
             }
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
@@ -271,19 +268,15 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und
-     * Kreisverkehr
-     * die für die Datenextraktion relevante {@link FahrbewegungKreisverkehr}.
+     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und Kreisverkehr die für die Datenextraktion relevante
+     * {@link FahrbewegungKreisverkehr}.
      *
-     * @param von als Startknotenarm.
-     * @param nach als Zielknotenarm
+     * @param von            als Startknotenarm.
+     * @param nach           als Zielknotenarm
      * @param isKreisverkehr bezeichner ob erzeugung für Kreuzung oder Kreisverkehr.
-     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit Fahrbeziehungsauswahl
-     *         "alle nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Fahrbeziehungsauswahl mit
-     *         "X nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Fahrbeziehungsauswahl mit
-     *         "alle nach X" handelt.
+     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit Fahrbeziehungsauswahl "alle nach alle" handelt.
+     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Fahrbeziehungsauswahl mit "X nach alle" handelt.
+     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Fahrbeziehungsauswahl mit "alle nach X" handelt.
      */
     public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
             final Integer nach,
@@ -304,16 +297,12 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in
-     * den {@link OptionsDTO} vorhandenen Informationen und der Zaehlungs-ID.
-     * Die aus der Datenbank extrahierten Daten werden anschließend nach {@link LadeZaehldatumDTO}
-     * gemappt.
-     * Schlussendlich werden alle {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO}
-     * zurückgegeben.
+     * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in den {@link OptionsDTO} vorhandenen Informationen und der
+     * Zaehlungs-ID. Die aus der Datenbank extrahierten Daten werden anschließend nach {@link LadeZaehldatumDTO} gemappt. Schlussendlich werden alle
+     * {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO} zurückgegeben.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param options    zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach {@link LadeZaehldatumDTO}.
      * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
      * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
      */
@@ -419,10 +408,8 @@ public class LadeZaehldatenService {
      * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
-     * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
-     *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
+     * @param options    zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
             final Boolean isKreisverkehr,

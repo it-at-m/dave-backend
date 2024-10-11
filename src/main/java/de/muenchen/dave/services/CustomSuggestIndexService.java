@@ -5,16 +5,17 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -105,7 +106,7 @@ public class CustomSuggestIndexService {
      * Erzeugt für die Suchwörter ein Set an Vorschlägen.
      *
      * @param suchwoerter Suchwörter einer Zählstelle oder Zählung
-     * @param suggestId ID der zugehörigen Zählstelle oder Zählung
+     * @param suggestId   ID der zugehörigen Zählstelle oder Zählung
      */
     private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId) {
         if (CollectionUtils.isNotEmpty(suchwoerter)) {

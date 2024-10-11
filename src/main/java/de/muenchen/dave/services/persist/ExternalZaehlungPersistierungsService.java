@@ -18,14 +18,15 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -47,7 +48,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @param zaehlungDto enthält die Id und die neuen Metadaten
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim erneuern der Zaehlstelle im Index
-     * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
+     * @throws DataNotFoundException         beim Laden der Zaehlstelle im Index
      */
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
@@ -110,8 +111,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die {@link Hochrechnung}
      * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
      *
-     * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
-     * @param zaehlung zum Setzen der zusätzlichen Daten.
+     * @param zeitintervall    in welchem die zusätzlichen Informationen gesetzt werden sollen.
+     * @param zaehlung         zum Setzen der zusätzlichen Daten.
      * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
@@ -131,13 +132,10 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
-     * einen {@link Zeitintervall}.
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen
-     *            an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
-     *         {@link Zeitintervall}
+     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final ExternalFahrbeziehungDTO fahrbeziehungDto) {
         final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();

@@ -6,12 +6,13 @@ package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -132,8 +133,7 @@ public final class CalculationUtil {
     /**
      * @param value1 Erster Wert
      * @param value2 Zweiter Wert
-     * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null"
-     *         wird dieser als Wert "0" interpretiert.
+     * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null" wird dieser als Wert "0" interpretiert.
      */
     public static Integer nullSafeSummation(final Integer value1, final Integer value2) {
         final Integer sum;
@@ -149,8 +149,7 @@ public final class CalculationUtil {
     /**
      * @param value1 Erster Wert
      * @param value2 Zweiter Wert
-     * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null"
-     *         wird dieser als Wert "0" interpretiert.
+     * @return null falls beide Parameter null sind ansonsten die Summe. Ist nur ein Parameter null" wird dieser als Wert "0" interpretiert.
      */
     public static BigDecimal nullSafeSummation(final BigDecimal value1, final BigDecimal value2) {
         final BigDecimal sum;

@@ -11,21 +11,18 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
-import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenSteplineService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.convert.ReadingConverter;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -39,6 +36,62 @@ public class GanglinieService {
     private static final Integer ROUNDING_VALUE = 20;
 
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
+
+    protected static void setRangeMaxRoundedToTwentyInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final Integer value) {
+        final var currentValue = ladeZaehldatenStepline.getRangeMax();
+        final Integer newRoundedValue;
+        if (Objects.isNull(currentValue)) {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    ZaehldatenProcessingUtil.getZeroIfNull(value),
+                    ROUNDING_VALUE);
+        } else {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    Math.max(
+                            ZaehldatenProcessingUtil.getZeroIfNull(value),
+                            ladeZaehldatenStepline.getRangeMax()),
+                    ROUNDING_VALUE);
+        }
+        ladeZaehldatenStepline.setRangeMax(newRoundedValue);
+    }
+
+    protected static void setRangeMaxPercentRoundedToTwoInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final BigDecimal value) {
+
+        final var currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
+        final Integer newRoundedValue;
+        if (Objects.isNull(currentValue)) {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    ZaehldatenProcessingUtil.getZeroIfNull(value),
+                    ROUNDING_VALUE_PERCENT);
+        } else {
+            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
+                    BigDecimal.valueOf(currentValue).max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
+                    ROUNDING_VALUE_PERCENT);
+        }
+        ladeZaehldatenStepline.setRangeMaxPercent(newRoundedValue);
+    }
+
+    protected static void setLegendInZaehldatenStepline(
+            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final String legendEntry) {
+        ladeZaehldatenStepline.setLegend(
+                ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
+                        ladeZaehldatenStepline.getLegend(),
+                        legendEntry));
+    }
+
+    protected static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ZERO);
+    }
+
+    protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(ZERO);
+        stepLineSeriesEntry.setYAxisIndex(ONE);
+    }
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
     public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
@@ -139,62 +192,6 @@ public class GanglinieService {
         return ladeZaehldatenStepline;
     }
 
-    protected static void setRangeMaxRoundedToTwentyInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final Integer value) {
-        final var currentValue = ladeZaehldatenStepline.getRangeMax();
-        final Integer newRoundedValue;
-        if (Objects.isNull(currentValue)) {
-            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
-                    ZaehldatenProcessingUtil.getZeroIfNull(value),
-                    ROUNDING_VALUE);
-        } else {
-            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
-                    Math.max(
-                            ZaehldatenProcessingUtil.getZeroIfNull(value),
-                            ladeZaehldatenStepline.getRangeMax()),
-                    ROUNDING_VALUE);
-        }
-        ladeZaehldatenStepline.setRangeMax(newRoundedValue);
-    }
-
-    protected static void setRangeMaxPercentRoundedToTwoInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final BigDecimal value) {
-
-        final var currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
-        final Integer newRoundedValue;
-        if (Objects.isNull(currentValue)) {
-            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
-                    ZaehldatenProcessingUtil.getZeroIfNull(value),
-                    ROUNDING_VALUE_PERCENT);
-        } else {
-            newRoundedValue = ZaehldatenProcessingUtil.getValueRounded(
-                    BigDecimal.valueOf(currentValue).max(ZaehldatenProcessingUtil.getZeroIfNull(value)),
-                    ROUNDING_VALUE_PERCENT);
-        }
-        ladeZaehldatenStepline.setRangeMaxPercent(newRoundedValue);
-    }
-
-    protected static void setLegendInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final String legendEntry) {
-        ladeZaehldatenStepline.setLegend(
-                ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
-                        ladeZaehldatenStepline.getLegend(),
-                        legendEntry));
-    }
-
-    protected static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(ZERO);
-        stepLineSeriesEntry.setYAxisIndex(ZERO);
-    }
-
-    protected static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
-        stepLineSeriesEntry.setXAxisIndex(ZERO);
-        stepLineSeriesEntry.setYAxisIndex(ONE);
-    }
-
     protected Integer getIntValueIfNotNull(final BigDecimal value) {
         return value == null
                 ? null
@@ -202,8 +199,7 @@ public class GanglinieService {
     }
 
     /**
-     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
-     * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
+     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
      * aufgliedert und vorhält.
      */
     @Getter
@@ -271,12 +267,10 @@ public class GanglinieService {
         }
 
         /**
-         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
-         * entsprechend der im Parameter options gewählten
+         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO} entsprechend der im Parameter options gewählten
          * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
-         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
-         *         {@link StepLineSeriesEntryBigDecimalDTO}.
+         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}.
          */
         public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();

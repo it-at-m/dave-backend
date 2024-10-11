@@ -6,8 +6,6 @@ package de.muenchen.dave.security;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -22,47 +20,36 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+
 /**
- * Service, der einen OIDC /userinfo Endpoint aufruft (mit JWT Bearer Auth) und dort die enthaltenen
- * "Authorities" und Nutzerinformationen extrahiert.
+ * Service, der einen OIDC /userinfo Endpoint aufruft (mit JWT Bearer Auth) und dort die enthaltenen "Authorities" und Nutzerinformationen extrahiert.
  */
 @Slf4j
 public class UserInfoDataService {
 
-    @Data
-    public static final class UserInfoData {
-
-        private Map<String, Object> claims;
-
-        private Collection<SimpleGrantedAuthority> authorities;
-    }
-
     public static final String NAME_AUTHENTICATION_CACHE = "authentication_cache";
-
     public static final int AUTHENTICATION_CACHE_EXPIRATION_TIME_SECONDS = 60;
-
     public static final String CLAIM_AUTHORITIES = "authorities";
-
     public static final String CLAIM_SURNAME = "surname";
-
     public static final String CLAIM_GIVENNAME = "givenname";
-
     public static final String CLAIM_DEPARTMENT = "department";
-
     public static final String CLAIM_EMAIL = "email";
-
     public static final String CLAIM_USERNAME = "username";
-
     private final String userInfoUri;
-
     private final RestTemplate restTemplate;
-
     private final Cache cache;
 
     /**
      * Erzeugt eine neue Instanz.
      *
-     * @param userInfoUri userinfo Endpoint URI
+     * @param userInfoUri         userinfo Endpoint URI
      * @param restTemplateBuilder ein {@link RestTemplateBuilder}
      */
     public UserInfoDataService(final String userInfoUri,
@@ -81,9 +68,7 @@ public class UserInfoDataService {
     }
 
     /**
-     * Ruft den /userinfo Endpoint und extrahiert {@link GrantedAuthority}s aus dem "authorities"
-     * Claim sowie weitere personalisierte Claims.
-     *
+     * Ruft den /userinfo Endpoint und extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim sowie weitere personalisierte Claims.
      *
      * @param jwt der JWT
      * @return die {@link GrantedAuthority}s sowie weitere personalisierte Claims.
@@ -128,8 +113,7 @@ public class UserInfoDataService {
      * Extrahiert {@link GrantedAuthority}s aus dem "authorities" Claim.
      *
      * @param userInfoEndpointData erhalten vom /userinfo Endpoint.
-     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie
-     *         weitere personalisierte Claims.
+     * @return die {@link GrantedAuthority}s gem. Claim "authorities" des /userinfo Endpoints sowie weitere personalisierte Claims.
      */
     protected List<SimpleGrantedAuthority> getAuthoritiesFromUserInfoEndpointData(
             final Map<String, Object> userInfoEndpointData) {
@@ -193,12 +177,19 @@ public class UserInfoDataService {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + jwt.getTokenValue());
         final var entity = new HttpEntity<String>(headers);
 
-        @SuppressWarnings("unchecked")
-        final Map<String, Object> userInfoEndpointData = restTemplate
+        @SuppressWarnings("unchecked") final Map<String, Object> userInfoEndpointData = restTemplate
                 .exchange(this.userInfoUri, HttpMethod.GET, entity, Map.class)
                 .getBody();
         log.debug("Response from user-info Endpoint: {}", userInfoEndpointData);
 
         return userInfoEndpointData;
+    }
+
+    @Data
+    public static final class UserInfoData {
+
+        private Map<String, Object> claims;
+
+        private Collection<SimpleGrantedAuthority> authorities;
     }
 }

@@ -9,28 +9,33 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
-import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
-import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
 public class BelastungsplanService {
 
     private final MessstelleService messstelleService;
+
     private final RoundingService roundingService;
+
     private final SpitzenstundeService spitzenstundeService;
+
+    private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
+        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
+                ? ""
+                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
+    }
 
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
             final List<IntervalDto> intervals,
@@ -78,12 +83,6 @@ public class BelastungsplanService {
             belastungsplanMessquerschnitteDTO.setEndeUhrzeitSpitzenstunde(spitzenstunde.getEndeUhrzeit());
         }
         return belastungsplanMessquerschnitteDTO;
-    }
-
-    private static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
-                ? ""
-                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {

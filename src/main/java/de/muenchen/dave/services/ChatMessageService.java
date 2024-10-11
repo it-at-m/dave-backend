@@ -15,12 +15,13 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ChatMessageService {
@@ -50,14 +51,13 @@ public class ChatMessageService {
     }
 
     /**
-     * Die Methode speichert eine Chat Nachricht ab. Ist die Nachricht vom Dienstleister oder liegt die
-     * Zählung
-     * beim Dienstleister, dann wird auch eine E-Mail versendet.
+     * Die Methode speichert eine Chat Nachricht ab. Ist die Nachricht vom Dienstleister oder liegt die Zählung beim Dienstleister, dann wird auch eine E-Mail
+     * versendet.
      *
      * @param chatMessageDTO Das {@link ChatMessageDTO} zum Speichern.
      * @return Das gespeicherte {@link ChatMessageDTO}.
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
-     * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
+     * @throws DataNotFoundException         Wenn Daten nicht geladen werden konnten
      */
     public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO) throws BrokenInfrastructureException, DataNotFoundException {
         ChatMessage chatMessage = chatMessageMapper.dto2bean(chatMessageDTO);
@@ -155,10 +155,9 @@ public class ChatMessageService {
     }
 
     /**
-     * In dieser Methode werden alle ChatMessages zur übergebenen Zählung zum übergebenen Participant
-     * auf viewed = true gesetzt.
+     * In dieser Methode werden alle ChatMessages zur übergebenen Zählung zum übergebenen Participant auf viewed = true gesetzt.
      *
-     * @param zaehlungId Zählungs-ID der Zählung
+     * @param zaehlungId           Zählungs-ID der Zählung
      * @param callingParticipantId Participant dessen Messages auf viewed gestellt werden sollen.
      * @return Liste mit allen Chatnachrichten zu einer Zählung
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern

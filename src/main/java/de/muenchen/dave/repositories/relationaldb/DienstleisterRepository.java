@@ -5,9 +5,11 @@
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Dienstleister;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DienstleisterRepository extends JpaRepository<Dienstleister, UUID> { //NOSONAR
