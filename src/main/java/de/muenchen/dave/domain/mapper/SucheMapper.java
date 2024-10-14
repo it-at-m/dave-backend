@@ -21,17 +21,17 @@ public interface SucheMapper {
 
     String UNBEKANNT = "unbekannt";
 
-    MessstelleTooltipDTO messstelleToMessstelleTooltipDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
+    MessstelleTooltipDTO messstelleToMessstelleTooltipDTO(final Messstelle messstelle, @Context final StadtbezirkMapper stadtbezirkMapper);
 
-    MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
+    MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle, @Context final StadtbezirkMapper stadtbezirkMapper);
 
-    Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen, @Context StadtbezirkMapper stadtbezirkMapper);
+    Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen, @Context final StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
     default void messstelleToMessstelleKarteDTOAfterMapping(
-            @MappingTarget MessstelleKarteDTO dto,
-            Messstelle bean,
-            @Context StadtbezirkMapper stadtbezirkMapper) {
+            @MappingTarget final MessstelleKarteDTO dto,
+            final Messstelle bean,
+            @Context final StadtbezirkMapper stadtbezirkMapper) {
         dto.setType("messstelle");
         dto.setFachId(bean.getMstId());
         dto.setLatitude(bean.getPunkt().getLat());
@@ -41,9 +41,9 @@ public interface SucheMapper {
 
     @AfterMapping
     default void messstelleToMessstelleTooltipDTOAfterMapping(
-            @MappingTarget MessstelleTooltipDTO dto,
-            Messstelle bean,
-            @Context StadtbezirkMapper stadtbezirkMapper) {
+            @MappingTarget final MessstelleTooltipDTO dto,
+            final Messstelle bean,
+            @Context final StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
 
@@ -95,7 +95,9 @@ public interface SucheMapper {
     ZaehlstelleKarteDTO zaehlstelleToZaehlstelleKarteDTO(final Zaehlstelle zaehlstelle);
 
     @AfterMapping
-    default void zaehlstelleToZaehlstelleKarteDTOAfterMapping(@MappingTarget ZaehlstelleKarteDTO dto, Zaehlstelle bean) {
+    default void zaehlstelleToZaehlstelleKarteDTOAfterMapping(
+            @MappingTarget final ZaehlstelleKarteDTO dto,
+            final Zaehlstelle bean) {
         dto.setType("zaehlstelle");
         dto.setFachId(bean.getNummer());
         dto.setLatitude(bean.getPunkt().getLat());
