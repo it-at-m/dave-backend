@@ -1,10 +1,5 @@
 package de.muenchen.dave.spring.services.pdfgenerator;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
@@ -16,13 +11,19 @@ import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.pdfgenerator.ReportService;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -31,17 +32,14 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class ReportServiceSpringTest {
 
-    @MockBean
-    private ZaehlstelleIndex zaehlstelleIndex;
-
-    @MockBean
-    private MessstelleIndex messstelleIndex;
-
-    @MockBean
-    private CustomSuggestIndex customSuggestIndex;
-
     @Autowired
     ReportService reportService;
+    @MockBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+    @MockBean
+    private MessstelleIndex messstelleIndex;
+    @MockBean
+    private CustomSuggestIndex customSuggestIndex;
 
     @Test
     public void generateReportHtml() {

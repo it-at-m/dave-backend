@@ -1,8 +1,5 @@
 package de.muenchen.dave.domain.mapper;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-
 import com.github.javafaker.Faker;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
@@ -16,6 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
                 "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
@@ -24,19 +24,15 @@ import org.springframework.test.context.ActiveProfiles;
 @Slf4j
 public class StadtbezirkMapperTest {
 
+    private static final Faker fakerInstance = Faker.instance();
     @Autowired
     private StadtbezirkMapper stadtbezirkMapper;
-
     @MockBean
     private ZaehlstelleIndex zaehlstelleIndex;
-
     @MockBean
     private MessstelleIndex messstelleIndex;
-
     @MockBean
     private CustomSuggestIndex customSuggestIndex;
-
-    private static final Faker fakerInstance = Faker.instance();
 
     @Test
     public void testBezeichnungOfWithExistingStadtbezirk() {

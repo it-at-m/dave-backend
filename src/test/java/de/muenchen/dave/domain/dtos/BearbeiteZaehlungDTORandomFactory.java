@@ -4,11 +4,12 @@ import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class BearbeiteZaehlungDTORandomFactory {
 

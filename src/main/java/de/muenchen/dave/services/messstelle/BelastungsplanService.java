@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +30,12 @@ public class BelastungsplanService {
     private final RoundingService roundingService;
 
     private final SpitzenstundeService spitzenstundeService;
+
+    protected static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
+        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
+                ? ""
+                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
+    }
 
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
             final List<IntervalDto> intervals,
@@ -126,12 +131,6 @@ public class BelastungsplanService {
         }
 
         return belastungsplanMessquerschnitte;
-    }
-
-    protected static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
-        return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
-                ? ""
-                : messstelle.getMessquerschnitte().getFirst().getStrassenname();
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {

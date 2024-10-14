@@ -7,13 +7,13 @@ package de.muenchen.dave.util.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 class MesswerteBaseUtilTest {
 

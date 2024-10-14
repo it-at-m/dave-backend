@@ -1,13 +1,14 @@
 package de.muenchen.dave.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.dtos.laden.FahrbeziehungenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
-import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class FahrbeziehungUtilTest {
 

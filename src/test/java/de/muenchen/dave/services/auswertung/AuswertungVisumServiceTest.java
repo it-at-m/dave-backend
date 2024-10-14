@@ -1,8 +1,5 @@
 package de.muenchen.dave.services.auswertung;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.FahrbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
@@ -12,9 +9,13 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class AuswertungVisumServiceTest {
 

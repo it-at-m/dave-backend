@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections4.list.UnmodifiableList;
 import org.apache.commons.collections4.map.UnmodifiableMap;
 import org.apache.commons.io.IOUtils;
@@ -42,22 +44,15 @@ import org.mockito.quality.Strictness;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class NfcConverterTest {
 
-    private static final String NAME_NFD = "aM\u0302ao\u0308a";
-
-    private static final String VALUE_NFD = "b M\u0302 b o\u0308 b";
-
-    private static final String VALUE2_NFD = "c M\u0302 c o\u0308 c";
-
-    private static final String NAME_NFC = Normalizer.normalize(NAME_NFD, Normalizer.Form.NFC);
-
-    private static final String VALUE_NFC = Normalizer.normalize(VALUE_NFD, Normalizer.Form.NFC);
-
-    @SuppressWarnings("unused")
-    private static final String VALUE2_NFC = Normalizer.normalize(VALUE2_NFD, Normalizer.Form.NFC);
-
     // Für Stellen der API an denen Strings bestimmten Regeln genügen müssen.
     public static final String TOKEN = "token";
-
+    private static final String NAME_NFD = "aM\u0302ao\u0308a";
+    private static final String VALUE_NFD = "b M\u0302 b o\u0308 b";
+    private static final String VALUE2_NFD = "c M\u0302 c o\u0308 c";
+    private static final String NAME_NFC = Normalizer.normalize(NAME_NFD, Normalizer.Form.NFC);
+    private static final String VALUE_NFC = Normalizer.normalize(VALUE_NFD, Normalizer.Form.NFC);
+    @SuppressWarnings("unused")
+    private static final String VALUE2_NFC = Normalizer.normalize(VALUE2_NFD, Normalizer.Form.NFC);
     private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     @Mock
@@ -72,7 +67,7 @@ public class NfcConverterTest {
     @Mock
     private FilterConfig config;
 
-    private NfcRequestFilter filter = new NfcRequestFilter();
+    private final NfcRequestFilter filter = new NfcRequestFilter();
 
     //
     // Test, das Request mit konfigriertem ContentType auf NFC normalisiert wird.

@@ -1,13 +1,5 @@
 package de.muenchen.dave.spring.services.persist;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
@@ -22,10 +14,6 @@ import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +21,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -78,14 +79,14 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
         zst = ZaehlstelleRandomFactory.getOne();
         zst.setNummer("120107");
         zst.setStadtbezirkNummer(12);
-        zst.setZaehlungen(Arrays.asList(ZaehlungRandomFactory.getOne()));
+        zst.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
         zst.getZaehlungen().get(0).setStatus(Status.CORRECTION.name());
         indexResult.add(zst);
 
         zst = ZaehlstelleRandomFactory.getOne();
         zst.setNummer("120107");
         zst.setStadtbezirkNummer(12);
-        zst.setZaehlungen(Arrays.asList(ZaehlungRandomFactory.getOne()));
+        zst.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
         zst.getZaehlungen().get(0).setStatus(Status.COUNTING.name());
         indexResult.add(zst);
 
@@ -104,7 +105,7 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
         final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         zaehlstelle.setNummer("120105");
         zaehlstelle.setStadtbezirkNummer(12);
-        zaehlstelle.setZaehlungen(Arrays.asList(ZaehlungRandomFactory.getOne()));
+        zaehlstelle.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
         zaehlstelle.getZaehlungen().get(0).setStatus(Status.INSTRUCTED.name());
 
         final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();

@@ -11,9 +11,6 @@ import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RequestMapping(value = "/zaehlstelle")
 @RestController
