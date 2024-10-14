@@ -29,7 +29,8 @@ public interface SucheMapper {
 
     @AfterMapping
     default void messstelleToMessstelleKarteDTOAfterMapping(
-            @MappingTarget MessstelleKarteDTO dto, Messstelle bean,
+            @MappingTarget MessstelleKarteDTO dto,
+            Messstelle bean,
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setType("messstelle");
         dto.setFachId(bean.getMstId());

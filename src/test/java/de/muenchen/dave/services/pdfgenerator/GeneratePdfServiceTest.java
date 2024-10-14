@@ -182,7 +182,6 @@ class GeneratePdfServiceTest {
         } else {
             expected = String.format(
                     "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>");
-
         }
 
         assertThat(html, is(expected));
