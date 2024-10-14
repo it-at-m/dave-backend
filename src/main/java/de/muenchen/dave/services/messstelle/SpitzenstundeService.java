@@ -33,27 +33,24 @@ public class SpitzenstundeService {
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
             final ZaehldatenIntervall intervalSize) {
-        final int partsPerHour;
-        if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
-            partsPerHour = 4;
-        } else if (ZaehldatenIntervall.STUNDE_HALB == intervalSize) {
-            partsPerHour = 2;
-        } else {
-            partsPerHour = 1;
-        }
         var intervalsSpitzenstunde = new ArrayList<IntervalDto>();
         var spitzenStunde = new LadeMesswerteDTO();
-        for (int index = 0; index + partsPerHour < intervals.size(); index++) {
+        for (int index = 0; index < intervals.size(); index++) {
             final var intervalsToCheckForSpitzenstunde = new ArrayList<IntervalDto>();
             if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
-                intervalsToCheckForSpitzenstunde.addAll(
-                        List.of(
-                                intervals.get(index),
-                                intervals.get(index + 1),
-                                intervals.get(index + 2),
-                                intervals.get(index + 3)));
+                if (index < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index));
+                if (index + 1 < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index + 1));
+                if (index + 2 < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index + 2));
+                if (index + 3 < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index + 3));
             } else if (ZaehldatenIntervall.STUNDE_HALB == intervalSize) {
-                intervalsToCheckForSpitzenstunde.addAll(List.of(intervals.get(index), intervals.get(index + 1)));
+                if (index < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index));
+                if (index + 1 < intervals.size())
+                    intervalsToCheckForSpitzenstunde.add(intervals.get(index + 1));
             } else {
                 // ZaehldatenIntervall.STUNDE_KOMPLETT
                 intervalsToCheckForSpitzenstunde.add(intervals.get(index));
@@ -88,7 +85,6 @@ public class SpitzenstundeService {
                     intervalsToCheckForSpitzenstunde.add(intervals.get(index + 2));
                 if (index + 3 < intervals.size())
                     intervalsToCheckForSpitzenstunde.add(intervals.get(index + 3));
-
             } else if (ZaehldatenIntervall.STUNDE_HALB == intervalSize) {
                 if (index < intervals.size())
                     intervalsToCheckForSpitzenstunde.add(intervals.get(index));
