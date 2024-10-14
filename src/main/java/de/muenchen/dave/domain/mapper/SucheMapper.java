@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import org.apache.commons.lang3.ObjectUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -39,10 +40,12 @@ public interface SucheMapper {
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
-        dto.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
-        if (bean.getAbbaudatum() != null)
+        if (ObjectUtils.isNotEmpty(bean.getRealisierungsdatum()))
+            dto.setAbbaudatum(bean.getRealisierungsdatum().toString());
+        if (ObjectUtils.isNotEmpty(bean.getAbbaudatum()))
             dto.setAbbaudatum(bean.getAbbaudatum().toString());
-        dto.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
+        if (ObjectUtils.isNotEmpty(bean.getDatumLetztePlausibleMessung()))
+            dto.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
     }
 
     /**
