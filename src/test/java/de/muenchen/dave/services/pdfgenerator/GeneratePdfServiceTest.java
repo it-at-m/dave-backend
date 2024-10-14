@@ -14,6 +14,7 @@ import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -174,8 +175,15 @@ class GeneratePdfServiceTest {
 
         final String html = generatePdfService.getHtml(mustache, pdfBean);
 
-        final var expected = String.format(
-                "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>");
+        final String expected;
+
+        if (SystemUtils.IS_OS_WINDOWS) {
+            expected = "<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>";
+        } else {
+            expected = String.format(
+                    "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>");
+
+        }
 
         assertThat(html, is(expected));
     }
