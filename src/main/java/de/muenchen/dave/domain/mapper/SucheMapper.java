@@ -40,7 +40,8 @@ public interface SucheMapper {
 
     @AfterMapping
     default void messstelleToMessstelleTooltipDTOAfterMapping(
-            @MappingTarget MessstelleTooltipDTO dto, Messstelle bean,
+            @MappingTarget MessstelleTooltipDTO dto,
+            Messstelle bean,
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
