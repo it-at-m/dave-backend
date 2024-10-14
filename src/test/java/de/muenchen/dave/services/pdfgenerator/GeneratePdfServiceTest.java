@@ -177,12 +177,8 @@ class GeneratePdfServiceTest {
 
         final String expected;
 
-        if (SystemUtils.IS_OS_WINDOWS) {
-            expected = "<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>";
-        } else {
-            expected = String.format(
-                    "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>");
-        }
+        expected = String.format(
+                "<html>%n<head>%n  <style></style>%n</head>%n<body>%nNur ein Test-Template.%n<header>Der Header</header>%n%n<footer>Der Footer</footer>%n%n14.12.2020%n&lt;TestOU&gt;%n</body>%n</html>");
 
         assertThat(html, is(expected));
     }
