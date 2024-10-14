@@ -13,6 +13,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum TagesTyp {
 
+    UNSPECIFIED("unspecified", MesswertRequestDto.TagesTypEnum.DTV, null),
+
     WERKTAG_DI_MI_DO("DTVw3 (Di,Mi,Do - außerhalb Ferien)", MesswertRequestDto.TagesTypEnum.DTV_W3, IntervalDto.TagesTypEnum.DTV_W3),
 
     WERKTAG_MO_FR("DTVw5 (Mo-Fr - außerhalb Ferien)", MesswertRequestDto.TagesTypEnum.DTV_W5, IntervalDto.TagesTypEnum.DTV_W5),
