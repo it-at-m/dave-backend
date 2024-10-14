@@ -4,9 +4,10 @@
  */
 package de.muenchen.dave.util;
 
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ChartLegendUtil {

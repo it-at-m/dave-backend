@@ -2,11 +2,12 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.configuration.StadtbezirkMapperConfig;
 import jakarta.annotation.Resource;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor

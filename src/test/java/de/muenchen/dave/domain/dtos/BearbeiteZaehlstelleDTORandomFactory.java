@@ -6,10 +6,11 @@ import com.github.javafaker.service.RandomService;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class BearbeiteZaehlstelleDTORandomFactory {
 

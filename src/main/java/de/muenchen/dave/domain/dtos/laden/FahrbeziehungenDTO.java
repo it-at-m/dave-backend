@@ -4,9 +4,10 @@
  */
 package de.muenchen.dave.domain.dtos.laden;
 
+import lombok.Data;
+
 import java.util.Map;
 import java.util.Set;
-import lombok.Data;
 
 /**
  * Klasse stellt die möglichen Fahrbeziehung zur Verfügung welche ausgewählt werden können.
@@ -20,8 +21,7 @@ public class FahrbeziehungenDTO {
     Set<Integer> vonKnotenarme;
 
     /**
-     * Je in die in die Kreuzung/in den Kreisverkehr führenden Knotenarm
-     * die möglichen Zielknotenarme.
+     * Je in die in die Kreuzung/in den Kreisverkehr führenden Knotenarm die möglichen Zielknotenarme.
      */
     Map<Integer, Set<Integer>> nachKnotenarme;
 

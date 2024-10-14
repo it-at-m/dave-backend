@@ -53,7 +53,8 @@ public class KIZeitintervall {
 
     /**
      * Diese Methode wandelt ein KIZeitintervall-Objekt in ein Array mit primitivem long-Typ um, damit
-     * die ONNX-Runtime (int64) dieses zur Vorhersage verwenden kann.
+     * die ONNX-Runtime (int64) dieses zur Vorhersage verwenden
+     * kann.
      *
      * @return Das KIZeitintervall als long[]-Repräsentation.
      */

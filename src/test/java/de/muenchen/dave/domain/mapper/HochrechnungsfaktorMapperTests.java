@@ -1,15 +1,15 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-
 import de.muenchen.dave.domain.dtos.BearbeiteHochrechnungsfaktorDTORandomFactory;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor;
 import de.muenchen.dave.domain.elasticsearch.HochrechnungsfaktorRandomFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 
 @Slf4j
 public class HochrechnungsfaktorMapperTests {

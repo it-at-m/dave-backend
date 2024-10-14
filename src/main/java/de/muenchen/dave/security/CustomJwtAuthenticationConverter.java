@@ -11,7 +11,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 
 /**
  * Ein custom {@link JwtAuthenticationConverter}, der die Authorities und die Nutzerinformationen
- * mittels {@link UserInfoDataService} vom /userinfo Endpoint des OIDC Providers bezieht.
+ * mittels {@link UserInfoDataService} vom /userinfo Endpoint des
+ * OIDC Providers bezieht.
  */
 @Profile("!no-security")
 @RequiredArgsConstructor

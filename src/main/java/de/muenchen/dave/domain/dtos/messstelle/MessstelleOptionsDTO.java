@@ -4,14 +4,16 @@
  */
 package de.muenchen.dave.domain.dtos.messstelle;
 
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import lombok.Data;
 
 @Data
 public class MessstelleOptionsDTO implements Serializable {
@@ -28,7 +30,7 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotNull
     private Zeitblock zeitblock;
 
-    private String tagesTyp;
+    private TagesTyp tagesTyp;
 
     @NotNull
     private ZaehldatenIntervall intervall;

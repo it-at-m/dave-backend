@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -14,10 +13,12 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mappings;
 
+import java.util.List;
+
 /**
- * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann.
- * Mustache ist eine Sprache für Templates aus denen die für die PDF benötigten HTML Strings
- * entstehen.
+ * Mapper wird benötigt, da Mustache nicht mit @JsonGetter umgehen kann. Mustache ist eine Sprache
+ * für Templates aus denen die für die PDF benötigten HTML
+ * Strings entstehen.
  */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface DatentabellePdfZaehldatumMapper {

@@ -1,14 +1,14 @@
 package de.muenchen.dave.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.services.IndexServiceUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -16,8 +16,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @Slf4j
 public class SuchwortUtilTests {

@@ -4,10 +4,11 @@
  */
 package de.muenchen.dave.domain.dtos.laden;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
 
 @Data
 public class StepLineSeriesEntryBigDecimalDTO extends StepLineSeriesEntryBaseDTO {

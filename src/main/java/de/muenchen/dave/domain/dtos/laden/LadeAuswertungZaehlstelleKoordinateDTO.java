@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import java.time.LocalDate;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Data
 public class LadeAuswertungZaehlstelleKoordinateDTO {

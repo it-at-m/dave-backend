@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.is;
 @Slf4j
 class GeneratePdfServiceTest {
 
-    private GeneratePdfService generatePdfService = new GeneratePdfService(null, null);
+    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null);
 
     @BeforeEach
     public void init() {

@@ -18,14 +18,15 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -131,11 +132,11 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
-     * einen {@link Zeitintervall}.
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen
-     *            an einen {@link Zeitintervall} erstellt werden soll.
+     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
+     *            einen {@link Zeitintervall} erstellt werden soll.
      * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */

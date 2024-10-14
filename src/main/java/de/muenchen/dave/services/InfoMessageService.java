@@ -8,11 +8,12 @@ import de.muenchen.dave.domain.InfoMessage;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
 import de.muenchen.dave.domain.mapper.InfoMessageMapper;
 import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 @Service
 public class InfoMessageService {
@@ -30,9 +31,9 @@ public class InfoMessageService {
     }
 
     /**
-     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene
-     * {@link InfoMessageDTO}s als Liste zurück, beginnend mit der
-     * neusten aktiven InfoMessage.
+     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene {@link InfoMessageDTO}s als
+     * Liste zurück, beginnend mit der neusten aktiven
+     * InfoMessage.
      *
      * @param infoMessageDTO Das {@link InfoMessageDTO} zum Speichern.
      * @return die {@link InfoMessageDTO}s

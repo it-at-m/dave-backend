@@ -22,14 +22,6 @@ import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -41,6 +33,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -87,9 +88,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Zählstelle im Index speichern. Sollte Elasticsearch nicht
-     * erreichbar sein, dann wird eine entsprechende Exception
-     * geworfen und eine Fehlermeldung geloggt.
+     * Zählstelle im Index speichern. Sollte Elasticsearch nicht erreichbar sein, dann wird eine
+     * entsprechende Exception geworfen und eine Fehlermeldung
+     * geloggt.
      *
      * @param zaehlstelle zu Speichernede Zaehlstelle
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
@@ -122,9 +123,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Speichert die Daten zur Zählstelle, wenn diese erneuert wurden. Es wird erwartet,
-     * dass immer alle Werte zur Zählung übergeben werden, auch welche, die nicht verändert
-     * wurden. Werden diese nicht übergebn, so entstehen (ungewollt) leere Attribute.
+     * Speichert die Daten zur Zählstelle, wenn diese erneuert wurden. Es wird erwartet, dass immer alle
+     * Werte zur Zählung übergeben werden, auch welche, die
+     * nicht verändert wurden. Werden diese nicht übergebn, so entstehen (ungewollt) leere Attribute.
      *
      * @param zdto DTO der Zählstelle
      * @param zaehlstelleId ID der Zählstelle
@@ -152,8 +153,7 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Erstellt eine neue Zählung, updatet die entsprechende Zählstelle und
-     * speichert alles im Index.
+     * Erstellt eine neue Zählung, updatet die entsprechende Zählstelle und speichert alles im Index.
      *
      * @param zdto DTO der Zaehlung
      * @param zaehlstelleId ID der Zählstelle
@@ -235,8 +235,8 @@ public class ZaehlstelleIndexService {
      * Erneuert die {@link Zaehlung} welche an der {@link Zaehlstelle}
      * - identifiziert entsprechend des Parameters zaehlstelleId - angefügt ist.
      * <p>
-     * Falls die zu erneuernde {@link Zaehlung} mehr Suchwörter beinhaltet als die
-     * bisherige persistierte Zählung, so werden die neuen Suchwörter persistiert.
+     * Falls die zu erneuernde {@link Zaehlung} mehr Suchwörter beinhaltet als die bisherige
+     * persistierte Zählung, so werden die neuen Suchwörter persistiert.
      *
      * @param zl zur Erneuerung in der {@link Zaehlstelle}.
      * @param zaehlstelleId zur Identifikation der {@link Zaehlstelle}.
@@ -317,9 +317,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Erneuert die Parameter einer Zählstelle, die von der letzten Zählung
-     * abhängig sind. Dabei ist es irrelevant, ob die übergebene Zählung die
-     * letzte Zählung ist.
+     * Erneuert die Parameter einer Zählstelle, die von der letzten Zählung abhängig sind. Dabei ist es
+     * irrelevant, ob die übergebene Zählung die letzte Zählung
+     * ist.
      *
      * @param zaehlstelle Zaehlstelle
      * @param zaehlung Zaehlung
@@ -439,10 +439,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Aufbau der Zaehlstellennummer
-     * Stelle 1 und 2: Stadtbezirksnummer ohne fuehrende 0
-     * Stelle 3 und 4: Stadtbezirksviertelnummer
-     * Stelle 5 und 6: laufende Nummer (wird aus DB geholt)
+     * Aufbau der Zaehlstellennummer Stelle 1 und 2: Stadtbezirksnummer ohne fuehrende 0 Stelle 3 und 4:
+     * Stadtbezirksviertelnummer Stelle 5 und 6: laufende
+     * Nummer (wird aus DB geholt)
      *
      * @param partOfzaehlstelleId Ersten 3-4 Zeichen der Zaehlstellennummer (ohne fuehrende 0)
      * @param stadtbezirksnummer Nummer des Stadtbezirks der Zaehlstelle
@@ -467,9 +466,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Ermittelt alle Zaehlungen, die für den Dienstleister relevant sind.
-     * Relevante Zählungen haben einen der folgenden Status:
-     * Status.COUNTING, Status.CORRECTION, Status.INSTRUCTED
+     * Ermittelt alle Zaehlungen, die für den Dienstleister relevant sind. Relevante Zählungen haben
+     * einen der folgenden Status: Status.COUNTING,
+     * Status.CORRECTION, Status.INSTRUCTED
      *
      * @param diensleisterkennung Kennung des Dienstleisters
      * @param isFachadmin Ist der User ein Fachadmin?
@@ -537,10 +536,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Ermittelt alle Zaehlungen, die noch nicht freigegeben sind.
-     * Relevante Zählungen haben einen der folgenden Status:
-     * Status.COUNTING, Status.CORRECTION, Status.INSTRUCTED,
-     * Status.ACCOMPLISHED und Status.CREATED
+     * Ermittelt alle Zaehlungen, die noch nicht freigegeben sind. Relevante Zählungen haben einen der
+     * folgenden Status: Status.COUNTING, Status.CORRECTION,
+     * Status.INSTRUCTED, Status.ACCOMPLISHED und Status.CREATED
      *
      * @return Liste mit allen relevanten Zählungen
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch

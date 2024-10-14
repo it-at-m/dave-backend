@@ -13,9 +13,6 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -25,6 +22,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt
@@ -37,15 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Profile({ "!konexternal && !prodexternal && !unittest" })
 public class MessstelleReceiver {
 
-    private MessstelleApi messstelleApi;
-
     private final MessstelleIndexService messstelleIndexService;
-
     private final CustomSuggestIndexService customSuggestIndexService;
-
-    private MessstelleReceiverMapper messstelleReceiverMapper;
-
     private final StadtbezirkMapper stadtbezirkMapper;
+    private MessstelleApi messstelleApi;
+    private MessstelleReceiverMapper messstelleReceiverMapper;
 
     /**
      * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
@@ -73,10 +70,12 @@ public class MessstelleReceiver {
     private void processingMessstellen(final List<MessstelleDto> messstellen) {
         log.debug("#processingMessstellenCron");
         // Daten aus Dave laden
-        messstellen.forEach(messstelleDto -> {
+        messstellen.parallelStream().forEach(messstelleDto -> {
             log.debug("#findById");
-            messstelleIndexService.findByMstId(messstelleDto.getMstId()).ifPresentOrElse(found -> this.updateMessstelle(found, messstelleDto),
-                    () -> this.createMessstelle(messstelleDto));
+            messstelleIndexService.findByMstId(messstelleDto.getMstId())
+                    .ifPresentOrElse(
+                            found -> this.updateMessstelle(found, messstelleDto),
+                            () -> this.createMessstelle(messstelleDto));
         });
     }
 

@@ -15,9 +15,6 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +22,10 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -73,15 +74,14 @@ public class ProcessZaehldatenSteplineService {
 
     /**
      * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
-     * befinden, wird das Diagramm in zwei Unterdiagramme aufgeteilt.
-     * Die Aufteilung der Daten für die beiden Unterdiagramme wird in der mitte der X-Achse
-     * des Gesamtdiagramms vorgenommen.
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN} befinden, wird das Diagramm in zwei
+     * Unterdiagramme aufgeteilt. Die Aufteilung der Daten für die beiden Unterdiagramme wird in der
+     * mitte der X-Achse des Gesamtdiagramms vorgenommen.
      *
-     * @param ladeZaehldatenStepline Die für ein Diagramm aufbereitete Daten.
-     *            Die Unterteilung in Unterdiagramme ist noch nicht durchgeführt.
-     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
-     *            und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
+     * @param ladeZaehldatenStepline Die für ein Diagramm aufbereitete Daten. Die Unterteilung in
+     *            Unterdiagramme ist noch nicht durchgeführt.
+     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
+     *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
             final OptionsDTO options) {
@@ -177,21 +177,21 @@ public class ProcessZaehldatenSteplineService {
      * Diese Methode führt die Datenaufbereitung für das Stepline-Diagramm durch.
      * <p>
      * Sind in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
-     * zu finden, so wird die Datenaufbereitung für zwei Unterdiagramme vorgenommen.
-     * Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in zwei Unterdiagramme statt
-     * und die Daten werden für ein Diagramm aufbereitet.
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN} zu finden, so wird die Datenaufbereitung für zwei
+     * Unterdiagramme vorgenommen. Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in
+     * zwei Unterdiagramme statt und die Daten werden für ein
+     * Diagramm aufbereitet.
      * <p>
      * Falls keine Aufteilung in zwei Unterdiagrammme erforderlich ist, werden in der Klasse
      * {@link LadeZaehldatenSteplineDTO} neben den Variablen
      * {@link LadeZaehldatenSteplineDTO}#getLegend, {@link LadeZaehldatenSteplineDTO}#getRangeMax und
-     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur die Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart
-     * sowie {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesFirstChart gesetzt.
+     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur
+     * die Variablen {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart sowie
+     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesFirstChart gesetzt.
      * <p>
      * Ist eine Aufteilung notwendig, so werden auch die Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart
-     * sowie {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesSecondChart gesetzt.
+     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart sowie
+     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesSecondChart gesetzt.
      *
      * @param zaehldatenTable Die Datengrundlage zur Aufbereitung des Stepline-Diagramms.
      * @param options Die durch den User im Frontend gewählten Optionen.
@@ -301,8 +301,8 @@ public class ProcessZaehldatenSteplineService {
 
     /**
      * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
-     * {@link StepLineSeriesEntryBigDecimalDTO}
-     * nach Fahrzeugklasse und Fahrzeugkategorie aufgliedert und vorhält.
+     * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
+     * aufgliedert und vorhält.
      */
     @Getter
     @Setter
@@ -373,13 +373,13 @@ public class ProcessZaehldatenSteplineService {
 
         /**
          * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
-         * entsprechend der im Parameter options gewählten Fahrzeugklassen, Fahrzeugkategorien
-         * und Prozentwerte als Liste zurück.
+         * entsprechend der im Parameter options gewählten
+         * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
          * @param options Das Objekt mit der Information bezüglich erwünschter oder nicht erwünschter
          *            Fahrzeugklassen, Fahrzeugkategorien oder Prozentwerte
-         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO}
-         *         und {@link StepLineSeriesEntryBigDecimalDTO}.
+         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
+         *         {@link StepLineSeriesEntryBigDecimalDTO}.
          */
         public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final OptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();

@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.elasticsearch;
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

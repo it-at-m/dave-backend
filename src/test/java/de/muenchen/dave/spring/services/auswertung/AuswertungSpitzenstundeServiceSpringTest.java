@@ -1,10 +1,5 @@
 package de.muenchen.dave.spring.services.auswertung;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
@@ -17,16 +12,22 @@ import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.auswertung.AuswertungSpitzenstundeService;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.UUID;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {

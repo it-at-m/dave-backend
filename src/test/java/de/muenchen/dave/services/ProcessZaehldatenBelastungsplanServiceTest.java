@@ -1,8 +1,5 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -15,13 +12,17 @@ import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class ProcessZaehldatenBelastungsplanServiceTest {
 

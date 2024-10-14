@@ -8,11 +8,6 @@ import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +18,12 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleReceiverMapper {
@@ -47,19 +48,9 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        // TODO workaround solange Datenqualitaet mist ist
+        // TODO workaround solange Datenqualitaet nicht geklärt ist
         if (ObjectUtils.isEmpty(dto.getStadtbezirkNummer())) {
             bean.setStadtbezirkNummer(999);
-        }
-
-        // TODO workaround solange Datenqualitaet mist ist
-        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            bean.setDatumLetztePlausibleMessung(LocalDate.MAX);
-        }
-
-        // TODO workaround solange Datenqualitaet mist ist
-        if (ObjectUtils.isEmpty(dto.getRealisierungsdatum())) {
-            bean.setRealisierungsdatum(LocalDate.MAX);
         }
 
         // Suchworte setzen

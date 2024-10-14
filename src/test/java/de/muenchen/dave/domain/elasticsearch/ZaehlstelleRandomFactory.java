@@ -6,11 +6,12 @@ import com.github.javafaker.service.RandomService;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import de.muenchen.dave.services.IndexServiceUtils;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class ZaehlstelleRandomFactory {
     private final static FakeValuesService service = new FakeValuesService(new Locale("test"), new RandomService());
@@ -23,8 +24,7 @@ public class ZaehlstelleRandomFactory {
     private final static String GEO = "geo";
 
     /**
-     * Creates a random "zaehlstelle". You can find the data under
-     * /test/resources/test.yml.
+     * Creates a random "zaehlstelle". You can find the data under /test/resources/test.yml.
      *
      * @return
      */

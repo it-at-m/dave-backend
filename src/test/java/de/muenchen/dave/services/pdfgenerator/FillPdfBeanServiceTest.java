@@ -1,8 +1,5 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -17,14 +14,20 @@ import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfCompon
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 class FillPdfBeanServiceTest {
 
@@ -138,18 +141,34 @@ class FillPdfBeanServiceTest {
     @Test
     void fillMessstelleninformationen() {
         final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        final MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
+        MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final String tagesTyp = TagesTyp.SAMSTAG.name();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
-        optionsDTO.setZeitraum(List.of(LocalDate.now()));
+        final ArrayList<LocalDate> localDates = new ArrayList<>();
+        localDates.add(LocalDate.now());
+        localDates.add(LocalDate.now());
+        optionsDTO.setZeitraum(localDates);
 
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
-        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().get(0).format(DDMMYYYY)));
+        assertThat(informationen.getMesszeitraum(),
+                is(String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(0).format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
+        assertThat(informationen.isWochentagNeeded(), is(true));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
+
+        informationen = new MessstelleninformationenPdfComponent();
+        optionsDTO.setZeitraum(List.of(LocalDate.now()));
+        FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
+        assertThat(informationen.getStandort(), is(messstelle.getStandort()));
+        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().get(0).format(DDMMYYYY)));
+        assertThat(informationen.isWochentagNeeded(), is(false));
+        assertThat(informationen.getWochentag(), is(nullValue()));
+        assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
+
     }
 
     @Test
@@ -164,14 +183,13 @@ class FillPdfBeanServiceTest {
 
         final Messquerschnitt messquerschnitt = messstelle.getMessquerschnitte().get(0);
         optionsDTO.setMessquerschnittIds(Set.of(messquerschnitt.getMqId()));
-        final StringBuilder expectedChartTitle = new StringBuilder();
-        expectedChartTitle.append(messquerschnitt.getMqId());
-        expectedChartTitle.append(StringUtils.SPACE);
-        expectedChartTitle.append("-");
-        expectedChartTitle.append(StringUtils.SPACE);
-        expectedChartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN));
-        expectedChartTitle.append(StringUtils.SPACE);
-        assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(expectedChartTitle.toString().trim()));
+        String expectedChartTitle = messquerschnitt.getMqId() +
+                StringUtils.SPACE +
+                "-" +
+                StringUtils.SPACE +
+                StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN) +
+                StringUtils.SPACE;
+        assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(expectedChartTitle.trim()));
     }
 
     @Test

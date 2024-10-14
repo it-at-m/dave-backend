@@ -1,8 +1,5 @@
 package de.muenchen.dave.services.auswertung;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
@@ -11,10 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 @Slf4j
 class AuswertungSpitzenstundeServiceTest {
 
-    private AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null);
+    private final AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null);
 
     @Test
     void getSortingIndex() {

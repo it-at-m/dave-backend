@@ -11,11 +11,12 @@ import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodDto;
 import de.muenchen.dave.geodateneai.gen.model.ValidWochentageInPeriodRequestDto;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 class MessstelleOptionsmenuMapperTest {
 

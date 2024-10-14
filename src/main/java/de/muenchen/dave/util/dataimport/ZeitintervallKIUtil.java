@@ -7,6 +7,9 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,12 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 /**
- * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage
- * entsprechend den Fahrbeziehungen.
+ * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage entsprechend den
+ * Fahrbeziehungen.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallKIUtil {
@@ -78,7 +79,8 @@ public final class ZeitintervallKIUtil {
      * @param zeitintervall Zeitintervall zur Übertragung der ZaehlungID, FahrbeziehungID und
      *            Fahrbeziehung
      * @return Zeitintervall vom Typ TypeZeitintervall.GESAMT_KI, dass die Tageshochrechnungen für
-     *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der Hochrechnung) enthält.
+     *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der
+     *         Hochrechnung) enthält.
      */
     private static Zeitintervall createKIZeitintervallFromKIPredictionResult(KIPredictionResult predictionResult, Zeitintervall zeitintervall) {
         final Zeitintervall kiZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(

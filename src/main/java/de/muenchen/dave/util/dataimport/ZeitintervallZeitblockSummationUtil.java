@@ -8,6 +8,11 @@ import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Diese Klasse bildet die Summen je möglichen {@link Zeitblock} je {@link Fahrbeziehung}.
@@ -29,8 +30,8 @@ import org.apache.commons.lang3.ObjectUtils;
 public final class ZeitintervallZeitblockSummationUtil {
 
     /**
-     * In dieser Methode werden die {@link Zeitintervall}e je {@link Fahrbeziehung}
-     * über die {@link Zeitblock}e summiert.
+     * In dieser Methode werden die {@link Zeitintervall}e je {@link Fahrbeziehung} über die
+     * {@link Zeitblock}e summiert.
      *
      * @param zeitintervalle Die zur Summierung vorgesehenen Zeitintervalle.
      * @return Die Summen je {@link Fahrbeziehung} und je {@link Zeitblock}.
@@ -128,9 +129,9 @@ public final class ZeitintervallZeitblockSummationUtil {
      *
      * @param zeitblock zur Prüfung.
      * @param startEndeUhrzeit zur Prüfung.
-     * @return Handelt es sich im Parameter zeitblock um einen dieser beiden Zeitblöcke und
-     *         die Anzahl an Stunden zwischen der Start- und Endeuhrzeit entspricht nicht dem Zeitblock,
-     *         so wird false zurückgegeben. Andernfalls wird true zurückgegeben.
+     * @return Handelt es sich im Parameter zeitblock um einen dieser beiden Zeitblöcke und die Anzahl
+     *         an Stunden zwischen der Start- und Endeuhrzeit entspricht
+     *         nicht dem Zeitblock, so wird false zurückgegeben. Andernfalls wird true zurückgegeben.
      */
     private static boolean shouldZeitblockBeCreated(final Zeitblock zeitblock,
             final StartEndeUhrzeit startEndeUhrzeit) {
@@ -141,9 +142,9 @@ public final class ZeitintervallZeitblockSummationUtil {
     }
 
     /**
-     * Diese Methode ermittelt für die im Parameter übergebenen {@link Zeitintervall}e
-     * die Startuhrzeit des frühesten Zeitintervalls und die Endeuhrzeit des ältesten
-     * Zeitintervalls.
+     * Diese Methode ermittelt für die im Parameter übergebenen {@link Zeitintervall}e die Startuhrzeit
+     * des frühesten Zeitintervalls und die Endeuhrzeit des
+     * ältesten Zeitintervalls.
      *
      * @param zeitintervalle zur Ermittlung der Start- und Endeuhrzeit.
      * @return die Startuhrzeit des frühesten Zeitintervalls und Endeuhrzeit des ältesten
