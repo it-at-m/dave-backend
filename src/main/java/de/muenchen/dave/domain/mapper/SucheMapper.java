@@ -26,7 +26,8 @@ public interface SucheMapper {
     Set<MessstelleKarteDTO> messstelleToMessstelleKarteDTO(final List<Messstelle> messstellen, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
-    default void messstelleToMessstelleKarteDTOAfterMapping(@MappingTarget MessstelleKarteDTO dto, Messstelle bean,
+    default void messstelleToMessstelleKarteDTOAfterMapping(
+            @MappingTarget MessstelleKarteDTO dto, Messstelle bean,
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setType("messstelle");
         dto.setFachId(bean.getMstId());
@@ -36,7 +37,8 @@ public interface SucheMapper {
     }
 
     @AfterMapping
-    default void messstelleToMessstelleTooltipDTOAfterMapping(@MappingTarget MessstelleTooltipDTO dto, Messstelle bean,
+    default void messstelleToMessstelleTooltipDTOAfterMapping(
+            @MappingTarget MessstelleTooltipDTO dto, Messstelle bean,
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
@@ -60,7 +62,8 @@ public interface SucheMapper {
      * @param kreuzungsname Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
-    default ZaehlstelleTooltipDTO createZaehlstelleTooltip(final String stadtbezirk,
+    default ZaehlstelleTooltipDTO createZaehlstelleTooltip(
+            final String stadtbezirk,
             final Integer stadtbezirknummer,
             final String nummer,
             final Integer anzahlZaehlungen,
