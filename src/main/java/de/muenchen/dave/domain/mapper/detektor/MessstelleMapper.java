@@ -88,7 +88,7 @@ public interface MessstelleMapper {
 
         // TODO workaround solange Datenqualitaet mist ist
         if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            actual.setDatumLetztePlausibleMessung(LocalDate.MAX);
+            actual.setDatumLetztePlausibleMessung(LocalDate.now());
         }
 
         // Suchworte setzen
