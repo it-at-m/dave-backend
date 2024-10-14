@@ -19,6 +19,8 @@ import java.util.Set;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SucheMapper {
 
+    String UNBEKANNT = "unbekannt";
+
     MessstelleTooltipDTO messstelleToMessstelleTooltipDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
 
     MessstelleKarteDTO messstelleToMessstelleKarteDTO(final Messstelle messstelle, @Context StadtbezirkMapper stadtbezirkMapper);
@@ -42,12 +44,21 @@ public interface SucheMapper {
             @Context StadtbezirkMapper stadtbezirkMapper) {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
-        if (ObjectUtils.isNotEmpty(bean.getRealisierungsdatum()))
-            dto.setAbbaudatum(bean.getRealisierungsdatum().toString());
-        if (ObjectUtils.isNotEmpty(bean.getAbbaudatum()))
-            dto.setAbbaudatum(bean.getAbbaudatum().toString());
-        if (ObjectUtils.isNotEmpty(bean.getDatumLetztePlausibleMessung()))
-            dto.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
+
+        final var realisierungsdatum = ObjectUtils.isNotEmpty(bean.getRealisierungsdatum())
+                ? bean.getRealisierungsdatum().toString()
+                : UNBEKANNT;
+        dto.setRealisierungsdatum(realisierungsdatum);
+
+        final var abbaudatum = ObjectUtils.isNotEmpty(bean.getAbbaudatum())
+                ? bean.getAbbaudatum().toString()
+                : UNBEKANNT;
+        dto.setAbbaudatum(abbaudatum);
+
+        final var datumLetztePlausibleMessung = ObjectUtils.isNotEmpty(bean.getDatumLetztePlausibleMessung())
+                ? bean.getDatumLetztePlausibleMessung().toString()
+                : UNBEKANNT;
+        dto.setDatumLetztePlausibleMessung(datumLetztePlausibleMessung);
     }
 
     /**
