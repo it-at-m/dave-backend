@@ -4,6 +4,7 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ public enum TagesTyp {
 
     private static final Map<IntervalDto.TagesTypEnum, TagesTyp> tagesTypByIntervallTyp = Stream
             .of(TagesTyp.values())
+            .filter(tagesTyp -> ObjectUtils.isNotEmpty(tagesTyp.getIntervallTyp()))
             .collect(Collectors.toMap(TagesTyp::getIntervallTyp, Function.identity()));
 
     /**
