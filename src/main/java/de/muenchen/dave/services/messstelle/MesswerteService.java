@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -39,7 +40,7 @@ public class MesswerteService {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
 
-        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options);
+        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
         final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
         final List<IntervalDto> intervals;
 
@@ -67,6 +68,8 @@ public class MesswerteService {
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
+        processedZaehldaten.setRequestedMeasuringDays(options.getZeitraum().getFirst().until(options.getZeitraum().getLast()).getDays() + 1);
+        processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         return processedZaehldaten;
     }
 
@@ -76,10 +79,11 @@ public class MesswerteService {
         }
     }
 
-    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options) {
+    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options, final Set<String> messquerschnittIds) {
         final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());
+        request.setSelectedMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());
+        request.setAllMessquerschnittIds(messquerschnittIds.stream().map(Integer::valueOf).toList());
         if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
             request.setTagesTyp(options.getTagesTyp().getMesswertTyp());
         } else {
@@ -87,11 +91,11 @@ public class MesswerteService {
         }
         if (options.getZeitraum().size() == 2) {
             Collections.sort(options.getZeitraum());
-            request.setStartDate(options.getZeitraum().get(0));
-            request.setEndDate(options.getZeitraum().get(1));
+            request.setStartDate(options.getZeitraum().getFirst());
+            request.setEndDate(options.getZeitraum().getLast());
         } else {
-            request.setStartDate(options.getZeitraum().get(0));
-            request.setEndDate(options.getZeitraum().get(0));
+            request.setStartDate(options.getZeitraum().getFirst());
+            request.setEndDate(options.getZeitraum().getFirst());
         }
         request.setStartTime(options.getZeitblock().getStart().toLocalTime());
         request.setEndTime(options.getZeitblock().getEnd().toLocalTime());

@@ -35,7 +35,7 @@
         "tags": [
           "Messwerte"
         ],
-        "summary": "Extrahiert die intervalle und führt eine Aggregation, Summierung und Durchschnittsbildung auf die Intervalle durch. Zum einen wird der Durchschnitt für jeden Messtag je Messquerschnitt über alle Tagesintervalle gebildet.Und zum anderen der Durchschnitt für jeden Messtag je Interval über die Messquerschnitte.",
+        "summary": "Extrahiert die Intervalle und führt eine Aggregation, Summierung und Durchschnittsbildung auf die Intervalle durch. Zum einen wird der Durchschnitt für jeden Messtag je Messquerschnitt der Messstelle über alle Tagesintervalle gebildet.Und zum anderen der Durchschnitt für jeden Messtag je Interval über die selektierten Messquerschnitte.",
         "operationId": "getIntervalle",
         "requestBody": {
           "content": {
@@ -89,16 +89,6 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
@@ -108,44 +98,13 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/MessstelleOptionsmenu/validWochentageInPeriod": {
-      "post": {
-        "tags": [
-          "MessstelleOptionsmenuController"
-        ],
-        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
-        "operationId": "getValidWochentageInPeriod",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ValidWochentageInPeriodRequestDto"
-              }
-            }
           },
-          "required": true
-        },
-        "responses": {
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "Valide Wochentage im Zeitraum konnten ermittelt werden",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidWochentageInPeriodDto"
                 }
               }
             }
@@ -254,20 +213,32 @@
       },
       "MesswertRequestDto": {
         "required": [
+          "allMessquerschnittIds",
           "endDate",
           "endTime",
           "intervalInMinutes",
-          "messquerschnittIds",
+          "selectedMessquerschnittIds",
           "startDate",
           "startTime",
           "tagesTyp"
         ],
         "type": "object",
         "properties": {
-          "messquerschnittIds": {
+          "allMessquerschnittIds": {
             "type": "array",
+            "description": "Alle Messquerschnitt-Ids der Messstelle",
             "items": {
               "type": "integer",
+              "description": "Alle Messquerschnitt-Ids der Messstelle",
+              "format": "int32"
+            }
+          },
+          "selectedMessquerschnittIds": {
+            "type": "array",
+            "description": "Die ausgewählten Messquerschnitt-Ids der Messstelle welche angezeigt werden sollen.",
+            "items": {
+              "type": "integer",
+              "description": "Die ausgewählten Messquerschnitt-Ids der Messstelle welche angezeigt werden sollen.",
               "format": "int32"
             }
           },
@@ -420,22 +391,30 @@
           "prozentGueterverkehr": {
             "type": "number"
           }
-        }
+        },
+        "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids."
       },
       "IntervalResponseDto": {
         "type": "object",
         "properties": {
           "meanOfIntervalsForEachMqIdByMesstag": {
             "type": "array",
+            "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle.",
             "items": {
               "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
           "meanOfMqIdForEachIntervalByMesstag": {
             "type": "array",
+            "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids.",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
             }
+          },
+          "includedMeasuringDays": {
+            "type": "integer",
+            "description": "Anzahl der Messtage, die in die Auswertung eingeflossenen sind.",
+            "format": "int32"
           }
         }
       },
@@ -452,7 +431,8 @@
               "$ref": "#/components/schemas/IntervalDto"
             }
           }
-        }
+        },
+        "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle."
       },
       "ChosenTagesTypValidRequestDto": {
         "type": "object",
@@ -481,49 +461,6 @@
         "properties": {
           "isValid": {
             "type": "boolean"
-          }
-        }
-      },
-      "ValidWochentageInPeriodRequestDto": {
-        "type": "object",
-        "properties": {
-          "startDate": {
-            "type": "string"
-          },
-          "endDate": {
-            "type": "string"
-          },
-          "messstelleId": {
-            "type": "string"
-          }
-        }
-      },
-      "ValidWochentageInPeriodDto": {
-        "type": "object",
-        "properties": {
-          "numberOfValidTagesTypDiMiDo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfValidTagesTypMoFr": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfValidTagesTypSamstag": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfValidTagesTypSonntagFeiertag": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfValidTagesTypWerktagFerien": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfValidTagesTypMoSo": {
-            "type": "integer",
-            "format": "int32"
           }
         }
       },

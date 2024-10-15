@@ -78,6 +78,13 @@ public class MessstelleService {
         return result;
     }
 
+    public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {
+        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final Set<String> result = new HashSet<>();
+        messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
+        return result;
+    }
+
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
