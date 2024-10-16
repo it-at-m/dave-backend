@@ -19,7 +19,6 @@ import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
@@ -84,11 +83,6 @@ public interface MessstelleMapper {
     default void updateMessstelleAfterMapping(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         if (!MessstelleStatus.IN_PLANUNG.equals(actual.getStatus())) {
             actual.setGeprueft(true);
-        }
-
-        // TODO workaround solange Datenqualitaet mist ist
-        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            actual.setDatumLetztePlausibleMessung(LocalDate.now());
         }
 
         // Suchworte setzen

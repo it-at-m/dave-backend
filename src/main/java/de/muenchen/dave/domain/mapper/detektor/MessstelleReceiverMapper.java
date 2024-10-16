@@ -48,11 +48,6 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        // TODO workaround solange Datenqualitaet nicht geklärt ist
-        if (ObjectUtils.isEmpty(dto.getStadtbezirkNummer())) {
-            bean.setStadtbezirkNummer(999);
-        }
-
         // Suchworte setzen
         final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper);
 
