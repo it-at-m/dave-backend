@@ -103,7 +103,7 @@ public class HeatmapService {
         ladeZaehldatenHeatmap.setLegend(new ArrayList<>());
         ladeZaehldatenHeatmap.setXAxisDataFirstChart(new ArrayList<>());
         ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(new ArrayList<>());
-        AtomicInteger heatMapEntryIndex = new AtomicInteger(0);
+        final AtomicInteger heatMapEntryIndex = new AtomicInteger(0);
 
         final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
 

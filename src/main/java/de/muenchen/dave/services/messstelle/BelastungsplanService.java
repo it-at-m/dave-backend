@@ -31,7 +31,7 @@ public class BelastungsplanService {
 
     private final SpitzenstundeService spitzenstundeService;
 
-    protected static String getStrassennameFromMessquerschnitt(ReadMessstelleInfoDTO messstelle) {
+    protected static String getStrassennameFromMessquerschnitt(final ReadMessstelleInfoDTO messstelle) {
         return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
                 ? ""
                 : messstelle.getMessquerschnitte().getFirst().getStrassenname();
@@ -54,7 +54,7 @@ public class BelastungsplanService {
         final var messquerschnitte = totalSumOfAllMessquerschnitte
                 .stream()
                 .map(sumOfMessquerschnitt -> {
-                    LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
+                    final LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
 
                     final var kfz = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue();
                     final var sumKfz = roundNumberToHundredIfNeeded(kfz, options);
@@ -78,7 +78,7 @@ public class BelastungsplanService {
                     final var percentSv = calcPercentage(sv, kfz);
                     messquerschnitt.setPercentSv(percentSv);
 
-                    final var mqId = sumOfMessquerschnitt.getMqId().toString();
+                    final var mqId = String.valueOf(sumOfMessquerschnitt.getMqId());
                     messquerschnitt.setMqId(mqId);
 
                     final var direction = getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString());
@@ -134,7 +134,7 @@ public class BelastungsplanService {
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
-        ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
+        final ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
                 .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId))
                 .toList()
                 .getFirst();
