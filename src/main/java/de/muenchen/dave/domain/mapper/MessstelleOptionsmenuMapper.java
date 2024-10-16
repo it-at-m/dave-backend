@@ -25,7 +25,7 @@ public interface MessstelleOptionsmenuMapper {
             @MappingTarget final ChosenTagesTypValidRequestDto target,
             final ChosenTagesTypValidEaiRequestDTO source) {
         final var tagesTyp = ObjectUtils.isNotEmpty(source.getTagesTyp())
-                ? ChosenTagesTypValidRequestDto.TagesTypEnum.valueOf(source.getTagesTyp().name())
+                ? ChosenTagesTypValidRequestDto.TagesTypEnum.valueOf(source.getTagesTyp().getMesswertTyp().getValue())
                 : null;
         target.setTagesTyp(tagesTyp);
     }
