@@ -59,8 +59,8 @@ keycloak:
 
 elasticsearch:
   user: elastic
-  password: changeMe
-  http-ca-certificate: 
+  password: changeme
+  http-ca-certificate:
   host: localhost
   port: 9200
   connectTimeout: 10
