@@ -6,9 +6,11 @@ package de.muenchen.dave.configuration.nfcconverter;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -10,11 +10,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.Part;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.io.IOUtils;
@@ -27,14 +29,11 @@ import org.apache.commons.io.IOUtils;
 @Slf4j
 public class NfcRequest extends HttpServletRequestWrapper implements HttpServletRequest {
 
-    private Map<String, String[]> params;
-
-    private Cookie[] cookies;
-
-    private Map<String, List<String>> headers;
-
     @SuppressWarnings("unused")
     private final Set<String> contentTypes;
+    private Map<String, String[]> params;
+    private Cookie[] cookies;
+    private Map<String, List<String>> headers;
 
     public NfcRequest(final HttpServletRequest request, final Set<String> contentTypes) {
         super(request);

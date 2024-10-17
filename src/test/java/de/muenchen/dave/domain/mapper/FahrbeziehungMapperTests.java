@@ -1,15 +1,15 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.BearbeiteFahrbeziehungKreuzungDTORandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import de.muenchen.dave.domain.elasticsearch.FahrbeziehungKreuzungRandomFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 @Slf4j
 public class FahrbeziehungMapperTests {

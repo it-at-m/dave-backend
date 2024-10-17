@@ -6,20 +6,20 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDT
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -115,8 +115,8 @@ public class GenerateCsvMstService {
             }
         }
         metaData.append(SEMIKOLON);
-        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
-            metaData.append(TagesTyp.valueOf(options.getTagesTyp()).getBeschreibung());
+        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+            metaData.append(options.getTagesTyp().getBeschreibung());
         }
         metaData.append(SEMIKOLON);
         // ausgewählte mq's

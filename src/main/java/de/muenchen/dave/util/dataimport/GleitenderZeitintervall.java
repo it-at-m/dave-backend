@@ -8,13 +8,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,13 +16,20 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 /**
- * Hilfklasse zur Ermittlung der gleitenden Spitzenstunde
- * in {@link ZeitintervallGleitendeSpitzenstundeUtil}.
+ * Hilfklasse zur Ermittlung der gleitenden Spitzenstunde in
+ * {@link ZeitintervallGleitendeSpitzenstundeUtil}.
  * <p>
  * Das Ergebnis der Klasse wird zur Prüfung bezüglich der Spitzenstunde in
- * {@link ZeitintervallGleitendeSpitzenstundeUtil}.berechneGleitendeSpitzenstunde(UUID, Zeitblock,
- * Fahrbeziehung, List) verwendet.
+ * {@link ZeitintervallGleitendeSpitzenstundeUtil}.berechneGleitendeSpitzenstunde(UUID,
+ * Zeitblock, Fahrbeziehung, List) verwendet.
  */
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PRIVATE)
@@ -43,7 +44,7 @@ public class GleitenderZeitintervall {
     private final int zeitintervallePerHour;
 
     private final List<Zeitintervall> zeitintervalle;
-    private final List<MeasurementValuesPerInterval> measurementValuesPerIntervals;
+    private final List<IntervalDto> measurementValuesPerIntervals;
 
     private GleitenderZeitintervall(final int zeitintervallePerHour) {
         this.zeitintervallePerHour = zeitintervallePerHour;
@@ -57,19 +58,18 @@ public class GleitenderZeitintervall {
 
     /**
      * Diese Methode ermittelt die Zeitintervalle auf Basis der <code>sortedZeitintervalle</code> welche
-     * zusammen 1h umfassen.
-     * Die Ermittlung startet rückwirkend beginnend bei der Position <code>index</code> in den
+     * zusammen 1h umfassen. Die Ermittlung startet
+     * rückwirkend beginnend bei der Position <code>index</code> in den
      * <code>sortedZeitintervalle</code>.
      * Es werden in <code>sortedZeitintervalle</code> nur die Zeitintervalle berücksichtigt, welche
-     * innerhalb des in
-     * Parameter <code>zeitblock</code> definierten Zeitblocks liegen.
+     * innerhalb des in Parameter <code>zeitblock</code>
+     * definierten Zeitblocks liegen.
      *
      * @param sortedZeitintervalle in aufsteigend sortierter Reihenfolge
      * @param index in den <code>sortedZeitintervalle</code>.
      * @param zeitblock zur Prüfung auf relevante Zeitintervalle.
      * @return den {@link GleitenderZeitintervall} bestehen aus den Zeitintervallen welche rückwirkend
-     *         beginnend bei
-     *         Position <code>index</code> 1h umfassen,
+     *         beginnend bei Position <code>index</code> 1h umfassen,
      */
     public static GleitenderZeitintervall createInstanceWithIndexParameterAsNewestIndex(final List<Zeitintervall> sortedZeitintervalle,
             final int index,
@@ -108,13 +108,12 @@ public class GleitenderZeitintervall {
         zeitintervalle.add(zeitintervall);
     }
 
-    private void add(final MeasurementValuesPerInterval measurementValuesPerInterval) {
+    private void add(final IntervalDto measurementValuesPerInterval) {
         measurementValuesPerIntervals.add(measurementValuesPerInterval);
     }
 
     /**
-     * @return Den Zeitintervall mit den Summen der einzelnen Zeitintervalle welche
-     *         ermittelt in
+     * @return Den Zeitintervall mit den Summen der einzelnen Zeitintervalle welche ermittelt in
      *         {@link GleitenderZeitintervall#createInstanceWithIndexParameterAsNewestIndex(List, int, Zeitblock)}
      *         zusammen 1h definieren.
      */

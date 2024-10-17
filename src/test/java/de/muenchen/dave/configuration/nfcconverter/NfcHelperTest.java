@@ -1,15 +1,16 @@
 package de.muenchen.dave.configuration.nfcconverter;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NfcHelperTest {
 
@@ -28,6 +29,13 @@ public class NfcHelperTest {
     public static final String[] NFD_INPUT = new String[] { FIRST_NFD, SECOND_NFD, THIRD_NFD };
 
     public static final String[] NFC_OUTPUT_EXPECTED = new String[] { FIRST_NFC, SECOND_NFC, THIRD_NFC };
+
+    private static Cookie createNfdCookie() {
+        final Cookie nfdCookie = new Cookie(NfcConverterTest.TOKEN, Arrays.toString(NFD_INPUT));
+        nfdCookie.setDomain(THIRD_NFD);
+        nfdCookie.setPath(THIRD_NFD);
+        return nfdCookie;
+    }
 
     @Test
     public void nfcConverterString() {
@@ -93,13 +101,6 @@ public class NfcHelperTest {
             assertEquals(THIRD_NFC, nfcCookie.getDomain());
             assertEquals(THIRD_NFC, nfcCookie.getPath());
         });
-    }
-
-    private static Cookie createNfdCookie() {
-        final Cookie nfdCookie = new Cookie(NfcConverterTest.TOKEN, Arrays.toString(NFD_INPUT));
-        nfdCookie.setDomain(THIRD_NFD);
-        nfdCookie.setPath(THIRD_NFD);
-        return nfdCookie;
     }
 
 }

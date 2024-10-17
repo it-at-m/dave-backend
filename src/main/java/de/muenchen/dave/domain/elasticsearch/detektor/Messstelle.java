@@ -1,9 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
 import de.muenchen.dave.domain.enums.MessstelleStatus;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -11,6 +8,10 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Document(indexName = "messstelle")

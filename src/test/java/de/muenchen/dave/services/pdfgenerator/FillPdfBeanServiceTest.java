@@ -1,9 +1,5 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -18,6 +14,9 @@ import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfCompon
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,8 +24,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 class FillPdfBeanServiceTest {
 
@@ -182,14 +183,13 @@ class FillPdfBeanServiceTest {
 
         final Messquerschnitt messquerschnitt = messstelle.getMessquerschnitte().get(0);
         optionsDTO.setMessquerschnittIds(Set.of(messquerschnitt.getMqId()));
-        final StringBuilder expectedChartTitle = new StringBuilder();
-        expectedChartTitle.append(messquerschnitt.getMqId());
-        expectedChartTitle.append(StringUtils.SPACE);
-        expectedChartTitle.append("-");
-        expectedChartTitle.append(StringUtils.SPACE);
-        expectedChartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN));
-        expectedChartTitle.append(StringUtils.SPACE);
-        assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(expectedChartTitle.toString().trim()));
+        String expectedChartTitle = messquerschnitt.getMqId() +
+                StringUtils.SPACE +
+                "-" +
+                StringUtils.SPACE +
+                StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN) +
+                StringUtils.SPACE;
+        assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(expectedChartTitle.trim()));
     }
 
     @Test

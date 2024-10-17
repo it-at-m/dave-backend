@@ -7,12 +7,6 @@ package de.muenchen.dave.util.dataimport;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,6 +16,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
 /**
  * Diese Klasse ermittelt die gleitende Spitzenstunde je mögliche Ausprägung der Fahrbeziehung.
  */
@@ -30,9 +31,9 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Fahrbeziehung
-     * jeweils für KFZ-, Rad- und Fussverkehr.
-     * Je möglicher Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde
-     * für folgende {@link Zeitblock}e ermittelt:
+     * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
+     * Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
+     * ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
      * - {@link Zeitblock#ZB_10_15}
@@ -40,11 +41,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_19_24}
      * - {@link Zeitblock#ZB_00_24}
      *
-     * @param zeitintervalle Die Zeitintervalle für welche die
-     *            gleitende Spitzenstunde je mögliche Ausprägung der
-     *            Fahrbeziehung ermittelt werden soll.
-     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en
-     *         jeweils für KFZ-, Rad- und Fussverkehr.
+     * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
+     *            Ausprägung der Fahrbeziehung ermittelt werden soll.
+     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für KFZ-, Rad-
+     *         und Fussverkehr.
      */
     public static List<Zeitintervall> getGleitendeSpitzenstunden(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
@@ -58,9 +58,9 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Fahrbeziehung
-     * jeweils für KFZ-, Rad- und Fussverkehr.
-     * Je möglicher Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde
-     * für folgende {@link Zeitblock}e ermittelt:
+     * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
+     * Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
+     * ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
      * - {@link Zeitblock#ZB_10_15}
@@ -68,8 +68,8 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_19_24}
      * - {@link Zeitblock#ZB_00_24}
      *
-     * @param fahrbeziehung Die {@link Fahrbeziehung} für welche die gleitende Spitzenstunde
-     *            je {@link Zeitblock} ermittelt werden soll.
+     * @param fahrbeziehung Die {@link Fahrbeziehung} für welche die gleitende Spitzenstunde je
+     *            {@link Zeitblock} ermittelt werden soll.
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
      *            Intervallen.
      * @return die gleitenden Spitzenstunde je {@link Zeitblock} als List von {@link Zeitintervall}en

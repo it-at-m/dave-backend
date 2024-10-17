@@ -1,15 +1,5 @@
 package de.muenchen.dave.spring;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Fahrbeziehung;
@@ -36,6 +26,12 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -45,11 +41,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -142,7 +143,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zaehlung.setPkwEinheit(new PkwEinheit());
 
         Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setZaehlungen(Arrays.asList(zaehlung));
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
@@ -254,7 +255,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zaehlung.setPkwEinheit(new PkwEinheit());
 
         Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setZaehlungen(Arrays.asList(zaehlung));
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository

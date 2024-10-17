@@ -1,17 +1,18 @@
 package de.muenchen.dave.services;
 
+import de.muenchen.dave.domain.elasticsearch.Knotenarm;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import java.time.LocalDate;
-import java.util.Arrays;
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class ZaehlstelleIndexServiceUtilsTests {

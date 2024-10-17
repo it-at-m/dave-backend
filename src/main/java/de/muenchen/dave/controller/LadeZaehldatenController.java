@@ -56,8 +56,8 @@ public class LadeZaehldatenController {
     }
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung
-     * für das Gangliniendiagramm, die Listenausgabe und für die Heatmap.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für das Gangliniendiagramm, die
+     * Listenausgabe und für die Heatmap.
      *
      * @param zaehlungId Die Id der Zaehlung.
      * @param options Die im Frontend gewählten Optionen.
@@ -82,8 +82,7 @@ public class LadeZaehldatenController {
     }
 
     /**
-     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung
-     * für den Belastungsplan.
+     * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für den Belastungsplan.
      *
      * @param zaehlungId Die Id der Zaehlung.
      * @param options Die im Frontend gewählten Optionen.

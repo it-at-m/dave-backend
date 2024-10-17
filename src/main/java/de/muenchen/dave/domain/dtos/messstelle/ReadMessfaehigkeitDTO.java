@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor

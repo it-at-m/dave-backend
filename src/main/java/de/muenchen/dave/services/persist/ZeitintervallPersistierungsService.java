@@ -20,16 +20,17 @@ import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -52,26 +53,26 @@ public class ZeitintervallPersistierungsService {
     }
 
     /**
-     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank
-     * eine Datenaufbreitung durch. D.h.:
+     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank eine Datenaufbreitung
+     * durch. D.h.:
      * <p>
-     * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft,
-     * ob der letzte Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59 aufweist.
-     * - Die im Parameter übergebenen Zeitintervalle werden mit einem Index für
-     * die Sortierung bei der Datenextraktion versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden mit
-     * dem Merkmal {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
-     * alle möglichen Fahrbeziehungspermutationen summiert.
+     * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft, ob der letzte
+     * Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59
+     * aufweist.
+     * - Die im Parameter übergebenen Zeitintervalle werden mit einem Index für die Sortierung bei der
+     * Datenextraktion versehen.
+     * - Die im Parameter übergebenen Zeitintervalle werden mit dem Merkmal
+     * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
+     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über alle möglichen
+     * Fahrbeziehungspermutationen summiert.
      * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle
-     * werden die gleitenden Spitzenstunden ermittelt.
+     * Zeitintervalle werden die gleitenden Spitzenstunden ermittelt.
      * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle
-     * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
+     * Zeitintervalle werden die Summen für die einzelnen
+     * {@link Zeitblock}e gebildet.
      *
-     * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor
-     *            der eigentlichen Persistierung.
+     * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
+     *            Persistierung.
      * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
      * @return Alle persistierten {@link Zeitintervall}e.
      */

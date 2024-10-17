@@ -1,13 +1,14 @@
 package de.muenchen.dave.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.muenchen.dave.domain.elasticsearch.*;
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
 
 @Component
 @Profile("sample")

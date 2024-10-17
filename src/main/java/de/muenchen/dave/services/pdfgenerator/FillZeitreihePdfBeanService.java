@@ -15,13 +15,14 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 public class FillZeitreihePdfBeanService {
@@ -47,10 +48,10 @@ public class FillZeitreihePdfBeanService {
     /**
      * Hier werden die
      * {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent}
-     * gesetzt.
-     * Es sollen die einzelnen Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist,
-     * soll auch dieser angezeigt werden.
-     * Der Platz wird nur angezeigt wenn die Straßennamen nicht im Platznamen zu finden sind.
+     * gesetzt. Es sollen die einzelnen
+     * Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist, soll auch dieser
+     * angezeigt werden. Der Platz wird nur angezeigt wenn die
+     * Straßennamen nicht im Platznamen zu finden sind.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Im Frontend ausgewählte Zählung
@@ -156,9 +157,9 @@ public class FillZeitreihePdfBeanService {
     }
 
     /**
-     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt.
-     * Es sollen der Zählstellenkommentar und alle Kommtare zu allen ausgewählten Zählungen erscheinen,
-     * insofern gesetzt.
+     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt. Es sollen der
+     * Zählstellenkommentar und alle Kommtare zu allen ausgewählten
+     * Zählungen erscheinen, insofern gesetzt.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Aktuell im Frontend gesetzte Zählung

@@ -1,9 +1,5 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-
 import de.muenchen.dave.domain.EmailAddress;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.dtos.EmailAddressDTORandomFactory;
@@ -11,9 +7,14 @@ import de.muenchen.dave.domain.mapper.EmailAddressMapperImpl;
 import de.muenchen.dave.domain.relationaldb.EmailAddressRandomFactory;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
 import de.muenchen.dave.services.email.EmailAddressService;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.Optional;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 
 public class EmailAddressServiceTest {
 

@@ -15,12 +15,13 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ChatMessageService {
@@ -51,8 +52,8 @@ public class ChatMessageService {
 
     /**
      * Die Methode speichert eine Chat Nachricht ab. Ist die Nachricht vom Dienstleister oder liegt die
-     * Zählung
-     * beim Dienstleister, dann wird auch eine E-Mail versendet.
+     * Zählung beim Dienstleister, dann wird auch eine E-Mail
+     * versendet.
      *
      * @param chatMessageDTO Das {@link ChatMessageDTO} zum Speichern.
      * @return Das gespeicherte {@link ChatMessageDTO}.
