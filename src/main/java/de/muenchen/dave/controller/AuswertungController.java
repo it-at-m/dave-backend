@@ -1,6 +1,5 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.CsvDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -39,12 +39,22 @@ public class AuswertungController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/messstelle", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CsvDTO> generateAuswertung(
+    @PostMapping(value = "/messstelle", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
-        //auswertungService.loadDataForEvaluation(options);
-        log.info("CSV wurde erstellt");
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            final byte[] byteArray = auswertungService.createAuswertungsfile(options);
+            log.info("Datei wurde erstellt");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(byteArray.length)
+                    .body(byteArray);
+        } catch (Exception e) {
+            log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}", options.getMstIds(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der Auswertung aufgetreten.");
+        }
+
+
     }
 }

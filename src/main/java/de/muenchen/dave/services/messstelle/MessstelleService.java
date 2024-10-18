@@ -40,6 +40,11 @@ public class MessstelleService {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
     }
 
+    public Messstelle getMessstelleByMstId(final String mstId) {
+        log.debug("#getMessstelleByMstId");
+        return messstelleIndexService.findByMstIdOrThrowException(mstId);
+    }
+
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);

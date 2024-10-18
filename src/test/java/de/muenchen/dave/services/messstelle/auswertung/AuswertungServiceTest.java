@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(null);
+    private final AuswertungService auswertungService = new AuswertungService(null, null, null);
 
     @Test
     void calculateZeitraeume() {
