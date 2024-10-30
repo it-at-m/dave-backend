@@ -2,23 +2,35 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.util.OptionsUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +47,7 @@ public class MesswerteService {
     private final ListenausgabeService listenausgabeService;
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
+    private final AuswertungMapper auswertungMapper;
 
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
@@ -109,4 +122,80 @@ public class MesswerteService {
         }
         return response.getBody();
     }
+
+    public List<AuswertungResponse> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
+
+        final List<Zeitraum> zeitraums = calculateZeitraeume(options.getZeitraum(), options.getJahre());
+//
+//        final var result = new ArrayList<AuswertungResponse>();
+//
+//        zeitraums.parallelStream().forEach(zeitraum -> {
+//            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
+//            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
+//            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
+//            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
+//                if (AuswertungsZeitraum.JAHRE.equals(zeitraum.auswertungsZeitraum)) {
+//                    auswertungResponse.setZeitraum(String.valueOf(zeitraum.start.getYear()));
+//                } else {
+//                    auswertungResponse.setZeitraum(String.format("%s / %s", zeitraum.auswertungsZeitraum.getText(), zeitraum.start.getYear()));
+//                }
+//            });
+//            result.addAll(auswertungResponses);
+//        });
+
+        return zeitraums.parallelStream().flatMap(zeitraum -> {
+            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
+            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
+            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
+            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
+                auswertungResponse.setZeitraum(zeitraum);
+//                if (AuswertungsZeitraum.JAHRE.equals(zeitraum.auswertungsZeitraum)) {
+//                    auswertungResponse.setZeitraum(String.valueOf(zeitraum.start.getYear()));
+//                } else {
+//                    auswertungResponse.setZeitraum(String.format("%s / %s", zeitraum.auswertungsZeitraum.getText(), zeitraum.start.getYear()));
+//                }
+            });
+            return auswertungResponses.stream();
+        }).sorted(Comparator.comparing((AuswertungResponse o) -> o.getZeitraum().start).thenComparingInt(AuswertungResponse::getMqId))
+                .toList();
+//        result.sort(Comparator.comparing((AuswertungResponse o) -> StringUtils.reverse(o.getZeitraum())).thenComparing(AuswertungResponse::getZeitraum)
+//                .thenComparingInt(AuswertungResponse::getMqId));
+//
+//        return result;
+    }
+
+    protected TagesaggregatRequestDto createRequestDto(final MessstelleAuswertungOptionsDTO options, final Zeitraum zeitraum) {
+        final TagesaggregatRequestDto requestDto = new TagesaggregatRequestDto();
+        requestDto.setMessquerschnittIds(options.getMqIds().stream().map(Integer::valueOf).toList());
+        requestDto.setStartDate(LocalDate.of(zeitraum.start.getYear(), zeitraum.start.getMonthValue(), 1));
+        requestDto.setEndDate(LocalDate.of(zeitraum.end.getYear(), zeitraum.end.getMonthValue(), zeitraum.end.atEndOfMonth().getDayOfMonth()));
+        requestDto.setTagesTyp(options.getTagesTyp().getTagesaggregatTyp());
+
+        return requestDto;
+    }
+
+    protected TagesaggregatResponseDto sendRequest(final TagesaggregatRequestDto requestDto) {
+        final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(requestDto).block();
+
+        if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
+            log.error("Die Response beinhaltet keine Daten");
+            throw new ResourceNotFoundException(ERROR_MESSAGE);
+        }
+        return response.getBody();
+    }
+
+    protected List<Zeitraum> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
+        final List<Zeitraum> result = new ArrayList<>();
+
+        for (AuswertungsZeitraum auswertungsZeitraum : auswertungszeitraeume) {
+            for (int jahr : jahre) {
+                result.add(new Zeitraum(
+                        YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
+                        YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
+                        auswertungsZeitraum));
+            }
+        }
+        return result;
+    }
+
 }

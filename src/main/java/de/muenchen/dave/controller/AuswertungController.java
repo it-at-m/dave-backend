@@ -55,6 +55,5 @@ public class AuswertungController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der Auswertung aufgetreten.");
         }
 
-
     }
 }

@@ -71,6 +71,47 @@
         }
       }
     },
+    "/messwerte/daily-aggregates": {
+      "post": {
+        "tags": [
+          "Messwerte"
+        ],
+        "summary": "Extrahiert die Tagesaggregate und führt eine Durchschnittsbildung auf die Tagesaggregate pro Messquerschnitt durch.",
+        "operationId": "getMeanOfDailyAggregatesPerMQ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagesaggregatRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tagesaggregate erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/MessstelleOptionsmenu/validateTagesTyp": {
       "post": {
         "tags": [
@@ -433,6 +474,143 @@
           }
         },
         "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle."
+      },
+      "TagesaggregatRequestDto": {
+        "required": [
+          "endDate",
+          "messquerschnittIds",
+          "startDate",
+          "tagesTyp"
+        ],
+        "type": "object",
+        "properties": {
+          "messquerschnittIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          }
+        }
+      },
+      "TagesaggregatDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "start": {
+            "type": "string",
+            "format": "date"
+          },
+          "end": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          },
+          "anzahlPkw": {
+            "type": "number"
+          },
+          "anzahlPkwA": {
+            "type": "number"
+          },
+          "anzahlLfw": {
+            "type": "number"
+          },
+          "anzahlKrad": {
+            "type": "number"
+          },
+          "anzahlLkw": {
+            "type": "number"
+          },
+          "anzahlLkwA": {
+            "type": "number"
+          },
+          "anzahlSattelKfz": {
+            "type": "number"
+          },
+          "anzahlBus": {
+            "type": "number"
+          },
+          "anzahlNkKfz": {
+            "type": "number"
+          },
+          "anzahlRad": {
+            "type": "number"
+          },
+          "summeAllePkw": {
+            "type": "number"
+          },
+          "summeLastzug": {
+            "type": "number"
+          },
+          "summeGueterverkehr": {
+            "type": "number"
+          },
+          "summeSchwerverkehr": {
+            "type": "number"
+          },
+          "summeKraftfahrzeugverkehr": {
+            "type": "number"
+          },
+          "prozentSchwerverkehr": {
+            "type": "number"
+          },
+          "prozentGueterverkehr": {
+            "type": "number"
+          },
+          "includedMeasuringDays": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "description": "Durchschnitt aller Tagesaggregate über die angefragten Messquerschnitt-Ids."
+      },
+      "TagesaggregatResponseDto": {
+        "type": "object",
+        "properties": {
+          "meanOfAggregatesForEachMqId": {
+            "type": "array",
+            "description": "Durchschnitt aller Tagesaggregate über die angefragten Messquerschnitt-Ids.",
+            "items": {
+              "$ref": "#/components/schemas/TagesaggregatDto"
+            }
+          }
+        }
       },
       "ChosenTagesTypValidRequestDto": {
         "type": "object",
