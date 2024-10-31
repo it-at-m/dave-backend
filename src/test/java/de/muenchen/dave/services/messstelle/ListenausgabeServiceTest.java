@@ -1279,6 +1279,77 @@ class ListenausgabeServiceTest {
     }
 
     @Test
+    void calculateSumOfIntervalsPerHourForLastThressHoursOfDay() {
+        final var interval0 = new IntervalDto();
+        interval0.setAnzahlLkw(BigDecimal.valueOf(1));
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 22, 30, 0));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 22, 45, 0));
+        final var interval1 = new IntervalDto();
+        interval1.setAnzahlLkw(BigDecimal.valueOf(2));
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 22, 45, 0));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 0, 0));
+        final var interval2 = new IntervalDto();
+        interval2.setAnzahlLkw(BigDecimal.valueOf(3));
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 0, 0));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 15, 0));
+        final var interval3 = new IntervalDto();
+        interval3.setAnzahlLkw(BigDecimal.valueOf(4));
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 15, 0));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 30, 0));
+        final var interval4 = new IntervalDto();
+        interval4.setAnzahlLkw(BigDecimal.valueOf(5));
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 30, 0));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 45, 0));
+        final var interval5 = new IntervalDto();
+        interval5.setAnzahlLkw(BigDecimal.valueOf(6));
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 45, 0));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 59, 59));
+
+        var result = listenausgabeService.calculateSumOfIntervalsPerHour(List.of(interval0, interval1, interval2, interval3, interval4, interval5));
+
+        final var expected0 = new LadeMesswerteDTO();
+        expected0.setType("Stunde");
+        expected0.setStartUhrzeit(Zeitblock.ZB_22_23.getStart().toLocalTime());
+        expected0.setEndeUhrzeit(Zeitblock.ZB_22_23.getEnd().toLocalTime());
+        expected0.setSortingIndex(51092092);
+        expected0.setPkw(0);
+        expected0.setLkw(3);
+        expected0.setLfw(0);
+        expected0.setLastzuege(0);
+        expected0.setBusse(0);
+        expected0.setKraftraeder(0);
+        expected0.setFahrradfahrer(0);
+        expected0.setKfz(0);
+        expected0.setSchwerverkehr(0);
+        expected0.setGueterverkehr(0);
+        expected0.setAnteilSchwerverkehrAnKfzProzent(0D);
+        expected0.setAnteilGueterverkehrAnKfzProzent(0D);
+
+        final var expected1 = new LadeMesswerteDTO();
+        expected1.setType("Stunde");
+        expected1.setStartUhrzeit(Zeitblock.ZB_23_24.getStart().toLocalTime());
+        expected1.setEndeUhrzeit(LocalTime.of(23,59,59));
+        expected1.setSortingIndex(51095095);
+        expected1.setPkw(0);
+        expected1.setLkw(18);
+        expected1.setLfw(0);
+        expected1.setLastzuege(0);
+        expected1.setBusse(0);
+        expected1.setKraftraeder(0);
+        expected1.setFahrradfahrer(0);
+        expected1.setKfz(0);
+        expected1.setSchwerverkehr(0);
+        expected1.setGueterverkehr(0);
+        expected1.setAnteilSchwerverkehrAnKfzProzent(0D);
+        expected1.setAnteilGueterverkehrAnKfzProzent(0D);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .isEqualTo(List.of(expected0, expected1));
+    }
+
+    @Test
     void calculateSumOfIntervalsAndAddBlockSpecificDataToResult() {
         final var interval0 = new IntervalDto();
         interval0.setAnzahlLkw(BigDecimal.valueOf(1));

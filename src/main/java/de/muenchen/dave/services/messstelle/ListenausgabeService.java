@@ -194,19 +194,19 @@ public class ListenausgabeService {
     protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<IntervalDto> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            final LocalTime start = LocalTime.of(i, 0);
-            final LocalTime end;
+            final LocalTime hourStart = LocalTime.of(i, 0,0);
+            final LocalTime hourEnd;
             if (i == 23) {
-                end = LocalTime.of(i, 59);
+                hourEnd = LocalTime.of(i, 59, 59);
             } else {
-                end = LocalTime.of(i + 1, 0);
+                hourEnd = LocalTime.of(i + 1, 0, 0);
             }
-            final List<IntervalDto> relevantIntervals = getIntervalsWithinRange(intervals, start, end);
+            final List<IntervalDto> relevantIntervals = getIntervalsWithinRange(intervals, hourStart, hourEnd);
             if (CollectionUtils.isNotEmpty(relevantIntervals)) {
                 final LadeMesswerteDTO dto = MesswerteBaseUtil.calculateSum(
                         relevantIntervals);
-                dto.setStartUhrzeit(start);
-                dto.setEndeUhrzeit(end);
+                dto.setStartUhrzeit(hourStart);
+                dto.setEndeUhrzeit(hourEnd);
                 dto.setType(STUNDE);
                 dto.setSortingIndex(MesswerteSortingIndexUtil.getSortingIndexWithinBlock(dto, TypeZeitintervall.STUNDE_KOMPLETT));
                 dtos.add(dto);
