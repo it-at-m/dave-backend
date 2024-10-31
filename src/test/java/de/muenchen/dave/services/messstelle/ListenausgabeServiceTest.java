@@ -1279,7 +1279,7 @@ class ListenausgabeServiceTest {
     }
 
     @Test
-    void calculateSumOfIntervalsPerHourForLastThreeHoursOfDay() {
+    void calculateSumOfIntervalsPerHourForLastTwoHoursOfDay() {
         final var interval0 = new IntervalDto();
         interval0.setAnzahlLkw(BigDecimal.valueOf(1));
         interval0.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 22, 30, 0));
