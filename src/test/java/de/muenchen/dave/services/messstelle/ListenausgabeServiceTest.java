@@ -1420,6 +1420,36 @@ class ListenausgabeServiceTest {
     }
 
     @Test
+    void getIntervalsWithinZeitblockForLastHourOfDay() {
+        final var interval0 = new IntervalDto();
+        interval0.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 22, 30, 0));
+        interval0.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 22, 45, 0));
+        final var interval1 = new IntervalDto();
+        interval1.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 22, 45, 0));
+        interval1.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 0, 0));
+        final var interval2 = new IntervalDto();
+        interval2.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 0, 0));
+        interval2.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 15, 0));
+        final var interval3 = new IntervalDto();
+        interval3.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 15, 0));
+        interval3.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 30, 0));
+        final var interval4 = new IntervalDto();
+        interval4.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 30, 0));
+        interval4.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 45, 0));
+        final var interval5 = new IntervalDto();
+        interval5.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 23, 45, 0));
+        interval5.setDatumUhrzeitBis(LocalDateTime.of(2024, 1, 5, 23, 59, 59));
+
+        final var intervals = List.of(interval0, interval1, interval2, interval3, interval4, interval5);
+        final var result = listenausgabeService.getIntervalsWithinZeitblock(intervals, Zeitblock.ZB_23_24);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .isEqualTo(List.of(interval2, interval3, interval4, interval5));
+    }
+
+    @Test
     void getIntervalsWithinRange() {
         final var interval0 = new IntervalDto();
         interval0.setDatumUhrzeitVon(LocalDateTime.of(2024, 1, 5, 9, 45, 0));
