@@ -519,29 +519,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "datum": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "start": {
-            "type": "string",
-            "format": "date"
-          },
-          "end": {
-            "type": "string",
-            "format": "date"
-          },
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "DTV_W3",
-              "DTV_W5",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN",
-              "DTV"
-            ]
-          },
           "anzahlPkw": {
             "type": "number"
           },
@@ -598,17 +575,20 @@
             "format": "int64"
           }
         },
-        "description": "Durchschnitt aller Tagesaggregate über die angefragten Messquerschnitt-Ids."
+        "description": "Durchschnitt aller Tagesaggregate über alle angefragten Messquerschnitt-Ids."
       },
       "TagesaggregatResponseDto": {
         "type": "object",
         "properties": {
           "meanOfAggregatesForEachMqId": {
             "type": "array",
-            "description": "Durchschnitt aller Tagesaggregate über die angefragten Messquerschnitt-Ids.",
+            "description": "Durchschnitt aller Tagesaggregate pro angefragten Messquerschnitt-Ids.",
             "items": {
               "$ref": "#/components/schemas/TagesaggregatDto"
             }
+          },
+          "meanOfAggregatesForAllMqId": {
+            "$ref": "#/components/schemas/TagesaggregatDto"
           }
         }
       },

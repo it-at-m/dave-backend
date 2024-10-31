@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
@@ -28,11 +29,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -123,45 +131,53 @@ public class MesswerteService {
         return response.getBody();
     }
 
-    public List<AuswertungResponse> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
+    public Map<Integer, List<AuswertungResponse>> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraums = calculateZeitraeume(options.getZeitraum(), options.getJahre());
-//
-//        final var result = new ArrayList<AuswertungResponse>();
-//
-//        zeitraums.parallelStream().forEach(zeitraum -> {
-//            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
-//            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
-//            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
-//            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
-//                if (AuswertungsZeitraum.JAHRE.equals(zeitraum.auswertungsZeitraum)) {
-//                    auswertungResponse.setZeitraum(String.valueOf(zeitraum.start.getYear()));
-//                } else {
-//                    auswertungResponse.setZeitraum(String.format("%s / %s", zeitraum.auswertungsZeitraum.getText(), zeitraum.start.getYear()));
-//                }
-//            });
-//            result.addAll(auswertungResponses);
-//        });
 
-        return zeitraums.parallelStream().flatMap(zeitraum -> {
-            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
-            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
-            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
-            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
+        // TagesaggregatResponseDto Januar
+        // Liste für MQ
+        // Wert Messstelle 1
+
+        // TagesaggregatResponseDto Januar
+        // Liste für MQ
+        // Wert Messstelle 2
+
+        // TagesaggregatResponseDto Februar
+        // Liste für MQ
+        // Wert Messstelle 1
+
+        // TagesaggregatResponseDto Februar
+        // Liste für MQ
+        // Wert Messstelle 2
+
+        // TagesaggregatResponseDto Januar und Februar
+        // Liste für MQ
+        // Wert Messstelle
+
+        ConcurrentMap<Integer, List<AuswertungResponse>> collect = zeitraums.parallelStream().flatMap(zeitraum -> {
+            return options.getMstIds().parallelStream().map(mstId -> {
+                final Messstelle messstelle = messstelleService.getMessstelleByMstId(mstId);
+                options.setMqIds(new HashSet<>());
+                messstelle.getMessquerschnitte().forEach(messquerschnitt -> options.getMqIds().add(messquerschnitt.getMqId()));
+                final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
+                final TagesaggregatResponseDto tagesaggregatResponseDto = sendRequest(requestDto);
+                final AuswertungResponse auswertungResponse = auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregatResponseDto);
                 auswertungResponse.setZeitraum(zeitraum);
-//                if (AuswertungsZeitraum.JAHRE.equals(zeitraum.auswertungsZeitraum)) {
-//                    auswertungResponse.setZeitraum(String.valueOf(zeitraum.start.getYear()));
-//                } else {
-//                    auswertungResponse.setZeitraum(String.format("%s / %s", zeitraum.auswertungsZeitraum.getText(), zeitraum.start.getYear()));
-//                }
+                return auswertungResponse;
             });
-            return auswertungResponses.stream();
-        }).sorted(Comparator.comparing((AuswertungResponse o) -> o.getZeitraum().start).thenComparingInt(AuswertungResponse::getMqId))
-                .toList();
-//        result.sort(Comparator.comparing((AuswertungResponse o) -> StringUtils.reverse(o.getZeitraum())).thenComparing(AuswertungResponse::getZeitraum)
-//                .thenComparingInt(AuswertungResponse::getMqId));
-//
-//        return result;
+            // TODO Pro Messstelle und deren MQ's einzeln Anfragen
+            //            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
+            //            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
+            //            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
+            //            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
+            //                auswertungResponse.setZeitraum(zeitraum);
+        }).collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
+        return collect;
+        //            return auswertungResponses.stream();
+        //        })
+        //            .sorted(Comparator.comparing((AuswertungResponse o) -> o.getZeitraum().start).thenComparingInt(AuswertungResponse::getMqId))
+        //                .toList();
     }
 
     protected TagesaggregatRequestDto createRequestDto(final MessstelleAuswertungOptionsDTO options, final Zeitraum zeitraum) {
