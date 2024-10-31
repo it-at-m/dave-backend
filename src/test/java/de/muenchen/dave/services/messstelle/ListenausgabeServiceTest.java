@@ -1328,7 +1328,7 @@ class ListenausgabeServiceTest {
         final var expected1 = new LadeMesswerteDTO();
         expected1.setType("Stunde");
         expected1.setStartUhrzeit(Zeitblock.ZB_23_24.getStart().toLocalTime());
-        expected1.setEndeUhrzeit(LocalTime.of(23,59,59));
+        expected1.setEndeUhrzeit(LocalTime.of(23, 59, 59));
         expected1.setSortingIndex(51095095);
         expected1.setPkw(0);
         expected1.setLkw(18);

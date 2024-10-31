@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -194,7 +196,7 @@ public class ListenausgabeService {
     protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<IntervalDto> intervals) {
         final List<LadeMesswerteDTO> dtos = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            final LocalTime hourStart = LocalTime.of(i, 0,0);
+            final LocalTime hourStart = LocalTime.of(i, 0, 0);
             final LocalTime hourEnd;
             if (i == 23) {
                 hourEnd = LocalTime.of(i, 59, 59);
