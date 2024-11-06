@@ -8,8 +8,6 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
-import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
-import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @AllArgsConstructor
 @Service
 @Slf4j
-public class ExcelService {
+public class SpreadsheetService {
 
     private final MessstelleService messstelleService;
 
