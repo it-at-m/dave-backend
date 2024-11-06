@@ -7,6 +7,7 @@ package de.muenchen.dave.services.messstelle.auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
@@ -16,6 +17,9 @@ import de.muenchen.dave.services.messstelle.Zeitraum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -55,7 +59,7 @@ public class AuswertungService {
 
     public Map<Integer, List<AuswertungResponse>> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
 
-        final List<Zeitraum> zeitraums = this.calculateZeitraeume(options.getZeitraum(), options.getJahre());
+        final List<Zeitraum> zeitraeume = this.calculateZeitraeume(options.getZeitraum(), options.getJahre());
 
         // TagesaggregatResponseDto Januar
         // Liste für MQ
@@ -77,15 +81,21 @@ public class AuswertungService {
         // Liste für MQ
         // Wert Messstelle
 
-        ConcurrentMap<Integer, List<AuswertungResponse>> collect = zeitraums.parallelStream().flatMap(zeitraum -> {
+        ConcurrentMap<Integer, List<AuswertungResponse>> collect = zeitraeume.parallelStream().flatMap(zeitraum -> {
             return options.getMstIds().parallelStream().map(mstId -> {
-                final Messstelle messstelle = messstelleService.getMessstelleByMstId(mstId);
-                options.setMqIds(new HashSet<>());
-                messstelle.getMessquerschnitte().forEach(messquerschnitt -> options.getMqIds().add(messquerschnitt.getMqId()));
+
+                // Holen der Messquerschnitte aus Messstelle für Options.
+                final var messstelle = messstelleService.getMessstelleByMstId(mstId);
+                final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
+                                .stream()
+                                .filter(ObjectUtils::isNotEmpty)
+                                .map(Messquerschnitt::getMqId)
+                                .filter(ObjectUtils::isNotEmpty)
+                                .collect(Collectors.toSet());
+                options.setMqIds(mqIds);
+
                 final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
-                final AuswertungResponse auswertungResponse = auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate);
-                auswertungResponse.setZeitraum(zeitraum);
-                return auswertungResponse;
+                return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum);
             });
             // TODO Pro Messstelle und deren MQ's einzeln Anfragen
             //            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
