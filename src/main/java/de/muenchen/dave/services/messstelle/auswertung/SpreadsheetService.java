@@ -34,7 +34,49 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class SpreadsheetService {
 
-    private final MessstelleService messstelleService;
+    public byte[] createFileTest() throws IOException {
+        final Workbook workbook = new XSSFWorkbook();
+
+        final Sheet sheet = workbook.createSheet("Persons");
+        sheet.setColumnWidth(0, 6000);
+        sheet.setColumnWidth(1, 4000);
+
+        final Row header = sheet.createRow(0);
+
+        final CellStyle headerStyle = workbook.createCellStyle();
+        final XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 16);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("Name");
+        headerCell.setCellStyle(headerStyle);
+
+        headerCell = header.createCell(1);
+        headerCell.setCellValue("Age");
+        headerCell.setCellStyle(headerStyle);
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+
+        Row row = sheet.createRow(2);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("John Smith");
+        cell.setCellStyle(style);
+
+        cell = row.createCell(1);
+        cell.setCellValue(20);
+        cell.setCellStyle(style);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        workbook.write(baos);
+        final byte[] workbookAsByteArray = baos.toByteArray();
+        workbook.close();
+
+        return workbookAsByteArray;
+    }
 
     private Sheet createSheet(final Workbook workbook, final String sheetName) {
         final Sheet sheet = workbook.createSheet(sheetName);
@@ -474,50 +516,6 @@ public class SpreadsheetService {
         //
         //            rowIndex.getAndIncrement();
         //        });
-
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        workbook.write(baos);
-        final byte[] workbookAsByteArray = baos.toByteArray();
-        workbook.close();
-
-        return workbookAsByteArray;
-    }
-
-    public byte[] createFileTest() throws IOException {
-        final Workbook workbook = new XSSFWorkbook();
-
-        final Sheet sheet = workbook.createSheet("Persons");
-        sheet.setColumnWidth(0, 6000);
-        sheet.setColumnWidth(1, 4000);
-
-        final Row header = sheet.createRow(0);
-
-        final CellStyle headerStyle = workbook.createCellStyle();
-        final XSSFFont font = ((XSSFWorkbook) workbook).createFont();
-        font.setFontName("Arial");
-        font.setFontHeightInPoints((short) 16);
-        font.setBold(true);
-        headerStyle.setFont(font);
-
-        Cell headerCell = header.createCell(0);
-        headerCell.setCellValue("Name");
-        headerCell.setCellStyle(headerStyle);
-
-        headerCell = header.createCell(1);
-        headerCell.setCellValue("Age");
-        headerCell.setCellStyle(headerStyle);
-
-        CellStyle style = workbook.createCellStyle();
-        style.setWrapText(true);
-
-        Row row = sheet.createRow(2);
-        Cell cell = row.createCell(0);
-        cell.setCellValue("John Smith");
-        cell.setCellStyle(style);
-
-        cell = row.createCell(1);
-        cell.setCellValue(20);
-        cell.setCellStyle(style);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         workbook.write(baos);
