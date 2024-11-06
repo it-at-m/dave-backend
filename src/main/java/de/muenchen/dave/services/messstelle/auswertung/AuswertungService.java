@@ -87,11 +87,11 @@ public class AuswertungService {
                 // Holen der Messquerschnitte aus Messstelle für Options.
                 final var messstelle = messstelleService.getMessstelleByMstId(mstId);
                 final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
-                                .stream()
-                                .filter(ObjectUtils::isNotEmpty)
-                                .map(Messquerschnitt::getMqId)
-                                .filter(ObjectUtils::isNotEmpty)
-                                .collect(Collectors.toSet());
+                        .stream()
+                        .filter(ObjectUtils::isNotEmpty)
+                        .map(Messquerschnitt::getMqId)
+                        .filter(ObjectUtils::isNotEmpty)
+                        .collect(Collectors.toSet());
                 options.setMqIds(mqIds);
 
                 final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
