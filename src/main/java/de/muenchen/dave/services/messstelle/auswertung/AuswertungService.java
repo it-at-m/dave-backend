@@ -81,7 +81,7 @@ public class AuswertungService {
         // Liste für MQ
         // Wert Messstelle
 
-        ConcurrentMap<Integer, List<AuswertungResponse>> collect = zeitraeume.parallelStream().flatMap(zeitraum -> {
+        return zeitraeume.parallelStream().flatMap(zeitraum -> {
             return options.getMstIds().parallelStream().map(mstId -> {
 
                 // Holen der Messquerschnitte aus Messstelle für Options.
@@ -103,8 +103,8 @@ public class AuswertungService {
             //            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
             //            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
             //                auswertungResponse.setZeitraum(zeitraum);
-        }).collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
-        return collect;
+        })
+        .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
     }
 
     protected List<Zeitraum> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
