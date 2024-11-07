@@ -48,11 +48,11 @@ public class AuswertungService {
         if (CollectionUtils.isEmpty(options.getMstIds())) {
             throw new IllegalArgumentException("MstIds is empty");
         }
-        final Map<Integer, List<AuswertungResponse>> auswertungen = this.ladeAuswertung(options);
-        return spreadsheetService.createFile(auswertungen, options);
+        final var auswertungenByMqId = this.ladeAuswertungGroupedByMqId(options);
+        return spreadsheetService.createFile(auswertungenByMqId, options);
     }
 
-    public Map<Integer, List<AuswertungResponse>> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
+    public Map<Integer, List<AuswertungResponse>> ladeAuswertungGroupedByMqId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
