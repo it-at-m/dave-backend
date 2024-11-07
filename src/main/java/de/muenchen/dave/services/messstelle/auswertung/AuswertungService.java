@@ -93,6 +93,7 @@ public class AuswertungService {
                                     .collect(Collectors.toSet());
                             options.setMqIds(mqIds);
 
+                            // Extrahieren der Tagesaggregate für die Messquerschnitte
                             final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
                             return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
                         }))
