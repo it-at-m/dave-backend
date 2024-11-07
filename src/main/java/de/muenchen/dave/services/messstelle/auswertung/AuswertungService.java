@@ -61,23 +61,23 @@ public class AuswertungService {
 
         final List<Zeitraum> zeitraeume = this.calculateZeitraeume(options.getZeitraum(), options.getJahre());
 
-        // TagesaggregatResponseDto Januar
+        // AuswertungResponse extends TagesaggregatResponseDto für Januar
         // Liste für MQ
         // Wert Messstelle 1
 
-        // TagesaggregatResponseDto Januar
+        // AuswertungResponse extends TagesaggregatResponseDto für Januar
         // Liste für MQ
         // Wert Messstelle 2
 
-        // TagesaggregatResponseDto Februar
+        // AuswertungResponse extends TagesaggregatResponseDto für Februar
         // Liste für MQ
         // Wert Messstelle 1
 
-        // TagesaggregatResponseDto Februar
+        // AuswertungResponse extends TagesaggregatResponseDto für Februar
         // Liste für MQ
         // Wert Messstelle 2
 
-        // TagesaggregatResponseDto Januar und Februar
+        // AuswertungResponse extends TagesaggregatResponseDto für Januar und Februar
         // Liste für MQ
         // Wert Messstelle
 
@@ -97,27 +97,21 @@ public class AuswertungService {
                 final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
                 return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum);
             });
-            // TODO Pro Messstelle und deren MQ's einzeln Anfragen
-            //            final TagesaggregatRequestDto requestDto = createRequestDto(options, zeitraum);
-            //            final List<TagesaggregatDto> meanOfAggregatesForEachMqId = sendRequest(requestDto).getMeanOfAggregatesForEachMqId();
-            //            final List<AuswertungResponse> auswertungResponses = auswertungMapper.tagesaggregatDto2AuswertungResponse(meanOfAggregatesForEachMqId);
-            //            auswertungResponses.parallelStream().forEach(auswertungResponse -> {
-            //                auswertungResponse.setZeitraum(zeitraum);
         })
-        .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
+                .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
     }
 
     protected List<Zeitraum> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
-        final List<Zeitraum> result = new ArrayList<>();
+        final List<Zeitraum> zeitraeume = new ArrayList<>();
 
         for (AuswertungsZeitraum auswertungsZeitraum : auswertungszeitraeume) {
             for (int jahr : jahre) {
-                result.add(new Zeitraum(
+                zeitraeume.add(new Zeitraum(
                         YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
                         YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
                         auswertungsZeitraum));
             }
         }
-        return result;
+        return zeitraeume;
     }
 }

@@ -7,6 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.Month;
 
+/**
+ * Definiert die möglichen unterjährigen Auswertungszeiträume
+ * mit dem jeweiligen Start- und Enddatum.
+ */
 @AllArgsConstructor
 @Getter
 public enum AuswertungsZeitraum {
