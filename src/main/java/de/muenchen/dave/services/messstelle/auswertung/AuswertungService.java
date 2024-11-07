@@ -58,26 +58,6 @@ public class AuswertungService {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        // AuswertungResponse extends TagesaggregatResponseDto für Januar
-        // Liste für MQ
-        // Wert Messstelle 1
-
-        // AuswertungResponse extends TagesaggregatResponseDto für Januar
-        // Liste für MQ
-        // Wert Messstelle 2
-
-        // AuswertungResponse extends TagesaggregatResponseDto für Februar
-        // Liste für MQ
-        // Wert Messstelle 1
-
-        // AuswertungResponse extends TagesaggregatResponseDto für Februar
-        // Liste für MQ
-        // Wert Messstelle 2
-
-        // AuswertungResponse extends TagesaggregatResponseDto für Januar und Februar
-        // Liste für MQ
-        // Wert Messstelle
-
         return CollectionUtils.emptyIfNull(options.getMstIds())
                 .parallelStream()
                 .flatMap(mstId -> CollectionUtils.emptyIfNull(zeitraeume)
