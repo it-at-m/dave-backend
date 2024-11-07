@@ -102,16 +102,12 @@ public class AuswertungService {
     }
 
     protected List<Zeitraum> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
-        final List<Zeitraum> zeitraeume = new ArrayList<>();
-
-        for (AuswertungsZeitraum auswertungsZeitraum : auswertungszeitraeume) {
-            for (int jahr : jahre) {
-                zeitraeume.add(new Zeitraum(
-                        YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
-                        YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
-                        auswertungsZeitraum));
-            }
-        }
-        return zeitraeume;
+        return ListUtils.emptyIfNull(auswertungszeitraeume).stream()
+                .flatMap(auswertungsZeitraum -> ListUtils.emptyIfNull(jahre).stream()
+                        .map(jahr -> new Zeitraum(
+                                YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
+                                YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
+                                auswertungsZeitraum)))
+                .toList();
     }
 }
