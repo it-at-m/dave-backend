@@ -53,13 +53,6 @@ public class SpreadsheetService {
         return serializeSpreadsheetDocument(spreadsheetDocument);
     }
 
-    private Sheet createSheet(final Workbook workbook, final String sheetName) {
-        final Sheet sheet = workbook.createSheet(sheetName);
-        sheet.setColumnWidth(0, 6000);
-        sheet.setColumnWidth(1, 4000);
-        return sheet;
-    }
-
     private void addMetaHeaderToSheet(final Sheet sheet) {
         final Row metaheader = sheet.createRow(0);
         Cell metaHeaderCell = metaheader.createCell(0);
