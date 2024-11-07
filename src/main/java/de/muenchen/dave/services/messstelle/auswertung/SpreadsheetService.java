@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class SpreadsheetService {
 
-    public byte[] createFile(final Map<Integer, List<AuswertungMessquerschnitte>> auswertungen, final MessstelleAuswertungOptionsDTO options)
+    public byte[] createFile(final Map<Integer, List<AuswertungMessquerschnitte>> auswertungenByMstId, final MessstelleAuswertungOptionsDTO options)
             throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
 
@@ -40,7 +40,7 @@ public class SpreadsheetService {
         dataCellStyle.setWrapText(true);
 
         // Füge Daten zum Document hinzu.
-        auswertungen.forEach((mstId, tagesaggregatResponseDtos) -> {
+        auswertungenByMstId.forEach((mstId, tagesaggregatResponseDtos) -> {
 
             final Sheet sheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", mstId));
 
