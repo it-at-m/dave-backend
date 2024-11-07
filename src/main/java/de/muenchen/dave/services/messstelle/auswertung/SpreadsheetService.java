@@ -11,6 +11,8 @@ import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -40,14 +42,18 @@ public class SpreadsheetService {
         dataCellStyle.setWrapText(true);
 
         // Füge Daten zum Document hinzu.
-        auswertungenByMstId.forEach((mstId, tagesaggregatResponseDtos) -> {
+        MapUtils.emptyIfNull(auswertungenByMstId).forEach((mstId, tagesaggregatResponseDtos) -> {
 
             final Sheet sheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", mstId));
 
             addMetaHeaderToSheet(sheet);
             addMetaDataToSheet(sheet, options);
             addDataHeaderToSheet(sheet, options.getFahrzeuge());
-            addDataToSheet(sheet, dataCellStyle, tagesaggregatResponseDtos, options.getFahrzeuge());
+            addDataToSheet(
+                    sheet,
+                    dataCellStyle,
+                    ListUtils.emptyIfNull(tagesaggregatResponseDtos),
+                    options.getFahrzeuge());
 
         });
 
