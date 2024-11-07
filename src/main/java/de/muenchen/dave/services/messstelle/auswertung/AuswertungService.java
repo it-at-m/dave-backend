@@ -4,7 +4,7 @@
  */
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitt;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -48,11 +48,11 @@ public class AuswertungService {
         if (CollectionUtils.isEmpty(options.getMstIds())) {
             throw new IllegalArgumentException("MstIds is empty");
         }
-        final var auswertungenByMstId = this.ladeAuswertungGroupedByMstId(options);
-        return spreadsheetService.createFile(auswertungenByMstId, options);
+        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+        return spreadsheetService.createFile(auswertungenMqByMstId, options);
     }
 
-    protected Map<Integer, List<AuswertungMessquerschnitt>> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
+    protected Map<Integer, List<AuswertungMessquerschnitte>> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
