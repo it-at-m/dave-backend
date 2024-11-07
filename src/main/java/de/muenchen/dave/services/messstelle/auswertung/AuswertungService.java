@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.services.messstelle.auswertung;
 
+import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
@@ -43,6 +44,7 @@ public class AuswertungService {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
     }
 
+    @LogExecutionTime
     public byte[] createAuswertungsfile(final MessstelleAuswertungOptionsDTO options) throws IOException {
         log.info("#createAuswertungsfile {}", options);
         if (CollectionUtils.isEmpty(options.getMstIds())) {
