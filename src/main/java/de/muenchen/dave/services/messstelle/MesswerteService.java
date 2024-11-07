@@ -2,12 +2,8 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
@@ -26,15 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

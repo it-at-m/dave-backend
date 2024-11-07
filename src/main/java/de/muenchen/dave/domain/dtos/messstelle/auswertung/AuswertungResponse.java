@@ -8,10 +8,10 @@ import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 public class AuswertungResponse extends TagesaggregatResponseDto {
+
+    private Integer mstId;
 
     private Zeitraum zeitraum;
 }

@@ -91,7 +91,7 @@ public class AuswertungService {
                     options.setMqIds(mqIds);
 
                     final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
-                    return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum);
+                    return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
                 }))
                 .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
     }
