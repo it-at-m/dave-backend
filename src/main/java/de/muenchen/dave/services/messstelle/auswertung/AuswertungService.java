@@ -78,24 +78,25 @@ public class AuswertungService {
         // Liste für MQ
         // Wert Messstelle
 
-        return zeitraeume
+        return CollectionUtils.emptyIfNull(options.getMstIds())
                 .parallelStream()
-                .flatMap(zeitraum -> options.getMstIds().parallelStream().map(mstId -> {
+                .flatMap(mstId -> CollectionUtils.emptyIfNull(zeitraeume)
+                        .parallelStream()
+                        .map(zeitraum -> {
+                            // Holen der Messquerschnitte aus Messstelle für Options.
+                            final var messstelle = messstelleService.getMessstelleByMstId(mstId);
+                            final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
+                                    .stream()
+                                    .filter(ObjectUtils::isNotEmpty)
+                                    .map(Messquerschnitt::getMqId)
+                                    .filter(ObjectUtils::isNotEmpty)
+                                    .collect(Collectors.toSet());
+                            options.setMqIds(mqIds);
 
-                    // Holen der Messquerschnitte aus Messstelle für Options.
-                    final var messstelle = messstelleService.getMessstelleByMstId(mstId);
-                    final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
-                            .stream()
-                            .filter(ObjectUtils::isNotEmpty)
-                            .map(Messquerschnitt::getMqId)
-                            .filter(ObjectUtils::isNotEmpty)
-                            .collect(Collectors.toSet());
-                    options.setMqIds(mqIds);
-
-                    final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
-                    return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
-                }))
-                .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMstId()));
+                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
+                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
+                        }))
+                .collect(Collectors.groupingByConcurrent(AuswertungMessquerschnitte::getMstId));
     }
 
     protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {

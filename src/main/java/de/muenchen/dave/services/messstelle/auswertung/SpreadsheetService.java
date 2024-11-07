@@ -32,7 +32,8 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class SpreadsheetService {
 
-    public byte[] createFile(final Map<Integer, List<AuswertungMessquerschnitte>> auswertungen, final MessstelleAuswertungOptionsDTO options) throws IOException {
+    public byte[] createFile(final Map<Integer, List<AuswertungMessquerschnitte>> auswertungen, final MessstelleAuswertungOptionsDTO options)
+            throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
 
         final var dataCellStyle = spreadsheetDocument.createCellStyle();
