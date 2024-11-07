@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
-import de.muenchen.dave.services.messstelle.MessstelleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,7 +17,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -35,28 +33,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SpreadsheetService {
 
     public byte[] createFile(final Map<Integer, List<AuswertungResponse>> auswertungen, final MessstelleAuswertungOptionsDTO options) throws IOException {
-        final Workbook workbook = new XSSFWorkbook();
+        final var spreadsheetDocument = new XSSFWorkbook();
 
-        final CellStyle dataCellStyle = workbook.createCellStyle();
+        final var dataCellStyle = spreadsheetDocument.createCellStyle();
         dataCellStyle.setWrapText(true);
 
+        // Füge Daten zum Document hinzu.
         auswertungen.forEach((mstId, tagesaggregatResponseDtos) -> {
 
-            final Sheet sheet = workbook.createSheet(String.format("Messstelle %s", mstId));
+            final Sheet sheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", mstId));
 
-            createMetaHeader(sheet);
-            createMetaData(sheet, options);
-            createDataHeader(sheet, options.getFahrzeuge());
-            createData(sheet, dataCellStyle, tagesaggregatResponseDtos, options.getFahrzeuge());
+            addMetaHeaderToSheet(sheet);
+            addMetaDataToSheet(sheet, options);
+            addDataHeaderToSheet(sheet, options.getFahrzeuge());
+            addDataToSheet(sheet, dataCellStyle, tagesaggregatResponseDtos, options.getFahrzeuge());
 
         });
 
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        workbook.write(baos);
-        final byte[] workbookAsByteArray = baos.toByteArray();
-        workbook.close();
-
-        return workbookAsByteArray;
+        return serializeSpreadsheetDocument(spreadsheetDocument);
     }
 
     private Sheet createSheet(final Workbook workbook, final String sheetName) {
@@ -66,7 +60,7 @@ public class SpreadsheetService {
         return sheet;
     }
 
-    private void createMetaHeader(final Sheet sheet) {
+    private void addMetaHeaderToSheet(final Sheet sheet) {
         final Row metaheader = sheet.createRow(0);
         Cell metaHeaderCell = metaheader.createCell(0);
         metaHeaderCell.setCellValue("ausgewählter Wochentag");
@@ -74,7 +68,7 @@ public class SpreadsheetService {
         metaHeaderCell.setCellValue("ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
     }
 
-    private void createMetaData(final Sheet sheet, final MessstelleAuswertungOptionsDTO options) {
+    private void addMetaDataToSheet(final Sheet sheet, final MessstelleAuswertungOptionsDTO options) {
         final Row metaData = sheet.createRow(1);
         Cell metaDataCell = metaData.createCell(0);
         metaDataCell.setCellValue(options.getTagesTyp().getBeschreibung());
@@ -91,7 +85,10 @@ public class SpreadsheetService {
         sheet.createRow(2);
     }
 
-    private void createData(final Sheet sheet, final CellStyle style, final List<AuswertungResponse> tagesaggregatResponseDtos,
+    private void addDataToSheet(
+            final Sheet sheet,
+            final CellStyle style,
+            final List<AuswertungResponse> tagesaggregatResponseDtos,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         AtomicInteger rowIndex = new AtomicInteger(4);
         AtomicReference<Row> row = new AtomicReference<>();
@@ -198,7 +195,7 @@ public class SpreadsheetService {
         });
     }
 
-    private void createDataHeader(final Sheet sheet, final FahrzeugOptionsDTO fahrzeugOptions) {
+    private void addDataHeaderToSheet(final Sheet sheet, final FahrzeugOptionsDTO fahrzeugOptions) {
         final Row header = sheet.createRow(3);
 
         Cell headerCell = header.createCell(0);
@@ -271,6 +268,15 @@ public class SpreadsheetService {
         if (fahrzeugOptions.isPersonenkraftwagen()) {
             headerCell = header.createCell(headerCellIndex);
             headerCell.setCellValue("PKW");
+        }
+    }
+
+    protected byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
+        try (final var baos = new ByteArrayOutputStream()) {
+            spreadsheetDocument.write(baos);
+            return baos.toByteArray();
+        } catch (final IOException exception) {
+            throw exception;
         }
     }
 }

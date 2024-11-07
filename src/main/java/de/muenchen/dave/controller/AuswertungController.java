@@ -44,14 +44,13 @@ public class AuswertungController {
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
         try {
-            final byte[] byteArray = auswertungService.createAuswertungsfile(options);
-            log.info("Datei wurde erstellt");
+            final byte[] file = auswertungService.createAuswertungsfile(options);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(byteArray.length)
-                    .body(byteArray);
-        } catch (Exception e) {
-            log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}", options.getMstIds(), e);
+                    .contentLength(file.length)
+                    .body(file);
+        } catch (Exception exception) {
+            log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}", options.getMstIds(), exception);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der Auswertung aufgetreten.");
         }
 

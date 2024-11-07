@@ -52,7 +52,7 @@ public class AuswertungService {
         return spreadsheetService.createFile(auswertungenByMqId, options);
     }
 
-    public Map<Integer, List<AuswertungResponse>> ladeAuswertungGroupedByMqId(final MessstelleAuswertungOptionsDTO options) {
+    protected Map<Integer, List<AuswertungResponse>> ladeAuswertungGroupedByMqId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
