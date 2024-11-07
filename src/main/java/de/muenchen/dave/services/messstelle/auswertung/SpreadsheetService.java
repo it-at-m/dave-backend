@@ -5,7 +5,7 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitt;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class SpreadsheetService {
 
-    public byte[] createFile(final Map<Integer, List<AuswertungResponse>> auswertungen, final MessstelleAuswertungOptionsDTO options) throws IOException {
+    public byte[] createFile(final Map<Integer, List<AuswertungMessquerschnitt>> auswertungen, final MessstelleAuswertungOptionsDTO options) throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
 
         final var dataCellStyle = spreadsheetDocument.createCellStyle();
@@ -81,7 +81,7 @@ public class SpreadsheetService {
     private void addDataToSheet(
             final Sheet sheet,
             final CellStyle style,
-            final List<AuswertungResponse> tagesaggregatResponseDtos,
+            final List<AuswertungMessquerschnitt> tagesaggregatResponseDtos,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         AtomicInteger rowIndex = new AtomicInteger(4);
         AtomicReference<Row> row = new AtomicReference<>();

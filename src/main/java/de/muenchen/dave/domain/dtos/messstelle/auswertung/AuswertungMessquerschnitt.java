@@ -9,7 +9,7 @@ import de.muenchen.dave.services.messstelle.Zeitraum;
 import lombok.Data;
 
 @Data
-public class AuswertungResponse extends TagesaggregatResponseDto {
+public class AuswertungMessquerschnitt extends TagesaggregatResponseDto {
 
     private Integer mstId;
 

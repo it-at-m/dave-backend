@@ -4,7 +4,7 @@
  */
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitt;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -48,11 +48,11 @@ public class AuswertungService {
         if (CollectionUtils.isEmpty(options.getMstIds())) {
             throw new IllegalArgumentException("MstIds is empty");
         }
-        final var auswertungenByMqId = this.ladeAuswertungGroupedByMqId(options);
-        return spreadsheetService.createFile(auswertungenByMqId, options);
+        final var auswertungenByMstId = this.ladeAuswertungGroupedByMstId(options);
+        return spreadsheetService.createFile(auswertungenByMstId, options);
     }
 
-    protected Map<Integer, List<AuswertungResponse>> ladeAuswertungGroupedByMqId(final MessstelleAuswertungOptionsDTO options) {
+    protected Map<Integer, List<AuswertungMessquerschnitt>> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
@@ -93,7 +93,7 @@ public class AuswertungService {
                     final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
                     return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
                 }))
-                .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
+                .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMstId()));
     }
 
     protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
