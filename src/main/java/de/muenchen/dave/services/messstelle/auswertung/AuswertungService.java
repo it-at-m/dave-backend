@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungResponse;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.services.messstelle.MessstelleService;
@@ -18,17 +17,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -59,7 +54,7 @@ public class AuswertungService {
 
     public Map<Integer, List<AuswertungResponse>> ladeAuswertung(final MessstelleAuswertungOptionsDTO options) {
 
-        final List<Zeitraum> zeitraeume = this.calculateZeitraeume(options.getZeitraum(), options.getJahre());
+        final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
         // AuswertungResponse extends TagesaggregatResponseDto für Januar
         // Liste für MQ
@@ -81,29 +76,31 @@ public class AuswertungService {
         // Liste für MQ
         // Wert Messstelle
 
-        return zeitraeume.parallelStream().flatMap(zeitraum -> {
-            return options.getMstIds().parallelStream().map(mstId -> {
+        return zeitraeume
+                .parallelStream()
+                .flatMap(zeitraum -> options.getMstIds().parallelStream().map(mstId -> {
 
-                // Holen der Messquerschnitte aus Messstelle für Options.
-                final var messstelle = messstelleService.getMessstelleByMstId(mstId);
-                final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
-                        .stream()
-                        .filter(ObjectUtils::isNotEmpty)
-                        .map(Messquerschnitt::getMqId)
-                        .filter(ObjectUtils::isNotEmpty)
-                        .collect(Collectors.toSet());
-                options.setMqIds(mqIds);
+                    // Holen der Messquerschnitte aus Messstelle für Options.
+                    final var messstelle = messstelleService.getMessstelleByMstId(mstId);
+                    final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
+                            .stream()
+                            .filter(ObjectUtils::isNotEmpty)
+                            .map(Messquerschnitt::getMqId)
+                            .filter(ObjectUtils::isNotEmpty)
+                            .collect(Collectors.toSet());
+                    options.setMqIds(mqIds);
 
-                final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
-                return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum);
-            });
-        })
+                    final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
+                    return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum);
+                }))
                 .collect(Collectors.groupingByConcurrent(tagesaggregatResponseDto -> tagesaggregatResponseDto.getMeanOfAggregatesForAllMqId().getMqId()));
     }
 
-    protected List<Zeitraum> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
-        return ListUtils.emptyIfNull(auswertungszeitraeume).stream()
-                .flatMap(auswertungsZeitraum -> ListUtils.emptyIfNull(jahre).stream()
+    protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
+        return ListUtils.emptyIfNull(auswertungszeitraeume)
+                .stream()
+                .flatMap(auswertungsZeitraum -> ListUtils.emptyIfNull(jahre)
+                        .stream()
                         .map(jahr -> new Zeitraum(
                                 YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
                                 YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
