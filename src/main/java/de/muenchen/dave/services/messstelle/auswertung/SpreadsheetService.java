@@ -105,47 +105,47 @@ public class SpreadsheetService {
             cell.setCellStyle(style);
 
             cell = row.get().createCell(1);
-            cell.setCellValue(entry.getMeanOfAggregatesForAllMqId().getMqId());
+            cell.setCellValue(entry.getMeanOverAllAggregatesOfAllMqId().getMqId());
             cell.setCellStyle(style);
 
             int cellIndex = 2;
             if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
                 cell = row.get().createCell(cellIndex);
                 cell.setCellValue(
-                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeKraftfahrzeugverkehr()), StringUtils.EMPTY));
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeKraftfahrzeugverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isSchwerverkehr()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeSchwerverkehr()));
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeSchwerverkehr()), StringUtils.EMPTY));
+                cell.setCellValue(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeSchwerverkehr()));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeSchwerverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isGueterverkehr()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeGueterverkehr()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeGueterverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
                 cell = row.get().createCell(cellIndex);
                 cell.setCellValue(
-                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getProzentSchwerverkehr()), StringUtils.EMPTY));
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getProzentSchwerverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
                 cell = row.get().createCell(cellIndex);
                 cell.setCellValue(
-                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getProzentGueterverkehr()), StringUtils.EMPTY));
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getProzentGueterverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isRadverkehr()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getAnzahlRad()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getAnzahlRad()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
@@ -157,37 +157,37 @@ public class SpreadsheetService {
             }
             if (fahrzeugOptions.isLastkraftwagen()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getAnzahlLkw()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getAnzahlLkw()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isLieferwagen()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getAnzahlLfw()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getAnzahlLfw()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isLastzuege()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeLastzug()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeLastzug()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isBusse()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getAnzahlBus()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getAnzahlBus()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isKraftraeder()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getAnzahlKrad()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getAnzahlKrad()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isPersonenkraftwagen()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOfAggregatesForAllMqId().getSummeAllePkw()), StringUtils.EMPTY));
+                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeAllePkw()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
             }
 

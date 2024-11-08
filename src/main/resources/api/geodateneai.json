@@ -48,22 +48,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Intervalle erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IntervalResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Intervalle erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalResponseDto"
                 }
               }
             }
@@ -130,22 +130,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "TagesTyp erfolgreich validiert",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "TagesTyp erfolgreich validiert",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
                 }
               }
             }
@@ -205,22 +205,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -362,25 +362,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "datumUhrzeitVon": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "datumUhrzeitBis": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "DTV_W3",
-              "DTV_W5",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN",
-              "DTV"
-            ]
-          },
           "anzahlPkw": {
             "type": "number"
           },
@@ -431,6 +412,25 @@
           },
           "prozentGueterverkehr": {
             "type": "number"
+          },
+          "datumUhrzeitVon": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "datumUhrzeitBis": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
           }
         },
         "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids."
@@ -582,12 +582,12 @@
         "properties": {
           "meanOfAggregatesForEachMqId": {
             "type": "array",
-            "description": "Durchschnitt aller Tagesaggregate pro angefragten Messquerschnitt-Ids.",
+            "description": "Durchschnitt aller Tagesaggregate je angefragten Messquerschnitt-Ids.",
             "items": {
               "$ref": "#/components/schemas/TagesaggregatDto"
             }
           },
-          "meanOfAggregatesForAllMqId": {
+          "meanOverAllAggregatesOfAllMqId": {
             "$ref": "#/components/schemas/TagesaggregatDto"
           }
         }
