@@ -2,7 +2,6 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
@@ -22,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -72,7 +72,7 @@ public class MesswerteService {
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
-        processedZaehldaten.setRequestedMeasuringDays(options.getZeitraum().getFirst().until(options.getZeitraum().getLast()).getDays() + 1);
+        processedZaehldaten.setRequestedMeasuringDays(ChronoUnit.DAYS.between(options.getZeitraum().getFirst(), options.getZeitraum().getLast()) + 1);
         processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         return processedZaehldaten;
     }
@@ -114,18 +114,12 @@ public class MesswerteService {
         return response.getBody();
     }
 
-    /**
-     *
-     * @param options
-     * @param zeitraum
-     * @return
-     */
-    public TagesaggregatResponseDto ladeTagesaggregate(final MessstelleAuswertungOptionsDTO options, final Zeitraum zeitraum) {
+    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
         final var request = new TagesaggregatRequestDto();
-        request.setMessquerschnittIds(options.getMqIds().stream().map(Integer::valueOf).toList());
+        request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
         request.setStartDate(LocalDate.of(zeitraum.start.getYear(), zeitraum.start.getMonthValue(), 1));
         request.setEndDate(LocalDate.of(zeitraum.end.getYear(), zeitraum.end.getMonthValue(), zeitraum.end.atEndOfMonth().getDayOfMonth()));
-        request.setTagesTyp(options.getTagesTyp().getTagesaggregatTyp());
+        request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
 
         final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(request).block();
 

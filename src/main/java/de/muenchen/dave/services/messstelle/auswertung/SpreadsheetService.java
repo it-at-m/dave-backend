@@ -1,11 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import lombok.AllArgsConstructor;
@@ -26,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,6 +42,7 @@ public class SpreadsheetService {
         // Füge Daten zum Document hinzu.
         MapUtils.emptyIfNull(auswertungenByMstId).forEach((mstId, tagesaggregatResponseDtos) -> {
 
+            // Sheet Messstelle
             final Sheet sheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", mstId));
 
             addMetaHeaderToSheet(sheet);
@@ -54,6 +53,9 @@ public class SpreadsheetService {
                     dataCellStyle,
                     ListUtils.emptyIfNull(tagesaggregatResponseDtos),
                     options.getFahrzeuge());
+
+            // Sheets Messquerschnitte
+            // Nur machen, wenn eine Messstelle ausgewaehlt wurde
 
         });
 
@@ -74,15 +76,95 @@ public class SpreadsheetService {
         metaDataCell.setCellValue(options.getTagesTyp().getBeschreibung());
         metaDataCell = metaData.createCell(1);
 
-        if (CollectionUtils.isNotEmpty(options.getMqIds())) {
+        if (CollectionUtils.isNotEmpty(options.getMessstelleAuswertungIds()) && options.getMessstelleAuswertungIds().size() > 1) {
             metaDataCell.setCellValue("Alle Messquerschnitte");
-        } else {
-            // TODO MQ's laden wg Richtung und Standort
-            metaDataCell.setCellValue(String.join(", ", options.getMqIds()));
         }
-
+        if (CollectionUtils.isNotEmpty(options.getMessstelleAuswertungIds())) {
+            if (options.getMessstelleAuswertungIds().size() > 1) {
+                metaDataCell.setCellValue("Alle Messquerschnitte");
+            } else {
+                // TODO MQ's laden wg Richtung und Standort
+                final Optional<MessstelleAuswertungIdDTO> first = options.getMessstelleAuswertungIds().stream().findFirst();
+                if (first.isPresent()) {
+                    metaDataCell.setCellValue(String.join(", ", first.get().getMqIds()));
+                }
+            }
+        }
         // Leere Zeile einfuegen
         sheet.createRow(2);
+    }
+
+    private void addDataHeaderToSheet(final Sheet sheet, final FahrzeugOptionsDTO fahrzeugOptions) {
+        final Row header = sheet.createRow(3);
+
+        Cell headerCell = header.createCell(0);
+        headerCell.setCellValue("Zeitintervall");
+
+        int headerCellIndex = 1;
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("KFZ");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("SV");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isGueterverkehr()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("GV");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("SV%");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("GV%");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isRadverkehr()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("RAD");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isFussverkehr()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("FUß");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("LKW");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isLieferwagen()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("LFW");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isLastzuege()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("LZ");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isBusse()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("BUS");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isKraftraeder()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("KRAD");
+            headerCellIndex++;
+        }
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            headerCell = header.createCell(headerCellIndex);
+            headerCell.setCellValue("PKW");
+        }
     }
 
     private void addDataToSheet(
@@ -104,28 +186,26 @@ public class SpreadsheetService {
             }
             cell.setCellStyle(style);
 
-            cell = row.get().createCell(1);
-            cell.setCellValue(entry.getMeanOverAllAggregatesOfAllMqId().getMqId());
-            cell.setCellStyle(style);
-
-            int cellIndex = 2;
+            int cellIndex = 1;
             if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
                 cell = row.get().createCell(cellIndex);
                 cell.setCellValue(
-                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeKraftfahrzeugverkehr()), StringUtils.EMPTY));
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeKraftfahrzeugverkehr()),
+                                StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isSchwerverkehr()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeSchwerverkehr()));
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeSchwerverkehr()), StringUtils.EMPTY));
+                cell.setCellValue(
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeSchwerverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
             if (fahrzeugOptions.isGueterverkehr()) {
                 cell = row.get().createCell(cellIndex);
-                cell.setCellValue(StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeGueterverkehr()), StringUtils.EMPTY));
+                cell.setCellValue(
+                        StringUtils.defaultIfEmpty(String.valueOf(entry.getMeanOverAllAggregatesOfAllMqId().getSummeGueterverkehr()), StringUtils.EMPTY));
                 cell.setCellStyle(style);
                 cellIndex++;
             }
@@ -195,87 +275,12 @@ public class SpreadsheetService {
         });
     }
 
-    private void addDataHeaderToSheet(final Sheet sheet, final FahrzeugOptionsDTO fahrzeugOptions) {
-        final Row header = sheet.createRow(3);
-
-        Cell headerCell = header.createCell(0);
-        headerCell.setCellValue("Zeitintervall");
-
-        headerCell = header.createCell(1);
-        headerCell.setCellValue("MQ-ID");
-
-        int headerCellIndex = 2;
-        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("KFZ");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isSchwerverkehr()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("SV");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isGueterverkehr()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("GV");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("SV%");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("GV%");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isRadverkehr()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("RAD");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isFussverkehr()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("FUß");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isLastkraftwagen()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("LKW");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isLieferwagen()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("LFW");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isLastzuege()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("LZ");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isBusse()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("BUS");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isKraftraeder()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("KRAD");
-            headerCellIndex++;
-        }
-        if (fahrzeugOptions.isPersonenkraftwagen()) {
-            headerCell = header.createCell(headerCellIndex);
-            headerCell.setCellValue("PKW");
-        }
-    }
-
     protected byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
         try (final var baos = new ByteArrayOutputStream()) {
             spreadsheetDocument.write(baos);
             return baos.toByteArray();
         } catch (final IOException exception) {
+            // TODO Fehlerhandling einbauen
             throw exception;
         }
     }

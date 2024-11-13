@@ -15,10 +15,7 @@ public class MessstelleAuswertungOptionsDTO implements Serializable {
     private List<Integer> jahre;
     private TagesTyp tagesTyp;
     private List<AuswertungsZeitraum> zeitraum;
-
-    // TODO: Zusammenfassen der mstIds und mqids in eine Liste von Objekten für Mst welche jeweils die mqId beinhalten.
-    private Set<String> mstIds;
-    private Set<String> mqIds;
+    private Set<MessstelleAuswertungIdDTO> messstelleAuswertungIds;
     private FahrzeugOptionsDTO fahrzeuge;
 
 }

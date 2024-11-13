@@ -42,7 +42,7 @@ public class AuswertungController {
     @PostMapping(value = "/messstelle", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<byte[]> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
-        log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
+        log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMessstelleAuswertungIds());
         try {
             final byte[] file = auswertungService.createAuswertungsfile(options);
             return ResponseEntity.ok()
@@ -50,7 +50,8 @@ public class AuswertungController {
                     .contentLength(file.length)
                     .body(file);
         } catch (Exception exception) {
-            log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}", options.getMstIds(), exception);
+            log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}",
+                    options.getMessstelleAuswertungIds(), exception);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der Auswertung aufgetreten.");
         }
 

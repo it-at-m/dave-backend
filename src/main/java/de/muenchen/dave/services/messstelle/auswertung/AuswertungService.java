@@ -8,7 +8,6 @@ import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.services.messstelle.MessstelleService;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -47,8 +45,8 @@ public class AuswertungService {
     @LogExecutionTime
     public byte[] createAuswertungsfile(final MessstelleAuswertungOptionsDTO options) throws IOException {
         log.info("#createAuswertungsfile {}", options);
-        if (CollectionUtils.isEmpty(options.getMstIds())) {
-            throw new IllegalArgumentException("MstIds is empty");
+        if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
+            throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
         }
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
         return spreadsheetService.createFile(auswertungenMqByMstId, options);
@@ -58,24 +56,15 @@ public class AuswertungService {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        return CollectionUtils.emptyIfNull(options.getMstIds())
+        return CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
-                .flatMap(mstId -> CollectionUtils.emptyIfNull(zeitraeume)
+                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
-                            // Holen der Messquerschnitte aus Messstelle für Options.
-                            final var messstelle = messstelleService.getMessstelleByMstId(mstId);
-                            final var mqIds = ListUtils.emptyIfNull(messstelle.getMessquerschnitte())
-                                    .stream()
-                                    .filter(ObjectUtils::isNotEmpty)
-                                    .map(Messquerschnitt::getMqId)
-                                    .filter(ObjectUtils::isNotEmpty)
-                                    .collect(Collectors.toSet());
-                            options.setMqIds(mqIds);
-
                             // Extrahieren der Tagesaggregate für die Messquerschnitte
-                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options, zeitraum);
-                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, mstId);
+                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
+                                    zeitraum);
+                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, messstelleAuswertungIdDTO.getMstId());
                         }))
                 .collect(Collectors.groupingByConcurrent(AuswertungMessquerschnitte::getMstId));
     }
