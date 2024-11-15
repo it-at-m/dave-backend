@@ -5,7 +5,9 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -21,8 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -52,21 +55,48 @@ public class AuswertungService {
         return spreadsheetService.createFile(auswertungenMqByMstId, options);
     }
 
-    protected Map<Integer, List<AuswertungMessquerschnitte>> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
+    protected List<AuswertungProMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        return CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds())
+        final List<AuswertungProMessstelle> auswertungen = new ArrayList<>();
+
+        final ConcurrentMap<String, List<AuswertungMessquerschnitte>> collected = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
-                            // Extrahieren der Tagesaggregate für die Messquerschnitte
                             final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
                                     zeitraum);
-                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate, zeitraum, messstelleAuswertungIdDTO.getMstId());
+                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate,
+                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
                         }))
                 .collect(Collectors.groupingByConcurrent(AuswertungMessquerschnitte::getMstId));
+
+        collected.forEach((mstId, auswertungMessquerschnitte) -> {
+            final AuswertungProMessstelle auswertungProMessstelle = new AuswertungProMessstelle();
+            auswertungProMessstelle.setMstId(mstId);
+            auswertungMessquerschnitte.forEach(auswertungMessquerschnitt -> {
+                final Auswertung auswertung = new Auswertung();
+                auswertung.setObjectId(mstId);
+                auswertung.setZeitraum(auswertungMessquerschnitt.getZeitraum());
+                auswertung.setDaten(auswertungMessquerschnitt.getMeanOverAllAggregatesOfAllMqId());
+                auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
+                ListUtils.emptyIfNull(auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId()).forEach(tagesaggregatDto -> {
+                    final Auswertung auswertungMq = new Auswertung();
+                    String mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
+                    auswertungMq.setObjectId(mqIdAsString);
+                    auswertungMq.setZeitraum(auswertungMessquerschnitt.getZeitraum());
+                    auswertungMq.setDaten(tagesaggregatDto);
+                    if (!auswertungProMessstelle.getAuswertungenProMq().containsKey(mqIdAsString)) {
+                        auswertungProMessstelle.getAuswertungenProMq().put(mqIdAsString, new ArrayList<>());
+                    }
+                    auswertungProMessstelle.getAuswertungenProMq().get(mqIdAsString).add(auswertungMq);
+                });
+            });
+            auswertungen.add(auswertungProMessstelle);
+        });
+        return auswertungen;
     }
 
     protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {

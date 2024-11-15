@@ -12,7 +12,7 @@ import org.mapstruct.MappingConstants;
 public interface AuswertungMapper {
 
     @Mapping(target = "zeitraum", expression = "java( zeitraum )")
-    @Mapping(target = "mstId", expression = "java( Integer.valueOf(mstId) )")
+    @Mapping(target = "mstId", expression = "java( mstId )")
     AuswertungMessquerschnitte tagesaggregatDto2AuswertungResponse(
             final TagesaggregatResponseDto dto,
             @Context final Zeitraum zeitraum,
