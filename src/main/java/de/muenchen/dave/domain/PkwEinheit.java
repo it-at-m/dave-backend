@@ -2,12 +2,13 @@ package de.muenchen.dave.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import java.math.BigDecimal;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.math.BigDecimal;
 
 @Entity
 // Definition of getter, setter, ...

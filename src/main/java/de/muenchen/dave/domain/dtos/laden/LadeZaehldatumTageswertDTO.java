@@ -5,8 +5,9 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.math.BigDecimal;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 @JsonIgnoreProperties(

@@ -9,8 +9,7 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 public class EtagConfiguration {
 
     /**
-     * Bean zur Aktivierung der Versionskontrolle
-     * bei Entitäten für die relationale Datenbank.
+     * Bean zur Aktivierung der Versionskontrolle bei Entitäten für die relationale Datenbank.
      * <p>
      * Das relevante Attribut ist {@link BaseEntity#getEntityVersion()}.
      *

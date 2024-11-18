@@ -37,8 +37,7 @@ public class WGS84 {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof WGS84) {
-            WGS84 other = (WGS84) o;
+        if (o instanceof WGS84 other) {
             return (latitude == other.latitude) &&
                     (longitude == other.longitude);
         }

@@ -1,7 +1,8 @@
 package de.muenchen.dave.util.geo;
 
-import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Locale;
 
 /**
  * Class representing UTM-coordinates. Based on code from stack overflow.
@@ -59,13 +60,12 @@ public class UTM {
     }
 
     /**
-     * Tests the exact representation. There might be more representations for
-     * the same geographical point with different letters or zones, but that is
-     * not taken into account.
+     * Tests the exact representation. There might be more representations for the same geographical
+     * point with different letters or zones, but that is not
+     * taken into account.
      */
     public boolean equals(Object o) {
-        if (o instanceof UTM) {
-            UTM other = (UTM) o;
+        if (o instanceof UTM other) {
             return (zone == other.zone) &&
                     (letter == other.letter) &&
                     (easting == other.easting) &&

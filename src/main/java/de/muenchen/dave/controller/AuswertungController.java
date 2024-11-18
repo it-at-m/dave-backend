@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOp
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RequestMapping(value = "/auswertung")
 @RestController
@@ -42,7 +43,7 @@ public class AuswertungController {
     public ResponseEntity<CsvDTO> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMstIds());
-        auswertungService.loadDataForEvaluation(options);
+        //auswertungService.loadDataForEvaluation(options);
         log.info("CSV wurde erstellt");
         return new ResponseEntity<>(HttpStatus.OK);
     }

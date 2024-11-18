@@ -1,14 +1,5 @@
 package de.muenchen.dave.spring.services.ladezaehldaten;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
@@ -33,6 +24,15 @@ import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,14 +43,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -543,7 +544,7 @@ class LadeZaehldatenServiceSpringTest {
         zaehlung.setId(zaehlungId.toString());
         zaehlung.setPkwEinheit(new PkwEinheit());
         zaehlung.setKreisverkehr(false);
-        zaehlstelle.setZaehlungen(Arrays.asList(zaehlung));
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         final OptionsDTO chosenOptions = new OptionsDTO();

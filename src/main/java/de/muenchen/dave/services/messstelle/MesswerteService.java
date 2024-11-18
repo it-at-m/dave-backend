@@ -1,120 +1,112 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
-import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesRequest;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesResponse;
-import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.util.OptionsUtil;
-import java.util.Collections;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class MesswerteService {
 
+    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
     private final MessstelleService messstelleService;
     private final MesswerteApi messwerteApi;
-
     private final GanglinieService ganglinieService;
     private final HeatmapService heatmapService;
     private final ListenausgabeService listenausgabeService;
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
 
-    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
-
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
-        final MeasurementValuesResponse response = this.ladeMesswerteIntervall(options);
-        final List<MeasurementValuesPerInterval> intervals;
-        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
-            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(response.getAverageMeasurementValuesPerIntervalResponse().getIntervals(),
-                    messstelleService.isKfzMessstelle(messstelleId));
-        } else {
-            intervals = response.getAverageMeasurementValuesPerIntervalResponse().getIntervals();
-        }
-        final List<TotalSumPerMessquerschnitt> totalSumPerMessquerschnittList = response.getTotalSumOfAllMessquerschnitte().getTotalSumPerMessquerschnittList();
 
-        final LadeProcessedMesswerteDTO processedZaehldaten = new LadeProcessedMesswerteDTO();
+        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
+        final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
+        final List<IntervalDto> intervals;
+
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
+            intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
+                    ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag()),
+                    isKfzMessstelle,
+                    options.getIntervall());
+        } else {
+            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
+        }
+
+        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
+                .stream()
+                .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
+                .toList();
+
+        final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
-        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, messstelleService.isKfzMessstelle(messstelleId), options));
-        processedZaehldaten.setBelastungsplanMessquerschnitte(new BelastungsplanMessquerschnitteDTO());
+        processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
         processedZaehldaten
-                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, totalSumPerMessquerschnittList, messstelleId, options));
+                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
         if (CollectionUtils.isNotEmpty(intervals)) {
-            processedZaehldaten.setTagesTyp(TagesTyp.valueOf(intervals.get(0).getTagesTyp().name()));
+            processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
+        processedZaehldaten.setRequestedMeasuringDays(options.getZeitraum().getFirst().until(options.getZeitraum().getLast()).getDays() + 1);
+        processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         return processedZaehldaten;
     }
 
     protected void validateOptions(final MessstelleOptionsDTO options) {
-        if (options.getZeitraum().size() == 2 && StringUtils.isEmpty(options.getTagesTyp())) {
+        if (options.getZeitraum().size() == 2 && ObjectUtils.isEmpty(options.getTagesTyp())) {
             throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
         }
     }
 
-    protected MeasurementValuesResponse ladeMesswerteIntervall(final MessstelleOptionsDTO options) {
-        final GetMeasurementValuesRequest request = new GetMeasurementValuesRequest();
+    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options, final Set<String> messquerschnittIds) {
+        final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
-        request.setMessquerschnittIds(options.getMessquerschnittIds());
-        if (StringUtils.isNotEmpty(options.getTagesTyp())) {
-            request.setTagesTyp(GetMeasurementValuesRequest.TagesTypEnum.valueOf(options.getTagesTyp()));
+        request.setSelectedMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());
+        request.setAllMessquerschnittIds(messquerschnittIds.stream().map(Integer::valueOf).toList());
+        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+            request.setTagesTyp(options.getTagesTyp().getMesswertTyp());
+        } else {
+            request.setTagesTyp(MesswertRequestDto.TagesTypEnum.DTV);
         }
         if (options.getZeitraum().size() == 2) {
             Collections.sort(options.getZeitraum());
-            request.setZeitpunktStart(options.getZeitraum().get(0));
-            request.setZeitpunktEnde(options.getZeitraum().get(1));
+            request.setStartDate(options.getZeitraum().getFirst());
+            request.setEndDate(options.getZeitraum().getLast());
         } else {
-            request.setZeitpunktStart(options.getZeitraum().get(0));
-            request.setZeitpunktEnde(options.getZeitraum().get(0));
+            request.setStartDate(options.getZeitraum().getFirst());
+            request.setEndDate(options.getZeitraum().getFirst());
         }
-        request.setUhrzeitStart(options.getZeitblock().getStart().toLocalTime());
-        request.setUhrzeitEnde(options.getZeitblock().getEnd().toLocalTime());
-        request.setMinutesPerZeitintervall(options.getIntervall().getMinutesPerIntervall());
+        request.setStartTime(options.getZeitblock().getStart().toLocalTime());
+        request.setEndTime(options.getZeitblock().getEnd().toLocalTime());
+        request.setIntervalInMinutes(options.getIntervall().getMesswertIntervalInMinutes());
 
-        final Mono<ResponseEntity<MeasurementValuesResponse>> response = messwerteApi
-                .getAverageMeasurementValuesPerIntervalWithHttpInfo(
-                        request);
-        final ResponseEntity<MeasurementValuesResponse> block = response.block();
-        if (ObjectUtils.isEmpty(block)) {
-            log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
+        final ResponseEntity<IntervalResponseDto> response = messwerteApi.getIntervalleWithHttpInfo(request).block();
+
+        if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
+            log.error("Die Response beinhaltet keine Daten");
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
-        final MeasurementValuesResponse body = block.getBody();
-        if (ObjectUtils.isEmpty(body)) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> ist leer.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (ObjectUtils.isEmpty(body.getAverageMeasurementValuesPerIntervalResponse())) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine AverageMeasurementValuesPerInterval.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (ObjectUtils.isEmpty(body.getTotalSumOfAllMessquerschnitte())) {
-            log.error("Body der Anfrage <MeasurementValuesResponse> enthält keine TotalSumOfAllMessquerschnitte.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        if (CollectionUtils.isEmpty(body.getAverageMeasurementValuesPerIntervalResponse().getIntervals())) {
-            log.error("Body der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> enthält keine Messwerte.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        return body;
+        return response.getBody();
     }
 }

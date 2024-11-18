@@ -15,25 +15,26 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot.version>3.3.5</spring.boot.version>
+
         <spring.cloud.version>2023.0.3</spring.cloud.version>
         <logstash.encoder>7.4</logstash.encoder>
         <apache.commons.collections4>4.4</apache.commons.collections4>
-        <apache.commons.csv>1.11.0</apache.commons.csv>
-        <apache.commons.io>2.16.1</apache.commons.io>
-        <apache.commons.lang3>3.14.0</apache.commons.lang3>
+        <apache.commons.csv>1.12.0</apache.commons.csv>
+        <apache.commons.io>2.17.0</apache.commons.io>
+        <apache.commons.lang3>3.17.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.4.0</apache.commons.exec>
-        <guava>33.2.1-jre</guava>
-        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <guava>33.3.1-jre</guava>
+        <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
         <apache.sis.version>1.4</apache.sis.version>
         <org.jsoup.version>1.17.2</org.jsoup.version>
         <!-- Plugins -->
-        <maven-scm-plugin.version>1.10.0</maven-scm-plugin.version>
-        <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+        <maven-scm-plugin.version>2.1.0</maven-scm-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
         <org.projectlombok.lombok.version>1.18.34</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
@@ -170,6 +171,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
 
 
         <!-- Caching -->
@@ -286,7 +291,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
+            <version>3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

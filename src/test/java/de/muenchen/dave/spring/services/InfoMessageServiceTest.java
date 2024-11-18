@@ -1,11 +1,5 @@
 package de.muenchen.dave.spring.services;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.InfoMessage;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
@@ -15,9 +9,6 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
 import de.muenchen.dave.services.InfoMessageService;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {

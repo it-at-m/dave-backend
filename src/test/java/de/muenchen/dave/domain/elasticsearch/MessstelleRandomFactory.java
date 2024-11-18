@@ -4,11 +4,12 @@ import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class MessstelleRandomFactory {
     private static final Faker fakerInstance = Faker.instance();
@@ -72,8 +73,8 @@ public class MessstelleRandomFactory {
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
         dto.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnittDtos());
-        dto.setYcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
-        dto.setXcoordinate(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setLatitude(fakerInstance.number().randomDouble(5, 0, 5));
+        dto.setLongitude(fakerInstance.number().randomDouble(5, 0, 5));
         dto.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeitenDtos());
         return dto;
     }

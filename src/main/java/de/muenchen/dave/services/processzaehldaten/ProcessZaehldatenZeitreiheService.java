@@ -18,6 +18,10 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -25,9 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -130,10 +131,10 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Berechnet das "älteste Datum" nach dem gesucht werden soll. Wenn in den Optionen keine
-     * Vergleichszählung gewählt wurde,
-     * wird das Datum der drittletzten Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden.
-     * Ansonsten das Datum
-     * der zweitletzten Zählung bzw. wenn auch diese nicht vorhanden, dann der aktuellen Zählung.
+     * Vergleichszählung gewählt wurde, wird das Datum der drittletzten
+     * Zählung (ab der aktuellen) zurückgegeben, sofern vorhanden. Ansonsten das Datum der zweitletzten
+     * Zählung bzw. wenn auch diese nicht vorhanden, dann der
+     * aktuellen Zählung.
      *
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      * @param currentDate Datum der aktuell im Frontend gewählten Zählung
@@ -239,10 +240,10 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Filtert die Zaehlungen aus der Zaehlstelle heraus, die in der Zeitreihe angezeigt werden sollen
-     * und gibt diese als Stream zurück.
-     * Die Zaehlungen werden anhand der aktuellen Zählung und der in den Optionen gewählten
-     * Vergleichszählung gefiltert.
-     * Gewählte Zählungen müssen alle der folgenden Kriterien erfüllen:
+     * und gibt diese als Stream zurück. Die Zaehlungen werden
+     * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
+     * Gewählte Zählungen müssen alle der folgenden Kriterien
+     * erfüllen:
      * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (inkl.)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein

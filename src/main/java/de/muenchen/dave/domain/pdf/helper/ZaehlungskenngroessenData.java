@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.pdf.helper;
 
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import lombok.Data;
+
 import java.util.Arrays;
 import java.util.List;
-import lombok.Data;
 
 @Data
 public class ZaehlungskenngroessenData implements Comparable<ZaehlungskenngroessenData> {

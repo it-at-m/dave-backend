@@ -5,11 +5,12 @@
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.EmailAddress;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EmailAddressRepository extends JpaRepository<EmailAddress, UUID> { //NOSONAR
 

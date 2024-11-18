@@ -7,9 +7,6 @@ import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -18,6 +15,10 @@ import org.apache.commons.mail.SimpleEmail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener

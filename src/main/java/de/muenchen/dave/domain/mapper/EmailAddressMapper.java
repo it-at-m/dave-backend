@@ -2,9 +2,10 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.EmailAddress;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
-import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface EmailAddressMapper {

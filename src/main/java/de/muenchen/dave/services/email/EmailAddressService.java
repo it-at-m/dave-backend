@@ -5,13 +5,14 @@ import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.mapper.EmailAddressMapper;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -27,7 +28,8 @@ public class EmailAddressService {
 
     /**
      * Lädt eine Email-Adresse zu einer Participant ID. Falls sie noch nicht existiert, wird eine neues
-     * EmailAddressDTO mit leerem Wert für die Email-Adresse zurückgegeben.
+     * EmailAddressDTO mit leerem Wert für die Email-Adresse
+     * zurückgegeben.
      *
      * @param participantId Die ID des Participants
      * @return geladenes EmailAddressDTO
@@ -70,8 +72,8 @@ public class EmailAddressService {
     }
 
     /**
-     * Lädt die Email-Adressen. Falls sie noch nicht existiert, wird eine neues
-     * EmailAddressDTO mit leerem Wert für die Email-Adresse zurückgegeben.
+     * Lädt die Email-Adressen. Falls sie noch nicht existiert, wird eine neues EmailAddressDTO mit
+     * leerem Wert für die Email-Adresse zurückgegeben.
      *
      * @return geladenes EmailAddressDTO
      */

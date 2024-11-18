@@ -4,63 +4,66 @@
  */
 package de.muenchen.dave.services.messstelle;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesPerInterval;
-import de.muenchen.dave.geodateneai.gen.model.TotalSumPerMessquerschnitt;
+import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class BelastungsplanServiceTest {
     @Mock
     MessstelleService messstelleService;
+
     @Mock
     SpitzenstundeService spitzenstundeService;
+
     private BelastungsplanService belastungsplanService;
-    private RoundingService roundingService;
 
     @BeforeEach
     void setup() {
-        belastungsplanService = new BelastungsplanService(messstelleService, roundingService, spitzenstundeService);
+        belastungsplanService = new BelastungsplanService(messstelleService, new RoundingService(), spitzenstundeService);
     }
 
     @Test
     void ladeBelastungsplan() {
         // setup
-        List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt1 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt1.setSumGv(50);
-        totalSumPerMessquerschnitt1.setSumKfz(200);
-        totalSumPerMessquerschnitt1.setSumRad(20);
-        totalSumPerMessquerschnitt1.setSumSv(30);
-        totalSumPerMessquerschnitt1.setMqId("1");
+        List<IntervalDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervalDto totalSumPerMessquerschnitt1 = new IntervalDto();
+        totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
+        totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
+        totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt1.setMqId(1);
 
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt2 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt2.setSumGv(30);
-        totalSumPerMessquerschnitt2.setSumKfz(100);
-        totalSumPerMessquerschnitt2.setSumRad(10);
-        totalSumPerMessquerschnitt2.setSumSv(50);
-        totalSumPerMessquerschnitt2.setMqId("2");
+        IntervalDto totalSumPerMessquerschnitt2 = new IntervalDto();
+        totalSumPerMessquerschnitt2.setSummeGueterverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
+        totalSumPerMessquerschnitt2.setAnzahlRad(BigDecimal.valueOf(10));
+        totalSumPerMessquerschnitt2.setSummeSchwerverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt2.setMqId(2);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt1);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
@@ -107,7 +110,7 @@ class BelastungsplanServiceTest {
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1", "2"));
-        final MeasurementValuesPerInterval interval = new MeasurementValuesPerInterval();
+        final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
@@ -119,20 +122,20 @@ class BelastungsplanServiceTest {
     @Test
     void ladeBelastungsplanWithSpitzenstunde() {
         // setup
-        List<TotalSumPerMessquerschnitt> totalSumOfAllMessquerschnitte = new ArrayList<>();
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt1 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt1.setSumGv(50);
-        totalSumPerMessquerschnitt1.setSumKfz(200);
-        totalSumPerMessquerschnitt1.setSumRad(20);
-        totalSumPerMessquerschnitt1.setSumSv(30);
-        totalSumPerMessquerschnitt1.setMqId("1");
+        List<IntervalDto> totalSumOfAllMessquerschnitte = new ArrayList<>();
+        IntervalDto totalSumPerMessquerschnitt1 = new IntervalDto();
+        totalSumPerMessquerschnitt1.setSummeGueterverkehr(BigDecimal.valueOf(50));
+        totalSumPerMessquerschnitt1.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(200));
+        totalSumPerMessquerschnitt1.setAnzahlRad(BigDecimal.valueOf(20));
+        totalSumPerMessquerschnitt1.setSummeSchwerverkehr(BigDecimal.valueOf(30));
+        totalSumPerMessquerschnitt1.setMqId(1);
 
-        TotalSumPerMessquerschnitt totalSumPerMessquerschnitt2 = new TotalSumPerMessquerschnitt();
-        totalSumPerMessquerschnitt2.setSumGv(30);
-        totalSumPerMessquerschnitt2.setSumKfz(100);
-        totalSumPerMessquerschnitt2.setSumRad(10);
-        totalSumPerMessquerschnitt2.setSumSv(50);
-        totalSumPerMessquerschnitt2.setMqId("2");
+        IntervalDto totalSumPerMessquerschnitt2 = new IntervalDto();
+        totalSumPerMessquerschnitt2.setSummeGueterverkehr((BigDecimal.valueOf(30)));
+        totalSumPerMessquerschnitt2.setSummeKraftfahrzeugverkehr((BigDecimal.valueOf(100)));
+        totalSumPerMessquerschnitt2.setAnzahlRad((BigDecimal.valueOf(10)));
+        totalSumPerMessquerschnitt2.setSummeSchwerverkehr((BigDecimal.valueOf(50)));
+        totalSumPerMessquerschnitt2.setMqId(2);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt1);
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
@@ -195,12 +198,17 @@ class BelastungsplanServiceTest {
         spitzenStunde.setGueterverkehr(30);
         spitzenStunde.setAnteilSchwerverkehrAnKfzProzent(12.0);
         spitzenStunde.setAnteilGueterverkehrAnKfzProzent(4.5);
-        doReturn(spitzenStunde).when(spitzenstundeService).calculateSpitzenstunde(any(), anyList(), any(boolean.class));
+        Mockito.when(spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+                any(),
+                anyList(),
+                anyBoolean(),
+                any()))
+                .thenReturn(spitzenStunde);
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
 
-        final MeasurementValuesPerInterval interval = new MeasurementValuesPerInterval();
+        final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
 
         Assertions.assertThat(result)
@@ -221,6 +229,51 @@ class BelastungsplanServiceTest {
         var result = belastungsplanService.getDirection(getMessstelle(), "1");
         var expected = "O";
         Assertions.assertThat(result).isEqualTo(expected);
+    }
+
+    @Test
+    void roundNumberToHundredIfNeeded() {
+        final var options = new MessstelleOptionsDTO();
+
+        options.setWerteHundertRunden(true);
+        var result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
+        Assertions.assertThat(result).isNull();
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(0, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(1, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(49, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(50, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(99, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(100, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(true);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setWerteHundertRunden(false);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
+        Assertions.assertThat(result).isNull();
+
+        options.setWerteHundertRunden(false);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(101);
     }
 
     ReadMessstelleInfoDTO getMessstelle() {
@@ -271,4 +324,5 @@ class BelastungsplanServiceTest {
 
         return readMessstelleInfoDTO;
     }
+
 }

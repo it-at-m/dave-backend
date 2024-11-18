@@ -15,15 +15,16 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -55,8 +56,9 @@ public class AuswertungVisumService {
     /**
      * Diese Methode erstellt für eine Fahrbeziehung folgende Visum-relevanten Objekte.
      * <p>
-     * Für eine Kreuzung wird eine FahrbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und
-     * ein zweite FahrbeziehungVisum für alle Knotenarme zum nach-Knotenarm erstellt.
+     * Für eine Kreuzung wird eine FahrbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und ein
+     * zweite FahrbeziehungVisum für alle Knotenarme zum
+     * nach-Knotenarm erstellt.
      * <p>
      * Für den Kreisverkehr wird nur eine FahrbeziehungVisum erstellt.
      *
@@ -108,10 +110,10 @@ public class AuswertungVisumService {
 
     /**
      * Diese Methode ermittelt für den in den Parametern angegeben Monatszeitraum die durchgeführten
-     * Zählungen je Zählstelle.
-     * Je relevante Fahrbeziehung werden die Zahldaten an die Zählung angehangen.
-     * Für eine Kreuzung werden die Fahrbeziehung "x nach alle" und "alle nach x" betrachtet.
-     * Der Kreisverkehr beinhaltet nur die Fahrbeziehungen "x nach alle".
+     * Zählungen je Zählstelle. Je relevante Fahrbeziehung werden
+     * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Fahrbeziehung "x nach alle"
+     * und "alle nach x" betrachtet. Der Kreisverkehr
+     * beinhaltet nur die Fahrbeziehungen "x nach alle".
      *
      * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
@@ -166,8 +168,8 @@ public class AuswertungVisumService {
     }
 
     /**
-     * Diese Methode holt die Zeitintervalle aus der Datenbank und gibt diese als Zaehldaten
-     * im Objekt fahrbeziehungVisum zurück.
+     * Diese Methode holt die Zeitintervalle aus der Datenbank und gibt diese als Zaehldaten im Objekt
+     * fahrbeziehungVisum zurück.
      *
      * @param fahrbeziehungVisum die für die Datenextraktion relevanten Knotenarme welche die
      *            Fahrbeziehung definieren.

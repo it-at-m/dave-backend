@@ -1,8 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch;
 
 import de.muenchen.dave.util.geo.CoordinateUtil;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -10,6 +8,9 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Document(indexName = "zaehlstelle")

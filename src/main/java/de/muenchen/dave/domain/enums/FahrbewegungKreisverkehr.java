@@ -6,8 +6,9 @@ package de.muenchen.dave.domain.enums;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
-import java.util.Optional;
 import org.apache.commons.lang3.BooleanUtils;
+
+import java.util.Optional;
 
 public enum FahrbewegungKreisverkehr {
 
