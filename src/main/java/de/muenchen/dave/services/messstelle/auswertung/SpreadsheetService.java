@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +42,8 @@ public class SpreadsheetService {
     public byte[] createFile(final List<AuswertungProMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
             throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
+
+        auswertungenProMessstelle.sort(Comparator.comparing(AuswertungProMessstelle::getMstId));
 
         // Füge Daten zum Document hinzu.
         ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungProMessstelle -> {
@@ -192,6 +195,9 @@ public class SpreadsheetService {
             final FahrzeugOptionsDTO fahrzeugOptions) {
         final AtomicInteger rowIndex = new AtomicInteger(4);
         final AtomicReference<Row> row = new AtomicReference<>();
+
+        auswertung.sort(Comparator.comparing(o -> o.getZeitraum().getStart()));
+
         auswertung.forEach(entry -> {
             row.set(sheet.createRow(rowIndex.get()));
 
@@ -277,12 +283,8 @@ public class SpreadsheetService {
     }
 
     protected byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
-        try (final var baos = new ByteArrayOutputStream()) {
-            spreadsheetDocument.write(baos);
-            return baos.toByteArray();
-        } catch (final IOException exception) {
-            // TODO Fehlerhandling einbauen
-            throw exception;
-        }
+        final var baos = new ByteArrayOutputStream();
+        spreadsheetDocument.write(baos);
+        return baos.toByteArray();
     }
 }

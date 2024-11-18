@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDT
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -82,7 +84,9 @@ public class AuswertungService {
                 auswertung.setZeitraum(auswertungMessquerschnitt.getZeitraum());
                 auswertung.setDaten(auswertungMessquerschnitt.getMeanOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
-                ListUtils.emptyIfNull(auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId()).forEach(tagesaggregatDto -> {
+                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId();
+                meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
+                ListUtils.emptyIfNull(meanOfAggregatesForEachMqId).forEach(tagesaggregatDto -> {
                     final Auswertung auswertungMq = new Auswertung();
                     String mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
                     auswertungMq.setObjectId(mqIdAsString);
