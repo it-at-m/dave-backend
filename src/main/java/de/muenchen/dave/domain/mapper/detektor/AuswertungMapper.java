@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import org.mapstruct.Context;
@@ -13,7 +13,7 @@ public interface AuswertungMapper {
 
     @Mapping(target = "zeitraum", expression = "java( zeitraum )")
     @Mapping(target = "mstId", expression = "java( mstId )")
-    AuswertungMessquerschnitte tagesaggregatDto2AuswertungResponse(
+    AuswertungProMessstelleUndZeitraum tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
             final TagesaggregatResponseDto dto,
             @Context final Zeitraum zeitraum,
             @Context final String mstId);

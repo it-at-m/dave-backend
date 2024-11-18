@@ -1,12 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessquerschnitte;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelleUndZeitraum;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
@@ -61,46 +57,19 @@ public class AuswertungService {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        final List<AuswertungProMessstelle> auswertungen = new ArrayList<>();
-
-        final ConcurrentMap<String, List<AuswertungMessquerschnitte>> collected = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds())
+        final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
+                .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
                             final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
                                     zeitraum);
-                            return auswertungMapper.tagesaggregatDto2AuswertungResponse(tagesaggregate,
+                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregate,
                                     zeitraum, messstelleAuswertungIdDTO.getMstId());
                         }))
-                .collect(Collectors.groupingByConcurrent(AuswertungMessquerschnitte::getMstId));
-
-        collected.forEach((mstId, auswertungMessquerschnitte) -> {
-            final AuswertungProMessstelle auswertungProMessstelle = new AuswertungProMessstelle();
-            auswertungProMessstelle.setMstId(mstId);
-            auswertungMessquerschnitte.forEach(auswertungMessquerschnitt -> {
-                final Auswertung auswertung = new Auswertung();
-                auswertung.setObjectId(mstId);
-                auswertung.setZeitraum(auswertungMessquerschnitt.getZeitraum());
-                auswertung.setDaten(auswertungMessquerschnitt.getMeanOverAllAggregatesOfAllMqId());
-                auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
-                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils.emptyIfNull(auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId());
-                meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
-                meanOfAggregatesForEachMqId.forEach(tagesaggregatDto -> {
-                    final Auswertung auswertungMq = new Auswertung();
-                    String mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
-                    auswertungMq.setObjectId(mqIdAsString);
-                    auswertungMq.setZeitraum(auswertungMessquerschnitt.getZeitraum());
-                    auswertungMq.setDaten(tagesaggregatDto);
-                    if (!auswertungProMessstelle.getAuswertungenProMq().containsKey(mqIdAsString)) {
-                        auswertungProMessstelle.getAuswertungenProMq().put(mqIdAsString, new ArrayList<>());
-                    }
-                    auswertungProMessstelle.getAuswertungenProMq().get(mqIdAsString).add(auswertungMq);
-                });
-            });
-            auswertungen.add(auswertungProMessstelle);
-        });
-        return auswertungen;
+                .collect(Collectors.groupingByConcurrent(AuswertungProMessstelleUndZeitraum::getMstId));
+        return convertAuswertungen(auswertungenGroupedByMstId);
     }
 
     protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
@@ -113,5 +82,37 @@ public class AuswertungService {
                                 YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
                                 auswertungsZeitraum)))
                 .toList();
+    }
+
+    protected List<AuswertungProMessstelle> convertAuswertungen(
+            final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId) {
+        final List<AuswertungProMessstelle> auswertungen = new ArrayList<>();
+        auswertungenGroupedByMstId.forEach((mstId, auswertungenProMessstelleUndZeitraum) -> {
+            final AuswertungProMessstelle auswertungProMessstelle = new AuswertungProMessstelle();
+            auswertungProMessstelle.setMstId(mstId);
+            auswertungenProMessstelleUndZeitraum.forEach(auswertungProMessstelleUndZeitraum -> {
+                final Auswertung auswertung = new Auswertung();
+                auswertung.setObjectId(mstId);
+                auswertung.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
+                auswertung.setDaten(auswertungProMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
+                auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
+                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
+                        .emptyIfNull(auswertungProMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
+                meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
+                meanOfAggregatesForEachMqId.forEach(tagesaggregatDto -> {
+                    final Auswertung auswertungMq = new Auswertung();
+                    String mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
+                    auswertungMq.setObjectId(mqIdAsString);
+                    auswertungMq.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
+                    auswertungMq.setDaten(tagesaggregatDto);
+                    if (!auswertungProMessstelle.getAuswertungenProMq().containsKey(mqIdAsString)) {
+                        auswertungProMessstelle.getAuswertungenProMq().put(mqIdAsString, new ArrayList<>());
+                    }
+                    auswertungProMessstelle.getAuswertungenProMq().get(mqIdAsString).add(auswertungMq);
+                });
+            });
+            auswertungen.add(auswertungProMessstelle);
+        });
+        return auswertungen;
     }
 }
