@@ -84,9 +84,9 @@ public class AuswertungService {
                 auswertung.setZeitraum(auswertungMessquerschnitt.getZeitraum());
                 auswertung.setDaten(auswertungMessquerschnitt.getMeanOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
-                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId();
+                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils.emptyIfNull(auswertungMessquerschnitt.getMeanOfAggregatesForEachMqId());
                 meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
-                ListUtils.emptyIfNull(meanOfAggregatesForEachMqId).forEach(tagesaggregatDto -> {
+                meanOfAggregatesForEachMqId.forEach(tagesaggregatDto -> {
                     final Auswertung auswertungMq = new Auswertung();
                     String mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
                     auswertungMq.setObjectId(mqIdAsString);
