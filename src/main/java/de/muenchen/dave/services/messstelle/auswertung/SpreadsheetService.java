@@ -41,10 +41,12 @@ public class SpreadsheetService {
 
     /**
      * Erzeugt eine Datei als byte[], welches die ausgewerteten Daten beinhaltet
+     *
      * @param auswertungenProMessstelle ausgewerteten Daten
      * @param options zur Auswertung verwendete Optionen
      * @return das File als byte[]
-     * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im Controller.
+     * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im
+     *             Controller.
      */
     public byte[] createFile(final List<AuswertungProMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
             throws IOException {
@@ -89,6 +91,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet eine Zeile für die Header-Metainformationen an und schreibt in
      * ersten beiden Zellen der Zeile die Headerwerte.
+     *
      * @param sheet aktuelles Sheet einer Messstelle in der Auswertungsdatei
      */
     private void addMetaHeaderToSheet(final Sheet sheet) {
@@ -101,6 +104,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet eine Zeile für die Daten der Metainformationen an und schreibt in
      * ersten beiden Zellen der Zeile die Daten.
+     *
      * @param sheet aktuelles Sheet einer Messstelle in der Auswertungsdatei
      * @param options Verwendetet Optionen bei der Auswertung
      */
@@ -134,6 +138,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet eine Zeile für die Header-Metainformationen an und schreibt in
      * ersten beiden Zellen der Zeile die Headerwerte.
+     *
      * @param sheet aktuelles Sheet eines Messquerschnitts
      */
     private void addMetaHeaderToMessquerschnittSheet(final Sheet sheet) {
@@ -146,6 +151,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet eine Zeile für die Daten der Metainformationen an und schreibt in
      * ersten beiden Zellen der Zeile die Daten.
+     *
      * @param sheet aktuelles Sheet eines Messquerschnitts in der Auswertungsdatei
      * @param options Verwendetet Optionen bei der Auswertung
      * @param mstId ausgewertete Messstelle
@@ -163,6 +169,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet eine Zeile für die Header-Informationen an und legt pro
      * gewählte Fahrzeugoption eine Zelle mit dem Header in der Reihe an.
+     *
      * @param sheet aktuelles Sheet
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
      */
@@ -229,6 +236,7 @@ public class SpreadsheetService {
     /**
      * Legt im Sheet pro Zeitraum eine Zeile für die Daten an und legt pro
      * gewählte Fahrzeugoption eine Zelle mit den Daten in dieser Reihe an.
+     *
      * @param sheet aktuelles Sheet
      * @param auswertung Liste mit den Daten pro Zeitraum
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
@@ -328,6 +336,7 @@ public class SpreadsheetService {
 
     /**
      * Erzeugt aus dem WorkBook ein byte[]
+     *
      * @param spreadsheetDocument Workbook zum Serialisieren
      * @return Workbook als byte[]
      * @throws IOException kann beim Erstellen geworfen werden. Behandlung erfolgt im Controller.

@@ -45,9 +45,11 @@ public class AuswertungService {
 
     /**
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
+     *
      * @param options Optionen für die Auswertung
      * @return Auswertungsdatei als byte[]
-     * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im Controller
+     * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
+     *             Controller
      */
     @LogExecutionTime
     public byte[] createAuswertungsfile(final MessstelleAuswertungOptionsDTO options) throws IOException {
@@ -61,6 +63,7 @@ public class AuswertungService {
 
     /**
      * Lädt die Daten pro Messstelle pro Zeitraum.
+     *
      * @param options Definierte Optionen zum Laden der Daten
      * @return Liste an Auswertungen Pro Messstelle
      */
@@ -88,10 +91,13 @@ public class AuswertungService {
     }
 
     /**
-     * Erzeugt aus den übergebenen Parametern eine Liste mit Zeiträumen für die die Daten geladen werden sollen.
-     * @param auswertungszeitraeume Liste an Auswertungszeiträumen, z.B. Januar oder Quartal_1 für die die Daten geladen werden sollen
+     * Erzeugt aus den übergebenen Parametern eine Liste mit Zeiträumen für die die Daten geladen werden
+     * sollen.
+     *
+     * @param auswertungszeitraeume Liste an Auswertungszeiträumen, z.B. Januar oder Quartal_1 für die
+     *            die Daten geladen werden sollen
      * @param jahre Liste an Jahren für die die Daten geladen werden sollen
-     * @return
+     * @return Liste der Zeiträume
      */
     protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
         return ListUtils.emptyIfNull(auswertungszeitraeume)

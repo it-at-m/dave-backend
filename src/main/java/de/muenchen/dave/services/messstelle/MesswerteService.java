@@ -42,6 +42,7 @@ public class MesswerteService {
 
     /**
      * Bereitet die geladenen Messwerte der gewünschten Messstelle für die GUI auf.
+     *
      * @param messstelleId Zu ladende Messstelle
      * @param options in der GUI definierte Optionen zum Laden der Daten
      * @return aufbereitete Daten
@@ -91,6 +92,7 @@ public class MesswerteService {
 
     /**
      * Lädt die Messwerte als Intervalle anhand der definierten Messquerschnitt-IDs aus der Geodaten-EAI
+     *
      * @param options definierte Optionen zum Laden der Daten
      * @param messquerschnittIds zu ladende Messquerschnitte
      * @return geladene Intervall-Daten als DTO
@@ -127,7 +129,9 @@ public class MesswerteService {
     }
 
     /**
-     * Lädt die Messwerte als Tagesaggregat anhand der definierten Messquerschnitt-IDs aus der Geodaten-EAI
+     * Lädt die Messwerte als Tagesaggregat anhand der definierten Messquerschnitt-IDs aus der
+     * Geodaten-EAI
+     *
      * @param tagesTyp Tagestyp der zu ladenden Daten
      * @param mqIds zu ladende Messquerschnitte
      * @param zeitraum Zeitraum der zu ladenden Daten
