@@ -10,6 +10,8 @@ spring:
       return-body-on-create: true
 
   # Spring JPA
+  flyway:
+    enabled: false
   datasource.url: jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE
   jpa:
     database: H2
