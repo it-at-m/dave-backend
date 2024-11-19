@@ -51,7 +51,7 @@ class AuswertungServiceTest {
     }
 
     @Test
-    void convertAuswertungen() {
+    void mapAuswertungMapToListOfAuswertungProMessstelle() {
 
         final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> request = new ConcurrentHashMap<>();
 
@@ -96,7 +96,7 @@ class AuswertungServiceTest {
         request.put(mstId1, messstelle1);
         request.put(mstId2, messstelle2);
 
-        final List<AuswertungProMessstelle> result = auswertungService.convertAuswertungen(request);
+        final List<AuswertungProMessstelle> result = auswertungService.mapAuswertungMapToListOfAuswertungProMessstelle(request);
 
         final List<AuswertungProMessstelle> expected = new ArrayList<>();
         final AuswertungProMessstelle auswertungProMessstelle1 = new AuswertungProMessstelle();
@@ -150,7 +150,7 @@ class AuswertungServiceTest {
     }
 
     @Test
-    void convertAuswertungen2() {
+    void mapAuswertungMapToListOfAuswertungProMessstelle2() {
 
         final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> request = new ConcurrentHashMap<>();
 
@@ -179,7 +179,7 @@ class AuswertungServiceTest {
 
         request.put(mstId1, messstelle1);
 
-        final List<AuswertungProMessstelle> result = auswertungService.convertAuswertungen(request);
+        final List<AuswertungProMessstelle> result = auswertungService.mapAuswertungMapToListOfAuswertungProMessstelle(request);
 
         final List<AuswertungProMessstelle> expected = new ArrayList<>();
         final AuswertungProMessstelle auswertungProMessstelle1 = new AuswertungProMessstelle();
