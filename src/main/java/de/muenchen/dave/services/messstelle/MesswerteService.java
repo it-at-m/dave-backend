@@ -40,6 +40,12 @@ public class MesswerteService {
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
 
+    /**
+     * Bereitet die geladenen Messwerte der gewünschten Messstelle für die GUI auf.
+     * @param messstelleId Zu ladende Messstelle
+     * @param options in der GUI definierte Optionen zum Laden der Daten
+     * @return aufbereitete Daten
+     */
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
@@ -83,6 +89,12 @@ public class MesswerteService {
         }
     }
 
+    /**
+     * Lädt die Messwerte als Intervalle anhand der definierten Messquerschnitt-IDs aus der Geodaten-EAI
+     * @param options definierte Optionen zum Laden der Daten
+     * @param messquerschnittIds zu ladende Messquerschnitte
+     * @return geladene Intervall-Daten als DTO
+     */
     protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options, final Set<String> messquerschnittIds) {
         final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
@@ -114,6 +126,13 @@ public class MesswerteService {
         return response.getBody();
     }
 
+    /**
+     * Lädt die Messwerte als Tagesaggregat anhand der definierten Messquerschnitt-IDs aus der Geodaten-EAI
+     * @param tagesTyp Tagestyp der zu ladenden Daten
+     * @param mqIds zu ladende Messquerschnitte
+     * @param zeitraum Zeitraum der zu ladenden Daten
+     * @return die geladenen Tagesaggregate als DTO
+     */
     public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
