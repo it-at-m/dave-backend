@@ -7,8 +7,17 @@ import lombok.Getter;
 @Getter
 public enum Zeitauswahl {
 
-    TAGESWERT("Tageswert"), BLOCK("Block"), STUNDE("Stunde"), SPITZENSTUNDE_KFZ("Spitzenstunde KFZ"), SPITZENSTUNDE_RAD(
-            "Spitzenstunde Rad"), SPITZENSTUNDE_FUSS("Spitzenstunde Fuß");
+    TAGESWERT("Tageswert"),
+
+    BLOCK("Block"),
+
+    STUNDE("Stunde"),
+
+    SPITZENSTUNDE_KFZ("Spitzenstunde KFZ"),
+
+    SPITZENSTUNDE_RAD("Spitzenstunde Rad"),
+
+    SPITZENSTUNDE_FUSS("Spitzenstunde Fuß");
 
     private final String capitalizedName;
 }

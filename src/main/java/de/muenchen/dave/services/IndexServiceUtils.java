@@ -3,17 +3,18 @@ package de.muenchen.dave.services;
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -98,8 +99,8 @@ public final class IndexServiceUtils {
 
     /**
      * @param datum für welches der Tagestyp ermittelt werden soll.
-     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben.
-     *         Andernfalls wird der Wert "Wochenende" zurückgegeben.
+     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben. Andernfalls wird
+     *         der Wert "Wochenende" zurückgegeben.
      */
     public static String getTagesTyp(final LocalDate datum) {
         final DayOfWeek dayOfWeek = datum.getDayOfWeek();
@@ -115,8 +116,8 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung
-     * falls kein expliziter Kreuzungsname gesetzt ist.
+     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung falls
+     * kein expliziter Kreuzungsname gesetzt ist.
      *
      * @param kreuzungsname welcher gegebenenfalls durch die konkatenierten Straßennamen ersetzt wird.
      * @param zaehlung zur Extraktion der Straßennamen.

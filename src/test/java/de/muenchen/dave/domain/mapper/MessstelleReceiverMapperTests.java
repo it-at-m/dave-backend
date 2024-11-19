@@ -1,8 +1,5 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -13,15 +10,19 @@ import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 class MessstelleReceiverMapperTests {
@@ -43,7 +44,7 @@ class MessstelleReceiverMapperTests {
         expected.setStadtbezirkNummer(dto.getStadtbezirkNummer());
         expected.setBemerkung(dto.getBemerkung());
         expected.setDatumLetztePlausibleMessung(dto.getDatumLetztePlausibleMessung());
-        expected.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        expected.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         expected.setSichtbarDatenportal(false);
         expected.setGeprueft(false);
         expected.setSuchwoerter(new ArrayList<>());
@@ -80,7 +81,7 @@ class MessstelleReceiverMapperTests {
         final MessquerschnittDto dto = MessquerschnittRandomFactory.getMessquerschnittDto();
         final Messquerschnitt expected = new Messquerschnitt();
         expected.setMqId(dto.getMqId());
-        expected.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        expected.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         expected.setStrassenname(dto.getStrassenname());
         expected.setLageMessquerschnitt(dto.getLageMessquerschnitt());
         expected.setFahrtrichtung(dto.getFahrtrichtung());
@@ -94,8 +95,8 @@ class MessstelleReceiverMapperTests {
                 .ignoringFields("id", "punkt")
                 .isEqualTo(expected);
 
-        Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getXcoordinate());
-        Assertions.assertThat(actual.getPunkt().getLon()).isEqualTo(dto.getYcoordinate());
+        Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getLatitude());
+        Assertions.assertThat(actual.getPunkt().getLon()).isEqualTo(dto.getLongitude());
         Assertions.assertThat(actual.getId())
                 .isNotNull();
     }

@@ -4,21 +4,22 @@ import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.mapper.ChatMessageMapper;
 import de.muenchen.dave.services.ChatMessageService;
-import java.io.IOException;
-import java.util.Date;
-import java.util.UUID;
-import javax.mail.Address;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.internet.MimeMultipart;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.mail.Address;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Diese Klasse stellt eine Methode zum Verarbeiten einer Email bereit.
@@ -110,10 +111,10 @@ public class ProcessEmailService {
 
     /**
      * Verarbeitet den Plain-Text-Inhalt wie folgt: Jede Zeile wird auf ein Match mit einem String aus
-     * der Konfiguration geprüft.
-     * Falls es eine Übereinstimmung gibt, wird der restliche Inhalt (Signatur oder ursprüngliche
-     * Nachricht) verworfen.
-     * Zuletzt werden führende und anhängende Leerzeichen und Zeilenumbrüche entfernt.
+     * der Konfiguration geprüft. Falls es eine Übereinstimmung
+     * gibt, wird der restliche Inhalt (Signatur oder ursprüngliche Nachricht) verworfen. Zuletzt werden
+     * führende und anhängende Leerzeichen und Zeilenumbrüche
+     * entfernt.
      *
      * @param content Plain-Text-Inhalt
      * @return Inhalt ohne Signatur und ursprünglicher Nachricht
@@ -152,8 +153,8 @@ public class ProcessEmailService {
 
     /**
      * Diese Methode verarbeitet MultipartMessages. Da aus technischem Aufwand keine Anhänge unterstützt
-     * werden, wird
-     * einfach nur der erste Teil der Nachricht verarbeitet, da dieser dem Hauptteil entspricht.
+     * werden, wird einfach nur der erste Teil der Nachricht
+     * verarbeitet, da dieser dem Hauptteil entspricht.
      *
      * @param multipartMessage die zu verarbeitende Nachricht
      * @return der verarbeitete Inhalt der Nachricht

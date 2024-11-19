@@ -10,14 +10,15 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * Die Klasse {@link MessstelleService} holt alle relevanten Messstellen aus MobidaM und
@@ -28,29 +29,26 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MessstelleService {
 
+    private static final String KFZ = "KFZ";
     private final MessstelleIndexService messstelleIndexService;
-
     private final CustomSuggestIndexService customSuggestIndexService;
-
     private final MessstelleMapper messstelleMapper;
-
     private final StadtbezirkMapper stadtbezirkMapper;
 
-    private static final String KFZ = "KFZ";
-
     public Messstelle getMessstelle(final String messstelleId) {
-        log.debug("#getMessstelle");
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
     }
 
+    public Messstelle getMessstelleByMstId(final String mstId) {
+        return messstelleIndexService.findByMstIdOrThrowException(mstId);
+    }
+
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
-        log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
-        log.debug("#getMessstelleToEdit");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         byIdOrThrowException.setMessfaehigkeiten(
                 byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
@@ -58,7 +56,6 @@ public class MessstelleService {
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
-        log.info("#updateMessstelle");
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
@@ -69,7 +66,6 @@ public class MessstelleService {
     }
 
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
-        log.debug("#getAllMessstellenForOverview");
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen);
     }
@@ -81,13 +77,19 @@ public class MessstelleService {
         return result;
     }
 
+    public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {
+        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final Set<String> result = new HashSet<>();
+        messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
+        return result;
+    }
+
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
     }
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
-        log.debug("#getAllVisibleMessstellenForAuswertung");
         final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
         return messstelleMapper.bean2auswertungDto(sorted);

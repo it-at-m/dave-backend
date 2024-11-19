@@ -2,7 +2,10 @@ package de.muenchen.dave.services;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.search.*;
+import co.elastic.clients.elasticsearch.core.search.CompletionSuggestOption;
+import co.elastic.clients.elasticsearch.core.search.CompletionSuggester;
+import co.elastic.clients.elasticsearch.core.search.FieldSuggester;
+import co.elastic.clients.elasticsearch.core.search.Suggester;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
@@ -28,12 +31,6 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.util.DaveConstants;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +43,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -75,8 +85,8 @@ public class SucheService {
     private final ElasticsearchOperations elasticsearchOperations;
 
     /**
-     * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en,
-     * die nach Koordinaten gruppierten Zaehlarten.
+     * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en, die nach Koordinaten
+     * gruppierten Zaehlarten.
      *
      * @param zaehlungen zum ermitteln nach Koordinate gruppierten Zählarten.
      * @return die nach Koordinaten gruppierten Zaehlarten.
@@ -104,7 +114,8 @@ public class SucheService {
 
     /**
      * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren
-     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem zurückgegebenen Objekt.
+     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem
+     * zurückgegebenen Objekt.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
@@ -134,8 +145,8 @@ public class SucheService {
     }
 
     /**
-     * Erstellt eine Vorschlagsliste für die "search as you type" Suche. Diese
-     * besteht aus Suchvorschlägen, Vorschläge für eine bestimmte Suchstelle und
+     * Erstellt eine Vorschlagsliste für die "search as you type" Suche. Diese besteht aus
+     * Suchvorschlägen, Vorschläge für eine bestimmte Suchstelle und
      * Vorschläge für eine bestimmte Zählung.
      *
      * @param query Suchquery
@@ -191,8 +202,8 @@ public class SucheService {
      * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
      * Zaehl-/Messstellen aus dem zurückgegebenen Set.
      * <p>
-     * Gibt alle sichtbaren Zähl-/Messstellen zurück.
-     * Eine Zähl-/Messstelle gilt als unsichtbar sobald das Attribut "sichtbarDatenportal" false ist.
+     * Gibt alle sichtbaren Zähl-/Messstellen zurück. Eine Zähl-/Messstelle gilt als unsichtbar sobald
+     * das Attribut "sichtbarDatenportal" false ist.
      *
      * @param query Suchquery
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
@@ -306,8 +317,7 @@ public class SucheService {
     }
 
     /**
-     * Hilfmethode, um zu testen, ob es sich um eine Suche nach einem Datumsbereich handelt.
-     * Kriterien:
+     * Hilfmethode, um zu testen, ob es sich um eine Suche nach einem Datumsbereich handelt. Kriterien:
      * - Exakt 4 Suchbegriffe enthalten
      * - 'von' und 'bis' müssen enthalten sein
      * - 'von' ist Begriff 1, 'bis' ist Begriff 3
@@ -337,10 +347,10 @@ public class SucheService {
 
     /**
      * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden
-     * hier ausgefiltert.
-     * Desweiteren darf ein normaler Anwender keine Sonderzählungen sehen, diese werden ebenfalls
-     * ausgefiltert.
-     * Wenn eine Zählstelle nach dem Filtern keine Zählungen mehr enthält, so wird dies auch entfernt.
+     * hier ausgefiltert. Desweiteren darf ein normaler Anwender
+     * keine Sonderzählungen sehen, diese werden ebenfalls ausgefiltert. Wenn eine Zählstelle nach dem
+     * Filtern keine Zählungen mehr enthält, so wird dies auch
+     * entfernt.
      *
      * @param zaehlstellen zu filtern
      * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
@@ -513,9 +523,10 @@ public class SucheService {
     }
 
     /**
-     * Check die Zählstelle, ob sich darin Zählungen befinden, die direkt angezeigt werden
-     * können. Im ersten Schritt werden hierfür das Datum und der Projektname hergenommen.
-     * Bei Bedarf können diese zwei Parameter auch durch weitere Attrubute erweitert werden.
+     * Check die Zählstelle, ob sich darin Zählungen befinden, die direkt angezeigt werden können. Im
+     * ersten Schritt werden hierfür das Datum und der
+     * Projektname hergenommen. Bei Bedarf können diese zwei Parameter auch durch weitere Attrubute
+     * erweitert werden.
      *
      * @param zaehlstelle zu pruefen
      * @param query Suchwoerter
@@ -535,8 +546,7 @@ public class SucheService {
     }
 
     /**
-     * Prüft, ob eines der Suchworte auf die angegebenen Attribute
-     * einer Zählung passt.
+     * Prüft, ob eines der Suchworte auf die angegebenen Attribute einer Zählung passt.
      *
      * @param words Liste der Suchworte
      * @param z Zaehlung
@@ -552,9 +562,9 @@ public class SucheService {
     }
 
     /**
-     * Erstellt den Query String mit suffix Wildcards. Dadurch muss der
-     * Anwender sich gar keine Gedanken machen, ob er jetzt eine Wildcard
-     * benötigt, oder nicht.
+     * Erstellt den Query String mit suffix Wildcards. Dadurch muss der Anwender sich gar keine Gedanken
+     * machen, ob er jetzt eine Wildcard benötigt, oder
+     * nicht.
      *
      * @param query Suchquery
      * @return Suchquery mit Wildcards
@@ -585,9 +595,9 @@ public class SucheService {
     }
 
     /**
-     * Fügt in ein Datum führende Nullen ein und ergänzt das
-     * Jahr ggf. um die Tausender. Wenn es sich nicht um ein Datum handelt,
-     * dann wird einfach der String wieder zurück gegeben.
+     * Fügt in ein Datum führende Nullen ein und ergänzt das Jahr ggf. um die Tausender. Wenn es sich
+     * nicht um ein Datum handelt, dann wird einfach der String
+     * wieder zurück gegeben.
      *
      * @param word Suchwort
      * @return korrigiertes Datum oder ursprüngliches Wort

@@ -19,12 +19,13 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -105,7 +106,8 @@ public class ReportService {
 
     /**
      * Hier werden die flexiblen Anteile der CSS erstellt, die für die Datentabellen notwendig sind.
-     * Jede Datentabelle benötigt hier einen eigenen CSS Anteil für Spaltenbreite etc.
+     * Jede Datentabelle benötigt hier einen eigenen CSS Anteil
+     * für Spaltenbreite etc.
      *
      * @param assetList Liste der im Frontend generierten Assets
      * @return Flexibler CSS Anteil als String

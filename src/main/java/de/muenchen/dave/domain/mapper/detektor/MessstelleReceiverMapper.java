@@ -8,11 +8,6 @@ import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.util.SuchwortUtil;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +18,12 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleReceiverMapper {
@@ -43,8 +44,8 @@ public interface MessstelleReceiverMapper {
             bean.setId(UUID.randomUUID().toString());
         }
 
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
-            bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
+            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
         // Suchworte setzen
@@ -77,8 +78,8 @@ public interface MessstelleReceiverMapper {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getXcoordinate() != null && dto.getYcoordinate() != null) {
-            bean.setPunkt(new GeoPoint(dto.getXcoordinate(), dto.getYcoordinate()));
+        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
+            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
     }
 

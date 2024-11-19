@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.enums;
 
-import java.util.Arrays;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter

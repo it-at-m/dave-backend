@@ -1,10 +1,10 @@
 package de.muenchen.dave.util.geo;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class CoordinateUtilTest {
 
@@ -34,8 +34,7 @@ class CoordinateUtilTest {
     }
 
     /**
-     * Testdaten für Koordinatenumrechnung:
-     * <a href=
+     * Testdaten für Koordinatenumrechnung: <a href=
      * "https://www.koordinaten-umrechner.de/decimal/66.296139,-104.062500?karte=OpenStreetMap&zoom=4">...</a>
      */
     @Test

@@ -1,108 +1,163 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle.auswertung;
 
+import de.muenchen.dave.configuration.LogExecutionTime;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelleUndZeitraum;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
-import de.muenchen.dave.domain.mapper.GeodatenEaiMapper;
-import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
-import de.muenchen.dave.geodateneai.gen.model.GetMeasurementValuesAggregateRequest;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesAggregateDto;
-import de.muenchen.dave.geodateneai.gen.model.MeasurementValuesAggregateResponse;
+import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import lombok.AllArgsConstructor;
+import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.services.messstelle.Zeitraum;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.http.ResponseEntity;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
-@AllArgsConstructor
+import java.io.IOException;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+
+@RequiredArgsConstructor
 @Service
 @Slf4j
 public class AuswertungService {
 
     private final MessstelleService messstelleService;
-    private final MesswerteApi messwerteApi;
-    private final GeodatenEaiMapper geodatenEaiMapper;
 
-    private static final String ERROR_MESSAGE = "Beim Laden der MesswerteTagesaggregatMessquerschnittResponse ist ein Fehler aufgetreten";
+    private final MesswerteService messwerteService;
+
+    private final AuswertungMapper auswertungMapper;
+
+    private final SpreadsheetService spreadsheetService;
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
     }
 
-    public void loadDataForEvaluation(final MessstelleAuswertungOptionsDTO options) {
-        log.info("#loadDataForEvaluation {}", options);
-        final GetMeasurementValuesAggregateRequest request = new GetMeasurementValuesAggregateRequest();
-        request.setMessquerschnittIdsPerMessstelle(calculateMessquerschnittIdsPerMessstelle(options.getMstIds(), options.getMqIds()));
-        request.setTagesTyp(geodatenEaiMapper.backendToEai(options.getTagesTyp()));
-        request.setZeitraeume(calculateZeitraeume(options.getZeitraum(), options.getJahre()));
-
-        Map<String, MeasurementValuesAggregateDto> response = loadData(request);
-        log.info(response.toString());
-
+    /**
+     * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
+     *
+     * @param options Optionen für die Auswertung
+     * @return Auswertungsdatei als byte[]
+     * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
+     *             Controller
+     */
+    @LogExecutionTime
+    public byte[] createAuswertungsfile(final MessstelleAuswertungOptionsDTO options) throws IOException {
+        log.debug("#createAuswertungsfile {}", options);
+        if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
+            throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
+        }
+        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+        return spreadsheetService.createFile(auswertungenMqByMstId, options);
     }
 
-    protected Map<String, MeasurementValuesAggregateDto> loadData(final GetMeasurementValuesAggregateRequest request) {
-        final Mono<ResponseEntity<MeasurementValuesAggregateResponse>> response;
-        if (request.getMessquerschnittIdsPerMessstelle().keySet().size() == 1) {
-            response = messwerteApi.getMesswerteTagesaggregatPerMessquerschnittWithHttpInfo(
-                    request);
-        } else {
-            response = messwerteApi.getMesswerteTagesaggregatPerMessstelleWithHttpInfo(
-                    request);
-        }
-        final ResponseEntity<MeasurementValuesAggregateResponse> block = response.block();
-        if (ObjectUtils.isEmpty(block)) {
-            log.error("ResponseEntity der Anfrage <getAverageMeasurementValuesPerIntervalWithHttpInfo> ist leer.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        final MeasurementValuesAggregateResponse body = block.getBody();
-        if (ObjectUtils.isEmpty(body)) {
-            log.error("Body der Anfrage <MeasurementValuesAggregateResponse> ist leer.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
-        final Map<String, MeasurementValuesAggregateDto> measurementValues = body.getMeasurementValues();
-        if (ObjectUtils.isEmpty(measurementValues)) {
-            log.error("Body der Anfrage <MeasurementValuesAggregateResponse> enthält keine Messwerte.");
-            throw new ResourceNotFoundException(ERROR_MESSAGE);
-        }
+    /**
+     * Lädt die Daten pro Messstelle pro Zeitraum.
+     *
+     * @param options Definierte Optionen zum Laden der Daten
+     * @return Liste an Auswertungen Pro Messstelle
+     */
+    protected List<AuswertungProMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
-        return measurementValues;
+        final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
+
+        final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
+                // Lädt die Daten pro Messstelle
+                .emptyIfNull(options.getMessstelleAuswertungIds())
+                .parallelStream()
+                // Lädt die Daten einer Messstelle pro Zeitraum
+                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
+                        .parallelStream()
+                        .map(zeitraum -> {
+                            // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
+                            // über den geladenen Zeitraum und die MstId an.
+                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
+                                    zeitraum);
+                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregate,
+                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
+                        }))
+                .collect(Collectors.groupingByConcurrent(AuswertungProMessstelleUndZeitraum::getMstId));
+        return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
     }
 
-    protected Map<String, Set<String>> calculateMessquerschnittIdsPerMessstelle(final List<String> mstIds, final List<String> mqIds) {
-        final Map<String, Set<String>> result = new HashMap<>();
-        if (mstIds.size() == 1) {
-            // per MQ
-            result.put(mstIds.get(0), Set.copyOf(mqIds));
-        } else {
-            // per Mst
-            mstIds.forEach(mstId -> result.put(mstId, messstelleService.getMessquerschnittIds(mstId)));
-        }
-        return result;
+    /**
+     * Erzeugt aus den übergebenen Parametern eine Liste mit Zeiträumen für die die Daten geladen werden
+     * sollen.
+     *
+     * @param auswertungszeitraeume Liste an Auswertungszeiträumen, z.B. Januar oder Quartal_1 für die
+     *            die Daten geladen werden sollen
+     * @param jahre Liste an Jahren für die die Daten geladen werden sollen
+     * @return Liste der Zeiträume
+     */
+    protected List<Zeitraum> createZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
+        return ListUtils.emptyIfNull(auswertungszeitraeume)
+                .stream()
+                .flatMap(auswertungsZeitraum -> ListUtils.emptyIfNull(jahre)
+                        .stream()
+                        // erzeugt für jedes Jahr im Auswertungszeitraum ein Objekt vom Typ Zeitraum
+                        .map(jahr -> new Zeitraum(
+                                YearMonth.of(jahr, auswertungsZeitraum.getZeitraumStart().getMonth()),
+                                YearMonth.of(jahr, auswertungsZeitraum.getZeitraumEnd().getMonth()),
+                                auswertungsZeitraum)))
+                .toList();
     }
 
-    protected List<List<LocalDate>> calculateZeitraeume(final List<AuswertungsZeitraum> auswertungszeitraeume, final List<Integer> jahre) {
-        final List<List<LocalDate>> result = new ArrayList<>();
-        auswertungszeitraeume.forEach(auswertungszeitraum -> jahre.forEach(jahr -> {
-            LocalDate end = auswertungszeitraum.getZeitraumEnd().withYear(jahr);
-            if (AuswertungsZeitraum.FEBRUAR == auswertungszeitraum && jahr % 4 == 0) {
-                end = end.withDayOfMonth(29);
-            }
-            result.add(List.of(auswertungszeitraum.getZeitraumStart().withYear(jahr), end));
-        }));
-        return result;
+    /**
+     * Wandelt die als Map vorliegenden Daten in eine Liste mit den Auswertungen pro Messstelle um.
+     * Die Daten liegen pro Messquerschnitt und pro Zeitraum in einer flachen Liste vor und müssen
+     * anhand der MQ-Id gruppiert werden, damit pro Messstelle ein Objekt geliefert werden kann,
+     * welches die geladenen Daten in einer Liste pro Zeitraum über alle Messquerschnitte beinhaltet,
+     * sowie pro Messquerschnitt eine Liste an Daten pro Zeitraum.
+     *
+     * @param auswertungenGroupedByMstId Map mit den nach der MessstellenId gruppierten Daten
+     * @return Liste mit der Auswertung pro Messstelle
+     */
+    protected List<AuswertungProMessstelle> mapAuswertungMapToListOfAuswertungProMessstelle(
+            final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId) {
+        final List<AuswertungProMessstelle> auswertungen = new ArrayList<>();
+        auswertungenGroupedByMstId.forEach((mstId, auswertungenProMessstelleUndZeitraum) -> {
+            // Pro Messstelle wird ein Objekt erzeugt
+            final var auswertungProMessstelle = new AuswertungProMessstelle();
+            auswertungProMessstelle.setMstId(mstId);
+            // Pro ausgewertetem Zeitraum einer Messstelle werden die Daten auf ein neues Objekt
+            // gemappt
+            auswertungenProMessstelleUndZeitraum.forEach(auswertungProMessstelleUndZeitraum -> {
+                final var auswertung = new Auswertung();
+                auswertung.setObjectId(mstId);
+                auswertung.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
+                auswertung.setDaten(auswertungProMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
+                auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
+                final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
+                        .emptyIfNull(auswertungProMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
+                meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
+                // Pro Messquerschnitt einer Messstelle werden die Daten ebenfalls pro Zeitraum auf ein
+                // neues Objekt gemapt und in einer Map abgelegt
+                meanOfAggregatesForEachMqId.forEach(tagesaggregatDto -> {
+                    final var auswertungMq = new Auswertung();
+                    final var mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
+                    auswertungMq.setObjectId(mqIdAsString);
+                    auswertungMq.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
+                    auswertungMq.setDaten(tagesaggregatDto);
+                    // Erzeugt für jeden geladenen Messquerschnitt einen eigenen Eintrag in der Map,
+                    // um die geladenen Daten pro Zeitraum abzulegen
+                    if (!auswertungProMessstelle.getAuswertungenProMq().containsKey(mqIdAsString)) {
+                        auswertungProMessstelle.getAuswertungenProMq().put(mqIdAsString, new ArrayList<>());
+                    }
+                    auswertungProMessstelle.getAuswertungenProMq().get(mqIdAsString).add(auswertungMq);
+                });
+            });
+            auswertungen.add(auswertungProMessstelle);
+        });
+        return auswertungen;
     }
 }

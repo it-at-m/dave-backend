@@ -16,8 +16,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -27,6 +25,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 // Definition of getter, setter, ...
@@ -71,9 +72,8 @@ public class Zeitintervall extends BaseEntity {
     private LocalDateTime endeUhrzeit;
 
     /**
-     * Der Index ist erforderlich um bei der Datenextraktion die
-     * korrekte Reihenfolge zu erhalten.
-     * Der Index wird vor der Persistierung mit der Klasse
+     * Der Index ist erforderlich um bei der Datenextraktion die korrekte Reihenfolge zu erhalten. Der
+     * Index wird vor der Persistierung mit der Klasse
      * {@link ZeitintervallSortingIndexUtil} ermittelt.
      */
     @Column(name = "sortingindex")

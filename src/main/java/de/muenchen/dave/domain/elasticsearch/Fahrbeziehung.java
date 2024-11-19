@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.elasticsearch;
 
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 @Data
 public class Fahrbeziehung implements Serializable {

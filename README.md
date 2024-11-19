@@ -24,7 +24,7 @@ Die Frontends sind jeweils Vue Single Page Applications, die über ein Service G
 
 
 ## Built with
-    Java 11, Spring Boot 2.7, ElasticSearch 7.17
+    Java 21, Spring Boot 3.3, ElasticSearch 8.15
 
 ## Contributing
 
@@ -46,8 +46,8 @@ To add those conventions to your favorite IDE, please have a look at the [README
 
 ### BuildAndRun
 Local requirements:
-- Java: min Java 11
-- ElasticSearch: v7.17
+- Java: min Java 21
+- ElasticSearch: v8.15
 - Maven 3.9.7
 
 1. Clone the Project from GitHub

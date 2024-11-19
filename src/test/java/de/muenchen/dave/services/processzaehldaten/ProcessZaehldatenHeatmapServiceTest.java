@@ -1,8 +1,5 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
@@ -11,18 +8,22 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ChartLegendUtil;
+import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.hamcrest.core.IsNull;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class ProcessZaehldatenHeatmapServiceTest {
 
-    private ProcessZaehldatenHeatmapService processZaehldatenHeatmapService = new ProcessZaehldatenHeatmapService();
+    private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService = new ProcessZaehldatenHeatmapService();
 
     private LadeZaehldatenTableDTO zaehldatenTable;
 
@@ -266,11 +267,11 @@ class ProcessZaehldatenHeatmapServiceTest {
                 10,
                 "PKW");
 
-        assertThat(ladeZaehldatenHeatmap.getLegend(), is(Arrays.asList("PKW")));
+        assertThat(ladeZaehldatenHeatmap.getLegend(), is(List.of("PKW")));
         assertThat(ladeZaehldatenHeatmap.getRangeMax(), is(10));
         assertThat(ladeZaehldatenHeatmap.getRangeMin(), is(0));
         assertThat(ladeZaehldatenHeatmap.getXAxisDataFirstChart(), is(new ArrayList<>()));
-        assertThat(ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(), is(Arrays.asList(Arrays.asList(0, 1, 10))));
+        assertThat(ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(), is(List.of(Arrays.asList(0, 1, 10))));
 
         ProcessZaehldatenHeatmapService.insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                 ladeZaehldatenHeatmap,

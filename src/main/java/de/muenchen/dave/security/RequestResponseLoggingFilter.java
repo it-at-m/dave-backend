@@ -12,14 +12,15 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This filter logs the username for requests.
@@ -50,8 +51,8 @@ public class RequestResponseLoggingFilter implements Filter {
     }
 
     /**
-     * The method logs the username extracted out of the {@link SecurityContext},
-     * the kind of HTTP-Request, the targeted URI and the response http status code.
+     * The method logs the username extracted out of the {@link SecurityContext}, the kind of
+     * HTTP-Request, the targeted URI and the response http status code.
      * {@inheritDoc}
      */
     @Override

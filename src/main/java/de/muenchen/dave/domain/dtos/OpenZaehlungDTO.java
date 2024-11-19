@@ -1,8 +1,9 @@
 package de.muenchen.dave.domain.dtos;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 @Data
 public class OpenZaehlungDTO implements Serializable {
