@@ -24,6 +24,6 @@ public class LadeProcessedMesswerteDTO implements Serializable {
 
     BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitte;
 
-    private Integer requestedMeasuringDays;
+    private Long requestedMeasuringDays;
     private Integer includedMeasuringDays;
 }

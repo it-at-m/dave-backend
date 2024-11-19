@@ -9,6 +9,8 @@ import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.util.OptionsUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +40,13 @@ public class MesswerteService {
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
 
+    /**
+     * Bereitet die geladenen Messwerte der gewünschten Messstelle für die GUI auf.
+     *
+     * @param messstelleId Zu ladende Messstelle
+     * @param options in der GUI definierte Optionen zum Laden der Daten
+     * @return aufbereitete Daten
+     */
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
@@ -68,7 +79,7 @@ public class MesswerteService {
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
-        processedZaehldaten.setRequestedMeasuringDays(options.getZeitraum().getFirst().until(options.getZeitraum().getLast()).getDays() + 1);
+        processedZaehldaten.setRequestedMeasuringDays(ChronoUnit.DAYS.between(options.getZeitraum().getFirst(), options.getZeitraum().getLast()) + 1);
         processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         return processedZaehldaten;
     }
@@ -79,6 +90,13 @@ public class MesswerteService {
         }
     }
 
+    /**
+     * Lädt die Messwerte als Intervalle anhand der definierten Messquerschnitt-IDs aus der Geodaten-EAI
+     *
+     * @param options definierte Optionen zum Laden der Daten
+     * @param messquerschnittIds zu ladende Messquerschnitte
+     * @return geladene Intervall-Daten als DTO
+     */
     protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options, final Set<String> messquerschnittIds) {
         final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
@@ -109,4 +127,30 @@ public class MesswerteService {
         }
         return response.getBody();
     }
+
+    /**
+     * Lädt die Messwerte als Tagesaggregat anhand der definierten Messquerschnitt-IDs aus der
+     * Geodaten-EAI
+     *
+     * @param tagesTyp Tagestyp der zu ladenden Daten
+     * @param mqIds zu ladende Messquerschnitte
+     * @param zeitraum Zeitraum der zu ladenden Daten
+     * @return die geladenen Tagesaggregate als DTO
+     */
+    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
+        final var request = new TagesaggregatRequestDto();
+        request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
+        request.setStartDate(LocalDate.of(zeitraum.start.getYear(), zeitraum.start.getMonthValue(), 1));
+        request.setEndDate(LocalDate.of(zeitraum.end.getYear(), zeitraum.end.getMonthValue(), zeitraum.end.atEndOfMonth().getDayOfMonth()));
+        request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
+
+        final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(request).block();
+
+        if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
+            log.error("Die Response beinhaltet keine Daten");
+            throw new ResourceNotFoundException(ERROR_MESSAGE);
+        }
+        return response.getBody();
+    }
+
 }

@@ -36,18 +36,19 @@ public class MessstelleService {
     private final StadtbezirkMapper stadtbezirkMapper;
 
     public Messstelle getMessstelle(final String messstelleId) {
-        log.debug("#getMessstelle");
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
     }
 
+    public Messstelle getMessstelleByMstId(final String mstId) {
+        return messstelleIndexService.findByMstIdOrThrowException(mstId);
+    }
+
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
-        log.debug("#readMessstelleById");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
-        log.debug("#getMessstelleToEdit");
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         byIdOrThrowException.setMessfaehigkeiten(
                 byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
@@ -55,7 +56,6 @@ public class MessstelleService {
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
-        log.info("#updateMessstelle");
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
@@ -66,7 +66,6 @@ public class MessstelleService {
     }
 
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
-        log.debug("#getAllMessstellenForOverview");
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen);
     }
@@ -91,7 +90,6 @@ public class MessstelleService {
     }
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
-        log.debug("#getAllVisibleMessstellenForAuswertung");
         final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
         return messstelleMapper.bean2auswertungDto(sorted);

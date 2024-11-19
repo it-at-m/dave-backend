@@ -14,7 +14,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>3.3.4</spring.boot.version>
+        <spring.boot.version>3.3.5</spring.boot.version>
         <spring.cloud.version>2023.0.3</spring.cloud.version>
         <logstash.encoder>7.4</logstash.encoder>
         <ojdbc8.version>19.9.0.0</ojdbc8.version>
@@ -24,6 +24,7 @@
         <apache.commons.lang3>3.17.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.4.0</apache.commons.exec>
+        <apache.poi>5.3.0</apache.poi>
         <guava>33.3.1-jre</guava>
         <org.mapstruct.version>1.6.2</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
@@ -359,6 +360,16 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi}</version>
         </dependency>
 
         <!-- PDF -->
