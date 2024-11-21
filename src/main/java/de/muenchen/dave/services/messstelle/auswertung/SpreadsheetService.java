@@ -2,7 +2,7 @@ package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelle;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -48,31 +48,31 @@ public class SpreadsheetService {
      * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im
      *             Controller.
      */
-    public byte[] createFile(final List<AuswertungProMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
+    public byte[] createFile(final List<AuswertungMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
             throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
 
-        auswertungenProMessstelle.sort(Comparator.comparing(AuswertungProMessstelle::getMstId));
+        auswertungenProMessstelle.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
 
         // Füge Daten zum Document hinzu.
-        ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungProMessstelle -> {
+        ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungMessstelle -> {
 
             // Sheet Messstelle
-            final Sheet mstSheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", auswertungProMessstelle.getMstId()));
+            final Sheet mstSheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", auswertungMessstelle.getMstId()));
 
             addMetaHeaderToSheet(mstSheet);
             addMetaDataToSheet(mstSheet, options);
             addDataHeaderToSheet(mstSheet, options.getFahrzeuge());
             addDataToSheet(
                     mstSheet,
-                    ListUtils.emptyIfNull(auswertungProMessstelle.getAuswertungenProZeitraum()),
+                    ListUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum()),
                     options.getFahrzeuge());
 
-            auswertungProMessstelle.getAuswertungenProMq().forEach((mqId, auswertungenProMessquerschnitt) -> {
+            auswertungMessstelle.getAuswertungenProMq().forEach((mqId, auswertungenProMessquerschnitt) -> {
                 final Sheet mqSheet = spreadsheetDocument.createSheet(String.format("Messquerschnitt %s", mqId));
 
                 addMetaHeaderToMessquerschnittSheet(mqSheet);
-                addMetaDataToMessquerschnittSheet(mqSheet, options, auswertungProMessstelle.getMstId(), mqId);
+                addMetaDataToMessquerschnittSheet(mqSheet, options, auswertungMessstelle.getMstId(), mqId);
                 addDataHeaderToSheet(mqSheet, options.getFahrzeuge());
                 addDataToSheet(
                         mqSheet,

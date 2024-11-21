@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Data
-public class AuswertungProMessstelle {
+public class AuswertungMessstelle {
 
     private String mstId;
 

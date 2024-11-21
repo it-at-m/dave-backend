@@ -1,5 +1,6 @@
 package de.muenchen.dave.controller;
 
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
@@ -39,16 +40,13 @@ public class AuswertungController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/messstelle", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<byte[]> generateAuswertung(
+    @PostMapping(value = "/messstelle")
+    public ResponseEntity<AuswertungMessstelleWithFileDTO> generateAuswertung(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMessstelleAuswertungIds());
         try {
-            final byte[] file = auswertungService.createAuswertungsfile(options);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(file.length)
-                    .body(file);
+            final var auswertungMessstellen = auswertungService.ladeAuswertungMessstellen(options);
+            return ResponseEntity.ok(auswertungMessstellen);
         } catch (Exception exception) {
             log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}",
                     options.getMessstelleAuswertungIds(), exception);

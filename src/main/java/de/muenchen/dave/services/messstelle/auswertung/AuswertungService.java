@@ -1,11 +1,8 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelleUndZeitraum;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungProMessstelle;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.*;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -44,20 +42,37 @@ public class AuswertungService {
     }
 
     /**
+     * tbd
+     * @param options
+     */
+    public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellen(final MessstelleAuswertungOptionsDTO options) throws IOException {
+        final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
+        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+        auswertungMessstellen.setAuswertungMessstelle(auswertungenMqByMstId);
+        final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
+        final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
+        auswertungMessstellen.setSpreadsheetBase64Encoded(spreadsheetBase64Encoded);
+        return auswertungMessstellen;
+    }
+
+    /**
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
      *
      * @param options Optionen für die Auswertung
+     * @param auswertungenMqByMstId tbd
      * @return Auswertungsdatei als byte[]
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
      */
     @LogExecutionTime
-    public byte[] createAuswertungsfile(final MessstelleAuswertungOptionsDTO options) throws IOException {
+    public byte[] createAuswertungMessstellenSpreadsheet(
+            final MessstelleAuswertungOptionsDTO options,
+            final List<AuswertungMessstelle> auswertungenMqByMstId) throws IOException {
         log.debug("#createAuswertungsfile {}", options);
         if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
             throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
         }
-        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+
         return spreadsheetService.createFile(auswertungenMqByMstId, options);
     }
 
@@ -67,11 +82,11 @@ public class AuswertungService {
      * @param options Definierte Optionen zum Laden der Daten
      * @return Liste an Auswertungen Pro Messstelle
      */
-    protected List<AuswertungProMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
+    protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
+        final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
                 // Lädt die Daten pro Messstelle
                 .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
@@ -86,7 +101,7 @@ public class AuswertungService {
                             return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregate,
                                     zeitraum, messstelleAuswertungIdDTO.getMstId());
                         }))
-                .collect(Collectors.groupingByConcurrent(AuswertungProMessstelleUndZeitraum::getMstId));
+                .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
         return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
     }
 
@@ -122,23 +137,23 @@ public class AuswertungService {
      * @param auswertungenGroupedByMstId Map mit den nach der MessstellenId gruppierten Daten
      * @return Liste mit der Auswertung pro Messstelle
      */
-    protected List<AuswertungProMessstelle> mapAuswertungMapToListOfAuswertungProMessstelle(
-            final ConcurrentMap<String, List<AuswertungProMessstelleUndZeitraum>> auswertungenGroupedByMstId) {
-        final List<AuswertungProMessstelle> auswertungen = new ArrayList<>();
+    protected List<AuswertungMessstelle> mapAuswertungMapToListOfAuswertungProMessstelle(
+            final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId) {
+        final List<AuswertungMessstelle> auswertungen = new ArrayList<>();
         auswertungenGroupedByMstId.forEach((mstId, auswertungenProMessstelleUndZeitraum) -> {
             // Pro Messstelle wird ein Objekt erzeugt
-            final var auswertungProMessstelle = new AuswertungProMessstelle();
+            final var auswertungProMessstelle = new AuswertungMessstelle();
             auswertungProMessstelle.setMstId(mstId);
             // Pro ausgewertetem Zeitraum einer Messstelle werden die Daten auf ein neues Objekt
             // gemappt
-            auswertungenProMessstelleUndZeitraum.forEach(auswertungProMessstelleUndZeitraum -> {
+            auswertungenProMessstelleUndZeitraum.forEach(auswertungMessstelleUndZeitraum -> {
                 final var auswertung = new Auswertung();
                 auswertung.setObjectId(mstId);
-                auswertung.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
-                auswertung.setDaten(auswertungProMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
+                auswertung.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
+                auswertung.setDaten(auswertungMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
                 final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
-                        .emptyIfNull(auswertungProMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
+                        .emptyIfNull(auswertungMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
                 meanOfAggregatesForEachMqId.sort(Comparator.comparing(TagesaggregatDto::getMqId));
                 // Pro Messquerschnitt einer Messstelle werden die Daten ebenfalls pro Zeitraum auf ein
                 // neues Objekt gemapt und in einer Map abgelegt
@@ -146,7 +161,7 @@ public class AuswertungService {
                     final var auswertungMq = new Auswertung();
                     final var mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
                     auswertungMq.setObjectId(mqIdAsString);
-                    auswertungMq.setZeitraum(auswertungProMessstelleUndZeitraum.getZeitraum());
+                    auswertungMq.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
                     auswertungMq.setDaten(tagesaggregatDto);
                     // Erzeugt für jeden geladenen Messquerschnitt einen eigenen Eintrag in der Map,
                     // um die geladenen Daten pro Zeitraum abzulegen
