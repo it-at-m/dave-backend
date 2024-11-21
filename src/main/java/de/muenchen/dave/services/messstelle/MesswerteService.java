@@ -71,7 +71,7 @@ public class MesswerteService {
                 .toList();
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
-        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
+        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge(), GanglinieService.TypeXAxisData.ZEITPUNKT));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
         processedZaehldaten

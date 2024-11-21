@@ -99,7 +99,7 @@ class GanglinieServiceTest {
         optionsFahrzeuge.setBusse(true);
         optionsFahrzeuge.setKraftraeder(true);
 
-        final var result = ganglinieService.ladeGanglinie(intervals, optionsFahrzeuge);
+        final var result = ganglinieService.ladeGanglinie(intervals, optionsFahrzeuge, GanglinieService.TypeXAxisData.ZEITPUNKT);
 
         final var expected = new LadeZaehldatenSteplineDTO();
         expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
