@@ -59,7 +59,8 @@ public class AuswertungService {
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
      *
      * @param options Optionen für die Auswertung
-     * @param auswertungenMqByMstId tbd
+     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin enthaltenen Unterattribute
+     *                                  bildet sich ebenfalls in der erstellen Datei ab.
      * @return Auswertungsdatei als byte[]
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
@@ -67,13 +68,13 @@ public class AuswertungService {
     @LogExecutionTime
     public byte[] createAuswertungMessstellenSpreadsheet(
             final MessstelleAuswertungOptionsDTO options,
-            final List<AuswertungMessstelle> auswertungenMqByMstId) throws IOException {
+            final List<AuswertungMessstelle> auswertungenProMessstelle) throws IOException {
         log.debug("#createAuswertungsfile {}", options);
         if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
             throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
         }
 
-        return spreadsheetService.createFile(auswertungenMqByMstId, options);
+        return spreadsheetService.createSpreadsheetForMessstellen(auswertungenProMessstelle, options);
     }
 
     /**
@@ -140,6 +141,7 @@ public class AuswertungService {
     protected List<AuswertungMessstelle> mapAuswertungMapToListOfAuswertungProMessstelle(
             final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId) {
         final List<AuswertungMessstelle> auswertungen = new ArrayList<>();
+
         auswertungenGroupedByMstId.forEach((mstId, auswertungenProMessstelleUndZeitraum) -> {
             // Pro Messstelle wird ein Objekt erzeugt
             final var auswertungProMessstelle = new AuswertungMessstelle();
@@ -171,8 +173,23 @@ public class AuswertungService {
                     auswertungProMessstelle.getAuswertungenProMq().get(mqIdAsString).add(auswertungMq);
                 });
             });
+
+            // Sortierung nach Zeitraum.
+            auswertungProMessstelle
+                    .getAuswertungenProZeitraum()
+                    .sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+            auswertungProMessstelle
+                    .getAuswertungenProMq()
+                    .values()
+                    .parallelStream()
+                    .forEach(auswertungenMesstelleProZeitraum -> {
+                        auswertungenMesstelleProZeitraum.sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+                    });
             auswertungen.add(auswertungProMessstelle);
         });
+
+        // Sortierung nach Messtelle
+        auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
         return auswertungen;
     }
 }

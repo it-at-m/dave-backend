@@ -40,19 +40,18 @@ public class SpreadsheetService {
     private final MessstelleService messstelleService;
 
     /**
-     * Erzeugt eine Datei als byte[], welches die ausgewerteten Daten beinhaltet
+     * Erzeugt eine Tabellenkalkulationsdatei als byte[], welches die ausgewerteten Daten beinhaltet.
      *
-     * @param auswertungenProMessstelle ausgewerteten Daten
+     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin enthaltenen Unterattribute
+     *                                 bildet sich ebenfalls in der erstellen Datei ab.
      * @param options zur Auswertung verwendete Optionen
      * @return das File als byte[]
      * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im
      *             Controller.
      */
-    public byte[] createFile(final List<AuswertungMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
+    public byte[] createSpreadsheetForMessstellen(final List<AuswertungMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
             throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
-
-        auswertungenProMessstelle.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
 
         // Füge Daten zum Document hinzu.
         ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungMessstelle -> {
@@ -247,8 +246,6 @@ public class SpreadsheetService {
             final FahrzeugOptionsDTO fahrzeugOptions) {
         final AtomicInteger rowIndex = new AtomicInteger(4);
         final AtomicReference<Row> row = new AtomicReference<>();
-
-        auswertung.sort(Comparator.comparing(o -> o.getZeitraum().getStart()));
 
         auswertung.forEach(entry -> {
             row.set(sheet.createRow(rowIndex.get()));
