@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null);
+    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null, null);
 
     @Test
     void calculateZeitraeume() {

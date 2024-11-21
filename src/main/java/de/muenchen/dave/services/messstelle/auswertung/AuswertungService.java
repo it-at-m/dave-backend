@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUn
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.services.messstelle.GanglinieService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
@@ -37,6 +38,8 @@ public class AuswertungService {
 
     private final SpreadsheetService spreadsheetService;
 
+    private final GanglinieService ganglinieService;
+
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
     }
@@ -55,12 +58,17 @@ public class AuswertungService {
         log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+
+        //ganglinieService.ladeGanglinie()
+
         auswertungMessstellen.setAuswertungMessstelle(auswertungenMqByMstId);
         final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
         final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
         auswertungMessstellen.setSpreadsheetBase64Encoded(spreadsheetBase64Encoded);
         return auswertungMessstellen;
     }
+
+
 
     /**
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
