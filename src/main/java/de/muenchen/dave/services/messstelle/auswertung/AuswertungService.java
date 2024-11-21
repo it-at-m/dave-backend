@@ -45,7 +45,9 @@ public class AuswertungService {
      * tbd
      * @param options
      */
+    @LogExecutionTime
     public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellen(final MessstelleAuswertungOptionsDTO options) throws IOException {
+        log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
         auswertungMessstellen.setAuswertungMessstelle(auswertungenMqByMstId);
@@ -65,11 +67,9 @@ public class AuswertungService {
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
      */
-    @LogExecutionTime
     public byte[] createAuswertungMessstellenSpreadsheet(
             final MessstelleAuswertungOptionsDTO options,
             final List<AuswertungMessstelle> auswertungenProMessstelle) throws IOException {
-        log.debug("#createAuswertungsfile {}", options);
         if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
             throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
         }
