@@ -41,7 +41,7 @@ public class AuswertungController {
     }
 
     @PostMapping(value = "/messstelle")
-    public ResponseEntity<AuswertungMessstelleWithFileDTO> generateAuswertung(
+    public ResponseEntity<AuswertungMessstelleWithFileDTO> getAuswertungMessstelle(
             @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMessstelleAuswertungIds());
         try {
