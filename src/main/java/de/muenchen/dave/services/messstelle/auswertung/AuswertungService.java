@@ -42,8 +42,13 @@ public class AuswertungService {
     }
 
     /**
-     * tbd
+     * Ermittelt je Messstelle die in Zeiträume unterteilten Zähldaten.
+     *
+     * Die Zähldaten werden aufbereitet und zusätzlich als Tabellenkalkulationsdatei bereitgestellt.
+     *
      * @param options
+     * @return
+     * @throws IOException
      */
     @LogExecutionTime
     public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellen(final MessstelleAuswertungOptionsDTO options) throws IOException {
@@ -67,7 +72,7 @@ public class AuswertungService {
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
      */
-    public byte[] createAuswertungMessstellenSpreadsheet(
+    protected byte[] createAuswertungMessstellenSpreadsheet(
             final MessstelleAuswertungOptionsDTO options,
             final List<AuswertungMessstelle> auswertungenProMessstelle) throws IOException {
         if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
@@ -78,7 +83,7 @@ public class AuswertungService {
     }
 
     /**
-     * Lädt die Daten pro Messstelle pro Zeitraum.
+     * Lädt die Daten pro Messstelle je Zeitraum.
      *
      * @param options Definierte Optionen zum Laden der Daten
      * @return Liste an Auswertungen Pro Messstelle
