@@ -1,5 +1,7 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -14,6 +16,7 @@ import org.mapstruct.MappingConstants;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AuswertungMapper {
@@ -25,7 +28,12 @@ public interface AuswertungMapper {
             @Context final Zeitraum zeitraum,
             @Context final String mstId);
 
-    default IntervalDto tagesaggregat2Interval(final Auswertung auswertung) {
+    @Mapping(target = "mstId", expression = "java( mstId )")
+    LadeZaehldatenSteplineForMessstelleDTO map(final LadeZaehldatenSteplineDTO dto, @Context final String mstId);
+
+    List<IntervalDto> auswertungen2Intervalle(final List<Auswertung> auswertungen);
+
+    default IntervalDto auswertung2Interval(final Auswertung auswertung) {
         final var interval = tagesaggregat2Interval(auswertung.getDaten());
         final var zeitraum = auswertung.getZeitraum();
         final var datumUhrzeitVon = LocalDateTime

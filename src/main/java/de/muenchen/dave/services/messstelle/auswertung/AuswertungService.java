@@ -1,6 +1,9 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.*;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -58,14 +61,25 @@ public class AuswertungService {
         log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
-
-        //ganglinieService.ladeGanglinie()
-
-        auswertungMessstellen.setAuswertungMessstelle(auswertungenMqByMstId);
+        final var zaehldatenMessstellen = this.ladeZaehldatenGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
+        auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
         final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
         final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
         auswertungMessstellen.setSpreadsheetBase64Encoded(spreadsheetBase64Encoded);
         return auswertungMessstellen;
+    }
+
+    protected List<LadeZaehldatenSteplineForMessstelleDTO> ladeZaehldatenGanglinie(
+            final FahrzeugOptionsDTO options,
+            final List<AuswertungMessstelle> auswertungenProMessstelle) {
+        return CollectionUtils.emptyIfNull(auswertungenProMessstelle)
+                        .stream()
+                        .map(auswertungMessstelle -> {
+                            final var intervalle = auswertungMapper.auswertungen2Intervalle(auswertungMessstelle.getAuswertungenProZeitraum());
+                            final var zaehldaten = ganglinieService.ladeGanglinie(intervalle, options, GanglinieService.TypeXAxisData.ZEITRAUM);
+                            return auswertungMapper.map(zaehldaten, auswertungMessstelle.getMstId());
+                        })
+                    .toList();
     }
 
 
