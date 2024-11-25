@@ -83,8 +83,9 @@ public class AuswertungService {
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
      *
      * @param options Optionen für die Auswertung
-     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin enthaltenen Unterattribute
-     *                                  bildet sich ebenfalls in der erstellen Datei ab.
+     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin
+     *            enthaltenen Unterattribute
+     *            bildet sich ebenfalls in der erstellen Datei ab.
      * @return Auswertungsdatei als byte[]
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
@@ -196,19 +197,19 @@ public class AuswertungService {
                 });
             });
 
-                    // Sortierung nach Zeitraum.
-                    auswertungProMessstelle
-                            .getAuswertungenProZeitraum()
-                            .sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
-                    auswertungProMessstelle
-                            .getAuswertungenProMq()
-                            .values()
-                            .parallelStream()
-                            .forEach(auswertungenMesstelleProZeitraum -> {
-                                auswertungenMesstelleProZeitraum.sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
-                            });
-                    auswertungen.add(auswertungProMessstelle);
-                });
+            // Sortierung nach Zeitraum.
+            auswertungProMessstelle
+                    .getAuswertungenProZeitraum()
+                    .sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+            auswertungProMessstelle
+                    .getAuswertungenProMq()
+                    .values()
+                    .parallelStream()
+                    .forEach(auswertungenMesstelleProZeitraum -> {
+                        auswertungenMesstelleProZeitraum.sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+                    });
+            auswertungen.add(auswertungProMessstelle);
+        });
 
         // Sortierung nach Messtelle
         auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
