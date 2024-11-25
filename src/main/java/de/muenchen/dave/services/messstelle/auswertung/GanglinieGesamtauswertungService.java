@@ -1,20 +1,26 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -31,7 +37,6 @@ public class GanglinieGesamtauswertungService {
 
         final var auswertungenProZeitraum = CollectionUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
         final var zaehldatenStepline = this.getInitialZaehldatenStepline();
-
         final var seriesEntries = new GanglinieUtil.SeriesEntries();
 
         auswertungenProZeitraum.forEach(auswertung -> {
@@ -129,12 +134,54 @@ public class GanglinieGesamtauswertungService {
 
     }
 
-    public LadeZaehldatenSteplineDTO ladeGanglinieForMultipleMessstellen(
-            final List<AuswertungMessstelle> auswertungMessstelle,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
+    public LadeZaehldatenSteplineDTO ladeGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
         log.debug("#ladeGanglinieForMultipleMessstellen");
 
-        return null;
+        final var zaehldatenStepline = this.getInitialZaehldatenStepline();
+        final var auswertungByZeitraum = new HashMap<Zeitraum, AuswertungZeitraum>();
+
+        CollectionUtils
+                .emptyIfNull(auswertungMessstellen)
+                .forEach(auswertungMessstelle -> CollectionUtils
+                        .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
+                        .forEach(auswertung -> {
+                            final var zeitraum = auswertung.getZeitraum();
+                            if (!auswertungByZeitraum.containsKey(zeitraum)) {
+                                auswertungByZeitraum.put(
+                                        zeitraum,
+                                        new AuswertungZeitraum(zeitraum, new HashMap<>()));
+                            }
+                            auswertungByZeitraum
+                                    .get(zeitraum)
+                                    .getSummeKfzByMstId()
+                                    .put(
+                                            auswertungMessstelle.getMstId(),
+                                            auswertung.getDaten().getSummeKraftfahrzeugverkehr());
+                        }));
+
+        auswertungByZeitraum.values().forEach(auswertungZeitraum -> {
+            auswertungZeitraum.summeKfzByMstId.forEach((mstId, summeKfz) -> {
+                final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
+                stepLineSeriesEntryMessstelle.setName("MST " + mstId);
+                GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
+                stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                GanglinieUtil.setLegendInZaehldatenStepline(
+                        zaehldatenStepline,
+                        stepLineSeriesEntryMessstelle.getName());
+                GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(
+                        zaehldatenStepline,
+                        GanglinieUtil.getIntValueIfNotNull(summeKfz));
+            });
+
+            final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
+            final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
+                    currentXAxisData,
+                    getZeitraumForXaxis(auswertungZeitraum.getZeitraum()));
+            zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
+
+        });
+
+        return zaehldatenStepline;
 
     }
 
@@ -156,5 +203,17 @@ public class GanglinieGesamtauswertungService {
         ladeZaehldatenStepline.setXAxisDataFirstChart(new ArrayList<>());
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
         return ladeZaehldatenStepline;
+    }
+
+    /**
+     *
+     */
+    @Data
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    private static class AuswertungZeitraum {
+
+        private Zeitraum zeitraum;
+
+        private HashMap<String, BigDecimal> summeKfzByMstId;
     }
 }

@@ -74,7 +74,7 @@ public class AuswertungService {
         if (auswertungenProMessstelle.size() == 1) {
             return ganglinieGesamtauswertungService.ladeGanglinieForSingleMessstelle(auswertungenProMessstelle.getFirst(), fahrzeugOptions);
         } else {
-            return ganglinieGesamtauswertungService.ladeGanglinieForMultipleMessstellen(auswertungenProMessstelle, fahrzeugOptions);
+            return ganglinieGesamtauswertungService.ladeGanglinieForMultipleMessstellen(auswertungenProMessstelle);
         }
     }
 
