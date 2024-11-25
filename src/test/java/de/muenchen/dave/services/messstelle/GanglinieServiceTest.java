@@ -85,7 +85,6 @@ class GanglinieServiceTest {
         interval2.setProzentSchwerverkehr(BigDecimal.valueOf(14));
 
         final var intervals = List.of(interval0, interval1, interval2);
-        final var options = new MessstelleOptionsDTO();
         final var optionsFahrzeuge = new FahrzeugOptionsDTO();
         optionsFahrzeuge.setKraftfahrzeugverkehr(true);
         optionsFahrzeuge.setSchwerverkehr(true);
@@ -100,9 +99,8 @@ class GanglinieServiceTest {
         optionsFahrzeuge.setLastzuege(true);
         optionsFahrzeuge.setBusse(true);
         optionsFahrzeuge.setKraftraeder(true);
-        options.setFahrzeuge(optionsFahrzeuge);
 
-        final var result = ganglinieService.ladeGanglinie(intervals, options);
+        final var result = ganglinieService.ladeGanglinie(intervals, optionsFahrzeuge);
 
         final var expected = new LadeZaehldatenSteplineDTO();
         expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
