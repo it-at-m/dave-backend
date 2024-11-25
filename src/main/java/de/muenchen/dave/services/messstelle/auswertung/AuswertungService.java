@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUn
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
-import de.muenchen.dave.services.messstelle.GanglinieService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
@@ -40,7 +39,7 @@ public class AuswertungService {
 
     private final SpreadsheetService spreadsheetService;
 
-    private final GanglinieService ganglinieService;
+    private final GanglinieGesamtauswertungService ganglinieGesamtauswertungService;
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
@@ -69,13 +68,13 @@ public class AuswertungService {
     }
 
     protected LadeZaehldatenSteplineDTO ladeZaehldatenGanglinie(
-            final FahrzeugOptionsDTO options,
+            final FahrzeugOptionsDTO fahrzeugOptions,
             final List<AuswertungMessstelle> auswertungenMessstellen) {
-        final var auswertungenProMessstelle = CollectionUtils.emptyIfNull(auswertungenMessstellen);
-        if (auswertungenProMessstelle.size() > 1) {
-            return new LadeZaehldatenSteplineDTO();
+        final var auswertungenProMessstelle = ListUtils.emptyIfNull(auswertungenMessstellen);
+        if (auswertungenProMessstelle.size() == 1) {
+            return ganglinieGesamtauswertungService.ladeGanglinieForSingleMessstelle(auswertungenProMessstelle.getFirst(), fahrzeugOptions);
         } else {
-            return new LadeZaehldatenSteplineDTO();
+            return ganglinieGesamtauswertungService.ladeGanglinieForMultipleMessstellen(auswertungenProMessstelle, fahrzeugOptions);
         }
     }
 

@@ -1,19 +1,13 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
-import de.muenchen.dave.services.messstelle.GanglinieService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +20,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class GanglinieGesamtauswertung {
+public class GanglinieGesamtauswertungService {
 
     private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("MM.yyyy");
 
