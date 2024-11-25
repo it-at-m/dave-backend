@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -95,10 +94,7 @@ public class GanglinieService {
     }
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenSteplineDTO ladeGanglinie(
-            final List<IntervalDto> intervals,
-            final FahrzeugOptionsDTO fahrzeugOptions,
-            final TypeXAxisData typeXAxisData) {
+    public LadeZaehldatenSteplineDTO ladeGanglinie(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
         log.debug("#ladeGanglinie");
         final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
@@ -108,6 +104,7 @@ public class GanglinieService {
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
 
         final var seriesEntries = new SeriesEntries();
+        final var fahrzeugOptions = options.getFahrzeuge();
 
         intervals
                 .forEach(interval -> {
@@ -187,7 +184,7 @@ public class GanglinieService {
                     final var currentXAxisData = ladeZaehldatenStepline.getXAxisDataFirstChart();
                     final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                             currentXAxisData,
-                            getXAxisData(interval, typeXAxisData));
+                            interval.getDatumUhrzeitVon().toLocalTime().toString());
                     ladeZaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
                 });
 
@@ -295,27 +292,6 @@ public class GanglinieService {
             return allEntries;
         }
 
-    }
-
-    protected String getXAxisData(final IntervalDto interval, final TypeXAxisData typeXAxisData) {
-        StringBuilder xAxisData = new StringBuilder();
-        if (TypeXAxisData.ZEITPUNKT.equals(typeXAxisData)) {
-            xAxisData.append(interval.getDatumUhrzeitVon().toLocalTime().toString());
-        } else {
-            xAxisData
-                    .append(interval.getDatumUhrzeitVon().toLocalDate().toString())
-                    .append(StringUtils.SPACE)
-                    .append("-")
-                    .append(StringUtils.SPACE)
-                    .append(interval.getDatumUhrzeitBis().toLocalDate().toString());
-        }
-        return xAxisData.toString();
-    }
-
-    public enum TypeXAxisData {
-        ZEITPUNKT,
-
-        ZEITRAUM;
     }
 
 }

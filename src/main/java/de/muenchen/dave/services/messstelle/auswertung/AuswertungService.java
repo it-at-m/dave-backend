@@ -1,7 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.*;
@@ -76,8 +75,8 @@ public class AuswertungService {
                         .stream()
                         .map(auswertungMessstelle -> {
                             final var intervalle = auswertungMapper.auswertungen2Intervalle(auswertungMessstelle.getAuswertungenProZeitraum());
-                            final var zaehldaten = ganglinieService.ladeGanglinie(intervalle, options, GanglinieService.TypeXAxisData.ZEITRAUM);
-                            return auswertungMapper.map(zaehldaten, auswertungMessstelle.getMstId());
+                            //final var zaehldaten = ganglinieService.ladeGanglinie(intervalle, options);
+                            return new LadeZaehldatenSteplineForMessstelleDTO();
                         })
                     .toList();
     }
