@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -26,9 +25,6 @@ public interface AuswertungMapper {
             final TagesaggregatResponseDto dto,
             @Context final Zeitraum zeitraum,
             @Context final String mstId);
-
-    @Mapping(target = "mstId", expression = "java( mstId )")
-    LadeZaehldatenSteplineForMessstelleDTO map(final LadeZaehldatenSteplineDTO dto, @Context final String mstId);
 
     List<IntervalDto> auswertungen2Intervalle(final List<Auswertung> auswertungen);
 

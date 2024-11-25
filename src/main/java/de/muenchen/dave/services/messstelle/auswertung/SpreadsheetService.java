@@ -41,8 +41,9 @@ public class SpreadsheetService {
     /**
      * Erzeugt eine Tabellenkalkulationsdatei als byte[], welches die ausgewerteten Daten beinhaltet.
      *
-     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin enthaltenen Unterattribute
-     *                                 bildet sich ebenfalls in der erstellen Datei ab.
+     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin
+     *            enthaltenen Unterattribute
+     *            bildet sich ebenfalls in der erstellen Datei ab.
      * @param options zur Auswertung verwendete Optionen
      * @return das File als byte[]
      * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im

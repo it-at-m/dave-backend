@@ -82,8 +82,9 @@ public class AuswertungService {
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
      *
      * @param options Optionen für die Auswertung
-     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin enthaltenen Unterattribute
-     *                                  bildet sich ebenfalls in der erstellen Datei ab.
+     * @param auswertungenProMessstelle ausgewerteten Daten. Die Sortierung des Attributs und der darin
+     *            enthaltenen Unterattribute
+     *            bildet sich ebenfalls in der erstellen Datei ab.
      * @return Auswertungsdatei als byte[]
      * @throws IOException kann beim Erstellen des byte[] geworfen werden. Fehlerbehandlung erfolgt im
      *             Controller
@@ -173,7 +174,7 @@ public class AuswertungService {
                 final var auswertung = new Auswertung();
                 auswertung.setObjectId(mstId);
                 auswertung.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
-                auswertung.setDaten(auswertungMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
+                auswertung.setDaten(auswertungMessstelleUndZeitraum.getSumOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
                 final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
                         .emptyIfNull(auswertungMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
