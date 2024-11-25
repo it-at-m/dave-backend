@@ -1,7 +1,6 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;

@@ -1,15 +1,13 @@
 package de.muenchen.dave.domain.dtos.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import lombok.Data;
-
-import java.util.List;
 
 
 @Data
 public class AuswertungMessstelleWithFileDTO {
 
-    private List<LadeZaehldatenSteplineForMessstelleDTO> zaehldatenMessstellen;
+    private LadeZaehldatenSteplineDTO zaehldatenMessstellen;
 
     private String spreadsheetBase64Encoded;
 

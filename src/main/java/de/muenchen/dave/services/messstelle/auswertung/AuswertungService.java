@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineForMessstelleDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.*;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
@@ -68,20 +68,16 @@ public class AuswertungService {
         return auswertungMessstellen;
     }
 
-    protected List<LadeZaehldatenSteplineForMessstelleDTO> ladeZaehldatenGanglinie(
+    protected LadeZaehldatenSteplineDTO ladeZaehldatenGanglinie(
             final FahrzeugOptionsDTO options,
-            final List<AuswertungMessstelle> auswertungenProMessstelle) {
-        return CollectionUtils.emptyIfNull(auswertungenProMessstelle)
-                        .stream()
-                        .map(auswertungMessstelle -> {
-                            final var intervalle = auswertungMapper.auswertungen2Intervalle(auswertungMessstelle.getAuswertungenProZeitraum());
-                            //final var zaehldaten = ganglinieService.ladeGanglinie(intervalle, options);
-                            return new LadeZaehldatenSteplineForMessstelleDTO();
-                        })
-                    .toList();
+            final List<AuswertungMessstelle> auswertungenMessstellen) {
+        final var auswertungenProMessstelle = CollectionUtils.emptyIfNull(auswertungenMessstellen);
+        if (auswertungenProMessstelle.size() > 1) {
+            return new LadeZaehldatenSteplineDTO();
+        } else {
+            return new LadeZaehldatenSteplineDTO();
+        }
     }
-
-
 
     /**
      * Erzeugt mittels der geladenen Daten eine Datei für die Auswertung
