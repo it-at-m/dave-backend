@@ -174,7 +174,7 @@ public class AuswertungService {
                 final var auswertung = new Auswertung();
                 auswertung.setObjectId(mstId);
                 auswertung.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
-                auswertung.setDaten(auswertungMessstelleUndZeitraum.getMeanOverAllAggregatesOfAllMqId());
+                auswertung.setDaten(auswertungMessstelleUndZeitraum.getSumOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
                 final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
                         .emptyIfNull(auswertungMessstelleUndZeitraum.getMeanOfAggregatesForEachMqId());
@@ -196,19 +196,19 @@ public class AuswertungService {
                 });
             });
 
-            // Sortierung nach Zeitraum.
-            auswertungProMessstelle
-                    .getAuswertungenProZeitraum()
-                    .sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
-            auswertungProMessstelle
-                    .getAuswertungenProMq()
-                    .values()
-                    .parallelStream()
-                    .forEach(auswertungenMesstelleProZeitraum -> {
-                        auswertungenMesstelleProZeitraum.sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
-                    });
-            auswertungen.add(auswertungProMessstelle);
-        });
+                    // Sortierung nach Zeitraum.
+                    auswertungProMessstelle
+                            .getAuswertungenProZeitraum()
+                            .sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+                    auswertungProMessstelle
+                            .getAuswertungenProMq()
+                            .values()
+                            .parallelStream()
+                            .forEach(auswertungenMesstelleProZeitraum -> {
+                                auswertungenMesstelleProZeitraum.sort(Comparator.comparing(auswertung -> auswertung.getZeitraum().getStart()));
+                            });
+                    auswertungen.add(auswertungProMessstelle);
+                });
 
         // Sortierung nach Messtelle
         auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
