@@ -175,7 +175,7 @@ public final class GanglinieUtil {
          * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
          * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
-         *         {@link StepLineSeriesEntryBigDecimalDTO}.
+         * {@link StepLineSeriesEntryBigDecimalDTO}.
          */
         public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
