@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,8 +25,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class GanglinieGesamtauswertungService {
-
-    private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("MM.yyyy");
 
     /**
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
@@ -39,7 +36,7 @@ public class GanglinieGesamtauswertungService {
     public LadeZaehldatenSteplineDTO createGanglinieForSingleMessstelle(
             final AuswertungMessstelle auswertungMessstelle,
             final FahrzeugOptionsDTO fahrzeugOptions) {
-        log.debug("#ladeGanglinieForSingleMessstelle");
+        log.debug("#createGanglinieForSingleMessstelle");
 
         final var auswertungenProZeitraum = CollectionUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
@@ -147,7 +144,7 @@ public class GanglinieGesamtauswertungService {
      * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
-        log.debug("#ladeGanglinieForMultipleMessstellen");
+        log.debug("#createGanglinieForMultipleMessstellen");
 
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
         final var auswertungByZeitraum = new HashMap<Zeitraum, AuswertungZeitraum>();

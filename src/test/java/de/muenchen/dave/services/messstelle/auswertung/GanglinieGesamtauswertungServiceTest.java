@@ -12,6 +12,9 @@ class GanglinieGesamtauswertungServiceTest {
     private GanglinieGesamtauswertungService ganglinieGesamtauswertungService = new GanglinieGesamtauswertungService();
 
     @Test
+    void
+
+    @Test
     void getZeitraumForXaxis() {
         var zeitraum = new Zeitraum(YearMonth.of(2024, 11), null, AuswertungsZeitraum.SEPTEMBER);
         var result = ganglinieGesamtauswertungService.getZeitraumForXaxis(zeitraum);
