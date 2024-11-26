@@ -201,19 +201,16 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     * Gibt die String-Repräsentation des Zeitraums in der Form "MM.yyyy - MM.yyyy" zurück.
+     * Gibt die String-Repräsentation des Zeitraums zurück.
      *
      * @param zeitraum zur Stringerstellung.
      * @return die String-Repräsentation des Zeitraums.
      */
     public String getZeitraumForXaxis(final Zeitraum zeitraum) {
-        return new StringBuilder()
-                .append(zeitraum.getStart().format(YEAR_MONTH_FORMATTER))
-                .append(StringUtils.SPACE)
-                .append("-")
-                .append(StringUtils.SPACE)
-                .append(zeitraum.getEnd().format(YEAR_MONTH_FORMATTER))
-                .toString();
+        final var bezeichnerZeitraum = zeitraum.getAuswertungsZeitraum().getText();
+        return bezeichnerZeitraum
+                .concat(bezeichnerZeitraum.isEmpty() ? StringUtils.EMPTY : StringUtils.SPACE)
+                .concat(String.valueOf(zeitraum.getStart().getYear()));
     }
 
     /**
