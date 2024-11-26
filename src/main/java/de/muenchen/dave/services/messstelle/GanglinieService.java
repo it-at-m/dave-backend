@@ -34,55 +34,64 @@ public class GanglinieService {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
                         seriesEntries.getSeriesEntryPkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getSummeAllePkw()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.PKW);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getSummeAllePkw()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getSummeAllePkw()));
                     }
                     if (fahrzeugOptions.isLastkraftwagen()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
                         seriesEntries.getSeriesEntryLkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLkw()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LKW);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLkw()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLkw()));
                     }
                     if (fahrzeugOptions.isLastzuege()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
                         seriesEntries.getSeriesEntryLz().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getSummeLastzug()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getSummeLastzug()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getSummeLastzug()));
                     }
                     if (fahrzeugOptions.isLieferwagen()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
                         seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
                     }
                     if (fahrzeugOptions.isBusse()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
                         seriesEntries.getSeriesEntryBus().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlBus()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.BUSSE);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlBus()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlBus()));
                     }
                     if (fahrzeugOptions.isKraftraeder()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKrad());
                         seriesEntries.getSeriesEntryKrad().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlKrad()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KRAFTRAEDER);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlKrad()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlKrad()));
                     }
                     if (fahrzeugOptions.isRadverkehr()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
                         seriesEntries.getSeriesEntryRad().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlRad()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.RAD);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlRad()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlRad()));
                     }
                     if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKfz());
                         seriesEntries.getSeriesEntryKfz().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getSummeKraftfahrzeugverkehr()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.KFZ);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getSummeKraftfahrzeugverkehr()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getSummeKraftfahrzeugverkehr()));
                     }
                     if (fahrzeugOptions.isSchwerverkehr()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntrySv());
                         seriesEntries.getSeriesEntrySv().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getSummeSchwerverkehr()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.SCHWERVERKEHR);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getSummeSchwerverkehr()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getSummeSchwerverkehr()));
                     }
                     if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
                         GanglinieUtil.setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
@@ -94,7 +103,8 @@ public class GanglinieService {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
                         seriesEntries.getSeriesEntryGv().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getSummeGueterverkehr()));
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.GUETERVERKEHR);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(interval.getSummeGueterverkehr()));
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getSummeGueterverkehr()));
                     }
                     if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
                         GanglinieUtil.setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
