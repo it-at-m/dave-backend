@@ -90,6 +90,16 @@ public final class GanglinieUtil {
                 : value.intValue();
     }
 
+    public static LadeZaehldatenSteplineDTO getInitialZaehldatenStepline() {
+        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+        ladeZaehldatenStepline.setRangeMax(0);
+        ladeZaehldatenStepline.setRangeMaxPercent(0);
+        ladeZaehldatenStepline.setLegend(new ArrayList<>());
+        ladeZaehldatenStepline.setXAxisDataFirstChart(new ArrayList<>());
+        ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
+        return ladeZaehldatenStepline;
+    }
+
     /**
      * Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
      * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie

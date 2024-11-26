@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class GanglinieGesamtauswertungService {
         log.debug("#ladeGanglinieForSingleMessstelle");
 
         final var auswertungenProZeitraum = CollectionUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
-        final var zaehldatenStepline = this.getInitialZaehldatenStepline();
+        final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
         final var seriesEntries = new GanglinieUtil.SeriesEntries();
 
         auswertungenProZeitraum.forEach(auswertung -> {
@@ -137,7 +136,7 @@ public class GanglinieGesamtauswertungService {
     public LadeZaehldatenSteplineDTO ladeGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
         log.debug("#ladeGanglinieForMultipleMessstellen");
 
-        final var zaehldatenStepline = this.getInitialZaehldatenStepline();
+        final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
         final var auswertungByZeitraum = new HashMap<Zeitraum, AuswertungZeitraum>();
 
         CollectionUtils
@@ -193,16 +192,6 @@ public class GanglinieGesamtauswertungService {
                 .append(StringUtils.SPACE)
                 .append(zeitraum.getEnd().format(YEAR_MONTH_FORMATTER))
                 .toString();
-    }
-
-    protected LadeZaehldatenSteplineDTO getInitialZaehldatenStepline() {
-        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
-        ladeZaehldatenStepline.setRangeMax(0);
-        ladeZaehldatenStepline.setRangeMaxPercent(0);
-        ladeZaehldatenStepline.setLegend(new ArrayList<>());
-        ladeZaehldatenStepline.setXAxisDataFirstChart(new ArrayList<>());
-        ladeZaehldatenStepline.setSeriesEntriesFirstChart(new ArrayList<>());
-        return ladeZaehldatenStepline;
     }
 
     /**
