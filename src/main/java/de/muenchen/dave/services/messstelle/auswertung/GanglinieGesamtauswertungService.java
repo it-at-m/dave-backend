@@ -29,7 +29,14 @@ public class GanglinieGesamtauswertungService {
 
     private static final DateTimeFormatter YEAR_MONTH_FORMATTER = DateTimeFormatter.ofPattern("MM.yyyy");
 
-    public LadeZaehldatenSteplineDTO ladeGanglinieForSingleMessstelle(
+    /**
+     * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
+     *
+     * @param auswertungMessstelle mit den Zähldaten.
+     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
+     * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
+     */
+    public LadeZaehldatenSteplineDTO createGanglinieForSingleMessstelle(
             final AuswertungMessstelle auswertungMessstelle,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         log.debug("#ladeGanglinieForSingleMessstelle");
@@ -133,12 +140,20 @@ public class GanglinieGesamtauswertungService {
 
     }
 
-    public LadeZaehldatenSteplineDTO ladeGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
+    /**
+     * Erstellt die Repräsentation der Zähldaten (Summe KFZ) zur Gangliniendarstellung für mehrere Messstellen.
+     *
+     * @param auswertungMessstellen mit den Zähldaten.
+     * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
+     */
+    public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
         log.debug("#ladeGanglinieForMultipleMessstellen");
 
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
         final var auswertungByZeitraum = new HashMap<Zeitraum, AuswertungZeitraum>();
 
+        // Gruppieren der Auswertungen nach Zeitraum
+        // Jeder Zeitraum umfasst je Messstelle die Anzahl der KFZ
         CollectionUtils
                 .emptyIfNull(auswertungMessstellen)
                 .forEach(auswertungMessstelle -> CollectionUtils
@@ -150,6 +165,7 @@ public class GanglinieGesamtauswertungService {
                                         zeitraum,
                                         new AuswertungZeitraum(zeitraum, new HashMap<>()));
                             }
+                            // Hinzufügen der Messstelle mit der Summe an KFZ.
                             auswertungByZeitraum
                                     .get(zeitraum)
                                     .getSummeKfzByMstId()
@@ -158,6 +174,7 @@ public class GanglinieGesamtauswertungService {
                                             auswertung.getDaten().getSummeKraftfahrzeugverkehr());
                         }));
 
+        // Aufbereitung der im oberen Abschnitt gruppierten Zähldaten für Gangliniendarstellung.
         auswertungByZeitraum.values().forEach(auswertungZeitraum -> {
             auswertungZeitraum.summeKfzByMstId.forEach((mstId, summeKfz) -> {
                 final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
@@ -181,9 +198,14 @@ public class GanglinieGesamtauswertungService {
         });
 
         return zaehldatenStepline;
-
     }
 
+    /**
+     * Gibt die String-Repräsentation des Zeitraums in der Form "MM.yyyy - MM.yyyy" zurück.
+     *
+     * @param zeitraum zur Stringerstellung.
+     * @return die String-Repräsentation des Zeitraums.
+     */
     public String getZeitraumForXaxis(final Zeitraum zeitraum) {
         return new StringBuilder()
                 .append(zeitraum.getStart().format(YEAR_MONTH_FORMATTER))
@@ -195,7 +217,7 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     *
+     * Die Klasse repräsentiert für einen Zeitraum je Messstelle die Summe der Kfz.
      */
     @Data
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
