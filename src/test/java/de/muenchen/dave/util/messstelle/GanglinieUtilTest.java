@@ -119,4 +119,16 @@ class GanglinieUtilTest {
         Assertions.assertThat(result).isNotNull().isEqualTo(2);
     }
 
+    @Test
+    void getInitialZaehldatenStepline() {
+        final var result = GanglinieUtil.getInitialZaehldatenStepline();
+        final var expected = new LadeZaehldatenSteplineDTO();
+        expected.setRangeMax(0);
+        expected.setRangeMaxPercent(0);
+        expected.setLegend(new ArrayList<>());
+        expected.setXAxisDataFirstChart(new ArrayList<>());
+        expected.setSeriesEntriesFirstChart(new ArrayList<>());
+        Assertions.assertThat(result).isNotNull().isEqualTo(expected);
+    }
+
 }
