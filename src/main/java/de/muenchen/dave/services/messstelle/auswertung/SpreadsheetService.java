@@ -112,7 +112,7 @@ public class SpreadsheetService {
      * @param row aktuelle Zeile
      * @param isMessquerschnitt Flag, ob es sich um einen Messquerschnitt handelt
      */
-    private void addMetaHeaderToRow(final Row row, final boolean isMessquerschnitt) {
+    protected void addMetaHeaderToRow(final Row row, final boolean isMessquerschnitt) {
         int cellIndex = 0;
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), "ausgewählter Wochentag");
         if (isMessquerschnitt) {
@@ -160,7 +160,7 @@ public class SpreadsheetService {
      * @param mstId ausgewertete Messstelle
      * @param mqId ausgewerteter Messquerschnitt
      */
-    private void addMetaDataToMessquerschnittRow(final Row row, final MessstelleAuswertungOptionsDTO options, final String mstId, final String mqId) {
+    protected void addMetaDataToMessquerschnittRow(final Row row, final MessstelleAuswertungOptionsDTO options, final String mstId, final String mqId) {
         int cellIndex = 0;
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), options.getTagesTyp().getBeschreibung());
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), mstId);
@@ -179,7 +179,7 @@ public class SpreadsheetService {
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
      * @param isGesamtSheet Flag falls es das GesamtSheet ist
      */
-    private void addDataHeaderToRow(final Row row, final FahrzeugOptionsDTO fahrzeugOptions, final boolean isGesamtSheet) {
+    protected void addDataHeaderToRow(final Row row, final FahrzeugOptionsDTO fahrzeugOptions, final boolean isGesamtSheet) {
         int headerCellIndex = 0;
         addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Zeitintervall");
         if (isGesamtSheet) {
@@ -278,7 +278,7 @@ public class SpreadsheetService {
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
      * @param isGesamtSheet Flag ob es sich um das Sheet der Gesamtansicht handelt
      */
-    private void addDataToRow(
+    protected void addDataToRow(
             final Row row,
             final Auswertung auswertung,
             final FahrzeugOptionsDTO fahrzeugOptions,
@@ -373,7 +373,7 @@ public class SpreadsheetService {
      * @param messquerschnitt zu formatierender Messquerschnitt
      * @return Messquerschnitt als String
      */
-    private String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
+    protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
         return String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
                 messquerschnitt.getStandort());
     }
@@ -385,7 +385,7 @@ public class SpreadsheetService {
      * @return Workbook als byte[]
      * @throws IOException kann beim Erstellen geworfen werden. Behandlung erfolgt im Controller.
      */
-    protected byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
+    private byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
         try (final var baos = new ByteArrayOutputStream()) {
             spreadsheetDocument.write(baos);
             return baos.toByteArray();
