@@ -206,7 +206,7 @@ public class GanglinieGesamtauswertungService {
     public String getZeitraumForXaxis(final Zeitraum zeitraum) {
         final var bezeichnerZeitraum = zeitraum.getAuswertungsZeitraum().getText();
         return bezeichnerZeitraum
-                .concat(bezeichnerZeitraum.isEmpty() ? StringUtils.EMPTY : StringUtils.SPACE)
+                .concat(bezeichnerZeitraum.isEmpty() ? StringUtils.EMPTY : ".")
                 .concat(String.valueOf(zeitraum.getStart().getYear()));
     }
 
