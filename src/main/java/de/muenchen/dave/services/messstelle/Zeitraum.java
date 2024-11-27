@@ -9,7 +9,7 @@ import java.time.YearMonth;
 @Data
 @AllArgsConstructor
 public class Zeitraum {
-    YearMonth start;
-    YearMonth end;
-    AuswertungsZeitraum auswertungsZeitraum;
+    private YearMonth start;
+    private YearMonth end;
+    private AuswertungsZeitraum auswertungsZeitraum;
 }

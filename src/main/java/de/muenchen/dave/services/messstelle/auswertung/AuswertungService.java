@@ -48,10 +48,11 @@ public class AuswertungService {
     /**
      * Ermittelt je Messstelle die in Zeiträume unterteilten Zähldaten.
      *
-     * Die Zähldaten werden aufbereitet und zusätzlich als Tabellenkalkulationsdatei bereitgestellt.
+     * Die Zähldaten werden für die Darstellungen in einem Gangliniendiagramm aufbereitet.
+     * Zusätzlich werden die Informationen als Tabellenkalkulationsdatei bereitgestellt.
      *
-     * @param options
-     * @return
+     * @param options zum Laden und Aufbereiten der Messstelleninformationen mit Zähldaten.
+     * @return die Zähldaten der Messstelleninformationen mitsamt der Tabellenkalkulationsdatei.
      * @throws IOException
      */
     @LogExecutionTime
@@ -59,7 +60,7 @@ public class AuswertungService {
         log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
-        final var zaehldatenMessstellen = this.ladeZaehldatenGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
+        final var zaehldatenMessstellen = this.createZaehldatenForGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
         auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
         final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
         final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
@@ -67,14 +68,22 @@ public class AuswertungService {
         return auswertungMessstellen;
     }
 
-    protected LadeZaehldatenSteplineDTO ladeZaehldatenGanglinie(
+    /**
+     * Bereitet die im Parameter gegebenen Zähldaten für die Gangliniendarstellung auf.
+     *
+     * @param fahrzeugOptions die Optionen zur Aufbereitung der Zähldaten für die Gangliniendarstellung.
+     * @param auswertungenMessstellen die Auswertungen der Messstellen zur Aufbereitung für die
+     *            Gangliniendarstellung.
+     * @return die aufbereiteten Daten für die Gangliniendarstellung.
+     */
+    protected LadeZaehldatenSteplineDTO createZaehldatenForGanglinie(
             final FahrzeugOptionsDTO fahrzeugOptions,
             final List<AuswertungMessstelle> auswertungenMessstellen) {
         final var auswertungenProMessstelle = ListUtils.emptyIfNull(auswertungenMessstellen);
         if (auswertungenProMessstelle.size() == 1) {
-            return ganglinieGesamtauswertungService.ladeGanglinieForSingleMessstelle(auswertungenProMessstelle.getFirst(), fahrzeugOptions);
+            return ganglinieGesamtauswertungService.createGanglinieForSingleMessstelle(auswertungenProMessstelle.getFirst(), fahrzeugOptions);
         } else {
-            return ganglinieGesamtauswertungService.ladeGanglinieForMultipleMessstellen(auswertungenProMessstelle);
+            return ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungenProMessstelle);
         }
     }
 
