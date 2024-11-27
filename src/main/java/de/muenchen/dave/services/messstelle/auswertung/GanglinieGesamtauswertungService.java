@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -133,12 +134,15 @@ public class GanglinieGesamtauswertungService {
             zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
 
         });
+
+        zaehldatenStepline.setSeriesEntriesFirstChart(seriesEntries.getChosenStepLineSeriesEntries(fahrzeugOptions));
         return zaehldatenStepline;
 
     }
 
     /**
-     * Erstellt die Repräsentation der Zähldaten (Summe KFZ) zur Gangliniendarstellung für mehrere Messstellen.
+     * Erstellt die Repräsentation der Zähldaten (Summe KFZ) zur Gangliniendarstellung für mehrere
+     * Messstellen.
      *
      * @param auswertungMessstellen mit den Zähldaten.
      * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
@@ -172,27 +176,35 @@ public class GanglinieGesamtauswertungService {
                         }));
 
         // Aufbereitung der im oberen Abschnitt gruppierten Zähldaten für Gangliniendarstellung.
-        auswertungByZeitraum.values().forEach(auswertungZeitraum -> {
-            auswertungZeitraum.summeKfzByMstId.forEach((mstId, summeKfz) -> {
-                final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
-                stepLineSeriesEntryMessstelle.setName("MST " + mstId);
-                GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
-                stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
-                GanglinieUtil.setLegendInZaehldatenStepline(
-                        zaehldatenStepline,
-                        stepLineSeriesEntryMessstelle.getName());
-                GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(
-                        zaehldatenStepline,
-                        GanglinieUtil.getIntValueIfNotNull(summeKfz));
-            });
+        auswertungByZeitraum
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(auswertungZeitraum -> auswertungZeitraum.getZeitraum().getStart()))
+                .forEach(auswertungZeitraum -> {
 
-            final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
-            final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
-                    currentXAxisData,
-                    getZeitraumForXaxis(auswertungZeitraum.getZeitraum()));
-            zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
+                    final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
 
-        });
+                    auswertungZeitraum.summeKfzByMstId.forEach((mstId, summeKfz) -> {
+                        stepLineSeriesEntryMessstelle.setName("MST " + mstId);
+                        GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
+                        stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                        GanglinieUtil.setLegendInZaehldatenStepline(
+                                zaehldatenStepline,
+                                stepLineSeriesEntryMessstelle.getName());
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(
+                                zaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(summeKfz));
+
+                        zaehldatenStepline.getSeriesEntriesFirstChart().add(stepLineSeriesEntryMessstelle);
+                    });
+
+                    final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
+                    final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
+                            currentXAxisData,
+                            getZeitraumForXaxis(auswertungZeitraum.getZeitraum()));
+                    zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
+
+                });
 
         return zaehldatenStepline;
     }

@@ -72,7 +72,8 @@ public class AuswertungService {
      * Bereitet die im Parameter gegebenen Zähldaten für die Gangliniendarstellung auf.
      *
      * @param fahrzeugOptions die Optionen zur Aufbereitung der Zähldaten für die Gangliniendarstellung.
-     * @param auswertungenMessstellen die Auswertungen der Messstellen zur Aufbereitung für die Gangliniendarstellung.
+     * @param auswertungenMessstellen die Auswertungen der Messstellen zur Aufbereitung für die
+     *            Gangliniendarstellung.
      * @return die aufbereiteten Daten für die Gangliniendarstellung.
      */
     protected LadeZaehldatenSteplineDTO createZaehldatenForGanglinie(
