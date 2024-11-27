@@ -60,6 +60,7 @@ public class AuswertungService {
         log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+        auswertungMessstellen.setAuswertungen(auswertungenMqByMstId.stream().map(AuswertungMessstelle::getAuswertungenProZeitraum).toList());
         final var zaehldatenMessstellen = this.createZaehldatenForGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
         auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
         final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);

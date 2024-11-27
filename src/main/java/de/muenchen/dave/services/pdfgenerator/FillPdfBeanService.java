@@ -7,10 +7,14 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -30,6 +34,7 @@ import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
@@ -47,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -66,6 +72,7 @@ public class FillPdfBeanService {
     private static final String BELASTUNGSPLAN_TITLE_MESSSTELLE = "Belastungsplan - Messstelle ";
     private static final String GANGLINIE_TITLE_ZAEHLSTELLE = "Ganglinie - Zählstelle ";
     private static final String GANGLINIE_TITLE_MESSSTELLE = "Ganglinie - Messstelle ";
+    private static final String GESAMTAUSWERTUNG_TITLE_MESSSTELLE = "Zeitreihe - Messstelle ";
     private static final String DATENTABELLE_TITLE_ZAEHLSTELLE = "Listenausgabe - Zählstelle ";
     private static final String DATENTABELLE_TITLE_MESSSTELLE = "Listenausgabe - Messstelle ";
     private static final String CHART_TITLE_BLOCK = "Block";
@@ -134,6 +141,15 @@ public class FillPdfBeanService {
         return basicPdf;
     }
 
+    static de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf fillBasicPdfGesamtauswertung(
+            final de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf basicPdf,
+            final Messstelle messstelle, final String department, final MessstelleAuswertungOptionsDTO optionsDTO) {
+        fillPdfBeanWithData(basicPdf, department);
+        basicPdf.setMessstelleninformationen(fillMessstelleninformationenGesamtauswertung(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO));
+
+        return basicPdf;
+    }
+
     /**
      * Befüllt die übergebene ZaehlstelleninformationenPdfComponent und gibt diese zurück
      *
@@ -169,6 +185,21 @@ public class FillPdfBeanService {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().get(0).format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
         }
+        messstelleninformationen.setKommentar(messstelle.getKommentar());
+        return messstelleninformationen;
+    }
+
+    static MessstelleninformationenPdfComponent fillMessstelleninformationenGesamtauswertung(
+            final MessstelleninformationenPdfComponent messstelleninformationen,
+            final Messstelle messstelle, final MessstelleAuswertungOptionsDTO optionsDTO) {
+        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setMesszeitraum(String.join((CharSequence) optionsDTO.getJahre(), ", "));
+        messstelleninformationen.setZeitintervallNeeded(true);
+        messstelleninformationen.setZeitintervall(optionsDTO.getZeitraum().stream().map(AuswertungsZeitraum::getLongText).collect(Collectors.joining(", ")));
+        messstelleninformationen.setWochentagNeeded(true);
+        messstelleninformationen
+                .setWochentag(StringUtils.defaultIfEmpty(optionsDTO.getTagesTyp().getBeschreibung(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setKommentar(messstelle.getKommentar());
         return messstelleninformationen;
     }
@@ -257,6 +288,26 @@ public class FillPdfBeanService {
                         chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
                         chartTitle.append(StringUtils.SPACE);
                     });
+        }
+        return chartTitle.toString().trim();
+    }
+
+    static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final Messstelle messstelle) {
+        final StringBuilder chartTitle = new StringBuilder();
+        if (options.getMessstelleAuswertungIds().size() > 1) {
+            chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
+        } else {
+            CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds()).stream().findFirst()
+                    .ifPresent(messstelleAuswertungIdDTO -> messstelle.getMessquerschnitte().stream()
+                            .filter(messquerschnitt -> messstelleAuswertungIdDTO.getMqIds().contains(messquerschnitt.getMqId()))
+                            .forEach(messquerschnitt -> {
+                                chartTitle.append(messquerschnitt.getMqId());
+                                chartTitle.append(StringUtils.SPACE);
+                                chartTitle.append("-");
+                                chartTitle.append(StringUtils.SPACE);
+                                chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
+                                chartTitle.append(StringUtils.SPACE);
+                            }));
         }
         return chartTitle.toString().trim();
     }
@@ -709,6 +760,84 @@ public class FillPdfBeanService {
 
         gangliniePdf.setGanglinieTables(gtList);
 
+        return gangliniePdf;
+    }
+
+    public de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf fillGesamtauswertungPdf(
+            final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf,
+            final MessstelleAuswertungOptionsDTO options, final List<Auswertung> auswertungen,
+            final String chartAsBase64Png, final String department) {
+
+        final Optional<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTO = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds()).stream()
+                .findFirst();
+        if (messstelleAuswertungIdDTO.isPresent()) {
+            final Messstelle messstelle = this.messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.get().getMstId());
+            fillBasicPdfGesamtauswertung(gangliniePdf, messstelle, department, options);
+
+            gangliniePdf.setDocumentTitle(GESAMTAUSWERTUNG_TITLE_MESSSTELLE + messstelle.getMstId());
+            gangliniePdf.setChart(chartAsBase64Png);
+            gangliniePdf.setChartTitle(createChartTitle(options, messstelle));
+
+            gangliniePdf.setSchematischeUebersichtNeeded(false);
+
+            final List<GanglinieTable> gtList = new ArrayList<>();
+
+            // Initialisierung vor erstem Schleifendurchlauf
+            final List<GanglinieTableColumn>[] gtcList = new List[] { new ArrayList<>() };
+            final GanglinieTable[] gt = { new GanglinieTable() };
+
+            // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
+            this.gangliniePdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
+
+            CollectionUtils.emptyIfNull(auswertungen).forEach((auswertung) -> {
+
+                final GanglinieTableColumn gtc = new GanglinieTableColumn();
+                gtc.setUhrzeit(
+                        String.format("%s / %s", auswertung.getZeitraum().getAuswertungsZeitraum().getText(), auswertung.getZeitraum().getStart().getYear()));
+                final TagesaggregatDto daten = auswertung.getDaten();
+                gtc.setKfz(String.valueOf(daten.getSummeKraftfahrzeugverkehr()));
+                gtc.setSv(String.valueOf(daten.getSummeSchwerverkehr()));
+                gtc.setSvAnteil(String.valueOf(daten.getProzentSchwerverkehr()));
+                gtc.setGv(String.valueOf(daten.getSummeGueterverkehr()));
+                gtc.setGvAnteil(String.valueOf(daten.getProzentGueterverkehr()));
+                gtc.setPkw(String.valueOf(daten.getSummeAllePkw()));
+                gtc.setLkw(String.valueOf(daten.getAnzahlLkw()));
+                gtc.setLastzuege(String.valueOf(daten.getSummeLastzug()));
+                gtc.setLfw(String.valueOf(daten.getAnzahlLfw()));
+                gtc.setBusse(String.valueOf(daten.getAnzahlBus()));
+                gtc.setKraftraeder(String.valueOf(daten.getAnzahlKrad()));
+                gtc.setFahrradfahrer(String.valueOf(daten.getAnzahlRad()));
+                gtc.setFussgaenger(StringUtils.EMPTY);
+                gtc.setPkwEinheiten(String.valueOf(daten.getSummeAllePkw()));
+
+                gtcList[0].add(gtc);
+
+                // Wenn maximale Spaltenanzahl überschritten => Tabelle speichern und neue Tabelle erstellen
+                if (gtcList[0].size() == MAX_ELEMENTS_IN_GANGLINIE_TABLE) {
+                    gt[0].setGanglinieTableColumns(gtcList[0]);
+                    gtList.add(gt[0]);
+                    gt[0] = new GanglinieTable();
+                    gtcList[0] = new ArrayList<>();
+                }
+            });
+            if (CollectionUtils.isNotEmpty(gtcList[0])) {
+                gt[0].setGanglinieTableColumns(gtcList[0]);
+                gtList.add(gt[0]);
+            }
+
+            // Wenn mehrere Tabellen vonnöten => große Zählung, Zellenbreite auf Minimum verkleinern
+            // Hier sollte später dynamisch berechnet werden wie viele Tabellen benötigt werden und die Elemente gleichmäßig in diese verteilen.
+            if (gtList.size() > 1) {
+                gangliniePdf.setTableCellWidth("11.5mm");
+                // Wenn nur eine Tabelle => Zellenbreite anpassen
+            } else {
+                final Integer gtSize = gt[0].getGanglinieTableColumns().size();
+
+                gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
+            }
+
+            gangliniePdf.setGanglinieTables(gtList);
+        }
         return gangliniePdf;
     }
 

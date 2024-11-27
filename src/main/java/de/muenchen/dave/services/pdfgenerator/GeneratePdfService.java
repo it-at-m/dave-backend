@@ -8,6 +8,8 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -418,6 +421,16 @@ public class GeneratePdfService {
             final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf();
         fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
+        final String html = createGanglinieHTML(gangliniePdf);
+
+        return createPdf(html);
+    }
+
+    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options, final List<Auswertung> auswertungen, final String chartAsBase64Png,
+            final String department)
+            throws IOException {
+        final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf();
+        fillPdfBeanService.fillGesamtauswertungPdf(gangliniePdf, options, auswertungen, chartAsBase64Png, department);
         final String html = createGanglinieHTML(gangliniePdf);
 
         return createPdf(html);

@@ -11,9 +11,13 @@ public class MessstelleninformationenPdfComponent {
 
     private String messzeitraum;
 
+    private String zeitintervall;
+
     private String wochentag;
 
     private String kommentar;
 
     private boolean wochentagNeeded;
+
+    private boolean zeitintervallNeeded;
 }
