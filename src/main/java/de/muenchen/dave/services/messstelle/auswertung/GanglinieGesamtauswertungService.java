@@ -8,18 +8,13 @@ import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -197,17 +192,5 @@ public class GanglinieGesamtauswertungService {
         return bezeichnerZeitraum
                 .concat(bezeichnerZeitraum.isEmpty() ? StringUtils.EMPTY : ".")
                 .concat(String.valueOf(zeitraum.getStart().getYear()));
-    }
-
-    /**
-     * Die Klasse repräsentiert für einen Zeitraum je Messstelle die Summe der Kfz.
-     */
-    @Data
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    private static class AuswertungZeitraum {
-
-        private Zeitraum zeitraum;
-
-        private HashMap<String, BigDecimal> summeKfzByMstId;
     }
 }
