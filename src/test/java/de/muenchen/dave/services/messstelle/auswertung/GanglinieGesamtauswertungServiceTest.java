@@ -130,7 +130,8 @@ class GanglinieGesamtauswertungServiceTest {
         stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         stepLineSeriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
-        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(BigDecimal.valueOf(20.5), BigDecimal.valueOf(21.5), BigDecimal.valueOf(22.5), BigDecimal.valueOf(23.5), BigDecimal.valueOf(24.5)));
+        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(BigDecimal.valueOf(20.5), BigDecimal.valueOf(21.5), BigDecimal.valueOf(22.5),
+                BigDecimal.valueOf(23.5), BigDecimal.valueOf(24.5)));
         seriesEntriesFirstChart.add(stepLineSeriesEntryBigDecimal);
         expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
 
