@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class GanglinieGesamtauswertungService {
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
      *
      * @param auswertungMessstelle mit den Zähldaten.
-     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
+     * @param fahrzeugOptions      zur Steuerung der zu repräsentierenden Daten.
      * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForSingleMessstelle(
@@ -151,58 +150,30 @@ public class GanglinieGesamtauswertungService {
         log.debug("#createGanglinieForMultipleMessstellen");
 
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
-        final var auswertungByZeitraum = new HashMap<Zeitraum, AuswertungZeitraum>();
 
-        // Gruppieren der Auswertungen nach Zeitraum
-        // Jeder Zeitraum umfasst je Messstelle die Anzahl der KFZ
         CollectionUtils
                 .emptyIfNull(auswertungMessstellen)
-                .forEach(auswertungMessstelle -> CollectionUtils
-                        .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
-                        .forEach(auswertung -> {
-                            final var zeitraum = auswertung.getZeitraum();
-                            if (!auswertungByZeitraum.containsKey(zeitraum)) {
-                                auswertungByZeitraum.put(
-                                        zeitraum,
-                                        new AuswertungZeitraum(zeitraum, new HashMap<>()));
-                            }
-                            // Hinzufügen der Messstelle mit der Summe an KFZ.
-                            auswertungByZeitraum
-                                    .get(zeitraum)
-                                    .getSummeKfzByMstId()
-                                    .put(
-                                            auswertungMessstelle.getMstId(),
-                                            auswertung.getDaten().getSummeKraftfahrzeugverkehr());
-                        }));
-
-        // Aufbereitung der im oberen Abschnitt gruppierten Zähldaten für Gangliniendarstellung.
-        auswertungByZeitraum
-                .values()
-                .stream()
-                .sorted(Comparator.comparing(auswertungZeitraum -> auswertungZeitraum.getZeitraum().getStart()))
-                .forEach(auswertungZeitraum -> {
-
+                .forEach(auswertungMessstelle -> {
                     final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
+                    stepLineSeriesEntryMessstelle.setName("MST " + auswertungMessstelle.getMstId());
+                    GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, stepLineSeriesEntryMessstelle.getName());
 
-                    auswertungZeitraum.summeKfzByMstId.forEach((mstId, summeKfz) -> {
-                        stepLineSeriesEntryMessstelle.setName("MST " + mstId);
-                        GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
-                        stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
-                        GanglinieUtil.setLegendInZaehldatenStepline(
-                                zaehldatenStepline,
-                                stepLineSeriesEntryMessstelle.getName());
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(
-                                zaehldatenStepline,
-                                GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                    CollectionUtils
+                            .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
+                            .forEach(auswertung -> {
+                                GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
+                                final var summeKfz = auswertung.getDaten().getSummeKraftfahrzeugverkehr();
+                                stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                                GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                                final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
+                                final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
+                                        currentXAxisData,
+                                        getZeitraumForXaxis(auswertung.getZeitraum()));
+                                zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
+                            });
 
-                        zaehldatenStepline.getSeriesEntriesFirstChart().add(stepLineSeriesEntryMessstelle);
-                    });
+                    zaehldatenStepline.getSeriesEntriesFirstChart().add(stepLineSeriesEntryMessstelle);
 
-                    final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
-                    final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
-                            currentXAxisData,
-                            getZeitraumForXaxis(auswertungZeitraum.getZeitraum()));
-                    zaehldatenStepline.setXAxisDataFirstChart(newXAxisData);
 
                 });
 
