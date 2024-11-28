@@ -2,6 +2,7 @@ package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class GanglinieGesamtauswertungServiceTest {
@@ -67,20 +69,65 @@ class GanglinieGesamtauswertungServiceTest {
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
 
         final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setRadverkehr(true);
+        fahrzeugOptions.setFussverkehr(true);
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+
         final var result = ganglinieGesamtauswertungService.createGanglinieForSingleMessstelle(auswertungMessstelle, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Kfz"));
+        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(120);
-        expected.setRangeMaxPercent(0);
+        expected.setRangeMaxPercent(2);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
         final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
         var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(100, 101, 102, 103, 104));
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(100, 101, 102, 103, 104));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        var stepLineSeriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
+        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryBigDecimal);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
+        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(null, null, null, null, null));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryBigDecimal);
         expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
-
 
         Assertions.assertThat(result).isNotNull().isEqualTo(expected);
     }
@@ -187,22 +234,12 @@ class GanglinieGesamtauswertungServiceTest {
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
         final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
         var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(100, 200));
+        stepLineSeriesEntryInteger.setYAxisData(List.of(100, 101, 102, 103, 104));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(101, 201));
-        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
-        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(102, 202));
-        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
-        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(103, 203));
-        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
-        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(203, 204));
+        stepLineSeriesEntryInteger.setYAxisData(List.of(200, 201, 202, 203, 204));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
-
 
         Assertions.assertThat(result).isNotNull().isEqualTo(expected);
 
