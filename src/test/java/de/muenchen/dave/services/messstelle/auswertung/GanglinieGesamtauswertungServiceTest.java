@@ -215,7 +215,7 @@ class GanglinieGesamtauswertungServiceTest {
         auswertung = new Auswertung();
         zeitraum = new Zeitraum(YearMonth.of(2024, 10), YearMonth.of(2024, 12), AuswertungsZeitraum.QUARTAL_4);
         tagesaggregat = new TagesaggregatDto();
-        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(203));
+        tagesaggregat.setSummeKraftfahrzeugverkehr(null);
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -242,7 +242,7 @@ class GanglinieGesamtauswertungServiceTest {
         stepLineSeriesEntryInteger.setYAxisData(List.of(100, 101, 102, 103, 104));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
-        stepLineSeriesEntryInteger.setYAxisData(List.of(200, 201, 202, 203, 204));
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(200, 201, 202, null, 204));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
 

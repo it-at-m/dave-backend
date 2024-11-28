@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -160,6 +161,8 @@ public class GanglinieGesamtauswertungService {
 
                     CollectionUtils
                             .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
+                            .stream()
+                            .sorted(Comparator.comparing(auswertungZeitraum -> auswertungZeitraum.getZeitraum().getStart()))
                             .forEach(auswertung -> {
                                 GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
                                 final var summeKfz = auswertung.getDaten().getSummeKraftfahrzeugverkehr();
