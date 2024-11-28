@@ -1,6 +1,9 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -12,10 +15,75 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.List;
 
 class GanglinieGesamtauswertungServiceTest {
 
     private GanglinieGesamtauswertungService ganglinieGesamtauswertungService = new GanglinieGesamtauswertungService();
+
+    @Test
+    void createGanglinieForSingleMessstelle() {
+        var auswertungMessstelle = new AuswertungMessstelle();
+        auswertungMessstelle.setMstId("1");
+
+        var auswertung = new Auswertung();
+        var zeitraum = new Zeitraum(YearMonth.of(2024, 1), YearMonth.of(2024, 3), AuswertungsZeitraum.QUARTAL_1);
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
+        auswertung.setZeitraum(zeitraum);
+        auswertung.setDaten(tagesaggregat);
+        auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
+
+        auswertung = new Auswertung();
+        zeitraum = new Zeitraum(YearMonth.of(2024, 4), YearMonth.of(2024, 6), AuswertungsZeitraum.QUARTAL_2);
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(101));
+        auswertung.setZeitraum(zeitraum);
+        auswertung.setDaten(tagesaggregat);
+        auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
+
+        auswertung = new Auswertung();
+        zeitraum = new Zeitraum(YearMonth.of(2024, 7), YearMonth.of(2024, 9), AuswertungsZeitraum.QUARTAL_3);
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(102));
+        auswertung.setZeitraum(zeitraum);
+        auswertung.setDaten(tagesaggregat);
+        auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
+
+        auswertung = new Auswertung();
+        zeitraum = new Zeitraum(YearMonth.of(2024, 10), YearMonth.of(2024, 12), AuswertungsZeitraum.QUARTAL_4);
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(103));
+        auswertung.setZeitraum(zeitraum);
+        auswertung.setDaten(tagesaggregat);
+        auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
+
+        auswertung = new Auswertung();
+        zeitraum = new Zeitraum(YearMonth.of(2025, 1), YearMonth.of(2025, 3), AuswertungsZeitraum.QUARTAL_1);
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(104));
+        auswertung.setZeitraum(zeitraum);
+        auswertung.setDaten(tagesaggregat);
+        auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        final var result = ganglinieGesamtauswertungService.createGanglinieForSingleMessstelle(auswertungMessstelle, fahrzeugOptions);
+
+        final var expected = new LadeZaehldatenSteplineDTO();
+        expected.setLegend(List.of("Kfz"));
+        expected.setRangeMax(120);
+        expected.setRangeMaxPercent(0);
+        expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
+        final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
+        var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(100, 101, 102, 103, 104));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
+
+
+        Assertions.assertThat(result).isNotNull().isEqualTo(expected);
+    }
 
     @Test
     void createGanglinieForMultipleMessstellen() {
@@ -113,6 +181,28 @@ class GanglinieGesamtauswertungServiceTest {
         final var result = ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungMessstellen);
 
         final var expected = new LadeZaehldatenSteplineDTO();
+        expected.setLegend(List.of("MST 1", "MST 2"));
+        expected.setRangeMax(220);
+        expected.setRangeMaxPercent(0);
+        expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
+        final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
+        var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(100, 200));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(101, 201));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(102, 202));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(103, 203));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(203, 204));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
+
 
         Assertions.assertThat(result).isNotNull().isEqualTo(expected);
 
