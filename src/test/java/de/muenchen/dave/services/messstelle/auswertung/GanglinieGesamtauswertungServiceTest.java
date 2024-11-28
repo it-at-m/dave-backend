@@ -32,6 +32,7 @@ class GanglinieGesamtauswertungServiceTest {
         var zeitraum = new Zeitraum(YearMonth.of(2024, 1), YearMonth.of(2024, 3), AuswertungsZeitraum.QUARTAL_1);
         var tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(20.5));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -40,6 +41,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 4), YearMonth.of(2024, 6), AuswertungsZeitraum.QUARTAL_2);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(101));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(21.5));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -48,6 +50,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 7), YearMonth.of(2024, 9), AuswertungsZeitraum.QUARTAL_3);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(102));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(22.5));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -56,6 +59,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 10), YearMonth.of(2024, 12), AuswertungsZeitraum.QUARTAL_4);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(103));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(23.5));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -64,6 +68,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2025, 1), YearMonth.of(2025, 3), AuswertungsZeitraum.QUARTAL_1);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(104));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(24.5));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -88,7 +93,7 @@ class GanglinieGesamtauswertungServiceTest {
         final var expected = new LadeZaehldatenSteplineDTO();
         expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(120);
-        expected.setRangeMaxPercent(2);
+        expected.setRangeMaxPercent(26);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
         final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
         var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
@@ -125,7 +130,7 @@ class GanglinieGesamtauswertungServiceTest {
         stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         stepLineSeriesEntryBigDecimal = new StepLineSeriesEntryBigDecimalDTO();
-        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(null, null, null, null, null));
+        stepLineSeriesEntryBigDecimal.setYAxisData(Arrays.asList(BigDecimal.valueOf(20.5), BigDecimal.valueOf(21.5), BigDecimal.valueOf(22.5), BigDecimal.valueOf(23.5), BigDecimal.valueOf(24.5)));
         seriesEntriesFirstChart.add(stepLineSeriesEntryBigDecimal);
         expected.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
 
