@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -93,5 +95,10 @@ public class MessstelleService {
         final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
         return messstelleMapper.bean2auswertungDto(sorted);
+    }
+
+    public Optional<Messquerschnitt> getOptionalOfMessquerschnittByMstId(final String mstId, final String mqId) {
+        return messstelleIndexService.findByMstIdOrThrowException(mstId).getMessquerschnitte().stream()
+                .filter(messquerschnitt -> mqId.equalsIgnoreCase(messquerschnitt.getMqId())).findFirst();
     }
 }

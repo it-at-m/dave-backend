@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.services.messstelle.MessstelleService;
@@ -53,26 +54,43 @@ public class SpreadsheetService {
             throws IOException {
         final var spreadsheetDocument = new XSSFWorkbook();
 
-        // Füge Daten zum Document hinzu.
-        ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungMessstelle -> {
+        // Sheet Gesamt
+        final Sheet gesamtSheet = spreadsheetDocument.createSheet("Gesamt");
+        int gesamtRowIndex = 0;
+        addMetaHeaderToRow(gesamtSheet.createRow(gesamtRowIndex++), false);
+        addMetaDataToRow(gesamtSheet.createRow(gesamtRowIndex++), options);
+        addEmptyRowToSheetAtIndex(gesamtSheet, gesamtRowIndex++);
+        addDataHeaderToRow(gesamtSheet.createRow(gesamtRowIndex), options.getFahrzeuge(), true);
 
+        final AtomicReference<Integer> rowOffset = new AtomicReference<>(0);
+        // Füge Daten zum Dokument hinzu.
+        ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungMessstelle -> {
+            int mstRowIndex = 0;
             // Sheet Messstelle
             final Sheet mstSheet = spreadsheetDocument.createSheet(String.format("Messstelle %s", auswertungMessstelle.getMstId()));
-
-            addMetaHeaderToSheet(mstSheet);
-            addMetaDataToSheet(mstSheet, options);
-            addDataHeaderToSheet(mstSheet, options.getFahrzeuge());
+            addMetaHeaderToRow(mstSheet.createRow(mstRowIndex++), false);
+            addMetaDataToRow(mstSheet.createRow(mstRowIndex++), options);
+            addEmptyRowToSheetAtIndex(mstSheet, mstRowIndex++);
+            addDataHeaderToRow(mstSheet.createRow(mstRowIndex), options.getFahrzeuge(), false);
+            final List<Auswertung> auswertungen = ListUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
             addDataToSheet(
                     mstSheet,
-                    ListUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum()),
+                    auswertungen,
                     options.getFahrzeuge());
+            addDataToGesamtSheet(
+                    gesamtSheet,
+                    auswertungen,
+                    options.getFahrzeuge(),
+                    rowOffset.getAndUpdate(v -> v + auswertungen.size()));
 
             auswertungMessstelle.getAuswertungenProMq().forEach((mqId, auswertungenProMessquerschnitt) -> {
                 final Sheet mqSheet = spreadsheetDocument.createSheet(String.format("Messquerschnitt %s", mqId));
+                int mqRowIndex = 0;
 
-                addMetaHeaderToMessquerschnittSheet(mqSheet);
-                addMetaDataToMessquerschnittSheet(mqSheet, options, auswertungMessstelle.getMstId(), mqId);
-                addDataHeaderToSheet(mqSheet, options.getFahrzeuge());
+                addMetaHeaderToRow(mqSheet.createRow(mqRowIndex++), true);
+                addMetaDataToMessquerschnittRow(mqSheet.createRow(mqRowIndex++), options, auswertungMessstelle.getMstId(), mqId);
+                addEmptyRowToSheetAtIndex(mqSheet, mqRowIndex++);
+                addDataHeaderToRow(mqSheet.createRow(mqRowIndex), options.getFahrzeuge(), false);
                 addDataToSheet(
                         mqSheet,
                         ListUtils.emptyIfNull(auswertungenProMessquerschnitt),
@@ -83,236 +101,254 @@ public class SpreadsheetService {
             });
             mstSheet.autoSizeColumn(0);
         });
+        gesamtSheet.autoSizeColumn(0);
 
         return serializeSpreadsheetDocument(spreadsheetDocument);
     }
 
     /**
-     * Legt im Sheet eine Zeile für die Header-Metainformationen an und schreibt in
-     * ersten beiden Zellen der Zeile die Headerwerte.
+     * Schreibt die Headerwerte in die Zeile.
      *
-     * @param sheet aktuelles Sheet einer Messstelle in der Auswertungsdatei
+     * @param row aktuelle Zeile
+     * @param isMessquerschnitt Flag, ob es sich um einen Messquerschnitt handelt
      */
-    private void addMetaHeaderToSheet(final Sheet sheet) {
-        final Row metaheader = sheet.createRow(0);
-        addStringToCell(metaheader.createCell(0, CellType.STRING), "ausgewählter Wochentag");
-        addStringToCell(metaheader.createCell(1, CellType.STRING),
-                "ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+    protected void addMetaHeaderToRow(final Row row, final boolean isMessquerschnitt) {
+        int cellIndex = 0;
+        addStringToCell(row.createCell(cellIndex++, CellType.STRING), "ausgewählter Wochentag");
+        if (isMessquerschnitt) {
+            addStringToCell(row.createCell(cellIndex++, CellType.STRING), "Messstelle");
+            addStringToCell(row.createCell(cellIndex, CellType.STRING), "Messquerschnitt (Merkmale \"MQ-ID - Richtung - Standort MQ\")");
+        } else {
+            addStringToCell(row.createCell(cellIndex, CellType.STRING),
+                    "ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+        }
     }
 
     /**
-     * Legt im Sheet eine Zeile für die Daten der Metainformationen an und schreibt in
-     * ersten beiden Zellen der Zeile die Daten.
+     * Schreibt die Meta-Daten in die Zeile.
      *
-     * @param sheet aktuelles Sheet einer Messstelle in der Auswertungsdatei
+     * @param row aktuelle Zeile
      * @param options Verwendetet Optionen bei der Auswertung
      */
-    protected void addMetaDataToSheet(final Sheet sheet, final MessstelleAuswertungOptionsDTO options) {
-        final Row metaData = sheet.createRow(1);
-        addStringToCell(metaData.createCell(0, CellType.STRING), options.getTagesTyp().getBeschreibung());
+    protected void addMetaDataToRow(final Row row, final MessstelleAuswertungOptionsDTO options) {
+        int cellIndex = 0;
+        addStringToCell(row.createCell(cellIndex++, CellType.STRING), options.getTagesTyp().getBeschreibung());
 
         if (CollectionUtils.isNotEmpty(options.getMessstelleAuswertungIds())) {
-            if (options.getMessstelleAuswertungIds().size() > 1) {
-                addStringToCell(metaData.createCell(1, CellType.STRING), "Alle Messquerschnitte");
-            } else {
+            String cellValue = "Alle Messquerschnitte";
+            if (options.getMessstelleAuswertungIds().size() == 1) {
                 final Optional<MessstelleAuswertungIdDTO> first = options.getMessstelleAuswertungIds().stream().findFirst();
-                if (first.isPresent()) {
-                    final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = first.get();
-                    final Messstelle messstelleByMstId = messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.getMstId());
-                    final List<String> cellValue = new ArrayList<>();
-                    messstelleByMstId.getMessquerschnitte().forEach(messquerschnitt -> {
-                        if (messstelleAuswertungIdDTO.getMqIds().contains(messquerschnitt.getMqId())) {
-                            cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
-                                    messquerschnitt.getStandort()));
-                        }
-                    });
-                    addStringToCell(metaData.createCell(1, CellType.STRING), String.join(", ", cellValue));
-                }
+                final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = first.get();
+                final Messstelle messstelleByMstId = messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.getMstId());
+                final List<String> formattedMessquerschnitte = new ArrayList<>();
+                messstelleByMstId.getMessquerschnitte().forEach(messquerschnitt -> {
+                    if (messstelleAuswertungIdDTO.getMqIds().contains(messquerschnitt.getMqId())) {
+                        formattedMessquerschnitte.add(getFormattedStringForMessquerschnitt(messquerschnitt));
+                    }
+                });
+                cellValue = String.join(", ", formattedMessquerschnitte);
             }
+            addStringToCell(row.createCell(cellIndex, CellType.STRING), cellValue);
         }
-        // Leere Zeile einfuegen
-        sheet.createRow(2);
     }
 
     /**
-     * Legt im Sheet eine Zeile für die Header-Metainformationen an und schreibt in
-     * ersten beiden Zellen der Zeile die Headerwerte.
+     * Schreibt die Meta-Daten eines Messquerschnitts in die Zeile.
      *
-     * @param sheet aktuelles Sheet eines Messquerschnitts
-     */
-    private void addMetaHeaderToMessquerschnittSheet(final Sheet sheet) {
-        final Row metaheader = sheet.createRow(0);
-        addStringToCell(metaheader.createCell(0, CellType.STRING), "ausgewählter Wochentag");
-        addStringToCell(metaheader.createCell(1, CellType.STRING), "Messstelle");
-        addStringToCell(metaheader.createCell(2, CellType.STRING), "Messquerschnitt (Merkmale \"MQ-ID - Richtung - Standort MQ\")");
-    }
-
-    /**
-     * Legt im Sheet eine Zeile für die Daten der Metainformationen an und schreibt in
-     * ersten beiden Zellen der Zeile die Daten.
-     *
-     * @param sheet aktuelles Sheet eines Messquerschnitts in der Auswertungsdatei
+     * @param row aktuelle Zeile eines Messquerschnitts
      * @param options Verwendetet Optionen bei der Auswertung
      * @param mstId ausgewertete Messstelle
      * @param mqId ausgewerteter Messquerschnitt
      */
-    private void addMetaDataToMessquerschnittSheet(final Sheet sheet, final MessstelleAuswertungOptionsDTO options, final String mstId, final String mqId) {
-        final Row metaData = sheet.createRow(1);
-        addStringToCell(metaData.createCell(0, CellType.STRING), options.getTagesTyp().getBeschreibung());
-        addStringToCell(metaData.createCell(1, CellType.STRING), mstId);
-        addStringToCell(metaData.createCell(2, CellType.STRING), mqId);
-        // Leere Zeile einfuegen
-        sheet.createRow(2);
+    protected void addMetaDataToMessquerschnittRow(final Row row, final MessstelleAuswertungOptionsDTO options, final String mstId, final String mqId) {
+        int cellIndex = 0;
+        addStringToCell(row.createCell(cellIndex++, CellType.STRING), options.getTagesTyp().getBeschreibung());
+        addStringToCell(row.createCell(cellIndex++, CellType.STRING), mstId);
+        final Optional<Messquerschnitt> optionalMessquerschnitt = messstelleService.getOptionalOfMessquerschnittByMstId(mstId, mqId);
+        String cellValue = mqId;
+        if (optionalMessquerschnitt.isPresent()) {
+            cellValue = getFormattedStringForMessquerschnitt(optionalMessquerschnitt.get());
+        }
+        addStringToCell(row.createCell(cellIndex, CellType.STRING), cellValue);
     }
 
     /**
-     * Legt im Sheet eine Zeile für die Header-Informationen an und legt pro
-     * gewählte Fahrzeugoption eine Zelle mit dem Header in der Reihe an.
+     * Legt pro gewählte Fahrzeugoption eine Zelle mit dem Header in der Zeile an.
      *
-     * @param sheet aktuelles Sheet
+     * @param row aktuelle Zeile
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
+     * @param isGesamtSheet Flag falls es das GesamtSheet ist
      */
-    private void addDataHeaderToSheet(final Sheet sheet, final FahrzeugOptionsDTO fahrzeugOptions) {
-        final Row header = sheet.createRow(3);
-
+    protected void addDataHeaderToRow(final Row row, final FahrzeugOptionsDTO fahrzeugOptions, final boolean isGesamtSheet) {
         int headerCellIndex = 0;
-        addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "Zeitintervall");
-        headerCellIndex++;
-
+        addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Zeitintervall");
+        if (isGesamtSheet) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "MstId");
+        }
         if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "KFZ");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KFZ");
         }
         if (fahrzeugOptions.isSchwerverkehr()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "SV");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV");
         }
         if (fahrzeugOptions.isGueterverkehr()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "GV");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
         }
         if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "SV%");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV%");
         }
         if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "GV%");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV%");
         }
         if (fahrzeugOptions.isRadverkehr()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "RAD");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "RAD");
         }
         if (fahrzeugOptions.isFussverkehr()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "FUß");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "FUß");
         }
         if (fahrzeugOptions.isLastkraftwagen()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "LKW");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LKW");
         }
         if (fahrzeugOptions.isLieferwagen()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "LFW");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LFW");
         }
         if (fahrzeugOptions.isLastzuege()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "LZ");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LZ");
         }
         if (fahrzeugOptions.isBusse()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "BUS");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "BUS");
         }
         if (fahrzeugOptions.isKraftraeder()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "KRAD");
-            headerCellIndex++;
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KRAD");
         }
         if (fahrzeugOptions.isPersonenkraftwagen()) {
-            addStringToCell(header.createCell(headerCellIndex, CellType.STRING), "PKW");
+            addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "PKW");
         }
     }
 
     /**
-     * Legt im Sheet pro Zeitraum eine Zeile für die Daten an und legt pro
-     * gewählte Fahrzeugoption eine Zelle mit den Daten in dieser Reihe an.
+     * Legt im Arbeitsblatt der Gesamtansicht für jeden Auswertungszeitraum eine Zeile an und
+     * lässt diese mit den Daten befüllen.
      *
-     * @param sheet aktuelles Sheet
-     * @param auswertung Liste mit den Daten pro Zeitraum
+     * @param sheet aktuelles Arbeitsblatt
+     * @param auswertungen Liste mit den Daten pro Zeitraum
+     * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
+     * @param rowOffset Offset für den Zeilenindex
+     */
+    private void addDataToGesamtSheet(
+            final Sheet sheet,
+            final List<Auswertung> auswertungen,
+            final FahrzeugOptionsDTO fahrzeugOptions,
+            final Integer rowOffset) {
+        final AtomicInteger rowIndex = new AtomicInteger(4 + rowOffset);
+        auswertungen.forEach(auswertung -> addDataToRow(sheet.createRow(rowIndex.getAndIncrement()), auswertung, fahrzeugOptions, true));
+    }
+
+    /**
+     * Legt im Arbeitsblatt für jeden Auswertungszeitraum eine Zeile an und
+     * lässt diese mit den Daten befüllen.
+     *
+     * @param sheet aktuelles Arbeitsblatt
+     * @param auswertungen Liste mit den Daten pro Zeitraum
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
      */
     private void addDataToSheet(
             final Sheet sheet,
-            final List<Auswertung> auswertung,
+            final List<Auswertung> auswertungen,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         final AtomicInteger rowIndex = new AtomicInteger(4);
-        final AtomicReference<Row> row = new AtomicReference<>();
+        auswertungen.forEach(auswertung -> addDataToRow(sheet.createRow(rowIndex.getAndIncrement()), auswertung, fahrzeugOptions, false));
+    }
 
-        auswertung.forEach(entry -> {
-            row.set(sheet.createRow(rowIndex.get()));
+    /**
+     * Erzeugt am Index eine Leerzeile im Arbeitsblatt.
+     *
+     * @param sheet aktuelles Arbeitsblatt
+     * @param index Index der Leerzeile
+     */
+    private void addEmptyRowToSheetAtIndex(final Sheet sheet, final int index) {
+        sheet.createRow(index);
+    }
 
-            int cellIndex = 0;
-            if (AuswertungsZeitraum.JAHRE.equals(entry.getZeitraum().getAuswertungsZeitraum())) {
-                addStringToCell(row.get().createCell(cellIndex, CellType.STRING), String.valueOf(entry.getZeitraum().getStart().getYear()));
-            } else {
-                addStringToCell(row.get().createCell(cellIndex, CellType.STRING),
-                        String.format("%s / %s", entry.getZeitraum().getAuswertungsZeitraum().getText(), entry.getZeitraum().getStart().getYear()));
-            }
+    /**
+     * Legt pro gewählte Fahrzeugoption eine Zelle mit den Daten in dieser Reihe an.
+     *
+     * @param row aktuelle Zeile
+     * @param auswertung Liste mit den Daten pro Zeitraum
+     * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
+     * @param isGesamtSheet Flag ob es sich um das Sheet der Gesamtansicht handelt
+     */
+    protected void addDataToRow(
+            final Row row,
+            final Auswertung auswertung,
+            final FahrzeugOptionsDTO fahrzeugOptions,
+            final boolean isGesamtSheet) {
+
+        int cellIndex = 0;
+        if (AuswertungsZeitraum.JAHRE.equals(auswertung.getZeitraum().getAuswertungsZeitraum())) {
+            addStringToCell(row.createCell(cellIndex, CellType.STRING), String.valueOf(auswertung.getZeitraum().getStart().getYear()));
+        } else {
+            addStringToCell(row.createCell(cellIndex, CellType.STRING),
+                    String.format("%s / %s", auswertung.getZeitraum().getAuswertungsZeitraum().getText(), auswertung.getZeitraum().getStart().getYear()));
+        }
+        cellIndex++;
+
+        if (isGesamtSheet) {
+            addStringToCell(row.createCell(cellIndex, CellType.STRING), auswertung.getObjectId());
             cellIndex++;
-
-            if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getSummeKraftfahrzeugverkehr());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isSchwerverkehr()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getSummeSchwerverkehr());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isGueterverkehr()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getSummeGueterverkehr());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getProzentSchwerverkehr());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getProzentGueterverkehr());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isRadverkehr()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getAnzahlRad());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isFussverkehr()) {
-                // Wird aktuell noch nicht erfasst
-                addStringToCell(row.get().createCell(cellIndex, CellType.NUMERIC), StringUtils.EMPTY);
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isLastkraftwagen()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getAnzahlLkw());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isLieferwagen()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getAnzahlLfw());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isLastzuege()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getSummeLastzug());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isBusse()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getAnzahlBus());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isKraftraeder()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getAnzahlKrad());
-                cellIndex++;
-            }
-            if (fahrzeugOptions.isPersonenkraftwagen()) {
-                addBigDecimalToCell(row.get().createCell(cellIndex, CellType.NUMERIC), entry.getDaten().getSummeAllePkw());
-            }
-            rowIndex.getAndIncrement();
-        });
+        }
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeKraftfahrzeugverkehr());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeSchwerverkehr());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isGueterverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentSchwerverkehr());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isRadverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlRad());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isFussverkehr()) {
+            // Wird aktuell noch nicht erfasst
+            addStringToCell(row.createCell(cellIndex, CellType.NUMERIC), StringUtils.EMPTY);
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlLkw());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isLieferwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlLfw());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isLastzuege()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeLastzug());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isBusse()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlBus());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isKraftraeder()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlKrad());
+            cellIndex++;
+        }
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeAllePkw());
+        }
     }
 
     protected void addBigDecimalToCell(final Cell cell, final BigDecimal data) {
@@ -332,13 +368,24 @@ public class SpreadsheetService {
     }
 
     /**
+     * Liefert einen formatierten String für einen Messquerschnitt.
+     *
+     * @param messquerschnitt zu formatierender Messquerschnitt
+     * @return Messquerschnitt als String
+     */
+    protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
+        return String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+                messquerschnitt.getStandort());
+    }
+
+    /**
      * Erzeugt aus dem WorkBook ein byte[]
      *
      * @param spreadsheetDocument Workbook zum Serialisieren
      * @return Workbook als byte[]
      * @throws IOException kann beim Erstellen geworfen werden. Behandlung erfolgt im Controller.
      */
-    protected byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
+    private byte[] serializeSpreadsheetDocument(final Workbook spreadsheetDocument) throws IOException {
         try (final var baos = new ByteArrayOutputStream()) {
             spreadsheetDocument.write(baos);
             return baos.toByteArray();
