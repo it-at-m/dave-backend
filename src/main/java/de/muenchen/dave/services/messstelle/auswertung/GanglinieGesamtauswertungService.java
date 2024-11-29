@@ -141,8 +141,7 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     * Erstellt die Repräsentation der Zähldaten (Summe KFZ) zur Gangliniendarstellung für mehrere
-     * Messstellen.
+     * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für mehrere Messstellen.
      *
      * @param auswertungMessstellen mit den Zähldaten.
      * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.s
@@ -160,7 +159,6 @@ public class GanglinieGesamtauswertungService {
                 .forEach(auswertungMessstelle -> {
                     final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
                     stepLineSeriesEntryMessstelle.setName("MST " + auswertungMessstelle.getMstId());
-                    GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, stepLineSeriesEntryMessstelle.getName());
 
                     CollectionUtils
                             .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
