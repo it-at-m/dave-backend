@@ -159,6 +159,7 @@ public class GanglinieGesamtauswertungService {
                 .forEach(auswertungMessstelle -> {
                     final var stepLineSeriesEntryMessstelle = new StepLineSeriesEntryIntegerDTO();
                     stepLineSeriesEntryMessstelle.setName("MST " + auswertungMessstelle.getMstId());
+                    GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, stepLineSeriesEntryMessstelle.getName());
 
                     CollectionUtils
                             .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
