@@ -231,7 +231,22 @@ class GanglinieGesamtauswertungServiceTest {
 
         auswertungMessstellen.add(auswertungMessstelle);
 
-        final var result = ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungMessstellen);
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setRadverkehr(false);
+        fahrzeugOptions.setFussverkehr(false);
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+
+        final var result = ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungMessstellen, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
         expected.setLegend(List.of("MST 1", "MST 2"));

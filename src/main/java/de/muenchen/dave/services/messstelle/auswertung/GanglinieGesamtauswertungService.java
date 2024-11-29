@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
@@ -146,7 +147,9 @@ public class GanglinieGesamtauswertungService {
      * @param auswertungMessstellen mit den Zähldaten.
      * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
      */
-    public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(final List<AuswertungMessstelle> auswertungMessstellen) {
+    public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(
+            final List<AuswertungMessstelle> auswertungMessstellen,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
         log.debug("#createGanglinieForMultipleMessstellen");
 
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
@@ -164,9 +167,36 @@ public class GanglinieGesamtauswertungService {
                             .sorted(Comparator.comparing(auswertungZeitraum -> auswertungZeitraum.getZeitraum().getStart()))
                             .forEach(auswertung -> {
                                 GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntryMessstelle);
-                                final var summeKfz = auswertung.getDaten().getSummeKraftfahrzeugverkehr();
-                                stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(summeKfz));
-                                GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(summeKfz));
+                                final BigDecimal zaehlwert;
+                                if (fahrzeugOptions.isPersonenkraftwagen()) {
+                                    zaehlwert = auswertung.getDaten().getSummeAllePkw();
+                                } else if (fahrzeugOptions.isLastkraftwagen()) {
+                                    zaehlwert = auswertung.getDaten().getAnzahlLkw();
+                                } else if (fahrzeugOptions.isLastzuege()) {
+                                    zaehlwert = auswertung.getDaten().getSummeLastzug();
+                                } else if (fahrzeugOptions.isLieferwagen()) {
+                                    zaehlwert = auswertung.getDaten().getAnzahlLfw();
+                                } else if (fahrzeugOptions.isBusse()) {
+                                    zaehlwert = auswertung.getDaten().getAnzahlBus();
+                                } else if (fahrzeugOptions.isKraftraeder()) {
+                                    zaehlwert = auswertung.getDaten().getAnzahlKrad();
+                                } else if (fahrzeugOptions.isRadverkehr()) {
+                                    zaehlwert = auswertung.getDaten().getAnzahlRad();
+                                } else if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+                                    zaehlwert = auswertung.getDaten().getSummeKraftfahrzeugverkehr();
+                                } else if (fahrzeugOptions.isSchwerverkehr()) {
+                                    zaehlwert = auswertung.getDaten().getSummeSchwerverkehr();
+                                } else if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+                                    zaehlwert = auswertung.getDaten().getProzentSchwerverkehr();
+                                } else if (fahrzeugOptions.isGueterverkehr()) {
+                                    zaehlwert = auswertung.getDaten().getSummeGueterverkehr();
+                                } else if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+                                    zaehlwert = auswertung.getDaten().getProzentGueterverkehr();
+                                } else {
+                                    zaehlwert = null;
+                                }
+                                stepLineSeriesEntryMessstelle.getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(zaehlwert));
+                                GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline, GanglinieUtil.getIntValueIfNotNull(zaehlwert));
                                 final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
                                 final var newXAxisData = ZaehldatenProcessingUtil.checkAndAddToXAxisWhenNotAvailable(
                                         currentXAxisData,
