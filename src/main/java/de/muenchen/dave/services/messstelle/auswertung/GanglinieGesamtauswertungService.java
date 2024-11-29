@@ -145,6 +145,7 @@ public class GanglinieGesamtauswertungService {
      * Messstellen.
      *
      * @param auswertungMessstellen mit den Zähldaten.
+     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.s
      * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(
