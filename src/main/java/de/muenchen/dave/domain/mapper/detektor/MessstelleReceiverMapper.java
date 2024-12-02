@@ -71,8 +71,6 @@ public interface MessstelleReceiverMapper {
                 }
             });
         }
-
-        bean.setSichtbarDatenportal(true);
     }
 
     @AfterMapping
