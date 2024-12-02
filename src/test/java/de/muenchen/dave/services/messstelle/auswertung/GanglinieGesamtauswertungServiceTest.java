@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
+import de.muenchen.dave.util.messstelle.GanglinieUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -294,6 +295,27 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 11), null, AuswertungsZeitraum.JAHRE);
         result = ganglinieGesamtauswertungService.getZeitraumForXaxis(zeitraum);
         Assertions.assertThat(result).isNotNull().isEqualTo("2024");
+    }
+
+    @Test
+    void prependMstIdBeforeNameOfSeriesEntries() {
+        final var seriesEntries = new GanglinieUtil.SeriesEntries();
+        final var mstId = "42";
+
+        ganglinieGesamtauswertungService.prependMstIdBeforeNameOfSeriesEntries(mstId, seriesEntries);
+
+        Assertions.assertThat(seriesEntries.getSeriesEntryPkw().getName()).isNotNull().isEqualTo("MST 42 Pkw");
+        Assertions.assertThat(seriesEntries.getSeriesEntryLkw().getName()).isNotNull().isEqualTo("MST 42 Lkw");
+        Assertions.assertThat(seriesEntries.getSeriesEntryLfw().getName()).isNotNull().isEqualTo("MST 42 Lfw");
+        Assertions.assertThat(seriesEntries.getSeriesEntryLz().getName()).isNotNull().isEqualTo("MST 42 Lz");
+        Assertions.assertThat(seriesEntries.getSeriesEntryBus().getName()).isNotNull().isEqualTo("MST 42 Busse");
+        Assertions.assertThat(seriesEntries.getSeriesEntryKrad().getName()).isNotNull().isEqualTo("MST 42 Krad");
+        Assertions.assertThat(seriesEntries.getSeriesEntryRad().getName()).isNotNull().isEqualTo("MST 42 Rad");
+        Assertions.assertThat(seriesEntries.getSeriesEntryKfz().getName()).isNotNull().isEqualTo("MST 42 Kfz");
+        Assertions.assertThat(seriesEntries.getSeriesEntrySv().getName()).isNotNull().isEqualTo("MST 42 SV");
+        Assertions.assertThat(seriesEntries.getSeriesEntrySvProzent().getName()).isNotNull().isEqualTo("MST 42 SV %");
+        Assertions.assertThat(seriesEntries.getSeriesEntryGv().getName()).isNotNull().isEqualTo("MST 42 GV");
+        Assertions.assertThat(seriesEntries.getSeriesEntryGvProzent().getName()).isNotNull().isEqualTo("MST 42 GV %");
     }
 
 }

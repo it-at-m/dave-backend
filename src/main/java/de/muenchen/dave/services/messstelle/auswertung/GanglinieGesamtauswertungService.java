@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.services.messstelle.Zeitraum;
@@ -26,7 +27,7 @@ public class GanglinieGesamtauswertungService {
     /**
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
      *
-     * @param auswertungMessstelle mit den Zähldaten.
+     * @param auswertungMessstelle mit den Zähldaten einer Messstelle.
      * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
      * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
@@ -143,9 +144,9 @@ public class GanglinieGesamtauswertungService {
     /**
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für mehrere Messstellen.
      *
-     * @param auswertungMessstellen mit den Zähldaten.
-     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.s
-     * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
+     * @param auswertungMessstellen mit den Zähldaten der Messstellen.
+     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
+     * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(
             final List<AuswertungMessstelle> auswertungMessstellen,
@@ -290,8 +291,11 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     * @param mstId
-     * @param seriesEntries
+     * Fügt dem Namensattribut eines jeden {@link StepLineSeriesEntryIntegerDTO}
+     * in den {@link GanglinieUtil.SeriesEntries} die Messtellen-Id als Prefix hinzu.
+     *
+     * @param mstId als ID der Messstelle.
+     * @param seriesEntries mit den darin enthaltenen.
      */
     protected void prependMstIdBeforeNameOfSeriesEntries(final String mstId, final GanglinieUtil.SeriesEntries seriesEntries) {
         final var prefixMstId = PREFIX_MESSSTELLE + StringUtils.SPACE + mstId + StringUtils.SPACE;
