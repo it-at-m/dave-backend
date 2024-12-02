@@ -148,6 +148,7 @@ class GanglinieGesamtauswertungServiceTest {
         var zeitraum = new Zeitraum(YearMonth.of(2024, 1), YearMonth.of(2024, 3), AuswertungsZeitraum.QUARTAL_1);
         var tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(100));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(50));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -156,6 +157,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 4), YearMonth.of(2024, 6), AuswertungsZeitraum.QUARTAL_2);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(101));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(51));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -164,6 +166,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 7), YearMonth.of(2024, 9), AuswertungsZeitraum.QUARTAL_3);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(102));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(52));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -172,6 +175,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2024, 10), YearMonth.of(2024, 12), AuswertungsZeitraum.QUARTAL_4);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(103));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(53));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -180,6 +184,7 @@ class GanglinieGesamtauswertungServiceTest {
         zeitraum = new Zeitraum(YearMonth.of(2025, 1), YearMonth.of(2025, 3), AuswertungsZeitraum.QUARTAL_1);
         tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(104));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(54));
         auswertung.setZeitraum(zeitraum);
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
@@ -236,7 +241,7 @@ class GanglinieGesamtauswertungServiceTest {
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setLastkraftwagen(false);
         fahrzeugOptions.setLastzuege(false);
-        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setBusse(true);
         fahrzeugOptions.setKraftraeder(false);
         fahrzeugOptions.setRadverkehr(false);
         fahrzeugOptions.setFussverkehr(false);
@@ -249,13 +254,19 @@ class GanglinieGesamtauswertungServiceTest {
         final var result = ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungMessstellen, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("MST 1", "MST 2"));
+        expected.setLegend(List.of("MST 1 Busse", "MST 1 Kfz", "MST 2 Busse", "MST 2 Kfz"));
         expected.setRangeMax(220);
         expected.setRangeMaxPercent(0);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
         final var seriesEntriesFirstChart = new ArrayList<StepLineSeriesEntryBaseDTO>();
         var stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(List.of(50, 51, 52, 53, 54));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
         stepLineSeriesEntryInteger.setYAxisData(List.of(100, 101, 102, 103, 104));
+        seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
+        stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
+        stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(null, null, null, null, null));
         seriesEntriesFirstChart.add(stepLineSeriesEntryInteger);
         stepLineSeriesEntryInteger = new StepLineSeriesEntryIntegerDTO();
         stepLineSeriesEntryInteger.setYAxisData(Arrays.asList(200, 201, 202, null, 204));
