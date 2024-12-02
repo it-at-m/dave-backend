@@ -278,7 +278,7 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     * Gibt die String-Repräsentation des Zeitraums zurück.
+     * Gibt die Textuelle-Repräsentation des Zeitraums zurück.
      *
      * @param zeitraum zur Stringerstellung.
      * @return die String-Repräsentation des Zeitraums.
