@@ -43,7 +43,7 @@
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
         <ai.onnxruntime>1.18.0</ai.onnxruntime>
         <!-- Bei der nächsten Spring Boot Version überprüfen, ob flyway-version wieder entfernt werden kann -->
-        <flyway.version>10.19.0</flyway.version>
+        <flyway.version>11.0.0</flyway.version>
     </properties>
 
     <scm>
