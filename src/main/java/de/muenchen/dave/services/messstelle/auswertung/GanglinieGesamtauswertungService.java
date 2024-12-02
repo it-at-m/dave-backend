@@ -27,7 +27,7 @@ public class GanglinieGesamtauswertungService {
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
      *
      * @param auswertungMessstelle mit den Zähldaten.
-     * @param fahrzeugOptions      zur Steuerung der zu repräsentierenden Daten.
+     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
      * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForSingleMessstelle(
@@ -144,7 +144,7 @@ public class GanglinieGesamtauswertungService {
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für mehrere Messstellen.
      *
      * @param auswertungMessstellen mit den Zähldaten.
-     * @param fahrzeugOptions       zur Steuerung der zu repräsentierenden Daten.s
+     * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.s
      * @return die Repräsentation der Zähldaten (Summe KFZ) für die Gangliniendarstellung.
      */
     public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(
@@ -169,49 +169,56 @@ public class GanglinieGesamtauswertungService {
                             .forEach(auswertung -> {
                                 if (fahrzeugOptions.isPersonenkraftwagen()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryPkw());
-                                    seriesEntries.getSeriesEntryPkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeAllePkw()));
+                                    seriesEntries.getSeriesEntryPkw().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeAllePkw()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryPkw().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeAllePkw()));
                                 }
                                 if (fahrzeugOptions.isLastkraftwagen()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
-                                    seriesEntries.getSeriesEntryLkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLkw()));
+                                    seriesEntries.getSeriesEntryLkw().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLkw()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLkw().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLkw()));
                                 }
                                 if (fahrzeugOptions.isLastzuege()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLz());
-                                    seriesEntries.getSeriesEntryLz().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeLastzug()));
+                                    seriesEntries.getSeriesEntryLz().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeLastzug()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLz().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeLastzug()));
                                 }
                                 if (fahrzeugOptions.isLieferwagen()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                                    seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
+                                    seriesEntries.getSeriesEntryLfw().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLfw().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
                                 }
                                 if (fahrzeugOptions.isBusse()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
-                                    seriesEntries.getSeriesEntryBus().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlBus()));
+                                    seriesEntries.getSeriesEntryBus().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlBus()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryBus().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlBus()));
                                 }
                                 if (fahrzeugOptions.isKraftraeder()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryKrad());
-                                    seriesEntries.getSeriesEntryKrad().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlKrad()));
+                                    seriesEntries.getSeriesEntryKrad().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlKrad()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryKrad().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlKrad()));
                                 }
                                 if (fahrzeugOptions.isRadverkehr()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryRad());
-                                    seriesEntries.getSeriesEntryRad().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlRad()));
+                                    seriesEntries.getSeriesEntryRad().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlRad()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryRad().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlRad()));
@@ -226,7 +233,8 @@ public class GanglinieGesamtauswertungService {
                                 }
                                 if (fahrzeugOptions.isSchwerverkehr()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntrySv());
-                                    seriesEntries.getSeriesEntrySv().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeSchwerverkehr()));
+                                    seriesEntries.getSeriesEntrySv().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeSchwerverkehr()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntrySv().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeSchwerverkehr()));
@@ -235,11 +243,13 @@ public class GanglinieGesamtauswertungService {
                                     GanglinieUtil.setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntrySvProzent());
                                     seriesEntries.getSeriesEntrySvProzent().getYAxisData().add(auswertung.getDaten().getProzentSchwerverkehr());
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntrySvProzent().getName());
-                                    GanglinieUtil.setRangeMaxPercentRoundedToTwoInZaehldatenStepline(zaehldatenStepline, auswertung.getDaten().getProzentSchwerverkehr());
+                                    GanglinieUtil.setRangeMaxPercentRoundedToTwoInZaehldatenStepline(zaehldatenStepline,
+                                            auswertung.getDaten().getProzentSchwerverkehr());
                                 }
                                 if (fahrzeugOptions.isGueterverkehr()) {
                                     GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryGv());
-                                    seriesEntries.getSeriesEntryGv().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeGueterverkehr()));
+                                    seriesEntries.getSeriesEntryGv().getYAxisData()
+                                            .add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeGueterverkehr()));
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryGv().getName());
                                     GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                             GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeGueterverkehr()));
@@ -248,7 +258,8 @@ public class GanglinieGesamtauswertungService {
                                     GanglinieUtil.setSeriesIndexForFirstChartPercent(seriesEntries.getSeriesEntryGvProzent());
                                     seriesEntries.getSeriesEntryGvProzent().getYAxisData().add(auswertung.getDaten().getProzentGueterverkehr());
                                     GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryGvProzent().getName());
-                                    GanglinieUtil.setRangeMaxPercentRoundedToTwoInZaehldatenStepline(zaehldatenStepline, auswertung.getDaten().getProzentGueterverkehr());
+                                    GanglinieUtil.setRangeMaxPercentRoundedToTwoInZaehldatenStepline(zaehldatenStepline,
+                                            auswertung.getDaten().getProzentGueterverkehr());
                                 }
 
                                 final var currentXAxisData = zaehldatenStepline.getXAxisDataFirstChart();
@@ -337,6 +348,5 @@ public class GanglinieGesamtauswertungService {
         nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
         seriesEntries.getSeriesEntryGvProzent().setName(nameSeriesEntry);
     }
-
 
 }
