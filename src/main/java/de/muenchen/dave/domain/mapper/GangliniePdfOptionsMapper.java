@@ -16,4 +16,7 @@ public interface GangliniePdfOptionsMapper {
     de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf options2gangliniePdf(
             @MappingTarget de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf, FahrzeugOptionsDTO dto);
 
+    de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf options2gesamtauswertungPdf(
+            @MappingTarget de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf gesamtauswertungPdf, FahrzeugOptionsDTO dto);
+
 }

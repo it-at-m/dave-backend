@@ -7,8 +7,8 @@ import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -45,6 +44,7 @@ public class GeneratePdfService {
     private static final String PDF_TEMPLATES_ZEITREIHE_MUSTACHE = "/pdf/templates/zeitreihe.mustache";
     private static final String PDF_TEMPLATES_BELASTUNGSPLAN_MESSSTELLE_MUSTACHE = "/pdf/templates/messstelle/belastungsplan.mustache";
     private static final String PDF_TEMPLATES_GANGLINIE_MESSSTELLE_MUSTACHE = "/pdf/templates/messstelle/ganglinie.mustache";
+    private static final String PDF_TEMPLATES_GESAMTAUSWERTUNG_MESSSTELLE_MUSTACHE = "/pdf/templates/messstelle/gesamtauswertung.mustache";
     private static final String PDF_TEMPLATES_DATENTABELLE_MESSSTELLE_MUSTACHE = "/pdf/templates/messstelle/datentabelle.mustache";
 
     // Parts
@@ -59,6 +59,9 @@ public class GeneratePdfService {
     // Ganglinie
     private static final String PDF_TEMPLATES_PARTS_GANGLINIE_TABLE_MUSTACHE = "/pdf/templates/parts/ganglinie-table.mustache";
     private static final String PDF_TEMPLATES_PARTS_GANGLINIE_CSS_MUSTACHE = "/pdf/templates/parts/ganglinie-css.mustache";
+    // Gesamtauswertung
+    private static final String PDF_TEMPLATES_PARTS_GESAMTAUSWERTUNG_TABLE_MUSTACHE = "/pdf/templates/messstelle/parts/gesamtauswertung-table.mustache";
+    private static final String PDF_TEMPLATES_PARTS_GESAMTAUSWERTUNG_CSS_MUSTACHE = "/pdf/templates/messstelle/parts/gesamtauswertung-css.mustache";
 
     // Datentabelle
     private static final String PDF_TEMPLATES_PARTS_DATENTABELLE_ZAEHLSTELLE_TABLE_MUSTACHE = "/pdf/templates/parts/datentabelle-table.mustache";
@@ -98,6 +101,7 @@ public class GeneratePdfService {
     private Mustache belastungsplan_messstelle;
     private Mustache ganglinie;
     private Mustache ganglinie_messstelle;
+    private Mustache gesamtauswertung_messstelle;
     private Mustache datentabelle;
     private Mustache datentabelle_messstelle;
     private Mustache zeitreihe;
@@ -113,6 +117,9 @@ public class GeneratePdfService {
     // Ganglinie
     private Mustache ganglinieTable;
     private Mustache ganglinieCss;
+    // Gesamtauswertung
+    private Mustache gesamtauswertungTable;
+    private Mustache gesamtauswertungCss;
     // Datentabelle
     private Mustache datentabelleTable;
     private Mustache datentabelleCss;
@@ -177,6 +184,15 @@ public class GeneratePdfService {
         bean.setGanglinieTablesMustachePart(getHtml(this.ganglinieTable, bean));
 
         return getHtml(this.ganglinie_messstelle, bean);
+    }
+
+    public String createGesamtauswertungHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf bean) {
+        fillPdfBeanMustacheParts(bean);
+        bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
+        bean.setGesamtauswertungCssMustachePart(getHtml(this.gesamtauswertungCss, bean));
+        bean.setGesamtauswertungTablesMustachePart(getHtml(this.gesamtauswertungTable, bean));
+
+        return getHtml(this.gesamtauswertung_messstelle, bean);
     }
 
     /**
@@ -318,6 +334,7 @@ public class GeneratePdfService {
         this.zeitreihe = compileMustache(PDF_TEMPLATES_ZEITREIHE_MUSTACHE, mf);
         this.belastungsplan_messstelle = compileMustache(PDF_TEMPLATES_BELASTUNGSPLAN_MESSSTELLE_MUSTACHE, mf);
         this.ganglinie_messstelle = compileMustache(PDF_TEMPLATES_GANGLINIE_MESSSTELLE_MUSTACHE, mf);
+        this.gesamtauswertung_messstelle = compileMustache(PDF_TEMPLATES_GESAMTAUSWERTUNG_MESSSTELLE_MUSTACHE, mf);
         this.datentabelle_messstelle = compileMustache(PDF_TEMPLATES_DATENTABELLE_MESSSTELLE_MUSTACHE, mf);
 
         this.header = compileMustache(PDF_TEMPLATES_PARTS_LOGO_MUSTACHE, mf);
@@ -336,6 +353,10 @@ public class GeneratePdfService {
         this.zusatzinformationenZeitreihe = compileMustache(PDF_TEMPLATES_PARTS_ZUSATZINFORMATIONEN_ZEITREIHE_MUSTACHE, mf);
         this.zeitreiheTables = compileMustache(PDF_TEMPLATES_PARTS_ZEITREIHE_TABLES_MUSTACHE, mf);
         this.zeitreiheCss = compileMustache(PDF_TEMPLATES_PARTS_ZEITREIHE_CSS_MUSTACHE, mf);
+
+        this.gesamtauswertungTable = compileMustache(PDF_TEMPLATES_PARTS_GESAMTAUSWERTUNG_TABLE_MUSTACHE, mf);
+        this.gesamtauswertungCss = compileMustache(PDF_TEMPLATES_PARTS_GESAMTAUSWERTUNG_CSS_MUSTACHE, mf);
+
     }
 
     /**
@@ -426,12 +447,13 @@ public class GeneratePdfService {
         return createPdf(html);
     }
 
-    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options, final List<Auswertung> auswertungen, final String chartAsBase64Png,
+    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options, final LadeZaehldatenSteplineDTO auswertung,
+            final String chartAsBase64Png,
             final String department)
             throws IOException {
-        final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf();
-        fillPdfBeanService.fillGesamtauswertungPdf(gangliniePdf, options, auswertungen, chartAsBase64Png, department);
-        final String html = createGanglinieHTML(gangliniePdf);
+        final de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf gesamtauswertungPdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf();
+        fillPdfBeanService.fillGesamtauswertungPdf(gesamtauswertungPdf, options, auswertung, chartAsBase64Png, department);
+        final String html = createGesamtauswertungHTML(gesamtauswertungPdf);
 
         return createPdf(html);
     }

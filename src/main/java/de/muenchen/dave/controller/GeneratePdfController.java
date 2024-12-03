@@ -1,8 +1,8 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -190,10 +190,10 @@ public class GeneratePdfController {
     public ResponseEntity<byte[]> generatePdfAuswertung(
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDTO options,
-            @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final List<Auswertung> auswertungen,
+            @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final LadeZaehldatenSteplineDTO auswertung,
             @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png) {
         try {
-            final byte[] pdf = generatePdfService.generateGesamtauswertungPdf(options, auswertungen, chartAsBase64Png, department);
+            final byte[] pdf = generatePdfService.generateGesamtauswertungPdf(options, auswertung, chartAsBase64Png, department);
             final HttpHeaders headers = getHttpHeadersForPdfFile(pdf.length);
 
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);

@@ -1,0 +1,30 @@
+{{#gesamtauswertungTables}}
+  <table class="gesamtauswertung">
+    <thead>
+    <tr>
+        <th></th>
+        {{#gesamtauswertungTableHeaders}}
+        <th>
+          <div class="gesamtauswertung-table-cell gesamtauswertung-table-cell-header"><b>{{header}}</b></div>
+        </th>
+        {{/gesamtauswertungTableHeaders}}
+    </tr>
+    </thead>
+    {{#gesamtauswertungTableRows}}
+        <tr>
+          <td>
+              <div class="gesamtauswertung-table-cell gesamtauswertung-table-cell-legend">
+                  <div class="color-box {{cssColorBox}}"></div>
+                  {{legend}}
+              </div>
+          </td>
+          {{#gesamtauswertungTableColumns}}
+              <td>
+                  <div class="gesamtauswertung-table-cell gesamtauswertung-table-cell-data">{{dataValue}}</div>
+              </td>
+          {{/gesamtauswertungTableColumns}}
+        </tr>
+    {{/gesamtauswertungTableRows}}
+  </table>
+  <br/>
+{{/gesamtauswertungTables}}
