@@ -1,5 +1,7 @@
 {{#messstelleninformationen}}
-<b>{{standort}}</b>
+{{#standortNeeded}}
+    <b>{{standort}}</b>
+{{/standortNeeded}}
 <table class="format format-informationen" style="width:450px;">
   <tr>
 <!--    Alle weiteren ersten Spalten implizit die gleiche width -->
@@ -22,11 +24,13 @@
     <td>{{wochentag}}</td>
   </tr>
   {{/wochentagNeeded}}
+  {{#kommentarNeeded}}
   <tr>
     <td>Kommentar:</td>
     <td>
       {{kommentar}}
     </td>
   </tr>
+  {{/kommentarNeeded}}
 </table>
 {{/messstelleninformationen}}
