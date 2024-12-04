@@ -24,6 +24,10 @@ public final class GanglinieUtil {
 
     public static final Integer ONE = 1;
 
+    public static final Integer TWO = 2;
+
+    public static final Integer THREE = 3;
+
     public static final Integer ROUNDING_VALUE = 20;
 
     public static final Integer ROUNDING_VALUE_PERCENT = 2;
@@ -82,6 +86,16 @@ public final class GanglinieUtil {
     public static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ZERO);
         stepLineSeriesEntry.setYAxisIndex(ONE);
+    }
+
+    public static void setSeriesIndexForSecondChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(ONE);
+        stepLineSeriesEntry.setYAxisIndex(TWO);
+    }
+
+    public static void setSeriesIndexForSecondChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+        stepLineSeriesEntry.setXAxisIndex(ONE);
+        stepLineSeriesEntry.setYAxisIndex(THREE);
     }
 
     public static Integer getIntValueIfNotNull(final BigDecimal value) {

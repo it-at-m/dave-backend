@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +46,7 @@ public class AuswertungController {
         try {
             final var auswertungMessstellen = auswertungService.ladeAuswertungMessstellen(options);
             return ResponseEntity.ok(auswertungMessstellen);
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             log.error("Unerwarteter Fehler im AuswertungsController beim Erstellen der Auswertung mit die messstellen: {}",
                     options.getMessstelleAuswertungIds(), exception);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Erstellen der Auswertung aufgetreten.");
