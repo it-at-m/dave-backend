@@ -8,7 +8,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface GangliniePdfOptionsMapper {
+public interface DiagrammPdfOptionsMapper {
 
     // @MappingTarget bewirkt, dass das übergebene GangliniePdf nur "geupdated" wird und kein neues Objekt erzeugt wird.
     GangliniePdf options2gangliniePdf(@MappingTarget GangliniePdf gangliniePdf, OptionsDTO dto);

@@ -23,7 +23,7 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.DatentabellePdfZaehldatumMapper;
-import de.muenchen.dave.domain.mapper.GangliniePdfOptionsMapper;
+import de.muenchen.dave.domain.mapper.DiagrammPdfOptionsMapper;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
@@ -103,7 +103,7 @@ public class FillPdfBeanService {
 
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
-    private final GangliniePdfOptionsMapper gangliniePdfOptionsMapper;
+    private final DiagrammPdfOptionsMapper diagrammPdfOptionsMapper;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
     private final MessstelleService messstelleService;
@@ -602,7 +602,7 @@ public class FillPdfBeanService {
         GanglinieTable gt = new GanglinieTable();
 
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-        this.gangliniePdfOptionsMapper.options2gangliniePdf(gangliniePdf, options);
+        this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options);
 
         for (final LadeZaehldatumDTO lzDto : ladeZaehldatumDTOS) {
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
@@ -701,7 +701,7 @@ public class FillPdfBeanService {
         GanglinieTable gt = new GanglinieTable();
 
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-        this.gangliniePdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
+        this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
         for (final LadeMesswerteDTO messwert : messwerte) {
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
@@ -793,8 +793,7 @@ public class FillPdfBeanService {
             gesamtauswertungPdf.setChartTitle(createChartTitle(options, messstelle));
 
             // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-            // TODO eigene KLasse
-            this.gangliniePdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
+            this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> emptyIfNullHeader = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
             final List<StepLineSeriesEntryBaseDTO> emptyIfNullSeriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
