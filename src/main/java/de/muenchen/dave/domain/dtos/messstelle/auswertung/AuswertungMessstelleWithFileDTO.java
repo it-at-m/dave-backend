@@ -9,4 +9,5 @@ public class AuswertungMessstelleWithFileDTO {
     private LadeZaehldatenSteplineDTO zaehldatenMessstellen;
 
     private String spreadsheetBase64Encoded;
+
 }
