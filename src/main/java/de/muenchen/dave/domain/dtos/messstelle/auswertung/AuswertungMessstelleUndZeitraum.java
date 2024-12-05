@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AuswertungProMessstelleUndZeitraum extends TagesaggregatResponseDto {
+public class AuswertungMessstelleUndZeitraum extends TagesaggregatResponseDto {
 
     private String mstId;
 

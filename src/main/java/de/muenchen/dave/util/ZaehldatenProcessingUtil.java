@@ -61,7 +61,8 @@ public final class ZaehldatenProcessingUtil {
      * @param xAxisValue zum Anfügen an den ersten Parameter.
      * @return den um den zweiten Parameter erweiterten ersten Parameter.
      */
-    public static List<String> checkAndAddToXAxisWhenNotAvailable(final List<String> xAxisData,
+    public static List<String> checkAndAddToXAxisWhenNotAvailable(
+            final List<String> xAxisData,
             final String xAxisValue) {
         if (!xAxisData.contains(xAxisValue)) {
             xAxisData.add(xAxisValue);
