@@ -18,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,13 +43,13 @@ import static org.mockito.Mockito.when;
 @Slf4j
 class ExternalZaehlungPersistierungsServiceSpringTest {
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
     @Autowired
