@@ -17,7 +17,7 @@ public class BearbeiteZaehlungDTORandomFactory {
 
         BearbeiteZaehlungDTO dto = new BearbeiteZaehlungDTO();
 
-        Faker faker = Faker.instance(new Locale("test"));
+        Faker faker = Faker.instance(new Locale.Builder().setLanguage("test").build());
 
         LocalDate d = LocalDate.of(2020, 12, 12);
 

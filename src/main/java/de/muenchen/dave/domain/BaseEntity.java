@@ -40,7 +40,6 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     @Column(name = "id", length = 36)
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", type = org.hibernate.id.uuid.UuidGenerator.class)
     @UuidGenerator(style = UuidGenerator.Style.RANDOM)
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
