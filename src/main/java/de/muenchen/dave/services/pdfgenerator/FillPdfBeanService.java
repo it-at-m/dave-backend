@@ -46,12 +46,10 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -796,7 +794,7 @@ public class FillPdfBeanService {
             final MessstelleAuswertungOptionsDTO options, final LadeZaehldatenSteplineDTO auswertung,
             final String chartAsBase64Png, final String department) {
 
-        Collection<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTOS = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds());
+        final Collection<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTOS = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds());
         final Optional<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTO = messstelleAuswertungIdDTOS.stream()
                 .findFirst();
         if (messstelleAuswertungIdDTO.isPresent()) {
@@ -834,34 +832,14 @@ public class FillPdfBeanService {
                         final StepLineSeriesEntryBaseDTO baseDto = emptyIfNullSeriesEntries.get(index);
                         if (baseDto.getClass() == StepLineSeriesEntryIntegerDTO.class) {
                             final StepLineSeriesEntryIntegerDTO integerDto = (StepLineSeriesEntryIntegerDTO) baseDto;
-                            row.setGesamtauswertungTableColumns(integerDto.getYAxisData().stream().map(integer -> {
-                                final GesamtauswertungTableColumn column = new GesamtauswertungTableColumn();
-                                if (ObjectUtils.isEmpty(integer)) {
-                                    column.setDataValue(StringUtils.EMPTY);
-                                } else {
-                                    column.setDataValue(String.valueOf(integer));
-                                }
-                                return column;
-                            }).toList());
+                            row.setGesamtauswertungTableColumns(
+                                    integerDto.getYAxisData().stream().map(integer -> new GesamtauswertungTableColumn(convertZaehldata(integer))).toList());
                         } else if (baseDto.getClass() == StepLineSeriesEntryBigDecimalDTO.class) {
                             final StepLineSeriesEntryBigDecimalDTO bigdecimalDto = (StepLineSeriesEntryBigDecimalDTO) baseDto;
-                            row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream().map(bigDecimal -> {
-                                final GesamtauswertungTableColumn column = new GesamtauswertungTableColumn();
-                                if (ObjectUtils.isEmpty(bigDecimal)) {
-                                    column.setDataValue(StringUtils.EMPTY);
-                                } else {
-                                    column.setDataValue(String.valueOf(bigDecimal));
-                                }
-                                return column;
-                            }).toList());
+                            row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream()
+                                    .map(bigDecimal -> new GesamtauswertungTableColumn(convertZaehldata(bigDecimal))).toList());
                         } else {
-                            final List<GesamtauswertungTableColumn> defaultValues = new ArrayList<>();
-                            for (int i = 0; i < emptyIfNullHeader.size(); i++) {
-                                final GesamtauswertungTableColumn column = new GesamtauswertungTableColumn();
-                                column.setDataValue("???");
-                                defaultValues.add(column);
-                            }
-                            row.setGesamtauswertungTableColumns(defaultValues);
+                            row.setGesamtauswertungTableColumns(emptyIfNullHeader.stream().map((header) -> new GesamtauswertungTableColumn("???")).toList());
                         }
                         return row;
                     }).toList();
@@ -1153,12 +1131,5 @@ public class FillPdfBeanService {
         return StringUtils.equals(zaehlung.getZaehlart(), Zaehlart.N.toString())
                 ? StringUtils.EMPTY
                 : zaehlung.getZaehlart();
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    protected class GesamtauswertungHelper {
-        private final String type;
-        private final StepLineSeriesEntryBaseDTO value;
     }
 }
