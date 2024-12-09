@@ -17,6 +17,7 @@ import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanPdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -186,7 +187,7 @@ public class GeneratePdfService {
         return getHtml(this.ganglinie_messstelle, bean);
     }
 
-    public String createGesamtauswertungHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf bean) {
+    public String createGesamtauswertungHTML(final GesamtauswertungPdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
         bean.setGesamtauswertungCssMustachePart(getHtml(this.gesamtauswertungCss, bean));
@@ -447,11 +448,22 @@ public class GeneratePdfService {
         return createPdf(html);
     }
 
-    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options, final LadeZaehldatenSteplineDTO auswertung,
+    /**
+     * Generiert ein PDF fuer die Gesamtauswertung.
+     *
+     * @param options Eingestellte Optionen bei der Auswertung
+     * @param auswertung Der Grafik zugrunde liegenden Daten
+     * @param chartAsBase64Png Grafik der Gesamtauswertung
+     * @param department Abteilung des eingeloggten Benutzers
+     * @return PDF als byte[]
+     * @throws IOException
+     */
+    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options,
+            final LadeZaehldatenSteplineDTO auswertung,
             final String chartAsBase64Png,
             final String department)
             throws IOException {
-        final de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf gesamtauswertungPdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf();
+        final var gesamtauswertungPdf = new GesamtauswertungPdf();
         fillPdfBeanService.fillGesamtauswertungPdf(gesamtauswertungPdf, options, auswertung, chartAsBase64Png, department);
         final String html = createGesamtauswertungHTML(gesamtauswertungPdf);
 
