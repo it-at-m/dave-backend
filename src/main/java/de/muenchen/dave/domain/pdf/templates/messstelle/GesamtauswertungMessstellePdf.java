@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GesamtauswertungPdf extends DiagrammPdf {
+public class GesamtauswertungMessstellePdf extends DiagrammMessstellePdf {
 
     private String gesamtauswertungCssMustachePart;
 

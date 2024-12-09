@@ -16,8 +16,10 @@ import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
-import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanPdf;
-import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -151,7 +153,7 @@ public class GeneratePdfService {
         return getHtml(this.belastungsplan, bean);
     }
 
-    public String createBelastungsplanHTML(final BelastungsplanPdf bean) {
+    public String createBelastungsplanHTML(final BelastungsplanMessstellePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
 
@@ -176,7 +178,7 @@ public class GeneratePdfService {
         return getHtml(this.ganglinie, bean);
     }
 
-    public String createGanglinieHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf bean) {
+    public String createGanglinieHTML(final GanglinieMessstellePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
         bean.setGanglinieCssMustachePart(getHtml(this.ganglinieCss, bean));
@@ -187,7 +189,7 @@ public class GeneratePdfService {
         return getHtml(this.ganglinie_messstelle, bean);
     }
 
-    public String createGesamtauswertungHTML(final GesamtauswertungPdf bean) {
+    public String createGesamtauswertungHTML(final GesamtauswertungMessstellePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
         bean.setGesamtauswertungCssMustachePart(getHtml(this.gesamtauswertungCss, bean));
@@ -215,7 +217,7 @@ public class GeneratePdfService {
         return getHtml(this.datentabelle, bean);
     }
 
-    public String createDatentabelleHTML(final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf bean) {
+    public String createDatentabelleHTML(final DatentabelleMessstellePdf bean) {
         fillPdfBeanMustacheParts(bean);
         bean.setMessstelleninformationenMustachePart(getHtml(this.messstelleninformationen, bean));
         bean.setDatentabelleCssMustachePart(getHtml(this.datentabelleCss, bean));
@@ -410,7 +412,7 @@ public class GeneratePdfService {
     public byte[] generateBelastungsplanPdf(final String messstelleId, final MessstelleOptionsDTO options, final String chartAsBase64Png,
             final String department)
             throws IOException, DataNotFoundException {
-        final BelastungsplanPdf belastungsplanPdf = new BelastungsplanPdf();
+        final BelastungsplanMessstellePdf belastungsplanPdf = new BelastungsplanMessstellePdf();
         fillPdfBeanService.fillBelastungsplanPdf(belastungsplanPdf, messstelleId, options, chartAsBase64Png, department);
         final String html = createBelastungsplanHTML(belastungsplanPdf);
 
@@ -441,7 +443,7 @@ public class GeneratePdfService {
 
     public byte[] generateGangliniePdf(final String messstelleId, final MessstelleOptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
-        final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf();
+        final GanglinieMessstellePdf gangliniePdf = new GanglinieMessstellePdf();
         fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
         final String html = createGanglinieHTML(gangliniePdf);
 
@@ -463,7 +465,7 @@ public class GeneratePdfService {
             final String chartAsBase64Png,
             final String department)
             throws IOException {
-        final var gesamtauswertungPdf = new GesamtauswertungPdf();
+        final var gesamtauswertungPdf = new GesamtauswertungMessstellePdf();
         fillPdfBeanService.fillGesamtauswertungPdf(gesamtauswertungPdf, options, auswertung, chartAsBase64Png, department);
         final String html = createGesamtauswertungHTML(gesamtauswertungPdf);
 
@@ -515,7 +517,7 @@ public class GeneratePdfService {
 
     public byte[] generateDatentabellePdf(final String messstelleId, final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {
-        final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf datentabellePdf = new de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf();
+        final DatentabelleMessstellePdf datentabellePdf = new DatentabelleMessstellePdf();
         fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, options, schematischeUebersichtAsBase64Png, department);
         final String html = createDatentabelleHTML(datentabellePdf);
 

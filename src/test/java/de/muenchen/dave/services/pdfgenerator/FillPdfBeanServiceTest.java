@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfCompone
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.BasicMessstellePdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -125,7 +126,7 @@ class FillPdfBeanServiceTest {
     // Messstelle
     @Test
     void fillBasicPdf_Messstelle() {
-        final var basicPdf = new de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf();
+        final var basicPdf = new BasicMessstellePdf();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final String department = "TestOU";
         final String tagesTyp = TagesTyp.SAMSTAG.name();

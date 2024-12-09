@@ -179,12 +179,13 @@ public class GeneratePdfController {
     }
 
     /**
-     * Generiert einen PDF fuer die Auswertung
+     * Generiert ein PDF-File fuer die Gesamtauswertung über (potenziell) mehrere Messstellen
+     * in einem definierten Zeitbereich, z.B. bestimmte Jahre, Monate oder Quartale.
      *
      * @param options Die im Frontend ausgewählten Optionen.
      * @param chartAsBase64Png Ein Graph als PNG in Base64.
      * @param department Organisationseinheit des Benutzers
-     * @return PDF-Datei
+     * @return PDF-Datei als byte[]
      */
     @PostMapping(value = "/auswertung")
     public ResponseEntity<byte[]> generatePdfAuswertung(

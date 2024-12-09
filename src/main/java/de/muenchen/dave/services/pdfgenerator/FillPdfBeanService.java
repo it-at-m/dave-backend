@@ -39,7 +39,11 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
-import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanPdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.BasicMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.BelastungsplanMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
+import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -139,7 +143,7 @@ public class FillPdfBeanService {
      * @param department Organisationseinheit des Benutzers
      * @return Befüllte BasicPdf Bean.
      */
-    static BasicPdf fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+    protected static BasicPdf fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
             final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
@@ -148,7 +152,7 @@ public class FillPdfBeanService {
         return basicPdf;
     }
 
-    static de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf fillBasicPdf(final de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf basicPdf,
+    protected static BasicMessstellePdf fillBasicPdf(final BasicMessstellePdf basicPdf,
             final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
@@ -156,9 +160,22 @@ public class FillPdfBeanService {
         return basicPdf;
     }
 
-    static de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf fillBasicPdfGesamtauswertung(
-            final de.muenchen.dave.domain.pdf.templates.messstelle.BasicPdf basicPdf,
-            final Messstelle messstelle, final String department, final MessstelleAuswertungOptionsDTO optionsDTO, final boolean isSingleMessstelle) {
+    /**
+     * Befuellt den Standardteil eines PDF-Files über Messstellen mit den Daten
+     *
+     * @param basicPdf Standard-Teil eines Messstellen-PDFs
+     * @param messstelle Ausgewertete Messstelle
+     * @param department Abteilung des anfragenden Nutzers
+     * @param optionsDTO Ausgewählte Optionen der Auswertung
+     * @param isSingleMessstelle Flag, ob nur eine Messstelle ausgewertet wurde
+     * @return Standardteil des PDFs
+     */
+    protected static BasicMessstellePdf fillBasicPdfGesamtauswertung(
+            final BasicMessstellePdf basicPdf,
+            final Messstelle messstelle,
+            final String department,
+            final MessstelleAuswertungOptionsDTO optionsDTO,
+            final boolean isSingleMessstelle) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(
                 fillMessstelleninformationenGesamtauswertung(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, isSingleMessstelle));
@@ -174,7 +191,7 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
+    protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
             final String kreuzungsname, final Zaehlung zaehlung) {
         zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
@@ -186,7 +203,7 @@ public class FillPdfBeanService {
         return zaehlstelleninformationen;
     }
 
-    static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
+    protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
             final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
@@ -205,9 +222,20 @@ public class FillPdfBeanService {
         return messstelleninformationen;
     }
 
-    static MessstelleninformationenPdfComponent fillMessstelleninformationenGesamtauswertung(
+    /**
+     * Befuellt die Messstelleinformationen mit den ausgewerteten Daten.
+     *
+     * @param messstelleninformationen PDF-Komponente der Messstelleninformationen
+     * @param messstelle ausewertet Messstelle
+     * @param optionsDTO Ausgewählte Option der Auswertung
+     * @param isSingleMessstelle flag, ob nur eine Messstelle auswertet wurde
+     * @return
+     */
+    protected static MessstelleninformationenPdfComponent fillMessstelleninformationenGesamtauswertung(
             final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle, final MessstelleAuswertungOptionsDTO optionsDTO, final boolean isSingleMessstelle) {
+            final Messstelle messstelle,
+            final MessstelleAuswertungOptionsDTO optionsDTO,
+            final boolean isSingleMessstelle) {
         messstelleninformationen.setStandortNeeded(isSingleMessstelle);
         messstelleninformationen.setKommentarNeeded(isSingleMessstelle);
         if (isSingleMessstelle) {
@@ -232,7 +260,8 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen, final Zaehlstelle zaehlstelle,
+    protected static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen,
+            final Zaehlstelle zaehlstelle,
             final Zaehlung zaehlung) {
         zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(zaehlstelle.getKommentar()));
         zusatzinformationen.setIstKommentarVorhandenZaehlung(StringUtils.isNotEmpty(zaehlung.getKommentar()));
@@ -294,7 +323,7 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
@@ -312,7 +341,7 @@ public class FillPdfBeanService {
         return chartTitle.toString().trim();
     }
 
-    static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final Messstelle messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessstelleAuswertungIds().size() > 1) {
             chartTitle.append(CHART_TITLE_MEHRERE_MESSSTELLE);
@@ -345,7 +374,7 @@ public class FillPdfBeanService {
      * @return Der übergebene Wert als String. Wenn der übergebene Wert 'null' beträgt wird ein leerer
      *         String zurückgegeben.
      */
-    static String convertZaehldata(final Number zaehldata) {
+    protected static String convertZaehldata(final Number zaehldata) {
         if (zaehldata == null) {
             return StringUtils.EMPTY;
         } else {
@@ -364,15 +393,15 @@ public class FillPdfBeanService {
      *
      * @param optionsDTO Options aus dem Frontend
      */
-    static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
+    protected static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
         return getTimeblockForChartTitle(optionsDTO.getZeitblock());
     }
 
-    static String getTimeblockForChartTitle(final MessstelleOptionsDTO optionsDTO) {
+    protected static String getTimeblockForChartTitle(final MessstelleOptionsDTO optionsDTO) {
         return getTimeblockForChartTitle(optionsDTO.getZeitblock());
     }
 
-    static String getTimeblockForChartTitle(final Zeitblock zeitblock) {
+    protected static String getTimeblockForChartTitle(final Zeitblock zeitblock) {
         final StringBuilder timeblock = new StringBuilder();
         timeblock.append(zeitblock.getStart().getHour());
         timeblock.append(StringUtils.SPACE);
@@ -397,7 +426,7 @@ public class FillPdfBeanService {
      * @param tdCount Anzahl der Zellen
      * @return Zellengröße als String in mm
      */
-    public static String calculateCellWidth(final Integer tdCount) {
+    protected static String calculateCellWidth(final Integer tdCount) {
         if (tdCount < 7) {
             // Bei wenig Spalten => Maximale Zellenbreite setzen
             return CELL_WIDTH_20_MM;
@@ -563,7 +592,7 @@ public class FillPdfBeanService {
         return diagrammPdf;
     }
 
-    public BelastungsplanPdf fillBelastungsplanPdf(final BelastungsplanPdf belastungsplanPdf, final String messstelleId,
+    public BelastungsplanMessstellePdf fillBelastungsplanPdf(final BelastungsplanMessstellePdf belastungsplanPdf, final String messstelleId,
             final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
         final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = this.messwerteService.ladeMesswerte(messstelle.getId(), options);
@@ -669,7 +698,7 @@ public class FillPdfBeanService {
                 }
             }
         }
-        if (!gtcList.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(gtcList)) {
             gt.setGanglinieTableColumns(gtcList);
             gtList.add(gt);
         }
@@ -690,8 +719,8 @@ public class FillPdfBeanService {
         return gangliniePdf;
     }
 
-    public de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf fillGangliniePdf(
-            final de.muenchen.dave.domain.pdf.templates.messstelle.GangliniePdf gangliniePdf, final String messstelleId,
+    public GanglinieMessstellePdf fillGangliniePdf(
+            final GanglinieMessstellePdf gangliniePdf, final String messstelleId,
             final MessstelleOptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
@@ -789,10 +818,22 @@ public class FillPdfBeanService {
         return gangliniePdf;
     }
 
-    public de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf fillGesamtauswertungPdf(
-            final de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungPdf gesamtauswertungPdf,
-            final MessstelleAuswertungOptionsDTO options, final LadeZaehldatenSteplineDTO auswertung,
-            final String chartAsBase64Png, final String department) {
+    /**
+     * Befuellt das PDf-Objekt der Auswertung mit den ausgewerteten Daten.
+     *
+     * @param gesamtauswertungPdf zu füllendes PDF-Objekt
+     * @param options ausgewählte Optionen der Auswertung
+     * @param auswertung zugrunde liegende Messwerte der Auswertung
+     * @param chartAsBase64Png Grafik der Auswertung
+     * @param department Abteilung des anfragenden Nutzers
+     * @return gefüllte PDF-Objekt
+     */
+    public GesamtauswertungMessstellePdf fillGesamtauswertungPdf(
+            final GesamtauswertungMessstellePdf gesamtauswertungPdf,
+            final MessstelleAuswertungOptionsDTO options,
+            final LadeZaehldatenSteplineDTO auswertung,
+            final String chartAsBase64Png,
+            final String department) {
 
         final Collection<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTOS = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds());
         final Optional<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTO = messstelleAuswertungIdDTOS.stream()
@@ -813,14 +854,14 @@ public class FillPdfBeanService {
             // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
             this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
-            final List<String> emptyIfNullHeader = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
-            final List<StepLineSeriesEntryBaseDTO> emptyIfNullSeriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
-            final List<String> emptyIfNullLegend = ListUtils.emptyIfNull(auswertung.getLegend());
+            final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
+            final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
+            final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
-            final List<GesamtauswertungTableRow> rows = IntStream.range(0, emptyIfNullSeriesEntries.size())
+            final List<GesamtauswertungTableRow> gesamtauswertungTableRows = IntStream.range(0, seriesEntries.size())
                     .mapToObj(index -> {
                         final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
-                        row.setLegend(emptyIfNullLegend.get(index));
+                        row.setLegend(legend.get(index));
                         if (hasMultipleMessstellen) {
                             row.setCssColorBox("default");
                         } else {
@@ -829,7 +870,7 @@ public class FillPdfBeanService {
                         if (row.getCssColorBox().contains("%")) {
                             row.setCssColorBox(row.getCssColorBox().replace(" %", "-anteil"));
                         }
-                        final StepLineSeriesEntryBaseDTO baseDto = emptyIfNullSeriesEntries.get(index);
+                        final StepLineSeriesEntryBaseDTO baseDto = seriesEntries.get(index);
                         if (baseDto.getClass() == StepLineSeriesEntryIntegerDTO.class) {
                             final StepLineSeriesEntryIntegerDTO integerDto = (StepLineSeriesEntryIntegerDTO) baseDto;
                             row.setGesamtauswertungTableColumns(
@@ -839,38 +880,38 @@ public class FillPdfBeanService {
                             row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream()
                                     .map(bigDecimal -> new GesamtauswertungTableColumn(convertZaehldata(bigDecimal))).toList());
                         } else {
-                            row.setGesamtauswertungTableColumns(emptyIfNullHeader.stream().map((header) -> new GesamtauswertungTableColumn("???")).toList());
+                            row.setGesamtauswertungTableColumns(header.stream().map((headerValue) -> new GesamtauswertungTableColumn("???")).toList());
                         }
                         return row;
                     }).toList();
 
-            final Map<Integer, List<GesamtauswertungTableRow>> helper = new HashMap<>();
-            rows.forEach(gesamtauswertungTableRow -> {
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = new HashMap<>();
+            gesamtauswertungTableRows.forEach(gesamtauswertungTableRow -> {
                 final AtomicInteger tableIndex = new AtomicInteger(0);
                 final List<List<GesamtauswertungTableColumn>> partition = ListUtils.partition(gesamtauswertungTableRow.getGesamtauswertungTableColumns(),
                         MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
                 partition.forEach(gesamtauswertungTableColumns -> {
-                    if (!helper.containsKey(tableIndex.get())) {
-                        helper.put(tableIndex.get(), new ArrayList<>());
+                    if (!rowsPerTable.containsKey(tableIndex.get())) {
+                        rowsPerTable.put(tableIndex.get(), new ArrayList<>());
                     }
                     final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
                     row.setCssColorBox(gesamtauswertungTableRow.getCssColorBox());
                     row.setLegend(gesamtauswertungTableRow.getLegend());
                     row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
-                    helper.get(tableIndex.getAndIncrement()).add(row);
+                    rowsPerTable.get(tableIndex.getAndIncrement()).add(row);
                 });
             });
 
-            final List<GesamtauswertungTableHeader> tableHeaderList = emptyIfNullHeader.stream().map(s -> {
+            final List<GesamtauswertungTableHeader> tableHeader = header.stream().map(s -> {
                 final GesamtauswertungTableHeader gesamtauswertungTableHeader = new GesamtauswertungTableHeader();
                 gesamtauswertungTableHeader.setHeader(s);
                 return gesamtauswertungTableHeader;
             }).toList();
 
-            final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeaderList, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
+            final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
             final List<GesamtauswertungTable> gtList = IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
                 final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
-                gesamtauswertungTable.setGesamtauswertungTableRows(helper.get(index));
+                gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
                 gesamtauswertungTable.setGesamtauswertungTableHeaders(partitionTableHeaders.get(index));
                 return gesamtauswertungTable;
             }).toList();
@@ -923,8 +964,8 @@ public class FillPdfBeanService {
         return datentabellePdf;
     }
 
-    public de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf fillDatentabellePdf(
-            final de.muenchen.dave.domain.pdf.templates.messstelle.DatentabellePdf datentabellePdf, final String messstelleId,
+    public DatentabelleMessstellePdf fillDatentabellePdf(
+            final DatentabelleMessstellePdf datentabellePdf, final String messstelleId,
             final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
