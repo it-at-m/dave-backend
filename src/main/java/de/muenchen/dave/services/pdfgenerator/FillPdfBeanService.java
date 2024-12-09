@@ -858,63 +858,10 @@ public class FillPdfBeanService {
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
-            final List<GesamtauswertungTableRow> gesamtauswertungTableRows = IntStream.range(0, seriesEntries.size())
-                    .mapToObj(index -> {
-                        final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
-                        row.setLegend(legend.get(index));
-                        if (hasMultipleMessstellen) {
-                            row.setCssColorBox("default");
-                        } else {
-                            row.setCssColorBox(row.getLegend().toLowerCase());
-                        }
-                        if (row.getCssColorBox().contains("%")) {
-                            row.setCssColorBox(row.getCssColorBox().replace(" %", "-anteil"));
-                        }
-                        final StepLineSeriesEntryBaseDTO baseDto = seriesEntries.get(index);
-                        if (baseDto.getClass() == StepLineSeriesEntryIntegerDTO.class) {
-                            final StepLineSeriesEntryIntegerDTO integerDto = (StepLineSeriesEntryIntegerDTO) baseDto;
-                            row.setGesamtauswertungTableColumns(
-                                    integerDto.getYAxisData().stream().map(integer -> new GesamtauswertungTableColumn(convertZaehldata(integer))).toList());
-                        } else if (baseDto.getClass() == StepLineSeriesEntryBigDecimalDTO.class) {
-                            final StepLineSeriesEntryBigDecimalDTO bigdecimalDto = (StepLineSeriesEntryBigDecimalDTO) baseDto;
-                            row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream()
-                                    .map(bigDecimal -> new GesamtauswertungTableColumn(convertZaehldata(bigDecimal))).toList());
-                        } else {
-                            row.setGesamtauswertungTableColumns(header.stream().map((headerValue) -> new GesamtauswertungTableColumn("???")).toList());
-                        }
-                        return row;
-                    }).toList();
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = getRowsPerTable(seriesEntries,
+                    legend, hasMultipleMessstellen, header);
 
-            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = new HashMap<>();
-            gesamtauswertungTableRows.forEach(gesamtauswertungTableRow -> {
-                final AtomicInteger tableIndex = new AtomicInteger(0);
-                final List<List<GesamtauswertungTableColumn>> partition = ListUtils.partition(gesamtauswertungTableRow.getGesamtauswertungTableColumns(),
-                        MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
-                partition.forEach(gesamtauswertungTableColumns -> {
-                    if (!rowsPerTable.containsKey(tableIndex.get())) {
-                        rowsPerTable.put(tableIndex.get(), new ArrayList<>());
-                    }
-                    final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
-                    row.setCssColorBox(gesamtauswertungTableRow.getCssColorBox());
-                    row.setLegend(gesamtauswertungTableRow.getLegend());
-                    row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
-                    rowsPerTable.get(tableIndex.getAndIncrement()).add(row);
-                });
-            });
-
-            final List<GesamtauswertungTableHeader> tableHeader = header.stream().map(s -> {
-                final GesamtauswertungTableHeader gesamtauswertungTableHeader = new GesamtauswertungTableHeader();
-                gesamtauswertungTableHeader.setHeader(s);
-                return gesamtauswertungTableHeader;
-            }).toList();
-
-            final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
-            final List<GesamtauswertungTable> gtList = IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
-                final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
-                gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
-                gesamtauswertungTable.setGesamtauswertungTableHeaders(partitionTableHeaders.get(index));
-                return gesamtauswertungTable;
-            }).toList();
+            final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable);
 
             // Wenn mehrere Tabellen vonnöten => große Zählung, Zellenbreite auf Minimum verkleinern
             // Hier sollte später dynamisch berechnet werden wie viele Tabellen benötigt werden und die Elemente gleichmäßig in diese verteilen.
@@ -928,6 +875,91 @@ public class FillPdfBeanService {
             gesamtauswertungPdf.setGesamtauswertungTables(gtList);
         }
         return gesamtauswertungPdf;
+    }
+
+    /**
+     * TODO testen und beschreiben
+     *
+     * @param header
+     * @param rowsPerTable
+     * @return
+     */
+    protected static List<GesamtauswertungTable> getGesamtauswertungTables(
+            final List<String> header,
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable) {
+        final List<GesamtauswertungTableHeader> tableHeader = header.stream().map(s -> {
+            final GesamtauswertungTableHeader gesamtauswertungTableHeader = new GesamtauswertungTableHeader();
+            gesamtauswertungTableHeader.setHeader(s);
+            return gesamtauswertungTableHeader;
+        }).toList();
+
+        final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
+        return IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
+            final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
+            gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
+            gesamtauswertungTable.setGesamtauswertungTableHeaders(partitionTableHeaders.get(index));
+            return gesamtauswertungTable;
+        }).toList();
+    }
+
+    /**
+     * TODO umbenennen, testen und beschreiben
+     *
+     * @param seriesEntries
+     * @param legend
+     * @param hasMultipleMessstellen
+     * @param header
+     * @return
+     */
+    protected static Map<Integer, List<GesamtauswertungTableRow>> getRowsPerTable(
+            final List<StepLineSeriesEntryBaseDTO> seriesEntries,
+            final List<String> legend,
+            final boolean hasMultipleMessstellen,
+            final List<String> header) {
+        final List<GesamtauswertungTableRow> gesamtauswertungTableRows = IntStream.range(0, seriesEntries.size())
+                .mapToObj(index -> {
+                    final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
+                    row.setLegend(legend.get(index));
+                    if (hasMultipleMessstellen) {
+                        row.setCssColorBox("default");
+                    } else {
+                        row.setCssColorBox(row.getLegend().toLowerCase());
+                    }
+                    if (row.getCssColorBox().contains("%")) {
+                        row.setCssColorBox(row.getCssColorBox().replace(" %", "-anteil"));
+                    }
+                    final StepLineSeriesEntryBaseDTO baseDto = seriesEntries.get(index);
+                    if (baseDto.getClass() == StepLineSeriesEntryIntegerDTO.class) {
+                        final StepLineSeriesEntryIntegerDTO integerDto = (StepLineSeriesEntryIntegerDTO) baseDto;
+                        row.setGesamtauswertungTableColumns(
+                                integerDto.getYAxisData().stream().map(integer -> new GesamtauswertungTableColumn(convertZaehldata(integer))).toList());
+                    } else if (baseDto.getClass() == StepLineSeriesEntryBigDecimalDTO.class) {
+                        final StepLineSeriesEntryBigDecimalDTO bigdecimalDto = (StepLineSeriesEntryBigDecimalDTO) baseDto;
+                        row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream()
+                                .map(bigDecimal -> new GesamtauswertungTableColumn(convertZaehldata(bigDecimal))).toList());
+                    } else {
+                        row.setGesamtauswertungTableColumns(header.stream().map((headerValue) -> new GesamtauswertungTableColumn("???")).toList());
+                    }
+                    return row;
+                }).toList();
+
+        final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = new HashMap<>();
+        gesamtauswertungTableRows.forEach(gesamtauswertungTableRow -> {
+            final AtomicInteger tableIndex = new AtomicInteger(0);
+            final List<List<GesamtauswertungTableColumn>> partition = ListUtils.partition(gesamtauswertungTableRow.getGesamtauswertungTableColumns(),
+                    MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
+            partition.forEach(gesamtauswertungTableColumns -> {
+                if (!rowsPerTable.containsKey(tableIndex.get())) {
+                    rowsPerTable.put(tableIndex.get(), new ArrayList<>());
+                }
+                final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
+                row.setCssColorBox(gesamtauswertungTableRow.getCssColorBox());
+                row.setLegend(gesamtauswertungTableRow.getLegend());
+                row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
+                rowsPerTable.get(tableIndex.getAndIncrement()).add(row);
+            });
+        });
+        return rowsPerTable;
     }
 
     /**
@@ -965,8 +997,10 @@ public class FillPdfBeanService {
     }
 
     public DatentabelleMessstellePdf fillDatentabellePdf(
-            final DatentabelleMessstellePdf datentabellePdf, final String messstelleId,
-            final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final DatentabelleMessstellePdf datentabellePdf,
+            final String messstelleId,
+            final MessstelleOptionsDTO options,
+            final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
         final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
