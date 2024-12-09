@@ -29,8 +29,8 @@ import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -62,19 +62,19 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
     @Autowired
     private ProcessZaehldatenBelastungsplanService processZaehldatenBelastungsplanService;
 
-    @MockBean
+    @MockitoBean
     private ZeitintervallRepository zeitintervallRepository;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
-    @MockBean
+    @MockitoBean
     private LadeZaehldatenService ladeZaehldatenService;
 
     @Test
