@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class BearbeiteZaehlstelleDTORandomFactory {
 
-    private final static FakeValuesService service = new FakeValuesService(new Locale("test"), new RandomService());
+    private final static FakeValuesService service = new FakeValuesService(new Locale.Builder().setLanguage("test").build(), new RandomService());
 
     private final static String BEZIRKNUMMER = "bezirknummer";
     private final static String BEZIRK = "bezirk";

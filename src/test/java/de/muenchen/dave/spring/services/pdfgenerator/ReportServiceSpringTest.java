@@ -14,8 +14,8 @@ import de.muenchen.dave.services.pdfgenerator.ReportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +34,11 @@ public class ReportServiceSpringTest {
 
     @Autowired
     ReportService reportService;
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
     @Test

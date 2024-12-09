@@ -33,8 +33,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -71,22 +71,22 @@ public class FillPdfBeanServiceSpringTest {
     public static final String MOCKABLE_ZAEHLUNG_ID = "6837e615-ea6e-4e42-9c6f-f9aadde6599f";
     public static final String DEPARTMENT = "TestOU";
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
     @Autowired
     private FillPdfBeanService fillPdfBeanService;
 
-    @MockBean
+    @MockitoBean
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndexService indexService;
 
     public static Zaehlung getZaehlung() {

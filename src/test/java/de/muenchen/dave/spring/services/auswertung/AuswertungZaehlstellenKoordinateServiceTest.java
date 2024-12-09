@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,19 +35,19 @@ import static org.mockito.Mockito.when;
 @Slf4j
 class AuswertungZaehlstellenKoordinateServiceTest {
 
-    @MockBean
-    private ZaehlstelleIndex zaehlstelleIndex;
-
-    @MockBean
-    private MessstelleIndex messstelleIndex;
-
-    @MockBean
-    private CustomSuggestIndex customSuggestIndex;
-
     @Autowired
     private AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService;
 
-    @MockBean
+    @MockitoBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockitoBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockitoBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockitoBean
     private ZaehlstelleIndexService indexService;
 
     @Test

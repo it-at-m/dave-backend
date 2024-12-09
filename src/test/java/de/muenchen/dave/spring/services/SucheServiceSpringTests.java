@@ -23,7 +23,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +31,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -67,15 +67,15 @@ public class SucheServiceSpringTests {
     SucheService service;
     @Autowired
     CacheManager cacheManager;
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
-    @MockBean
+    @MockitoBean
     private ElasticsearchOperations elasticsearchOperations;
-    @MockBean
+    @MockitoBean
     private ElasticsearchClient elasticsearchClient;
 
     @Test
