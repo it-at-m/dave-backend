@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GangliniePdf extends DiagrammPdf {
+public class GanglinieMessstellePdf extends DiagrammMessstellePdf {
 
     private String ganglinieCssMustachePart;
 
