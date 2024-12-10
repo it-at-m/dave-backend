@@ -26,8 +26,8 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -63,19 +63,19 @@ public class GenerateCsvServiceSpringTest {
     @Autowired
     private GenerateCsvService generateCsvService;
 
-    @MockBean
+    @MockitoBean
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndexService indexService;
 
     private static Zaehlung getZaehlung() {

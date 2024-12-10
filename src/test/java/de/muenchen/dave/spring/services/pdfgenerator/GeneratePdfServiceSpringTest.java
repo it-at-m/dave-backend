@@ -11,8 +11,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -40,11 +40,11 @@ public class GeneratePdfServiceSpringTest {
     private static final String EXPECTED_RES_PATH = "/pdf/expected-pdfs/";
     @Autowired
     GeneratePdfService generatePdfService;
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
     /**

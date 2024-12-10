@@ -71,7 +71,7 @@ public class MesswerteService {
                 .toList();
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
-        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options));
+        processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
         processedZaehldaten
@@ -140,8 +140,8 @@ public class MesswerteService {
     public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
-        request.setStartDate(LocalDate.of(zeitraum.start.getYear(), zeitraum.start.getMonthValue(), 1));
-        request.setEndDate(LocalDate.of(zeitraum.end.getYear(), zeitraum.end.getMonthValue(), zeitraum.end.atEndOfMonth().getDayOfMonth()));
+        request.setStartDate(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
+        request.setEndDate(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(), zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
         request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
 
         final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(request).block();

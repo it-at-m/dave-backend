@@ -601,9 +601,9 @@ public class ZaehlstelleIndexService {
     }
 
     /**
-     * Methode zum aktualiseren einer Zählstelle.
+     * Methode zum Aktualisieren einer Zählstelle.
      *
-     * @param zaehlstelle zu aktualisierende
+     * @param zaehlstelle zum Aktualisieren
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
     public void erneuereZaehlstelle(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {

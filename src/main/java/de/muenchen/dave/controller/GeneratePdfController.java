@@ -1,7 +1,9 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
@@ -44,6 +46,7 @@ public class GeneratePdfController {
     private static final String HTTP_HEADER_FILENAME = "davePdf.pdf";
     private static final String REQUEST_PART_DEPARTMENT = "department";
     private static final String REQUEST_PART_OPTIONS = "options";
+    private static final String REQUEST_PART_AUSWERTUNG = "auswertung";
     private static final String REQUEST_PART_CHART_AS_BASE64_PNG = "chartAsBase64Png";
     private static final String REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG = "schematischeUebersichtAsBase64Png";
     private static final String REQUEST_PARAMETER_CHARTTYPE = "charttype";
@@ -152,7 +155,6 @@ public class GeneratePdfController {
         } catch (DataNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
     }
 
     /**
@@ -169,6 +171,32 @@ public class GeneratePdfController {
             final byte[] pdf;
             pdf = reportService.generateReportPdf(assetList, department);
             final HttpHeaders headers = getHttpHeadersForPdfFile(pdf.length);
+            return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+        } catch (IOException ioe) {
+            log.error(FEHLER_PDF_ERSTELLUNG, ioe);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, FEHLER_PDF_ERSTELLUNG);
+        }
+    }
+
+    /**
+     * Generiert ein PDF-File fuer die Gesamtauswertung über (potenziell) mehrere Messstellen
+     * in einem definierten Zeitbereich, z.B. bestimmte Jahre, Monate oder Quartale.
+     *
+     * @param options Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png Ein Graph als PNG in Base64.
+     * @param department Organisationseinheit des Benutzers
+     * @return PDF-Datei als byte[]
+     */
+    @PostMapping(value = "/auswertung")
+    public ResponseEntity<byte[]> generatePdfAuswertung(
+            @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
+            @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDTO options,
+            @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final LadeZaehldatenSteplineDTO auswertung,
+            @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png) {
+        try {
+            final byte[] pdf = generatePdfService.generateGesamtauswertungPdf(options, auswertung, chartAsBase64Png, department);
+            final HttpHeaders headers = getHttpHeadersForPdfFile(pdf.length);
+
             return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
         } catch (IOException ioe) {
             log.error(FEHLER_PDF_ERSTELLUNG, ioe);

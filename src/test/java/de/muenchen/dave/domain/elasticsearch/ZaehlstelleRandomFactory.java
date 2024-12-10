@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ZaehlstelleRandomFactory {
-    private final static FakeValuesService service = new FakeValuesService(new Locale("test"), new RandomService());
+    private final static FakeValuesService service = new FakeValuesService(new Locale.Builder().setLanguage("test").build(), new RandomService());
     private final static String BEZIRKNUMMER = "bezirknummer";
     private final static String BEZIRK = "bezirk";
     private final static String LAT = "lat";

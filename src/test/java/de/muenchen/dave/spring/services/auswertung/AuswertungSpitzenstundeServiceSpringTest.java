@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,13 +37,13 @@ import static org.hamcrest.Matchers.is;
 @Slf4j
 class AuswertungSpitzenstundeServiceSpringTest {
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
     @Autowired

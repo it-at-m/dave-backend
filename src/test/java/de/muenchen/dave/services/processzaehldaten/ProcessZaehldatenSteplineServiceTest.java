@@ -383,24 +383,24 @@ class ProcessZaehldatenSteplineServiceTest {
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
 
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, 42);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 42);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(60));
 
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, 100);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 100);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, 120);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 120);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
 
         final Integer value = null;
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
     }
 
@@ -409,24 +409,24 @@ class ProcessZaehldatenSteplineServiceTest {
         final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
         ladeZaehldatenStepline.setRangeMax(0);
 
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(42));
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(42));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(60));
 
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(100));
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(100));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(120));
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(120));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
 
         final BigDecimal value = null;
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedToHundredInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
     }
 
@@ -454,34 +454,6 @@ class ProcessZaehldatenSteplineServiceTest {
         ladeZaehldatenStepline.setRangeMaxPercent(16);
         ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(16));
-
-    }
-
-    @Test
-    public void setLegendInZaehldatenStepline() {
-        final LadeZaehldatenSteplineDTO ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
-        ladeZaehldatenStepline.setLegend(new ArrayList<>());
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "B");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(List.of("B")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "C");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "A");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C", "A")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "A");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C", "A")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "B");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C", "A")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "C");
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C", "A")));
-
-        ProcessZaehldatenSteplineService.setLegendInZaehldatenStepline(ladeZaehldatenStepline, null);
-        assertThat(ladeZaehldatenStepline.getLegend(), is(Arrays.asList("B", "C", "A", null)));
 
     }
 
@@ -641,53 +613,4 @@ class ProcessZaehldatenSteplineServiceTest {
         assertThat(seriesEntrySecondChart.getXAxisIndex(), is(1));
         assertThat(seriesEntrySecondChart.getYAxisIndex(), is(3));
     }
-
-    @Test
-    public void setSeriesIndexForFirstChartValue() {
-        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryBaseDTO();
-        seriesEntryFirstChart.setXAxisIndex(-1);
-        seriesEntryFirstChart.setYAxisIndex(-1);
-
-        ProcessZaehldatenSteplineService.setSeriesIndexForFirstChartValue(seriesEntryFirstChart);
-
-        assertThat(seriesEntryFirstChart.getXAxisIndex(), is(0));
-        assertThat(seriesEntryFirstChart.getYAxisIndex(), is(0));
-    }
-
-    @Test
-    public void setSeriesIndexForFirstChartPercent() {
-        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryBaseDTO();
-        seriesEntryFirstChart.setXAxisIndex(-1);
-        seriesEntryFirstChart.setYAxisIndex(-1);
-
-        ProcessZaehldatenSteplineService.setSeriesIndexForFirstChartPercent(seriesEntryFirstChart);
-
-        assertThat(seriesEntryFirstChart.getXAxisIndex(), is(0));
-        assertThat(seriesEntryFirstChart.getYAxisIndex(), is(1));
-    }
-
-    @Test
-    public void setSeriesIndexForSecondChartValue() {
-        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryBaseDTO();
-        seriesEntryFirstChart.setXAxisIndex(-1);
-        seriesEntryFirstChart.setYAxisIndex(-1);
-
-        ProcessZaehldatenSteplineService.setSeriesIndexForSecondChartValue(seriesEntryFirstChart);
-
-        assertThat(seriesEntryFirstChart.getXAxisIndex(), is(1));
-        assertThat(seriesEntryFirstChart.getYAxisIndex(), is(2));
-    }
-
-    @Test
-    public void setSeriesIndexForSecondChartPercent() {
-        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryBaseDTO();
-        seriesEntryFirstChart.setXAxisIndex(-1);
-        seriesEntryFirstChart.setYAxisIndex(-1);
-
-        ProcessZaehldatenSteplineService.setSeriesIndexForSecondChartPercent(seriesEntryFirstChart);
-
-        assertThat(seriesEntryFirstChart.getXAxisIndex(), is(1));
-        assertThat(seriesEntryFirstChart.getYAxisIndex(), is(3));
-    }
-
 }

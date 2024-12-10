@@ -24,7 +24,7 @@ public class ZaehlungRandomFactory {
     public static Zaehlung getOne() {
         final Zaehlung z = new Zaehlung();
 
-        final Faker faker = Faker.instance(new Locale("test"));
+        final Faker faker = Faker.instance(new Locale.Builder().setLanguage("test").build());
 
         // create random date
         final Date date = Faker.instance().date().between(new GregorianCalendar(1990, 0, 1).getTime(), new Date());
@@ -78,7 +78,7 @@ public class ZaehlungRandomFactory {
         final Set<Fahrzeug> k = new HashSet<>();
 
         for (int i = 0; i < x; i++) {
-            k.add(Fahrzeug.valueOf(Faker.instance(new Locale("test")).resolve("zaehlung.kategorie")));
+            k.add(Fahrzeug.valueOf(Faker.instance(new Locale.Builder().setLanguage("test").build()).resolve("zaehlung.kategorie")));
         }
 
         return Lists.newArrayList(k);

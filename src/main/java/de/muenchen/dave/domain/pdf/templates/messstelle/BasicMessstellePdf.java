@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BasicPdf extends PdfBean {
+public class BasicMessstellePdf extends PdfBean {
 
     private MessstelleninformationenPdfComponent messstelleninformationen;
 
@@ -15,7 +15,7 @@ public class BasicPdf extends PdfBean {
 
     private String documentTitle;
 
-    public BasicPdf() {
+    public BasicMessstellePdf() {
         messstelleninformationen = new MessstelleninformationenPdfComponent();
     }
 

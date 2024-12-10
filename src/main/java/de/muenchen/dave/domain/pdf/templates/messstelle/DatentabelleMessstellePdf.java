@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DatentabellePdf extends BasicPdf {
+public class DatentabelleMessstellePdf extends BasicMessstellePdf {
 
     private String datentabelleTableMustachePart;
 

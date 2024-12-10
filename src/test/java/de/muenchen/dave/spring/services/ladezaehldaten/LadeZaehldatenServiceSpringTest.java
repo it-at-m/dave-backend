@@ -30,14 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -67,16 +66,16 @@ class LadeZaehldatenServiceSpringTest {
     @Autowired
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
+    @MockitoBean
     private ZeitintervallRepository zeitintervallRepository;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
 
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
     @BeforeEach

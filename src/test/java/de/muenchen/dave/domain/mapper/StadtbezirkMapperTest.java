@@ -10,8 +10,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
@@ -27,11 +27,11 @@ public class StadtbezirkMapperTest {
     private static final Faker fakerInstance = Faker.instance();
     @Autowired
     private StadtbezirkMapper stadtbezirkMapper;
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
-    @MockBean
+    @MockitoBean
     private MessstelleIndex messstelleIndex;
-    @MockBean
+    @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
 
     @Test
