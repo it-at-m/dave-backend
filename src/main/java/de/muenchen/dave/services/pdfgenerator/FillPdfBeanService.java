@@ -922,7 +922,8 @@ public class FillPdfBeanService {
             final List<String> legend,
             final boolean hasMultipleMessstellen,
             final List<String> header) {
-        final List<GesamtauswertungTableRow> gesamtauswertungTableRows = IntStream.range(0, seriesEntries.size())
+
+        return IntStream.range(0, seriesEntries.size())
                 .mapToObj(index -> {
                     final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
                     row.setLegend(legend.get(index));
@@ -948,8 +949,6 @@ public class FillPdfBeanService {
                     }
                     return row;
                 }).toList();
-
-        return gesamtauswertungTableRows;
     }
 
     /**

@@ -28,7 +28,6 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.BasicMessstellePdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.flywaydb.core.internal.util.CollectionsUtils;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -171,7 +170,7 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
         assertThat(informationen.getMesszeitraum(),
-                is(String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(0).format(DDMMYYYY))));
+                is(String.format("%s - %s", optionsDTO.getZeitraum().getFirst().format(DDMMYYYY), optionsDTO.getZeitraum().getFirst().format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
         assertThat(informationen.isWochentagNeeded(), is(true));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
@@ -181,7 +180,7 @@ class FillPdfBeanServiceTest {
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
-        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().get(0).format(DDMMYYYY)));
+        assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY)));
         assertThat(informationen.isWochentagNeeded(), is(false));
         assertThat(informationen.getWochentag(), is(nullValue()));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
@@ -198,7 +197,7 @@ class FillPdfBeanServiceTest {
 
         assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(FillPdfBeanService.CHART_TITLE_GESAMTE_MESSSTELLE));
 
-        final Messquerschnitt messquerschnitt = messstelle.getMessquerschnitte().get(0);
+        final Messquerschnitt messquerschnitt = messstelle.getMessquerschnitte().getFirst();
         optionsDTO.setMessquerschnittIds(Set.of(messquerschnitt.getMqId()));
         String expectedChartTitle = messquerschnitt.getMqId() +
                 StringUtils.SPACE +
@@ -224,7 +223,6 @@ class FillPdfBeanServiceTest {
 
     @Test
     void fillMessstelleninformationenGesamtauswertung() {
-        final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final MessstelleAuswertungOptionsDTO optionsDTO = new MessstelleAuswertungOptionsDTO();
