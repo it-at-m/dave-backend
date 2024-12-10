@@ -79,7 +79,7 @@ public class FillPdfBeanService {
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
     public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
     public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
-    public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Alle ausgewählten Messstelle";
+    public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Alle ausgewählten Messstellen";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
@@ -102,7 +102,7 @@ public class FillPdfBeanService {
     private static final int UHRZEIT_HOURS_23 = 23;
     private static final int UHRZEIT_MINUTES_59 = 59;
     private static final int MAX_ELEMENTS_IN_GANGLINIE_TABLE = 13;
-    private static final int MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE = 12;
+    protected static final int MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE = 12;
     private static final String CELL_WIDTH_20_MM = "20mm";
     private static final String CELL_WIDTH_UNITS = "mm";
 
@@ -355,6 +355,10 @@ public class FillPdfBeanService {
                                     .filter(messquerschnitt -> messstelleAuswertungIdDTO.getMqIds().contains(messquerschnitt.getMqId()))
                                     .forEach(messquerschnitt -> {
                                         chartTitle.append(messquerschnitt.getMqId());
+                                        chartTitle.append(StringUtils.SPACE);
+                                        chartTitle.append("-");
+                                        chartTitle.append(StringUtils.SPACE);
+                                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getFahrtrichtung(), KEINE_DATEN_VORHANDEN));
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
@@ -858,8 +862,9 @@ public class FillPdfBeanService {
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
-            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = getRowsPerTable(seriesEntries,
+            final List<GesamtauswertungTableRow> gesamtauswertungTableRows = getGesamtauswertungTableRows(seriesEntries,
                     legend, hasMultipleMessstellen, header);
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = splitTableRowsIfNecessary(gesamtauswertungTableRows);
 
             final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable);
 
@@ -878,11 +883,11 @@ public class FillPdfBeanService {
     }
 
     /**
-     * TODO testen und beschreiben
+     * Erzeugt eine Liste an Tabellen mit den entsprechenden Zeilen.
      *
-     * @param header
-     * @param rowsPerTable
-     * @return
+     * @param header Header
+     * @param rowsPerTable Zeilen pro Tabelle
+     * @return Liste an anzuzeigenden Tabellen
      */
     protected static List<GesamtauswertungTable> getGesamtauswertungTables(
             final List<String> header,
@@ -903,15 +908,16 @@ public class FillPdfBeanService {
     }
 
     /**
-     * TODO umbenennen, testen und beschreiben
+     * Erzeugt aus den ausgewerteten Daten einzelne Zeile zur Darstellung als Tabelle.
+     * Sind in einer Reihe zu viele Einträge, so wird diese auf mehrere Tabellen aufgeteilt.
      *
-     * @param seriesEntries
-     * @param legend
-     * @param hasMultipleMessstellen
-     * @param header
-     * @return
+     * @param seriesEntries ausgewertete Daten
+     * @param legend Legende der Daten
+     * @param hasMultipleMessstellen Flag, ob mehrere Messstellen ausgewertet wurden
+     * @param header Headerzeile der Tabellen
+     * @return Map<Nummer der Tabelle, Zeilen pro Tabelle>
      */
-    protected static Map<Integer, List<GesamtauswertungTableRow>> getRowsPerTable(
+    protected static List<GesamtauswertungTableRow> getGesamtauswertungTableRows(
             final List<StepLineSeriesEntryBaseDTO> seriesEntries,
             final List<String> legend,
             final boolean hasMultipleMessstellen,
@@ -943,6 +949,16 @@ public class FillPdfBeanService {
                     return row;
                 }).toList();
 
+        return gesamtauswertungTableRows;
+    }
+
+    /**
+     * Wenn eine Row zu lang für die Tabelle ist, wird diese auf mehrere Tabellen vereteilt.
+     *
+     * @param gesamtauswertungTableRows Liste der Zeilen
+     * @return Map<Nummer der Tabelle, Zeilen pro Tabelle>
+     */
+    protected static Map<Integer, List<GesamtauswertungTableRow>> splitTableRowsIfNecessary(final List<GesamtauswertungTableRow> gesamtauswertungTableRows) {
         final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = new HashMap<>();
         gesamtauswertungTableRows.forEach(gesamtauswertungTableRow -> {
             final AtomicInteger tableIndex = new AtomicInteger(0);
