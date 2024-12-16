@@ -79,7 +79,7 @@ public class FillPdfBeanService {
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
     public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
     public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
-    public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Alle ausgewählten Messstellen";
+    public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Ausgewählte Messstellen";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
