@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS dave.optionsmenuesettings (
+    id character varying(36) NOT NULL,
+    created_time timestamp without time zone NOT NULL,
+    version bigint,
+    fahrzeugklassen character varying(255),
+    intervall character varying(255),
+    choosable_intervals jsonb NOT NULL,
+    kraftfahrzeugverkehr boolean NOT NULL,
+    schwerverkehr boolean NOT NULL,
+    gueterverkehr boolean NOT NULL,
+    schwerverkehrsanteil_prozent boolean NOT NULL,
+    gueterverkehrsanteil_prozent boolean NOT NULL,
+    radverkehr boolean NOT NULL,
+    fussverkehr boolean NOT NULL,
+    lastkraftwagen boolean NOT NULL,
+    lastzuege boolean NOT NULL,
+    busse boolean NOT NULL,
+    kraftraeder boolean NOT NULL,
+    personenkraftwagen boolean NOT NULL,
+    lieferwagen boolean NOT NULL,
+    CONSTRAINT optionsmenuesettings_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_optionsmenuesettings_fahrzeugklassen_intervall UNIQUE (bezeichnung, gueltig_ab)
+);
