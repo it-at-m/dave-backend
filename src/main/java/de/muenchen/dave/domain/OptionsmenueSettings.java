@@ -2,6 +2,7 @@ package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -21,8 +22,11 @@ import java.util.List;
         )
 })
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper=true)
 public class OptionsmenueSettings extends BaseEntity {
+
+    @Embedded
+    private OptionsmenueSettingsKey fahrzeugklassenAndIntervall;
 
     @Column(nullable = false)
     private String fahrzeugklassen;
