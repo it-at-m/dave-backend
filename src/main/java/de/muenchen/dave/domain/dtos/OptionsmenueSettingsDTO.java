@@ -10,10 +10,6 @@ public class OptionsmenueSettingsDTO {
 
     private OptionsmenueSettingsKeyDTO fahrzeugklassenAndIntervall;
 
-    private String fahrzeugklassen;
-
-    private String intervall;
-
     private List<ZaehldatenIntervall> choosableIntervals;
 
     private boolean kraftfahrzeugverkehr;

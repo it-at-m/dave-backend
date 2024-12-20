@@ -19,13 +19,12 @@ public class OptionsmenueSettingsService {
 
     private final OptionsmenueSettingsMapper optionsmenueSettingsMapper;
 
-    public Map<OptionsmenueSettingsKeyDTO, OptionsmenueSettingsDTO> getOptionsmenueSettings() {
+    public Map<OptionsmenueSettingsKeyDTO, OptionsmenueSettingsDTO> getAllOptionsmenueSettings() {
         return optionsmenueSettingsRepository
                 .findAll()
                 .stream()
                 .map(optionsmenueSettingsMapper::toDto)
                 .collect(Collectors.toMap(OptionsmenueSettingsDTO::getFahrzeugklassenAndIntervall, Function.identity()));
     }
-
 
 }

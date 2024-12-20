@@ -20,8 +20,8 @@ public class OptionsmenueSettingsController {
     private final OptionsmenueSettingsService optionsmenueSettingsService;
 
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<OptionsmenueSettingsKeyDTO, OptionsmenueSettingsDTO>> getOptionsmenueSettings() {
-        final var settings = optionsmenueSettingsService.getOptionsmenueSettings();
+    public ResponseEntity<Map<OptionsmenueSettingsKeyDTO, OptionsmenueSettingsDTO>> getAllOptionsmenueSettings() {
+        final var settings = optionsmenueSettingsService.getAllOptionsmenueSettings();
         return ResponseEntity.ok(settings);
     }
 

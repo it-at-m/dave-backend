@@ -1,5 +1,7 @@
 package de.muenchen.dave.domain;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
@@ -11,9 +13,9 @@ import lombok.EqualsAndHashCode;
 public class OptionsmenueSettingsKey {
 
     @Column(nullable = false)
-    private String fahrzeugklassen;
+    private Fahrzeugklasse fahrzeugklasse;
 
     @Column(nullable = false)
-    private String intervall;
+    private ZaehldatenIntervall intervall;
 
 }

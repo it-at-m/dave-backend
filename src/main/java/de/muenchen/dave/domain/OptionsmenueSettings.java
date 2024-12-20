@@ -28,12 +28,6 @@ public class OptionsmenueSettings extends BaseEntity {
     @Embedded
     private OptionsmenueSettingsKey fahrzeugklassenAndIntervall;
 
-    @Column(nullable = false)
-    private String fahrzeugklassen;
-
-    @Column(nullable = false)
-    private String intervall;
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false)
     private List<ZaehldatenIntervall> choosableIntervals;

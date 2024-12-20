@@ -1,12 +1,14 @@
 package de.muenchen.dave.domain.dtos;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import lombok.Data;
 
 @Data
 public class OptionsmenueSettingsKeyDTO {
 
-    private String fahrzeugklassen;
+    private Fahrzeugklasse fahrzeugklasse;
 
-    private String intervall;
+    private ZaehldatenIntervall intervall;
 
 }
