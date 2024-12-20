@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS dave.optionsmenuesettings (
     personenkraftwagen boolean NOT NULL,
     lieferwagen boolean NOT NULL,
     CONSTRAINT optionsmenuesettings_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_optionsmenuesettings_fahrzeugklassen_intervall UNIQUE (bezeichnung, gueltig_ab)
+    CONSTRAINT unique_optionsmenuesettings_fahrzeugklassen_intervall UNIQUE (fahrzeugklassen, intervall)
 );
