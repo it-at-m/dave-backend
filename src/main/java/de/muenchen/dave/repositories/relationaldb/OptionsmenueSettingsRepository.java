@@ -8,4 +8,5 @@ import de.muenchen.dave.domain.OptionsmenueSettings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
-public interface OptionsmenueSettingsRepository extends JpaRepository<OptionsmenueSettings, UUID> {}
+public interface OptionsmenueSettingsRepository extends JpaRepository<OptionsmenueSettings, UUID> {
+}

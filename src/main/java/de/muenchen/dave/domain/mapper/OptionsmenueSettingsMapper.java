@@ -10,5 +10,4 @@ public interface OptionsmenueSettingsMapper {
 
     OptionsmenueSettingsDTO toDto(final OptionsmenueSettings optionsmenueSettings);
 
-
 }

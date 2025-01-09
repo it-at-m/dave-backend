@@ -15,14 +15,15 @@ import java.util.List;
 
 @Entity
 @Table(
-        uniqueConstraints={
-        @UniqueConstraint(
-                name = "unique_optionsmenuesettings_fahrzeugklassen_intervall",
-                columnNames = {"fahrzeugklassen", "intervall"}
-        )
-})
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_optionsmenuesettings_fahrzeugklassen_intervall",
+                        columnNames = { "fahrzeugklassen", "intervall" }
+                )
+        }
+)
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class OptionsmenueSettings extends BaseEntity {
 
     @Embedded
