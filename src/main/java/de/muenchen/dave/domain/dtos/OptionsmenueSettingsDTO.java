@@ -10,32 +10,29 @@ public class OptionsmenueSettingsDTO {
 
     private OptionsmenueSettingsKeyDTO fahrzeugklassenAndIntervall;
 
-    private List<ZaehldatenIntervall> choosableIntervals;
+    private List<ZaehldatenIntervall> kraftfahrzeugverkehrChoosableIntervals;
 
-    private boolean kraftfahrzeugverkehr;
+    private List<ZaehldatenIntervall> schwerverkehrChoosableIntervals;
 
-    private boolean schwerverkehr;
+    private List<ZaehldatenIntervall> gueterverkehrChoosableIntervals;
 
-    private boolean gueterverkehr;
+    private List<ZaehldatenIntervall> schwerverkehrsanteilProzentChoosableIntervals;
 
-    private boolean schwerverkehrsanteilProzent;
+    private List<ZaehldatenIntervall> gueterverkehrsanteilProzentChoosableIntervals;
 
-    private boolean gueterverkehrsanteilProzent;
+    private List<ZaehldatenIntervall> radverkehrChoosableIntervals;
 
-    private boolean radverkehr;
+    private List<ZaehldatenIntervall> fussverkehrChoosableIntervals;
 
-    private boolean fussverkehr;
+    private List<ZaehldatenIntervall> lastkraftwagenChoosableIntervals;
 
-    private boolean lastkraftwagen;
+    private List<ZaehldatenIntervall> lastzuegeChoosableIntervals;
 
-    private boolean lastzuege;
+    private List<ZaehldatenIntervall> busseChoosableIntervals;
 
-    private boolean busse;
+    private List<ZaehldatenIntervall> kraftraederChoosableIntervals;
 
-    private boolean kraftraeder;
+    private List<ZaehldatenIntervall> personenkraftwagenChoosableIntervals;
 
-    private boolean personenkraftwagen;
-
-    private boolean lieferwagen;
-
+    private List<ZaehldatenIntervall> lieferwagenChoosableIntervals;
 }
