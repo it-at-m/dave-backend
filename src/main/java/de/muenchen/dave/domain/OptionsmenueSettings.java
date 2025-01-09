@@ -1,9 +1,11 @@
 package de.muenchen.dave.domain;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
@@ -17,8 +19,8 @@ import java.util.List;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_optionsmenuesettings_fahrzeugklassen_intervall",
-                        columnNames = { "fahrzeugklassen", "intervall" }
+                        name = "unique_optionsmenuesettings_fahrzeugklasse_intervall",
+                        columnNames = { "fahrzeugklasse", "intervall" }
                 )
         }
 )
@@ -26,59 +28,77 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class OptionsmenueSettings extends BaseEntity {
 
-    @Embedded
-    private OptionsmenueSettingsKey fahrzeugklassenAndIntervall;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Fahrzeugklasse fahrzeugklasse;
 
-    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ZaehldatenIntervall intervall;
+
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> kraftfahrzeugverkehrChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> schwerverkehrChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> gueterverkehrChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> schwerverkehrsanteilProzentChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> gueterverkehrsanteilProzentChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> radverkehrChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> fussverkehrChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lastkraftwagenChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lastzuegeChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> busseChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> kraftraederChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> personenkraftwagenChoosableIntervals;
 
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lieferwagenChoosableIntervals;
 
 }

@@ -1,12 +1,12 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.OptionsmenueSettings;
-import de.muenchen.dave.domain.OptionsmenueSettingsKey;
 import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
-import de.muenchen.dave.domain.dtos.OptionsmenueSettingsKeyDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.OptionsmenueSettingsMapperImpl;
+import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.OptionsmenueSettingsRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -36,46 +37,91 @@ class OptionsmenueSettingsServiceTest {
     }
 
     @Test
-    void getAllOptionsmenueSettings() {
+    void getByReadMessfaehigkeit() {
+        final var optionsmenueSettings = new OptionsmenueSettings();
+        optionsmenueSettings.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        optionsmenueSettings.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        optionsmenueSettings.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
 
-        var optionsmenueSettingsKey1 = new OptionsmenueSettingsKey();
-        optionsmenueSettingsKey1.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
-        optionsmenueSettingsKey1.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        var optionsmenueSettings1 = new OptionsmenueSettings();
-        optionsmenueSettings1.setFahrzeugklassenAndIntervall(optionsmenueSettingsKey1);
-        optionsmenueSettings1.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
+        final var readMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        readMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        readMessfaehigkeit.setFahrzeugklassen("ACHT_PLUS_EINS");
 
-        var optionsmenueSettingsKey2 = new OptionsmenueSettingsKey();
-        optionsmenueSettingsKey2.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        optionsmenueSettingsKey2.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
-        var optionsmenueSettings2 = new OptionsmenueSettings();
-        optionsmenueSettings2.setFahrzeugklassenAndIntervall(optionsmenueSettingsKey2);
-        optionsmenueSettings2.setKraftraederChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT));
-        optionsmenueSettings2.setRadverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_VIERTEL));
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.of(optionsmenueSettings));
 
-        Mockito.when(optionsmenueSettingsRepository.findAll()).thenReturn(List.of(optionsmenueSettings1, optionsmenueSettings2));
+        final var result = optionsmenueSettingsService.getByReadMessfaehigkeit(readMessfaehigkeit);
 
-        final var result = optionsmenueSettingsService.getAllOptionsmenueSettings();
+        final var expected = new OptionsmenueSettingsDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
 
-        var optionsmenueSettingsKeyDto1 = new OptionsmenueSettingsKeyDTO();
-        optionsmenueSettingsKeyDto1.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
-        optionsmenueSettingsKeyDto1.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        var optionsmenueSettingsDto1 = new OptionsmenueSettingsDTO();
-        optionsmenueSettingsDto1.setFahrzeugklassenAndIntervall(optionsmenueSettingsKeyDto1);
-        optionsmenueSettingsDto1.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
+        Assertions.assertThat(result).isEqualTo(expected);
 
-        var optionsmenueSettingsKeyDto2 = new OptionsmenueSettingsKeyDTO();
-        optionsmenueSettingsKeyDto2.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        optionsmenueSettingsKeyDto2.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
-        var optionsmenueSettingsDto2 = new OptionsmenueSettingsDTO();
-        optionsmenueSettingsDto2.setFahrzeugklassenAndIntervall(optionsmenueSettingsKeyDto2);
-        optionsmenueSettingsDto2.setKraftraederChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT));
-        optionsmenueSettingsDto2.setRadverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_VIERTEL));
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+    }
 
-        final var expected = List.of(optionsmenueSettingsDto1, optionsmenueSettingsDto2);
+    @Test
+    void getByReadMessfaehigkeitException() {
+        final var readMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        readMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        readMessfaehigkeit.setFahrzeugklassen("ACHT_PLUS_EINS");
 
-        Assertions.assertThat(result)
-                .isNotEmpty()
-                .containsExactlyInAnyOrderElementsOf(expected);
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.empty());
+
+        Assertions
+                .assertThatThrownBy(() -> optionsmenueSettingsService.getByReadMessfaehigkeit(readMessfaehigkeit))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+    }
+
+    @Test
+    void getByFahrzeugklasseAndIntervall() {
+        final var optionsmenueSettings = new OptionsmenueSettings();
+        optionsmenueSettings.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        optionsmenueSettings.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        optionsmenueSettings.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
+
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.of(optionsmenueSettings));
+
+        final var result = optionsmenueSettingsService.getByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+
+        final var expected = new OptionsmenueSettingsDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT, ZaehldatenIntervall.STUNDE_HALB));
+
+        Assertions.assertThat(result).isEqualTo(expected);
+
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+    }
+
+    @Test
+    void getByFahrzeugklasseAndIntervallException() {
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.empty());
+
+        Assertions
+                .assertThatThrownBy(
+                        () -> optionsmenueSettingsService.getByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .isInstanceOf(ResourceNotFoundException.class);
+
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
     }
 }

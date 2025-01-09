@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.OptionsmenueSettingsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final OptionsmenueSettingsService optionsmenueSettingsService;
 
     public Messstelle getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
@@ -46,15 +48,20 @@ public class MessstelleService {
     }
 
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
-        final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
+        final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final var readMessstelleInfo = messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
+        readMessstelleInfo.getMessfaehigkeiten().stream().forEach(messfaehigkeit -> {
+            final var optionsmenueSettings = optionsmenueSettingsService.getByReadMessfaehigkeit(messfaehigkeit);
+            messfaehigkeit.setOptionsmenueSettings(optionsmenueSettings);
+        });
+        return readMessstelleInfo;
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
-        final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        byIdOrThrowException.setMessfaehigkeiten(
-                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
-        return messstelleMapper.bean2editDto(byIdOrThrowException, stadtbezirkMapper);
+        final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        messstelle.setMessfaehigkeiten(
+                messstelle.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
+        return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {

@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import lombok.Data;
 
@@ -8,7 +9,9 @@ import java.util.List;
 @Data
 public class OptionsmenueSettingsDTO {
 
-    private OptionsmenueSettingsKeyDTO fahrzeugklassenAndIntervall;
+    private Fahrzeugklasse fahrzeugklasse;
+
+    private ZaehldatenIntervall intervall;
 
     private List<ZaehldatenIntervall> kraftfahrzeugverkehrChoosableIntervals;
 

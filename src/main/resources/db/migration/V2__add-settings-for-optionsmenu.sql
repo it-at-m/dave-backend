@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS dave.optionsmenuesettings (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
-    fahrzeugklassen character varying(255) NOT NULL,
+    fahrzeugklasse character varying(255) NOT NULL,
     intervall character varying(255) NOT NULL,
     kraftfahrzeugverkehr_choosable_intervals jsonb,
     schwerverkehr_choosable_intervals jsonb,
@@ -18,5 +18,5 @@ CREATE TABLE IF NOT EXISTS dave.optionsmenuesettings (
     personenkraftwagen_choosable_intervals jsonb,
     lieferwagen_choosable_intervals jsonb,
     CONSTRAINT optionsmenuesettings_pkey PRIMARY KEY (id),
-    CONSTRAINT unique_optionsmenuesettings_fahrzeugklassen_intervall UNIQUE (fahrzeugklassen, intervall)
+    CONSTRAINT unique_optionsmenuesettings_fahrzeugklasse_intervall UNIQUE (fahrzeugklasse, intervall)
 );
