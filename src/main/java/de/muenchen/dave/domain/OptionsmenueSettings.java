@@ -30,46 +30,55 @@ public class OptionsmenueSettings extends BaseEntity {
     private OptionsmenueSettingsKey fahrzeugklassenAndIntervall;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(nullable = false)
-    private List<ZaehldatenIntervall> choosableIntervals;
+    @Column
+    private boolean kraftfahrzeugverkehrChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean kraftfahrzeugverkehr;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean schwerverkehrChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean schwerverkehr;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean gueterverkehrChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean gueterverkehr;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean schwerverkehrsanteilProzentChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean schwerverkehrsanteilProzent;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean gueterverkehrsanteilProzentChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean gueterverkehrsanteilProzent;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean radverkehrChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean radverkehr;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean fussverkehrChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean fussverkehr;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean lastkraftwagenChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean lastkraftwagen;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean lastzuegeChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean lastzuege;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean busseChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean busse;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean kraftraederChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean kraftraeder;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean personenkraftwagenChoosableIntervals;
 
-    @Column(nullable = false)
-    private boolean personenkraftwagen;
-
-    @Column(nullable = false)
-    private boolean lieferwagen;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column
+    private boolean lieferwagenChoosableIntervals;
 
 }
