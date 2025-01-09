@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.List;
-import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -73,10 +72,10 @@ class OptionsmenueSettingsServiceTest {
         optionsmenueSettingsDto2.setKraftraederChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_KOMPLETT));
         optionsmenueSettingsDto2.setRadverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_VIERTEL));
 
-        final var expected = Map.of(optionsmenueSettingsKeyDto1, optionsmenueSettingsDto1, optionsmenueSettingsKeyDto2, optionsmenueSettingsDto2);
+        final var expected = List.of(optionsmenueSettingsDto1, optionsmenueSettingsDto2);
 
-        Assertions.assertThat(result.entrySet())
+        Assertions.assertThat(result)
                 .isNotEmpty()
-                .containsExactlyInAnyOrderElementsOf(expected.entrySet());
+                .containsExactlyInAnyOrderElementsOf(expected);
     }
 }
