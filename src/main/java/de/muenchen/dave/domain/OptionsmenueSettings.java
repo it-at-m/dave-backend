@@ -31,54 +31,54 @@ public class OptionsmenueSettings extends BaseEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean kraftfahrzeugverkehrChoosableIntervals;
+    private List<ZaehldatenIntervall> kraftfahrzeugverkehrChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean schwerverkehrChoosableIntervals;
+    private List<ZaehldatenIntervall> schwerverkehrChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean gueterverkehrChoosableIntervals;
+    private List<ZaehldatenIntervall> gueterverkehrChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean schwerverkehrsanteilProzentChoosableIntervals;
+    private List<ZaehldatenIntervall> schwerverkehrsanteilProzentChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean gueterverkehrsanteilProzentChoosableIntervals;
+    private List<ZaehldatenIntervall> gueterverkehrsanteilProzentChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean radverkehrChoosableIntervals;
+    private List<ZaehldatenIntervall> radverkehrChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean fussverkehrChoosableIntervals;
+    private List<ZaehldatenIntervall> fussverkehrChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean lastkraftwagenChoosableIntervals;
+    private List<ZaehldatenIntervall> lastkraftwagenChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean lastzuegeChoosableIntervals;
+    private List<ZaehldatenIntervall> lastzuegeChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean busseChoosableIntervals;
+    private List<ZaehldatenIntervall> busseChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean kraftraederChoosableIntervals;
+    private List<ZaehldatenIntervall> kraftraederChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean personenkraftwagenChoosableIntervals;
+    private List<ZaehldatenIntervall> personenkraftwagenChoosableIntervals;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column
-    private boolean lieferwagenChoosableIntervals;
+    private List<ZaehldatenIntervall> lieferwagenChoosableIntervals;
 
 }
