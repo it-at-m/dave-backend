@@ -31,7 +31,8 @@ public class OptionsmenueSettingsService {
         var optionsmenueSettings = optionsmenueSettingsRepository
                 .findByFahrzeugklasseAndIntervall(fahrzeugklasse, intervall)
                 .orElseGet(() -> {
-                    log.error("Die für die Messfähigkeit gesuchten Einstellungen des Optionsmenüs wurden nicht gefunden. Es wird stattdessen ein Fluchtwert zurückgegeben.");
+                    log.error(
+                            "Die für die Messfähigkeit gesuchten Einstellungen des Optionsmenüs wurden nicht gefunden. Es wird stattdessen ein Fluchtwert zurückgegeben.");
                     return this.getDefaultOptionsmenueSettings();
                 });
         return optionsmenueSettingsMapper.toDto(optionsmenueSettings);
@@ -40,6 +41,6 @@ public class OptionsmenueSettingsService {
     protected OptionsmenueSettings getDefaultOptionsmenueSettings() {
         return optionsmenueSettingsRepository
                 .findByFahrzeugklasseAndIntervall(null, null)
-                .orElseThrow(() ->  new ResourceNotFoundException("Der Fluchtwert für Einstellungen des Optionsmenüs wurde nicht gefunden."));
+                .orElseThrow(() -> new ResourceNotFoundException("Der Fluchtwert für Einstellungen des Optionsmenüs wurde nicht gefunden."));
     }
 }
