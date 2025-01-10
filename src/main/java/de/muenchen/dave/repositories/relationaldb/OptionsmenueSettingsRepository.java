@@ -16,4 +16,5 @@ public interface OptionsmenueSettingsRepository extends JpaRepository<Optionsmen
 
     Optional<OptionsmenueSettings> findByFahrzeugklasseAndIntervall(final Fahrzeugklasse fahrzeugklasse, final ZaehldatenIntervall intervall);
 
+    Optional<OptionsmenueSettings> findByFahrzeugklasseIsNullAndIntervallIsNull();
 }

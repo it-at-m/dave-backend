@@ -78,7 +78,7 @@ class OptionsmenueSettingsServiceTest {
         final var defaultOptionsmenueSettings = new OptionsmenueSettings();
         defaultOptionsmenueSettings.setBusseChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(null, null))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.of(defaultOptionsmenueSettings));
 
         final var result = optionsmenueSettingsService.getByReadMessfaehigkeit(readMessfaehigkeit);
@@ -94,7 +94,7 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 
     @Test
@@ -104,7 +104,11 @@ class OptionsmenueSettingsServiceTest {
         readMessfaehigkeit.setFahrzeugklassen(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Mockito.any(), Mockito.any()))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.empty());
+
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.empty());
 
         Assertions
@@ -117,7 +121,7 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 
     @Test
@@ -154,7 +158,7 @@ class OptionsmenueSettingsServiceTest {
         final var defaultOptionsmenueSettings = new OptionsmenueSettings();
         defaultOptionsmenueSettings.setBusseChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(null, null))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.of(defaultOptionsmenueSettings));
 
         final var result = optionsmenueSettingsService.getByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
@@ -170,13 +174,17 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 
     @Test
     void getByFahrzeugklasseAndIntervallExceptionBecauseNoDefaultOptionsmenueSettingsIsDefined() {
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Mockito.any(), Mockito.any()))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .thenReturn(Optional.empty());
+
+        Mockito
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.empty());
 
         Assertions
@@ -190,7 +198,7 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 
     @Test
@@ -198,7 +206,7 @@ class OptionsmenueSettingsServiceTest {
         final var defaultOptionsmenueSettings = new OptionsmenueSettings();
         defaultOptionsmenueSettings.setBusseChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(null, null))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.of(defaultOptionsmenueSettings));
 
         final var result = optionsmenueSettingsService.getDefaultOptionsmenueSettings();
@@ -210,13 +218,13 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 
     @Test
     void getDefaultOptionsmenueSettingsExceptionBecauseNoDefaultOptionsmenueSettingsIsDefined() {
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(null, null))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseIsNullAndIntervallIsNull())
                 .thenReturn(Optional.empty());
 
         Assertions
@@ -226,6 +234,6 @@ class OptionsmenueSettingsServiceTest {
 
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
-                .findByFahrzeugklasseAndIntervall(null, null);
+                .findByFahrzeugklasseIsNullAndIntervallIsNull();
     }
 }

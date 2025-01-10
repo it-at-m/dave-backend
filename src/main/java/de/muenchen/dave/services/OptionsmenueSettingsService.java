@@ -40,7 +40,7 @@ public class OptionsmenueSettingsService {
 
     protected OptionsmenueSettings getDefaultOptionsmenueSettings() {
         return optionsmenueSettingsRepository
-                .findByFahrzeugklasseAndIntervall(null, null)
+                .findByFahrzeugklasseIsNullAndIntervallIsNull()
                 .orElseThrow(() -> new ResourceNotFoundException("Der Fluchtwert für Einstellungen des Optionsmenüs wurde nicht gefunden."));
     }
 }
