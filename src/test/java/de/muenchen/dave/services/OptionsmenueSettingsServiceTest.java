@@ -45,7 +45,7 @@ class OptionsmenueSettingsServiceTest {
 
         final var readMessfaehigkeit = new ReadMessfaehigkeitDTO();
         readMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        readMessfaehigkeit.setFahrzeugklassen("ACHT_PLUS_EINS");
+        readMessfaehigkeit.setFahrzeugklassen(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         Mockito
                 .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
@@ -69,7 +69,7 @@ class OptionsmenueSettingsServiceTest {
     void getByReadMessfaehigkeitException() {
         final var readMessfaehigkeit = new ReadMessfaehigkeitDTO();
         readMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        readMessfaehigkeit.setFahrzeugklassen("ACHT_PLUS_EINS");
+        readMessfaehigkeit.setFahrzeugklassen(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         Mockito
                 .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))

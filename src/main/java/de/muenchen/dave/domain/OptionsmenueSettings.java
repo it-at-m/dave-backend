@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -26,13 +27,14 @@ import java.util.List;
 )
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class OptionsmenueSettings extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Fahrzeugklasse fahrzeugklasse;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private ZaehldatenIntervall intervall;
 
