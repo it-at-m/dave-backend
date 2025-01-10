@@ -66,13 +66,13 @@ class OptionsmenueSettingsServiceTest {
     }
 
     @Test
-    void getByReadMessfaehigkeitException() {
+    void getByReadMessfaehigkeitExceptionBecauseNoDefaultOptionsmenueSettingsIsDefined() {
         final var readMessfaehigkeit = new ReadMessfaehigkeitDTO();
         readMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         readMessfaehigkeit.setFahrzeugklassen(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
 
         Assertions
@@ -82,6 +82,10 @@ class OptionsmenueSettingsServiceTest {
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
                 .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(null, null);
     }
 
     @Test
@@ -110,9 +114,9 @@ class OptionsmenueSettingsServiceTest {
     }
 
     @Test
-    void getByFahrzeugklasseAndIntervallException() {
+    void getByFahrzeugklasseAndIntervallExceptionBecauseNoDefaultOptionsmenueSettingsIsDefined() {
         Mockito
-                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT))
+                .when(optionsmenueSettingsRepository.findByFahrzeugklasseAndIntervall(Mockito.any(), Mockito.any()))
                 .thenReturn(Optional.empty());
 
         Assertions
@@ -123,5 +127,9 @@ class OptionsmenueSettingsServiceTest {
         Mockito
                 .verify(optionsmenueSettingsRepository, Mockito.times(1))
                 .findByFahrzeugklasseAndIntervall(Fahrzeugklasse.ACHT_PLUS_EINS, ZaehldatenIntervall.STUNDE_KOMPLETT);
+
+        Mockito
+                .verify(optionsmenueSettingsRepository, Mockito.times(1))
+                .findByFahrzeugklasseAndIntervall(null, null);
     }
 }
