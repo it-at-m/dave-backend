@@ -11,7 +11,6 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import de.muenchen.dave.services.OptionsmenueSettingsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,6 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
     private final StadtbezirkMapper stadtbezirkMapper;
-    private final OptionsmenueSettingsService optionsmenueSettingsService;
 
     public Messstelle getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
