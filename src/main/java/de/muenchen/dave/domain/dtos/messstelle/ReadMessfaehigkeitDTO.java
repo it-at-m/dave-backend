@@ -16,5 +16,4 @@ public class ReadMessfaehigkeitDTO implements Serializable {
     private String gueltigAb;
     private Fahrzeugklasse fahrzeugklassen;
     private ZaehldatenIntervall intervall;
-    private OptionsmenueSettingsDTO optionsmenueSettings;
 }

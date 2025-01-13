@@ -49,12 +49,7 @@ public class MessstelleService {
 
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        final var readMessstelleInfo = messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
-        readMessstelleInfo.getMessfaehigkeiten().stream().forEach(messfaehigkeit -> {
-            final var optionsmenueSettings = optionsmenueSettingsService.getByReadMessfaehigkeit(messfaehigkeit);
-            messfaehigkeit.setOptionsmenueSettings(optionsmenueSettings);
-        });
-        return readMessstelleInfo;
+        return messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
