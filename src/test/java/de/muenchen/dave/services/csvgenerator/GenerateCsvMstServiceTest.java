@@ -141,7 +141,7 @@ class GenerateCsvMstServiceTest {
         final List<String> expectedData = new ArrayList<>();
         expectedData.add(messstelleInfoDTO.getMstId());
         expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsarten());
-        expectedData.add(optionsDTO.getZeitraum().get(0).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        expectedData.add(optionsDTO.getZeitraum().getFirst().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         expectedData.add("");
         expectedData.add("Alle Messquerschnitte");
         expectedData.add(";;;;;;;;;;");
