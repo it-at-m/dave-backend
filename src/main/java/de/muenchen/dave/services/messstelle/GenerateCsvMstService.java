@@ -48,20 +48,23 @@ public class GenerateCsvMstService {
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
         final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
 
+        final boolean isSingleDay = !options.getZeitraum().isEmpty() && options.getZeitraum().getFirst().isEqual(options.getZeitraum().getLast());
+
         final StringBuilder csvBuilder = new StringBuilder();
+
         final String header = getHeader(fahrzeugOptions);
 
-        final String metaHeader = getMetaHeader(header);
-        final String metaData = getMetaData(messstelle, header, options);
+        final String metaHeader = getMetaHeader(header, isSingleDay);
+        final String metaData = getMetaData(messstelle, header, options, isSingleDay);
         csvBuilder.append(metaHeader);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         csvBuilder.append(metaData);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         csvBuilder.append(header);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         data.forEach(dat -> {
             csvBuilder.append(getData(fahrzeugOptions, dat));
-            csvBuilder.append("\n");
+            csvBuilder.append(StringUtils.LF);
         });
         final CsvDTO csvAsString = new CsvDTO();
         csvAsString.setCsvAsString(new String(csvBuilder));
@@ -74,19 +77,21 @@ public class GenerateCsvMstService {
      * @param header Zur Berechnung der Anzahl der Semikolons
      * @return Csv-Zeile
      */
-    public String getMetaHeader(final String header) {
+    public String getMetaHeader(final String header, final boolean isSingleDay) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
 
         final StringBuilder metaHeader = new StringBuilder();
         metaHeader.append("ID Messstelle");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("KFZ oder RAD");
+        metaHeader.append("Detektierte Fahrzeuge");
         metaHeader.append(SEMIKOLON);
         metaHeader.append("ausgewählter Messzeitraum / Einzeltag");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("ausgewählter Wochentag");
+        if (!isSingleDay) {
+            metaHeader.append("ausgewählter Wochentag");
+        }
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+        metaHeader.append("ausgewählte MQ");
 
         metaHeader.append(SEMIKOLON.repeat(Math.max(0, neededSemikolons - 3)));
         return new String(metaHeader);
@@ -100,7 +105,7 @@ public class GenerateCsvMstService {
      * @param options Zur Anzeige der Fahrbeziehung
      * @return Csv-Zeile
      */
-    public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options) {
+    public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options, final boolean isSingleDay) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
         final StringBuilder metaData = new StringBuilder();
         metaData.append(messstelle.getMstId());
@@ -115,7 +120,7 @@ public class GenerateCsvMstService {
             }
         }
         metaData.append(SEMIKOLON);
-        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+        if (!isSingleDay && ObjectUtils.isNotEmpty(options.getTagesTyp())) {
             metaData.append(options.getTagesTyp().getBeschreibung());
         }
         metaData.append(SEMIKOLON);
@@ -154,10 +159,11 @@ public class GenerateCsvMstService {
         }
         data.append(SEMIKOLON);
         if (ObjectUtils.isNotEmpty(dataCsv.getEndeUhrzeit())) {
-            if (StringUtils.equals(dataCsv.getEndeUhrzeit().toString(), UHRZEIT_23_59)) {
+            if (StringUtils.startsWith(dataCsv.getEndeUhrzeit().toString(), UHRZEIT_23_59)) {
                 data.append(UHRZEIT_24_00);
+            } else {
+                data.append(dataCsv.getEndeUhrzeit());
             }
-            data.append(dataCsv.getEndeUhrzeit());
         }
         data.append(SEMIKOLON);
         if (StringUtils.isNotEmpty(dataCsv.getType())) {

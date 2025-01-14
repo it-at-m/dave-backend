@@ -121,8 +121,8 @@ class GenerateCsvMstServiceTest {
 
     @Test
     void getMetaHeader() {
-        final String header = csvService.getMetaHeader(csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge()));
-        final String headerExpected = "ID Messstelle;KFZ oder RAD;ausgewählter Messzeitraum / Einzeltag;ausgewählter Wochentag;ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\";;;;;;;;;;;";
+        final String header = csvService.getMetaHeader(csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge()), false);
+        final String headerExpected = "ID Messstelle;Detektierte Fahrzeuge;ausgewählter Messzeitraum / Einzeltag;ausgewählter Wochentag;ausgewählte MQ;;;;;;;;;;;";
         assertThat(header, is(headerExpected));
     }
 
@@ -137,7 +137,7 @@ class GenerateCsvMstServiceTest {
         messstelleInfoDTO.setMessquerschnitte(List.of(mq));
 
         MessstelleOptionsDTO optionsDTO = GenerateCsvMstServiceTest.getOptionsDTO();
-        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO);
+        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO, false);
         final List<String> expectedData = new ArrayList<>();
         expectedData.add(messstelleInfoDTO.getMstId());
         expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsarten());
