@@ -1,5 +1,7 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -15,6 +17,6 @@ public class Messfaehigkeit {
     LocalDate gueltigAb;
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
     LocalDate gueltigBis;
-    String fahrzeugklassen;
-    String intervall;
+    Fahrzeugklasse fahrzeugklassen;
+    ZaehldatenIntervall intervall;
 }
