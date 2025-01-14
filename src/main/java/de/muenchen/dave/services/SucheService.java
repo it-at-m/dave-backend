@@ -556,7 +556,7 @@ public class SucheService {
         final Optional<String> finding = words.stream()
                 .filter(
                         w -> z.getDatum().format(DATE_TIME_FORMATTER).startsWith(this.cleanseDateAndReturnIfWordIsDateOrJustReturnWord(w)) ||
-                                z.getSuchwoerter().stream().anyMatch(s -> s.startsWith(w)))
+                                z.getSuchwoerter().stream().anyMatch(s -> StringUtils.startsWithIgnoreCase(s, w)))
                 .findAny();
         return finding.isPresent();
     }

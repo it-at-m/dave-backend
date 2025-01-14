@@ -181,7 +181,7 @@ public class SucheServiceTests {
         // Test mit "foo" (klein)
         Optional<Zaehlung> optionalZaehlung4 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg foo Bla");
         assertThat(optionalZaehlung4.isPresent(), is(true));
-        assertThat(optionalZaehlung4.get(), is(equalTo(z2)));
+        assertThat(optionalZaehlung4.get(), is(equalTo(z1)));
 
         // Test mit falschem Text
         Optional<Zaehlung> optionalZaehlung5 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foobar Bla");
