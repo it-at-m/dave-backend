@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import lombok.Data;

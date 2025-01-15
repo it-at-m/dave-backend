@@ -160,7 +160,6 @@ public interface MessstelleMapper {
         }
     }
 
-    @Mapping(target = "intervall", ignore = true)
     ReadMessfaehigkeitDTO messfaehigkeitBean2ReadMessfaehigkeitDto(Messfaehigkeit bean);
 
     List<ReadMessfaehigkeitDTO> messfaehigkeitBean2ReadMessfaehigkeitDto(List<Messfaehigkeit> bean);
