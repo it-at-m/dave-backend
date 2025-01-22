@@ -400,10 +400,7 @@ public class ZaehlstelleIndexService {
         final LadeZaehlungDTO ladeZaehlungDTO = this.zaehlungMapper.bean2LadeDto(this.ladeZaehlung(zaehlungId));
         // Ermittlung möglicher Zeitauswahl
         ladeZaehlungDTO.setZeitauswahl(
-                this.zeitauswahlService.determinePossibleZeitauswahl(
-                        ladeZaehlungDTO.getZaehldauer(),
-                        ladeZaehlungDTO.getId(),
-                        ladeZaehlungDTO.getSonderzaehlung()));
+                this.zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlungDTO.getZaehldauer(), ladeZaehlungDTO.getId()));
         return ladeZaehlungDTO;
     }
 
@@ -429,8 +426,7 @@ public class ZaehlstelleIndexService {
         leseZaehlstelleDTO.getZaehlungen().forEach(leseZaehlungDTO -> leseZaehlungDTO.setZeitauswahl(
                 this.zeitauswahlService.determinePossibleZeitauswahl(
                         leseZaehlungDTO.getZaehldauer(),
-                        leseZaehlungDTO.getId(),
-                        leseZaehlungDTO.getSonderzaehlung())));
+                        leseZaehlungDTO.getId())));
         return leseZaehlstelleDTO;
     }
 
