@@ -171,11 +171,11 @@ public class ZeitintervallPersistierungsService {
 
     @Transactional
     @LogExecutionTime
-    public boolean deleteZeitintervalleByFahrbeziehungId(final String fahrbeziehungId) {
+    public void deleteZeitintervalleByFahrbeziehungId(final String fahrbeziehungId) {
         final UUID fahrbeziehungIdAsUUID = UUID.fromString(fahrbeziehungId);
-        zeitintervallRepository.deleteAllByFahrbeziehungId(fahrbeziehungIdAsUUID);
-        zeitintervallRepository.flush();
-        return !zeitintervallRepository.existsByFahrbeziehungId(fahrbeziehungIdAsUUID);
+        if (zeitintervallRepository.existsByFahrbeziehungId(fahrbeziehungIdAsUUID)) {
+            zeitintervallRepository.deleteAllByFahrbeziehungId(fahrbeziehungIdAsUUID);
+        }
     }
 
     @Transactional
