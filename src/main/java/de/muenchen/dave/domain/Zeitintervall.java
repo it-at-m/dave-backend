@@ -41,6 +41,7 @@ import java.util.UUID;
 @Table(
         indexes = {
                 @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
+                @Index(name = "index_fahrbeziehungid", columnList = "fahrbeziehung_id"),
                 @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
                 @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
                 @Index(
