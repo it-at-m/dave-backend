@@ -4,6 +4,7 @@
  */
 package de.muenchen.dave.services.persist;
 
+import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
@@ -50,7 +51,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws BrokenInfrastructureException Beim erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      */
+    @LogExecutionTime
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
+        log.debug("saveZaehlung");
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(zaehlungDto.getId())) {
