@@ -1,6 +1,5 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -79,7 +78,6 @@ public class CustomSuggestIndexService {
      *
      * @param zaehlstelle neue zu verschlagwortende Zaehlung
      */
-    @LogExecutionTime
     public void updateSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
         this.deleteAllSuggestionsByFkid(zaehlstelle.getId());
         this.createSuggestionsForZaehlstelle(zaehlstelle);
@@ -100,7 +98,6 @@ public class CustomSuggestIndexService {
      *
      * @param suggestFkid Fremdschlüssel
      */
-    @LogExecutionTime
     public void deleteAllSuggestionsByFkid(final String suggestFkid) {
         this.customSuggestIndex.deleteAllByFkid(suggestFkid);
     }
@@ -111,7 +108,6 @@ public class CustomSuggestIndexService {
      * @param suchwoerter Suchwörter einer Zählstelle oder Zählung
      * @param suggestId ID der zugehörigen Zählstelle oder Zählung
      */
-    @LogExecutionTime
     private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId) {
         if (CollectionUtils.isNotEmpty(suchwoerter)) {
             final List<CustomSuggest> suggestionList = new ArrayList<>();

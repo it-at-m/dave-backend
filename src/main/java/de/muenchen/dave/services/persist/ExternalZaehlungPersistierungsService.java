@@ -4,7 +4,6 @@
  */
 package de.muenchen.dave.services.persist;
 
-import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
@@ -44,14 +43,13 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Methode zum Aktualiseren der Metadaten einer Zählung
+     * Methode zum Aktualisieren der Metadaten einer Zählung
      *
      * @param zaehlungDto enthält die Id und die neuen Metadaten
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      */
-    @LogExecutionTime
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
         log.debug("saveZaehlung");
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
@@ -70,18 +68,26 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 // Fahrbeziehungen werden nach Zeitintervallen durchsucht
                 if (CollectionUtils.isNotEmpty(zaehlungDto.getFahrbeziehungen())) {
                     // Zeitintervalle persistieren
-                    final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-                    zaehlungDto.getFahrbeziehungen().forEach(fahrbeziehungDto -> {
-                        if (CollectionUtils.isNotEmpty(fahrbeziehungDto.getZeitintervalle())) {
-                            // Zeitintervalle zur Fahrbeziehung löschen, bevor neue gespeichert werden sollen
-                            this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(fahrbeziehungDto.getId());
-                            fahrbeziehungDto.getZeitintervalle().stream()
-                                    .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
-                                    .forEach(zeitintervalleToPersist::add);
-                        }
+                    final var zeitintervalleToPersist = new ArrayList<Zeitintervall>();
 
-                    });
+                    final var fahrbeziehungsIdsForZeitintervalleToDelete = zaehlungDto
+                            .getFahrbeziehungen()
+                            .stream()
+                            .peek(fahrbeziehungDto -> {
+                                if (CollectionUtils.isNotEmpty(fahrbeziehungDto.getZeitintervalle())) {
+                                    fahrbeziehungDto.getZeitintervalle()
+                                            .stream()
+                                            .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
+                                            .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
+                                            .forEach(zeitintervalleToPersist::add);
+                                }
+                            })
+                            .map(ExternalFahrbeziehungDTO::getId)
+                            .toList();
+
+                    // Zeitintervalle zur Fahrbeziehung löschen, bevor neue gespeichert werden sollen
+                    this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(fahrbeziehungsIdsForZeitintervalleToDelete);
+
                     // Zeitintervall nur speichern, ohne was zu berechnen
                     if (CollectionUtils.isNotEmpty(zeitintervalleToPersist)) {
                         this.zeitintervallPersistierungsService.persistZeitintervalle(zeitintervalleToPersist);
