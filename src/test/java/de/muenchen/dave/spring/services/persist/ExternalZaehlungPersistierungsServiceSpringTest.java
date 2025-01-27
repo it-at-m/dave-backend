@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -105,7 +106,9 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
         final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         zaehlstelle.setNummer("120105");
         zaehlstelle.setStadtbezirkNummer(12);
-        zaehlstelle.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
+        final var zaehlungen = new ArrayList<Zaehlung>();
+        zaehlungen.add(ZaehlungRandomFactory.getOne());
+        zaehlstelle.setZaehlungen(zaehlungen);
         zaehlstelle.getZaehlungen().get(0).setStatus(Status.INSTRUCTED.name());
 
         final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
