@@ -1,7 +1,6 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
@@ -340,7 +339,6 @@ public class ZaehlstelleIndexService {
      *
      * @param zaehlstelle
      */
-    @LogExecutionTime
     private void updateZaehlstelleWithLetzteZaehlung(final Zaehlstelle zaehlstelle) {
         final Zaehlung letzteZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
         if (letzteZaehlung != null) {
@@ -604,7 +602,6 @@ public class ZaehlstelleIndexService {
      * @param zaehlstelle zum Aktualisieren
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    @LogExecutionTime
     public void erneuereZaehlstelle(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
         log.debug("erneuereZaehlstelle");
         this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);

@@ -1,10 +1,5 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.persist;
 
-import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -22,6 +17,7 @@ import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,7 +146,6 @@ public class ZeitintervallPersistierungsService {
      *
      * @param toPersist zu speichernde Zeitintervalle
      */
-    @LogExecutionTime
     public void persistZeitintervalle(final List<Zeitintervall> toPersist) {
         log.debug("persistZeitintervalle");
         zeitintervallRepository.saveAllAndFlush(toPersist);
@@ -170,12 +165,13 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    @LogExecutionTime
-    public void deleteZeitintervalleByFahrbeziehungId(final String fahrbeziehungId) {
-        final UUID fahrbeziehungIdAsUUID = UUID.fromString(fahrbeziehungId);
-        if (zeitintervallRepository.existsByFahrbeziehungId(fahrbeziehungIdAsUUID)) {
-            zeitintervallRepository.deleteAllByFahrbeziehungId(fahrbeziehungIdAsUUID);
-        }
+    public void deleteZeitintervalleByFahrbeziehungId(final List<String> fahrbeziehungIds) {
+        final var uuidsOfFahrbeziehungen = CollectionUtils
+                .emptyIfNull(fahrbeziehungIds)
+                .stream()
+                .map(UUID::fromString)
+                .toList();
+        zeitintervallRepository.deleteByFahrbeziehungIdIn(uuidsOfFahrbeziehungen);
     }
 
     @Transactional
