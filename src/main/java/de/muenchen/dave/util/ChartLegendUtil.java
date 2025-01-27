@@ -18,7 +18,7 @@ public final class ChartLegendUtil {
 
     public static final String LASTZUEGE = "Lz";
 
-    public static final String BUSSE = "Busse";
+    public static final String BUSSE = "Bus";
 
     public static final String KRAFTRAEDER = "Krad";
 
