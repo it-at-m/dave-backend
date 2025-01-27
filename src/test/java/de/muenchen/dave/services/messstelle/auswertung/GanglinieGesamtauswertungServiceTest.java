@@ -92,7 +92,7 @@ class GanglinieGesamtauswertungServiceTest {
         final var result = ganglinieGesamtauswertungService.createGanglinieForSingleMessstelle(auswertungMessstelle, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Bus", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(120);
         expected.setRangeMaxPercent(26);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
@@ -255,7 +255,7 @@ class GanglinieGesamtauswertungServiceTest {
         final var result = ganglinieGesamtauswertungService.createGanglinieForMultipleMessstellen(auswertungMessstellen, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("MST 1 Busse", "MST 1 Kfz", "MST 2 Busse", "MST 2 Kfz"));
+        expected.setLegend(List.of("MST 1 Bus", "MST 1 Kfz", "MST 2 Bus", "MST 2 Kfz"));
         expected.setRangeMax(220);
         expected.setRangeMaxPercent(0);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
@@ -308,7 +308,7 @@ class GanglinieGesamtauswertungServiceTest {
         Assertions.assertThat(seriesEntries.getSeriesEntryLkw().getName()).isNotNull().isEqualTo("MST 42 Lkw");
         Assertions.assertThat(seriesEntries.getSeriesEntryLfw().getName()).isNotNull().isEqualTo("MST 42 Lfw");
         Assertions.assertThat(seriesEntries.getSeriesEntryLz().getName()).isNotNull().isEqualTo("MST 42 Lz");
-        Assertions.assertThat(seriesEntries.getSeriesEntryBus().getName()).isNotNull().isEqualTo("MST 42 Busse");
+        Assertions.assertThat(seriesEntries.getSeriesEntryBus().getName()).isNotNull().isEqualTo("MST 42 Bus");
         Assertions.assertThat(seriesEntries.getSeriesEntryKrad().getName()).isNotNull().isEqualTo("MST 42 Krad");
         Assertions.assertThat(seriesEntries.getSeriesEntryRad().getName()).isNotNull().isEqualTo("MST 42 Rad");
         Assertions.assertThat(seriesEntries.getSeriesEntryKfz().getName()).isNotNull().isEqualTo("MST 42 Kfz");
