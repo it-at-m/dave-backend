@@ -177,10 +177,7 @@ public class FillZeitreihePdfBeanService {
             zusatzinformationenZeitreihePdfComponentList.add(zusatzinformationenZeitreihe);
         }
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(
-                zaehlung.getZaehldauer(),
-                zaehlung.getId(),
-                zaehlung.getSonderzaehlung());
+        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(zaehlung.getZaehldauer(), zaehlung.getId());
 
         processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options, zeitauswahlDTO)
                 .filter(zaehlungForComment -> StringUtils.isNotEmpty(zaehlungForComment.getKommentar()))
