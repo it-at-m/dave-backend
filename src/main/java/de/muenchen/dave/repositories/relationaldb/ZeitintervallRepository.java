@@ -41,11 +41,9 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
 
     Long deleteAllByZaehlungId(UUID zaehlungId);
 
-    Long deleteAllByFahrbeziehungId(UUID fahrbeziehungId);
+    void deleteByFahrbeziehungIdIn(List<UUID> fahrbeziehungIds);
 
     boolean existsByZaehlungId(UUID zaehlungId);
-
-    boolean existsByFahrbeziehungId(UUID fahrbeziehungId);
 
     List<Zeitintervall> findAll(final Sort sort);
 

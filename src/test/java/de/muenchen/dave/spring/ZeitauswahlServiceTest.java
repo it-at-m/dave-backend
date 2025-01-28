@@ -78,8 +78,7 @@ class ZeitauswahlServiceTest {
         when(zeitintervallRepository.findByZaehlungId(UUID.fromString(ladeZaehlung.getId()), Sort.by(Sort.Direction.ASC, "startUhrzeit")))
                 .thenReturn(zeitintervalle);
 
-        final ZeitauswahlDTO choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId(),
-                false);
+        final ZeitauswahlDTO choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId());
 
         assertThat(choosableZeitauswahlDTO, is(notNullValue()));
         assertThat(choosableZeitauswahlDTO.getBlocks(), is(notNullValue()));
