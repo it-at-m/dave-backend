@@ -195,10 +195,7 @@ public class ProcessZaehldatenZeitreiheService {
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = new LadeZaehldatenZeitreiheDTO();
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(
-                currentZaehlung.getZaehldauer(),
-                currentZaehlung.getId(),
-                currentZaehlung.getSonderzaehlung());
+        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
                 .forEach(zaehlung -> {
@@ -273,12 +270,10 @@ public class ProcessZaehldatenZeitreiheService {
                 .filter(zaehlung -> zaehlung.getSonderzaehlung().equals(currentZaehlung.getSonderzaehlung()))
                 .filter(zaehlung -> this.zeitauswahlService.determinePossibleZeitauswahl(
                         zaehlung.getZaehldauer(),
-                        zaehlung.getId(),
-                        zaehlung.getSonderzaehlung()).getBlocks().contains(options.getZeitblock()) ||
+                        zaehlung.getId()).getBlocks().contains(options.getZeitblock()) ||
                         this.zeitauswahlService.determinePossibleZeitauswahl(
                                 zaehlung.getZaehldauer(),
-                                zaehlung.getId(),
-                                zaehlung.getSonderzaehlung()).getHours().contains(options.getZeitblock())
+                                zaehlung.getId()).getHours().contains(options.getZeitblock())
                         ||
                         options.getZeitblock().equals(Zeitblock.ZB_00_24));
     }

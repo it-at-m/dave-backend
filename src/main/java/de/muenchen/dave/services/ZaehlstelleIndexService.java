@@ -400,10 +400,7 @@ public class ZaehlstelleIndexService {
         final LadeZaehlungDTO ladeZaehlungDTO = this.zaehlungMapper.bean2LadeDto(this.ladeZaehlung(zaehlungId));
         // Ermittlung möglicher Zeitauswahl
         ladeZaehlungDTO.setZeitauswahl(
-                this.zeitauswahlService.determinePossibleZeitauswahl(
-                        ladeZaehlungDTO.getZaehldauer(),
-                        ladeZaehlungDTO.getId(),
-                        ladeZaehlungDTO.getSonderzaehlung()));
+                this.zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlungDTO.getZaehldauer(), ladeZaehlungDTO.getId()));
         return ladeZaehlungDTO;
     }
 
@@ -429,8 +426,7 @@ public class ZaehlstelleIndexService {
         leseZaehlstelleDTO.getZaehlungen().forEach(leseZaehlungDTO -> leseZaehlungDTO.setZeitauswahl(
                 this.zeitauswahlService.determinePossibleZeitauswahl(
                         leseZaehlungDTO.getZaehldauer(),
-                        leseZaehlungDTO.getId(),
-                        leseZaehlungDTO.getSonderzaehlung())));
+                        leseZaehlungDTO.getId())));
         return leseZaehlstelleDTO;
     }
 
@@ -607,6 +603,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
     public void erneuereZaehlstelle(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
+        log.debug("erneuereZaehlstelle");
         this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
         customSuggestIndexService.updateSuggestionsForZaehlstelle(zaehlstelle);
         this.speichereZaehlstelleInDatenbank(zaehlstelle);
