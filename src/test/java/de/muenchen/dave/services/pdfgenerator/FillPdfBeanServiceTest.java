@@ -162,7 +162,7 @@ class FillPdfBeanServiceTest {
         final String tagesTyp = TagesTyp.SAMSTAG.name();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
         final ArrayList<LocalDate> localDates = new ArrayList<>();
-        localDates.add(LocalDate.now());
+        localDates.add(LocalDate.now().minusDays(1));
         localDates.add(LocalDate.now());
         optionsDTO.setZeitraum(localDates);
 
@@ -170,13 +170,13 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
         assertThat(informationen.getMesszeitraum(),
-                is(String.format("%s - %s", optionsDTO.getZeitraum().getFirst().format(DDMMYYYY), optionsDTO.getZeitraum().getFirst().format(DDMMYYYY))));
+                is(String.format("%s - %s", optionsDTO.getZeitraum().getFirst().format(DDMMYYYY), optionsDTO.getZeitraum().getLast().format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
         assertThat(informationen.isWochentagNeeded(), is(true));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
 
         informationen = new MessstelleninformationenPdfComponent();
-        optionsDTO.setZeitraum(List.of(LocalDate.now()));
+        optionsDTO.setZeitraum(List.of(LocalDate.now(), LocalDate.now()));
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));

@@ -32,7 +32,7 @@ public enum TagesTyp {
     WERKTAG_FERIEN("Mo-Fr Ferien", MesswertRequestDto.TagesTypEnum.WERKTAG_FERIEN, TagesaggregatRequestDto.TagesTypEnum.WERKTAG_FERIEN,
             IntervalDto.TagesTypEnum.WERKTAG_FERIEN),
 
-    MO_SO("DTV (MO - SO)", MesswertRequestDto.TagesTypEnum.DTV, TagesaggregatRequestDto.TagesTypEnum.DTV, IntervalDto.TagesTypEnum.DTV);
+    MO_SO("DTV (Mo - So)", MesswertRequestDto.TagesTypEnum.DTV, TagesaggregatRequestDto.TagesTypEnum.DTV, IntervalDto.TagesTypEnum.DTV);
 
     private static final Map<IntervalDto.TagesTypEnum, TagesTyp> tagesTypByIntervallTyp = Stream
             .of(TagesTyp.values())
