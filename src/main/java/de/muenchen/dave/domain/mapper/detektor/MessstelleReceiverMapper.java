@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
@@ -26,7 +27,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        uses = FahrzeugklassenMapper.class,
+        componentModel = MappingConstants.ComponentModel.SPRING
+)
 public interface MessstelleReceiverMapper {
 
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
@@ -89,22 +93,6 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
     Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
-
-    default Fahrzeugklasse map(final MessfaehigkeitDto.FahrzeugklassenEnum fahrzeugklasse) {
-        final Fahrzeugklasse mappingTarget;
-        if (MessfaehigkeitDto.FahrzeugklassenEnum.ZWEI_PLUS_EINS == fahrzeugklasse) {
-            mappingTarget = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        } else if (MessfaehigkeitDto.FahrzeugklassenEnum.ACHT_PLUS_EINS == fahrzeugklasse) {
-            mappingTarget = Fahrzeugklasse.ACHT_PLUS_EINS;
-        } else if (MessfaehigkeitDto.FahrzeugklassenEnum.SUMME_KFZ == fahrzeugklasse) {
-            mappingTarget = Fahrzeugklasse.SUMME_KFZ;
-        } else if (MessfaehigkeitDto.FahrzeugklassenEnum.RAD == fahrzeugklasse) {
-            mappingTarget = Fahrzeugklasse.RAD;
-        } else {
-            mappingTarget = null;
-        }
-        return mappingTarget;
-    }
 
     default ZaehldatenIntervall map(final MessfaehigkeitDto.IntervallEnum intervall) {
         final ZaehldatenIntervall mappingTarget;

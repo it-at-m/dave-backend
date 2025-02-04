@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.util.SuchwortUtil;
@@ -124,7 +125,7 @@ class MessstelleMapperTests {
         updatedData.setStatus("darf nicht aktualisiert werden");
         updatedData.setBemerkung("darf nicht aktualisiert werden");
         updatedData.setHersteller("darf nicht aktualisiert werden");
-        updatedData.setFahrzeugKlassen("darf nicht aktualisiert werden");
+        updatedData.setFahrzeugKlassen(Fahrzeugklasse.RAD);
         updatedData.setDetektierteVerkehrsarten("darf nicht aktualisiert werden");
         updatedData.setStadtbezirkNummer(666);
         updatedData.setRealisierungsdatum("1999-11-11");

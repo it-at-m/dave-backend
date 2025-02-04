@@ -48,22 +48,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Intervalle erfolgreich abgefragt.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/IntervalResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -130,22 +130,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "TagesTyp erfolgreich validiert",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -730,7 +730,14 @@
             "format": "date"
           },
           "fahrzeugKlassen": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "RAD",
+              "SUMME_KFZ",
+              "ZWEI_PLUS_EINS",
+              "ACHT_PLUS_EINS",
+              "UNBEKANNT"
+            ]
           },
           "detektierteVerkehrsarten": {
             "type": "string"

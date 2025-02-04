@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -35,8 +36,11 @@ public class Messstelle {
     Integer stadtbezirkNummer;
 
     String bemerkung;
-    String fahrzeugKlassen;
+
+    Fahrzeugklasse fahrzeugKlassen;
+
     String detektierteVerkehrsarten;
+
     String hersteller;
 
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
