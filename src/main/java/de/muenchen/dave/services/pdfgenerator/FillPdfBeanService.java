@@ -205,6 +205,7 @@ public class FillPdfBeanService {
 
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
             final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+        messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
@@ -218,6 +219,7 @@ public class FillPdfBeanService {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
         }
+        messstelleninformationen.setKommentarNeeded(StringUtils.isNotEmpty(messstelle.getKommentar()));
         messstelleninformationen.setKommentar(messstelle.getKommentar());
         return messstelleninformationen;
     }
