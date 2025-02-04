@@ -62,7 +62,8 @@ public class MessstelleRandomFactory {
         dto.setMstId(UUID.randomUUID().toString());
         dto.setName(fakerInstance.pokemon().name());
         dto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        dto.setFahrzeugKlassen(MessstelleDto.FahrzeugKlassenEnum.values()[ThreadLocalRandom.current().nextInt(MessstelleDto.FahrzeugKlassenEnum.values().length)]);
+        dto.setFahrzeugKlassen(
+                MessstelleDto.FahrzeugKlassenEnum.values()[ThreadLocalRandom.current().nextInt(MessstelleDto.FahrzeugKlassenEnum.values().length)]);
         dto.setDetektierteVerkehrsarten("KFZ");
         dto.setHersteller(fakerInstance.pokemon().name());
         dto.setRealisierungsdatum(
