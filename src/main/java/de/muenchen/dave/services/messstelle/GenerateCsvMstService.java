@@ -113,10 +113,10 @@ public class GenerateCsvMstService {
         metaData.append(messstelle.getDetektierteVerkehrsarten());
         metaData.append(SEMIKOLON);
         if (CollectionUtils.isNotEmpty(options.getZeitraum())) {
-            metaData.append(options.getZeitraum().get(0).format(DDMMYYYY));
-            if (options.getZeitraum().size() == 2) {
+            metaData.append(options.getZeitraum().getFirst().format(DDMMYYYY));
+            if (!isSingleDay) {
                 metaData.append(" bis ");
-                metaData.append(options.getZeitraum().get(1).format(DDMMYYYY));
+                metaData.append(options.getZeitraum().getLast().format(DDMMYYYY));
             }
         }
         metaData.append(SEMIKOLON);

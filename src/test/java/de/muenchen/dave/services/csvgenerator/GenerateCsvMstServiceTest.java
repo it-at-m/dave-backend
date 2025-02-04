@@ -137,7 +137,8 @@ class GenerateCsvMstServiceTest {
         messstelleInfoDTO.setMessquerschnitte(List.of(mq));
 
         MessstelleOptionsDTO optionsDTO = GenerateCsvMstServiceTest.getOptionsDTO();
-        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO, false);
+        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO,
+                optionsDTO.getZeitraum().size() == 1);
         final List<String> expectedData = new ArrayList<>();
         expectedData.add(messstelleInfoDTO.getMstId());
         expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsarten());
