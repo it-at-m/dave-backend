@@ -105,7 +105,8 @@ public class ProcessZaehldatenZeitreiheService {
             ladeZaehldatenZeitreiheDTO.getGvAnteilInProzent().add(ladeZaehldatumDTO.getAnteilGueterverkehrAnKfzProzent());
         }
         if (options.getZeitreiheGesamt()) {
-            ladeZaehldatenZeitreiheDTO.getGesamt().add(ladeZaehldatumDTO.getGesamt());
+            ladeZaehldatenZeitreiheDTO.getGesamt()
+                    .add(calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFussgaenger(), ladeZaehldatumDTO.getFahrradfahrer()));
         }
     }
 
@@ -117,7 +118,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param fahrradfahrer Wert für Fahrradfahrer
      * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
      */
-    static BigDecimal calculateGesamt(BigDecimal kfz, Integer fussgaenger, Integer fahrradfahrer) {
+    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fussgaenger, final Integer fahrradfahrer) {
         BigDecimal gesamt = new BigDecimal(0);
         gesamt = gesamt.add(kfz);
         if (fussgaenger != null) {

@@ -49,11 +49,6 @@ public class LadeZaehldatumDTO implements Serializable {
     private Integer pkwEinheiten;
 
     @JsonGetter
-    public BigDecimal getGesamt() {
-        return CalculationUtil.getGesamt(this);
-    }
-
-    @JsonGetter
     public BigDecimal getKfz() {
         return CalculationUtil.getKfz(this);
     }
