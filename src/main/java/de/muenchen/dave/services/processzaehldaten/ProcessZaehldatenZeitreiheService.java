@@ -164,14 +164,16 @@ public class ProcessZaehldatenZeitreiheService {
                     .filter(zaehlung -> currentDate.equals(zaehlung.getDatum()))
                     .findFirst()
                     .get();
-            final int minIndex = zaehlungen.indexOf(currentZaehlung) - 2;
+            final List<Zaehlung> filteredZaehlungen = zaehlungen.stream().filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
+                    .toList();
+            final int minIndex = filteredZaehlungen.indexOf(currentZaehlung) - 2;
 
             if (minIndex < 0) {
                 // Wenn minIndex < 0 dann soll das Datum des ersten Elements genommen werden
-                oldestDate = zaehlungen.get(0).getDatum();
+                oldestDate = filteredZaehlungen.get(0).getDatum();
             } else {
                 // Ansonsten nimm das Datum des Elements mit minIndex
-                oldestDate = zaehlungen.get(minIndex).getDatum();
+                oldestDate = filteredZaehlungen.get(minIndex).getDatum();
             }
         }
 
