@@ -8,7 +8,6 @@ import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class KalendertagService {
