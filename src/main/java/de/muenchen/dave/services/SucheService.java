@@ -516,7 +516,8 @@ public class SucheService {
     }
 
     /**
-     * Hilfmethode, um zu testen, ob es sich um eine Suggestion nach einem Datumsbereich handelt. Kriterien:
+     * Hilfmethode, um zu testen, ob es sich um eine Suggestion nach einem Datumsbereich handelt.
+     * Kriterien:
      * - Exakt 3 Suchbegriffe enthalten
      * - 'von' und 'bis' müssen enthalten sein
      * - 'von' ist Begriff 1, 'bis' ist Begriff 3
