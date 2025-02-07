@@ -399,7 +399,7 @@ public class SucheService {
         for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, noFilter)) {
             Zaehlung letzeZaehlung = null;
             if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
-                letzeZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
+                letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());
             }
 
             final String stadtbezirk = zaehlstelle.getStadtbezirk();
