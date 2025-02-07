@@ -181,17 +181,16 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Lädt die Daten für eine Zeitreihe und gibt diese zurück
      *
-     * @param zaehlstelleId Die ID der im Frontend ausgewählten Zählstelle
      * @param currentZaehlungId Die ID der im Frontend ausgewählten Zählung
      * @param options Optionen aus dem Frontend
      * @return Zeitreihendaten als LadeZaehldatenZeitreiheDTO
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
-    @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1, #p2}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String zaehlstelleId, final String currentZaehlungId, final OptionsDTO options)
+    @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
+    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDTO options)
             throws DataNotFoundException {
-        log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s, %s und %s", zaehlstelleId, currentZaehlungId, options.toString()));
-        final Zaehlstelle zaehlstelle = indexService.getZaehlstelle(zaehlstelleId);
+        log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));
+        final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = new LadeZaehldatenZeitreiheDTO();
