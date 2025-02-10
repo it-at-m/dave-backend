@@ -87,15 +87,12 @@ public final class IndexServiceUtils {
      * @param zs Zaehlungen
      * @return aktuellste Zaehlung
      */
-    public static Zaehlung getLetzteAktiveZaehlung(List<Zaehlung> zs) {
-        zs.sort(Comparator.comparing(Zaehlung::getDatum));
-        final List<Zaehlung> onlyActiveZaehlungen = zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).toList();
-        if (!onlyActiveZaehlungen.isEmpty()) {
-            return onlyActiveZaehlungen.getLast();
-        } else {
-            log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
-            return null;
-        }
+    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zs) {
+        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).max(Comparator.comparing(Zaehlung::getDatum))
+                .orElseGet(() -> {
+                    log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
+                    return null;
+                });
     }
 
     /**
