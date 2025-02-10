@@ -48,6 +48,11 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # set latest tag for sprint branch
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'sprint') }}
+            # set stable tag for main-ls2 branch
+            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main-ls2') }}
           labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
       
