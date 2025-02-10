@@ -154,24 +154,23 @@ public class ProcessZaehldatenZeitreiheService {
         } else {
             // Es wurde kein Datum ausgewählt, wir versuchen die letzten drei Zählungen zu laden
 
-            // Liste an Zählungen sortieren (alt nach neu)
-            List<Zaehlung> zaehlungen = zaehlstelle.getZaehlungen();
-            zaehlungen.sort(Comparator.comparing(Zaehlung::getDatum));
-
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
                     .filter(zaehlung -> currentDate.equals(zaehlung.getDatum()))
                     .findFirst()
                     .get();
-            final int minIndex = zaehlungen.indexOf(currentZaehlung) - 2;
+            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
+                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
+                    .toList();
+            final int minIndex = filteredZaehlungen.indexOf(currentZaehlung) - 2;
 
             if (minIndex < 0) {
                 // Wenn minIndex < 0 dann soll das Datum des ersten Elements genommen werden
-                oldestDate = zaehlungen.get(0).getDatum();
+                oldestDate = filteredZaehlungen.getFirst().getDatum();
             } else {
                 // Ansonsten nimm das Datum des Elements mit minIndex
-                oldestDate = zaehlungen.get(minIndex).getDatum();
+                oldestDate = filteredZaehlungen.get(minIndex).getDatum();
             }
         }
 

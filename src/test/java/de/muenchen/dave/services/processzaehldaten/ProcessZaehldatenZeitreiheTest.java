@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -20,28 +21,39 @@ public class ProcessZaehldatenZeitreiheTest {
     private static final LocalDate DATE1 = LocalDate.of(2011, 11, 4);
     private static final LocalDate DATE2 = LocalDate.of(2016, 8, 8);
     private static final LocalDate DATE3 = LocalDate.of(2020, 4, 3);
+    private static final LocalDate DATE4 = LocalDate.of(2024, 1, 11);
     private static final String ID1 = "1234";
     private static final String ID2 = "5678";
     private static final String ID3 = "90ab";
+    private static final String ID4 = "42cd";
 
     private static Zaehlstelle getZaehlstelleWithZaehlungen() {
 
         Zaehlung zaehlung1 = new Zaehlung();
         zaehlung1.setId(ID1);
         zaehlung1.setDatum(DATE1);
+        zaehlung1.setZaehlart(Zaehlart.N.name());
 
         Zaehlung zaehlung2 = new Zaehlung();
         zaehlung2.setId(ID2);
         zaehlung2.setDatum(DATE2);
+        zaehlung2.setZaehlart(Zaehlart.N.name());
 
         Zaehlung zaehlung3 = new Zaehlung();
         zaehlung3.setId(ID3);
         zaehlung3.setDatum(DATE3);
+        zaehlung3.setZaehlart(Zaehlart.R.name());
+
+        Zaehlung zaehlung4 = new Zaehlung();
+        zaehlung4.setId(ID4);
+        zaehlung4.setDatum(DATE4);
+        zaehlung4.setZaehlart(Zaehlart.N.name());
 
         List<Zaehlung> zaehlungList = new ArrayList<>();
         zaehlungList.add(zaehlung1);
         zaehlungList.add(zaehlung2);
         zaehlungList.add(zaehlung3);
+        zaehlungList.add(zaehlung4);
 
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         zaehlstelle.setZaehlungen(zaehlungList);
@@ -54,12 +66,11 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlstelle zaehlstelle = getZaehlstelleWithZaehlungen();
         OptionsDTO options = new OptionsDTO();
 
-        LocalDate currentDate = DATE3;
+        LocalDate currentDate = DATE4;
         assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
                 is(DATE1));
 
         options.setIdVergleichszaehlungZeitreihe(ID2);
-        currentDate = DATE3;
         assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
                 is(DATE2));
 
