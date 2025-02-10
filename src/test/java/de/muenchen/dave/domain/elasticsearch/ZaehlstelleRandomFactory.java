@@ -39,7 +39,7 @@ public class ZaehlstelleRandomFactory {
         // Zaehlungen
         List<Zaehlung> zls = ZaehlungRandomFactory.getSome();
         z.setZaehlungen(zls);
-        Zaehlung zl1 = IndexServiceUtils.getLetzteZaehlung(zls);
+        Zaehlung zl1 = IndexServiceUtils.getLetzteAktiveZaehlung(zls);
         z.setLetzteZaehlungMonat(zl1.getMonat());
         z.setLetzteZaehlungMonatNummer(zl1.getDatum().getMonthValue());
         z.setGrundLetzteZaehlung(zl1.getZaehlsituation());
