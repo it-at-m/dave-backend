@@ -46,32 +46,23 @@ jobs:
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_KEY }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push app
-        uses: docker/build-push-action@v4
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          context: .
-          push: true
-          tags: itatm/dave-backend:${{ steps.set-version.outputs.new_version }},itatm/dave-backend:latest
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_KEY }}
-          repository: itatm/dave-backend
-          short-description: Anwendungs-Kern für Frontend, Adminportal, Selfserviceportal und EAI.
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # use tag from input
+            type=raw,value=stable,enable=true
+          labels: |
+            maintainer=it@m, Landeshauptstadt Muenchen (LHM)
 
   github-release:
     needs: merge_release
