@@ -1,2 +1,5 @@
-spring.jpa.defer-datasource-initialization: true
-spring.sql.init.data-locations: classpath:/data/sample-data.sql
+spring:
+  jpa.defer-datasource-initialization: true
+  sql.init:
+      data-locations: classpath:/data/sample-data.sql,classpath:/data/kalendertag.sql
+      mode: always
