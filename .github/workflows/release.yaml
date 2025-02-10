@@ -6,7 +6,7 @@ on:
     types:
       - closed
     branches:
-      - 'main'
+      - 'main-ls2'
 
 jobs:
   merge_release:
