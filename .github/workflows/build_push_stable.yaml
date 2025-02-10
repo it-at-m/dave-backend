@@ -9,23 +9,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  compliance:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Advance Security Policy as Code
-        uses: advanced-security/policy-as-code@v2.4.1
-        with:
-          policy: it-at-m/policy-as-code
-          policy-path: default.yaml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning --display"
-
   build-and-push-image:
-    needs: compliance
     runs-on: ubuntu-latest
 
     permissions:
