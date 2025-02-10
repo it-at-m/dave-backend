@@ -183,6 +183,10 @@ public class AuswertungSpitzenstundeService {
                 .stream()
                 .filter(zeitintervall -> zeitintervall.getType().equals(typeSpitzenstunde))
                 .filter(zeitintervall -> zeitintervall.getSortingIndex().equals(sortingIndex))
+                .peek(zeitintervall -> {
+                    zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
+                    zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
+                })
                 .collect(Collectors.toList());
     }
 
