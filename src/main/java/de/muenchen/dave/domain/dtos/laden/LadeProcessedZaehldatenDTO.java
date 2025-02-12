@@ -12,9 +12,9 @@ import java.io.Serializable;
 public class LadeProcessedZaehldatenDTO implements Serializable {
 
     LadeZaehldatenTableDTO zaehldatenTable;
-
     LadeZaehldatenSteplineDTO zaehldatenStepline;
-
     LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
+    LadeBelastungsplanDTO zaehldatenBelastungsplan;
+    LadeZaehldatenZeitreiheDTO zaehldatenZeitreihe;
 
 }
