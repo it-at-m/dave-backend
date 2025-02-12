@@ -399,7 +399,7 @@ public class SucheService {
         for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, noFilter)) {
             Zaehlung letzeZaehlung = null;
             if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
-                letzeZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
+                letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());
             }
 
             final String stadtbezirk = zaehlstelle.getStadtbezirk();
@@ -502,9 +502,36 @@ public class SucheService {
                 .flatMap(suggestion -> CollectionUtils.emptyIfNull(suggestion.completion().options()).stream())
                 .map(CompletionSuggestOption::text)
                 .filter(StringUtils::isNotEmpty)
+                .filter(suggestedText -> {
+                    if (isDatumsbereichSuggestion(prefix) && isDate(suggestedText)) {
+                        final LocalDate prefixDate = getLocalDateOfString(wordsForPrefix[1]);
+                        final LocalDate suggestedDate = getLocalDateOfString(suggestedText);
+                        return suggestedDate.isAfter(prefixDate);
+                    }
+                    return true;
+                })
                 .map(suggestedText -> prefix + suggestedText)
                 .map(SucheWordSuggestDTO::new)
                 .toList();
+    }
+
+    /**
+     * Hilfmethode, um zu testen, ob es sich um eine Suggestion nach einem Datumsbereich handelt.
+     * Kriterien:
+     * - Exakt 3 Suchbegriffe enthalten
+     * - 'von' und 'bis' müssen enthalten sein
+     * - 'von' ist Begriff 1, 'bis' ist Begriff 3
+     * - Begriffe 2 ist ein Datum
+     *
+     * @param query Suchanfrage
+     * @return true/false
+     */
+    private boolean isDatumsbereichSuggestion(final String query) {
+        final String[] split = query.trim().split(StringUtils.SPACE);
+        if (query.contains("von") && query.contains("bis") && split.length == 3) {
+            return split[0].trim().equalsIgnoreCase("von") && split[2].trim().equalsIgnoreCase("bis") && this.isDate(split[1]);
+        }
+        return false;
     }
 
     /**

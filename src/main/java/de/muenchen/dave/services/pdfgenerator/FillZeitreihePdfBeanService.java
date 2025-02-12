@@ -101,7 +101,7 @@ public class FillZeitreihePdfBeanService {
 
         final ZeitreiheTable zeitreiheTable = new ZeitreiheTable();
         zeitreiheTableOptionsMapper.options2zeitreiheTable(zeitreiheTable, options);
-        zeitreiheTable.setZeitreiheTableRows(getZeitreiheTableDataForPdf(zaehlstelle.getId(), zaehlungId, options));
+        zeitreiheTable.setZeitreiheTableRows(getZeitreiheTableDataForPdf(zaehlungId, options));
         zeitreihePdf.setZeitreiheTable(zeitreiheTable);
 
         FillPdfBeanService.fillPdfBeanWithData(zeitreihePdf, department);
@@ -115,14 +115,13 @@ public class FillZeitreihePdfBeanService {
     /**
      * Lädt die ZeitreiheDaten und wandelt sie in eine Liste von ZeitreiheTableRow um.
      *
-     * @param zaehlstelleId ID der aktuellen Zählstelle im Frontend
      * @param zaehlungId ID der aktuellen Zählung im Frontend
      * @param options Optionen aus dem Frontend
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
-    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(String zaehlstelleId, String zaehlungId, OptionsDTO options) throws DataNotFoundException {
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlstelleId, zaehlungId, options);
+    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDTO options) throws DataNotFoundException {
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {
             final ZeitreiheTableRow ztr = new ZeitreiheTableRow();

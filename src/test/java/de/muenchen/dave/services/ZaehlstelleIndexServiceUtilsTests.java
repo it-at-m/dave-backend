@@ -2,6 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Status;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
@@ -54,17 +55,23 @@ public class ZaehlstelleIndexServiceUtilsTests {
     }
 
     @Test
-    public void testGetLetzteZaehlung() {
+    public void testGetLetzteAktiveZaehlung() {
         Zaehlung z1 = new Zaehlung();
         z1.setDatum(LocalDate.of(2010, 1, 1));
+        z1.setStatus(Status.ACTIVE.name());
 
         Zaehlung z2 = new Zaehlung();
         z2.setDatum(LocalDate.of(2015, 1, 1));
+        z2.setStatus(Status.ACTIVE.name());
 
         Zaehlung z3 = new Zaehlung();
         z3.setDatum(LocalDate.of(2020, 1, 1));
+        z3.setStatus(Status.ACTIVE.name());
 
-        assertThat(IndexServiceUtils.getLetzteZaehlung(Lists.newArrayList(z1, z2, z3)), is(equalTo(z3)));
+        assertThat(IndexServiceUtils.getLetzteAktiveZaehlung(Lists.newArrayList(z1, z2, z3)), is(equalTo(z3)));
+
+        z3.setStatus(Status.INACTIVE.name());
+        assertThat(IndexServiceUtils.getLetzteAktiveZaehlung(Lists.newArrayList(z1, z2, z3)), is(equalTo(z2)));
     }
 
     @Test
