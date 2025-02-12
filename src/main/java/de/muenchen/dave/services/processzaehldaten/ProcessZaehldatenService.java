@@ -6,14 +6,16 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessZaehldatenService {
 
     private final LadeZaehldatenService ladeZaehldatenService;
@@ -30,17 +33,9 @@ public class ProcessZaehldatenService {
 
     private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService;
 
-    private final ZaehlstelleIndexService indexService;
+    private final ProcessZaehldatenBelastungsplanService processZaehldatenBelastungsplanService;
 
-    public ProcessZaehldatenService(final LadeZaehldatenService ladeZaehldatenService,
-            final ProcessZaehldatenSteplineService processZaehldatenSteplineService,
-            final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService,
-            final ZaehlstelleIndexService indexService) {
-        this.ladeZaehldatenService = ladeZaehldatenService;
-        this.processZaehldatenSteplineService = processZaehldatenSteplineService;
-        this.processZaehldatenHeatmapService = processZaehldatenHeatmapService;
-        this.indexService = indexService;
-    }
+    private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
 
     /**
      * Diese Methode gibt die Zaehldaten in aufbereiter Form zur Darstellung in der Listenausgabe, in
@@ -78,6 +73,18 @@ public class ProcessZaehldatenService {
                 ladeZaehldatenTable,
                 options);
         processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
+
+        log.debug("Process Zaehldaten Belastungsplan");
+        final LadeBelastungsplanDTO ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
+                zaehlungId,
+                options);
+        processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
+
+        log.debug("Process Zaehldaten Zeitreihe");
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
+                zaehlungId,
+                options);
+        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
 
         return processedZaehldaten;
     }
