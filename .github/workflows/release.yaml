@@ -11,7 +11,7 @@ on:
 jobs:
   merge_release:
     if: github.event.pull_request.merged == true
-    name: Create docker release
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -41,8 +41,13 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add pom.xml
           git commit -m "Bump main version to $new_version"
-          git push
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}       
+          
       - name: Build with Maven
         run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
 
