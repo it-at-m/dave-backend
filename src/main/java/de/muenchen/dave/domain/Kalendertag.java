@@ -1,7 +1,10 @@
 package de.muenchen.dave.domain;
 
+import de.muenchen.dave.domain.enums.TagesTyp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,6 +27,7 @@ public class Kalendertag extends BaseEntity {
     private String feiertag;
 
     @Column(nullable = false)
-    private Integer tagestyp;
+    @Enumerated(EnumType.STRING)
+    private TagesTyp tagestyp;
 
 }
