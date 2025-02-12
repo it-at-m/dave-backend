@@ -1,16 +1,12 @@
 name: release
 
-# Run workflow on commits to the `main` branch
-on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - 'main-ls2'
+# Run workflow on push to the `main` branch
+on: 
+  push:
+    branches: ["main-ls2"]
 
 jobs:
   merge_release:
-    if: github.event.pull_request.merged == true
     name: Create release
     runs-on: ubuntu-latest
     steps:
@@ -104,6 +100,5 @@ jobs:
         with:
           tag_name: ${{ steps.get-version.outputs.new_version }}
           release_name: Release ${{ steps.get-version.outputs.new_version }}
-          body: ${{ github.event.pull_request.body }}
           draft: false
           prerelease: false
