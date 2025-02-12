@@ -245,7 +245,7 @@ public class FillPdfBeanService {
             messstelleninformationen.setKommentar(messstelle.getKommentar());
         }
         messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        messstelleninformationen.setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")));
         messstelleninformationen.setZeitintervallNeeded(true);
         messstelleninformationen.setZeitintervall(optionsDTO.getZeitraum().stream().map(AuswertungsZeitraum::getLongText).collect(Collectors.joining(", ")));
         messstelleninformationen.setWochentagNeeded(true);
