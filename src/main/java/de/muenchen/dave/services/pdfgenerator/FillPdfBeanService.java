@@ -862,6 +862,7 @@ public class FillPdfBeanService {
             this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
+            header.addFirst(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
