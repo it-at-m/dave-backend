@@ -986,7 +986,7 @@ public class FillPdfBeanService {
                     final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
                     row.setLegend(legend.get(index));
                     if (hasMultipleMessstellen) {
-                        row.setCssColorBox("default");
+                        row.setCssColorBox(String.format("mst-%s", index));
                     } else {
                         row.setCssColorBox(row.getLegend().toLowerCase());
                     }

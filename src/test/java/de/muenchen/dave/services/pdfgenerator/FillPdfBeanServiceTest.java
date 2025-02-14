@@ -313,14 +313,14 @@ class FillPdfBeanServiceTest {
         final List<GesamtauswertungTableRow> expected = new ArrayList<>();
         final GesamtauswertungTableRow row1 = new GesamtauswertungTableRow();
         row1.setLegend(legend.getFirst());
-        row1.setCssColorBox("default");
+        row1.setCssColorBox("mst-0");
         row1.setGesamtauswertungTableColumns(List.of(new GesamtauswertungTableColumn(String.valueOf(entryInt.getYAxisData().getFirst())),
                 new GesamtauswertungTableColumn(String.valueOf(entryInt.getYAxisData().getLast()))));
         final GesamtauswertungTableRow row2 = new GesamtauswertungTableRow();
         row2.setLegend(legend.getLast());
         row2.setGesamtauswertungTableColumns(List.of(new GesamtauswertungTableColumn(String.valueOf(entryDec.getYAxisData().getFirst())),
                 new GesamtauswertungTableColumn(String.valueOf(entryDec.getYAxisData().getLast()))));
-        row2.setCssColorBox("default");
+        row2.setCssColorBox("mst-1");
         expected.add(row1);
         expected.add(row2);
         assertThat(FillPdfBeanService.getGesamtauswertungTableRows(seriesEntries, legend, hasMultipleMessstellen, header), is(expected));
