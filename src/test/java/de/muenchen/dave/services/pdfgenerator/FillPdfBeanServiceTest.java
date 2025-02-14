@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
@@ -168,7 +169,7 @@ class FillPdfBeanServiceTest {
 
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
-        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getSelectedFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
         assertThat(informationen.getMesszeitraum(),
                 is(String.format("%s - %s", optionsDTO.getZeitraum().getFirst().format(DDMMYYYY), optionsDTO.getZeitraum().getLast().format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
@@ -179,7 +180,7 @@ class FillPdfBeanServiceTest {
         optionsDTO.setZeitraum(List.of(LocalDate.now(), LocalDate.now()));
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
-        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getSelectedFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
         assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY)));
         assertThat(informationen.isWochentagNeeded(), is(false));
         assertThat(informationen.getWochentag(), is(nullValue()));
@@ -228,6 +229,7 @@ class FillPdfBeanServiceTest {
         final MessstelleAuswertungOptionsDTO optionsDTO = new MessstelleAuswertungOptionsDTO();
         optionsDTO.setJahre(List.of(2006, 2007, 2008));
         optionsDTO.setTagesTyp(TagesTyp.SAMSTAG);
+        optionsDTO.setFahrzeuge(new FahrzeugOptionsDTO());
         optionsDTO.setZeitraum(List.of(AuswertungsZeitraum.JANUAR, AuswertungsZeitraum.FEBRUAR, AuswertungsZeitraum.MAERZ));
         boolean isSingleMessstelle = false;
 
@@ -236,7 +238,7 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.getStandort(), is(nullValue()));
         assertThat(informationen.isKommentarNeeded(), is(isSingleMessstelle));
         assertThat(informationen.getKommentar(), is(nullValue()));
-        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getSelectedFahrzeuge(), is(FillPdfBeanService.KEINE_DATEN_VORHANDEN));
         assertThat(informationen.getMesszeitraum(),
                 is(optionsDTO.getJahre().stream().map(String::valueOf).collect(Collectors.joining(", "))));
         assertThat(informationen.isZeitintervallNeeded(), is(true));
@@ -252,7 +254,7 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.isKommentarNeeded(), is(isSingleMessstelle));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
-        assertThat(informationen.getDetektierteFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getSelectedFahrzeuge(), is(FillPdfBeanService.KEINE_DATEN_VORHANDEN));
         assertThat(informationen.getMesszeitraum(),
                 is(optionsDTO.getJahre().stream().map(String::valueOf).collect(Collectors.joining(", "))));
         assertThat(informationen.isZeitintervallNeeded(), is(true));
@@ -432,5 +434,15 @@ class FillPdfBeanServiceTest {
             expected.add(gesamtauswertungTable);
         });
         assertThat(FillPdfBeanService.getGesamtauswertungTables(header, rowsPerTable), is(expected));
+    }
+
+    @Test
+    void getSelectedFahrzeugeAsText() {
+        final String expected = "Lkw, Lz, Krad";
+        final FahrzeugOptionsDTO fahrzeugOptionsDTO = new FahrzeugOptionsDTO();
+        fahrzeugOptionsDTO.setLastkraftwagen(true);
+        fahrzeugOptionsDTO.setLastzuege(true);
+        fahrzeugOptionsDTO.setKraftraeder(true);
+        assertThat(FillPdfBeanService.getSelectedFahrzeugeAsText(fahrzeugOptionsDTO), is(expected));
     }
 }
