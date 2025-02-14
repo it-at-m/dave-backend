@@ -101,7 +101,7 @@ class GanglinieServiceTest {
         final var result = ganglinieService.ladeGanglinie(intervals, optionsFahrzeuge);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Bus", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(20);
         expected.setRangeMaxPercent(14);
         expected.setXAxisDataFirstChart(List.of("00:00", "00:30", "01:00"));
