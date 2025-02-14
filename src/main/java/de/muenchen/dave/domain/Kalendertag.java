@@ -20,12 +20,6 @@ public class Kalendertag extends BaseEntity {
     @Column(nullable = false, unique = true)
     private LocalDate datum;
 
-    @Column
-    private String ferientyp;
-
-    @Column
-    private String feiertag;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TagesTyp tagestyp;
