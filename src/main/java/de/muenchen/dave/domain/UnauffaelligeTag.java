@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,7 +28,7 @@ import java.time.LocalDate;
         )
         }
 )
-public class UnauffaelligeTage extends BaseEntity {
+public class UnauffaelligeTag extends BaseEntity {
 
     @Column(nullable = false)
     private Integer mstId;
