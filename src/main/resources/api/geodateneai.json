@@ -48,22 +48,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Intervalle erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IntervalResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Intervalle erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalResponseDto"
                 }
               }
             }
@@ -89,22 +89,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Tagesaggregate erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Tagesaggregate erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
                 }
               }
             }
@@ -161,6 +161,16 @@
         "summary": "Holt alle relevanten Messstellen.",
         "operationId": "getMessstellen",
         "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Messstellen erfolgreich abgefragt.",
             "content": {
@@ -173,13 +183,57 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/messstelle/unauffaellige-tage-for-each-messstelle": {
+      "get": {
+        "tags": [
+          "Messstelle"
+        ],
+        "summary": "Gibt die unauffälligen Tage für jede existierende Messstelle im gegebenen Zeitraum zurück.",
+        "operationId": "getUnauffaelligeTageForEachMessstelle",
+        "parameters": [
+          {
+            "name": "start-date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           },
+          {
+            "name": "end-date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Unauffällige Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnauffaelligerTagDto"
+                  }
                 }
               }
             }
@@ -205,22 +259,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -743,6 +797,19 @@
             "items": {
               "$ref": "#/components/schemas/MessfaehigkeitDto"
             }
+          }
+        }
+      },
+      "UnauffaelligerTagDto": {
+        "type": "object",
+        "properties": {
+          "mstId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date"
           }
         }
       },

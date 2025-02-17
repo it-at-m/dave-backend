@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -11,8 +12,8 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 
+@Entity
 @Data
-@Builder
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(
