@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document(indexName = "zaehlstelle")
+@Document(indexName = "#{ 'zaehlstelle' + @environment.getProperty('elasticsearch.index.suffix') }")
 public class Zaehlstelle {
 
     @Id
