@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
@@ -206,17 +207,63 @@ public class SucheService {
      * das Attribut "sichtbarDatenportal" false ist.
      *
      * @param query Suchquery
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return passende Zaehl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(final String query, final boolean noFilter) {
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
-        return this.sucheErhebungsstelle(query, noFilter)
+        final Set<ErhebungsstelleKarteDTO> result = new HashSet<>();
+        if (searchAndFilterOptionsDTO.isSearchInMessstellen()) {
+            result.addAll(sucheMessstelle(query));
+        }
+        if (searchAndFilterOptionsDTO.isSearchInZaehlstellen()) {
+            result.addAll(sucheZaehlstelle(query, searchAndFilterOptionsDTO));
+        }
+        return result
                 .stream()
-                .filter(zaehlstelleKarte -> ObjectUtils.isEmpty(zaehlstelleKarte.getSichtbarDatenportal())
-                        || zaehlstelleKarte.getSichtbarDatenportal())
+                .filter(erhebungsstelleKarteDTO -> ObjectUtils.isEmpty(erhebungsstelleKarteDTO.getSichtbarDatenportal())
+                        || erhebungsstelleKarteDTO.getSichtbarDatenportal())
                 .collect(Collectors.toSet());
+    }
+
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO) {
+        final List<Zaehlstelle> zaehlstellen;
+        final PageRequest pageable = PageRequest.of(0, 10000);
+        if (StringUtils.isEmpty(query)) {
+            zaehlstellen = this.zaehlstelleIndex.findAll();
+        } else {
+            final String q = this.createQueryString(query);
+            log.debug("#sucheZaehlstelle '{}', filter '{}'", q, searchAndFilterOptionsDTO);
+            zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, pageable).toList();
+        }
+        final List<Zaehlstelle> relevantZaelstellen = new ArrayList<>();
+        if (ObjectUtils.isNotEmpty(searchAndFilterOptionsDTO.getZeitraum())) {
+            final LocalDate startDate = searchAndFilterOptionsDTO.getZeitraum().getStartDate();
+            final LocalDate endDate = searchAndFilterOptionsDTO.getZeitraum().getEndDate();
+            if (ObjectUtils.isNotEmpty(startDate) && ObjectUtils.isNotEmpty(endDate)) {
+                zaehlstellen.forEach(zaehlstelle -> zaehlstelle.getZaehlungen().forEach(zaehlung -> {
+                    if (this.isDateEqualOrAfter(zaehlung.getDatum(), startDate) && this.isDateEqualOrBefore(zaehlung.getDatum(),
+                            endDate)) {
+                        relevantZaelstellen.add(zaehlstelle);
+                    }
+                }));
+            } else if (ObjectUtils.isNotEmpty(startDate)) {
+                zaehlstellen.forEach(zaehlstelle -> zaehlstelle.getZaehlungen().forEach(zaehlung -> {
+                    if (this.isDateEqualOrAfter(zaehlung.getDatum(), startDate)) {
+                        relevantZaelstellen.add(zaehlstelle);
+                    }
+                }));
+            } else if (ObjectUtils.isNotEmpty(endDate)) {
+                zaehlstellen.forEach(zaehlstelle -> zaehlstelle.getZaehlungen().forEach(zaehlung -> {
+                    if (this.isDateEqualOrBefore(zaehlung.getDatum(), endDate)) {
+                        relevantZaelstellen.add(zaehlstelle);
+                    }
+                }));
+            } else {
+                relevantZaelstellen.addAll(zaehlstellen);
+            }
+        }
+        return this.getZaehlstelleKarteDTOS(relevantZaelstellen, false);
     }
 
     /**
