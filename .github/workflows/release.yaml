@@ -1,4 +1,4 @@
-name: release
+name: release-maven-image
 
 on:
   workflow_dispatch:
@@ -6,11 +6,11 @@ on:
       releaseVersion:
         description: "Default version to use when preparing a release."
         required: true
-        default: "2.0.0"
+        default: "X.Y.Z"
       developmentVersion:
         description: "Default version to use for new local working copy."
         required: true
-        default: "2.0.1-SNAPSHOT"
+        default: "X.Y.Z-SNAPSHOT"
 
 jobs:
   release-maven:
@@ -24,7 +24,7 @@ jobs:
       - id: maven-release-step
         uses: it-at-m/.github/.github/actions/action-maven-release@main
         with:
-          app-path: ""
+          app-path: .
           releaseVersion: "${{ github.event.inputs.releaseVersion }}"
           developmentVersion: "${{ github.event.inputs.developmentVersion }}"
           java-version: 21
