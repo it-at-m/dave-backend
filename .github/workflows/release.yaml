@@ -28,6 +28,7 @@ jobs:
           releaseVersion: "${{ github.event.inputs.releaseVersion }}"
           developmentVersion: "${{ github.event.inputs.developmentVersion }}"
           java-version: 21
+          ssh-key: ${{secrets.PUSH_KEY}}
 
   create-github-release:
     needs: release-maven
