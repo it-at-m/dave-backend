@@ -32,16 +32,16 @@ public class LageplanController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<DocumentDto> loadLageplan(@RequestParam(value = REQUEST_PARAMETER_MSTID) final String messstelleId) {
-        log.debug("#readMessstelleInfo with id {}", messstelleId);
+        log.debug("#loadLageplan with id {}", messstelleId);
         try {
             final DocumentDto documentDto = this.lageplanService.ladeLageplan(messstelleId);
             return ResponseEntity.ok(documentDto);
         } catch (final ResourceNotFoundException e) {
-            log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
+            log.error("Fehler beim Laden des Lageplans zur Messstelle: {}", messstelleId, e);
             throw e;
         } catch (final Exception e) {
-            log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", messstelleId, e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
+            log.error("Fehler beim Laden des Lageplans zur Messstelle: {}", messstelleId, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein Fehler beim Laden des Lageplans zur Messstelle aufgetreten.");
         }
     }
 

@@ -9,6 +9,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service für das Behandeln von Lageplänen zu Messstellen.
+ */
 @Slf4j
 @Service
 @AllArgsConstructor
