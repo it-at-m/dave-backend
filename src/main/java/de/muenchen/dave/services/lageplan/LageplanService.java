@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.lageplan;
 
 import de.muenchen.dave.documentstorage.gen.api.LageplanApi;
-import de.muenchen.dave.documentstorage.gen.model.LageplanDto;
+import de.muenchen.dave.documentstorage.gen.model.DocumentDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +20,10 @@ public class LageplanService {
     /**
      * Lädt die Lageplan-Infos zur angegebenen Messstelle.
      */
-    public LageplanDto ladeLageplan(final String mstId) {
+    public DocumentDto ladeLageplan(final String mstId) {
         log.debug("#ladeLageplan {}", mstId);
 
-        ResponseEntity<LageplanDto> response = lageplanApi.getLageplanWithHttpInfo(mstId).block();
+        ResponseEntity<DocumentDto> response = lageplanApi.getLageplanWithHttpInfo(mstId).block();
 
         if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
             log.error("Die Response beinhaltet keine Daten");
@@ -38,7 +38,7 @@ public class LageplanService {
     public Boolean lageplanVorhanden(final String mstId) {
         log.debug("#lageplanVorhanden {}", mstId);
 
-        ResponseEntity<Boolean> response = lageplanApi.hasLageplanWithHttpInfo(mstId).block();
+        ResponseEntity<Boolean> response = lageplanApi.lageplanExistsWithHttpInfo(mstId).block();
 
         if (ObjectUtils.isEmpty(response) || ObjectUtils.isEmpty(response.getBody())) {
             log.error("Die Response beinhaltet keine Daten");
