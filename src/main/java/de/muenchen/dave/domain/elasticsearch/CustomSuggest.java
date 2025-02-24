@@ -11,7 +11,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
 
 @Data
-@Document(indexName = "#{ 'suggestion' + @environment.getProperty('elasticsearch.index.suffix') }")
+@Document(indexName = "suggestion")
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomSuggest {
