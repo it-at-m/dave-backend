@@ -21,7 +21,7 @@ public class DocumentStorageApiConfiguration {
     public String documentStorageUrl;
 
     /**
-     * Erstellt ein {@link LageplanApi} Bean für Requests an den document-storage
+     * Erstellt eine unsecured {@link LageplanApi} Bean für Requests an den document-storage.
      */
     @Bean
     @Profile("no-security")
@@ -31,6 +31,9 @@ public class DocumentStorageApiConfiguration {
         return new LageplanApi(apiClient);
     }
 
+    /**
+     * Erstellt eine secured {@link LageplanApi} Bean für Requests an den document-storage.
+     */
     @Bean
     @Profile("!no-security")
     public LageplanApi securedDocumentStorageApi(final ClientRegistrationRepository clientRegistrationRepository,
