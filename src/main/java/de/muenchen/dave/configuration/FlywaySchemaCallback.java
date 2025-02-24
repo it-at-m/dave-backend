@@ -11,6 +11,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Die Klasse implementiert die Flyway Callback-Schnittstelle, um vor bestimmten Migrationsschritten
+ * zusätzl. Vorarbeiten durchzuführen.
+ */
 @Component
 @Slf4j
 public class FlywaySchemaCallback implements Callback {
@@ -22,18 +26,18 @@ public class FlywaySchemaCallback implements Callback {
     }
 
     @Override
-    public boolean supports(Event event, Context context) {
+    public boolean supports(final Event event, final Context context) {
         // telling Flyway to only trigger callback for these events
         return event.equals(Event.BEFORE_EACH_MIGRATE) || event.equals(Event.AFTER_EACH_MIGRATE);
     }
 
     @Override
-    public boolean canHandleInTransaction(Event event, Context context) {
+    public boolean canHandleInTransaction(final Event event, final Context context) {
         return false;
     }
 
     @Override
-    public void handle(Event event, Context context) {
+    public void handle(final Event event, final Context context) {
         if (event.equals(org.flywaydb.core.api.callback.Event.BEFORE_MIGRATE)) {
             try (Connection connection = context.getConnection()) {
                 try (Statement statement = connection.createStatement()) {
