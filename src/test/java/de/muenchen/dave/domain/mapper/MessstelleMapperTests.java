@@ -53,6 +53,7 @@ class MessstelleMapperTests {
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setKommentar(bean.getKommentar());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
