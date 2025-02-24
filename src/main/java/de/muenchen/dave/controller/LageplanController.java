@@ -3,6 +3,7 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.documentstorage.gen.model.DocumentDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.lageplan.LageplanService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class LageplanController {
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<DocumentDto> loadLageplan(@RequestParam(value = REQUEST_PARAMETER_MSTID) final String messstelleId) {
+    public ResponseEntity<DocumentDto> loadLageplan(@RequestParam(value = REQUEST_PARAMETER_MSTID) @NotBlank final String messstelleId) {
         log.debug("#loadLageplan with id {}", messstelleId);
         try {
             final DocumentDto documentDto = this.lageplanService.ladeLageplan(messstelleId);
