@@ -97,9 +97,9 @@ public class MessstelleReceiver {
         messstelleIndexService.saveMessstelle(updated);
     }
 
-    private void updateLageplanVorhanden(Messstelle updated) {
-        if (updated.getLageplanVorhanden() == null || !updated.getLageplanVorhanden()) {
-            updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
+    private void updateLageplanVorhanden(Messstelle messstelle) {
+        if (messstelle.getLageplanVorhanden() == null || !messstelle.getLageplanVorhanden()) {
+            messstelle.setLageplanVorhanden(lageplanService.lageplanVorhanden(messstelle.getMstId()));
         }
     }
 
