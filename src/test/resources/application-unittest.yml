@@ -1,6 +1,3 @@
-# Environment-specific db schema name
-db.schema: dave
-
 spring:
 
   # Spring data rest
@@ -29,7 +26,6 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: ${db.schema}
         format_sql: true
   datasource:
     username: sa
@@ -49,8 +45,6 @@ spring:
           client-secret:
           authorization-grant-type: client_credentials
 
-# Environment-specific suffix appended to the index name (may be empty)
-index.suffix:
 elasticsearch:
   user: elastic
   password:
