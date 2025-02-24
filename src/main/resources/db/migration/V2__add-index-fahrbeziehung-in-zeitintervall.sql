@@ -1,1 +1,1 @@
-CREATE INDEX index_fahrbeziehungid ON zeitintervall USING btree (fahrbeziehung_id);
+CREATE INDEX index_fahrbeziehungid ON dave.zeitintervall USING btree (fahrbeziehung_id);

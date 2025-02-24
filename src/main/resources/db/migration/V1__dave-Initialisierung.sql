@@ -12,6 +12,7 @@ SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
@@ -31,7 +32,7 @@ SET default_table_access_method = heap;
 -- Name: chatmessage; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE chatmessage (
+CREATE TABLE dave.chatmessage (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -45,14 +46,14 @@ CREATE TABLE chatmessage (
 );
 
 
-ALTER TABLE chatmessage OWNER TO dave;
+ALTER TABLE dave.chatmessage OWNER TO dave;
 
 --
 -- TOC entry 226 (class 1259 OID 16535)
 -- Name: dienstleister; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE dienstleister (
+CREATE TABLE dave.dienstleister (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -62,27 +63,27 @@ CREATE TABLE dienstleister (
 );
 
 
-ALTER TABLE dienstleister OWNER TO dave;
+ALTER TABLE dave.dienstleister OWNER TO dave;
 
 --
 -- TOC entry 227 (class 1259 OID 16542)
 -- Name: dienstleister_emailaddresses; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE dienstleister_emailaddresses (
+CREATE TABLE dave.dienstleister_emailaddresses (
     dienstleister_id character varying(36) NOT NULL,
     email_addresses character varying(255)
 );
 
 
-ALTER TABLE dienstleister_emailaddresses OWNER TO dave;
+ALTER TABLE dave.dienstleister_emailaddresses OWNER TO dave;
 
 --
 -- TOC entry 228 (class 1259 OID 16545)
 -- Name: emailaddress; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE emailaddress (
+CREATE TABLE dave.emailaddress (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -91,14 +92,14 @@ CREATE TABLE emailaddress (
 );
 
 
-ALTER TABLE emailaddress OWNER TO dave;
+ALTER TABLE dave.emailaddress OWNER TO dave;
 
 --
 -- TOC entry 229 (class 1259 OID 16550)
 -- Name: hochrechnungsfaktor; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE hochrechnungsfaktor (
+CREATE TABLE dave.hochrechnungsfaktor (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -111,14 +112,14 @@ CREATE TABLE hochrechnungsfaktor (
 );
 
 
-ALTER TABLE hochrechnungsfaktor OWNER TO dave;
+ALTER TABLE dave.hochrechnungsfaktor OWNER TO dave;
 
 --
 -- TOC entry 230 (class 1259 OID 16555)
 -- Name: infomessage; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE infomessage (
+CREATE TABLE dave.infomessage (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -129,14 +130,14 @@ CREATE TABLE infomessage (
 );
 
 
-ALTER TABLE infomessage OWNER TO dave;
+ALTER TABLE dave.infomessage OWNER TO dave;
 
 --
 -- TOC entry 231 (class 1259 OID 16562)
 -- Name: pkweinheit; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE pkweinheit (
+CREATE TABLE dave.pkweinheit (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -149,14 +150,14 @@ CREATE TABLE pkweinheit (
 );
 
 
-ALTER TABLE pkweinheit OWNER TO dave;
+ALTER TABLE dave.pkweinheit OWNER TO dave;
 
 --
 -- TOC entry 232 (class 1259 OID 16567)
 -- Name: shedlock; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE shedlock (
+CREATE TABLE dave.shedlock (
     name character varying(255) NOT NULL,
     lock_until timestamp(6) without time zone NOT NULL,
     locked_at timestamp(6) without time zone NOT NULL,
@@ -164,14 +165,14 @@ CREATE TABLE shedlock (
 );
 
 
-ALTER TABLE shedlock OWNER TO dave;
+ALTER TABLE dave.shedlock OWNER TO dave;
 
 --
 -- TOC entry 233 (class 1259 OID 16574)
 -- Name: zeitintervall; Type: TABLE; Schema: dave; Owner: dave
 --
 
-CREATE TABLE zeitintervall (
+CREATE TABLE dave.zeitintervall (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
@@ -203,7 +204,7 @@ CREATE TABLE zeitintervall (
 );
 
 
-ALTER TABLE zeitintervall OWNER TO dave;
+ALTER TABLE dave.zeitintervall OWNER TO dave;
 
 
 --
@@ -211,7 +212,7 @@ ALTER TABLE zeitintervall OWNER TO dave;
 -- Name: chatmessage chatmessage_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY chatmessage
+ALTER TABLE ONLY dave.chatmessage
     ADD CONSTRAINT chatmessage_pkey PRIMARY KEY (id);
 
 
@@ -220,7 +221,7 @@ ALTER TABLE ONLY chatmessage
 -- Name: dienstleister dienstleister_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY dienstleister
+ALTER TABLE ONLY dave.dienstleister
     ADD CONSTRAINT dienstleister_pkey PRIMARY KEY (id);
 
 
@@ -229,7 +230,7 @@ ALTER TABLE ONLY dienstleister
 -- Name: emailaddress emailaddress_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY emailaddress
+ALTER TABLE ONLY dave.emailaddress
     ADD CONSTRAINT emailaddress_pkey PRIMARY KEY (id);
 
 
@@ -238,7 +239,7 @@ ALTER TABLE ONLY emailaddress
 -- Name: hochrechnungsfaktor hochrechnungsfaktor_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY hochrechnungsfaktor
+ALTER TABLE ONLY dave.hochrechnungsfaktor
     ADD CONSTRAINT hochrechnungsfaktor_pkey PRIMARY KEY (id);
 
 
@@ -247,7 +248,7 @@ ALTER TABLE ONLY hochrechnungsfaktor
 -- Name: infomessage infomessage_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY infomessage
+ALTER TABLE ONLY dave.infomessage
     ADD CONSTRAINT infomessage_pkey PRIMARY KEY (id);
 
 
@@ -256,7 +257,7 @@ ALTER TABLE ONLY infomessage
 -- Name: pkweinheit pkweinheit_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY pkweinheit
+ALTER TABLE ONLY dave.pkweinheit
     ADD CONSTRAINT pkweinheit_pkey PRIMARY KEY (id);
 
 
@@ -265,7 +266,7 @@ ALTER TABLE ONLY pkweinheit
 -- Name: shedlock shedlock_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY shedlock
+ALTER TABLE ONLY dave.shedlock
     ADD CONSTRAINT shedlock_pkey PRIMARY KEY (name);
 
 
@@ -274,7 +275,7 @@ ALTER TABLE ONLY shedlock
 -- Name: hochrechnungsfaktor uk60cvh9h36xnd1d3vpluylr2po; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY hochrechnungsfaktor
+ALTER TABLE ONLY dave.hochrechnungsfaktor
     ADD CONSTRAINT unique_dave_hochrechnungsfaktor_matrix UNIQUE (matrix);
 
 
@@ -283,7 +284,7 @@ ALTER TABLE ONLY hochrechnungsfaktor
 -- Name: zeitintervall zeitintervall_pkey; Type: CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY zeitintervall
+ALTER TABLE ONLY dave.zeitintervall
     ADD CONSTRAINT zeitintervall_pkey PRIMARY KEY (id);
 
 
@@ -292,7 +293,7 @@ ALTER TABLE ONLY zeitintervall
 -- Name: index_active; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_active ON hochrechnungsfaktor USING btree (active);
+CREATE INDEX index_active ON dave.hochrechnungsfaktor USING btree (active);
 
 
 --
@@ -300,7 +301,7 @@ CREATE INDEX index_active ON hochrechnungsfaktor USING btree (active);
 -- Name: index_combined_1; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_combined_1 ON zeitintervall USING btree (zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach);
+CREATE INDEX index_combined_1 ON dave.zeitintervall USING btree (zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach);
 
 
 --
@@ -308,7 +309,7 @@ CREATE INDEX index_combined_1 ON zeitintervall USING btree (zaehlung_id, type, f
 -- Name: index_combined_2; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_combined_2 ON zeitintervall USING btree (zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type);
+CREATE INDEX index_combined_2 ON dave.zeitintervall USING btree (zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type);
 
 
 --
@@ -316,7 +317,7 @@ CREATE INDEX index_combined_2 ON zeitintervall USING btree (zaehlung_id, startuh
 -- Name: index_combined_3; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_combined_3 ON zeitintervall USING btree (zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type);
+CREATE INDEX index_combined_3 ON dave.zeitintervall USING btree (zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type);
 
 
 --
@@ -324,7 +325,7 @@ CREATE INDEX index_combined_3 ON zeitintervall USING btree (zaehlung_id, startuh
 -- Name: index_default_faktor; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_default_faktor ON hochrechnungsfaktor USING btree (default_faktor);
+CREATE INDEX index_default_faktor ON dave.hochrechnungsfaktor USING btree (default_faktor);
 
 
 --
@@ -332,7 +333,7 @@ CREATE INDEX index_default_faktor ON hochrechnungsfaktor USING btree (default_fa
 -- Name: index_zaehlung; Type: INDEX; Schema: dave; Owner: dave
 --
 
-CREATE INDEX index_zaehlung ON zeitintervall USING btree (zaehlung_id);
+CREATE INDEX index_zaehlung ON dave.zeitintervall USING btree (zaehlung_id);
 
 
 --
@@ -340,8 +341,8 @@ CREATE INDEX index_zaehlung ON zeitintervall USING btree (zaehlung_id);
 -- Name: dienstleister_emailaddresses fk2iw1ggeetum6vfgr1jfpo8gsg; Type: FK CONSTRAINT; Schema: dave; Owner: dave
 --
 
-ALTER TABLE ONLY dienstleister_emailaddresses
-    ADD CONSTRAINT dave_dienstleister_id_fkey FOREIGN KEY (dienstleister_id) REFERENCES dienstleister(id);
+ALTER TABLE ONLY dave.dienstleister_emailaddresses
+    ADD CONSTRAINT dave_dienstleister_id_fkey FOREIGN KEY (dienstleister_id) REFERENCES dave.dienstleister(id);
 
 
 -- Completed on 2024-09-26 15:54:20
