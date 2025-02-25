@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
+import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
@@ -75,7 +76,8 @@ public class UnauffaelligeTageService {
      *
      * @param unauffaelligerTag als DTO.
      * @return die Entität des unauffälligen Tags mit der referenz zum Kalendertag.
-     * @throws EntityNotFoundException falls kein Kalendertag für den unauffälligen Tag gefunden wurde.
+     * @throws EntityNotFoundException falls kein {@link Kalendertag} für den
+     *             unauffälligen Tag gefunden wurde.
      */
     protected UnauffaelligerTag mapDto2Entity(final UnauffaelligerTagDto unauffaelligerTag) {
         final var kalendertag = kalendertagRepository.findByDatum(unauffaelligerTag.getDatum())

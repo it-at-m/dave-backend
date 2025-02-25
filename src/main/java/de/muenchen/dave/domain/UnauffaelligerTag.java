@@ -36,6 +36,6 @@ public class UnauffaelligerTag extends BaseEntity {
     private Integer mstId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name ="kalendertag_id")
+    @JoinColumn(name = "kalendertag_id")
     private Kalendertag kalendertag;
 }
