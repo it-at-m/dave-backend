@@ -207,7 +207,7 @@ public class FillPdfBeanService {
             final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
@@ -244,14 +244,69 @@ public class FillPdfBeanService {
             messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
             messstelleninformationen.setKommentar(messstelle.getKommentar());
         }
-        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        messstelleninformationen
+                .setSelectedFahrzeuge(StringUtils.defaultIfEmpty(getSelectedFahrzeugeAsText(optionsDTO.getFahrzeuge()), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen
+                .setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")));
         messstelleninformationen.setZeitintervallNeeded(true);
         messstelleninformationen.setZeitintervall(optionsDTO.getZeitraum().stream().map(AuswertungsZeitraum::getLongText).collect(Collectors.joining(", ")));
         messstelleninformationen.setWochentagNeeded(true);
         messstelleninformationen
                 .setWochentag(StringUtils.defaultIfEmpty(optionsDTO.getTagesTyp().getBeschreibung(), KEINE_DATEN_VORHANDEN));
         return messstelleninformationen;
+    }
+
+    /**
+     * Wandelt die Fahrzeugoptions in Text um
+     *
+     * @param options aktuelle Einstellungen
+     * @return ausgewaehlte Verkehrsarten als String
+     */
+    protected static String getSelectedFahrzeugeAsText(final FahrzeugOptionsDTO options) {
+        final List<String> selectedFahrzeuge = new ArrayList<>();
+        // Fahrzeugtypen
+        if (options.isPersonenkraftwagen()) {
+            selectedFahrzeuge.add("Pkw");
+        }
+        if (options.isLastkraftwagen()) {
+            selectedFahrzeuge.add("Lkw");
+        }
+        if (options.isLastzuege()) {
+            selectedFahrzeuge.add("Lz");
+        }
+        if (options.isLieferwagen()) {
+            selectedFahrzeuge.add("Lfw");
+        }
+        if (options.isBusse()) {
+            selectedFahrzeuge.add("Bus");
+        }
+        if (options.isKraftraeder()) {
+            selectedFahrzeuge.add("Krad");
+        }
+        if (options.isRadverkehr()) {
+            selectedFahrzeuge.add("Rad");
+        }
+        if (options.isFussverkehr()) {
+            selectedFahrzeuge.add("Fuß");
+        }
+        // Fahrzeugklassen
+        if (options.isKraftfahrzeugverkehr()) {
+            selectedFahrzeuge.add("KFZ");
+        }
+        if (options.isSchwerverkehr()) {
+            selectedFahrzeuge.add("SV");
+        }
+        if (options.isGueterverkehr()) {
+            selectedFahrzeuge.add("GV");
+        }
+        // Anteil
+        if (options.isSchwerverkehrsanteilProzent()) {
+            selectedFahrzeuge.add("SV%");
+        }
+        if (options.isGueterverkehrsanteilProzent()) {
+            selectedFahrzeuge.add("GV%");
+        }
+        return String.join(", ", selectedFahrzeuge);
     }
 
     /**
@@ -861,6 +916,7 @@ public class FillPdfBeanService {
             this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
+            header.addFirst(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
@@ -930,7 +986,7 @@ public class FillPdfBeanService {
                     final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
                     row.setLegend(legend.get(index));
                     if (hasMultipleMessstellen) {
-                        row.setCssColorBox("default");
+                        row.setCssColorBox(String.format("mst-%s", index));
                     } else {
                         row.setCssColorBox(row.getLegend().toLowerCase());
                     }

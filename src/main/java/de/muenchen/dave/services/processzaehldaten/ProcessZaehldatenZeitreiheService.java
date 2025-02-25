@@ -105,7 +105,8 @@ public class ProcessZaehldatenZeitreiheService {
             ladeZaehldatenZeitreiheDTO.getGvAnteilInProzent().add(ladeZaehldatumDTO.getAnteilGueterverkehrAnKfzProzent());
         }
         if (options.getZeitreiheGesamt()) {
-            ladeZaehldatenZeitreiheDTO.getGesamt().add(ladeZaehldatumDTO.getGesamt());
+            ladeZaehldatenZeitreiheDTO.getGesamt()
+                    .add(calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFussgaenger(), ladeZaehldatumDTO.getFahrradfahrer()));
         }
     }
 
@@ -117,7 +118,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param fahrradfahrer Wert für Fahrradfahrer
      * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
      */
-    static BigDecimal calculateGesamt(BigDecimal kfz, Integer fussgaenger, Integer fahrradfahrer) {
+    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fussgaenger, final Integer fahrradfahrer) {
         BigDecimal gesamt = new BigDecimal(0);
         gesamt = gesamt.add(kfz);
         if (fussgaenger != null) {
@@ -153,24 +154,23 @@ public class ProcessZaehldatenZeitreiheService {
         } else {
             // Es wurde kein Datum ausgewählt, wir versuchen die letzten drei Zählungen zu laden
 
-            // Liste an Zählungen sortieren (alt nach neu)
-            List<Zaehlung> zaehlungen = zaehlstelle.getZaehlungen();
-            zaehlungen.sort(Comparator.comparing(Zaehlung::getDatum));
-
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
                     .filter(zaehlung -> currentDate.equals(zaehlung.getDatum()))
                     .findFirst()
                     .get();
-            final int minIndex = zaehlungen.indexOf(currentZaehlung) - 2;
+            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
+                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
+                    .toList();
+            final int minIndex = filteredZaehlungen.indexOf(currentZaehlung) - 2;
 
             if (minIndex < 0) {
                 // Wenn minIndex < 0 dann soll das Datum des ersten Elements genommen werden
-                oldestDate = zaehlungen.get(0).getDatum();
+                oldestDate = filteredZaehlungen.getFirst().getDatum();
             } else {
                 // Ansonsten nimm das Datum des Elements mit minIndex
-                oldestDate = zaehlungen.get(minIndex).getDatum();
+                oldestDate = filteredZaehlungen.get(minIndex).getDatum();
             }
         }
 
@@ -180,17 +180,16 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Lädt die Daten für eine Zeitreihe und gibt diese zurück
      *
-     * @param zaehlstelleId Die ID der im Frontend ausgewählten Zählstelle
      * @param currentZaehlungId Die ID der im Frontend ausgewählten Zählung
      * @param options Optionen aus dem Frontend
      * @return Zeitreihendaten als LadeZaehldatenZeitreiheDTO
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
-    @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1, #p2}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String zaehlstelleId, final String currentZaehlungId, final OptionsDTO options)
+    @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
+    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDTO options)
             throws DataNotFoundException {
-        log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s, %s und %s", zaehlstelleId, currentZaehlungId, options.toString()));
-        final Zaehlstelle zaehlstelle = indexService.getZaehlstelle(zaehlstelleId);
+        log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));
+        final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = new LadeZaehldatenZeitreiheDTO();
