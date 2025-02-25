@@ -54,6 +54,11 @@ public class UnauffaelligeTageService {
         unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByDatumDesc();
         final LocalDate lastUnauffaelligerTag;
