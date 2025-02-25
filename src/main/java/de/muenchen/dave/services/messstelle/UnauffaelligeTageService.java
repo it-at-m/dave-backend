@@ -69,7 +69,7 @@ public class UnauffaelligeTageService {
         final var lastUnauffaelligerTag = unaufaelligerTag
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
-        final LocalDate yesterday = LocalDate.now().minusDays(1);
+        final var yesterday = LocalDate.now().minusDays(1);
         final var unauffaelligeTage = Objects
                 .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
         return unauffaelligeTage
