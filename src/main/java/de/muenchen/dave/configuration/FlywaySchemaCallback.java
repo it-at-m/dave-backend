@@ -39,8 +39,8 @@ public class FlywaySchemaCallback implements Callback {
     @Override
     public void handle(final Event event, final Context context) {
         if (event.equals(org.flywaydb.core.api.callback.Event.BEFORE_MIGRATE)) {
-            try (Connection connection = context.getConnection();
-                    Statement statement = connection.createStatement()) {
+            try (final Connection connection = context.getConnection();
+                    final Statement statement = connection.createStatement()) {
                 statement.execute("SET search_path TO " + schema);
             } catch (SQLException e) {
                 log.error("Fehler bei der Migrationsvorbereitung", e);
