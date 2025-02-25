@@ -40,8 +40,8 @@ public class UnauffaelligeTageService {
     /**
      * Die Methode aktualisiert regelmäßig die unauffälligen Tage.
      *
-     * Existiert für eine Messstelle ein Tagesaggregat, so ist dieser Tag als unauffälliger Tag für
-     * diese Messstelle defininert.
+     * Existiert für eine Messstelle ein Tagesaggregat,
+     * so ist dieser Tag als unauffälliger Tag für diese Messstelle definiert.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
@@ -60,9 +60,11 @@ public class UnauffaelligeTageService {
     }
 
     /**
+     * Die Methode ermittelt aus Mobidam die unauffälligen Tage und gibt diese als persistierbare Entitäten zurück.
      *
-     *
-     * @return
+     * @return die persistierbaren Entitäten der unauffälligen Tage.
+     * @throws EntityNotFoundException falls kein {@link Kalendertag} für den
+     *            unauffälligen Tag gefunden wurde.
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByDatumDesc();
