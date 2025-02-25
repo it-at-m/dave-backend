@@ -3,13 +3,19 @@ CREATE TABLE kalendertag (
                              created_time timestamp without time zone NOT NULL,
                              version bigint,
                              datum timestamp(6) without time zone NOT NULL UNIQUE,
-                             tagestyp character varying(255) NOT NULL
+                             tagestyp character varying(255) NOT NULL,
+                             constraint unique_kalendertag_datum UNIQUE (datum)
 );
 
 ALTER TABLE kalendertag OWNER TO dave;
 
 ALTER TABLE ONLY kalendertag
     ADD CONSTRAINT kalendertag_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY kalendertag
+    ADD CONSTRAINT unique_kalendertag_datum UNIQUE (datum);
+
+CREATE INDEX index_kalendertag_datum ON kalendertag USING BTREE(datum);
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
