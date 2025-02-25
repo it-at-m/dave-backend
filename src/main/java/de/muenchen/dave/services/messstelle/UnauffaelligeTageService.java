@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -49,9 +50,13 @@ public class UnauffaelligeTageService {
     public void loadMessstellenCron() {
         LockAssert.assertLocked();
         log.info("#loadUnauffaelligeTage from MobidaM");
-        // Daten aus MobidaM laden
-        final var unauffaelligeTage = loadUnauffaelligeTageForEachMessstelle();
-        unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+        try {
+            // Daten aus MobidaM laden
+            final var unauffaelligeTage = loadUnauffaelligeTageForEachMessstelle();
+            unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+        } catch (final Exception exception) {
+            log.error(exception.getMessage(), exception);
+        }
     }
 
     /**
@@ -83,7 +88,12 @@ public class UnauffaelligeTageService {
      */
     protected UnauffaelligerTag mapDto2Entity(final UnauffaelligerTagDto unauffaelligerTag) {
         final var kalendertag = kalendertagRepository.findByDatum(unauffaelligerTag.getDatum())
-                .orElseThrow(() -> new EntityNotFoundException("Kalendertag not found"));
+                .orElseThrow(() -> {
+                    final var message = MessageFormat.format(
+                            "Kalendertag for date {0} not found",
+                            unauffaelligerTag.getDatum() != null ? unauffaelligerTag.getDatum().toString() : null);
+                    return new EntityNotFoundException(message);
+                });
         return messstelleReceiverMapper.dto2Entity(unauffaelligerTag, kalendertag);
     }
 
