@@ -9,6 +9,7 @@ import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
 import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import de.muenchen.dave.repositories.relationaldb.UnauffaelligeTageRepository;
 import jakarta.persistence.EntityNotFoundException;
+import net.javacrumbs.shedlock.core.LockAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,43 @@ class UnauffaelligeTageServiceTest {
                 new MessstelleReceiverMapperImpl(),
                 messstelleApi);
         Mockito.reset(unauffaelligeTageRepository, kalendertagRepository, messstelleApi);
+    }
+
+    @Test
+    void loadMessstellenCron() {
+        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageService);
+
+        final var kalendertag20250202 = new Kalendertag();
+        kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
+        kalendertag20250202.setTagestyp(TagesTyp.MO_SO);
+
+        final var kalendertag20250203 = new Kalendertag();
+        kalendertag20250203.setDatum(LocalDate.of(2025, 2, 3));
+        kalendertag20250203.setTagestyp(TagesTyp.MO_SO);
+
+        final var unauffaelligeTage = new ArrayList<UnauffaelligerTag>();
+        var unauffaelligerTag = new UnauffaelligerTag();
+        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setKalendertag(kalendertag20250202);
+        unauffaelligeTage.add(unauffaelligerTag);
+        unauffaelligerTag = new UnauffaelligerTag();
+        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setKalendertag(kalendertag20250203);
+        unauffaelligeTage.add(unauffaelligerTag);
+        unauffaelligerTag = new UnauffaelligerTag();
+        unauffaelligerTag.setMstId(4321);
+        unauffaelligerTag.setKalendertag(kalendertag20250203);
+        unauffaelligeTage.add(unauffaelligerTag);
+
+        Mockito.doReturn(unauffaelligeTage).when(unauffaelligeTageServiceSpy).loadUnauffaelligeTageForEachMessstelle();
+
+        LockAssert.TestHelper.makeAllAssertsPass(true);
+        unauffaelligeTageServiceSpy.loadMessstellenCron();
+        LockAssert.TestHelper.makeAllAssertsPass(false);
+
+        Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadUnauffaelligeTageForEachMessstelle();
+
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).saveAllAndFlush(unauffaelligeTage);
     }
 
     @Test
