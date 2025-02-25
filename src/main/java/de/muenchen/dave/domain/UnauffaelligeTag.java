@@ -2,14 +2,15 @@ package de.muenchen.dave.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.time.LocalDate;
 
 @Entity
 @Data
@@ -18,14 +19,15 @@ import java.time.LocalDate;
 @Table(
         indexes = {
                 @Index(
-                        name = "index_unauffaellige_tage_mst_id_datum",
-                        columnList = "mst_id, datum"
+                        name = "index_unauffaellige_tage_mst_id",
+                        columnList = "mst_id"
                 )
         },
-        uniqueConstraints = { @UniqueConstraint(
-                name = "unique_unauffaellige_tage_mst_id_datum",
-                columnNames = { "mst_id", "datum" }
-        )
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "unique_unauffaellige_tage_mst_id_kalendertag_id",
+                        columnNames = { "mst_id", "kalendertag_id" }
+                )
         }
 )
 public class UnauffaelligeTag extends BaseEntity {
@@ -33,6 +35,7 @@ public class UnauffaelligeTag extends BaseEntity {
     @Column(nullable = false)
     private Integer mstId;
 
-    @Column(nullable = false)
-    private LocalDate datum;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name ="kalendertag_id")
+    private Kalendertag kalendertag;
 }
