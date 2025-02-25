@@ -43,8 +43,8 @@ public class UnauffaelligeTageService {
      * Existiert für eine Messstelle ein Tagesaggregat,
      * so ist dieser Tag als unauffälliger Tag für diese Messstelle definiert.
      */
-    @Scheduled(cron = "${dave.messstelle.cron}")
-    @SchedulerLock(name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
+    @Scheduled(cron = "${dave.unauffaellige-tage.cron}")
+    @SchedulerLock(name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.unauffaellige-tage.shedlock}", lockAtLeastFor = "${dave.unauffaellige-tage.shedlock}")
     @Transactional
     @LogExecutionTime
     public void loadMessstellenCron() {
