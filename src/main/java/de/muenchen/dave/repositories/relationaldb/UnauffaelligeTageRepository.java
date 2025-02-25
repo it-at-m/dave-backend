@@ -11,5 +11,5 @@ public interface UnauffaelligeTageRepository extends JpaRepository<Unauffaellige
 
     List<UnauffaelligerTag> findByMstId(final Integer mstId);
 
-    Optional<UnauffaelligerTag> findTopByOrderByDatumDesc();
+    Optional<UnauffaelligerTag> findTopByOrderByKalendertagDatumDesc();
 }

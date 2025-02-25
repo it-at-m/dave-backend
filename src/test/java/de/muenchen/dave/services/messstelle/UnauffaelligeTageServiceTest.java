@@ -98,7 +98,7 @@ class UnauffaelligeTageServiceTest {
         youngestSavedUnauffaelligerTag.setKalendertag(kalenderTagForYoungestSavedUnauffaelligerTag);
         youngestSavedUnauffaelligerTag.setMstId(1234);
 
-        Mockito.when(unauffaelligeTageRepository.findTopByOrderByDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
+        Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
@@ -157,7 +157,7 @@ class UnauffaelligeTageServiceTest {
 
     @Test
     void loadUnauffaelligeTageForEachMessstelleWithoutDataInDatabase() {
-        Mockito.when(unauffaelligeTageRepository.findTopByOrderByDatumDesc()).thenReturn(Optional.empty());
+        Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.empty());
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();

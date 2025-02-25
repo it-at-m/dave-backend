@@ -62,4 +62,8 @@ dave:
     #    disabled
     cron: "-"
     shedlock: 1m
+  unauffaellige-tage:
+    #    disabled
+    cron: "-"
+    shedlock: 1m
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}

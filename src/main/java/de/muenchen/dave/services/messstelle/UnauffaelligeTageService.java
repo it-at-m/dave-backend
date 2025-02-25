@@ -67,7 +67,7 @@ public class UnauffaelligeTageService {
      *            unauffälligen Tag gefunden wurde.
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
-        final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByDatumDesc();
+        final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
         final var lastUnauffaelligerTag = unaufaelligerTag
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
