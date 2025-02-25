@@ -9,6 +9,8 @@ create table unauffaellige_tage
     constraint unique_unauffaellige_tage_mst_id_kalendertag_id UNIQUE (mst_id, kalendertag_id)
 );
 
+alter table unauffaellige_tage owner to dave;
+
 alter table only unauffaellige_tage
     add constraint kalendertag_id_fkey foreign key (kalendertag_id) references kalendertag (id);
 
