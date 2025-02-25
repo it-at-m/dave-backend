@@ -161,7 +161,7 @@ public class GanglinieGesamtauswertungService {
                 .forEach(auswertungMessstelle -> {
 
                     final var seriesEntries = new GanglinieUtil.SeriesEntries();
-                    prependMstIdBeforeNameOfSeriesEntries(auswertungMessstelle.getMstId(), seriesEntries);
+                    setMstIdToNameOfSeriesEntries(auswertungMessstelle.getMstId(), seriesEntries);
 
                     CollectionUtils
                             .emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum())
@@ -291,66 +291,25 @@ public class GanglinieGesamtauswertungService {
     }
 
     /**
-     * Fügt dem Namensattribut eines jeden {@link StepLineSeriesEntryIntegerDTO}
-     * in den {@link GanglinieUtil.SeriesEntries} die Messtellen-Id als Prefix hinzu.
+     * Setzt die MstId als SeriesName.
      *
      * @param mstId als ID der Messstelle.
      * @param seriesEntries mit den darin enthaltenen.
      */
-    protected void prependMstIdBeforeNameOfSeriesEntries(final String mstId, final GanglinieUtil.SeriesEntries seriesEntries) {
-        final var prefixMstId = PREFIX_MESSSTELLE + StringUtils.SPACE + mstId + StringUtils.SPACE;
-
-        String nameSeriesEntry = seriesEntries.getSeriesEntryPkw().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryPkw().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryLkw().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryLkw().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryLfw().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryLfw().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryLz().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryLz().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryBus().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryBus().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryBus().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryBus().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryKrad().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryKrad().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryRad().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryRad().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryKfz().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryKfz().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntrySv().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntrySv().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntrySvProzent().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntrySvProzent().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryGv().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryGv().setName(nameSeriesEntry);
-
-        nameSeriesEntry = seriesEntries.getSeriesEntryGvProzent().getName();
-        nameSeriesEntry = StringUtils.prependIfMissing(nameSeriesEntry, prefixMstId);
-        seriesEntries.getSeriesEntryGvProzent().setName(nameSeriesEntry);
+    protected void setMstIdToNameOfSeriesEntries(final String mstId, final GanglinieUtil.SeriesEntries seriesEntries) {
+        seriesEntries.getSeriesEntryPkw().setName(mstId);
+        seriesEntries.getSeriesEntryLkw().setName(mstId);
+        seriesEntries.getSeriesEntryLfw().setName(mstId);
+        seriesEntries.getSeriesEntryLz().setName(mstId);
+        seriesEntries.getSeriesEntryBus().setName(mstId);
+        seriesEntries.getSeriesEntryBus().setName(mstId);
+        seriesEntries.getSeriesEntryKrad().setName(mstId);
+        seriesEntries.getSeriesEntryRad().setName(mstId);
+        seriesEntries.getSeriesEntryKfz().setName(mstId);
+        seriesEntries.getSeriesEntrySv().setName(mstId);
+        seriesEntries.getSeriesEntrySvProzent().setName(mstId);
+        seriesEntries.getSeriesEntryGv().setName(mstId);
+        seriesEntries.getSeriesEntryGvProzent().setName(mstId);
     }
 
 }
