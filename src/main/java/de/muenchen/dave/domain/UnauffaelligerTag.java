@@ -19,18 +19,18 @@ import lombok.ToString;
 @Table(
         indexes = {
                 @Index(
-                        name = "index_unauffaellige_tage_mst_id",
+                        name = "index_unauffaelliger_tag_mst_id",
                         columnList = "mst_id"
                 )
         },
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_unauffaellige_tage_mst_id_kalendertag_id",
+                        name = "unique_unauffaelliger_tag_mst_id_kalendertag_id",
                         columnNames = { "mst_id", "kalendertag_id" }
                 )
         }
 )
-public class UnauffaelligeTag extends BaseEntity {
+public class UnauffaelligerTag extends BaseEntity {
 
     @Column(nullable = false)
     private Integer mstId;

@@ -1,10 +1,13 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.UnauffaelligeTag;
+import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
+import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
+import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import de.muenchen.dave.repositories.relationaldb.UnauffaelligeTageRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -25,6 +28,8 @@ public class UnauffaelligeTageService {
     private static final LocalDate EARLIEST_DAY = LocalDate.of(2006, 1, 1);
 
     private final UnauffaelligeTageRepository unauffaelligeTageRepository;
+
+    private final KalendertagRepository kalendertagRepository;
 
     private final MessstelleReceiverMapper messstelleReceiverMapper;
 
@@ -48,18 +53,34 @@ public class UnauffaelligeTageService {
         unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
     }
 
-    protected List<UnauffaelligeTag> loadUnauffaelligeTageForEachMessstelle() {
+    protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByDatumDesc();
         final LocalDate lastUnauffaelligerTag;
         if (unaufaelligerTag.isPresent()) {
-            lastUnauffaelligerTag = unaufaelligerTag.get().getDatum();
+            lastUnauffaelligerTag = unaufaelligerTag.get().getKalendertag().getDatum();
         } else {
             lastUnauffaelligerTag = EARLIEST_DAY;
         }
         final LocalDate yesterday = LocalDate.now().minusDays(1);
         final var unauffaelligeTage = Objects
                 .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
-        return unauffaelligeTage.stream().map(messstelleReceiverMapper::dto2Entity).toList();
+        return unauffaelligeTage
+                .stream()
+                .map(this::mapDto2Entity)
+                .toList();
+    }
+
+    /**
+     * Die Methode führt das Mapping des unauffälligen Tags vom DTO zur Entität durch.
+     *
+     * @param unauffaelligerTag als DTO.
+     * @return die Entität des unauffälligen Tags mit der referenz zum Kalendertag.
+     * @throws EntityNotFoundException falls kein Kalendertag für den unauffälligen Tag gefunden wurde.
+     */
+    protected UnauffaelligerTag mapDto2Entity(final UnauffaelligerTagDto unauffaelligerTag) {
+        final var kalendertag = kalendertagRepository.findByDatum(unauffaelligerTag.getDatum())
+                .orElseThrow(() -> new EntityNotFoundException("Kalendertag not found"));
+        return messstelleReceiverMapper.dto2Entity(unauffaelligerTag, kalendertag);
     }
 
 }
