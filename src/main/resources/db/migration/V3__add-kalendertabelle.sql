@@ -3,7 +3,7 @@ CREATE TABLE kalendertag (
                              created_time timestamp without time zone NOT NULL,
                              version bigint,
                              datum timestamp(6) without time zone NOT NULL UNIQUE,
-                             tagestyp character varying(255) NOT NULL,
+                             tagestyp character varying(255) NOT NULL
 );
 
 ALTER TABLE kalendertag OWNER TO dave;
