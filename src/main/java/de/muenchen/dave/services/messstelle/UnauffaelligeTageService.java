@@ -61,12 +61,9 @@ public class UnauffaelligeTageService {
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByDatumDesc();
-        final LocalDate lastUnauffaelligerTag;
-        if (unaufaelligerTag.isPresent()) {
-            lastUnauffaelligerTag = unaufaelligerTag.get().getKalendertag().getDatum();
-        } else {
-            lastUnauffaelligerTag = EARLIEST_DAY;
-        }
+        final var lastUnauffaelligerTag = unaufaelligerTag
+                .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
+                .orElse(EARLIEST_DAY);
         final LocalDate yesterday = LocalDate.now().minusDays(1);
         final var unauffaelligeTage = Objects
                 .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
