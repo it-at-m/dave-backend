@@ -4,7 +4,6 @@ CREATE TABLE kalendertag (
                              version bigint,
                              datum timestamp(6) without time zone NOT NULL UNIQUE,
                              tagestyp character varying(255) NOT NULL,
-                             constraint unique_kalendertag_datum UNIQUE (datum)
 );
 
 ALTER TABLE kalendertag OWNER TO dave;
