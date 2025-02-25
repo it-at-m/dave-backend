@@ -44,7 +44,9 @@ public class UnauffaelligeTageService {
      * so ist dieser Tag als unauffälliger Tag für diese Messstelle definiert.
      */
     @Scheduled(cron = "${dave.unauffaellige-tage.cron}")
-    @SchedulerLock(name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.unauffaellige-tage.shedlock}", lockAtLeastFor = "${dave.unauffaellige-tage.shedlock}")
+    @SchedulerLock(
+            name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.unauffaellige-tage.shedlock}", lockAtLeastFor = "${dave.unauffaellige-tage.shedlock}"
+    )
     @Transactional
     @LogExecutionTime
     public void loadMessstellenCron() {
@@ -60,11 +62,12 @@ public class UnauffaelligeTageService {
     }
 
     /**
-     * Die Methode ermittelt aus Mobidam die unauffälligen Tage und gibt diese als persistierbare Entitäten zurück.
+     * Die Methode ermittelt aus Mobidam die unauffälligen Tage und gibt diese als persistierbare
+     * Entitäten zurück.
      *
      * @return die persistierbaren Entitäten der unauffälligen Tage.
      * @throws EntityNotFoundException falls kein {@link Kalendertag} für den
-     *            unauffälligen Tag gefunden wurde.
+     *             unauffälligen Tag gefunden wurde.
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
