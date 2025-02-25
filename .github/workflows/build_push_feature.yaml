@@ -1,33 +1,17 @@
-name: build image and push to ghcr.io
+name: Build feature branch
 
-on: 
-  push:
-    branches: ["main-ls2", "sprint"]
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'What should the image be tagged as?'
+        required: false
+        default: 'dev'
 
 jobs:
-  compliance:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Advance Security Policy as Code
-        uses: advanced-security/policy-as-code@v2.4.1
-        with:
-          policy: it-at-m/policy-as-code
-          policy-path: default.yaml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning --display"
-
   build-and-push-image:
-    needs: compliance
     runs-on: ubuntu-latest
-
+    
     permissions:
       contents: read
       packages: write
@@ -48,13 +32,16 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # use tag from input
+            type=raw,value=${{ github.event.inputs.tag }},enable=true
           labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
-      
+
       - name: Install Java and Maven
         uses: actions/setup-java@v3
         with:
-          java-version: 21
+          java-version: "21"
           distribution: "temurin"
           cache: "maven"
 
@@ -73,4 +60,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
