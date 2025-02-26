@@ -215,6 +215,43 @@ class UnauffaelligeTageReceiverTest {
     }
 
     @Test
+    void loadUnauffaelligeTageForEachMessstelleNoKaledertagForDatumFound() {
+        Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.empty());
+
+        final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
+        var unauffaelligerTagDto = new UnauffaelligerTagDto();
+        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
+        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligerTagDto = new UnauffaelligerTagDto();
+        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
+        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligerTagDto = new UnauffaelligerTagDto();
+        unauffaelligerTagDto.setMstId(4321);
+        unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
+        unauffaelligeTage.add(unauffaelligerTagDto);
+        final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
+        final var mono = Mono.just(mobidamResponseEntity);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1))).thenReturn(mono);
+
+        Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 2))).thenReturn(Optional.empty());
+
+        Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 3))).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> unauffaelligeTageReceiver.loadUnauffaelligeTageForEachMessstelle());
+
+        Mockito.verify(messstelleApi, Mockito.times(1))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1));
+
+        Mockito.verify(kalendertagRepository, Mockito.times(1))
+                .findByDatum(LocalDate.of(2025, 2, 2));
+
+        Mockito.verify(kalendertagRepository, Mockito.times(0))
+                .findByDatum(LocalDate.of(2025, 2, 3));
+    }
+
+    @Test
     void mapDto2Entity() {
         final var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 25));
