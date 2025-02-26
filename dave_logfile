@@ -29,3 +29,13 @@
 2025-02-26 11:27:52.992 CET [8640] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,111 s, Sync=0,002 s, gesamt=0,129 s; sync. Dateien=2, längste=0,002 s, Durchschnitt=0.001 s; Entfernung=3 kB, Schätzung=152 kB; LSN=0/AE0DAE78, Redo-LSN=0/AE0DAE20
 2025-02-26 11:32:52.996 CET [8640] LOG:  Checkpoint beginnt: time
 2025-02-26 11:32:53.232 CET [8640] LOG:  Checkpoint komplett: 3 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,227 s, Sync=0,003 s, gesamt=0,237 s; sync. Dateien=3, längste=0,001 s, Durchschnitt=0.001 s; Entfernung=5 kB, Schätzung=137 kB; LSN=0/AE0DC3F8, Redo-LSN=0/AE0DC3A0
+2025-02-26 11:35:33.062 CET [23436] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.065 CET [28768] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.065 CET [27700] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.066 CET [23628] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.066 CET [21544] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.069 CET [4120] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.069 CET [9108] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.070 CET [17980] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.070 CET [17972] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-26 11:35:33.070 CET [28540] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054

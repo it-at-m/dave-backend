@@ -56,10 +56,14 @@ public class MessstelleReceiver {
         // To assert that the lock is held (prevents misconfiguration errors)
         LockAssert.assertLocked();
         log.info("#loadMessstellen from MobidaM");
-        // Daten aus MobidaM laden
-        final List<MessstelleDto> body = loadMessstellen();
-        // Stammdatenservice aufrufen
-        this.processingMessstellen(body);
+        try {
+            // Daten aus MobidaM laden
+            final List<MessstelleDto> body = loadMessstellen();
+            // Stammdatenservice aufrufen
+            this.processingMessstellen(body);
+        } catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
+        }
     }
 
     @LogExecutionTime
