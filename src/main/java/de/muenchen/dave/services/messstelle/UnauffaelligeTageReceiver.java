@@ -77,8 +77,13 @@ public class UnauffaelligeTageReceiver {
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
         final var yesterday = LocalDate.now().minusDays(1);
-        final var unauffaelligeTage = Objects
-                .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
+        final List<UnauffaelligerTagDto> unauffaelligeTage;
+        if (yesterday.isAfter(lastUnauffaelligerTag)) {
+            unauffaelligeTage = Objects
+                    .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
+        } else {
+            unauffaelligeTage = List.of();
+        }
         return unauffaelligeTage
                 .stream()
                 .map(this::mapDto2Entity)
