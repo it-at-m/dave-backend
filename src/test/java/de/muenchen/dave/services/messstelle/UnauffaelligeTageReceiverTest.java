@@ -90,6 +90,21 @@ class UnauffaelligeTageReceiverTest {
     }
 
     @Test
+    void loadMessstellenCronEntityNotFoundExceptionThrown() {
+        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageReceiver);
+
+        Mockito.doThrow(new EntityNotFoundException("test")).when(unauffaelligeTageServiceSpy).loadUnauffaelligeTageForEachMessstelle();
+
+        LockAssert.TestHelper.makeAllAssertsPass(true);
+        Assertions.assertThrows(EntityNotFoundException.class, unauffaelligeTageServiceSpy::loadUnauffaelligeTageForEachMessstelle);
+        LockAssert.TestHelper.makeAllAssertsPass(false);
+
+        Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadUnauffaelligeTageForEachMessstelle();
+
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(0)).saveAllAndFlush(Mockito.any());
+    }
+
+    @Test
     void loadUnauffaelligeTageForEachMessstelleWithDataInDatabase() {
         final var kalenderTagForYoungestSavedUnauffaelligerTag = new Kalendertag();
         kalenderTagForYoungestSavedUnauffaelligerTag.setDatum(LocalDate.of(2025, 2, 1));
@@ -239,7 +254,7 @@ class UnauffaelligeTageReceiverTest {
 
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 3))).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> unauffaelligeTageReceiver.loadUnauffaelligeTageForEachMessstelle());
+        Assertions.assertThrows(EntityNotFoundException.class, unauffaelligeTageReceiver::loadUnauffaelligeTageForEachMessstelle);
 
         Mockito.verify(messstelleApi, Mockito.times(1))
                 .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1));
