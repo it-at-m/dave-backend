@@ -29,9 +29,9 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class UnauffaelligeTageServiceTest {
+class UnauffaelligeTageReceiverTest {
 
-    private UnauffaelligeTageService unauffaelligeTageService;
+    private UnauffaelligeTageReceiver unauffaelligeTageReceiver;
 
     @Mock
     private UnauffaelligeTageRepository unauffaelligeTageRepository;
@@ -44,7 +44,7 @@ class UnauffaelligeTageServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        this.unauffaelligeTageService = new UnauffaelligeTageService(
+        this.unauffaelligeTageReceiver = new UnauffaelligeTageReceiver(
                 unauffaelligeTageRepository,
                 kalendertagRepository,
                 new MessstelleReceiverMapperImpl(),
@@ -54,7 +54,7 @@ class UnauffaelligeTageServiceTest {
 
     @Test
     void loadMessstellenCron() {
-        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageService);
+        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageReceiver);
 
         final var kalendertag20250202 = new Kalendertag();
         kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
@@ -127,7 +127,7 @@ class UnauffaelligeTageServiceTest {
         kalendertag20250203.setTagestyp(TagesTyp.MO_SO);
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 3))).thenReturn(Optional.of(kalendertag20250203));
 
-        final var result = unauffaelligeTageService.loadUnauffaelligeTageForEachMessstelle();
+        final var result = unauffaelligeTageReceiver.loadUnauffaelligeTageForEachMessstelle();
 
         final var expected = new ArrayList<UnauffaelligerTag>();
         var unauffaelligerTag = new UnauffaelligerTag();
@@ -186,7 +186,7 @@ class UnauffaelligeTageServiceTest {
         kalendertag20250203.setTagestyp(TagesTyp.MO_SO);
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 3))).thenReturn(Optional.of(kalendertag20250203));
 
-        final var result = unauffaelligeTageService.loadUnauffaelligeTageForEachMessstelle();
+        final var result = unauffaelligeTageReceiver.loadUnauffaelligeTageForEachMessstelle();
 
         final var expected = new ArrayList<UnauffaelligerTag>();
         var unauffaelligerTag = new UnauffaelligerTag();
@@ -226,7 +226,7 @@ class UnauffaelligeTageServiceTest {
 
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 25))).thenReturn(Optional.of(kalendertag));
 
-        final var result = unauffaelligeTageService.mapDto2Entity(unauffaelligerTagDto);
+        final var result = unauffaelligeTageReceiver.mapDto2Entity(unauffaelligerTagDto);
 
         final var expected = new UnauffaelligerTag();
         expected.setMstId(1234);
@@ -246,7 +246,7 @@ class UnauffaelligeTageServiceTest {
 
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 25))).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> unauffaelligeTageService.mapDto2Entity(unauffaelligerTagDto));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> unauffaelligeTageReceiver.mapDto2Entity(unauffaelligerTagDto));
 
         Mockito.verify(kalendertagRepository, Mockito.times(1)).findByDatum(LocalDate.of(2025, 2, 25));
     }

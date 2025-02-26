@@ -25,7 +25,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UnauffaelligeTageService {
+public class UnauffaelligeTageReceiver {
 
     private static final LocalDate EARLIEST_DAY = LocalDate.of(2006, 1, 1);
 
