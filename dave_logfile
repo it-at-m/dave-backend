@@ -1,0 +1,13 @@
+2025-02-26 11:07:52.130 CET [21368] LOG:  PostgreSQL 17.2 on x86_64-windows, compiled by msvc-19.42.34435, 64-bit startet
+2025-02-26 11:07:52.134 CET [21368] LOG:  erwarte Verbindungen auf IPv6-Adresse »::1«, Port 5431
+2025-02-26 11:07:52.134 CET [21368] LOG:  erwarte Verbindungen auf IPv4-Adresse »127.0.0.1«, Port 5431
+2025-02-26 11:07:52.182 CET [22940] LOG:  Datenbanksystem wurde unterbrochen; letzte bekannte Aktion am 2025-02-24 11:18:32 CET
+2025-02-26 11:07:52.471 CET [22940] LOG:  Datenbanksystem wurde nicht richtig heruntergefahren; automatische Wiederherstellung läuft
+2025-02-26 11:07:52.474 CET [22940] LOG:  Redo beginnt bei 0/AE09A180
+2025-02-26 11:07:52.474 CET [22940] LOG:  ungültige Datensatzlänge bei 0/AE09A1B8: mindestens 24 erwartet, 0 erhalten
+2025-02-26 11:07:52.474 CET [22940] LOG:  Redo fertig bei 0/AE09A180 Systembenutzung: CPU: Benutzer: 0,00 s, System: 0,00 s, verstrichen: 0,00 s
+2025-02-26 11:07:52.477 CET [8640] LOG:  Checkpoint beginnt: end-of-recovery immediate wait
+2025-02-26 11:07:52.484 CET [8640] LOG:  Checkpoint komplett: 3 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,002 s, Sync=0,002 s, gesamt=0,010 s; sync. Dateien=2, längste=0,001 s, Durchschnitt=0.001 s; Entfernung=0 kB, Schätzung=0 kB; LSN=0/AE09A1B8, Redo-LSN=0/AE09A1B8
+2025-02-26 11:07:52.516 CET [21368] LOG:  Datenbanksystem ist bereit, um Verbindungen anzunehmen
+2025-02-26 11:12:52.492 CET [8640] LOG:  Checkpoint beginnt: time
+2025-02-26 11:12:53.974 CET [8640] LOG:  Checkpoint komplett: 14 Puffer geschrieben (0.1%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=1,444 s, Sync=0,021 s, gesamt=1,482 s; sync. Dateien=10, längste=0,011 s, Durchschnitt=0.003 s; Entfernung=57 kB, Schätzung=57 kB; LSN=0/AE0A86F8, Redo-LSN=0/AE0A86A0

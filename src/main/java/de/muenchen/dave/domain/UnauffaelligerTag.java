@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@Entity
+@Entity(name = "unauffaelliger_tag")
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
