@@ -61,7 +61,7 @@ public class MessstelleReceiver {
             final List<MessstelleDto> body = loadMessstellen();
             // Stammdatenservice aufrufen
             this.processingMessstellen(body);
-        } catch (Exception exception) {
+        } catch (final Exception exception) {
             log.error(exception.getMessage(), exception);
         }
     }
