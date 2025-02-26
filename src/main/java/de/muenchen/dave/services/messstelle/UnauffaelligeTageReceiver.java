@@ -47,7 +47,7 @@ public class UnauffaelligeTageReceiver {
      */
     @Scheduled(cron = "${dave.unauffaellige-tage.cron}")
     @SchedulerLock(
-            name = "loadUnauffaelligeTage", lockAtMostFor = "${dave.unauffaellige-tage.shedlock}", lockAtLeastFor = "${dave.unauffaellige-tage.shedlock}"
+            name = "loadUnauffaelligeTageCron", lockAtMostFor = "${dave.unauffaellige-tage.shedlock}", lockAtLeastFor = "${dave.unauffaellige-tage.shedlock}"
     )
     @Transactional
     @LogExecutionTime
