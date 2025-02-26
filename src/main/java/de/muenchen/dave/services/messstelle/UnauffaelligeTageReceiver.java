@@ -72,15 +72,16 @@ public class UnauffaelligeTageReceiver {
      *             unauffälligen Tag gefunden wurde.
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
-        final var unaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
-        final var lastUnauffaelligerTag = unaufaelligerTag
+        final var lastUnaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
+        final var dayAfterLastUnauffaelligerTag = lastUnaufaelligerTag
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
         final var yesterday = LocalDate.now().minusDays(1);
         final List<UnauffaelligerTagDto> unauffaelligeTage;
-        if (yesterday.isAfter(lastUnauffaelligerTag)) {
+        if (!yesterday.isBefore(dayAfterLastUnauffaelligerTag)) {
             unauffaelligeTage = Objects
-                    .requireNonNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(lastUnauffaelligerTag, yesterday).block().getBody());
+                    .requireNonNull(
+                            messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayAfterLastUnauffaelligerTag, yesterday).block().getBody());
         } else {
             unauffaelligeTage = List.of();
         }

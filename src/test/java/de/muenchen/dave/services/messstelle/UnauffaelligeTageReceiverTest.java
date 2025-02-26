@@ -267,6 +267,28 @@ class UnauffaelligeTageReceiverTest {
     }
 
     @Test
+    void loadUnauffaelligeTageForEachMessstelleYesterdayIsNotAfterLastUnauffaelligerTag() {
+        final var kalenderTagForYoungestSavedUnauffaelligerTag = new Kalendertag();
+        kalenderTagForYoungestSavedUnauffaelligerTag.setDatum(LocalDate.now().minusDays(1));
+
+        final var youngestSavedUnauffaelligerTag = new UnauffaelligerTag();
+        youngestSavedUnauffaelligerTag.setKalendertag(kalenderTagForYoungestSavedUnauffaelligerTag);
+        youngestSavedUnauffaelligerTag.setMstId(1234);
+
+        Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
+
+        final var result = unauffaelligeTageReceiver.loadUnauffaelligeTageForEachMessstelle();
+
+        Assertions.assertEquals(List.of(), result);
+
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1))
+                .findTopByOrderByKalendertagDatumDesc();
+
+        Mockito.verify(messstelleApi, Mockito.times(0))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(Mockito.any(), Mockito.any());
+    }
+
+    @Test
     void mapDto2Entity() {
         final var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 25));
