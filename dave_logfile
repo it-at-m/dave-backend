@@ -11,3 +11,5 @@
 2025-02-26 11:07:52.516 CET [21368] LOG:  Datenbanksystem ist bereit, um Verbindungen anzunehmen
 2025-02-26 11:12:52.492 CET [8640] LOG:  Checkpoint beginnt: time
 2025-02-26 11:12:53.974 CET [8640] LOG:  Checkpoint komplett: 14 Puffer geschrieben (0.1%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=1,444 s, Sync=0,021 s, gesamt=1,482 s; sync. Dateien=10, längste=0,011 s, Durchschnitt=0.003 s; Entfernung=57 kB, Schätzung=57 kB; LSN=0/AE0A86F8, Redo-LSN=0/AE0A86A0
+2025-02-26 11:17:52.983 CET [8640] LOG:  Checkpoint beginnt: time
+2025-02-26 11:17:57.752 CET [8640] LOG:  Checkpoint komplett: 44 Puffer geschrieben (0.3%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=4,722 s, Sync=0,034 s, gesamt=4,769 s; sync. Dateien=42, längste=0,011 s, Durchschnitt=0.001 s; Entfernung=186 kB, Schätzung=186 kB; LSN=0/AE0D70B8, Redo-LSN=0/AE0D7028
