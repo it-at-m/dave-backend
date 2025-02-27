@@ -18,9 +18,9 @@ public class OptionsmenueSettingsController {
 
     private final OptionsmenueSettingsService optionsmenueSettingsService;
 
-    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<OptionsmenueSettingsDTO>> getAllOptionsmenueSettings() {
-        final var settings = optionsmenueSettingsService.getAllOptionsmenueSettings();
+    @GetMapping(value = "/messstelle/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<OptionsmenueSettingsDTO>> getAllOptionsmenueSettingsForMessstellen() {
+        final var settings = optionsmenueSettingsService.getAllOptionsmenueSettingsForMessstellen();
         return ResponseEntity.ok(settings);
     }
 

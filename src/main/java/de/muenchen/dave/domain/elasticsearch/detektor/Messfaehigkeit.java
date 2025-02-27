@@ -17,6 +17,6 @@ public class Messfaehigkeit {
     LocalDate gueltigAb;
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
     LocalDate gueltigBis;
-    Fahrzeugklasse fahrzeugklassen;
+    Fahrzeugklasse fahrzeugklasse;
     ZaehldatenIntervall intervall;
 }

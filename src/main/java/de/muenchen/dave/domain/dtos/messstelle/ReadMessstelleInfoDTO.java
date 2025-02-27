@@ -15,7 +15,7 @@ public class ReadMessstelleInfoDTO implements Serializable {
     private String standort;
     private String stadtbezirk;
     private Integer stadtbezirkNummer;
-    private Fahrzeugklasse fahrzeugKlassen;
+    private Fahrzeugklasse fahrzeugklasse;
     private String detektierteVerkehrsarten;
     private String hersteller;
     private Double longitude;

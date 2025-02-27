@@ -13,6 +13,6 @@ public class EditMessfaehigkeitDTO implements Serializable {
 
     private String gueltigBis;
     private String gueltigAb;
-    private Fahrzeugklasse fahrzeugklassen;
+    private Fahrzeugklasse fahrzeugklasse;
     private ZaehldatenIntervall intervall;
 }

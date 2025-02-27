@@ -22,7 +22,7 @@ public class EditMessstelleDTO implements Serializable {
     private String abbaudatum;
     private String datumLetztePlausibleMessung;
 
-    private Fahrzeugklasse fahrzeugKlassen;
+    private Fahrzeugklasse fahrzeugklasse;
     private String detektierteVerkehrsarten;
     private String hersteller;
 

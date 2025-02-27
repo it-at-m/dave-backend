@@ -284,7 +284,7 @@ class BelastungsplanServiceTest {
         readMessstelleInfoDTO.setStandort("Hauptstraße 1");
         readMessstelleInfoDTO.setStadtbezirk("Mitte");
         readMessstelleInfoDTO.setStadtbezirkNummer(1);
-        readMessstelleInfoDTO.setFahrzeugKlassen(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        readMessstelleInfoDTO.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         readMessstelleInfoDTO.setDetektierteVerkehrsarten("PKW, LKW, Motorrad");
         readMessstelleInfoDTO.setHersteller("Messung GmbH");
         readMessstelleInfoDTO.setLongitude(10.12345);

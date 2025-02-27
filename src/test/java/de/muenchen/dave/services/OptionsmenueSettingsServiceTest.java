@@ -80,7 +80,7 @@ class OptionsmenueSettingsServiceTest {
         expectedOptionsmenueSettings4.setRadverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));
         expectedOptionsmenueSettings4.setLastkraftwagenChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));
 
-        final var result = optionsmenueSettingsService.getAllOptionsmenueSettings();
+        final var result = optionsmenueSettingsService.getAllOptionsmenueSettingsForMessstellen();
 
         Assertions.assertThat(result)
                 .isEqualTo(List.of(expectedOptionsmenueSettings1, expectedOptionsmenueSettings2, expectedOptionsmenueSettings3, expectedOptionsmenueSettings4));

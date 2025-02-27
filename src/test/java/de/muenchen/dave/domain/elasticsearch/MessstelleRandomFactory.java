@@ -4,7 +4,6 @@ import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
-import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -23,7 +22,7 @@ public class MessstelleRandomFactory {
         messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
         messstelle.setStatus(MessstelleStatus.IN_BESTAND);
-        messstelle.setFahrzeugKlassen(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
+        messstelle.setFahrzeugklasse(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
         messstelle.setDetektierteVerkehrsarten("KFZ");
         messstelle.setHersteller(fakerInstance.pokemon().name());
         messstelle.setRealisierungsdatum(
@@ -62,8 +61,8 @@ public class MessstelleRandomFactory {
         dto.setMstId(UUID.randomUUID().toString());
         dto.setName(fakerInstance.pokemon().name());
         dto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        dto.setFahrzeugKlassen(
-                MessstelleDto.FahrzeugKlassenEnum.values()[ThreadLocalRandom.current().nextInt(MessstelleDto.FahrzeugKlassenEnum.values().length)]);
+        dto.setFahrzeugklasse(
+                MessstelleDto.FahrzeugklasseEnum.values()[ThreadLocalRandom.current().nextInt(MessstelleDto.FahrzeugklasseEnum.values().length)]);
         dto.setDetektierteVerkehrsarten("KFZ");
         dto.setHersteller(fakerInstance.pokemon().name());
         dto.setRealisierungsdatum(

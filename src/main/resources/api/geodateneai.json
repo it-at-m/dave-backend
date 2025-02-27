@@ -130,22 +130,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "TagesTyp erfolgreich validiert",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "TagesTyp erfolgreich validiert",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
                 }
               }
             }
@@ -633,7 +633,7 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugklassen": {
+          "fahrzeugklasse": {
             "type": "string",
             "enum": [
               "RAD",
@@ -729,7 +729,7 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugKlassen": {
+          "fahrzeugklasse": {
             "type": "string",
             "enum": [
               "RAD",

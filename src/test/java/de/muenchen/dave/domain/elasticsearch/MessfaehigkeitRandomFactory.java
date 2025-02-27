@@ -17,7 +17,7 @@ public class MessfaehigkeitRandomFactory {
 
     public static Messfaehigkeit getMessfaehigkeit() {
         final Messfaehigkeit messfaehigkeit = new Messfaehigkeit();
-        messfaehigkeit.setFahrzeugklassen(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.values()[ThreadLocalRandom.current().nextInt(ZaehldatenIntervall.values().length)]);
         messfaehigkeit
                 .setGueltigAb(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
@@ -37,8 +37,8 @@ public class MessfaehigkeitRandomFactory {
 
     public static MessfaehigkeitDto getMessfaehigkeitDto() {
         final MessfaehigkeitDto dto = new MessfaehigkeitDto();
-        dto.setFahrzeugklassen(
-                MessfaehigkeitDto.FahrzeugklassenEnum.values()[ThreadLocalRandom.current().nextInt(MessfaehigkeitDto.FahrzeugklassenEnum.values().length)]);
+        dto.setFahrzeugklasse(
+                MessfaehigkeitDto.FahrzeugklasseEnum.values()[ThreadLocalRandom.current().nextInt(MessfaehigkeitDto.FahrzeugklasseEnum.values().length)]);
         dto.setIntervall(MessfaehigkeitDto.IntervallEnum.values()[ThreadLocalRandom.current().nextInt(MessfaehigkeitDto.IntervallEnum.values().length)]);
         dto.setGueltigAb(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                 .numberBetween(1, 28)));

@@ -18,7 +18,7 @@ public class OptionsmenueSettingsService {
 
     private final OptionsmenueSettingsMapper optionsmenueSettingsMapper;
 
-    public List<OptionsmenueSettingsDTO> getAllOptionsmenueSettings() {
+    public List<OptionsmenueSettingsDTO> getAllOptionsmenueSettingsForMessstellen() {
         return optionsmenueSettingsRepository
                 .findAll()
                 .stream()

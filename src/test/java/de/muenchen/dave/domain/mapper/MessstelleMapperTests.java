@@ -51,7 +51,7 @@ class MessstelleMapperTests {
         expected.setMessquerschnitte(this.mapper.bean2readDto(bean.getMessquerschnitte()));
         expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2ReadMessfaehigkeitDto(bean.getMessfaehigkeiten()));
         expected.setHersteller(bean.getHersteller());
-        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setFahrzeugklasse(bean.getFahrzeugklasse());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setKommentar(bean.getKommentar());
 
@@ -92,7 +92,7 @@ class MessstelleMapperTests {
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setHersteller(bean.getHersteller());
-        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setFahrzeugklasse(bean.getFahrzeugklasse());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
 
         expected.setSichtbarDatenportal(bean.getSichtbarDatenportal());
@@ -125,7 +125,7 @@ class MessstelleMapperTests {
         updatedData.setStatus("darf nicht aktualisiert werden");
         updatedData.setBemerkung("darf nicht aktualisiert werden");
         updatedData.setHersteller("darf nicht aktualisiert werden");
-        updatedData.setFahrzeugKlassen(Fahrzeugklasse.RAD);
+        updatedData.setFahrzeugklasse(Fahrzeugklasse.RAD);
         updatedData.setDetektierteVerkehrsarten("darf nicht aktualisiert werden");
         updatedData.setStadtbezirkNummer(666);
         updatedData.setRealisierungsdatum("1999-11-11");
@@ -159,7 +159,7 @@ class MessstelleMapperTests {
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setPunkt(new GeoPoint(updatedData.getLatitude(), updatedData.getLongitude()));
         expected.setHersteller(bean.getHersteller());
-        expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
+        expected.setFahrzeugklasse(bean.getFahrzeugklasse());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
 

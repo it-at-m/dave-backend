@@ -37,7 +37,7 @@ public class Messstelle {
 
     String bemerkung;
 
-    Fahrzeugklasse fahrzeugKlassen;
+    Fahrzeugklasse fahrzeugklasse;
 
     String detektierteVerkehrsarten;
 
