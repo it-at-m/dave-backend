@@ -3,6 +3,7 @@ package de.muenchen.dave.services;
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Status;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -86,15 +87,12 @@ public final class IndexServiceUtils {
      * @param zs Zaehlungen
      * @return aktuellste Zaehlung
      */
-    public static Zaehlung getLetzteZaehlung(List<Zaehlung> zs) {
-        zs.sort(Comparator.comparing(Zaehlung::getDatum));
-
-        if (!zs.isEmpty()) {
-            return zs.get(zs.size() - 1);
-        } else {
-            log.warn("List of 'Zaehlungen' is empty. I can't give you the first entry");
-            return null;
-        }
+    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zs) {
+        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).max(Comparator.comparing(Zaehlung::getDatum))
+                .orElseGet(() -> {
+                    log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
+                    return null;
+                });
     }
 
     /**

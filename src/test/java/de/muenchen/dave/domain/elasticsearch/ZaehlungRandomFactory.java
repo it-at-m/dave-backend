@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.elasticsearch;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.services.IndexServiceUtils;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -36,7 +37,7 @@ public class ZaehlungRandomFactory {
         z.setMonat(d.getMonth().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY));
         z.setTagesTyp("Wochenende");
         z.setJahreszeit(IndexServiceUtils.jahreszeitenDetector(d));
-
+        z.setStatus(Status.ACTIVE.name());
         z.setZaehlart("Q");
         z.setPunkt(new GeoPoint(new Random().nextDouble(), new Random().nextDouble()));
 

@@ -4,11 +4,15 @@
   {{{globalCssMustachePart}}}
 </head>
 <body>
-{{{logoMustachePart}}}
-{{{footerMustachePart}}}
-<!-- Metainformationen -->
-<h4>{{documentTitle}}</h4>
-{{{zaehlstelleninformationenMustachePart}}}
+<table>
+    <tr>
+        {{{logoMustachePart}}}
+        {{{footerMustachePart}}}
+        <h4>{{documentTitle}}</h4>
+        {{{zaehlstelleninformationenMustachePart}}}
+    </tr>
+</table>
+<br/>
 <h5>{{chartTitle}}</h5>
 {{#belastungsplanKreisverkehr}}
   <img style="width: 100%" src="{{belastungsplanKreisverkehr}}"/>
