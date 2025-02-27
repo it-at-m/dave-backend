@@ -71,23 +71,6 @@ public class SucheController {
         }
     }
 
-    //    @GetMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
-    //    @Transactional(readOnly = true)
-    //    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
-    //            @RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-    //            @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
-    //        try {
-    //            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query, noFilter);
-    //            return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
-    //        } catch (final ResourceNotFoundException e) {
-    //            log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
-    //            throw e;
-    //        } catch (final Exception e) {
-    //            log.error("Unerwarteter Fehler im SucheController beim Suchen der Query: {}", query, e);
-    //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zähl-/Messstellen aufgetreten.");
-    //        }
-    //    }
-
     @PostMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
