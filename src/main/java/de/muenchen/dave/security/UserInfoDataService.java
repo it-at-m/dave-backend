@@ -42,7 +42,7 @@ public class UserInfoDataService {
     public static final String CLAIM_GIVENNAME = "givenname";
     public static final String CLAIM_DEPARTMENT = "department";
     public static final String CLAIM_EMAIL = "email";
-    public static final String CLAIM_USERNAME = "username";
+    public static final String CLAIM_USERNAME = "user_name";
     private final String userInfoUri;
     private final RestTemplate restTemplate;
     private final Cache cache;
