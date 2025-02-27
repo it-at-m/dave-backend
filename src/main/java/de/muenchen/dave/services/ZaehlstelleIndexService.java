@@ -223,6 +223,7 @@ public class ZaehlstelleIndexService {
                 }
             }
             customSuggestIndexService.updateSuggestionsForZaehlung(zaehlung);
+            updateZaehlstelleWithLetzteZaehlung(zst);
             this.speichereZaehlstelleInDatenbank(zst);
         } else {
             log.error("Keine Zählstelle zur id {} gefunden.", zaehlstelleId);
@@ -309,6 +310,7 @@ public class ZaehlstelleIndexService {
             customSuggestIndexService.deleteAllSuggestionsByFkid(zaehlungId);
 
             // Zählstelle speichern
+            updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
             this.speichereZaehlstelleInDatenbank(zaehlstelle);
         } else {
             throw new DataNotFoundException("Die zu löschende Zählung konnte nicht gefunden werden");
@@ -328,9 +330,7 @@ public class ZaehlstelleIndexService {
     public Zaehlstelle updateZaehlstelleWithZaehlung(final Zaehlstelle zaehlstelle, final Zaehlung zaehlung) {
         log.warn("Aktualisiere Zählstelle {} mit Zählung {}", zaehlstelle.getId(), zaehlung.getDatum());
         zaehlstelle.getZaehlungen().add(zaehlung);
-        if (zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())) {
-            this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
-        }
+        this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
         return zaehlstelle;
     }
 
@@ -340,12 +340,17 @@ public class ZaehlstelleIndexService {
      * @param zaehlstelle
      */
     private void updateZaehlstelleWithLetzteZaehlung(final Zaehlstelle zaehlstelle) {
-        final Zaehlung letzteZaehlung = IndexServiceUtils.getLetzteZaehlung(zaehlstelle.getZaehlungen());
+        final Zaehlung letzteZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());
         if (letzteZaehlung != null) {
             zaehlstelle.setLetzteZaehlungMonat(letzteZaehlung.getMonat());
             zaehlstelle.setLetzteZaehlungMonatNummer(letzteZaehlung.getDatum().getMonthValue());
             zaehlstelle.setGrundLetzteZaehlung(letzteZaehlung.getZaehlsituation());
             zaehlstelle.setLetzteZaehlungJahr(Integer.parseInt(letzteZaehlung.getJahr()));
+        } else {
+            zaehlstelle.setLetzteZaehlungMonat("");
+            zaehlstelle.setLetzteZaehlungMonatNummer(null);
+            zaehlstelle.setGrundLetzteZaehlung("");
+            zaehlstelle.setLetzteZaehlungJahr(null);
         }
     }
 
