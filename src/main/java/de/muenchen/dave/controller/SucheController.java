@@ -75,10 +75,10 @@ public class SucheController {
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
-            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO) {
+            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query,
-                    searchAndFilterOptionsDTO);
+                    searchAndFilterOptions);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);

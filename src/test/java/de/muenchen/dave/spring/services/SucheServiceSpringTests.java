@@ -148,15 +148,15 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
-        final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO = new SearchAndFilterOptionsDTO();
-        searchAndFilterOptionsDTO.setSearchInZaehlstellen(true);
-        searchAndFilterOptionsDTO.setSearchInMessstellen(true);
+        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptions.setSearchInZaehlstellen(true);
+        searchAndFilterOptions.setSearchInMessstellen(true);
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(0)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptionsDTO, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptions, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -186,15 +186,15 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
-        final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO = new SearchAndFilterOptionsDTO();
-        searchAndFilterOptionsDTO.setSearchInZaehlstellen(true);
-        searchAndFilterOptionsDTO.setSearchInMessstellen(true);
+        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptions.setSearchInZaehlstellen(true);
+        searchAndFilterOptions.setSearchInMessstellen(true);
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(0)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptionsDTO, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptions, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));

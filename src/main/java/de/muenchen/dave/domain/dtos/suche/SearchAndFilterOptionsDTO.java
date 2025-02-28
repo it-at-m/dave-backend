@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class SearchAndFilterOptionsDTO {
 
-    boolean searchInMessstellen;
-    boolean searchInZaehlstellen;
+    private boolean searchInMessstellen;
+    private boolean searchInZaehlstellen;
 }

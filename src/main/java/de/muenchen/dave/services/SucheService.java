@@ -211,7 +211,9 @@ public class SucheService {
      * @return passende Zaehl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(
+            final String query,
+            final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
         final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstelle(query, searchAndFilterOptions, false);
         return searchResult
@@ -231,7 +233,9 @@ public class SucheService {
      * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions,
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(
+            final String query,
+            final SearchAndFilterOptionsDTO searchAndFilterOptions,
             final boolean isAdminportal) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
@@ -375,21 +379,21 @@ public class SucheService {
         final boolean isAnwender = SecurityContextInformationExtractor.isAnwender();
 
         // Nur die Sichtbaren Zaehlstellen durchsuchen
-        zaehlstellen.stream().filter(Zaehlstelle::getSichtbarDatenportal).forEach(zaehlstelle -> {
-            zaehlstelle.setZaehlungen(
-                    zaehlstelle.getZaehlungen().stream()
-                            // Alle Zaehlung mit einem Status != ACTIVE werden ausgefilter
-                            .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
-                            // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
-                            .filter(zaehlung -> {
-                                if (isAnwender) {
-                                    return !zaehlung.getSonderzaehlung();
-                                } else {
-                                    return true;
-                                }
-                            })
-                            .collect(Collectors.toList()));
-        });
+        zaehlstellen.stream()
+                .filter(Zaehlstelle::getSichtbarDatenportal)
+                .forEach(zaehlstelle -> zaehlstelle.setZaehlungen(
+                        zaehlstelle.getZaehlungen().stream()
+                                // Alle Zaehlung mit einem Status != ACTIVE werden ausgefilter
+                                .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
+                                // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
+                                .filter(zaehlung -> {
+                                    if (isAnwender) {
+                                        return !zaehlung.getSonderzaehlung();
+                                    } else {
+                                        return true;
+                                    }
+                                })
+                                .collect(Collectors.toList())));
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
                 .filter(zaehlstelle -> CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen()))
