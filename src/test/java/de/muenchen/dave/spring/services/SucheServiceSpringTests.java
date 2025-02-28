@@ -9,6 +9,7 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -147,11 +148,15 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
+        final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptionsDTO.setSearchInZaehlstellen(true);
+        searchAndFilterOptionsDTO.setSearchInMessstellen(true);
+
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(0)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptionsDTO, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -181,11 +186,15 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
+        final SearchAndFilterOptionsDTO searchAndFilterOptionsDTO = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptionsDTO.setSearchInZaehlstellen(true);
+        searchAndFilterOptionsDTO.setSearchInMessstellen(true);
+
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(0)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptionsDTO, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -210,6 +219,7 @@ public class SucheServiceSpringTests {
         z1.setNummer("Z01");
         z1.setStadtbezirk("Moosach");
         z1.setPunkt(new GeoPoint(1, 1));
+        z1.setSichtbarDatenportal(true);
 
         Zaehlung z1_1 = new Zaehlung();
         z1_1.setId("1_1");
@@ -239,6 +249,7 @@ public class SucheServiceSpringTests {
         z2.setNummer("Z02");
         z2.setStadtbezirk("Sendling");
         z2.setPunkt(new GeoPoint(2, 2));
+        z2.setSichtbarDatenportal(true);
 
         Zaehlung z2_1 = new Zaehlung();
         z2_1.setId("2_1");
@@ -258,6 +269,7 @@ public class SucheServiceSpringTests {
         z3.setNummer("Z03");
         z3.setStadtbezirk("Schwabing");
         z3.setPunkt(new GeoPoint(3, 3));
+        z3.setSichtbarDatenportal(true);
 
         Zaehlung z3_1 = new Zaehlung();
         z3_1.setId("3_1");
@@ -287,6 +299,7 @@ public class SucheServiceSpringTests {
         z4.setNummer("Z04");
         z4.setStadtbezirk("Bogenhausen");
         z4.setPunkt(new GeoPoint(4, 4));
+        z4.setSichtbarDatenportal(true);
 
         Zaehlung z4_1 = new Zaehlung();
         z4_1.setProjektName("Hans");
