@@ -296,12 +296,11 @@ public class FillPdfBeanService {
         if (options.isSchwerverkehr()) {
             selectedFahrzeuge.add("SV");
         }
-        if (options.isGueterverkehr()) {
-            selectedFahrzeuge.add("GV");
-        }
-        // Anteil
         if (options.isSchwerverkehrsanteilProzent()) {
             selectedFahrzeuge.add("SV%");
+        }
+        if (options.isGueterverkehr()) {
+            selectedFahrzeuge.add("GV");
         }
         if (options.isGueterverkehrsanteilProzent()) {
             selectedFahrzeuge.add("GV%");
