@@ -9,23 +9,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  compliance:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Advance Security Policy as Code
-        uses: advanced-security/policy-as-code@v2.4.1
-        with:
-          policy: it-at-m/policy-as-code
-          policy-path: default.yaml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning --display"
-
   build-and-push-image:
-    needs: compliance
     runs-on: ubuntu-latest
 
     permissions:
@@ -48,6 +32,11 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # set latest tag for sprint branch
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'sprint') }}
+            # set stable tag for main-ls2 branch
+            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main-ls2') }}
           labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
       
