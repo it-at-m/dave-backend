@@ -392,6 +392,9 @@ class FillPdfBeanServiceTest {
             headerExpected.add(gesamtauswertungTableHeader);
             header.add(gesamtauswertungTableHeader.getHeader());
         }
+        final GesamtauswertungTableHeader firsColumnHeader = new GesamtauswertungTableHeader();
+        firsColumnHeader.setHeader(StringUtils.EMPTY);
+        headerExpected.addFirst(firsColumnHeader);
         row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
         gesamtauswertungTableRows.add(row);
         rowsPerTable.put(0, gesamtauswertungTableRows);
@@ -401,7 +404,7 @@ class FillPdfBeanServiceTest {
         gesamtauswertungTable.setGesamtauswertungTableHeaders(headerExpected);
         gesamtauswertungTable.setGesamtauswertungTableRows(gesamtauswertungTableRows);
         expected.add(gesamtauswertungTable);
-        assertThat(FillPdfBeanService.getGesamtauswertungTables(header, rowsPerTable), is(expected));
+        assertThat(FillPdfBeanService.getGesamtauswertungTables(header, rowsPerTable, false), is(expected));
     }
 
     @Test
@@ -423,17 +426,22 @@ class FillPdfBeanServiceTest {
         row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
         gesamtauswertungTableRows.add(row);
 
+        final GesamtauswertungTableHeader firstColumnHeader = new GesamtauswertungTableHeader();
+        firstColumnHeader.setHeader(StringUtils.EMPTY);
+
         final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = FillPdfBeanService.splitTableRowsIfNecessary(gesamtauswertungTableRows);
         final List<List<GesamtauswertungTableHeader>> partition = ListUtils.partition(headerExpected,
                 FillPdfBeanService.MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
         final List<GesamtauswertungTable> expected = new ArrayList<>();
         rowsPerTable.forEach((integer, gesamtauswertungTableRow) -> {
             final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
-            gesamtauswertungTable.setGesamtauswertungTableHeaders(partition.get(integer));
+            final List<GesamtauswertungTableHeader> gesamtauswertungTableHeaders = new ArrayList<>(partition.get(integer));
+            gesamtauswertungTableHeaders.addFirst(firstColumnHeader);
+            gesamtauswertungTable.setGesamtauswertungTableHeaders(gesamtauswertungTableHeaders);
             gesamtauswertungTable.setGesamtauswertungTableRows(gesamtauswertungTableRow);
             expected.add(gesamtauswertungTable);
         });
-        assertThat(FillPdfBeanService.getGesamtauswertungTables(header, rowsPerTable), is(expected));
+        assertThat(FillPdfBeanService.getGesamtauswertungTables(header, rowsPerTable, false), is(expected));
     }
 
     @Test
