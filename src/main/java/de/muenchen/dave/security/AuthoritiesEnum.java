@@ -15,5 +15,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public enum AuthoritiesEnum {
 
     // Rollen
-    POWERUSER, ANWENDER, FACHADMIN, EXTERNAL,
+    POWERUSER,
+    ANWENDER,
+    FACHADMIN,
+    EXTERNAL,
 }

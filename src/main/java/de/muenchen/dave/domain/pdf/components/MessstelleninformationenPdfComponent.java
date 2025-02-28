@@ -7,7 +7,7 @@ public class MessstelleninformationenPdfComponent {
 
     private boolean standortNeeded;
     private String standort;
-    private String detektierteFahrzeuge;
+    private String selectedFahrzeuge;
     private String messzeitraum;
     private boolean zeitintervallNeeded;
     private String zeitintervall;

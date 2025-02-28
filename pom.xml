@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-backend</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <name>dave_backend</name>
     <description>Backend für DAVe</description>
 
@@ -76,7 +76,7 @@
                             <dependency>
                                 <groupId>org.junit.jupiter</groupId>
                                 <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.10.5</version>
+                                <version>5.11.4</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -102,7 +102,7 @@
                             <dependency>
                                 <groupId>org.junit.jupiter</groupId>
                                 <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.10.5</version>
+                                <version>5.11.4</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -305,7 +305,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.11.0</version>
+            <version>2.12.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -539,7 +539,7 @@
                     <dependency>
                         <groupId>de.muenchen.oss</groupId>
                         <artifactId>itm-java-codeformat</artifactId>
-                        <version>1.0.7</version>
+                        <version>1.0.10</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -553,8 +553,8 @@
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
                         </eclipse>
-                        <trimTrailingWhitespace/>
-                        <endWithNewline/>
+                        <trimTrailingWhitespace />
+                        <endWithNewline />
                     </java>
                 </configuration>
                 <executions>
@@ -618,6 +618,10 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

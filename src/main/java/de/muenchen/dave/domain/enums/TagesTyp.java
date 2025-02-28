@@ -13,23 +13,39 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
+@Getter
 public enum TagesTyp {
 
     UNSPECIFIED("unspecified", MesswertRequestDto.TagesTypEnum.DTV, TagesaggregatRequestDto.TagesTypEnum.DTV, null),
 
-    WERKTAG_DI_MI_DO("DTVw3 (Di,Mi,Do - außerhalb Ferien)", MesswertRequestDto.TagesTypEnum.DTV_W3, TagesaggregatRequestDto.TagesTypEnum.DTV_W3,
+    WERKTAG_DI_MI_DO(
+            "DTVw3 (Di,Mi,Do - außerhalb Ferien)",
+            MesswertRequestDto.TagesTypEnum.DTV_W3,
+            TagesaggregatRequestDto.TagesTypEnum.DTV_W3,
             IntervalDto.TagesTypEnum.DTV_W3),
 
-    WERKTAG_MO_FR("DTVw5 (Mo-Fr - außerhalb Ferien)", MesswertRequestDto.TagesTypEnum.DTV_W5, TagesaggregatRequestDto.TagesTypEnum.DTV_W5,
+    WERKTAG_MO_FR(
+            "DTVw5 (Mo-Fr - außerhalb Ferien)",
+            MesswertRequestDto.TagesTypEnum.DTV_W5,
+            TagesaggregatRequestDto.TagesTypEnum.DTV_W5,
             IntervalDto.TagesTypEnum.DTV_W5),
 
-    SAMSTAG("Samstag in/außerhalb Ferien", MesswertRequestDto.TagesTypEnum.SAMSTAG, TagesaggregatRequestDto.TagesTypEnum.SAMSTAG,
+    SAMSTAG(
+            "Samstag in/außerhalb Ferien",
+            MesswertRequestDto.TagesTypEnum.SAMSTAG,
+            TagesaggregatRequestDto.TagesTypEnum.SAMSTAG,
             IntervalDto.TagesTypEnum.SAMSTAG),
 
-    SONNTAG_FEIERTAG("Sonntag/Feiertag in/außerhalb Ferien", MesswertRequestDto.TagesTypEnum.SONNTAG_FEIERTAG,
-            TagesaggregatRequestDto.TagesTypEnum.SONNTAG_FEIERTAG, IntervalDto.TagesTypEnum.SONNTAG_FEIERTAG),
+    SONNTAG_FEIERTAG(
+            "Sonntag/Feiertag in/außerhalb Ferien",
+            MesswertRequestDto.TagesTypEnum.SONNTAG_FEIERTAG,
+            TagesaggregatRequestDto.TagesTypEnum.SONNTAG_FEIERTAG,
+            IntervalDto.TagesTypEnum.SONNTAG_FEIERTAG),
 
-    WERKTAG_FERIEN("Mo-Fr Ferien", MesswertRequestDto.TagesTypEnum.WERKTAG_FERIEN, TagesaggregatRequestDto.TagesTypEnum.WERKTAG_FERIEN,
+    WERKTAG_FERIEN(
+            "Mo-Fr Ferien",
+            MesswertRequestDto.TagesTypEnum.WERKTAG_FERIEN,
+            TagesaggregatRequestDto.TagesTypEnum.WERKTAG_FERIEN,
             IntervalDto.TagesTypEnum.WERKTAG_FERIEN),
 
     MO_SO("DTV (Mo - So)", MesswertRequestDto.TagesTypEnum.DTV, TagesaggregatRequestDto.TagesTypEnum.DTV, IntervalDto.TagesTypEnum.DTV);
@@ -42,16 +58,12 @@ public enum TagesTyp {
     /**
      * Die Beschreibung zum TagesTyp.
      */
-    @Getter
     private final String beschreibung;
 
-    @Getter
     private final MesswertRequestDto.TagesTypEnum messwertTyp;
 
-    @Getter
     private final TagesaggregatRequestDto.TagesTypEnum tagesaggregatTyp;
 
-    @Getter
     private final IntervalDto.TagesTypEnum intervallTyp;
 
     public static TagesTyp getByIntervallTyp(final IntervalDto.TagesTypEnum messwertTyp) {
