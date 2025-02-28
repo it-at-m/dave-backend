@@ -2,11 +2,14 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MessfaehigkeitRandomFactory {
 
@@ -14,8 +17,8 @@ public class MessfaehigkeitRandomFactory {
 
     public static Messfaehigkeit getMessfaehigkeit() {
         final Messfaehigkeit messfaehigkeit = new Messfaehigkeit();
-        messfaehigkeit.setFahrzeugklassen(fakerInstance.pokemon().location());
-        messfaehigkeit.setIntervall(fakerInstance.pokemon().location());
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.values()[ThreadLocalRandom.current().nextInt(ZaehldatenIntervall.values().length)]);
         messfaehigkeit
                 .setGueltigAb(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
@@ -34,8 +37,9 @@ public class MessfaehigkeitRandomFactory {
 
     public static MessfaehigkeitDto getMessfaehigkeitDto() {
         final MessfaehigkeitDto dto = new MessfaehigkeitDto();
-        dto.setFahrzeugklassen(fakerInstance.pokemon().location());
-        dto.setIntervall(fakerInstance.pokemon().location());
+        dto.setFahrzeugklasse(
+                MessfaehigkeitDto.FahrzeugklasseEnum.values()[ThreadLocalRandom.current().nextInt(MessfaehigkeitDto.FahrzeugklasseEnum.values().length)]);
+        dto.setIntervall(MessfaehigkeitDto.IntervallEnum.values()[ThreadLocalRandom.current().nextInt(MessfaehigkeitDto.IntervallEnum.values().length)]);
         dto.setGueltigAb(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                 .numberBetween(1, 28)));
         dto.setGueltigBis(LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()

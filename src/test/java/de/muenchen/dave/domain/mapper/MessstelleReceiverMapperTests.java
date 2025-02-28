@@ -12,7 +12,9 @@ import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
@@ -27,7 +29,13 @@ import static org.mockito.Mockito.when;
 @Slf4j
 class MessstelleReceiverMapperTests {
 
-    private final MessstelleReceiverMapper mapper = new MessstelleReceiverMapperImpl();
+    private MessstelleReceiverMapper mapper;
+
+    @BeforeEach
+    void beforeEach() throws IllegalAccessException {
+        mapper = new MessstelleReceiverMapperImpl();
+        FieldUtils.writeField(mapper, "fahrzeugklassenMapper", new FahrzeugklassenMapperImpl(), true);
+    }
 
     @Test
     void testCreateMessstelle() {
@@ -49,7 +57,7 @@ class MessstelleReceiverMapperTests {
         expected.setGeprueft(false);
         expected.setSuchwoerter(new ArrayList<>());
         expected.setHersteller(dto.getHersteller());
-        expected.setFahrzeugKlassen(dto.getFahrzeugKlassen());
+        expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(dto.getFahrzeugklasse()));
         expected.setDetektierteVerkehrsarten(dto.getDetektierteVerkehrsarten());
         final String stadtbezirkBezeichnung = "Schwabing-West";
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirkBezeichnung));
@@ -118,7 +126,7 @@ class MessstelleReceiverMapperTests {
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setDatumLetztePlausibleMessung(updatedData.getDatumLetztePlausibleMessung());
         expected.setHersteller(updatedData.getHersteller());
-        expected.setFahrzeugKlassen(updatedData.getFahrzeugKlassen());
+        expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(updatedData.getFahrzeugklasse()));
         expected.setDetektierteVerkehrsarten(updatedData.getDetektierteVerkehrsarten());
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());

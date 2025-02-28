@@ -1,0 +1,57 @@
+2025-02-26 14:09:05.143 CET [34780] LOG:  PostgreSQL 17.2 on x86_64-windows, compiled by msvc-19.42.34435, 64-bit startet
+2025-02-26 14:09:05.147 CET [34780] LOG:  erwarte Verbindungen auf IPv6-Adresse »::1«, Port 5431
+2025-02-26 14:09:05.147 CET [34780] LOG:  erwarte Verbindungen auf IPv4-Adresse »127.0.0.1«, Port 5431
+2025-02-26 14:09:05.197 CET [25064] LOG:  Datenbanksystem wurde am 2025-02-26 12:39:28 CET heruntergefahren
+2025-02-26 14:09:05.236 CET [34780] LOG:  Datenbanksystem ist bereit, um Verbindungen anzunehmen
+2025-02-26 14:14:05.198 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 14:14:05.214 CET [28348] LOG:  Checkpoint komplett: 3 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,002 s, Sync=0,001 s, gesamt=0,018 s; sync. Dateien=2, längste=0,001 s, Durchschnitt=0.001 s; Entfernung=0 kB, Schätzung=0 kB; LSN=0/AE84AA68, Redo-LSN=0/AE84AA10
+2025-02-26 14:54:05.280 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 14:54:05.645 CET [28348] LOG:  Checkpoint komplett: 4 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,334 s, Sync=0,008 s, gesamt=0,365 s; sync. Dateien=4, längste=0,003 s, Durchschnitt=0.002 s; Entfernung=14 kB, Schätzung=14 kB; LSN=0/AE84E3A0, Redo-LSN=0/AE84E348
+2025-02-26 14:59:05.659 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 14:59:06.131 CET [28348] LOG:  Checkpoint komplett: 5 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,443 s, Sync=0,011 s, gesamt=0,472 s; sync. Dateien=4, längste=0,009 s, Durchschnitt=0.003 s; Entfernung=6 kB, Schätzung=13 kB; LSN=0/AE84FDA8, Redo-LSN=0/AE84FD50
+2025-02-26 15:04:05.142 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 15:04:05.282 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,112 s, Sync=0,010 s, gesamt=0,140 s; sync. Dateien=2, längste=0,009 s, Durchschnitt=0.005 s; Entfernung=6 kB, Schätzung=12 kB; LSN=0/AE8517D8, Redo-LSN=0/AE851780
+2025-02-26 15:54:05.360 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 15:54:05.504 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,110 s, Sync=0,011 s, gesamt=0,145 s; sync. Dateien=2, längste=0,010 s, Durchschnitt=0.006 s; Entfernung=6 kB, Schätzung=12 kB; LSN=0/AE853270, Redo-LSN=0/AE853218
+2025-02-26 15:59:05.515 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 15:59:05.653 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,107 s, Sync=0,010 s, gesamt=0,139 s; sync. Dateien=2, längste=0,010 s, Durchschnitt=0.005 s; Entfernung=6 kB, Schätzung=11 kB; LSN=0/AE854D48, Redo-LSN=0/AE854CF0
+2025-02-26 16:04:05.657 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 16:04:05.796 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,112 s, Sync=0,010 s, gesamt=0,139 s; sync. Dateien=2, längste=0,009 s, Durchschnitt=0.005 s; Entfernung=7 kB, Schätzung=11 kB; LSN=0/AE856A38, Redo-LSN=0/AE8569E0
+2025-02-26 16:54:05.868 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 16:54:06.007 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,109 s, Sync=0,011 s, gesamt=0,141 s; sync. Dateien=2, längste=0,010 s, Durchschnitt=0.006 s; Entfernung=7 kB, Schätzung=10 kB; LSN=0/AE858758, Redo-LSN=0/AE858700
+2025-02-26 16:59:05.013 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 16:59:05.151 CET [28348] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,110 s, Sync=0,011 s, gesamt=0,138 s; sync. Dateien=2, längste=0,010 s, Durchschnitt=0.006 s; Entfernung=7 kB, Schätzung=10 kB; LSN=0/AE85A528, Redo-LSN=0/AE85A4D0
+2025-02-26 17:04:05.166 CET [28348] LOG:  Checkpoint beginnt: time
+2025-02-26 17:04:05.868 CET [28348] LOG:  Checkpoint komplett: 7 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,664 s, Sync=0,019 s, gesamt=0,702 s; sync. Dateien=4, längste=0,015 s, Durchschnitt=0.005 s; Entfernung=38 kB, Schätzung=38 kB; LSN=0/AE863E28, Redo-LSN=0/AE863DD0
+2025-02-26 17:11:43.751 CET [34780] LOG:  schnelles Herunterfahren verlangt
+2025-02-26 17:11:43.754 CET [31244] FATAL:  Verbindung wird abgebrochen wegen unerwartetem Ende des Postmasters
+2025-02-27 08:18:58.833 CET [2804] LOG:  PostgreSQL 17.2 on x86_64-windows, compiled by msvc-19.42.34435, 64-bit startet
+2025-02-27 08:18:58.837 CET [2804] LOG:  erwarte Verbindungen auf IPv6-Adresse »::1«, Port 5431
+2025-02-27 08:18:58.837 CET [2804] LOG:  erwarte Verbindungen auf IPv4-Adresse »127.0.0.1«, Port 5431
+2025-02-27 08:18:58.887 CET [3204] LOG:  Datenbanksystem wurde unterbrochen; letzte bekannte Aktion am 2025-02-26 17:04:05 CET
+2025-02-27 08:18:59.153 CET [3204] LOG:  Datenbanksystem wurde nicht richtig heruntergefahren; automatische Wiederherstellung läuft
+2025-02-27 08:18:59.155 CET [3204] LOG:  Redo beginnt bei 0/AE863DD0
+2025-02-27 08:18:59.155 CET [3204] LOG:  ungültige Datensatzlänge bei 0/AE863ED8: mindestens 24 erwartet, 0 erhalten
+2025-02-27 08:18:59.155 CET [3204] LOG:  Redo fertig bei 0/AE863EA0 Systembenutzung: CPU: Benutzer: 0,00 s, System: 0,00 s, verstrichen: 0,00 s
+2025-02-27 08:18:59.158 CET [14100] LOG:  Checkpoint beginnt: end-of-recovery immediate wait
+2025-02-27 08:18:59.164 CET [14100] LOG:  Checkpoint komplett: 3 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,002 s, Sync=0,001 s, gesamt=0,008 s; sync. Dateien=2, längste=0,001 s, Durchschnitt=0.001 s; Entfernung=0 kB, Schätzung=0 kB; LSN=0/AE863ED8, Redo-LSN=0/AE863ED8
+2025-02-27 08:18:59.185 CET [2804] LOG:  Datenbanksystem ist bereit, um Verbindungen anzunehmen
+2025-02-27 08:53:59.974 CET [14100] LOG:  Checkpoint beginnt: time
+2025-02-27 08:54:00.662 CET [14100] LOG:  Checkpoint komplett: 7 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,655 s, Sync=0,015 s, gesamt=0,688 s; sync. Dateien=4, längste=0,012 s, Durchschnitt=0.004 s; Entfernung=16 kB, Schätzung=16 kB; LSN=0/AE8681B0, Redo-LSN=0/AE868158
+2025-02-27 09:03:59.668 CET [14100] LOG:  Checkpoint beginnt: time
+2025-02-27 09:03:59.804 CET [14100] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,116 s, Sync=0,004 s, gesamt=0,136 s; sync. Dateien=2, längste=0,003 s, Durchschnitt=0.002 s; Entfernung=2 kB, Schätzung=15 kB; LSN=0/AE8689B0, Redo-LSN=0/AE868958
+2025-02-27 09:53:59.874 CET [14100] LOG:  Checkpoint beginnt: time
+2025-02-27 09:54:00.000 CET [14100] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,107 s, Sync=0,002 s, gesamt=0,127 s; sync. Dateien=2, längste=0,002 s, Durchschnitt=0.001 s; Entfernung=1 kB, Schätzung=13 kB; LSN=0/AE869160, Redo-LSN=0/AE869108
+2025-02-27 10:03:59.014 CET [14100] LOG:  Checkpoint beginnt: time
+2025-02-27 10:03:59.134 CET [14100] LOG:  Checkpoint komplett: 2 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,104 s, Sync=0,004 s, gesamt=0,120 s; sync. Dateien=2, längste=0,003 s, Durchschnitt=0.002 s; Entfernung=2 kB, Schätzung=12 kB; LSN=0/AE869BD0, Redo-LSN=0/AE869B78
+2025-02-27 10:29:29.615 CET [30344] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.616 CET [29224] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.616 CET [30152] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.616 CET [27308] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.616 CET [12612] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.617 CET [30256] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.617 CET [30516] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.618 CET [30052] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.618 CET [29912] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:29:29.619 CET [30088] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-02-27 10:38:40.597 CET [2804] LOG:  schnelles Herunterfahren verlangt

@@ -3,6 +3,9 @@ package de.muenchen.dave.domain.mapper.detektor;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
@@ -19,13 +22,15 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        uses = FahrzeugklassenMapper.class,
+        componentModel = MappingConstants.ComponentModel.SPRING
+)
 public interface MessstelleReceiverMapper {
 
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
@@ -63,14 +68,6 @@ public interface MessstelleReceiverMapper {
         if (CollectionUtils.isEmpty(bean.getMessquerschnitte())) {
             bean.setMessquerschnitte(new ArrayList<>());
         }
-
-        if (CollectionUtils.isNotEmpty(bean.getMessfaehigkeiten())) {
-            bean.getMessfaehigkeiten().forEach(messfaehigkeit -> {
-                if (LocalDate.now().isBefore(messfaehigkeit.getGueltigBis())) {
-                    bean.setFahrzeugKlassen(messfaehigkeit.getFahrzeugklassen());
-                }
-            });
-        }
     }
 
     @AfterMapping
@@ -96,5 +93,21 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
     Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+
+    default ZaehldatenIntervall map(final MessfaehigkeitDto.IntervallEnum intervall) {
+        final ZaehldatenIntervall mappingTarget;
+        if (MessfaehigkeitDto.IntervallEnum.STUNDE_VIERTEL == intervall) {
+            mappingTarget = ZaehldatenIntervall.STUNDE_VIERTEL;
+        } else if (MessfaehigkeitDto.IntervallEnum.STUNDE_VIERTEL_EINGESCHRAENKT == intervall) {
+            mappingTarget = ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT;
+        } else if (MessfaehigkeitDto.IntervallEnum.STUNDE_HALB == intervall) {
+            mappingTarget = ZaehldatenIntervall.STUNDE_HALB;
+        } else if (MessfaehigkeitDto.IntervallEnum.STUNDE_KOMPLETT == intervall) {
+            mappingTarget = ZaehldatenIntervall.STUNDE_KOMPLETT;
+        } else {
+            mappingTarget = null;
+        }
+        return mappingTarget;
+    }
 
 }

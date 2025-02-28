@@ -46,15 +46,15 @@ public class MessstelleService {
     }
 
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
-        final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
+        final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        return messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
-        final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        byIdOrThrowException.setMessfaehigkeiten(
-                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
-        return messstelleMapper.bean2editDto(byIdOrThrowException, stadtbezirkMapper);
+        final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        messstelle.setMessfaehigkeiten(
+                messstelle.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
+        return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
