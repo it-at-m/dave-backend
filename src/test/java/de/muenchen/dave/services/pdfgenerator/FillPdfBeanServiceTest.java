@@ -392,7 +392,7 @@ class FillPdfBeanServiceTest {
             headerExpected.add(gesamtauswertungTableHeader);
             header.add(gesamtauswertungTableHeader.getHeader());
         }
-        final GesamtauswertungTableHeader firsColumnHeader = new GesamtauswertungTableHeader();
+        final var firsColumnHeader = new GesamtauswertungTableHeader();
         firsColumnHeader.setHeader(StringUtils.EMPTY);
         headerExpected.addFirst(firsColumnHeader);
         row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
@@ -426,7 +426,7 @@ class FillPdfBeanServiceTest {
         row.setGesamtauswertungTableColumns(gesamtauswertungTableColumns);
         gesamtauswertungTableRows.add(row);
 
-        final GesamtauswertungTableHeader firstColumnHeader = new GesamtauswertungTableHeader();
+        final var firstColumnHeader = new GesamtauswertungTableHeader();
         firstColumnHeader.setHeader(StringUtils.EMPTY);
 
         final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = FillPdfBeanService.splitTableRowsIfNecessary(gesamtauswertungTableRows);
@@ -434,9 +434,9 @@ class FillPdfBeanServiceTest {
                 FillPdfBeanService.MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
         final List<GesamtauswertungTable> expected = new ArrayList<>();
         rowsPerTable.forEach((integer, gesamtauswertungTableRow) -> {
-            final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
             final List<GesamtauswertungTableHeader> gesamtauswertungTableHeaders = new ArrayList<>(partition.get(integer));
             gesamtauswertungTableHeaders.addFirst(firstColumnHeader);
+            final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
             gesamtauswertungTable.setGesamtauswertungTableHeaders(gesamtauswertungTableHeaders);
             gesamtauswertungTable.setGesamtauswertungTableRows(gesamtauswertungTableRow);
             expected.add(gesamtauswertungTable);

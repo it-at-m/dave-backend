@@ -955,16 +955,16 @@ public class FillPdfBeanService {
             return gesamtauswertungTableHeader;
         }).toList();
 
-        final GesamtauswertungTableHeader firstColumnHeader = new GesamtauswertungTableHeader();
+        final var firstColumnHeader = new GesamtauswertungTableHeader();
         firstColumnHeader.setHeader(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
 
         final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
         return IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
-            final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
-            gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
             final List<GesamtauswertungTableHeader> gesamtauswertungTableHeaders = new ArrayList<>(partitionTableHeaders.get(index));
             gesamtauswertungTableHeaders.addFirst(firstColumnHeader);
+            final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
             gesamtauswertungTable.setGesamtauswertungTableHeaders(gesamtauswertungTableHeaders);
+            gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
             return gesamtauswertungTable;
         }).toList();
     }
