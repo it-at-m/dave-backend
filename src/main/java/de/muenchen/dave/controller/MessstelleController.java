@@ -4,11 +4,13 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,7 @@ import java.util.List;
 public class MessstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
+    private static final String REQUEST_PARAMETER_MSTID = "mstid";
     private final MessstelleService messstelleService;
 
     @PreAuthorize(
@@ -39,10 +42,20 @@ public class MessstelleController {
     )
     @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(
+            @RequestParam(value = REQUEST_PARAMETER_ID, required = false) final String messstelleId,
+            @RequestParam(value = REQUEST_PARAMETER_MSTID, required = false) final String mstId) {
         log.debug("#readMessstelleInfo with id {}", messstelleId);
         try {
-            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
+            if (StringUtils.isEmpty(messstelleId) && StringUtils.isEmpty(mstId)) {
+                throw new BadRequestException("ID zum Laden der Messstelle fehlt.");
+            }
+            final ReadMessstelleInfoDTO readMessstelleDTO;
+            if (StringUtils.isNotEmpty(messstelleId)) {
+                readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
+            } else {
+                readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
+            }
             return ResponseEntity.ok(readMessstelleDTO);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
