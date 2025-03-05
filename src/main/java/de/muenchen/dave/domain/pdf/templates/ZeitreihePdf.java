@@ -4,11 +4,15 @@ import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihe
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class ZeitreihePdf extends PdfBean {
 
     // Tabelle
@@ -32,6 +36,7 @@ public class ZeitreihePdf extends PdfBean {
     private String schematischeUebersichtAsBase64Png;
     private String chart;
     private String chartTitle;
+    private String zeitauswahl;
 
     private boolean schematischeUebersichtNeeded;
 
