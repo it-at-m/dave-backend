@@ -91,16 +91,10 @@ public class MessstelleReceiver {
     private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
-        updateLageplanVorhanden(updated);
+        updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);
-    }
-
-    private void updateLageplanVorhanden(final Messstelle messstelle) {
-        if (messstelle.getLageplanVorhanden() == null || !messstelle.getLageplanVorhanden()) {
-            messstelle.setLageplanVorhanden(lageplanService.lageplanVorhanden(messstelle.getMstId()));
-        }
     }
 
     protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(final List<Messquerschnitt> messquerschnitte,
