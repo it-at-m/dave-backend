@@ -4,13 +4,11 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,28 +38,36 @@ public class MessstelleController {
         "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
     )
-    @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/info", params = REQUEST_PARAMETER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(
-            @RequestParam(value = REQUEST_PARAMETER_ID, required = false) final String messstelleId,
-            @RequestParam(value = REQUEST_PARAMETER_MSTID, required = false) final String mstId) {
-        log.debug("#readMessstelleInfo with id {}", messstelleId);
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoById(
+            @RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
+        log.debug("#readMessstelleInfoById with id {}", messstelleId);
         try {
-            if (StringUtils.isEmpty(messstelleId) && StringUtils.isEmpty(mstId)) {
-                throw new BadRequestException("ID zum Laden der Messstelle fehlt.");
-            }
-            final ReadMessstelleInfoDTO readMessstelleDTO;
-            if (StringUtils.isNotEmpty(messstelleId)) {
-                readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
-            } else {
-                readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
-            }
+            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
             return ResponseEntity.ok(readMessstelleDTO);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
             throw e;
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", messstelleId, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
+        }
+    }
+
+    @GetMapping(value = "/info", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional(readOnly = true)
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoByMstId(
+            @RequestParam(value = REQUEST_PARAMETER_MSTID) final String mstId) {
+        log.debug("#readMessstelleInfoByMstId with id {}", mstId);
+        try {
+            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
+            return ResponseEntity.ok(readMessstelleDTO);
+        } catch (final ResourceNotFoundException e) {
+            log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", mstId, e);
+            throw e;
+        } catch (final Exception e) {
+            log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", mstId, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
         }
     }
