@@ -14,4 +14,5 @@ public class MessstelleOverviewDTO implements Serializable {
     private Boolean geprueft;
     private String stadtbezirk;
     private String stadtbezirkNummer;
+    private Boolean lageplanVorhanden;
 }
