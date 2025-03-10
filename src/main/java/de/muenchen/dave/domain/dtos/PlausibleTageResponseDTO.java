@@ -6,6 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class NichtPlausibleTageResponseDTO {
-    List<LocalDate> nichtPlausibleTage;
+public class PlausibleTageResponseDTO {
+    List<LocalDate> plausibleTage;
 }
