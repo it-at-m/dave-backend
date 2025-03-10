@@ -38,67 +38,67 @@ public class OptionsmenueSettings extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ZaehldatenIntervall intervall;
 
-    @Column
+    @Column(name = "kraftfahrzeugverkehr_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> kraftfahrzeugverkehrChoosableIntervals;
 
-    @Column
+    @Column(name = "schwerverkehr_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> schwerverkehrChoosableIntervals;
 
-    @Column
+    @Column(name = "gueterverkehr_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> gueterverkehrChoosableIntervals;
 
-    @Column
+    @Column(name = "schwerverkehrsanteil_prozent_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> schwerverkehrsanteilProzentChoosableIntervals;
 
-    @Column
+    @Column(name = "gueterverkehrsanteil_prozent_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> gueterverkehrsanteilProzentChoosableIntervals;
 
-    @Column
+    @Column(name = "radverkehr_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> radverkehrChoosableIntervals;
 
-    @Column
+    @Column(name = "fussverkehr_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> fussverkehrChoosableIntervals;
 
-    @Column
+    @Column(name = "lastkraftwagen_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lastkraftwagenChoosableIntervals;
 
-    @Column
+    @Column(name = "lastzuege_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lastzuegeChoosableIntervals;
 
-    @Column
+    @Column(name = "busse_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> busseChoosableIntervals;
 
-    @Column
+    @Column(name = "kraftraeder_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> kraftraederChoosableIntervals;
 
-    @Column
+    @Column(name = "personenkraftwagen_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> personenkraftwagenChoosableIntervals;
 
-    @Column
+    @Column(name = "lieferwagen_choosable_intervals")
     @JdbcTypeCode(SqlTypes.JSON)
     @Enumerated(EnumType.STRING)
     private List<ZaehldatenIntervall> lieferwagenChoosableIntervals;
