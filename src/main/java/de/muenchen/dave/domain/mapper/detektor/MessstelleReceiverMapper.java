@@ -1,15 +1,17 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.Kalendertag;
+import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
 import de.muenchen.dave.util.SuchwortUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -88,6 +90,7 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "geprueft", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
+    @Mapping(target = "lageplanVorhanden", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
@@ -108,6 +111,14 @@ public interface MessstelleReceiverMapper {
             mappingTarget = null;
         }
         return mappingTarget;
+    }
+
+    @Mapping(target = "kalendertag", ignore = true)
+    UnauffaelligerTag dto2Entity(final UnauffaelligerTagDto dto, @Context final Kalendertag kalendertag);
+
+    @AfterMapping
+    default void dto2EntityAfterMapping(@MappingTarget final UnauffaelligerTag entity, @Context final Kalendertag kalendertag) {
+        entity.setKalendertag(kalendertag);
     }
 
 }

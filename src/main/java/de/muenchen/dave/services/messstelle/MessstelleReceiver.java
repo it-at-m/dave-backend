@@ -13,6 +13,7 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.lageplan.LageplanService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -41,6 +42,7 @@ public class MessstelleReceiver {
     private final MessstelleIndexService messstelleIndexService;
     private final CustomSuggestIndexService customSuggestIndexService;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final LageplanService lageplanService;
     private MessstelleApi messstelleApi;
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
@@ -56,10 +58,14 @@ public class MessstelleReceiver {
         // To assert that the lock is held (prevents misconfiguration errors)
         LockAssert.assertLocked();
         log.info("#loadMessstellen from MobidaM");
-        // Daten aus MobidaM laden
-        final List<MessstelleDto> body = loadMessstellen();
-        // Stammdatenservice aufrufen
-        this.processingMessstellen(body);
+        try {
+            // Daten aus MobidaM laden
+            final List<MessstelleDto> body = loadMessstellen();
+            // Stammdatenservice aufrufen
+            this.processingMessstellen(body);
+        } catch (final Exception exception) {
+            log.error(exception.getMessage(), exception);
+        }
     }
 
     @LogExecutionTime
@@ -89,6 +95,7 @@ public class MessstelleReceiver {
     private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
+        updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         messstelleIndexService.saveMessstelle(updated);

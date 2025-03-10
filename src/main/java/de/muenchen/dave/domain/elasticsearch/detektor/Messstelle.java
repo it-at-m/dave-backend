@@ -62,4 +62,5 @@ public class Messstelle {
     List<String> customSuchwoerter;
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
     List<Messfaehigkeit> messfaehigkeiten = new ArrayList<>();
+    Boolean lageplanVorhanden = false;
 }

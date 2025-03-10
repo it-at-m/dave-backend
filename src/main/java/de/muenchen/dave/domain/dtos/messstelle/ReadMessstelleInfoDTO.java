@@ -26,4 +26,5 @@ public class ReadMessstelleInfoDTO implements Serializable {
     private String kommentar;
     private List<ReadMessquerschnittDTO> messquerschnitte;
     private List<ReadMessfaehigkeitDTO> messfaehigkeiten;
+    private Boolean lageplanVorhanden;
 }

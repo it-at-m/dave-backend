@@ -53,6 +53,7 @@ public class MessstelleRandomFactory {
         messstelle.setCustomSuchwoerter(customSuchwoerter);
         messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnitte());
         messstelle.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeiten());
+        messstelle.setLageplanVorhanden(fakerInstance.bool().bool());
         return messstelle;
     }
 

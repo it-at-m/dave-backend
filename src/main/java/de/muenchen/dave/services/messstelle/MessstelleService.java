@@ -50,6 +50,11 @@ public class MessstelleService {
         return messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
     }
 
+    public ReadMessstelleInfoDTO readMessstelleInfoByMstId(final String mstId) {
+        final Messstelle byIdOrThrowException = messstelleIndexService.findByMstIdOrThrowException(mstId);
+        return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
+    }
+
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         messstelle.setMessfaehigkeiten(

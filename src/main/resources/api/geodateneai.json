@@ -187,6 +187,60 @@
         }
       }
     },
+    "/messstelle/unauffaellige-tage-for-each-messstelle": {
+      "get": {
+        "tags": [
+          "Messstelle"
+        ],
+        "summary": "Gibt die unauffälligen Tage für jede existierende Messstelle im gegebenen Zeitraum zurück.",
+        "operationId": "getUnauffaelligeTageForEachMessstelle",
+        "parameters": [
+          {
+            "name": "start-date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end-date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unauffällige Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnauffaelligerTagDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/MessstelleOptionsmenu/nichtPlausibleDaten": {
       "get": {
         "tags": [
@@ -764,6 +818,19 @@
             "items": {
               "$ref": "#/components/schemas/MessfaehigkeitDto"
             }
+          }
+        }
+      },
+      "UnauffaelligerTagDto": {
+        "type": "object",
+        "properties": {
+          "mstId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date"
           }
         }
       },

@@ -54,6 +54,7 @@ class MessstelleMapperTests {
         expected.setFahrzeugklasse(bean.getFahrzeugklasse());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setKommentar(bean.getKommentar());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
@@ -171,6 +172,7 @@ class MessstelleMapperTests {
         expected.getSuchwoerter().addAll(SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper));
         expected.getSuchwoerter().addAll(updatedData.getCustomSuchwoerter());
         expected.setCustomSuchwoerter(updatedData.getCustomSuchwoerter());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)

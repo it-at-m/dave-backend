@@ -296,12 +296,11 @@ public class FillPdfBeanService {
         if (options.isSchwerverkehr()) {
             selectedFahrzeuge.add("SV");
         }
-        if (options.isGueterverkehr()) {
-            selectedFahrzeuge.add("GV");
-        }
-        // Anteil
         if (options.isSchwerverkehrsanteilProzent()) {
             selectedFahrzeuge.add("SV%");
+        }
+        if (options.isGueterverkehr()) {
+            selectedFahrzeuge.add("GV");
         }
         if (options.isGueterverkehrsanteilProzent()) {
             selectedFahrzeuge.add("GV%");
@@ -916,7 +915,6 @@ public class FillPdfBeanService {
             this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
-            header.addFirst(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
@@ -924,7 +922,7 @@ public class FillPdfBeanService {
                     legend, hasMultipleMessstellen, header);
             final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = splitTableRowsIfNecessary(gesamtauswertungTableRows);
 
-            final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable);
+            final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable, hasMultipleMessstellen);
 
             // Wenn mehrere Tabellen vonnöten => große Zählung, Zellenbreite auf Minimum verkleinern
             // Hier sollte später dynamisch berechnet werden wie viele Tabellen benötigt werden und die Elemente gleichmäßig in diese verteilen.
@@ -949,18 +947,24 @@ public class FillPdfBeanService {
      */
     protected static List<GesamtauswertungTable> getGesamtauswertungTables(
             final List<String> header,
-            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable) {
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable,
+            final boolean hasMultipleMessstellen) {
         final List<GesamtauswertungTableHeader> tableHeader = header.stream().map(s -> {
             final GesamtauswertungTableHeader gesamtauswertungTableHeader = new GesamtauswertungTableHeader();
             gesamtauswertungTableHeader.setHeader(s);
             return gesamtauswertungTableHeader;
         }).toList();
 
+        final var firstColumnHeader = new GesamtauswertungTableHeader();
+        firstColumnHeader.setHeader(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
+
         final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
         return IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
+            final List<GesamtauswertungTableHeader> gesamtauswertungTableHeaders = new ArrayList<>(partitionTableHeaders.get(index));
+            gesamtauswertungTableHeaders.addFirst(firstColumnHeader);
             final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
+            gesamtauswertungTable.setGesamtauswertungTableHeaders(gesamtauswertungTableHeaders);
             gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
-            gesamtauswertungTable.setGesamtauswertungTableHeaders(partitionTableHeaders.get(index));
             return gesamtauswertungTable;
         }).toList();
     }

@@ -15,8 +15,10 @@ import java.sql.Timestamp;
  * Entitaet fuer den Lock des Schedulers
  */
 @Entity
-@Table(name = "shedlock")
+@Table(name = Shedlock.TABLE_NAME)
 public class Shedlock {
+
+    public static final String TABLE_NAME = "shedlock";
 
     @Id
     @Column(name = "name", nullable = false)
