@@ -29,6 +29,7 @@ public class EditMessstelleDTO implements Serializable {
     private Double latitude;
 
     private Boolean sichtbarDatenportal;
+    private Boolean lageplanVorhanden;
     private Boolean geprueft;
     private String kommentar;
     private String standort;
