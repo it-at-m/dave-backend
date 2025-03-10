@@ -2,38 +2,15 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
 import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
-import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidDTO;
 import de.muenchen.dave.geodateneai.gen.model.ChosenTagesTypValidRequestDto;
-import de.muenchen.dave.geodateneai.gen.model.NichtPlausibleTageDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 class MessstelleOptionsmenuMapperTest {
 
     private final MessstelleOptionsmenuMapper mapper = new MessstelleOptionsmenuMapperImpl();
-
-    @Test
-    void requestToResponse() {
-        ArrayList<LocalDate> listOfDates = new ArrayList<>(List.of(LocalDate.of(2024, 1, 1),
-                LocalDate.of(2024, 1, 3),
-                LocalDate.of(2024, 1, 7)));
-        final NichtPlausibleTageDto requested = new NichtPlausibleTageDto();
-        requested.setNichtPlausibleTage(listOfDates);
-
-        final NichtPlausibleTageResponseDTO response = new NichtPlausibleTageResponseDTO();
-        response.setNichtPlausibleTage(listOfDates);
-
-        Assertions.assertThat(this.mapper.requestToResponse(requested))
-                .isNotNull()
-                .usingRecursiveComparison()
-                .isEqualTo(response);
-    }
 
     @Test
     void backendToEaiRequestChosenTageValidChosenValidWochentage() {
