@@ -29,7 +29,6 @@ public class EditMessstelleDTO implements Serializable {
     private Double latitude;
 
     private Boolean sichtbarDatenportal;
-    private Boolean lageplanVorhanden;
     private Boolean geprueft;
     private String kommentar;
     private String standort;
@@ -38,4 +37,5 @@ public class EditMessstelleDTO implements Serializable {
     private List<EditMessquerschnittDTO> messquerschnitte;
     private List<EditMessfaehigkeitDTO> messfaehigkeiten;
 
+    private Boolean lageplanVorhanden;
 }
