@@ -116,10 +116,10 @@ public class EmailSendService {
 
         final String subject;
         var content = String.format("Zur Messstelle \"%s\" liegt folgende Nachricht vor: \n\n", message.getMstId());
-        if (Objects.isNull(message.getStatusAlt()) && MessstelleStatus.IN_BESTAND.equals(message.getStatusNeu())) {
+        if (Objects.isNull(message.getStatusAlt()) && !Objects.isNull(message.getStatusNeu())) {
             subject = String.format("DAVe: Neue Messstelle %s", message.getMstId());
             content = content
-                    + String.format("Es handelt sich um einen neue und \"%s\" befindliche Messstelle.", message.getStatusNeu());
+                    + String.format("Es handelt sich um einen neue und in Status \"%s\" befindliche Messstelle.", message.getStatusNeu());
         } else {
             // Statusänderung
             subject = String.format("DAVe: Statusänderung Messstelle %s", message.getMstId());

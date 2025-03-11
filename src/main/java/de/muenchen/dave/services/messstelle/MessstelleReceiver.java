@@ -7,12 +7,16 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
+import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.email.EmailReceiveService;
+import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,12 +47,13 @@ public class MessstelleReceiver {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final StadtbezirkMapper stadtbezirkMapper;
     private final LageplanService lageplanService;
+    private final EmailSendService emailSendService;
     private MessstelleApi messstelleApi;
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
     /**
-     * Diese Methode laedt regelmaessig alle relevanten Messstellen aus MobidaM. Wie oft das geschieht,
-     * kann in der application-xxx.yml geändert werden.
+     * Diese Methode lädt regelmäßig alle relevanten Messstellen aus MobidaM.
+     * Der Zyklus kann in der application-xxx.yml mittels einer Property geändert werden.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
@@ -87,18 +92,32 @@ public class MessstelleReceiver {
 
     private void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        final Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
+        Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
-        messstelleIndexService.saveMessstelle(newMessstelle);
+        newMessstelle = messstelleIndexService.saveMessstelle(newMessstelle);
+        this.sendMailForUpdatedOrChangedMessstelle(
+                newMessstelle.getId(),
+                newMessstelle.getMstId(),
+                null,
+                newMessstelle.getStatus());
     }
 
     private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
-        final Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
+        final var statusMessstelleAlt = existingMessstelle.getStatus();
+        Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
         updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
-        messstelleIndexService.saveMessstelle(updated);
+        updated = messstelleIndexService.saveMessstelle(updated);
+        final var statusMessstelleNeu = updated.getStatus();
+        if (statusMessstelleAlt != statusMessstelleNeu) {
+            this.sendMailForUpdatedOrChangedMessstelle(
+                    updated.getId(),
+                    updated.getMstId(),
+                    statusMessstelleAlt,
+                    statusMessstelleNeu);
+        }
     }
 
     protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(final List<Messquerschnitt> messquerschnitte,
@@ -118,5 +137,22 @@ public class MessstelleReceiver {
             });
         }
         return messquerschnitte;
+    }
+
+    protected void sendMailForUpdatedOrChangedMessstelle(
+            final String id,
+            final String mstId,
+            final MessstelleStatus statusAlt,
+            final MessstelleStatus statusNeu) {
+        final var messstelleChangeMessage = new MessstelleChangeMessage();
+        messstelleChangeMessage.setTechnicalIdMst(id);
+        messstelleChangeMessage.setMstId(mstId);
+        messstelleChangeMessage.setStatusAlt(statusAlt);
+        messstelleChangeMessage.setStatusNeu(statusNeu);
+        try {
+            emailSendService.sendMailForMessstelleChangeMessage(messstelleChangeMessage);
+        } catch (final Exception exception) {
+            log.error("Der Emailversand ist fehlgeschlagen.", exception);
+        }
     }
 }
