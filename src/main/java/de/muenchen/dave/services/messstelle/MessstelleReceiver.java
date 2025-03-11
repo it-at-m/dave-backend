@@ -15,7 +15,6 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
-import de.muenchen.dave.services.email.EmailReceiveService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import lombok.AllArgsConstructor;
@@ -90,6 +89,12 @@ public class MessstelleReceiver {
         });
     }
 
+    /**
+     * Die Methode legt für die im Parameter gegebenen Messstelle eine neuen Messstelle an.
+     * Nach erfolgreichem Anlegen wird eine Infomail bezüglich der neuen Messstelle versandt.
+     *
+     * @param dto für Messstelle zum anlegen.
+     */
     private void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
         Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
@@ -102,6 +107,14 @@ public class MessstelleReceiver {
                 newMessstelle.getStatus());
     }
 
+    /**
+     * Die Methode aktualisiert eine bereits gespeicherte Messstelle.
+     * Nach erfolgreichen Anlegen und der Feststellung einer Statusänderung
+     * wird eine Infomail bezüglich der Aktualisierung versandt.
+     *
+     * @param existingMessstelle als bereits gespeicherte Messstelle.
+     * @param dto der Messstelle mit den zu aktualisierenden Daten.
+     */
     private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();

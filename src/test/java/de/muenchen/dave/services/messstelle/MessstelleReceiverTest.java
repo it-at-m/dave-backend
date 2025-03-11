@@ -20,6 +20,7 @@ public class MessstelleReceiverTest {
             null,
             null,
             null,
+            null,
             new MessstelleReceiverMapperImpl());
 
     @Test
