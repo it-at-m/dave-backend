@@ -58,7 +58,7 @@ public class EmailSendService {
      * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den
      * jeweils anderen Teilnehmer (Participant).
      *
-     * @param message Die Chat-Nachricht
+     * @param message mit den Informationen für den Mailversand.
      */
     public void sendEmailForChatMessage(final ChatMessage message) {
         String subject = "DAVe: Neue Nachricht vom %s [%s]";
