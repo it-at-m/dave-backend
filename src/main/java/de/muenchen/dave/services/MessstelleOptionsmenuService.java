@@ -29,9 +29,12 @@ public class MessstelleOptionsmenuService {
 
     public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final Integer mstId) {
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
-        final List<LocalDate> unauffaelligeTage = unauffaelligeTageForMessstelle.stream()
-                .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum()).toList();
-        final List<Kalendertag> auffaelligeKalendertage = kalendertagService.getAllKalendertageWhereDatumNotInAndDatumIsBefore(unauffaelligeTage,
+        final List<LocalDate> unauffaelligeTage = unauffaelligeTageForMessstelle
+                .stream()
+                .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum())
+                .toList();
+        final List<Kalendertag> auffaelligeKalendertage = kalendertagService.getAllKalendertageWhereDatumNotInAndDatumIsBefore(
+                unauffaelligeTage,
                 LocalDate.now());
         final List<LocalDate> auffaelligeTage = auffaelligeKalendertage.stream().map(Kalendertag::getDatum).toList();
         final AuffaelligeTageDTO auffaelligeTageDTO = new AuffaelligeTageDTO();
