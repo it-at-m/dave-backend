@@ -12,5 +12,5 @@ public interface KalendertagRepository extends JpaRepository<Kalendertag, UUID> 
 
     Optional<Kalendertag> findByDatum(final LocalDate datum);
 
-    List<Kalendertag> findAllByDatumNotInAndDatumIsBefore(final List<LocalDate> notIn, final LocalDate beforeDate);
+    List<Kalendertag> findAllByDatumNotInAndDatumIsBefore(final List<LocalDate> excludedDates, final LocalDate latestDate);
 }

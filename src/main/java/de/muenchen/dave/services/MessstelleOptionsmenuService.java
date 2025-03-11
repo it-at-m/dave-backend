@@ -33,7 +33,7 @@ public class MessstelleOptionsmenuService {
                 .stream()
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum())
                 .toList();
-        final List<Kalendertag> auffaelligeKalendertage = kalendertagService.getAllKalendertageWhereDatumNotInAndDatumIsBefore(
+        final List<Kalendertag> auffaelligeKalendertage = kalendertagService.getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(
                 unauffaelligeTage,
                 LocalDate.now());
         final List<LocalDate> auffaelligeTage = auffaelligeKalendertage.stream().map(Kalendertag::getDatum).toList();

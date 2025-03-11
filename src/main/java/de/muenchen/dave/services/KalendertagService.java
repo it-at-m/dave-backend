@@ -14,8 +14,16 @@ public class KalendertagService {
 
     private final KalendertagRepository kalendertagRepository;
 
-    public List<Kalendertag> getAllKalendertageWhereDatumNotInAndDatumIsBefore(final List<LocalDate> notIn, final LocalDate beforeDate) {
-        return kalendertagRepository.findAllByDatumNotInAndDatumIsBefore(notIn, beforeDate);
+    /**
+     * Liefert eine Liste an Kalendertagen bis zum latestDate, ohne die excludedDates.
+     *
+     * @param excludedDates Liste an LocalDates, deren Kalendertag nicht benötigt werden.
+     * @param latestDate bis zu diesem Datum soll gesucht werden
+     * @return Liste an Kalendertagen
+     */
+    public List<Kalendertag> getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(final List<LocalDate> excludedDates,
+            final LocalDate latestDate) {
+        return kalendertagRepository.findAllByDatumNotInAndDatumIsBefore(excludedDates, latestDate);
     }
 
 }

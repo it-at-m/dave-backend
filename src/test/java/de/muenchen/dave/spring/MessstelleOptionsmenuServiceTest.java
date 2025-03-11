@@ -69,7 +69,7 @@ class MessstelleOptionsmenuServiceTest {
         when(unauffaelligeTageService.getUnauffaelligeTageForMessstelle(anyInt()))
                 .thenReturn(unauffaelligeTageForMessstelle);
 
-        when(kalendertagService.getAllKalendertageWhereDatumNotInAndDatumIsBefore(any(), any()))
+        when(kalendertagService.getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(any(), any()))
                 .thenReturn(kalendertage);
 
         final AuffaelligeTageDTO expected = new AuffaelligeTageDTO();
