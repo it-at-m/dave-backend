@@ -37,4 +37,5 @@ public class EditMessstelleDTO implements Serializable {
     private List<EditMessquerschnittDTO> messquerschnitte;
     private List<EditMessfaehigkeitDTO> messfaehigkeiten;
 
+    private Boolean lageplanVorhanden;
 }
