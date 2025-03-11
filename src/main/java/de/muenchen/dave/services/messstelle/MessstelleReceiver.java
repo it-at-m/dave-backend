@@ -152,6 +152,15 @@ public class MessstelleReceiver {
         return messquerschnitte;
     }
 
+    /**
+     * Versendet eine Email mit den in den Parametern gegebenen Informationen.
+     * Tritt beim Emailversand ein Fehler auf, so wird dieser Fehler geloggt.
+     *
+     * @param id als technische ID der Messstelle.
+     * @param mstId als fachliche ID der Messstelle.
+     * @param statusAlt als Status der Messstelle vor der Aktualisierung.
+     * @param statusNeu als Status der Messstelle nach der Aktualisierung.
+     */
     protected void sendMailForUpdatedOrChangedMessstelle(
             final String id,
             final String mstId,
