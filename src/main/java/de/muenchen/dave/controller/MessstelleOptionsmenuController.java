@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.AuffaelligeTageDTO;
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
 import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
 import de.muenchen.dave.services.MessstelleOptionsmenuService;

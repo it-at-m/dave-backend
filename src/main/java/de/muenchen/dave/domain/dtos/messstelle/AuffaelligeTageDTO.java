@@ -1,4 +1,4 @@
-package de.muenchen.dave.domain.dtos;
+package de.muenchen.dave.domain.dtos.messstelle;
 
 import lombok.Data;
 

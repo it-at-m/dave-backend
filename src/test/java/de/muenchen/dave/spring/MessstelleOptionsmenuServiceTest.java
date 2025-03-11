@@ -3,7 +3,7 @@ package de.muenchen.dave.spring;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
-import de.muenchen.dave.domain.dtos.AuffaelligeTageDTO;
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.mapper.MessstelleOptionsmenuMapper;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
 import de.muenchen.dave.services.KalendertagService;

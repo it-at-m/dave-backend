@@ -2,7 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
-import de.muenchen.dave.domain.dtos.AuffaelligeTageDTO;
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
 import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
 import de.muenchen.dave.domain.mapper.MessstelleOptionsmenuMapper;
