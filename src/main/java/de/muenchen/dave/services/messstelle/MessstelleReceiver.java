@@ -73,11 +73,11 @@ public class MessstelleReceiver {
     }
 
     @LogExecutionTime
-    private List<MessstelleDto> loadMessstellen() {
+    protected List<MessstelleDto> loadMessstellen() {
         return Objects.requireNonNull(messstelleApi.getMessstellenWithHttpInfo().block()).getBody();
     }
 
-    private void processingMessstellen(final List<MessstelleDto> messstellen) {
+    protected void processingMessstellen(final List<MessstelleDto> messstellen) {
         log.debug("#processingMessstellenCron");
         // Daten aus Dave laden
         messstellen.parallelStream().forEach(messstelleDto -> {
@@ -95,7 +95,7 @@ public class MessstelleReceiver {
      *
      * @param dto für Messstelle zum anlegen.
      */
-    private void createMessstelle(final MessstelleDto dto) {
+    protected void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
         Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
@@ -103,7 +103,7 @@ public class MessstelleReceiver {
         this.sendMailForUpdatedOrChangedMessstelle(
                 newMessstelle.getId(),
                 newMessstelle.getMstId(),
-                null,
+                null, // neue Messstellen besitzen keinen alten Status
                 newMessstelle.getStatus());
     }
 
@@ -115,7 +115,7 @@ public class MessstelleReceiver {
      * @param existingMessstelle als bereits gespeicherte Messstelle.
      * @param dto der Messstelle mit den zu aktualisierenden Daten.
      */
-    private void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
+    protected void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();
         Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
