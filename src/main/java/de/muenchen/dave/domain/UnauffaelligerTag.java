@@ -33,7 +33,7 @@ import lombok.ToString;
 public class UnauffaelligerTag extends BaseEntity {
 
     @Column(name = "mst_id", nullable = false)
-    private Integer mstId;
+    private String mstId;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "kalendertag_id")
