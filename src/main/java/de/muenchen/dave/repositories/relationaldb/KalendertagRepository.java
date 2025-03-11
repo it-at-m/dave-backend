@@ -12,5 +12,12 @@ public interface KalendertagRepository extends JpaRepository<Kalendertag, UUID> 
 
     Optional<Kalendertag> findByDatum(final LocalDate datum);
 
+    /**
+     * Liefert eine Liste an Kalendertagen bis zum latestDate, ohne die excludedDates.
+     *
+     * @param excludedDates Liste an LocalDates, in denen das Datum nicht enthalten sein darf
+     * @param latestDate bis zu diesem Datum soll gesucht werden
+     * @return Liste an Kalendertagen
+     */
     List<Kalendertag> findAllByDatumNotInAndDatumIsBefore(final List<LocalDate> excludedDates, final LocalDate latestDate);
 }
