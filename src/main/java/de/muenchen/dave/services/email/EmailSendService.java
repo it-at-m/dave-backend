@@ -48,7 +48,8 @@ public class EmailSendService {
     public EmailSendService(
             final EmailAddressService emailAddressService,
             final DienstleisterService dienstleisterService,
-            final @Lazy ZaehlstelleIndexService indexService) {
+            final @Lazy
+            ZaehlstelleIndexService indexService) {
         this.emailAddressService = emailAddressService;
         this.dienstleisterService = dienstleisterService;
         this.indexService = indexService;
