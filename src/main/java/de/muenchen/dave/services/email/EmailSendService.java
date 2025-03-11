@@ -103,6 +103,12 @@ public class EmailSendService {
         this.sendMail(to, subject, content);
     }
 
+    /**
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link MessstelleChangeMessage}
+     * an den Participant {@link Participant#MOBILITAETSREFERAT}.
+     *
+     * @param message mit den Informationen für den Mailversand.
+     */
     public void sendMailForMessstelleChangeMessage(final MessstelleChangeMessage message) {
         final var emailAdressMobilitaetsreferat = emailAddressService.loadEmailAddressByParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
         final var to = new String[] { emailAdressMobilitaetsreferat.getEmailAddress() };
