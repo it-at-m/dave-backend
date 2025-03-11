@@ -50,7 +50,7 @@ spring:
           authorization-grant-type: client_credentials
 
 # Environment-specific suffix appended to the index name (may be empty)
-index.suffix:
+elasticsearch.index.suffix:
 elasticsearch:
   user: elastic
   password:
