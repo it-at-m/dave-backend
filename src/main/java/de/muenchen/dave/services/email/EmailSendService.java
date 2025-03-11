@@ -3,7 +3,9 @@ package de.muenchen.dave.services.email;
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Participant;
+import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener
@@ -42,21 +45,22 @@ public class EmailSendService {
     @Value("${spring.profiles.active:local}")
     private String activeProfile;
 
-    public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService,
-            final @Lazy
-            ZaehlstelleIndexService indexService) {
+    public EmailSendService(
+            final EmailAddressService emailAddressService,
+            final DienstleisterService dienstleisterService,
+            final @Lazy ZaehlstelleIndexService indexService) {
         this.emailAddressService = emailAddressService;
         this.dienstleisterService = dienstleisterService;
         this.indexService = indexService;
     }
 
     /**
-     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen
-     * Teilnehmer (Participant).
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den
+     * jeweils anderen Teilnehmer (Participant).
      *
      * @param message Die Chat-Nachricht
      */
-    public void sendEmail(final ChatMessage message) {
+    public void sendEmailForChatMessage(final ChatMessage message) {
         String subject = "DAVe: Neue Nachricht vom %s [%s]";
         String[] to = ArrayUtils.EMPTY_STRING_ARRAY;
         String link = "";
@@ -96,7 +100,39 @@ public class EmailSendService {
             return;
         }
 
-        // Email erstellen und abschicken
+        this.sendMail(to, subject, content);
+    }
+
+    public void sendMailForMessstelleChangeMessage(final MessstelleChangeMessage message) {
+        final var emailAdressMobilitaetsreferat = emailAddressService.loadEmailAddressByParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
+        final var to = new String[] { emailAdressMobilitaetsreferat.getEmailAddress() };
+
+        final String subject;
+        var content = String.format("Zur Messstelle \"%s\" liegt folgende Nachricht vor: \n\n", message.getMstId());
+        if (Objects.isNull(message.getStatusAlt()) && MessstelleStatus.IN_BESTAND.equals(message.getStatusNeu())) {
+            subject = String.format("DAVe: Neue Messstelle %s", message.getMstId());
+            content = content
+                    + String.format("Es handelt sich um einen neue und \"%s\" befindliche Messstelle.", message.getStatusNeu());
+        } else {
+            // Statusänderung
+            subject = String.format("DAVe: Statusänderung Messstelle %s", message.getMstId());
+            content = content
+                    + String.format("Der Messstellenstatus hat sich von \"%s\" auf \"%s\" geändert. \n\n", message.getStatusAlt(), message.getStatusNeu());
+        }
+        final var link = String.format("%s/#/messstelle/%s", this.createUrl(this.urlAdminportal), message.getTechnicalIdMst());
+        content = content + link;
+
+        this.sendMail(to, subject, content);
+    }
+
+    /**
+     * Die Methode erstellt und versendet die Email mit den im Parameter gegebenen Informationen.
+     *
+     * @param to als Emailadresse des Empfängers.
+     * @param subject als Betreff.
+     * @param content für Inhalt der Mail.
+     */
+    protected void sendMail(final String[] to, final String subject, final String content) {
         try {
             final Email email = new SimpleEmail();
             email.setHostName(this.serverHostname);
