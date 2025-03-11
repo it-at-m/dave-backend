@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class AuffaelligeTageDTO {
-    List<LocalDate> auffaelligeTage;
+    private List<LocalDate> auffaelligeTage;
 }
