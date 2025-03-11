@@ -32,9 +32,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und uerbgibt
- * diese dem {@link MessstelleService} zur weiteren
- * Verarbeitung. Soll nicht auf den externen Umgebungen laufen.
+ * Die Klasse {@link MessstelleReceiver} holt alle relevanten Messstellen aus MobidaM und vergibt
+ * diese dem {@link MessstelleService} zur weiteren Verarbeitung.
+ * Soll nicht auf den externen Umgebungen laufen.
  */
 @Slf4j
 @Service
