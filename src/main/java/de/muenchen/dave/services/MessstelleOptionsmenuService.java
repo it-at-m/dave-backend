@@ -27,7 +27,7 @@ public class MessstelleOptionsmenuService {
     private final UnauffaelligeTageService unauffaelligeTageService;
     private final KalendertagService kalendertagService;
 
-    public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final Integer mstId) {
+    public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final String mstId) {
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
         final List<LocalDate> unauffaelligeTage = unauffaelligeTageForMessstelle
                 .stream()

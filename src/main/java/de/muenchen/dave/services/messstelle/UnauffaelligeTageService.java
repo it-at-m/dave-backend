@@ -15,7 +15,7 @@ public class UnauffaelligeTageService {
 
     private final UnauffaelligeTageRepository unauffaelligeTageRepository;
 
-    public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final Integer mstId) {
+    public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final String mstId) {
         return unauffaelligeTageRepository.findByMstId(mstId);
     }
 

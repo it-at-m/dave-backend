@@ -31,7 +31,7 @@ public class MessstelleOptionsmenuController {
 
     @GetMapping("/auffaellige-tage")
     public ResponseEntity<AuffaelligeTageDTO> getAuffaelligeTage(
-            @RequestParam(value = REQUEST_PARAM_MESSSTELLE_ID) @NotNull final Integer mstId) {
+            @RequestParam(value = REQUEST_PARAM_MESSSTELLE_ID) @NotNull final String mstId) {
         log.debug("#getAuffaelligeTage for MessstelleId {}", mstId);
         return ResponseEntity.ok(messstelleOptionsmenuService.getAuffaelligeTageForMessstelle(mstId));
     }

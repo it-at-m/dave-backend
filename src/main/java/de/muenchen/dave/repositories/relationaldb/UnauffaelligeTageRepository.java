@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface UnauffaelligeTageRepository extends JpaRepository<UnauffaelligerTag, UUID> {
 
-    List<UnauffaelligerTag> findByMstId(final Integer mstId);
+    List<UnauffaelligerTag> findByMstId(final String mstId);
 
     /**
      * @return den jüngsten unauffälligen Tag bezogen auf den referenzierten Kalendertag.
