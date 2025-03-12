@@ -11,6 +11,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -196,6 +197,35 @@ class EmailSendServiceTest {
         Mockito.verify(emailSendServiceSpy, Mockito.times(1)).sendMail(expectedTo, expectedSubject, expectedBody);
 
         Mockito.verify(emailAddressService, Mockito.times(1)).loadEmailAddresses();
+    }
+
+    @Test
+    void createUrl() throws IllegalAccessException {
+        final var baseUrl = "the-base-url";
+        FieldUtils.writeField(emailSendService, "activeProfile", "local", true);
+        var result = emailSendService.createUrl(baseUrl);
+        var expected = baseUrl;
+        Assertions.assertEquals(expected, result);
+
+        FieldUtils.writeField(emailSendService, "activeProfile", "kon", true);
+        result = emailSendService.createUrl(baseUrl);
+        expected = "the-base-url-test.muenchen.de";
+        Assertions.assertEquals(expected, result);
+
+        FieldUtils.writeField(emailSendService, "activeProfile", "konexternal", true);
+        result = emailSendService.createUrl(baseUrl);
+        expected = "the-base-url-test.muenchen.de";
+        Assertions.assertEquals(expected, result);
+
+        FieldUtils.writeField(emailSendService, "activeProfile", "prod", true);
+        result = emailSendService.createUrl(baseUrl);
+        expected = "the-base-url.muenchen.de";
+        Assertions.assertEquals(expected, result);
+
+        FieldUtils.writeField(emailSendService, "activeProfile", "prodexternal", true);
+        result = emailSendService.createUrl(baseUrl);
+        expected = "the-base-url.muenchen.de";
+        Assertions.assertEquals(expected, result);
     }
 
 }
