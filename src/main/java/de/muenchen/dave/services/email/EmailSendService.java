@@ -83,7 +83,11 @@ public class EmailSendService {
             subject = String.format(subject, Participant.DIENSTLEISTER.getName(), zaehlungId);
             to = this.loadMailAddressesReferat();
             // an die URL werden die Parameter für zaehlstelleId und zaehlungId angehängt
-            link = String.format("%s/#/zaehlstelle/%s/%s", this.createUrl(this.urlAdminportal), zaehlstelle.getId(), zaehlungId);
+            link = String.format(
+                    "%s/#/zaehlstelle/%s/%s",
+                    this.createUrl(this.urlAdminportal),
+                    zaehlstelle.getId(),
+                    zaehlungId);
         } else if (message.getParticipantId() == Participant.MOBILITAETSREFERAT.getParticipantId()) {
             subject = String.format(subject, Participant.MOBILITAETSREFERAT.getName(), zaehlungId);
             to = this.loadMailAddressDienstleister(zaehlung.getDienstleisterkennung());
@@ -91,9 +95,14 @@ public class EmailSendService {
         }
 
         // Inhalt der E-Mail
-        final String content = String.format("Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
-                "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
-                zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), zaehlstelle.getNummer(), message.getContent(), link);
+        final String content = String.format(
+                "Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
+                        "\n\nLink zum Portal: %s",
+                zaehlung.getProjektName(),
+                zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                zaehlstelle.getNummer(),
+                message.getContent(),
+                link);
 
         if (ArrayUtils.isEmpty(to)) {
             log.warn("Es wurde keine Email versandt, da keine Email-Adresse hinterlegt ist.");
