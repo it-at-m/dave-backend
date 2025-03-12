@@ -137,7 +137,7 @@ public class EmailSendService {
      * @param subject als Betreff.
      * @param content für Inhalt der Mail.
      */
-    protected void sendMail(final String[] to, final String subject, final String content) {
+    private void sendMail(final String[] to, final String subject, final String content) {
         try {
             final Email email = new SimpleEmail();
             email.setHostName(this.serverHostname);
