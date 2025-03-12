@@ -117,7 +117,7 @@ public class EmailSendService {
         if (Objects.isNull(message.getStatusAlt()) && !Objects.isNull(message.getStatusNeu())) {
             subject = String.format("DAVe: Neue Messstelle %s", message.getMstId());
             content = content
-                    + String.format("Es handelt sich um einen neue und in Status \"%s\" befindliche Messstelle.\n\n", message.getStatusNeu());
+                    + String.format("Es handelt sich um einen neue und in Status \"%s\" befindliche Messstelle. \n\n", message.getStatusNeu());
         } else {
             // Statusänderung
             subject = String.format("DAVe: Statusänderung Messstelle %s", message.getMstId());

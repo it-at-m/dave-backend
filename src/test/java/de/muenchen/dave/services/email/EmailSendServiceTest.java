@@ -40,10 +40,11 @@ class EmailSendServiceTest {
         FieldUtils.writeField(emailSendService, "urlSelfserviceportal", "url-selfserviceportal", true);
         FieldUtils.writeField(emailSendService, "serverHostname", "server-hostname", true);
         FieldUtils.writeField(emailSendService, "activeProfile", "local", true);
+        Mockito.reset(emailAddressService, dienstleisterService, zaehlstelleIndexService);
     }
 
     @Test
-    void sendMailForMessstelleChangeMessage() {
+    void sendMailForMessstelleChangeMessageForNewMessstelle() {
         final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
 
         final var emailAdress1 = new EmailAddressDTO();
@@ -65,9 +66,41 @@ class EmailSendServiceTest {
         final var expectedTo = new String[] { emailAdress1.getEmailAddress(), emailAdress2.getEmailAddress() };
         final var expectedSubject = "DAVe: Neue Messstelle 9876";
         final var expectedBody = "Zur Messstelle \"9876\" liegt folgende Nachricht vor: \n\n"
-                + "Es handelt sich um einen neue und in Status \"IN_BESTAND\" befindliche Messstelle.\n\n"
+                + "Es handelt sich um einen neue und in Status \"IN_BESTAND\" befindliche Messstelle. \n\n"
                 + "url-adminportal/#/messstelle/1234";
         Mockito.verify(emailSendServiceSpy, Mockito.times(1)).sendMail(expectedTo, expectedSubject, expectedBody);
+
+        Mockito.verify(emailAddressService, Mockito.times(1)).loadEmailAddresses();
+    }
+
+    @Test
+    void sendMailForMessstelleChangeMessageForExistingMessstelle() {
+        final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
+
+        final var emailAdress1 = new EmailAddressDTO();
+        emailAdress1.setEmailAddress("mail1@xxx.yy");
+        final var emailAdress2 = new EmailAddressDTO();
+        emailAdress2.setEmailAddress("mail2@xxx.yy");
+
+        Mockito.when(emailAddressService.loadEmailAddresses()).thenReturn(List.of(emailAdress1, emailAdress2));
+
+        final var messstelleChangeMessage = new MessstelleChangeMessage();
+
+        messstelleChangeMessage.setTechnicalIdMst("1234");
+        messstelleChangeMessage.setMstId("9876");
+        messstelleChangeMessage.setStatusAlt(MessstelleStatus.IN_PLANUNG);
+        messstelleChangeMessage.setStatusNeu(MessstelleStatus.IN_BESTAND);
+
+        emailSendServiceSpy.sendMailForMessstelleChangeMessage(messstelleChangeMessage);
+
+        final var expectedTo = new String[] { emailAdress1.getEmailAddress(), emailAdress2.getEmailAddress() };
+        final var expectedSubject = "DAVe: Statusänderung Messstelle 9876";
+        final var expectedBody = "Zur Messstelle \"9876\" liegt folgende Nachricht vor: \n\n"
+                + "Der Messstellenstatus hat sich von \"IN_PLANUNG\" auf \"IN_BESTAND\" geändert. \n\n"
+                + "url-adminportal/#/messstelle/1234";
+        Mockito.verify(emailSendServiceSpy, Mockito.times(1)).sendMail(expectedTo, expectedSubject, expectedBody);
+
+        Mockito.verify(emailAddressService, Mockito.times(1)).loadEmailAddresses();
     }
 
 }
