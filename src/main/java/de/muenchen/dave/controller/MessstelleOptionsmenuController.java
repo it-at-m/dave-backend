@@ -1,10 +1,9 @@
 package de.muenchen.dave.controller;
 
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
 import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
-import de.muenchen.dave.domain.dtos.NichtPlausibleTageResponseDTO;
 import de.muenchen.dave.services.MessstelleOptionsmenuService;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
             "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
 public class MessstelleOptionsmenuController {
-    public static final String REQUEST_PARAM_MESSSTELLE_ID = "messstelle_id";
+    public static final String REQUEST_PARAM_MESSSTELLE_ID = "mst_id";
 
     private final MessstelleOptionsmenuService messstelleOptionsmenuService;
 
-    @GetMapping("/nichtPlausibleTage")
-    public ResponseEntity<NichtPlausibleTageResponseDTO> getPlausibleTage(@RequestParam(value = REQUEST_PARAM_MESSSTELLE_ID) @NotEmpty String messstelleId) {
-        log.debug("#getPlausibleTage for MessstelleId {}", messstelleId);
-        return ResponseEntity.ok(messstelleOptionsmenuService.getNichtPlausibleDatenFromEai(messstelleId));
+    @GetMapping("/auffaellige-tage")
+    public ResponseEntity<AuffaelligeTageDTO> getAuffaelligeTage(
+            @RequestParam(value = REQUEST_PARAM_MESSSTELLE_ID) @NotNull final String mstId) {
+        log.debug("#getAuffaelligeTage for MessstelleId {}", mstId);
+        return ResponseEntity.ok(messstelleOptionsmenuService.getAuffaelligeTageForMessstelle(mstId));
     }
 
     @PostMapping("/validateTagesTyp")

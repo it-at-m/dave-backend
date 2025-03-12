@@ -66,15 +66,15 @@ class UnauffaelligeTageReceiverTest {
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTag>();
         var unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250202);
         unauffaelligeTage.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         unauffaelligeTage.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(4321);
+        unauffaelligerTag.setMstId("4321");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         unauffaelligeTage.add(unauffaelligerTag);
 
@@ -111,21 +111,21 @@ class UnauffaelligeTageReceiverTest {
 
         final var youngestSavedUnauffaelligerTag = new UnauffaelligerTag();
         youngestSavedUnauffaelligerTag.setKalendertag(kalenderTagForYoungestSavedUnauffaelligerTag);
-        youngestSavedUnauffaelligerTag.setMstId(1234);
+        youngestSavedUnauffaelligerTag.setMstId("1234");
 
         Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(4321);
+        unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
@@ -146,15 +146,15 @@ class UnauffaelligeTageReceiverTest {
 
         final var expected = new ArrayList<UnauffaelligerTag>();
         var unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250202);
         expected.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         expected.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(4321);
+        unauffaelligerTag.setMstId("4321");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         expected.add(unauffaelligerTag);
 
@@ -176,15 +176,15 @@ class UnauffaelligeTageReceiverTest {
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(4321);
+        unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
@@ -205,15 +205,15 @@ class UnauffaelligeTageReceiverTest {
 
         final var expected = new ArrayList<UnauffaelligerTag>();
         var unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250202);
         expected.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(1234);
+        unauffaelligerTag.setMstId("1234");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         expected.add(unauffaelligerTag);
         unauffaelligerTag = new UnauffaelligerTag();
-        unauffaelligerTag.setMstId(4321);
+        unauffaelligerTag.setMstId("4321");
         unauffaelligerTag.setKalendertag(kalendertag20250203);
         expected.add(unauffaelligerTag);
 
@@ -235,15 +235,15 @@ class UnauffaelligeTageReceiverTest {
 
         final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId(4321);
+        unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
         unauffaelligeTage.add(unauffaelligerTagDto);
         final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
@@ -273,7 +273,7 @@ class UnauffaelligeTageReceiverTest {
 
         final var youngestSavedUnauffaelligerTag = new UnauffaelligerTag();
         youngestSavedUnauffaelligerTag.setKalendertag(kalenderTagForYoungestSavedUnauffaelligerTag);
-        youngestSavedUnauffaelligerTag.setMstId(1234);
+        youngestSavedUnauffaelligerTag.setMstId("1234");
 
         Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
 
@@ -292,7 +292,7 @@ class UnauffaelligeTageReceiverTest {
     void mapDto2Entity() {
         final var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 25));
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
 
         final var kalendertag = new Kalendertag();
         kalendertag.setDatum(LocalDate.of(2025, 2, 25));
@@ -303,7 +303,7 @@ class UnauffaelligeTageReceiverTest {
         final var result = unauffaelligeTageReceiver.mapDto2Entity(unauffaelligerTagDto);
 
         final var expected = new UnauffaelligerTag();
-        expected.setMstId(1234);
+        expected.setMstId("1234");
         expected.setKalendertag(kalendertag);
 
         Assertions.assertEquals(expected, result);
@@ -316,7 +316,7 @@ class UnauffaelligeTageReceiverTest {
     void mapDto2EntityNoKalendertagFound() {
         final var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 25));
-        unauffaelligerTagDto.setMstId(1234);
+        unauffaelligerTagDto.setMstId("1234");
 
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 25))).thenReturn(Optional.empty());
 

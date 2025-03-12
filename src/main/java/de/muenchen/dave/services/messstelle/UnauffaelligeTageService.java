@@ -1,0 +1,22 @@
+package de.muenchen.dave.services.messstelle;
+
+import de.muenchen.dave.domain.UnauffaelligerTag;
+import de.muenchen.dave.repositories.relationaldb.UnauffaelligeTageRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UnauffaelligeTageService {
+
+    private final UnauffaelligeTageRepository unauffaelligeTageRepository;
+
+    public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final String mstId) {
+        return unauffaelligeTageRepository.findByMstId(mstId);
+    }
+
+}
