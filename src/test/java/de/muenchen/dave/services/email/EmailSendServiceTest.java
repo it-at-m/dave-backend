@@ -51,7 +51,7 @@ class EmailSendServiceTest {
     }
 
     @Test
-    void sendEmailForChatMessage() throws DataNotFoundException {
+    void sendEmailForChatMessageDienstleister() throws DataNotFoundException {
         final var chatMessage = new ChatMessage();
         chatMessage.setZaehlungId(UUID.randomUUID());
         chatMessage.setParticipantId(Participant.DIENSTLEISTER.getParticipantId());
@@ -92,6 +92,50 @@ class EmailSendServiceTest {
         Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId().toString());
 
         Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString());
+
+        Mockito.verifyNoInteractions(dienstleisterService);
+    }
+
+    @Test
+    void sendEmailForChatMessageMobilitaetsrefereat() throws DataNotFoundException {
+        final var chatMessage = new ChatMessage();
+        chatMessage.setZaehlungId(UUID.randomUUID());
+        chatMessage.setParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
+        chatMessage.setContent("Der Content!");
+
+        final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
+
+        final var zaehlung = new Zaehlung();
+        zaehlung.setId(chatMessage.getZaehlungId().toString());
+        zaehlung.setDienstleisterkennung("dienstleisterkennung");
+        zaehlung.setDatum(LocalDate.of(2025, 3, 5));
+        zaehlung.setProjektName("Projektname");
+        Mockito.when(zaehlstelleIndexService.getZaehlung(chatMessage.getZaehlungId().toString())).thenReturn(zaehlung);
+
+        Mockito.when(dienstleisterService.getDienstleisterEmailAddressByKennung(zaehlung.getDienstleisterkennung()))
+                .thenReturn(List.of("mail1@xxx.yy", "mail2@xxx.yy"));
+
+        final var zaehlstelle = new Zaehlstelle();
+        zaehlstelle.setId(UUID.randomUUID().toString());
+        zaehlstelle.setNummer("54321");
+        Mockito.when(zaehlstelleIndexService.getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString())).thenReturn(zaehlstelle);
+
+        emailSendServiceSpy.sendEmailForChatMessage(chatMessage);
+
+        final var expectedTo = new String[] { "mail1@xxx.yy", "mail2@xxx.yy" };
+        final var expectedSubject = String.format("DAVe: Neue Nachricht vom Mobilitätsreferat [%s]", chatMessage.getZaehlungId().toString());
+        final var expectedBody = "Zur Zählung 'Projektname' vom 05.03.2025 an der Zählstelle 54321 liegt folgende Nachricht vor: " +
+                "\n\nDer Content!" +
+                "\n\nLink zum Portal: url-selfserviceportal";
+        Mockito.verify(emailSendServiceSpy, Mockito.times(1)).sendMail(expectedTo, expectedSubject, expectedBody);
+
+        Mockito.verifyNoInteractions(emailAddressService);
+
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId().toString());
+
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString());
+
+        Mockito.verify(dienstleisterService, Mockito.times(1)).getDienstleisterEmailAddressByKennung(zaehlung.getDienstleisterkennung());
     }
 
     @Test
