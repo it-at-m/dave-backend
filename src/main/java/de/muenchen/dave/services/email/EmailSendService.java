@@ -81,7 +81,7 @@ public class EmailSendService {
         // aufgebaut (ParticipantId == DIENSTLEISTER_ID bedeutet, dass die Nachricht vom Dienstleister kommt)
         if (message.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) {
             subject = String.format(subject, Participant.DIENSTLEISTER.getName(), zaehlungId);
-            to = this.loadMailAddressReferat();
+            to = this.loadMailAddressesReferat();
             // an die URL werden die Parameter für zaehlstelleId und zaehlungId angehängt
             link = String.format("%s/#/zaehlstelle/%s/%s", this.createUrl(this.urlAdminportal), zaehlstelle.getId(), zaehlungId);
         } else if (message.getParticipantId() == Participant.MOBILITAETSREFERAT.getParticipantId()) {
@@ -110,8 +110,7 @@ public class EmailSendService {
      * @param message mit den Informationen für den Mailversand.
      */
     public void sendMailForMessstelleChangeMessage(final MessstelleChangeMessage message) {
-        final var emailAdressMobilitaetsreferat = emailAddressService.loadEmailAddressByParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
-        final var to = new String[] { emailAdressMobilitaetsreferat.getEmailAddress() };
+        final var emailAdressesMobilitaetsreferat = this.loadMailAddressesReferat();
 
         final String subject;
         var content = String.format("Zur Messstelle \"%s\" liegt folgende Nachricht vor: \n\n", message.getMstId());
@@ -128,7 +127,7 @@ public class EmailSendService {
         final var link = String.format("%s/#/messstelle/%s", this.createUrl(this.urlAdminportal), message.getTechnicalIdMst());
         content = content + link;
 
-        this.sendMail(to, subject, content);
+        this.sendMail(emailAdressesMobilitaetsreferat, subject, content);
     }
 
     /**
@@ -176,7 +175,7 @@ public class EmailSendService {
         return String.format("%s-%s%s", baseUrl, profiles[0], ".muenchen.de");
     }
 
-    private String[] loadMailAddressReferat() {
+    private String[] loadMailAddressesReferat() {
         final List<String> mails = new ArrayList<>();
         this.emailAddressService.loadEmailAddresses().forEach(emailAddressDTO -> mails.add(emailAddressDTO.getEmailAddress()));
         return mails.toArray(String[]::new);
