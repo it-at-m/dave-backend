@@ -62,7 +62,7 @@ class EmailSendServiceTest {
 
         emailSendServiceSpy.sendMailForMessstelleChangeMessage(messstelleChangeMessage);
 
-        final var expectedTo = new String[] {emailAdress1.getEmailAddress(), emailAdress2.getEmailAddress()};
+        final var expectedTo = new String[] { emailAdress1.getEmailAddress(), emailAdress2.getEmailAddress() };
         final var expectedSubject = "DAVe: Neue Messstelle 9876";
         final var expectedBody = "Zur Messstelle \"9876\" liegt folgende Nachricht vor: \n\n"
                 + "Es handelt sich um einen neue und in Status \"IN_BESTAND\" befindliche Messstelle.\n\n"
