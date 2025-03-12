@@ -3,7 +3,6 @@ package de.muenchen.dave.services.email;
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
