@@ -2,12 +2,14 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
+import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
@@ -24,6 +26,7 @@ import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +61,47 @@ public class MessstelleReceiverTest {
                 emailSendService,
                 messstelleApi,
                 new MessstelleReceiverMapperImpl());
+    }
+
+    @Test
+    void processingMessstellen() {
+        final var messstelleDto1 = new MessstelleDto();
+        messstelleDto1.setMstId("1");
+        final var messstelleDto2 = new MessstelleDto();
+        messstelleDto2.setMstId("2");
+        final var messstelleDto3 = new MessstelleDto();
+        messstelleDto3.setMstId("3");
+        final var messstelleDto4 = new MessstelleDto();
+        messstelleDto4.setMstId("4");
+        final var messstellenToProcess = List.of(messstelleDto1, messstelleDto2, messstelleDto3, messstelleDto4);
+
+        final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
+
+        final var messstelle1 = new Messstelle();
+        messstelle1.setMstId("1");
+        Mockito.when(messstelleIndexService.findByMstId("1")).thenReturn(Optional.of(messstelle1));
+
+        Mockito.when(messstelleIndexService.findByMstId("2")).thenReturn(Optional.empty());
+
+        final var messstelle3 = new Messstelle();
+        messstelle1.setMstId("3");
+        Mockito.when(messstelleIndexService.findByMstId("3")).thenReturn(Optional.of(messstelle3));
+
+        Mockito.when(messstelleIndexService.findByMstId("4")).thenReturn(Optional.empty());
+
+        Mockito.doNothing().when(messstelleReceiverSpy).createMessstelle(Mockito.any());
+
+        Mockito.doNothing().when(messstelleReceiverSpy).updateMessstelle(Mockito.any(), Mockito.any());
+
+        messstelleReceiverSpy.processingMessstellen(messstellenToProcess);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).updateMessstelle(messstelle1, messstelleDto1);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).createMessstelle(messstelleDto2);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).updateMessstelle(messstelle3, messstelleDto3);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).createMessstelle(messstelleDto4);
     }
 
     @Test
