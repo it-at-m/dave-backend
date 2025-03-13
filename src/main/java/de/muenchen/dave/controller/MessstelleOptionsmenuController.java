@@ -1,9 +1,10 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
-import de.muenchen.dave.domain.dtos.ChosenTageValidResponseDTO;
-import de.muenchen.dave.domain.dtos.ChosenTagesTypValidEaiRequestDTO;
-import de.muenchen.dave.services.MessstelleOptionsmenuService;
+import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDTO;
+import de.muenchen.dave.services.messstelle.MessstelleOptionsmenuService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/messstelleOptionsmenu")
+@RequestMapping("/messstelle-optionsmenu")
 @AllArgsConstructor
 @Slf4j
 @PreAuthorize(
@@ -36,10 +37,10 @@ public class MessstelleOptionsmenuController {
         return ResponseEntity.ok(messstelleOptionsmenuService.getAuffaelligeTageForMessstelle(mstId));
     }
 
-    @PostMapping("/validateTagesTyp")
-    public ResponseEntity<ChosenTageValidResponseDTO> isTagesTypDataValid(
-            @RequestBody @NotNull ChosenTagesTypValidEaiRequestDTO chosenTagesTypValidEaiRequestDTO) {
-        final ChosenTageValidResponseDTO chosenTageValidResponseDTO = messstelleOptionsmenuService.isTagesTypValid(chosenTagesTypValidEaiRequestDTO);
-        return ResponseEntity.ok(chosenTageValidResponseDTO);
+    @PostMapping("/validate-zeitraum-and-tagestyp")
+    public ResponseEntity<ValidatedZeitraumAndTagestypDTO> validateZeitraumAndTagestyp(
+            @Valid @RequestBody @NotNull final ValidateZeitraumAndTagestypForMessstelleDTO request) {
+        log.debug("#validateZeitraumAndTagestyp for MessstelleId {}", request.getMstId());
+        return ResponseEntity.ok(messstelleOptionsmenuService.isZeitraumAndTagestypValid(request));
     }
 }

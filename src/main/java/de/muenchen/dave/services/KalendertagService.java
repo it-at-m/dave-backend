@@ -1,6 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Kalendertag;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,11 @@ public class KalendertagService {
     public List<Kalendertag> getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(final List<LocalDate> excludedDates,
             final LocalDate latestDate) {
         return kalendertagRepository.findAllByDatumNotInAndDatumIsBefore(excludedDates, latestDate);
+    }
+
+    public long countAllKalendertageByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(final LocalDate startDateIncluded, final LocalDate endDateExcluded,
+            final List<TagesTyp> tagestypen) {
+        return kalendertagRepository.countAllByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(startDateIncluded, endDateExcluded, tagestypen);
     }
 
 }

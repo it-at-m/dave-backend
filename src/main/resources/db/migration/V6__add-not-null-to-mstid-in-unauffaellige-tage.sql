@@ -1,0 +1,1 @@
+alter table unauffaelliger_tag alter column mst_id SET NOT NULL;

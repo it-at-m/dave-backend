@@ -1,11 +1,13 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.UnauffaelligerTag;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.repositories.relationaldb.UnauffaelligeTageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -17,6 +19,13 @@ public class UnauffaelligeTageService {
 
     public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final String mstId) {
         return unauffaelligeTageRepository.findByMstId(mstId);
+    }
+
+    public long countAllUnauffaelligetageByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndTagestypIn(final String mstId,
+            final LocalDate startDateIncluded, final LocalDate endDateExcluded, final List<TagesTyp> tagesTyp) {
+        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndKalendertagTagestypIn(mstId,
+                startDateIncluded,
+                endDateExcluded, tagesTyp);
     }
 
 }
