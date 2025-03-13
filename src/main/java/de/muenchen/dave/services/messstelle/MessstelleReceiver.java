@@ -116,7 +116,8 @@ public class MessstelleReceiver {
         final var statusMessstelleAlt = existingMessstelle.getStatus();
         Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
-        updated.setMessquerschnitte(updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte()));
+        final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte());
+        updated.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
         updated = messstelleIndexService.saveMessstelle(updated);
         final var statusMessstelleNeu = updated.getStatus();
@@ -129,7 +130,8 @@ public class MessstelleReceiver {
         }
     }
 
-    protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(final List<Messquerschnitt> messquerschnitte,
+    protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(
+            final List<Messquerschnitt> messquerschnitte,
             final List<MessquerschnittDto> messquerschnitteDto) {
         if (CollectionUtils.isNotEmpty(messquerschnitteDto)) {
             messquerschnitteDto.forEach(messquerschnittDto -> {

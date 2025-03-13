@@ -144,6 +144,118 @@ public class MessstelleReceiverTest {
     }
 
     @Test
+    void updateMessstelleOldStatusAndNewStatusUnequal() {
+        final var messstelleDto = new MessstelleDto();
+        messstelleDto.setMstId("1");
+        messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
+        messstelleDto.setMessquerschnitte(List.of());
+
+        final var existingMessstelle = new Messstelle();
+        existingMessstelle.setId("1234");
+        existingMessstelle.setMstId("1");
+        existingMessstelle.setStatus(MessstelleStatus.IN_PLANUNG);
+
+        Mockito.when(lageplanService.lageplanVorhanden("1")).thenReturn(true);
+
+        final var updatedMessstelle = new Messstelle();
+        updatedMessstelle.setId("1234");
+        updatedMessstelle.setMstId("1");
+        updatedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
+        updatedMessstelle.setMessquerschnitte(List.of());
+        updatedMessstelle.setMessfaehigkeiten(List.of());
+        updatedMessstelle.setSuchwoerter(List.of("1"));
+        updatedMessstelle.setLageplanVorhanden(true);
+
+        final var savedMessstelle = new Messstelle();
+        savedMessstelle.setId("1234");
+        savedMessstelle.setMstId("1");
+        savedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
+        savedMessstelle.setMessquerschnitte(List.of());
+        savedMessstelle.setMessfaehigkeiten(List.of());
+        savedMessstelle.setSuchwoerter(List.of("1"));
+        savedMessstelle.setLageplanVorhanden(true);
+        Mockito.when(messstelleIndexService.saveMessstelle(updatedMessstelle)).thenReturn(savedMessstelle);
+
+        final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
+
+        Mockito.doNothing().when(messstelleReceiverSpy).sendMailForUpdatedOrChangedMessstelle(
+                savedMessstelle.getId(),
+                savedMessstelle.getMstId(),
+                MessstelleStatus.IN_PLANUNG,
+                MessstelleStatus.IN_BESTAND);
+
+        messstelleReceiverSpy.updateMessstelle(existingMessstelle, messstelleDto);
+
+        Mockito.verify(lageplanService, Mockito.times(1)).lageplanVorhanden("1");
+
+        Mockito.verify(customSuggestIndexService, Mockito.times(1)).updateSuggestionsForMessstelle(updatedMessstelle);
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(updatedMessstelle);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
+                savedMessstelle.getId(),
+                savedMessstelle.getMstId(),
+                MessstelleStatus.IN_PLANUNG,
+                MessstelleStatus.IN_BESTAND);
+    }
+
+    @Test
+    void updateMessstelleOldStatusAndNewStatusEqual() {
+        final var messstelleDto = new MessstelleDto();
+        messstelleDto.setMstId("1");
+        messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
+        messstelleDto.setMessquerschnitte(List.of());
+
+        final var existingMessstelle = new Messstelle();
+        existingMessstelle.setId("1234");
+        existingMessstelle.setMstId("1");
+        existingMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
+
+        Mockito.when(lageplanService.lageplanVorhanden("1")).thenReturn(true);
+
+        final var updatedMessstelle = new Messstelle();
+        updatedMessstelle.setId("1234");
+        updatedMessstelle.setMstId("1");
+        updatedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
+        updatedMessstelle.setMessquerschnitte(List.of());
+        updatedMessstelle.setMessfaehigkeiten(List.of());
+        updatedMessstelle.setSuchwoerter(List.of("1"));
+        updatedMessstelle.setLageplanVorhanden(true);
+
+        final var savedMessstelle = new Messstelle();
+        savedMessstelle.setId("1234");
+        savedMessstelle.setMstId("1");
+        savedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
+        savedMessstelle.setMessquerschnitte(List.of());
+        savedMessstelle.setMessfaehigkeiten(List.of());
+        savedMessstelle.setSuchwoerter(List.of("1"));
+        savedMessstelle.setLageplanVorhanden(true);
+        Mockito.when(messstelleIndexService.saveMessstelle(updatedMessstelle)).thenReturn(savedMessstelle);
+
+        final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
+
+        Mockito.doNothing().when(messstelleReceiverSpy).sendMailForUpdatedOrChangedMessstelle(
+                savedMessstelle.getId(),
+                savedMessstelle.getMstId(),
+                MessstelleStatus.IN_PLANUNG,
+                MessstelleStatus.IN_BESTAND);
+
+        messstelleReceiverSpy.updateMessstelle(existingMessstelle, messstelleDto);
+
+        Mockito.verify(lageplanService, Mockito.times(1)).lageplanVorhanden("1");
+
+        Mockito.verify(customSuggestIndexService, Mockito.times(1)).updateSuggestionsForMessstelle(updatedMessstelle);
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(updatedMessstelle);
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(0)).sendMailForUpdatedOrChangedMessstelle(
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any(),
+                Mockito.any());
+    }
+
+    @Test
     void updateMessquerschnitteOfMessstelleWithoutCreate() {
         final List<Messquerschnitt> messquerschnitte = MessquerschnittRandomFactory.getSomeMessquerschnitte();
 
