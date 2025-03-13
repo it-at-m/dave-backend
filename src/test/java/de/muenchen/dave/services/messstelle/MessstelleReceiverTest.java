@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
@@ -39,6 +40,8 @@ public class MessstelleReceiverTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
+    private StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+
     @Mock
     private LageplanService lageplanService;
 
@@ -48,6 +51,8 @@ public class MessstelleReceiverTest {
     @Mock
     private MessstelleApi messstelleApi;
 
+    private MessstelleReceiverMapper messstelleReceiverMapper = new MessstelleReceiverMapperImpl();
+
     private MessstelleReceiver messstelleReceiver;
 
     @BeforeEach
@@ -56,11 +61,11 @@ public class MessstelleReceiverTest {
         messstelleReceiver = new MessstelleReceiver(
                 messstelleIndexService,
                 customSuggestIndexService,
-                new StadtbezirkMapper(),
+                stadtbezirkMapper,
                 lageplanService,
                 emailSendService,
                 messstelleApi,
-                new MessstelleReceiverMapperImpl());
+                messstelleReceiverMapper);
     }
 
     @Test
@@ -102,6 +107,40 @@ public class MessstelleReceiverTest {
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).updateMessstelle(messstelle3, messstelleDto3);
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).createMessstelle(messstelleDto4);
+    }
+
+    @Test
+    void createMessstelle() {
+        final var messstelleDto1 = new MessstelleDto();
+        messstelleDto1.setMstId("1");
+
+        final var messstelle1 = new Messstelle();
+        messstelle1.setMstId("1");
+        messstelle1.setStatus(MessstelleStatus.IN_BESTAND);
+
+        final var messstelleReceiverMapperSpy = Mockito.spy(this.messstelleReceiverMapper);
+
+        Mockito.when(messstelleReceiverMapperSpy.createMessstelle(messstelleDto1, stadtbezirkMapper)).thenReturn(messstelle1);
+
+        final var messstelle1Saved = new Messstelle();
+        messstelle1Saved.setId("1234");
+        messstelle1Saved.setMstId("1");
+        messstelle1Saved.setStatus(MessstelleStatus.IN_BESTAND);
+        Mockito.when(messstelleIndexService.saveMessstelle(Mockito.any(Messstelle.class))).thenReturn(messstelle1Saved);
+
+        final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
+
+        messstelleReceiverSpy.createMessstelle(messstelleDto1);
+
+        Mockito.verify(messstelleReceiverMapperSpy, Mockito.times(1)).createMessstelle(messstelleDto1, stadtbezirkMapper);
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(Mockito.any(Messstelle.class));
+
+        Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
+                messstelle1Saved.getId(),
+                messstelle1Saved.getMstId(),
+                null,
+                messstelle1Saved.getStatus());
     }
 
     @Test
