@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class TagestypValidator implements ConstraintValidator<TagestypValid, MessstelleOptionsDTO> {
 
     @Override
-    public boolean isValid(final MessstelleOptionsDTO options, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(final MessstelleOptionsDTO options, final ConstraintValidatorContext constraintValidatorContext) {
         boolean valid = true;
 
         if (MesswerteBaseUtil.isDateRange(options.getZeitraum())) {

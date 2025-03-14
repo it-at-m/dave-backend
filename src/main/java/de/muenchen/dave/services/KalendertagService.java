@@ -22,12 +22,15 @@ public class KalendertagService {
      * @param latestDate bis zu diesem Datum soll gesucht werden
      * @return Liste an Kalendertagen
      */
-    public List<Kalendertag> getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(final List<LocalDate> excludedDates,
+    public List<Kalendertag> getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(
+            final List<LocalDate> excludedDates,
             final LocalDate latestDate) {
         return kalendertagRepository.findAllByDatumNotInAndDatumIsBefore(excludedDates, latestDate);
     }
 
-    public long countAllKalendertageByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(final LocalDate startDateIncluded, final LocalDate endDateExcluded,
+    public long countAllKalendertageByDatumAndTagestyp(
+            final LocalDate startDateIncluded,
+            final LocalDate endDateExcluded,
             final List<TagesTyp> tagestypen) {
         return kalendertagRepository.countAllByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(startDateIncluded, endDateExcluded, tagestypen);
     }

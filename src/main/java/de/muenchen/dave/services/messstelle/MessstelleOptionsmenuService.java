@@ -31,20 +31,20 @@ public class MessstelleOptionsmenuService {
         final List<Kalendertag> auffaelligeKalendertage = kalendertagService.getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(
                 unauffaelligeTage,
                 LocalDate.now());
-        final List<LocalDate> auffaelligeTage = auffaelligeKalendertage.stream().map(Kalendertag::getDatum).toList();
-        final AuffaelligeTageDTO auffaelligeTageDTO = new AuffaelligeTageDTO();
-        auffaelligeTageDTO.setAuffaelligeTage(auffaelligeTage);
-        return auffaelligeTageDTO;
+        final List<LocalDate> auffaelligeTageList = auffaelligeKalendertage.stream().map(Kalendertag::getDatum).toList();
+        final AuffaelligeTageDTO auffaelligeTage = new AuffaelligeTageDTO();
+        auffaelligeTage.setAuffaelligeTage(auffaelligeTageList);
+        return auffaelligeTage;
     }
 
     public ValidatedZeitraumAndTagestypDTO isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
-        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(
+        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestyp(
                 request.getZeitraum().getFirst(),
                 request.getZeitraum().getLast(), tagestypen);
 
         final long numberOfUnauffaelligeTage = unauffaelligeTageService
-                .countAllUnauffaelligetageByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndTagestypIn(request.getMstId(),
+                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestyp(request.getMstId(),
                         request.getZeitraum().getFirst(), request.getZeitraum().getLast(), tagestypen);
 
         boolean isValid = hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
