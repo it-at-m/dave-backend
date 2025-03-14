@@ -28,7 +28,7 @@ public class KalendertagService {
         return kalendertagRepository.findAllByDatumNotInAndDatumIsBefore(excludedDates, latestDate);
     }
 
-    public long countAllKalendertageByDatumAndTagestyp(
+    public long countAllKalendertageByDatumAndTagestypen(
             final LocalDate startDateIncluded,
             final LocalDate endDateExcluded,
             final List<TagesTyp> tagestypen) {

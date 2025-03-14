@@ -21,7 +21,7 @@ public class UnauffaelligeTageService {
         return unauffaelligeTageRepository.findByMstId(mstId);
     }
 
-    public long countAllUnauffaelligetageByMstIdAndTimerangeAndTagestyp(
+    public long countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
             final String mstId,
             final LocalDate startDateIncluded,
             final LocalDate endDateExcluded,

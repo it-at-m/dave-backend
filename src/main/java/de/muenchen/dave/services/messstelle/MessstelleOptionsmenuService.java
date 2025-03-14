@@ -39,12 +39,12 @@ public class MessstelleOptionsmenuService {
 
     public ValidatedZeitraumAndTagestypDTO isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
-        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestyp(
+        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
                 request.getZeitraum().getFirst(),
                 request.getZeitraum().getLast(), tagestypen);
 
         final long numberOfUnauffaelligeTage = unauffaelligeTageService
-                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestyp(request.getMstId(),
+                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(request.getMstId(),
                         request.getZeitraum().getFirst(), request.getZeitraum().getLast(), tagestypen);
 
         boolean isValid = hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
