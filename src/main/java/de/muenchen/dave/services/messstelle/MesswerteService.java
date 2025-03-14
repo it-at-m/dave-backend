@@ -3,7 +3,6 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -48,7 +47,6 @@ public class MesswerteService {
      * @return aufbereitete Daten
      */
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
-        validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
 
         final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
@@ -82,12 +80,6 @@ public class MesswerteService {
         processedZaehldaten.setRequestedMeasuringDays(ChronoUnit.DAYS.between(options.getZeitraum().getFirst(), options.getZeitraum().getLast()) + 1);
         processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         return processedZaehldaten;
-    }
-
-    protected void validateOptions(final MessstelleOptionsDTO options) {
-        if (options.getZeitraum().size() == 2 && ObjectUtils.isEmpty(options.getTagesTyp())) {
-            throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
-        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Kalendertag;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
@@ -20,4 +21,7 @@ public interface KalendertagRepository extends JpaRepository<Kalendertag, UUID> 
      * @return Liste an Kalendertagen
      */
     List<Kalendertag> findAllByDatumNotInAndDatumIsBefore(final List<LocalDate> excludedDates, final LocalDate latestDate);
+
+    long countAllByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(final LocalDate startDateIncluded, final LocalDate endDateExcluded,
+            final List<TagesTyp> tagestypen);
 }

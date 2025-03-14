@@ -4,10 +4,8 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
-import de.muenchen.dave.domain.mapper.MessstelleOptionsmenuMapper;
-import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
 import de.muenchen.dave.services.KalendertagService;
-import de.muenchen.dave.services.MessstelleOptionsmenuService;
+import de.muenchen.dave.services.messstelle.MessstelleOptionsmenuService;
 import de.muenchen.dave.services.messstelle.UnauffaelligeTageService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -35,12 +33,6 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @Slf4j
 class MessstelleOptionsmenuServiceTest {
-
-    @MockitoBean
-    private MessstelleOptionsmenuMapper mapper;
-
-    @MockitoBean
-    private MessstelleOptionsmenuControllerApi messstelleOptionsmenuControllerApi;
 
     @MockitoBean
     private UnauffaelligeTageService unauffaelligeTageService;
