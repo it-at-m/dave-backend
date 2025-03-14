@@ -7,7 +7,10 @@ package de.muenchen.dave.domain.dtos.messstelle;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.domain.validation.TagestypValid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,15 +19,17 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@TagestypValid
 public class MessstelleOptionsDTO implements Serializable {
 
-    @NotNull
-    private List<LocalDate> zeitraum;
+    @NotEmpty
+    @Size(min = 2, max = 2)
+    private List<@NotNull LocalDate> zeitraum;
 
     @NotNull
     private FahrzeugOptionsDTO fahrzeuge;
 
-    @NotNull
+    @NotEmpty
     private String zeitauswahl;
 
     @NotNull
@@ -35,8 +40,8 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotNull
     private ZaehldatenIntervall intervall;
 
-    @NotNull
-    private Set<String> messquerschnittIds;
+    @NotEmpty
+    private Set<@NotEmpty String> messquerschnittIds;
 
     // Belastungsplan
     @NotNull

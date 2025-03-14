@@ -11,8 +11,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 class MesswerteBaseUtilTest {
@@ -252,6 +254,37 @@ class MesswerteBaseUtilTest {
         Assertions.assertThat(MesswerteBaseUtil.calculateAnteilProzent(1, null))
                 .isNotNull()
                 .isEqualTo(0D);
+    }
+
+    @Test
+    void isDateRange() {
+        List<LocalDate> zeitraum = new ArrayList<>();
+        var result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isFalse();
+
+        zeitraum.add(LocalDate.of(2020, 1, 1));
+        result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isFalse();
+
+        zeitraum.add(LocalDate.of(2020, 1, 1));
+        result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isFalse();
+
+        zeitraum.add(LocalDate.of(2020, 1, 1));
+        result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isFalse();
+
+        zeitraum.clear();
+        zeitraum.add(LocalDate.of(2020, 1, 1));
+        zeitraum.add(LocalDate.of(2024, 1, 1));
+        result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isTrue();
+
+        zeitraum.clear();
+        zeitraum.add(LocalDate.of(2024, 1, 1));
+        zeitraum.add(LocalDate.of(2022, 1, 1));
+        result = MesswerteBaseUtil.isDateRange(zeitraum);
+        Assertions.assertThat(result).isTrue();
     }
 
 }
