@@ -1,6 +1,5 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.services.KalendertagService;
