@@ -226,11 +226,11 @@ class AuswertungServiceTest {
     }
 
     @Test
-    void createValidateZeitraumAndTagesTypModel() {
+    void createValidateZeitraumAndTagesTyp() {
         final Zeitraum zeitraum = new Zeitraum(YearMonth.of(2006, 1), YearMonth.of(2006, 12), AuswertungsZeitraum.JAHRE);
         final String mstId = "1234";
         final TagesTyp tagesTyp = TagesTyp.WERKTAG_MO_FR;
-        final var result = auswertungService.createValidateZeitraumAndTagesTypModel(mstId, zeitraum, tagesTyp);
+        final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, zeitraum, tagesTyp);
 
         final var expected = new ValidateZeitraumAndTagesTypForMessstelleModel();
         expected.setTagesTyp(tagesTyp);

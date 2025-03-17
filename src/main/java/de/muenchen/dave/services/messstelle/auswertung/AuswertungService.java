@@ -138,7 +138,7 @@ public class AuswertungService {
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
-                            final var model = createValidateZeitraumAndTagesTypModel(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
+                            final var model = createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
                             final TagesaggregatResponseDto tagesaggregatResponse;
                             if (validierungService.isZeitraumAndTagestypValid(model)) {
                                 tagesaggregatResponse = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
@@ -172,7 +172,7 @@ public class AuswertungService {
      * @param tagesTyp angefragter Tagestyp
      * @return ValidateZeitraumAndTagesTypForMessstelleModel
      */
-    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTypModel(final String mstId, final Zeitraum zeitraum,
+    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTyp(final String mstId, final Zeitraum zeitraum,
             final TagesTyp tagesTyp) {
         final var model = new ValidateZeitraumAndTagesTypForMessstelleModel();
         model.setMstId(mstId);
