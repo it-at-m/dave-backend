@@ -67,7 +67,7 @@ public class MesswerteService {
 
         final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
                 .stream()
-                .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
+                .flatMap(intervalsForMqId -> CollectionUtils.emptyIfNull(intervalsForMqId.getMeanOfIntervalsByMesstag()).stream())
                 .toList();
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
