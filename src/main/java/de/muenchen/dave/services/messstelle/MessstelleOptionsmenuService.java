@@ -5,13 +5,12 @@ import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDTO;
-import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.mapper.ValidierungMapper;
 import de.muenchen.dave.services.KalendertagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -21,6 +20,8 @@ import java.util.List;
 public class MessstelleOptionsmenuService {
     private final UnauffaelligeTageService unauffaelligeTageService;
     private final KalendertagService kalendertagService;
+    private final ValidierungService validierungService;
+    private final ValidierungMapper validierungMapper;
 
     public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final String mstId) {
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
@@ -38,27 +39,9 @@ public class MessstelleOptionsmenuService {
     }
 
     public ValidatedZeitraumAndTagestypDTO isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
-        final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
-        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                request.getZeitraum().getFirst(),
-                request.getZeitraum().getLast(), tagestypen);
-
-        final long numberOfUnauffaelligeTage = unauffaelligeTageService
-                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(request.getMstId(),
-                        request.getZeitraum().getFirst(), request.getZeitraum().getLast(), tagestypen);
-
-        boolean isValid = hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
-                && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
-
-        return new ValidatedZeitraumAndTagestypDTO(isValid);
-    }
-
-    protected boolean hasMinimuOfTwoUnauffaelligeTage(final long numberOfUnauffaelligeTage) {
-        return numberOfUnauffaelligeTage >= 2;
-    }
-
-    protected boolean hasMinimuOfFiftyPercentUnauffaelligeTage(final long numberOfUnauffaelligeTage, final long numberOfRelevantKalendertage) {
-        return BigDecimal.valueOf(numberOfUnauffaelligeTage).multiply(BigDecimal.valueOf(numberOfRelevantKalendertage)).scaleByPowerOfTen(-2)
-                .doubleValue() >= 0.5;
+        final var model = validierungMapper.dto2model(request);
+        final var response = new ValidatedZeitraumAndTagestypDTO();
+        response.setIsValid(validierungService.isZeitraumAndTagestypValid(model));
+        return response;
     }
 }
