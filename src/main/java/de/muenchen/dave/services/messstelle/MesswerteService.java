@@ -80,6 +80,8 @@ public class MesswerteService {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
 
+        // Da nicht alle Tage innerhalb des Zeitraums relevant sind für die Auswertung, werden anhand
+        // des ausgewählten Tagestyps die relevanten Kalendertage ermittelt.
         if (MesswerteBaseUtil.isDateRange(options.getZeitraum())) {
             final var tagestypen = TagesTyp.getIncludedTagestypen(options.getTagesTyp());
             final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
