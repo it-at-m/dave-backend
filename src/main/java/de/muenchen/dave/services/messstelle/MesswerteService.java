@@ -10,7 +10,9 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.services.KalendertagService;
 import de.muenchen.dave.util.OptionsUtil;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class MesswerteService {
     private final ListenausgabeService listenausgabeService;
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
+    private final KalendertagService kalendertagService;
 
     /**
      * Bereitet die geladenen Messwerte der gewünschten Messstelle für die GUI auf.
@@ -65,7 +67,7 @@ public class MesswerteService {
 
         final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
                 .stream()
-                .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
+                .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getMeanOfIntervalsByMesstag()).stream())
                 .toList();
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
@@ -77,8 +79,17 @@ public class MesswerteService {
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
-        processedZaehldaten.setRequestedMeasuringDays(ChronoUnit.DAYS.between(options.getZeitraum().getFirst(), options.getZeitraum().getLast()) + 1);
-        processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
+
+        // Da für die Auswertung nicht alle Tage innerhalb des Zeitraums relevant sind,
+        // werden anhand des ausgewählten Tagestyps die relevanten Kalendertage ermittelt
+        if (MesswerteBaseUtil.isDateRange(options.getZeitraum())) {
+            final var tagestypen = TagesTyp.getIncludedTagestypen(options.getTagesTyp());
+            final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
+                    options.getZeitraum().getFirst(),
+                    options.getZeitraum().getLast(), tagestypen);
+            processedZaehldaten.setRequestedMeasuringDays(numberOfRelevantKalendertage);
+            processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
+        }
         return processedZaehldaten;
     }
 
