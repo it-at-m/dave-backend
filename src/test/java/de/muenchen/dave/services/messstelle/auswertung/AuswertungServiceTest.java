@@ -4,12 +4,15 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +24,7 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null, null);
+    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null, null, null);
 
     @Test
     void calculateZeitraeume() {
@@ -219,6 +222,27 @@ class AuswertungServiceTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void createValidateZeitraumAndTagesTypModel() {
+        final Zeitraum zeitraum = new Zeitraum(YearMonth.of(2006, 1), YearMonth.of(2006, 12), AuswertungsZeitraum.JAHRE);
+        final String mstId = "1234";
+        final TagesTyp tagesTyp = TagesTyp.WERKTAG_MO_FR;
+        final var result = auswertungService.createValidateZeitraumAndTagesTypModel(mstId, zeitraum, tagesTyp);
+
+        final var expected = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        expected.setTagesTyp(tagesTyp);
+        expected.setMstId(mstId);
+        final var expectedZeitraum = new ArrayList<LocalDate>();
+        expectedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
+        expectedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
+                zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+        expected.setZeitraum(expectedZeitraum);
+
+        Assertions.assertThat(result)
+                .isNotNull()
                 .isEqualTo(expected);
     }
 

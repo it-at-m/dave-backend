@@ -10,10 +10,14 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWi
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
+import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.services.messstelle.ValidierungService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -44,6 +49,8 @@ public class AuswertungService {
     private final SpreadsheetService spreadsheetService;
 
     private final GanglinieGesamtauswertungService ganglinieGesamtauswertungService;
+
+    private final ValidierungService validierungService;
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
@@ -120,6 +127,7 @@ public class AuswertungService {
      */
     protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
+        // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
@@ -130,15 +138,51 @@ public class AuswertungService {
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
+                            final var model = createValidateZeitraumAndTagesTypModel(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
+                            final TagesaggregatResponseDto tagesaggregatResponse;
+                            if (validierungService.isZeitraumAndTagestypValid(model)) {
+                                tagesaggregatResponse = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
+                                        zeitraum);
+                            } else {
+                                tagesaggregatResponse = new TagesaggregatResponseDto();
+                                final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+                                messstelleAuswertungIdDTO.getMqIds().forEach(mqId -> {
+                                    final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+                                    tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+                                    emptyTagesaggregate.add(tagesaggregatDto);
+                                });
+                                tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+                                tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+                            }
                             // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
                             // über den geladenen Zeitraum und die MstId an.
-                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
-                                    zeitraum);
-                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregate,
+                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregatResponse,
                                     zeitraum, messstelleAuswertungIdDTO.getMstId());
                         }))
                 .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
         return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
+    }
+
+    /**
+     * Erzeugt aus den übergebenen Parametern ein Objekt, um den angefragten Zeitraum und Tagestyp zu
+     * validieren.
+     *
+     * @param mstId ID der angefragten Messstelle
+     * @param zeitraum angefragter Zeitraum
+     * @param tagesTyp angefragter Tagestyp
+     * @return ValidateZeitraumAndTagesTypForMessstelleModel
+     */
+    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTypModel(final String mstId, final Zeitraum zeitraum,
+            final TagesTyp tagesTyp) {
+        final var model = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        model.setMstId(mstId);
+        model.setTagesTyp(tagesTyp);
+        final var requestedZeitraum = new ArrayList<LocalDate>();
+        requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
+        requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
+                zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+        model.setZeitraum(requestedZeitraum);
+        return model;
     }
 
     /**
