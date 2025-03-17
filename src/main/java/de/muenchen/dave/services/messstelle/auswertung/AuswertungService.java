@@ -172,7 +172,9 @@ public class AuswertungService {
      * @param tagesTyp angefragter Tagestyp
      * @return ValidateZeitraumAndTagesTypForMessstelleModel
      */
-    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTyp(final String mstId, final Zeitraum zeitraum,
+    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTyp(
+            final String mstId,
+            final Zeitraum zeitraum,
             final TagesTyp tagesTyp) {
         final var model = new ValidateZeitraumAndTagesTypForMessstelleModel();
         model.setMstId(mstId);

@@ -8,5 +8,5 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ValidierungMapper {
 
-    ValidateZeitraumAndTagesTypForMessstelleModel dto2model(ValidateZeitraumAndTagestypForMessstelleDTO dto);
+    ValidateZeitraumAndTagesTypForMessstelleModel dto2model(final ValidateZeitraumAndTagestypForMessstelleDTO dto);
 }
