@@ -152,9 +152,9 @@ public class BelastungsplanService {
         return messquerschnittDto.getFahrtrichtung();
     }
 
-    protected Boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDTO messstelle) {
+    protected boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDTO messstelle) {
         if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
-            return null;
+            return false;
         }
         final String direction = messstelle.getMessquerschnitte().getFirst().getFahrtrichtung();
         return direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("s");
