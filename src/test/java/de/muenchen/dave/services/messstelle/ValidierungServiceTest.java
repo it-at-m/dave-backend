@@ -7,9 +7,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @Slf4j
-class MessstelleOptionsmenuServiceTest {
+class ValidierungServiceTest {
 
-    private final MessstelleOptionsmenuService serviceToTest = new MessstelleOptionsmenuService(null, null);
+    private final ValidierungService serviceToTest = new ValidierungService(null, null);
 
     @Test
     void hasMinimuOfTwoUnauffaelligeTage() {
