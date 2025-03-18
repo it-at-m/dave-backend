@@ -343,6 +343,6 @@ class BelastungsplanServiceTest {
         Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isTrue();
 
         messstelle.setMessquerschnitte(null);
-        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isNull();
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
     }
 }
