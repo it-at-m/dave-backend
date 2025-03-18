@@ -58,7 +58,7 @@ public class MessstelleService {
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         byIdOrThrowException.setMessfaehigkeiten(
-                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb)).collect(Collectors.toList()));
+                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb).reversed()).collect(Collectors.toList()));
         return messstelleMapper.bean2editDto(byIdOrThrowException, stadtbezirkMapper);
     }
 
