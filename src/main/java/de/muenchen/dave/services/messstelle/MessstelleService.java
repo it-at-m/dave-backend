@@ -58,7 +58,9 @@ public class MessstelleService {
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
         final Messstelle byIdOrThrowException = messstelleIndexService.findByIdOrThrowException(messstelleId);
         byIdOrThrowException.setMessfaehigkeiten(
-                byIdOrThrowException.getMessfaehigkeiten().stream().sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb).reversed())
+                byIdOrThrowException.getMessfaehigkeiten()
+                        .stream()
+                        .sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb).reversed())
                         .collect(Collectors.toList()));
         return messstelleMapper.bean2editDto(byIdOrThrowException, stadtbezirkMapper);
     }
@@ -76,13 +78,6 @@ public class MessstelleService {
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen);
-    }
-
-    public Set<String> getMessquerschnittIds(final String mstId) {
-        final Messstelle messstelle = messstelleIndexService.findByMstIdOrThrowException(mstId);
-        final Set<String> result = new HashSet<>();
-        messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
-        return result;
     }
 
     public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {
