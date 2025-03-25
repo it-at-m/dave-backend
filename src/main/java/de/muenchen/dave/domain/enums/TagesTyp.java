@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -68,5 +70,20 @@ public enum TagesTyp {
 
     public static TagesTyp getByIntervallTyp(final IntervalDto.TagesTypEnum messwertTyp) {
         return tagesTypByIntervallTyp.get(messwertTyp);
+    }
+
+    public static List<TagesTyp> getIncludedTagestypen(final TagesTyp tagesTyp) {
+        final List<TagesTyp> includedTagestypen = new ArrayList<>();
+        includedTagestypen.add(tagesTyp);
+        if (TagesTyp.MO_SO.equals(tagesTyp)) {
+            includedTagestypen.add(TagesTyp.SONNTAG_FEIERTAG);
+            includedTagestypen.add(TagesTyp.SAMSTAG);
+            includedTagestypen.add(TagesTyp.WERKTAG_FERIEN);
+            includedTagestypen.add(TagesTyp.WERKTAG_MO_FR);
+            includedTagestypen.add(TagesTyp.WERKTAG_DI_MI_DO);
+        } else if (TagesTyp.WERKTAG_MO_FR.equals(tagesTyp)) {
+            includedTagestypen.add(TagesTyp.WERKTAG_DI_MI_DO);
+        }
+        return includedTagestypen;
     }
 }

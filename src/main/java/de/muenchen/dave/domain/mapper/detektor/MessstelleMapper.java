@@ -72,6 +72,7 @@ public interface MessstelleMapper {
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "messfaehigkeiten", ignore = true)
+    @Mapping(target = "lageplanVorhanden", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {

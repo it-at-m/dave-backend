@@ -28,7 +28,7 @@ public class FlywaySchemaCallback implements Callback {
     @Override
     public boolean supports(final Event event, final Context context) {
         // telling Flyway to only trigger callback for these events
-        return event.equals(Event.BEFORE_EACH_MIGRATE) || event.equals(Event.AFTER_EACH_MIGRATE);
+        return event.equals(Event.BEFORE_MIGRATE);
     }
 
     @Override
@@ -39,9 +39,10 @@ public class FlywaySchemaCallback implements Callback {
     @Override
     public void handle(final Event event, final Context context) {
         if (event.equals(org.flywaydb.core.api.callback.Event.BEFORE_MIGRATE)) {
-            try (final Connection connection = context.getConnection();
-                    final Statement statement = connection.createStatement()) {
+            final Connection connection = context.getConnection();
+            try (final Statement statement = connection.createStatement()) {
                 statement.execute("SET search_path TO " + schema);
+                statement.execute("CREATE SCHEMA IF NOT EXISTS " + schema + ";");
             } catch (SQLException e) {
                 log.error("Fehler bei der Migrationsvorbereitung", e);
             }

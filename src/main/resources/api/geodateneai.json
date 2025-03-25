@@ -21,10 +21,6 @@
       "description": "API zum Abfragen des FeatureServers für Messwerte."
     },
     {
-      "name": "MessstelleOptionsmenuController",
-      "description": "API für Abfragen zum vorbefüllen des OptionsMenues"
-    },
-    {
       "name": "Messstelle",
       "description": "API zum Abfragen des FeatureServers für die Messstellen."
     }
@@ -112,47 +108,6 @@
         }
       }
     },
-    "/MessstelleOptionsmenu/validateTagesTyp": {
-      "post": {
-        "tags": [
-          "MessstelleOptionsmenuController"
-        ],
-        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
-        "operationId": "isTagesTypDataValid",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChosenTagesTypValidRequestDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "TagesTyp erfolgreich validiert",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/messstelle": {
       "get": {
         "tags": [
@@ -224,47 +179,6 @@
                   "items": {
                     "$ref": "#/components/schemas/UnauffaelligerTagDto"
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
-      "get": {
-        "tags": [
-          "MessstelleOptionsmenuController"
-        ],
-        "summary": "Holt alle nicht Plausiblen Tage.",
-        "operationId": "getNichtPlausibleTage",
-        "parameters": [
-          {
-            "name": "messstelle_id",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
                 }
               }
             }
@@ -646,36 +560,6 @@
           }
         }
       },
-      "ChosenTagesTypValidRequestDto": {
-        "type": "object",
-        "properties": {
-          "startDate": {
-            "type": "string"
-          },
-          "endDate": {
-            "type": "string"
-          },
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "DTV_W3",
-              "DTV_W5",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN",
-              "DTV"
-            ]
-          }
-        }
-      },
-      "ChosenTagesTypValidDTO": {
-        "type": "object",
-        "properties": {
-          "isValid": {
-            "type": "boolean"
-          }
-        }
-      },
       "MessfaehigkeitDto": {
         "type": "object",
         "properties": {
@@ -825,24 +709,11 @@
         "type": "object",
         "properties": {
           "mstId": {
-            "type": "integer",
-            "format": "int32"
+            "type": "string"
           },
           "datum": {
             "type": "string",
             "format": "date"
-          }
-        }
-      },
-      "NichtPlausibleTageDto": {
-        "type": "object",
-        "properties": {
-          "nichtPlausibleTage": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date"
-            }
           }
         }
       }
