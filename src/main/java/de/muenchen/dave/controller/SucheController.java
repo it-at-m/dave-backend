@@ -89,14 +89,12 @@ public class SucheController {
         }
     }
 
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query) {
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(
+            @RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            // Sobald das Adminportal umgestellt wurde auf vue, wird das SearchAndFilterOptionsDTO mitgeschickt
-            final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
-            searchAndFilterOptions.setSearchInMessstellen(true);
-            searchAndFilterOptions.setSearchInZaehlstellen(true);
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
