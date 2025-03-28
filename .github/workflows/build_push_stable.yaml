@@ -2,7 +2,7 @@ name: build image and push to ghcr.io
 
 on: 
   push:
-    branches: ["main-ls2", "sprint"]
+    branches: ["main-ng", "sprint"]
 
 env:
   REGISTRY: ghcr.io
@@ -36,7 +36,7 @@ jobs:
             # set latest tag for sprint branch
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'sprint') }}
             # set stable tag for main-ls2 branch
-            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main-ls2') }}
+            type=raw,value=stable,enable=${{ github.ref == format('refs/heads/{0}', 'main-ng') }}
           labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
       
