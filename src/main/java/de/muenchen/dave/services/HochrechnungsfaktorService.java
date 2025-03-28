@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -85,6 +86,7 @@ public class HochrechnungsfaktorService {
         return hochrechnungsfaktorRepository.findAll(Sort.by(SORTING_ATTRIBUTE).descending())
                 .stream()
                 .map(hochrechnungsfaktorMapper::bean2Dto)
+                .sorted(Comparator.comparing(HochrechnungsfaktorDTO::getMatrix))
                 .collect(Collectors.toList());
     }
 
