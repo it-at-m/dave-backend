@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -283,7 +284,7 @@ class BelastungsplanServiceTest {
         readMessstelleInfoDTO.setStandort("Hauptstraße 1");
         readMessstelleInfoDTO.setStadtbezirk("Mitte");
         readMessstelleInfoDTO.setStadtbezirkNummer(1);
-        readMessstelleInfoDTO.setFahrzeugKlassen("PKW, LKW");
+        readMessstelleInfoDTO.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         readMessstelleInfoDTO.setDetektierteVerkehrsarten("PKW, LKW, Motorrad");
         readMessstelleInfoDTO.setHersteller("Messung GmbH");
         readMessstelleInfoDTO.setLongitude(10.12345);
