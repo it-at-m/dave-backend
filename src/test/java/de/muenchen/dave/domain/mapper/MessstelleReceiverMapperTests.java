@@ -136,6 +136,7 @@ class MessstelleReceiverMapperTests {
         expected.setId(bean.getId());
         expected.setSichtbarDatenportal(bean.getSichtbarDatenportal());
         expected.setGeprueft(bean.getGeprueft());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
         expected.setKommentar(bean.getKommentar());
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());

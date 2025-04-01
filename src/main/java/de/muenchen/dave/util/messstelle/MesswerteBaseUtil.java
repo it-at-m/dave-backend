@@ -9,15 +9,21 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {
+
+    public static boolean isDateRange(final List<LocalDate> zeitraum) {
+        return CollectionUtils.isNotEmpty(zeitraum) && zeitraum.size() == 2 && !zeitraum.getFirst().isEqual(zeitraum.getLast());
+    }
 
     public static boolean isIntervalWithingZeitblock(final IntervalDto interval, final Zeitblock zeitblock) {
         return isTimeWithinZeitblock(interval.getDatumUhrzeitVon().toLocalTime(), zeitblock)

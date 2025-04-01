@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Document(indexName = "messstelle")
+@Document(indexName = "#{ 'messstelle' + @environment.getProperty('elasticsearch.index.suffix') }")
 public class Messstelle {
 
     @Id
@@ -58,4 +58,5 @@ public class Messstelle {
     List<String> customSuchwoerter;
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
     List<Messfaehigkeit> messfaehigkeiten = new ArrayList<>();
+    Boolean lageplanVorhanden = false;
 }

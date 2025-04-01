@@ -12,7 +12,9 @@ import java.util.Optional;
 
 public enum FahrbewegungKreisverkehr {
 
-    HINEIN, HERAUS, VORBEI;
+    HINEIN,
+    HERAUS,
+    VORBEI;
 
     public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional;

@@ -62,4 +62,16 @@ public enum AuswertungsZeitraum {
 
     private final String text;
     private final String longText;
+
+    public static boolean isJahr(final AuswertungsZeitraum zeitraum) {
+        return StringUtils.equals(zeitraum.getLongText(), "Jahre");
+    }
+
+    public static boolean isHalbjahr(final AuswertungsZeitraum zeitraum) {
+        return StringUtils.contains(zeitraum.getLongText(), "Halbjahr");
+    }
+
+    public static boolean isQuartal(final AuswertungsZeitraum zeitraum) {
+        return StringUtils.contains(zeitraum.getLongText(), "Quartal");
+    }
 }

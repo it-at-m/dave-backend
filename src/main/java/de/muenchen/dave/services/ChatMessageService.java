@@ -67,7 +67,7 @@ public class ChatMessageService {
         final Zaehlung zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId().toString());
         if (chatMessage.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId() ||
                 SEND_EMAIL_TO_EXTERNAL_FOR_STATUS.contains(zaehlung.getStatus())) {
-            emailSendService.sendEmail(chatMessage);
+            emailSendService.sendEmailForChatMessage(chatMessage);
         }
 
         final Participant participant = (chatMessageDTO.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.MOBILITAETSREFERAT
@@ -151,7 +151,7 @@ public class ChatMessageService {
         chatMessageRepository.saveAndFlush(message);
 
         if (sendEmail) {
-            emailSendService.sendEmail(message);
+            emailSendService.sendEmailForChatMessage(message);
         }
     }
 

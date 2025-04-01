@@ -53,6 +53,7 @@ class MessstelleMapperTests {
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setKommentar(bean.getKommentar());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
@@ -101,6 +102,7 @@ class MessstelleMapperTests {
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setMessquerschnitte(this.mapper.bean2editDto(bean.getMessquerschnitte()));
         expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2EditMessfaehigkeitDto(bean.getMessfaehigkeiten()));
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
@@ -133,6 +135,7 @@ class MessstelleMapperTests {
         updatedData.setLongitude(6.66);
         updatedData.setLatitude(6.66);
         updatedData.setMessfaehigkeiten(Collections.emptyList());
+        updatedData.setLageplanVorhanden(false);
 
         updatedData.setSichtbarDatenportal(!bean.getSichtbarDatenportal());
         updatedData.setGeprueft(!bean.getGeprueft());
@@ -161,6 +164,7 @@ class MessstelleMapperTests {
         expected.setFahrzeugKlassen(bean.getFahrzeugKlassen());
         expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
         expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
+        expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
         expected.setGeprueft(true);

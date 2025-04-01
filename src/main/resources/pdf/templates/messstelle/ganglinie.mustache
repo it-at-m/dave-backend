@@ -8,10 +8,17 @@
 {{{logoMustachePart}}}
 {{{footerMustachePart}}}
 <!-- Metainformationen -->
+<table><tr>
 <h4>{{documentTitle}}</h4>
 {{{messstelleninformationenMustachePart}}}
 {{{schematischeUebersichtMustachePart}}}
-<h5>{{chartTitle}}</h5>
+</tr>
+</table>
+<br/>
+<table>
+    <tr class="blank_row"> <td class="no_border"></td></tr>
+    <tr><td class="no_border"><h5 class="no_margin">{{chartTitle}}</h5></td></tr>
+</table>
 <img src="{{chart}}"
      style="max-height: 100%; max-width: 100%;"
 />

@@ -1,9 +1,11 @@
 package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.ChatMessage;
+import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
+import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -17,8 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /**
  * Diese Klasse versendet eine E-Mail auf Basis einer {@link ChatMessage} mit vorgegebener
@@ -42,7 +43,9 @@ public class EmailSendService {
     @Value("${spring.profiles.active:local}")
     private String activeProfile;
 
-    public EmailSendService(final EmailAddressService emailAddressService, final DienstleisterService dienstleisterService,
+    public EmailSendService(
+            final EmailAddressService emailAddressService,
+            final DienstleisterService dienstleisterService,
             final @Lazy
             ZaehlstelleIndexService indexService) {
         this.emailAddressService = emailAddressService;
@@ -51,12 +54,12 @@ public class EmailSendService {
     }
 
     /**
-     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den jeweils anderen
-     * Teilnehmer (Participant).
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link ChatMessage} an den
+     * jeweils anderen Teilnehmer (Participant).
      *
-     * @param message Die Chat-Nachricht
+     * @param message mit den Informationen für den Mailversand.
      */
-    public void sendEmail(final ChatMessage message) {
+    public void sendEmailForChatMessage(final ChatMessage message) {
         String subject = "DAVe: Neue Nachricht vom %s [%s]";
         String[] to = ArrayUtils.EMPTY_STRING_ARRAY;
         String link = "";
@@ -77,9 +80,13 @@ public class EmailSendService {
         // aufgebaut (ParticipantId == DIENSTLEISTER_ID bedeutet, dass die Nachricht vom Dienstleister kommt)
         if (message.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) {
             subject = String.format(subject, Participant.DIENSTLEISTER.getName(), zaehlungId);
-            to = this.loadMailAddressReferat();
+            to = this.loadMailAddressesReferat();
             // an die URL werden die Parameter für zaehlstelleId und zaehlungId angehängt
-            link = String.format("%s/#/zaehlstelle/%s/%s", this.createUrl(this.urlAdminportal), zaehlstelle.getId(), zaehlungId);
+            link = String.format(
+                    "%s/#/zaehlstelle/%s/%s",
+                    this.createUrl(this.urlAdminportal),
+                    zaehlstelle.getId(),
+                    zaehlungId);
         } else if (message.getParticipantId() == Participant.MOBILITAETSREFERAT.getParticipantId()) {
             subject = String.format(subject, Participant.MOBILITAETSREFERAT.getName(), zaehlungId);
             to = this.loadMailAddressDienstleister(zaehlung.getDienstleisterkennung());
@@ -87,16 +94,58 @@ public class EmailSendService {
         }
 
         // Inhalt der E-Mail
-        final String content = String.format("Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
-                "\n\nLink zum Portal: %s", zaehlung.getProjektName(),
-                zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), zaehlstelle.getNummer(), message.getContent(), link);
+        final String content = String.format(
+                "Zur Zählung '%s' vom %s an der Zählstelle %s liegt folgende Nachricht vor: \n\n%s" +
+                        "\n\nLink zum Portal: %s",
+                zaehlung.getProjektName(),
+                zaehlung.getDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                zaehlstelle.getNummer(),
+                message.getContent(),
+                link);
 
         if (ArrayUtils.isEmpty(to)) {
             log.warn("Es wurde keine Email versandt, da keine Email-Adresse hinterlegt ist.");
             return;
         }
 
-        // Email erstellen und abschicken
+        this.sendMail(to, subject, content);
+    }
+
+    /**
+     * Sendet eine Email mit dem Inhalt der übergebenen {@link MessstelleChangeMessage}
+     * an den Participant {@link Participant#MOBILITAETSREFERAT}.
+     *
+     * @param message mit den Informationen für den Mailversand.
+     */
+    public void sendMailForMessstelleChangeMessage(final MessstelleChangeMessage message) {
+        final var emailAdressesMobilitaetsreferat = this.loadMailAddressesReferat();
+
+        final String subject;
+        var content = String.format("Zur Messstelle \"%s\" liegt folgende Nachricht vor: \n\n", message.getMstId());
+        if (Objects.isNull(message.getStatusAlt()) && !Objects.isNull(message.getStatusNeu())) {
+            subject = String.format("DAVe: Neue Messstelle %s", message.getMstId());
+            content = content
+                    + String.format("Es handelt sich um einen neue und in Status \"%s\" befindliche Messstelle. \n\n", message.getStatusNeu());
+        } else {
+            // Statusänderung
+            subject = String.format("DAVe: Statusänderung Messstelle %s", message.getMstId());
+            content = content
+                    + String.format("Der Messstellenstatus hat sich von \"%s\" auf \"%s\" geändert. \n\n", message.getStatusAlt(), message.getStatusNeu());
+        }
+        final var link = String.format("%s/#/messstelle/%s", this.createUrl(this.urlAdminportal), message.getTechnicalIdMst());
+        content = content + link;
+
+        this.sendMail(emailAdressesMobilitaetsreferat, subject, content);
+    }
+
+    /**
+     * Die Methode erstellt und versendet die Email mit den im Parameter gegebenen Informationen.
+     *
+     * @param to als Emailadresse des Empfängers.
+     * @param subject als Betreff.
+     * @param content für Inhalt der Mail.
+     */
+    protected void sendMail(final String[] to, final String subject, final String content) {
         try {
             final Email email = new SimpleEmail();
             email.setHostName(this.serverHostname);
@@ -111,7 +160,7 @@ public class EmailSendService {
         }
     }
 
-    private String createUrl(final String baseUrl) {
+    protected String createUrl(final String baseUrl) {
 
         final String[] profiles = this.activeProfile.split(",");
 
@@ -134,10 +183,11 @@ public class EmailSendService {
         return String.format("%s-%s%s", baseUrl, profiles[0], ".muenchen.de");
     }
 
-    private String[] loadMailAddressReferat() {
-        final List<String> mails = new ArrayList<>();
-        this.emailAddressService.loadEmailAddresses().forEach(emailAddressDTO -> mails.add(emailAddressDTO.getEmailAddress()));
-        return mails.toArray(String[]::new);
+    private String[] loadMailAddressesReferat() {
+        return this.emailAddressService.loadEmailAddresses()
+                .stream()
+                .map(EmailAddressDTO::getEmailAddress)
+                .toArray(String[]::new);
     }
 
     private String[] loadMailAddressDienstleister(final String dienstleisterkennung) {

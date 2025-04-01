@@ -31,16 +31,18 @@ import java.util.List;
 public class MessstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
+    private static final String REQUEST_PARAMETER_MSTID = "mstid";
     private final MessstelleService messstelleService;
 
     @PreAuthorize(
         "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
     )
-    @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/info", params = REQUEST_PARAMETER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfo(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
-        log.debug("#readMessstelleInfo with id {}", messstelleId);
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoById(
+            @RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
+        log.debug("#readMessstelleInfoById with id {}", messstelleId);
         try {
             final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
             return ResponseEntity.ok(readMessstelleDTO);
@@ -49,6 +51,23 @@ public class MessstelleController {
             throw e;
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", messstelleId, e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
+        }
+    }
+
+    @GetMapping(value = "/info", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional(readOnly = true)
+    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoByMstId(
+            @RequestParam(value = REQUEST_PARAMETER_MSTID) final String mstId) {
+        log.debug("#readMessstelleInfoByMstId with id {}", mstId);
+        try {
+            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
+            return ResponseEntity.ok(readMessstelleDTO);
+        } catch (final ResourceNotFoundException e) {
+            log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", mstId, e);
+            throw e;
+        } catch (final Exception e) {
+            log.error("Unerwarteter Fehler im MessstelleController beim Laden der Messstelle mit der ID: {}", mstId, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Messstelle aufgetreten.");
         }
     }

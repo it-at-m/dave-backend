@@ -205,9 +205,10 @@ public class FillPdfBeanService {
 
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
             final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+        messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
-        if (optionsDTO.getZeitraum().size() == 2) {
+        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
@@ -218,6 +219,7 @@ public class FillPdfBeanService {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
         }
+        messstelleninformationen.setKommentarNeeded(StringUtils.isNotEmpty(messstelle.getKommentar()));
         messstelleninformationen.setKommentar(messstelle.getKommentar());
         return messstelleninformationen;
     }
@@ -242,14 +244,68 @@ public class FillPdfBeanService {
             messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
             messstelleninformationen.setKommentar(messstelle.getKommentar());
         }
-        messstelleninformationen.setDetektierteFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().map(String::valueOf).collect(Collectors.joining(", ")));
+        messstelleninformationen
+                .setSelectedFahrzeuge(StringUtils.defaultIfEmpty(getSelectedFahrzeugeAsText(optionsDTO.getFahrzeuge()), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen
+                .setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")));
         messstelleninformationen.setZeitintervallNeeded(true);
         messstelleninformationen.setZeitintervall(optionsDTO.getZeitraum().stream().map(AuswertungsZeitraum::getLongText).collect(Collectors.joining(", ")));
         messstelleninformationen.setWochentagNeeded(true);
         messstelleninformationen
                 .setWochentag(StringUtils.defaultIfEmpty(optionsDTO.getTagesTyp().getBeschreibung(), KEINE_DATEN_VORHANDEN));
         return messstelleninformationen;
+    }
+
+    /**
+     * Wandelt die Fahrzeugoptions in Text um
+     *
+     * @param options aktuelle Einstellungen
+     * @return ausgewaehlte Verkehrsarten als String
+     */
+    protected static String getSelectedFahrzeugeAsText(final FahrzeugOptionsDTO options) {
+        final List<String> selectedFahrzeuge = new ArrayList<>();
+        // Fahrzeugtypen
+        if (options.isPersonenkraftwagen()) {
+            selectedFahrzeuge.add("Pkw");
+        }
+        if (options.isLastkraftwagen()) {
+            selectedFahrzeuge.add("Lkw");
+        }
+        if (options.isLastzuege()) {
+            selectedFahrzeuge.add("Lz");
+        }
+        if (options.isLieferwagen()) {
+            selectedFahrzeuge.add("Lfw");
+        }
+        if (options.isBusse()) {
+            selectedFahrzeuge.add("Bus");
+        }
+        if (options.isKraftraeder()) {
+            selectedFahrzeuge.add("Krad");
+        }
+        if (options.isRadverkehr()) {
+            selectedFahrzeuge.add("Rad");
+        }
+        if (options.isFussverkehr()) {
+            selectedFahrzeuge.add("Fuß");
+        }
+        // Fahrzeugklassen
+        if (options.isKraftfahrzeugverkehr()) {
+            selectedFahrzeuge.add("KFZ");
+        }
+        if (options.isSchwerverkehr()) {
+            selectedFahrzeuge.add("SV");
+        }
+        if (options.isSchwerverkehrsanteilProzent()) {
+            selectedFahrzeuge.add("SV%");
+        }
+        if (options.isGueterverkehr()) {
+            selectedFahrzeuge.add("GV");
+        }
+        if (options.isGueterverkehrsanteilProzent()) {
+            selectedFahrzeuge.add("GV%");
+        }
+        return String.join(", ", selectedFahrzeuge);
     }
 
     /**
@@ -866,7 +922,7 @@ public class FillPdfBeanService {
                     legend, hasMultipleMessstellen, header);
             final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable = splitTableRowsIfNecessary(gesamtauswertungTableRows);
 
-            final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable);
+            final List<GesamtauswertungTable> gtList = getGesamtauswertungTables(header, rowsPerTable, hasMultipleMessstellen);
 
             // Wenn mehrere Tabellen vonnöten => große Zählung, Zellenbreite auf Minimum verkleinern
             // Hier sollte später dynamisch berechnet werden wie viele Tabellen benötigt werden und die Elemente gleichmäßig in diese verteilen.
@@ -891,18 +947,24 @@ public class FillPdfBeanService {
      */
     protected static List<GesamtauswertungTable> getGesamtauswertungTables(
             final List<String> header,
-            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable) {
+            final Map<Integer, List<GesamtauswertungTableRow>> rowsPerTable,
+            final boolean hasMultipleMessstellen) {
         final List<GesamtauswertungTableHeader> tableHeader = header.stream().map(s -> {
             final GesamtauswertungTableHeader gesamtauswertungTableHeader = new GesamtauswertungTableHeader();
             gesamtauswertungTableHeader.setHeader(s);
             return gesamtauswertungTableHeader;
         }).toList();
 
+        final var firstColumnHeader = new GesamtauswertungTableHeader();
+        firstColumnHeader.setHeader(hasMultipleMessstellen ? "Mst-ID" : StringUtils.EMPTY);
+
         final List<List<GesamtauswertungTableHeader>> partitionTableHeaders = ListUtils.partition(tableHeader, MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE);
         return IntStream.range(0, partitionTableHeaders.size()).mapToObj(index -> {
+            final List<GesamtauswertungTableHeader> gesamtauswertungTableHeaders = new ArrayList<>(partitionTableHeaders.get(index));
+            gesamtauswertungTableHeaders.addFirst(firstColumnHeader);
             final GesamtauswertungTable gesamtauswertungTable = new GesamtauswertungTable();
+            gesamtauswertungTable.setGesamtauswertungTableHeaders(gesamtauswertungTableHeaders);
             gesamtauswertungTable.setGesamtauswertungTableRows(rowsPerTable.get(index));
-            gesamtauswertungTable.setGesamtauswertungTableHeaders(partitionTableHeaders.get(index));
             return gesamtauswertungTable;
         }).toList();
     }
@@ -928,7 +990,7 @@ public class FillPdfBeanService {
                     final GesamtauswertungTableRow row = new GesamtauswertungTableRow();
                     row.setLegend(legend.get(index));
                     if (hasMultipleMessstellen) {
-                        row.setCssColorBox("default");
+                        row.setCssColorBox(String.format("mst-%s", index));
                     } else {
                         row.setCssColorBox(row.getLegend().toLowerCase());
                     }
