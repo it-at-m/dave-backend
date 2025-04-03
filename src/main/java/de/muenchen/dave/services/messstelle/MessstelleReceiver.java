@@ -115,7 +115,11 @@ public class MessstelleReceiver {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();
         Messstelle updated = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
-        updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
+        try {
+            updated.setLageplanVorhanden(lageplanService.lageplanVorhanden(updated.getMstId()));
+        } catch (final Exception exception) {
+            log.error("Für die Messstelle {} konnte kein Lageplan ermittelt werden.", updated.getMstId());
+        }
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(updated.getMessquerschnitte(), dto.getMessquerschnitte());
         updated.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(updated);
