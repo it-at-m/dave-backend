@@ -1,0 +1,49 @@
+2025-04-09 08:25:34.989 CEST [14708] LOG:  PostgreSQL 17.2 on x86_64-windows, compiled by msvc-19.42.34435, 64-bit startet
+2025-04-09 08:25:34.993 CEST [14708] LOG:  erwarte Verbindungen auf IPv6-Adresse »::1«, Port 5431
+2025-04-09 08:25:34.993 CEST [14708] LOG:  erwarte Verbindungen auf IPv4-Adresse »127.0.0.1«, Port 5431
+2025-04-09 08:25:35.043 CEST [10228] LOG:  Datenbanksystem wurde unterbrochen; letzte bekannte Aktion am 2025-04-07 14:08:58 CEST
+2025-04-09 08:25:35.396 CEST [10228] LOG:  Datenbanksystem wurde nicht richtig heruntergefahren; automatische Wiederherstellung läuft
+2025-04-09 08:25:35.399 CEST [10228] LOG:  Redo beginnt bei 0/B0047B78
+2025-04-09 08:25:35.400 CEST [10228] LOG:  ungültige Datensatzlänge bei 0/B0047C80: mindestens 24 erwartet, 0 erhalten
+2025-04-09 08:25:35.400 CEST [10228] LOG:  Redo fertig bei 0/B0047C48 Systembenutzung: CPU: Benutzer: 0,00 s, System: 0,00 s, verstrichen: 0,00 s
+2025-04-09 08:25:35.403 CEST [16612] LOG:  Checkpoint beginnt: end-of-recovery immediate wait
+2025-04-09 08:25:35.412 CEST [16612] LOG:  Checkpoint komplett: 3 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,002 s, Sync=0,002 s, gesamt=0,011 s; sync. Dateien=2, längste=0,001 s, Durchschnitt=0.001 s; Entfernung=0 kB, Schätzung=0 kB; LSN=0/B0047C80, Redo-LSN=0/B0047C80
+2025-04-09 08:25:35.439 CEST [14708] LOG:  Datenbanksystem ist bereit, um Verbindungen anzunehmen
+2025-04-09 08:58:12.983 CEST [10576] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.983 CEST [24348] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.983 CEST [1072] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.984 CEST [21532] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.986 CEST [13840] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.986 CEST [19336] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.986 CEST [24216] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.987 CEST [21440] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.987 CEST [2692] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 08:58:12.987 CEST [24556] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.944 CEST [26516] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.945 CEST [23772] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.949 CEST [6412] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.952 CEST [23348] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.952 CEST [11304] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.952 CEST [15504] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.953 CEST [25168] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.953 CEST [20292] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.953 CEST [25468] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:09:08.953 CEST [23872] LOG:  konnte Daten vom Client nicht empfangen: unrecognized winsock error 10054
+2025-04-09 09:30:23.188 CEST [14708] LOG:  schnelles Herunterfahren verlangt
+2025-04-09 09:30:23.191 CEST [9580] FEHLER:  storniere Anfrage wegen Benutzeraufforderung
+2025-04-09 09:30:23.199 CEST [14708] LOG:  etwaige aktive Transaktionen werden abgebrochen
+2025-04-09 09:30:23.201 CEST [17956] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.202 CEST [3508] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.207 CEST [15708] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.207 CEST [26432] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.207 CEST [6068] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.207 CEST [2996] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.209 CEST [20896] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.209 CEST [5916] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.209 CEST [10888] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.209 CEST [11296] FATAL:  Verbindung wird abgebrochen aufgrund von Anweisung des Administrators
+2025-04-09 09:30:23.259 CEST [14708] LOG:  Background-Worker »logical replication launcher« (PID 9580) beendete mit Status 1
+2025-04-09 09:30:23.301 CEST [16612] LOG:  fahre herunter
+2025-04-09 09:30:23.302 CEST [16612] LOG:  Checkpoint beginnt: shutdown immediate
+2025-04-09 09:30:23.310 CEST [16612] LOG:  Checkpoint komplett: 0 Puffer geschrieben (0.0%); 0 WAL-Datei(en) hinzugefügt, 0 entfernt, 0 wiederverwendet; Schreiben=0,001 s, Sync=0,001 s, gesamt=0,009 s; sync. Dateien=0, längste=0,000 s, Durchschnitt=0.000 s; Entfernung=0 kB, Schätzung=0 kB; LSN=0/B0047D30, Redo-LSN=0/B0047D30
+2025-04-09 09:30:23.348 CEST [14708] LOG:  Datenbanksystem ist heruntergefahren
