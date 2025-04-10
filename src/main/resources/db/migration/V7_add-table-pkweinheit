@@ -1,0 +1,16 @@
+CREATE TABLE pkweinheit
+(
+    id character varying(36) NOT NULL,
+    created_time timestamp without time zone NOT NULL,
+    version bigint,
+    busse numeric(38,2),
+    fahrradfahrer numeric(38,2),
+    kraftraeder numeric(38,2),
+    lastzuege numeric(38,2),
+    lkw numeric(38,2),
+    pkw numeric(38,2),
+    CONSTRAINT pkweinheit_pkey PRIMARY KEY (id)
+)
+
+ALTER TABLE pkweinheit
+    OWNER to dave;
