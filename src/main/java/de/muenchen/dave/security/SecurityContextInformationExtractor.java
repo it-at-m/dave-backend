@@ -37,12 +37,11 @@ public final class SecurityContextInformationExtractor {
 
     public static boolean isFachadmin() {
         log.debug("get isFachadmin");
-        return true;
-        //        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //        return CollectionUtils
-        //                .emptyIfNull(authentication.getAuthorities())
-        //                .stream()
-        //                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name()));
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return CollectionUtils
+                .emptyIfNull(authentication.getAuthorities())
+                .stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name()));
     }
 
     public static String getUserName() {

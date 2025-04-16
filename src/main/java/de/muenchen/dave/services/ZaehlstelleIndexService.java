@@ -645,28 +645,29 @@ public class ZaehlstelleIndexService {
 
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages() {
         final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.MOBILITAETSREFERAT.getParticipantId());
-        zaehlstellen.forEach(zaehlstelle ->
-                zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
-                        .stream()
-                        .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
-                        .collect(Collectors.toList())));
+        zaehlstellen.forEach(zaehlstelle -> zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
+                .stream()
+                .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
+                .collect(Collectors.toList())));
         return zaehlstellen;
     }
+
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessagesExternal() {
         final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.DIENSTLEISTER.getParticipantId());
-        zaehlstellen.forEach(zaehlstelle ->
-                        zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
-                                .stream()
-                                .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
-                                .collect(Collectors.toList())));
+        zaehlstellen.forEach(zaehlstelle -> zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
+                .stream()
+                .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
+                .collect(Collectors.toList())));
         return zaehlstellen;
     }
 
     /**
-     * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt diese zurück
+     * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt
+     * diese zurück
      *
      * @param participantId Participant, bei dem ungelesene Nachrichten vorliegen
-     * @return LadeZaehlstelleWithUnreadMessageDTOs bei denen für einen bestimmten Participant ungelesene Nachrichten vorliegen
+     * @return LadeZaehlstelleWithUnreadMessageDTOs bei denen für einen bestimmten Participant
+     *         ungelesene Nachrichten vorliegen
      */
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages(final int participantId) {
         final List<Zaehlstelle> zaehlstellen;
