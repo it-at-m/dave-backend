@@ -84,7 +84,7 @@ public class SucheController {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
             throw e;
         } catch (final Exception e) {
-            log.error("Unerwarteter Fehler im SucheController beim Suchen der Query: {}", query, e);
+            log.error("Unerwarteter Fehler im SucheController beim Suchen", e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zähl-/Messstellen aufgetreten.");
         }
     }
@@ -101,7 +101,7 @@ public class SucheController {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
             throw e;
         } catch (final Exception e) {
-            log.error("Unerwarteter Fehler im SucheController beim Suchen der Query: {}", query, e);
+            log.error("Unerwarteter Fehler im SucheController beim Suchen", e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der Zähl-/Messstellen aufgetreten.");
         }
     }

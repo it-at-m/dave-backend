@@ -95,6 +95,7 @@ public class SucheService {
     public static Set<ZaehlartenKarteDTO> mapZaehlungenToZaehlartenKarte(final List<Zaehlung> zaehlungen) {
         final Set<ZaehlartenKarteDTO> zaehlartenKarteSet = new HashSet<>();
         CollectionUtils.emptyIfNull(zaehlungen).forEach(zaehlung -> {
+            log.debug("Zaehlung: {}", zaehlung.toString());
             final ZaehlartenKarteDTO zaehlartenKarte = new ZaehlartenKarteDTO();
             zaehlartenKarte.setLatitude(zaehlung.getPunkt().getLat());
             zaehlartenKarte.setLongitude(zaehlung.getPunkt().getLon());
