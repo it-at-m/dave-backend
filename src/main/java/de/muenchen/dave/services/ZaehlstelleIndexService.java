@@ -645,19 +645,25 @@ public class ZaehlstelleIndexService {
 
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages() {
         final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.MOBILITAETSREFERAT.getParticipantId());
-        zaehlstellen.forEach(zaehlstelle -> zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
-                .stream()
-                .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
-                .collect(Collectors.toList())));
+        zaehlstellen.forEach(zaehlstelle -> {
+            final var filteredZaehlungen = zaehlstelle.getZaehlungen()
+                    .stream()
+                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
+                    .collect(Collectors.toList());
+            zaehlstelle.setZaehlungen(filteredZaehlungen);
+        });
         return zaehlstellen;
     }
 
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessagesExternal() {
         final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.DIENSTLEISTER.getParticipantId());
-        zaehlstellen.forEach(zaehlstelle -> zaehlstelle.setZaehlungen(zaehlstelle.getZaehlungen()
-                .stream()
-                .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
-                .collect(Collectors.toList())));
+        zaehlstellen.forEach(zaehlstelle -> {
+            final var filteredZaehlungen = zaehlstelle.getZaehlungen()
+                    .stream()
+                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
+                    .collect(Collectors.toList());
+            zaehlstelle.setZaehlungen(filteredZaehlungen);
+        });
         return zaehlstellen;
     }
 
