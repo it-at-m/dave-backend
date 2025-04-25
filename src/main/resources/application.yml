@@ -49,9 +49,11 @@ dave:
   radius:
     distance-check-meter: 25
   zaehlung:
-    status:
+    status-updater:
       # Jeden Tag um 04:00 Uhr
-      updater: 0 0 4 1/1 * ?
+      cron: 0 0 4 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 1380m
   email:
     sender:
       # Server Einstellungen
@@ -66,7 +68,10 @@ dave:
       protocol: imap
       port: 993
       # Default Update-Intervall in Millisekunden für den Email-Abruf
-      update-interval: 3600000
+      #      Alle 60 min
+      cron: 0 0 0/1 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 59m
       folder-success: Erfolgreich
       folder-error: Fehlerhaft
       cut-email-body:
