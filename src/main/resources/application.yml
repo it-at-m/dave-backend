@@ -89,7 +89,7 @@ dave:
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
   map:
-  center:
-    lat: "48.137227"
-    lng: "11.575517"
-    zoom: 8
+    center:
+      lat: "48.137227"
+      lng: "11.575517"
+      zoom: 8
