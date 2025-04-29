@@ -24,7 +24,7 @@
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.4.0</apache.commons.exec>
         <apache.poi>5.4.1</apache.poi>
-        <guava>33.4.0-jre</guava>
+        <guava>33.4.8-jre</guava>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
