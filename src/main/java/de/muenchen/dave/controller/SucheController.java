@@ -41,7 +41,7 @@ public class SucheController {
 
     @GetMapping(value = "/suggest-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+    public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggestSichtbarDatenportal(query, noFilter);
@@ -57,7 +57,7 @@ public class SucheController {
 
     @GetMapping(value = "/suggest", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+    public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestParam(value = REQUEST_PARAMETER_NOFILTER, defaultValue = "false") final boolean noFilter) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, noFilter);
@@ -74,7 +74,7 @@ public class SucheController {
     @PostMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
-            @RequestParam(value = REQUEST_PARAMETER_QUERY) final String query,
+            @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query,
@@ -89,14 +89,12 @@ public class SucheController {
         }
     }
 
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(@RequestParam(value = REQUEST_PARAMETER_QUERY) final String query) {
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(
+            @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
+            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            // Sobald das Adminportal umgestellt wurde auf vue, wird das SearchAndFilterOptionsDTO mitgeschickt
-            final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
-            searchAndFilterOptions.setSearchInMessstellen(true);
-            searchAndFilterOptions.setSearchInZaehlstellen(true);
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {

@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
-import de.muenchen.dave.domain.dtos.MessageTimeDTO;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -28,20 +27,10 @@ public interface ChatMessageMapper {
 
     @AfterMapping
     default void toChatMessage(@MappingTarget ChatMessage bean, ChatMessageDTO dto) {
-        final ZoneId zone = ZoneId.of("Europe/Berlin");
-        MessageTimeDTO mtDTO = dto.getMessageTimeDTO();
-        if (ObjectUtils.isNotEmpty(mtDTO)) {
-            LocalDateTime localDateTime = LocalDateTime.of(mtDTO.getYear(), mtDTO.getMonth(), mtDTO.getDay(), mtDTO.getHour(),
-                    mtDTO.getMinute(), mtDTO.getSecond(), mtDTO.getMillisecond());
-            bean.setTimestamp(localDateTime);
-        } else {
+        if (ObjectUtils.isEmpty(dto.getTimestamp())) {
+            final ZoneId zone = ZoneId.of("Europe/Berlin");
             bean.setTimestamp(LocalDateTime.now(zone));
         }
-    }
-
-    @AfterMapping
-    default void toChatMessageDTO(@MappingTarget ChatMessageDTO dto, ChatMessage chatMessage) {
-        dto.setMessageTimeDTO(localDateTimeToMessageTimeDTO(chatMessage.getTimestamp()));
     }
 
     default UUID stringToUUID(String value) {
@@ -53,16 +42,5 @@ public interface ChatMessageMapper {
 
     default String UUIDtoString(UUID value) {
         return value.toString();
-    }
-
-    default MessageTimeDTO localDateTimeToMessageTimeDTO(LocalDateTime timestamp) {
-        final MessageTimeDTO messageTimeDTO = new MessageTimeDTO();
-        messageTimeDTO.setYear(timestamp.getYear());
-        messageTimeDTO.setMonth(timestamp.getMonth().getValue());
-        messageTimeDTO.setDay(timestamp.getDayOfMonth());
-        messageTimeDTO.setHour(timestamp.getHour());
-        messageTimeDTO.setMinute(timestamp.getMinute());
-        messageTimeDTO.setSecond(timestamp.getSecond());
-        return messageTimeDTO;
     }
 }

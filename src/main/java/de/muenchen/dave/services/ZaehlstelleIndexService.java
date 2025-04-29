@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
@@ -642,6 +643,30 @@ public class ZaehlstelleIndexService {
         this.messageService.saveUpdateMessageForZaehlungStatus(zaehlung.getId(), updateStatusDTO);
     }
 
+    public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages() {
+        final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.MOBILITAETSREFERAT.getParticipantId());
+        zaehlstellen.forEach(zaehlstelle -> {
+            final var filteredZaehlungen = zaehlstelle.getZaehlungen()
+                    .stream()
+                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
+                    .collect(Collectors.toList());
+            zaehlstelle.setZaehlungen(filteredZaehlungen);
+        });
+        return zaehlstellen;
+    }
+
+    public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessagesExternal() {
+        final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.DIENSTLEISTER.getParticipantId());
+        zaehlstellen.forEach(zaehlstelle -> {
+            final var filteredZaehlungen = zaehlstelle.getZaehlungen()
+                    .stream()
+                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
+                    .collect(Collectors.toList());
+            zaehlstelle.setZaehlungen(filteredZaehlungen);
+        });
+        return zaehlstellen;
+    }
+
     /**
      * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt
      * diese zurück
@@ -657,11 +682,10 @@ public class ZaehlstelleIndexService {
         } else {
             zaehlstellen = this.zaehlstelleIndex.findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
         }
-        final List<LadeZaehlstelleWithUnreadMessageDTO> leseZaehlstelleDTOS = new ArrayList<>();
-        zaehlstellen
-                .forEach(zaehlstelle -> leseZaehlstelleDTOS.add(this.zaehlstelleMapper.bean2LadeZaehlstelleWithUnreadMessageDTO(zaehlstelle)));
-
-        return leseZaehlstelleDTOS;
+        return zaehlstellen
+                .stream()
+                .map(zaehlstelleMapper::bean2LadeZaehlstelleWithUnreadMessageDTO)
+                .toList();
     }
 
     public boolean existsActiveZaehlungWithDienstleisterkennung(final String kennung) throws BrokenInfrastructureException {
