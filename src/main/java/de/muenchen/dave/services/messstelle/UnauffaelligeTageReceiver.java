@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,17 +74,15 @@ public class UnauffaelligeTageReceiver {
      */
     protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
         final var lastUnaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
-        final var dayAfterLastUnauffaelligerTag = lastUnaufaelligerTag
+        LocalDate dateToCheck = lastUnaufaelligerTag
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
-        final var yesterday = LocalDate.now().minusDays(1);
-        final List<UnauffaelligerTagDto> unauffaelligeTage;
-        if (!yesterday.isBefore(dayAfterLastUnauffaelligerTag)) {
-            unauffaelligeTage = Objects
+        final List<UnauffaelligerTagDto> unauffaelligeTage = new ArrayList<>();
+        while (dateToCheck.isBefore(LocalDate.now())) {
+            unauffaelligeTage.addAll(Objects
                     .requireNonNull(
-                            messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayAfterLastUnauffaelligerTag, yesterday).block().getBody());
-        } else {
-            unauffaelligeTage = List.of();
+                            messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dateToCheck, dateToCheck).block().getBody()));
+            dateToCheck = dateToCheck.plusDays(1);
         }
         return unauffaelligeTage
                 .stream()

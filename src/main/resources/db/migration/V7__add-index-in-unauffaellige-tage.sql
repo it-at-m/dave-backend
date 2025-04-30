@@ -1,0 +1,1 @@
+CREATE INDEX index_kalendertag_id ON unauffaelliger_tag USING btree (kalendertag_id);
