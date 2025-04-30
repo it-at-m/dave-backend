@@ -78,7 +78,8 @@ public class UnauffaelligeTageReceiver {
                 .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
                 .orElse(EARLIEST_DAY);
         final List<UnauffaelligerTagDto> unauffaelligeTage = new ArrayList<>();
-        while (dateToCheck.isBefore(LocalDate.now())) {
+        final LocalDate today = LocalDate.now();
+        while (dateToCheck.isBefore(today)) {
             unauffaelligeTage.addAll(Objects
                     .requireNonNull(
                             messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dateToCheck, dateToCheck).block().getBody()));

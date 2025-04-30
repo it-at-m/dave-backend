@@ -23,9 +23,13 @@ import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -101,7 +105,7 @@ class UnauffaelligeTageReceiverTest {
 
         Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadUnauffaelligeTageForEachMessstelle();
 
-        Mockito.verify(unauffaelligeTageRepository, Mockito.times(0)).saveAllAndFlush(Mockito.any());
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(0)).saveAllAndFlush(any());
     }
 
     @Test
@@ -115,22 +119,38 @@ class UnauffaelligeTageReceiverTest {
 
         Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.of(youngestSavedUnauffaelligerTag));
 
-        final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250202 = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250203 = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250202.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
-        final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
-        final var mono = Mono.just(mobidamResponseEntity);
-        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.now().minusDays(1))).thenReturn(mono);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
+        final var mono20250202 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250202)));
+        final var mono20250203 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250203)));
+        final var emptyMono = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) new ArrayList<UnauffaelligerTagDto>())));
+
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2))).thenReturn(mono20250202);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3))).thenReturn(mono20250203);
+
+        final AtomicReference<LocalDate> arg1 = new AtomicReference<>();
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                Mockito.argThat(argument -> {
+                    arg1.set(argument);
+                    return argument.isAfter(kalenderTagForYoungestSavedUnauffaelligerTag.getDatum()) && argument.isBefore(LocalDate.now());
+                }),
+                Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                        && !argument.isEqual(LocalDate.of(2025, 2, 3)))))
+                .thenReturn(emptyMono);
 
         final var kalendertag20250202 = new Kalendertag();
         kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
@@ -160,8 +180,19 @@ class UnauffaelligeTageReceiverTest {
 
         Assertions.assertEquals(expected, result);
 
+        Mockito.verify(messstelleApi,
+                Mockito.times((int) ChronoUnit.DAYS.between(kalenderTagForYoungestSavedUnauffaelligerTag.getDatum().plusDays(1), LocalDate.now()) - 2))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                        Mockito.argThat(argument -> {
+                            arg1.set(argument);
+                            return argument.isAfter(kalenderTagForYoungestSavedUnauffaelligerTag.getDatum()) && argument.isBefore(LocalDate.now());
+                        }),
+                        Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                                && !argument.isEqual(LocalDate.of(2025, 2, 3))));
         Mockito.verify(messstelleApi, Mockito.times(1))
-                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.now().minusDays(1));
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2));
+        Mockito.verify(messstelleApi, Mockito.times(1))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3));
 
         Mockito.verify(kalendertagRepository, Mockito.times(1))
                 .findByDatum(LocalDate.of(2025, 2, 2));
@@ -174,22 +205,38 @@ class UnauffaelligeTageReceiverTest {
     void loadUnauffaelligeTageForEachMessstelleWithoutDataInDatabase() {
         Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.empty());
 
-        final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250202 = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250203 = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250202.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
-        final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
-        final var mono = Mono.just(mobidamResponseEntity);
-        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1))).thenReturn(mono);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
+        final var mono20250202 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250202)));
+        final var mono20250203 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250203)));
+        final var emptyMono = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) new ArrayList<UnauffaelligerTagDto>())));
+
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2))).thenReturn(mono20250202);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3))).thenReturn(mono20250203);
+
+        final AtomicReference<LocalDate> arg1 = new AtomicReference<>();
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                Mockito.argThat(argument -> {
+                    arg1.set(argument);
+                    return argument.isAfter(LocalDate.of(2005, 12, 31)) && argument.isBefore(LocalDate.now());
+                }),
+                Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                        && !argument.isEqual(LocalDate.of(2025, 2, 3)))))
+                .thenReturn(emptyMono);
 
         final var kalendertag20250202 = new Kalendertag();
         kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
@@ -219,8 +266,18 @@ class UnauffaelligeTageReceiverTest {
 
         Assertions.assertEquals(expected, result);
 
+        Mockito.verify(messstelleApi, Mockito.times((int) ChronoUnit.DAYS.between(LocalDate.of(2006, 1, 1), LocalDate.now()) - 2))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                        Mockito.argThat(argument -> {
+                            arg1.set(argument);
+                            return argument.isAfter(LocalDate.of(2005, 12, 31)) && argument.isBefore(LocalDate.now());
+                        }),
+                        Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                                && !argument.isEqual(LocalDate.of(2025, 2, 3))));
         Mockito.verify(messstelleApi, Mockito.times(1))
-                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1));
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2));
+        Mockito.verify(messstelleApi, Mockito.times(1))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3));
 
         Mockito.verify(kalendertagRepository, Mockito.times(1))
                 .findByDatum(LocalDate.of(2025, 2, 2));
@@ -233,22 +290,38 @@ class UnauffaelligeTageReceiverTest {
     void loadUnauffaelligeTageForEachMessstelleNoKaledertagForDatumFound() {
         Mockito.when(unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc()).thenReturn(Optional.empty());
 
-        final var unauffaelligeTage = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250202 = new ArrayList<UnauffaelligerTagDto>();
+        final var unauffaelligeTag20250203 = new ArrayList<UnauffaelligerTagDto>();
         var unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 2));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250202.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("1234");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
         unauffaelligerTagDto = new UnauffaelligerTagDto();
         unauffaelligerTagDto.setMstId("4321");
         unauffaelligerTagDto.setDatum(LocalDate.of(2025, 2, 3));
-        unauffaelligeTage.add(unauffaelligerTagDto);
-        final var mobidamResponseEntity = ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTage));
-        final var mono = Mono.just(mobidamResponseEntity);
-        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1))).thenReturn(mono);
+        unauffaelligeTag20250203.add(unauffaelligerTagDto);
+        final var mono20250202 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250202)));
+        final var mono20250203 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250203)));
+        final var emptyMono = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) new ArrayList<UnauffaelligerTagDto>())));
+
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2))).thenReturn(mono20250202);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3))).thenReturn(mono20250203);
+
+        final AtomicReference<LocalDate> arg1 = new AtomicReference<>();
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                Mockito.argThat(argument -> {
+                    arg1.set(argument);
+                    return argument.isAfter(LocalDate.of(2005, 12, 31)) && argument.isBefore(LocalDate.now());
+                }),
+                Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                        && !argument.isEqual(LocalDate.of(2025, 2, 3)))))
+                .thenReturn(emptyMono);
 
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.of(2025, 2, 2))).thenReturn(Optional.empty());
 
@@ -256,8 +329,18 @@ class UnauffaelligeTageReceiverTest {
 
         Assertions.assertThrows(EntityNotFoundException.class, unauffaelligeTageReceiver::loadUnauffaelligeTageForEachMessstelle);
 
+        Mockito.verify(messstelleApi, Mockito.times((int) ChronoUnit.DAYS.between(LocalDate.of(2006, 1, 1), LocalDate.now()) - 2))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(
+                        Mockito.argThat(argument -> {
+                            arg1.set(argument);
+                            return argument.isAfter(LocalDate.of(2005, 12, 31)) && argument.isBefore(LocalDate.now());
+                        }),
+                        Mockito.argThat(argument -> argument.isEqual(arg1.get()) && !argument.isEqual(LocalDate.of(2025, 2, 2))
+                                && !argument.isEqual(LocalDate.of(2025, 2, 3))));
         Mockito.verify(messstelleApi, Mockito.times(1))
-                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2006, 1, 1), LocalDate.now().minusDays(1));
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2));
+        Mockito.verify(messstelleApi, Mockito.times(1))
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3));
 
         Mockito.verify(kalendertagRepository, Mockito.times(1))
                 .findByDatum(LocalDate.of(2025, 2, 2));
@@ -285,7 +368,7 @@ class UnauffaelligeTageReceiverTest {
                 .findTopByOrderByKalendertagDatumDesc();
 
         Mockito.verify(messstelleApi, Mockito.times(0))
-                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(Mockito.any(), Mockito.any());
+                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(any(), any());
     }
 
     @Test
