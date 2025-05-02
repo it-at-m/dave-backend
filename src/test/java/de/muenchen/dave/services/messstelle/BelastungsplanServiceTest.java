@@ -326,4 +326,24 @@ class BelastungsplanServiceTest {
         return readMessstelleInfoDTO;
     }
 
+    @Test
+    void isDirectionNorthOrSouth() {
+        ReadMessstelleInfoDTO messstelle = getMessstelle();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("O");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("W");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("w");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("O");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("N");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("S");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isTrue();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("s");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("n");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isTrue();
+
+        messstelle.setMessquerschnitte(null);
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+    }
 }
