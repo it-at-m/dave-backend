@@ -20,12 +20,20 @@ import java.time.LocalDate;
                 @Index(
                         name = "index_kalendertag_datum ",
                         columnList = "datum"
+                ),
+                @Index(
+                        name = "index_kalendertag_next_startday ",
+                        columnList = "next_startday_to_load_unauffaellige_tage"
                 )
         },
         uniqueConstraints = { @UniqueConstraint(
                 name = "unique_kalendertag_datum ",
                 columnNames = { "datum" }
-        )
+        ),
+                @UniqueConstraint(
+                        name = "unique_kalendertag_next_startday ",
+                        columnNames = { "next_startday_to_load_unauffaellige_tage" }
+                )
         }
 )
 @Data
@@ -40,4 +48,6 @@ public class Kalendertag extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TagesTyp tagestyp;
 
+    @Column(name = "next_startday_to_load_unauffaellige_tage", unique = true)
+    private Boolean nextStartdayToLoadUnauffaelligeTage;
 }
