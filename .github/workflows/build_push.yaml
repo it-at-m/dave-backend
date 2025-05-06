@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      ARTIFACT_NAME: ${{ steps.maven-release-step.outputs.artifact-name }}
+      ARTIFACT_NAME: ${{ steps.maven.outputs.artifact-name }}
     steps:
       - name: Build with Maven
         id: maven

@@ -49,7 +49,7 @@ jobs:
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
 
   create-github-release:
-    needs: build-image
+    needs: ["release-maven", "build-image"]
     runs-on: ubuntu-latest
     permissions:
       contents: write
