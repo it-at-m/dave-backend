@@ -79,6 +79,7 @@ public class UnauffaelligeTageReceiver {
         }
         final LocalDate today = LocalDate.now();
         final List<UnauffaelligerTag> unauffaelligeTage = Stream.iterate(dateToCheck, date -> date.isBefore(today), date -> date.plusDays(1))
+                .parallel()
                 .flatMap(dayToCheck -> ListUtils
                         .emptyIfNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayToCheck, dayToCheck).block().getBody()).stream())
                 .map(this::mapDto2Entity)
