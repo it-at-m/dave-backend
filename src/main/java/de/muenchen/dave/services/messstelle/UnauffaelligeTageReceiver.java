@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -77,13 +78,15 @@ public class UnauffaelligeTageReceiver {
             dateToCheck = byNextStartdayToLoadUnauffaelligeTageIsTrue.get().getDatum();
         }
         final LocalDate today = LocalDate.now();
-        Stream.iterate(dateToCheck, date -> date.isBefore(today), date -> date.plusDays(1))
+        final List<UnauffaelligerTag> unauffaelligeTage = Stream.iterate(dateToCheck, date -> date.isBefore(today), date -> date.plusDays(1))
                 .flatMap(dayToCheck -> ListUtils
                         .emptyIfNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayToCheck, dayToCheck).block().getBody()).stream())
                 .map(this::mapDto2Entity)
-                .forEach(unauffaelligeTageRepository::save);
+                .toList();
 
-        unauffaelligeTageRepository.flush();
+        log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
+        unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+        log.debug("Saved {} unauffaellige Tage in DB", unauffaelligeTage.size());
 
         byNextStartdayToLoadUnauffaelligeTageIsTrue.ifPresent(kalendertag -> {
             kalendertag.setNextStartdayToLoadUnauffaelligeTage(null);
