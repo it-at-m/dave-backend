@@ -87,7 +87,6 @@ public class UnauffaelligeTageReceiver {
 
         log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
         unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
-        log.debug("Saved {} unauffaellige Tage in DB", unauffaelligeTage.size());
 
         byNextStartdayToLoadUnauffaelligeTageIsTrue.ifPresent(kalendertag -> {
             kalendertag.setNextStartdayToLoadUnauffaelligeTage(null);
