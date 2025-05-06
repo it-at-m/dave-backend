@@ -53,7 +53,7 @@ public class UnauffaelligeTageReceiver {
     )
     @Transactional
     @LogExecutionTime
-    public void loadMessstellenCron() {
+    public void loadUnauffaelligeTageCron() {
         LockAssert.assertLocked();
         log.info("#loadUnauffaelligeTage from MobidaM");
         try {
