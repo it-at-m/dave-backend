@@ -21,6 +21,8 @@ jobs:
   build-maven:
     needs: compliance
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Build with Maven
         id: maven
