@@ -72,10 +72,10 @@ public class UnauffaelligeTageReceiver {
      *             unauffälligen Tag gefunden wurde.
      */
     protected void loadAndSaveUnauffaelligeTageForEachMessstelle() {
-        final Optional<Kalendertag> byNextStartdayToLoadUnauffaelligeTageIsTrue = kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue();
+        final Optional<Kalendertag> nextStartDate = kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue();
         LocalDate dateToCheck = EARLIEST_DAY;
-        if (byNextStartdayToLoadUnauffaelligeTageIsTrue.isPresent()) {
-            dateToCheck = byNextStartdayToLoadUnauffaelligeTageIsTrue.get().getDatum();
+        if (nextStartDate.isPresent()) {
+            dateToCheck = nextStartDate.get().getDatum();
         }
         final LocalDate today = LocalDate.now();
         final List<UnauffaelligerTag> unauffaelligeTage = Stream.iterate(dateToCheck, date -> date.isBefore(today), date -> date.plusDays(1))
@@ -88,12 +88,12 @@ public class UnauffaelligeTageReceiver {
         log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
         unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
 
-        byNextStartdayToLoadUnauffaelligeTageIsTrue.ifPresent(kalendertag -> {
-            kalendertag.setNextStartdayToLoadUnauffaelligeTage(null);
+        nextStartDate.ifPresent(kalendertag -> {
+            kalendertag.setNextStartDateToLoadUnauffaelligeTage(null);
             kalendertagRepository.save(kalendertag);
         });
         kalendertagRepository.findByDatum(today).ifPresent(kalendertag -> {
-            kalendertag.setNextStartdayToLoadUnauffaelligeTage(true);
+            kalendertag.setNextStartDateToLoadUnauffaelligeTage(true);
             kalendertagRepository.saveAndFlush(kalendertag);
         });
     }

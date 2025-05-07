@@ -61,20 +61,20 @@ class UnauffaelligeTageReceiverTest {
         final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageReceiver);
         final var today = new Kalendertag();
         today.setDatum(LocalDate.now());
-        today.setNextStartdayToLoadUnauffaelligeTage(null);
-        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(today));
+        today.setNextStartDateToLoadUnauffaelligeTage(null);
+        Mockito.when(kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(today));
 
         LockAssert.TestHelper.makeAllAssertsPass(true);
         unauffaelligeTageServiceSpy.loadUnauffaelligeTageCron();
         LockAssert.TestHelper.makeAllAssertsPass(false);
 
         Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadAndSaveUnauffaelligeTageForEachMessstelle();
-        Mockito.verify(kalendertagRepository, Mockito.times(1)).findByNextStartdayToLoadUnauffaelligeTageIsTrue();
+        Mockito.verify(kalendertagRepository, Mockito.times(1)).findByNextStartDateToLoadUnauffaelligeTageIsTrue();
         Mockito.verify(messstelleApi, Mockito.times(0)).getUnauffaelligeTageForEachMessstelleWithHttpInfo(any(LocalDate.class), any(LocalDate.class));
         Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).saveAllAndFlush(any());
         Mockito.verify(kalendertagRepository, Mockito.times(1)).save(today);
         Mockito.verify(kalendertagRepository, Mockito.times(1)).findByDatum(today.getDatum());
-        today.setNextStartdayToLoadUnauffaelligeTage(true);
+        today.setNextStartDateToLoadUnauffaelligeTage(true);
         Mockito.verify(kalendertagRepository, Mockito.times(0)).saveAndFlush(today);
     }
 
@@ -98,7 +98,7 @@ class UnauffaelligeTageReceiverTest {
         final var nextStartDate = new Kalendertag();
         nextStartDate.setDatum(LocalDate.of(2025, 2, 2));
 
-        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(nextStartDate));
+        Mockito.when(kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(nextStartDate));
         final var today = new Kalendertag();
         today.setDatum(LocalDate.now());
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.now())).thenReturn(Optional.of(today));
@@ -181,7 +181,7 @@ class UnauffaelligeTageReceiverTest {
 
     @Test
     void loadAndSaveUnauffaelligeTageForEachMessstelleWithoutDataInDatabase() {
-        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.empty());
+        Mockito.when(kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.empty());
         final var today = new Kalendertag();
         today.setDatum(LocalDate.now());
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.now())).thenReturn(Optional.of(today));
@@ -262,7 +262,7 @@ class UnauffaelligeTageReceiverTest {
 
     @Test
     void loadAndSaveUnauffaelligeTageForEachMessstelleNoKalendertagForDatumFound() {
-        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.empty());
+        Mockito.when(kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.empty());
         final var today = new Kalendertag();
         today.setDatum(LocalDate.now());
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.now())).thenReturn(Optional.of(today));
@@ -321,13 +321,13 @@ class UnauffaelligeTageReceiverTest {
         final var today = new Kalendertag();
         today.setDatum(LocalDate.now());
 
-        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(today));
+        Mockito.when(kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(today));
         Mockito.when(kalendertagRepository.findByDatum(LocalDate.now())).thenReturn(Optional.of(today));
 
         unauffaelligeTageReceiver.loadAndSaveUnauffaelligeTageForEachMessstelle();
 
         Mockito.verify(kalendertagRepository, Mockito.times(1))
-                .findByNextStartdayToLoadUnauffaelligeTageIsTrue();
+                .findByNextStartDateToLoadUnauffaelligeTageIsTrue();
 
         Mockito.verify(messstelleApi, Mockito.times(0))
                 .getUnauffaelligeTageForEachMessstelleWithHttpInfo(any(), any());
