@@ -82,6 +82,9 @@ public class SucheServiceSpringTests {
     @Test
     @WithMockUser(roles = { "FACHADMIN" })
     public void testComplexSuggest() throws IOException {
+        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptions.setSearchInZaehlstellen(true);
+        searchAndFilterOptions.setSearchInMessstellen(true);
 
         Page<Zaehlstelle> resultComplexSuggest = new PageImpl<>(List.of(
                 this.createSampleData().get(0),
@@ -98,7 +101,7 @@ public class SucheServiceSpringTests {
                                 .hits(hitsBuilder -> hitsBuilder.hits(List.of()))));
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", false);
+        SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", searchAndFilterOptions, false);
         assertThat(dto1.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto1.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01"))));
@@ -109,7 +112,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", false);
+        SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", searchAndFilterOptions, false);
         assertThat(dto2.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto2.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01")),
@@ -121,7 +124,7 @@ public class SucheServiceSpringTests {
         resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(2)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", false);
+        SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", searchAndFilterOptions, false);
         assertThat(dto3.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto3.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("03"))));
@@ -133,7 +136,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", false);
+        SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", searchAndFilterOptions, false);
         assertThat(dto5.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), containsInAnyOrder(
