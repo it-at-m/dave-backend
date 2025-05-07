@@ -56,42 +56,27 @@ class UnauffaelligeTageReceiverTest {
         Mockito.reset(unauffaelligeTageRepository, kalendertagRepository, messstelleApi);
     }
 
-    //    @Test
-    //    void loadUnauffaelligeTageCron() {
-    //        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageReceiver);
-    //
-    //        final var kalendertag20250202 = new Kalendertag();
-    //        kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
-    //        kalendertag20250202.setTagestyp(TagesTyp.MO_SO);
-    //
-    //        final var kalendertag20250203 = new Kalendertag();
-    //        kalendertag20250203.setDatum(LocalDate.of(2025, 2, 3));
-    //        kalendertag20250203.setTagestyp(TagesTyp.MO_SO);
-    //
-    //        final var unauffaelligeTage = new ArrayList<UnauffaelligerTag>();
-    //        var unauffaelligerTag = new UnauffaelligerTag();
-    //        unauffaelligerTag.setMstId("1234");
-    //        unauffaelligerTag.setKalendertag(kalendertag20250202);
-    //        unauffaelligeTage.add(unauffaelligerTag);
-    //        unauffaelligerTag = new UnauffaelligerTag();
-    //        unauffaelligerTag.setMstId("1234");
-    //        unauffaelligerTag.setKalendertag(kalendertag20250203);
-    //        unauffaelligeTage.add(unauffaelligerTag);
-    //        unauffaelligerTag = new UnauffaelligerTag();
-    //        unauffaelligerTag.setMstId("4321");
-    //        unauffaelligerTag.setKalendertag(kalendertag20250203);
-    //        unauffaelligeTage.add(unauffaelligerTag);
-    //
-    //        Mockito.doReturn(unauffaelligeTage).when(unauffaelligeTageServiceSpy).loadAndSaveUnauffaelligeTageForEachMessstelle();
-    //
-    //        LockAssert.TestHelper.makeAllAssertsPass(true);
-    //        unauffaelligeTageServiceSpy.loadUnauffaelligeTageCron();
-    //        LockAssert.TestHelper.makeAllAssertsPass(false);
-    //
-    //        Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadAndSaveUnauffaelligeTageForEachMessstelle();
-    //
-    //        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).saveAllAndFlush(unauffaelligeTage);
-    //    }
+    @Test
+    void loadUnauffaelligeTageCron() {
+        final var unauffaelligeTageServiceSpy = Mockito.spy(this.unauffaelligeTageReceiver);
+        final var today = new Kalendertag();
+        today.setDatum(LocalDate.now());
+        today.setNextStartdayToLoadUnauffaelligeTage(null);
+        Mockito.when(kalendertagRepository.findByNextStartdayToLoadUnauffaelligeTageIsTrue()).thenReturn(Optional.of(today));
+
+        LockAssert.TestHelper.makeAllAssertsPass(true);
+        unauffaelligeTageServiceSpy.loadUnauffaelligeTageCron();
+        LockAssert.TestHelper.makeAllAssertsPass(false);
+
+        Mockito.verify(unauffaelligeTageServiceSpy, Mockito.times(1)).loadAndSaveUnauffaelligeTageForEachMessstelle();
+        Mockito.verify(kalendertagRepository, Mockito.times(1)).findByNextStartdayToLoadUnauffaelligeTageIsTrue();
+        Mockito.verify(messstelleApi, Mockito.times(0)).getUnauffaelligeTageForEachMessstelleWithHttpInfo(any(LocalDate.class), any(LocalDate.class));
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).saveAllAndFlush(any());
+        Mockito.verify(kalendertagRepository, Mockito.times(1)).save(today);
+        Mockito.verify(kalendertagRepository, Mockito.times(1)).findByDatum(today.getDatum());
+        today.setNextStartdayToLoadUnauffaelligeTage(true);
+        Mockito.verify(kalendertagRepository, Mockito.times(0)).saveAndFlush(today);
+    }
 
     @Test
     void loadMessstellenCronEntityNotFoundExceptionThrown() {
