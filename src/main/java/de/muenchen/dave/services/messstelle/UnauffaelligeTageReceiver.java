@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -51,13 +53,12 @@ public class UnauffaelligeTageReceiver {
     )
     @Transactional
     @LogExecutionTime
-    public void loadMessstellenCron() {
+    public void loadUnauffaelligeTageCron() {
         LockAssert.assertLocked();
         log.info("#loadUnauffaelligeTage from MobidaM");
         try {
             // Daten aus MobidaM laden
-            final var unauffaelligeTage = loadUnauffaelligeTageForEachMessstelle();
-            unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+            loadAndSaveUnauffaelligeTageForEachMessstelle();
         } catch (final Exception exception) {
             log.error(exception.getMessage(), exception);
         }
@@ -67,28 +68,34 @@ public class UnauffaelligeTageReceiver {
      * Die Methode ermittelt aus Mobidam die unauffälligen Tage und gibt diese als persistierbare
      * Entitäten zurück.
      *
-     * @return die persistierbaren Entitäten der unauffälligen Tage.
      * @throws EntityNotFoundException falls kein {@link Kalendertag} für den
      *             unauffälligen Tag gefunden wurde.
      */
-    protected List<UnauffaelligerTag> loadUnauffaelligeTageForEachMessstelle() {
-        final var lastUnaufaelligerTag = unauffaelligeTageRepository.findTopByOrderByKalendertagDatumDesc();
-        final var dayAfterLastUnauffaelligerTag = lastUnaufaelligerTag
-                .map(unauffaelligerTag -> unauffaelligerTag.getKalendertag().getDatum().plusDays(1))
-                .orElse(EARLIEST_DAY);
-        final var yesterday = LocalDate.now().minusDays(1);
-        final List<UnauffaelligerTagDto> unauffaelligeTage;
-        if (!yesterday.isBefore(dayAfterLastUnauffaelligerTag)) {
-            unauffaelligeTage = Objects
-                    .requireNonNull(
-                            messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayAfterLastUnauffaelligerTag, yesterday).block().getBody());
-        } else {
-            unauffaelligeTage = List.of();
+    protected void loadAndSaveUnauffaelligeTageForEachMessstelle() {
+        final Optional<Kalendertag> nextStartDate = kalendertagRepository.findByNextStartDateToLoadUnauffaelligeTageIsTrue();
+        LocalDate dateToCheck = EARLIEST_DAY;
+        if (nextStartDate.isPresent()) {
+            dateToCheck = nextStartDate.get().getDatum();
         }
-        return unauffaelligeTage
-                .stream()
+        final LocalDate today = LocalDate.now();
+        final List<UnauffaelligerTag> unauffaelligeTage = Stream.iterate(dateToCheck, date -> date.isBefore(today), date -> date.plusDays(1))
+                .parallel()
+                .flatMap(dayToCheck -> ListUtils
+                        .emptyIfNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayToCheck, dayToCheck).block().getBody()).stream())
                 .map(this::mapDto2Entity)
                 .toList();
+
+        log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
+        unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+
+        nextStartDate.ifPresent(kalendertag -> {
+            kalendertag.setNextStartDateToLoadUnauffaelligeTage(null);
+            kalendertagRepository.save(kalendertag);
+        });
+        kalendertagRepository.findByDatum(today).ifPresent(kalendertag -> {
+            kalendertag.setNextStartDateToLoadUnauffaelligeTage(true);
+            kalendertagRepository.saveAndFlush(kalendertag);
+        });
     }
 
     /**
