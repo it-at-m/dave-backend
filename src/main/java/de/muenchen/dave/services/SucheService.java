@@ -36,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -120,24 +121,26 @@ public class SucheService {
      * zurückgegebenen Objekt.
      *
      * @param query Suchquery
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param searchAndFilterOptions Filteroptionen
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(final String query, final boolean noFilter) {
-        final var sucheComplexSuggests = this.getComplexSuggest(query, noFilter);
-        final var zaehlstellenSuggests = sucheComplexSuggests.getZaehlstellenSuggests()
+    public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(
+            final String query,
+            final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+        final var sucheComplexSuggests = this.getComplexSuggest(query, searchAndFilterOptions, false);
+        final var zaehlstellenSuggests = ListUtils.emptyIfNull(sucheComplexSuggests.getZaehlstellenSuggests())
                 .stream()
                 .filter(sucheZaehlstelleSuggest -> ObjectUtils.isEmpty(sucheZaehlstelleSuggest.getSichtbarDatenportal())
                         || sucheZaehlstelleSuggest.getSichtbarDatenportal())
                 .collect(Collectors.toList());
         sucheComplexSuggests.setZaehlstellenSuggests(zaehlstellenSuggests);
-        final var zaehlungenSuggests = sucheComplexSuggests.getZaehlungenSuggests()
+        final var zaehlungenSuggests = ListUtils.emptyIfNull(sucheComplexSuggests.getZaehlungenSuggests())
                 .stream()
                 .filter(sucheZaehlungSuggest -> ObjectUtils.isEmpty(sucheZaehlungSuggest.getSichtbarDatenportal())
                         || sucheZaehlungSuggest.getSichtbarDatenportal())
                 .collect(Collectors.toList());
         sucheComplexSuggests.setZaehlungenSuggests(zaehlungenSuggests);
-        final var messstellenSuggests = sucheComplexSuggests.getMessstellenSuggests()
+        final var messstellenSuggests = ListUtils.emptyIfNull(sucheComplexSuggests.getMessstellenSuggests())
                 .stream()
                 .filter(sucheMessstelleSuggest -> ObjectUtils.isEmpty(sucheMessstelleSuggest.getSichtbarDatenportal())
                         || sucheMessstelleSuggest.getSichtbarDatenportal())
@@ -152,32 +155,36 @@ public class SucheService {
      * Vorschläge für eine bestimmte Zählung.
      *
      * @param query Suchquery
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param searchAndFilterOptions Filteroptionen
+     * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO getComplexSuggest(final String query, final boolean noFilter) {
+    public SucheComplexSuggestsDTO getComplexSuggest(
+            final String query,
+            final SearchAndFilterOptionsDTO searchAndFilterOptions,
+            final boolean isAdminportal) {
         final String q = this.createQueryString(query);
         log.debug("query '{}'", q);
 
         final SucheComplexSuggestsDTO dto = new SucheComplexSuggestsDTO();
 
-        // Zählstellen
-        final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
+        if (searchAndFilterOptions.isSearchInZaehlstellen()) {
+            // Zählstellen
+            final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-        final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), noFilter).stream()
-                .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
-                .collect(Collectors.toList());
+            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdminportal).stream()
+                    .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
+                    .collect(Collectors.toList());
 
-        dto.setZaehlstellenSuggests(sucheZaehlstelleSuggestDTOS);
+            dto.setZaehlstellenSuggests(sucheZaehlstelleSuggestDTOS);
 
-        // Zählungen
-        final List<Zaehlung> zaehlungen = this.findZaehlung(zaehlstellen, query);
-        final List<SucheZaehlungSuggestDTO> sucheZaehlungSuggestDtos = zaehlungen.stream()
-                .map(this.zaehlungMapper::bean2SucheZaehlungSuggestDto)
-                .collect(Collectors.toList());
+            // Zählungen
+            final List<Zaehlung> zaehlungen = this.findZaehlung(zaehlstellen, query);
+            final List<SucheZaehlungSuggestDTO> sucheZaehlungSuggestDtos = zaehlungen.stream()
+                    .map(this.zaehlungMapper::bean2SucheZaehlungSuggestDto)
+                    .collect(Collectors.toList());
 
-        sucheZaehlungSuggestDtos.forEach(zaehlung -> {
-            zaehlstellen.get().forEach(zst -> {
+            sucheZaehlungSuggestDtos.forEach(zaehlung -> zaehlstellen.get().forEach(zst -> {
                 if (!zst.getZaehlungen().isEmpty()) {
                     final Optional<Zaehlung> first = zst.getZaehlungen().stream()
                             .filter(zaehlungFilter -> zaehlungFilter.getId().equalsIgnoreCase(zaehlung.getId())).findFirst();
@@ -186,16 +193,18 @@ public class SucheService {
                         zaehlung.setSichtbarDatenportal(zst.getSichtbarDatenportal());
                     }
                 }
-            });
-        });
+            }));
 
-        dto.setZaehlungenSuggests(sucheZaehlungSuggestDtos);
+            dto.setZaehlungenSuggests(sucheZaehlungSuggestDtos);
+        }
 
         // Wörter
         dto.setWordSuggests(this.getSuggestions(query));
 
-        // Messstellen
-        dto.setMessstellenSuggests(getMessstellenSuggest(q));
+        if (searchAndFilterOptions.isSearchInMessstellen()) {
+            // Messstellen
+            dto.setMessstellenSuggests(getMessstellenSuggest(q));
+        }
 
         return dto;
     }
@@ -271,13 +280,11 @@ public class SucheService {
                 // Alle Aktive Zählungen laden
                 // Alle Zählstellen suchen, die Zählungen im Bereich haben
                 final Set<Zaehlstelle> relevantZaelstellen = new HashSet<>();
-                this.zaehlstelleIndex.findAll().forEach(zaehlstelle -> {
-                    zaehlstelle.getZaehlungen().forEach(zaehlung -> {
-                        if (this.isDateEqualOrAfter(zaehlung.getDatum(), afterDate) && this.isDateEqualOrBefore(zaehlung.getDatum(), beforeDate)) {
-                            relevantZaelstellen.add(zaehlstelle);
-                        }
-                    });
-                });
+                this.zaehlstelleIndex.findAll().forEach(zaehlstelle -> zaehlstelle.getZaehlungen().forEach(zaehlung -> {
+                    if (this.isDateEqualOrAfter(zaehlung.getDatum(), afterDate) && this.isDateEqualOrBefore(zaehlung.getDatum(), beforeDate)) {
+                        relevantZaelstellen.add(zaehlstelle);
+                    }
+                }));
                 zaehlstellen = new ArrayList<>(relevantZaelstellen);
             } else {
                 final String q = this.createQueryString(query);
@@ -583,7 +590,7 @@ public class SucheService {
                     .filter(z -> this.filterZaehlung(words, z))
                     .findAny();
         } else {
-            optionalZaehlung = Optional.ofNullable(null);
+            optionalZaehlung = Optional.empty();
         }
         return optionalZaehlung;
     }

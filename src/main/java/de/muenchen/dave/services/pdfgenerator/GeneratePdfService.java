@@ -489,6 +489,7 @@ public class GeneratePdfService {
             final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final ZeitreihePdf zeitreihePdf = new ZeitreihePdf();
         fillZeitreihePdfBeanService.fillZeitreihePdf(zeitreihePdf, zaehlungId, chartAsBase64Png, schematischeUebersichtAsBase64Png, options, department);
+        zeitreihePdf.setZeitauswahl(fillPdfBeanService.createChartTitleZeitauswahl(zaehlungId, options));
         final String html = createZeitreiheHtml(zeitreihePdf);
 
         return createPdf(html);

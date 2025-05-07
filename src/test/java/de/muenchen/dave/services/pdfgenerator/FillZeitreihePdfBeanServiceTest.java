@@ -1,10 +1,7 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
-import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapperImpl;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
@@ -46,22 +43,5 @@ public class FillZeitreihePdfBeanServiceTest {
         FillZeitreihePdfBeanService.fillZaehlstelleninformationenZeitreihe(zeitreihePdf1, zaehlung);
         assertThat(zeitreihePdf2.getZaehlstelleninformationenZeitreihe().getPlatz(), is(emptyOrNullString()));
         assertThat(zeitreihePdf2.getZaehlstelleninformationenZeitreihe().isPlatzVorhanden(), is(false));
-    }
-
-    @Test
-    void createChartTitleZeitauswahl() {
-        final OptionsDTO options = new OptionsDTO();
-
-        // Testcase 1
-        options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
-        assertThat(fillZeitreihePdfBeanService.createChartTitleZeitauswahl(options), is("Tageswert"));
-        // Testcase 2
-        options.setZeitauswahl(Zeitauswahl.BLOCK.getCapitalizedName());
-        options.setZeitblock(Zeitblock.ZB_00_06);
-        assertThat(fillZeitreihePdfBeanService.createChartTitleZeitauswahl(options), is("Block 0 - 6 Uhr"));
-        // Testcase 3
-        options.setZeitauswahl(Zeitauswahl.STUNDE.getCapitalizedName());
-        options.setZeitblock(Zeitblock.ZB_02_03);
-        assertThat(fillZeitreihePdfBeanService.createChartTitleZeitauswahl(options), is("Stunde 2 - 3 Uhr"));
     }
 }
