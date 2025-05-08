@@ -34,7 +34,7 @@
         </logger>
 
         <logger name="org.springframework.cache"
-                level="trace"
+                level="info"
                 additivity="false">
             <appender-ref ref="STDOUT"/>
         </logger>
