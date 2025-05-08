@@ -89,6 +89,32 @@ values (gen_random_uuid(),
        (gen_random_uuid(),
         now(),
         0,
+        'ZWEI_PLUS_EINS',
+        'STUNDE_VIERTEL_EINGESCHRAENKT',
+        '[
+          "STUNDE_VIERTEL",
+          "STUNDE_HALB",
+          "STUNDE_KOMPLETT"
+        ]'::jsonb,
+        '[
+          "STUNDE_KOMPLETT"
+        ]'::jsonb,
+        NULL,
+        '[
+          "STUNDE_KOMPLETT"
+        ]'::jsonb,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL),
+       (gen_random_uuid(),
+        now(),
+        0,
         'ACHT_PLUS_EINS',
         'STUNDE_KOMPLETT',
         '[
