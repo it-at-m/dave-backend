@@ -16,7 +16,7 @@ public class MapConfigService {
     public MapConfigService(
             @Value("${dave.map.center.lat:48.137227}") final String lat,
             @Value("${dave.map.center.lng:11.575517}") final String lng,
-            @Value("${dave.map.center.zoom:8}") final Integer zoom) {
+            @Value("${dave.map.center.zoom:12}") final Integer zoom) {
         this.mapConfig = new MapConfigDTO(lat, lng, zoom);
     }
 
