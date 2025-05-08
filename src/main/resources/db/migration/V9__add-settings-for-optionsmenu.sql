@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS dave.optionsmenuesettings (
+CREATE TABLE IF NOT EXISTS optionsmenuesettings (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
     version bigint,
