@@ -132,12 +132,8 @@ values (gen_random_uuid(),
         '[
           "STUNDE_KOMPLETT"
         ]'::jsonb,
-        '[
-          "STUNDE_KOMPLETT"
-        ]'::jsonb,
-        '[
-          "STUNDE_KOMPLETT"
-        ]'::jsonb,
+        NULL,
+        NULL,
         '[
           "STUNDE_KOMPLETT"
         ]'::jsonb,
@@ -178,12 +174,8 @@ values (gen_random_uuid(),
         '[
           "STUNDE_KOMPLETT"
         ]'::jsonb,
-        '[
-          "STUNDE_KOMPLETT"
-        ]'::jsonb,
-        '[
-          "STUNDE_KOMPLETT"
-        ]'::jsonb,
+        NULL,
+        NULL,
         '[
           "STUNDE_KOMPLETT"
         ]'::jsonb,
