@@ -16,7 +16,7 @@ jobs:
   release-maven:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     outputs:
       MVN_ARTIFACT_ID: ${{ steps.maven-release-step.outputs.MVN_ARTIFACT_ID }}
       ARTIFACT_NAME: ${{ steps.maven-release-step.outputs.artifact-name }}
