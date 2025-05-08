@@ -48,7 +48,7 @@ jobs:
           registry-password: ${{ secrets.GITHUB_TOKEN }}
           image-tags: |
             type=semver,pattern={{version}},value=${{ github.event.inputs.releaseVersion }}
-          labels: |
+          image-labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
 
   create-github-release:

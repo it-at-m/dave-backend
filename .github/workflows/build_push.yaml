@@ -50,5 +50,5 @@ jobs:
             type=raw,value=stable,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', 'main-ng') }}
             # set internal deployment tag for main-ng branch
             type=raw,value=demo-ng,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', 'main-ng') }}
-          labels: |
+          image-labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
