@@ -102,4 +102,8 @@ public class MessstelleService {
         return messstelleIndexService.findByMstIdOrThrowException(mstId).getMessquerschnitte().stream()
                 .filter(messquerschnitt -> mqId.equalsIgnoreCase(messquerschnitt.getMqId())).findFirst();
     }
+
+    public void generateSuggestionsForAllMessstelle() {
+        messstelleIndexService.findAllMessstellen().stream().parallel().forEach(customSuggestIndexService::createSuggestionsForMessstelle);
+    }
 }

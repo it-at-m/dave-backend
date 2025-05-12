@@ -702,4 +702,11 @@ public class ZaehlstelleIndexService {
             }
         }
     }
+
+    public void generateSuggestionsForAllZaehlstellenAndZaehlungen() {
+        zaehlstelleIndex.findAll().stream().parallel().forEach(zaehlstelle -> {
+            customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
+            zaehlstelle.getZaehlungen().stream().parallel().forEach(customSuggestIndexService::createSuggestionsForZaehlung);
+        });
+    }
 }

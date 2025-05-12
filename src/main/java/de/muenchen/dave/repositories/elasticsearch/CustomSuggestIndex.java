@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 
 import java.util.List;
 
+import de.muenchen.dave.domain.enums.ErhebungsstelleType;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface CustomSuggestIndex extends ElasticsearchRepository<CustomSuggest, String> {
@@ -11,5 +12,7 @@ public interface CustomSuggestIndex extends ElasticsearchRepository<CustomSugges
     List<CustomSuggest> findAllByNameAndFkid(String name, String fkid);
 
     void deleteAllByFkid(String fkid);
+
+    void deleteAllByErhebungsstelleType(ErhebungsstelleType type);
 
 }
