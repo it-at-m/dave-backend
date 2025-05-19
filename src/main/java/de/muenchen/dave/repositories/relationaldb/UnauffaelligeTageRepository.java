@@ -12,7 +12,9 @@ public interface UnauffaelligeTageRepository extends JpaRepository<Unauffaellige
 
     List<UnauffaelligerTag> findByMstId(final String mstId);
 
-    long countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(final String mstId,
+    long countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(
+            final String mstId,
             final LocalDate startDateIncluded,
-            final LocalDate endDateIncluded, final List<TagesTyp> tagesTyp);
+            final LocalDate endDateIncluded,
+            final List<TagesTyp> tagesTyp);
 }

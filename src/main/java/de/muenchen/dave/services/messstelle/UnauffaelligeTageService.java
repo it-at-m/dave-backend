@@ -26,9 +26,11 @@ public class UnauffaelligeTageService {
             final LocalDate startDateIncluded,
             final LocalDate endDateIncluded,
             final List<TagesTyp> tagesTyp) {
-        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(mstId,
+        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(
+                mstId,
                 startDateIncluded,
-                endDateIncluded, tagesTyp);
+                endDateIncluded,
+                tagesTyp);
     }
 
 }
