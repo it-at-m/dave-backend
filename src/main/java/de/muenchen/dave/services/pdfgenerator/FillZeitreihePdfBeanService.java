@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapper;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
@@ -110,7 +109,6 @@ public class FillZeitreihePdfBeanService {
         fillZusatzinformationenZeitreihe(zeitreihePdf, zaehlung, options, zaehlstelle);
         fillZaehlstelleninformationenZeitreihe(zeitreihePdf, zaehlung);
         zeitreihePdf.setChartTitle(FillPdfBeanService.createChartTitleFahrbeziehung(options, zaehlung));
-        zeitreihePdf.setZeitauswahl(createChartTitleZeitauswahl(options));
 
         return zeitreihePdf;
     }
@@ -193,31 +191,5 @@ public class FillZeitreihePdfBeanService {
         zeitreihePdf.setSindZusatzinformationenVorhanden(CollectionUtils.isNotEmpty(zusatzinformationenZeitreihePdfComponentList));
 
         zeitreihePdf.setZusatzinformationenZeitreihe(zusatzinformationenZeitreihePdfComponentList);
-    }
-
-    /**
-     * Erstellt den ChartTitle für das Diagramm eines Belastungsplanes. Bei Tageswert wird nur Tageswert
-     * angezeigt. Bei Block und Stunde wird noch die ausgewählte Zeit angezeigt.
-     * <p>
-     * Beispiele: __________________________________________________________________________
-     * | Tageswert | Tageswert |
-     * | Block | Block 0 - 6 Uhr |
-     * | Stunde | Stunde 2 - 3 Uhr |
-     * ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-     *
-     * @param optionsDTO als {@link OptionsDTO}
-     * @return Chart-Title as String
-     */
-    protected String createChartTitleZeitauswahl(final OptionsDTO optionsDTO) {
-        final StringBuilder chartTitle = new StringBuilder();
-        if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
-            chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
-        } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
-                || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
-                    chartTitle.append(optionsDTO.getZeitauswahl());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO));
-                }
-        return chartTitle.toString();
     }
 }

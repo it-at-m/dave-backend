@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,11 +84,21 @@ public class BelastungsplanService {
 
                     final var direction = getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString());
                     messquerschnitt.setDirection(direction);
-
                     return messquerschnitt;
-                })
-                .toList();
-        belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(messquerschnitte);
+                });
+        final List<LadeBelastungsplanMessquerschnittDataDTO> sortedMessquerschnitte;
+        if (isDirectionNorthOrSouth(messstelle)) {
+            sortedMessquerschnitte = messquerschnitte
+                    .sorted(
+                            Comparator.comparing(
+                                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)
+                                    .reversed())
+                    .toList();
+        } else {
+            sortedMessquerschnitte = messquerschnitte.sorted(Comparator.comparing(
+                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)).toList();
+        }
+        belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(sortedMessquerschnitte);
 
         final Integer totalSumKfz = totalSumOfAllMessquerschnitte
                 .stream()
@@ -139,6 +150,14 @@ public class BelastungsplanService {
                 .toList()
                 .getFirst();
         return messquerschnittDto.getFahrtrichtung();
+    }
+
+    protected boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDTO messstelle) {
+        if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
+            return false;
+        }
+        final String direction = messstelle.getMessquerschnitte().getFirst().getFahrtrichtung();
+        return direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("s");
     }
 
     protected BigDecimal calcPercentage(final Integer dividend, final Integer divisor) {
