@@ -24,11 +24,11 @@ public class UnauffaelligeTageService {
     public long countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
             final String mstId,
             final LocalDate startDateIncluded,
-            final LocalDate endDateExcluded,
+            final LocalDate endDateIncluded,
             final List<TagesTyp> tagesTyp) {
-        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndKalendertagTagestypIn(mstId,
+        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(mstId,
                 startDateIncluded,
-                endDateExcluded, tagesTyp);
+                endDateIncluded, tagesTyp);
     }
 
 }
