@@ -22,7 +22,7 @@ public interface KalendertagRepository extends JpaRepository<Kalendertag, UUID> 
      */
     List<Kalendertag> findAllByDatumNotInAndDatumIsBefore(final List<LocalDate> excludedDates, final LocalDate latestDate);
 
-    long countAllByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(final LocalDate startDateIncluded, final LocalDate endDateExcluded,
+    long countAllByDatumGreaterThanEqualAndDatumLessThanEqualAndTagestypIn(final LocalDate startDateIncluded, final LocalDate endDateIncluded,
             final List<TagesTyp> tagestypen);
 
     Optional<Kalendertag> findByNextStartDateToLoadUnauffaelligeTageIsTrue();
