@@ -35,7 +35,6 @@ import java.util.UUID;
 )
 public interface MessstelleReceiverMapper {
 
-    @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
