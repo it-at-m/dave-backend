@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ public class ReadMessstelleInfoDTO implements Serializable {
     private String standort;
     private String stadtbezirk;
     private Integer stadtbezirkNummer;
-    private String fahrzeugKlassen;
+    private Fahrzeugklasse fahrzeugklasse;
     private String detektierteVerkehrsarten;
     private String hersteller;
     private Double longitude;

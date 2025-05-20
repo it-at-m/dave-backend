@@ -571,11 +571,25 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugklassen": {
-            "type": "string"
+          "fahrzeugklasse": {
+            "type": "string",
+            "enum": [
+              "RAD",
+              "SUMME_KFZ",
+              "ZWEI_PLUS_EINS",
+              "ACHT_PLUS_EINS",
+              "UNBEKANNT"
+            ]
           },
           "intervall": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "STUNDE_VIERTEL",
+              "STUNDE_VIERTEL_EINGESCHRAENKT",
+              "STUNDE_HALB",
+              "STUNDE_KOMPLETT",
+              "UNBEKANNT"
+            ]
           }
         }
       },
@@ -653,8 +667,15 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugKlassen": {
-            "type": "string"
+          "fahrzeugklasse": {
+            "type": "string",
+            "enum": [
+              "RAD",
+              "SUMME_KFZ",
+              "ZWEI_PLUS_EINS",
+              "ACHT_PLUS_EINS",
+              "UNBEKANNT"
+            ]
           },
           "detektierteVerkehrsarten": {
             "type": "string"
