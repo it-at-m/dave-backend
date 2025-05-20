@@ -11,7 +11,7 @@ on:
         default: 'dev'
 
 env:
-  IMAGE_NAME: "dave-selfserviceportal"
+  IMAGE_NAME: "dave-backend"
 
 jobs:
   build-maven:

@@ -16,7 +16,7 @@ on:
         default: "true"
 
 env:
-  IMAGE_NAME: "dave-selfserviceportal"
+  IMAGE_NAME: "dave-backend"
 
 jobs:
   release-maven:
