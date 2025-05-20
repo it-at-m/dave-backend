@@ -46,13 +46,17 @@ class UnauffaelligeTageReceiverTest {
     @Mock
     private MessstelleApi messstelleApi;
 
+    @Mock
+    private MessstelleService messstelleService;
+
     @BeforeEach
     void beforeEach() {
         this.unauffaelligeTageReceiver = new UnauffaelligeTageReceiver(
                 unauffaelligeTageRepository,
                 kalendertagRepository,
                 new MessstelleReceiverMapperImpl(),
-                messstelleApi);
+                messstelleApi,
+                messstelleService);
         Mockito.reset(unauffaelligeTageRepository, kalendertagRepository, messstelleApi);
     }
 

@@ -42,7 +42,7 @@ public class MessstelleReceiverTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
-    private StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+    private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
 
     @Mock
     private LageplanService lageplanService;
@@ -52,6 +52,8 @@ public class MessstelleReceiverTest {
 
     @Mock
     private MessstelleApi messstelleApi;
+    @Mock
+    private UnauffaelligeTageService unauffaelligeTageService;
 
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
@@ -69,7 +71,8 @@ public class MessstelleReceiverTest {
                 lageplanService,
                 emailSendService,
                 messstelleApi,
-                messstelleReceiverMapper);
+                messstelleReceiverMapper,
+                unauffaelligeTageService);
     }
 
     @Test

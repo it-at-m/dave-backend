@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UnauffaelligeTageRepository extends JpaRepository<UnauffaelligerTag, UUID> {
 
     List<UnauffaelligerTag> findByMstId(final String mstId);
+
+    Optional<UnauffaelligerTag> findFirstByMstIdOrderByKalendertagDatumDesc(final String mstId);
 
     long countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(
             final String mstId,
