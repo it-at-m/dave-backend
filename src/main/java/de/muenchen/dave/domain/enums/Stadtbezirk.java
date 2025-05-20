@@ -4,11 +4,12 @@
  */
 package de.muenchen.dave.domain.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
@@ -76,6 +77,14 @@ public enum Stadtbezirk {
     public static Map<Integer, String> getEnumattributesAsMap() {
         return Arrays.stream(Stadtbezirk.values())
                 .collect(Collectors.toMap(Stadtbezirk::getNummer, Stadtbezirk::getBezeichnung));
+    }
+
+    public static String bezeichnungOf(int nummer) {
+        return Arrays.stream(Stadtbezirk.values())
+                .filter(stadtbezirk -> stadtbezirk.getNummer() == nummer)
+                .findFirst()
+                .map(Stadtbezirk::getBezeichnung)
+                .orElse("unbekannt");
     }
 
 }

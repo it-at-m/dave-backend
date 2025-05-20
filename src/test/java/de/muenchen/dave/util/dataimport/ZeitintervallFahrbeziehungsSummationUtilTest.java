@@ -1194,7 +1194,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Set.class);
 
         expected = new HashSet<>();
-        expected.addAll(Arrays.asList(99));
+        expected.addAll(List.of(99));
         assertThat(vonFahrbeziehungen, is(expected));
 
     }

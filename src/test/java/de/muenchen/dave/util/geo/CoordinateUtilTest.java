@@ -34,8 +34,7 @@ class CoordinateUtilTest {
     }
 
     /**
-     * Testdaten für Koordinatenumrechnung:
-     * <a href=
+     * Testdaten für Koordinatenumrechnung: <a href=
      * "https://www.koordinaten-umrechner.de/decimal/66.296139,-104.062500?karte=OpenStreetMap&zoom=4">...</a>
      */
     @Test

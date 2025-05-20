@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class FahrbeziehungVisumDTO {

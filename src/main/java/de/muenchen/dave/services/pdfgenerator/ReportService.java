@@ -10,20 +10,22 @@ import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.LogoAsset;
+import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -48,7 +50,7 @@ public class ReportService {
     private final GeneratePdfService generatePdfService;
     private final FillPdfBeanService fillPdfBeanService;
     private final ProcessZaehldatenService processZaehldatenService;
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -70,7 +72,7 @@ public class ReportService {
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,
             final ProcessZaehldatenService processZaehldatenService,
-            final IndexService indexService,
+            final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
@@ -104,7 +106,8 @@ public class ReportService {
 
     /**
      * Hier werden die flexiblen Anteile der CSS erstellt, die für die Datentabellen notwendig sind.
-     * Jede Datentabelle benötigt hier einen eigenen CSS Anteil für Spaltenbreite etc.
+     * Jede Datentabelle benötigt hier einen eigenen CSS Anteil
+     * für Spaltenbreite etc.
      *
      * @param assetList Liste der im Frontend generierten Assets
      * @return Flexibler CSS Anteil als String
@@ -113,10 +116,8 @@ public class ReportService {
         final StringBuilder sb = new StringBuilder();
 
         assetList.stream()
-                .filter(asset -> asset.getType().equals(AssetType.DATATABLE))
-                .forEach(asset -> {
-                    sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset));
-                });
+                .filter(asset -> asset.getType().equals(AssetType.DATATABLE) || asset.getType().equals(AssetType.DATATABLE_MESSSTELLE))
+                .forEach(asset -> sb.append(this.generatePdfService.getHtml(this.dataTableCssMustacheCustom, asset)));
 
         return sb.toString();
     }
@@ -155,6 +156,18 @@ public class ReportService {
 
                     sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
                 } catch (final DataNotFoundException dataNotFoundException) {
+                    sb.append("Die Datentabelle konnte aufgrund eines technischen Fehlers nicht angezeigt werden.");
+                }
+            } else if (asset.getType().equals(AssetType.DATATABLE_MESSSTELLE)) {
+                final MessstelleDatatableAsset datatableAsset = (MessstelleDatatableAsset) asset;
+                try {
+                    final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.fillPdfBeanService
+                            .getDatentabellePdfZaehldaten(datatableAsset.getOptions(), datatableAsset.getMstId());
+                    datatableAsset.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
+                    datatableAsset.setRandomTableId(UUID.randomUUID().toString());
+
+                    sb.append(this.generatePdfService.getHtml(this.dataTableMustache, datatableAsset));
+                } catch (final Exception exception) {
                     sb.append("Die Datentabelle konnte aufgrund eines technischen Fehlers nicht angezeigt werden.");
                 }
             } else if (asset.getType().equals(AssetType.ZAEHLUNGSKENNGROESSEN)) {

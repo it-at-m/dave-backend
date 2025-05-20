@@ -4,9 +4,18 @@ import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.services.IndexServiceUtils;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -16,12 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -157,5 +160,24 @@ public final class SuchwortUtil {
             }
         }
         return knotenarmeSuchworte;
+    }
+
+    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, final StadtbezirkMapper stadtbezirkMapper) {
+        final Set<String> suchwoerter = new HashSet<>();
+        if (ObjectUtils.isNotEmpty(bean.getStadtbezirkNummer())) {
+            final String stadtbezirk = stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer());
+            final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirk));
+            suchwoerter.addAll(stadtbezirke);
+            if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {
+                suchwoerter.add(stadtbezirk);
+            }
+        }
+        if (StringUtils.isNotEmpty(bean.getMstId())) {
+            suchwoerter.add(bean.getMstId());
+        }
+        if (StringUtils.isNotEmpty(bean.getName())) {
+            suchwoerter.add(bean.getName());
+        }
+        return suchwoerter;
     }
 }

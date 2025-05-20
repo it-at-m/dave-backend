@@ -7,26 +7,26 @@ package de.muenchen.dave.util.dataimport;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 
 /**
- * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung
- * entsprechend den Fahrbeziehungen.
+ * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung entsprechend den Fahrbeziehungen.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallFahrbeziehungsSummationUtil {
 
     /**
-     * Diese Methode erstellt die Grundlegende Datenstruktur um Summierung über Zeitintervalle
-     * zu ermöglichen.
+     * Diese Methode erstellt die Grundlegende Datenstruktur um Summierung über Zeitintervalle zu
+     * ermöglichen.
      *
      * @param zeitintervalle Die Zeitintervalle aus denen die Datenstruktur erstellt werden soll.
      * @return Datenstruktur als Basis für Summierung.
@@ -41,12 +41,11 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     /**
      * Methode prüft auf Basis der im {@link Zeitintervall} hinterlegten Fahrbeziehungen, ob in Methode
      * {@link ZeitintervallFahrbeziehungsSummationUtil#createDataStructureForSummation(List)} eine
-     * Filterung
-     * durchgeführt werden soll.
+     * Filterung durchgeführt werden soll.
      *
      * @param zeitintervall Ein {@link Zeitintervall} der geprüft werden soll.
-     * @return true wenn die Fahrbeziehung "von" sowie Fahrbeziehung "nach"
-     *         bzw. die "fahrbewegungKreisverkehr" nicht "null" ist.
+     * @return true wenn die Fahrbeziehung "von" sowie Fahrbeziehung "nach" bzw. die
+     *         "fahrbewegungKreisverkehr" nicht "null" ist.
      */
     private static boolean filterValidFahrbeziehung(final Zeitintervall zeitintervall) {
         final Fahrbeziehung fahrbeziehung = zeitintervall.getFahrbeziehung();
@@ -123,10 +122,10 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     }
 
     /**
-     * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste
-     * die Summe je Fahrzeugkategorie.
-     * Die Summe wird nur für {@link} {@link Zeitintervall}e gebildet, welche
-     * die entsprechende "von"-Fahrbeziehung aus dem Parameter vonFahrbeziehung gesetzt haben.
+     * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
+     * Fahrzeugkategorie. Die Summe wird nur für {@link}
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Fahrbeziehung aus dem Parameter
+     * vonFahrbeziehung gesetzt haben.
      *
      * @param vonFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
      *            soll.
@@ -148,10 +147,10 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     }
 
     /**
-     * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste
-     * die Summe je Fahrzeugkategorie.
-     * Die Summe wird nur für {@link} {@link Zeitintervall}e gebildet, welche
-     * die entsprechende "nach"-Fahrbeziehung aus dem Parameter nachFahrbeziehung gesetzt haben.
+     * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
+     * Fahrzeugkategorie. Die Summe wird nur für {@link}
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Fahrbeziehung aus dem Parameter
+     * nachFahrbeziehung gesetzt haben.
      *
      * @param nachFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
      *            soll.
@@ -194,8 +193,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     }
 
     /**
-     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e
-     * alle "von"-Fahrbeziehugen extrahiert.
+     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "von"-Fahrbeziehugen
+     * extrahiert.
      *
      * @param zeitintervalle Die Zeitintervalle zur Fahrbeziehungsextraktion.
      * @return Alle "von"-Fahrbeziehungen aus den Zeitintervallen.
@@ -209,8 +208,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     }
 
     /**
-     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e
-     * alle "nach"-Fahrbeziehugen extrahiert.
+     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "nach"-Fahrbeziehugen
+     * extrahiert.
      *
      * @param zeitintervalle Die Zeitintervalle zur Fahrbeziehungsextraktion.
      * @return Alle "nach"-Fahrbeziehungen aus den Zeitintervallen.

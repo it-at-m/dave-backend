@@ -17,6 +17,8 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -28,14 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +52,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 class LadeZaehldatenServiceSpringTest {
 
@@ -64,11 +66,17 @@ class LadeZaehldatenServiceSpringTest {
     @Autowired
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
+    @MockitoBean
     private ZeitintervallRepository zeitintervallRepository;
 
-    @MockBean
+    @MockitoBean
     private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockitoBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockitoBean
+    private CustomSuggestIndex customSuggestIndex;
 
     @BeforeEach
     public void beforeEach() {
@@ -535,7 +543,7 @@ class LadeZaehldatenServiceSpringTest {
         zaehlung.setId(zaehlungId.toString());
         zaehlung.setPkwEinheit(new PkwEinheit());
         zaehlung.setKreisverkehr(false);
-        zaehlstelle.setZaehlungen(Arrays.asList(zaehlung));
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         final OptionsDTO chosenOptions = new OptionsDTO();

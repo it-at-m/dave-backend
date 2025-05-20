@@ -8,7 +8,7 @@
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
 
 
-    <springProfile name="dev,kon,local,test,demo,hotfix,konexternal">
+    <springProfile name="dev,kon,local,unittest,demo,hotfix,konexternal,docker">
 
         <!-- Log appender -->
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -24,7 +24,7 @@
         <logger name="de.muenchen.dave"
                 level="debug"
                 additivity="false">
-            <appender-ref ref="STDOUT" />
+            <appender-ref ref="STDOUT"/>
         </logger>
 
         <logger name="de.muenchen.dave.configuration.nfcconverter"
@@ -36,18 +36,18 @@
         <logger name="org.springframework.cache"
                 level="trace"
                 additivity="false">
-            <appender-ref ref="STDOUT" />
+            <appender-ref ref="STDOUT"/>
         </logger>
 
         <logger name="org.springframework.web"
                 level="debug"
                 additivity="false">
-            <appender-ref ref="STDOUT" />
+            <appender-ref ref="STDOUT"/>
         </logger>
 
         <!-- Logger usage -->
         <root level="info">
-            <appender-ref ref="STDOUT" />
+            <appender-ref ref="STDOUT"/>
         </root>
 
     </springProfile>
@@ -87,7 +87,7 @@
         <logger name="de.muenchen.dave"
                 level="info"
                 additivity="false">
-            <appender-ref ref="JSON_STDOUT" />
+            <appender-ref ref="JSON_STDOUT"/>
         </logger>
 
         <logger name="de.muenchen.dave.configuration.nfcconverter"
@@ -98,7 +98,7 @@
 
         <!-- Logger usage -->
         <root level="info">
-            <appender-ref ref="JSON_STDOUT" />
+            <appender-ref ref="JSON_STDOUT"/>
         </root>
 
     </springProfile>

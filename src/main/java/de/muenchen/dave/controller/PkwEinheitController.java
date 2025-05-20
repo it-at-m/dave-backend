@@ -7,7 +7,7 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.PkwEinheitService;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +37,11 @@ public class PkwEinheitController {
     }
 
     @GetMapping(value = "/latest", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+    )
     public ResponseEntity<PkwEinheitDTO> getLatestPkwEinheiten() {
         try {
             return ResponseEntity.ok(

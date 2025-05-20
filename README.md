@@ -8,7 +8,7 @@ Es müssen nicht zwingend alle 5 Komponenten gleichzeitig verwendet werden. Alle
 
 DAVe besteht aus folgenden Repositories:
 
-* **Backend (Datenportal)**: Beinhaltet die Business Logik für Frontend, Adminportal, Selfserviceportal und EAI. Bildet den Kern der Anwendung. 
+* **Backend (Datenportal)**: Beinhaltet die Business Logik für Frontend, Adminportal, Selfserviceportal und EAI. Bildet den Kern der Anwendung.
 * **Frontend (Datenportal)**: Das Datenportal bietet einen lesenden Zugriff auf die Zählungen. Es kann nach Zählungen gesucht werden (auch auf einer Karte). Hat ein Nutzer eine Zählung, bzw. eine Zählstelle gefunden, so kann in dieser eine umfangreiche Datenanalyse betrieben werden. [Repository](https://github.com/it-at-m/dave-frontend)
 * **Adminportal**: Das Adminportal ist den Administratoren der Anwendung vorbehalten. Hier ist der komplette Workflow um eine Zählstelle, oder eine Zählung anzulegen abgebildet. Auch die Kommunikation mit dem Zähldienstleister wird über dieses Portal abgewickelt. [Repository](https://github.com/it-at-m/dave-admin-portal)
 * **Selfserviceportal**: Das Selfserviceportal ist dem Zähldienstleister vorbehalten. Dort sieht der Dienstleister Aufträge für neue Zählungen, kann Metadaten zu einer Zählung pflegen und die Zähldaten hochladen. Das Selfserviceportal kann auch mit mehreren verschiedene Zähldienstleister betrieben werden. [Repository](https://github.com/it-at-m/dave-selfservice-portal)
@@ -24,7 +24,7 @@ Die Frontends sind jeweils Vue Single Page Applications, die über ein Service G
 
 
 ## Built with
-    Java 11
+    Java 21, Spring Boot 3.3, ElasticSearch 8.15
 
 ## Contributing
 
@@ -43,6 +43,20 @@ If you have a suggestion that would make this better, please open an issue with 
 
 We use the [itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat) project to apply code formatting conventions.
 To add those conventions to your favorite IDE, please have a look at the [README of itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat#verwendung).
+
+### BuildAndRun
+Local requirements:
+- Java: min Java 21
+- ElasticSearch: v8.15
+- Maven 3.9.7
+
+1. Clone the Project from GitHub
+2. Configure your ElasticSearch in application-local.yml
+3. Build the Project with ```mvn clean install```
+4. If you start it for the first time then change ```ddl-auto``` to ```create```
+5. Run the Project with one of the scripts ```runLocal``` or ```runLocalNoSecurity```
+
+**OR** you can go straight to the [dave-frontend](https://github.com/it-at-m/dave-frontend/) and try out our [test stack](https://github.com/it-at-m/dave-frontend/tree/opensource/docker-compose2/stack) based on docker-compose.  
 
 ## License
 

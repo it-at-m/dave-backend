@@ -4,19 +4,20 @@ import com.sun.mail.imap.IMAPFolder;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
-import java.io.IOException;
-import java.util.Properties;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Die Klasse {@link EmailReceiveService} checkt neue Emails im Postfach der technischen
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailReceiveService {
 
-    private static final String DUMMY_EMAIL_ADDRESS = "dave-dummy@muenchen.de";
+    private static final String DUMMY_EMAIL_ADDRESS = "dave@dummy.de";
     private final ChatMessageService chatMessageService;
     private final ProcessEmailService processEmailService;
     @Value("${dave.email.address}")
@@ -54,9 +55,10 @@ public class EmailReceiveService {
     }
 
     /**
-     * Diese Methode verbindet sich mit dem EMail-Postfach und verarbeitet alle neuen E-Mails.
-     * Wie oft gecheckt wird, kann in der application.yml geändert werden.
-     * Falls keine E-Mail Adresse oder die dummy-Email-Adresse konfiguriert ist, wird nichts getan.
+     * Diese Methode verbindet sich mit dem EMail-Postfach und verarbeitet alle neuen E-Mails. Wie oft
+     * gecheckt wird, kann in der application.yml geändert
+     * werden. Falls keine E-Mail Adresse oder die dummy-Email-Adresse konfiguriert ist, wird nichts
+     * getan.
      */
     @Scheduled(fixedDelayString = "${dave.email.receiver.update-interval}")
     public void checkEmails() {

@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.elasticsearch;
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.services.IndexServiceUtils;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -24,7 +25,7 @@ public class ZaehlungRandomFactory {
     public static Zaehlung getOne() {
         final Zaehlung z = new Zaehlung();
 
-        final Faker faker = Faker.instance(new Locale("test"));
+        final Faker faker = Faker.instance(new Locale.Builder().setLanguage("test").build());
 
         // create random date
         final Date date = Faker.instance().date().between(new GregorianCalendar(1990, 0, 1).getTime(), new Date());
@@ -36,7 +37,7 @@ public class ZaehlungRandomFactory {
         z.setMonat(d.getMonth().getDisplayName(TextStyle.FULL_STANDALONE, Locale.GERMANY));
         z.setTagesTyp("Wochenende");
         z.setJahreszeit(IndexServiceUtils.jahreszeitenDetector(d));
-
+        z.setStatus(Status.ACTIVE.name());
         z.setZaehlart("Q");
         z.setPunkt(new GeoPoint(new Random().nextDouble(), new Random().nextDouble()));
 
@@ -78,7 +79,7 @@ public class ZaehlungRandomFactory {
         final Set<Fahrzeug> k = new HashSet<>();
 
         for (int i = 0; i < x; i++) {
-            k.add(Fahrzeug.valueOf(Faker.instance(new Locale("test")).resolve("zaehlung.kategorie")));
+            k.add(Fahrzeug.valueOf(Faker.instance(new Locale.Builder().setLanguage("test").build()).resolve("zaehlung.kategorie")));
         }
 
         return Lists.newArrayList(k);

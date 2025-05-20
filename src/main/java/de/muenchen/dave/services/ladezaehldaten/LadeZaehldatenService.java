@@ -18,9 +18,16 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -29,13 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -60,10 +60,10 @@ public class LadeZaehldatenService {
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
     private final ZeitintervallRepository zeitintervallRepository;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
-            final IndexService indexService) {
+            final ZaehlstelleIndexService indexService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
         // Kfz
@@ -124,14 +124,13 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach
-     * {@link LadeZaehldatumDTO} statt.
-     * Beim Mapping werden die Informationen in {@link OptionsDTO} berücksichtigt.
+     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach {@link LadeZaehldatumDTO}
+     * statt. Beim Mapping werden die Informationen in
+     * {@link OptionsDTO} berücksichtigt.
      *
      * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDTO}.
      * @param pkwEinheit als {@link PkwEinheit}
-     * @param options die {@link OptionsDTO} zur Berücksichtigung der Art
-     *            und Weise des Mappings.
+     * @param options die {@link OptionsDTO} zur Berücksichtigung der Art und Weise des Mappings.
      * @return das gemappte {@link LadeZaehldatumDTO}.
      */
     public static LadeZaehldatumDTO mapToZaehldatum(final Zeitintervall zeitintervall,
@@ -209,9 +208,9 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die
-     * {@link TypeZeitintervall}e ermittelt, um die korrekten {@link Zeitintervall}e
-     * aus der Datenbank extrahieren zu können.
+     * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die {@link TypeZeitintervall}e
+     * ermittelt, um die korrekten {@link Zeitintervall}e aus der
+     * Datenbank extrahieren zu können.
      *
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.
@@ -273,8 +272,8 @@ public class LadeZaehldatenService {
 
     /**
      * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und
-     * Kreisverkehr
-     * die für die Datenextraktion relevante {@link FahrbewegungKreisverkehr}.
+     * Kreisverkehr die für die Datenextraktion relevante
+     * {@link FahrbewegungKreisverkehr}.
      *
      * @param von als Startknotenarm.
      * @param nach als Zielknotenarm
@@ -305,16 +304,15 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in
-     * den {@link OptionsDTO} vorhandenen Informationen und der Zaehlungs-ID.
-     * Die aus der Datenbank extrahierten Daten werden anschließend nach {@link LadeZaehldatumDTO}
-     * gemappt.
-     * Schlussendlich werden alle {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO}
-     * zurückgegeben.
+     * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in den
+     * {@link OptionsDTO} vorhandenen Informationen und der
+     * Zaehlungs-ID. Die aus der Datenbank extrahierten Daten werden anschließend nach
+     * {@link LadeZaehldatumDTO} gemappt. Schlussendlich werden alle
+     * {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO} zurückgegeben.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach
+     *            {@link LadeZaehldatumDTO}.
      * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
      * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
      */
@@ -420,8 +418,8 @@ public class LadeZaehldatenService {
      * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
-     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank
-     *            und zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach
+     *            {@link LadeZaehldatumDTO}.
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
@@ -451,7 +449,7 @@ public class LadeZaehldatenService {
                 extractedZeitintervalle.add(spitzenStunde);
             }
         } else {
-            extractedZeitintervalle = ListUtils.EMPTY_LIST;
+            extractedZeitintervalle = List.of();
         }
         return extractedZeitintervalle;
     }

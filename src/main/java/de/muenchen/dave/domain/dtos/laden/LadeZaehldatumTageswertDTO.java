@@ -5,21 +5,24 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.math.BigDecimal;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
-@JsonIgnoreProperties(value = {
-        "startUhrzeit",
-        "endeUhrzeit",
-        "pkw",
-        "lkw",
-        "lastzuege",
-        "busse",
-        "kraftraeder",
-        "fussgaenger",
-        "pkwEinheiten"
-})
+@JsonIgnoreProperties(
+        value = {
+                "startUhrzeit",
+                "endeUhrzeit",
+                "pkw",
+                "lkw",
+                "lastzuege",
+                "busse",
+                "kraftraeder",
+                "fussgaenger",
+                "pkwEinheiten"
+        }
+)
 public class LadeZaehldatumTageswertDTO extends LadeZaehldatumDTO {
 
     private BigDecimal kfz;

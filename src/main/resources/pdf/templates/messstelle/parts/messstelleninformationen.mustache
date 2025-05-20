@@ -1,0 +1,36 @@
+{{#messstelleninformationen}}
+{{#standortNeeded}}
+    <b>{{standort}}</b>
+{{/standortNeeded}}
+<table class="format format-informationen" style="width:450px;">
+  <tr>
+<!--    Alle weiteren ersten Spalten implizit die gleiche width -->
+    <td style="width: 110px;">Verkehrsarten:</td>
+    <td style="width: 340px;">{{detektierteFahrzeuge}}</td>
+  </tr>
+  <tr>
+    <td>Messzeitraum:</td>
+    <td>{{messzeitraum}}</td>
+  </tr>
+  {{#zeitintervallNeeded}}
+    <tr>
+        <td>Zeitintervall:</td>
+        <td>{{zeitintervall}}</td>
+    </tr>
+  {{/zeitintervallNeeded}}
+  {{#wochentagNeeded}}
+  <tr>
+    <td>Wochentag:</td>
+    <td>{{wochentag}}</td>
+  </tr>
+  {{/wochentagNeeded}}
+  {{#kommentarNeeded}}
+  <tr>
+    <td>Kommentar:</td>
+    <td>
+      {{kommentar}}
+    </td>
+  </tr>
+  {{/kommentarNeeded}}
+</table>
+{{/messstelleninformationen}}

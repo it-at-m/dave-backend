@@ -11,10 +11,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import de.muenchen.dave.util.CalculationUtil;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import lombok.Data;
 
 @Data
 public class LadeZaehldatumDTO implements Serializable {
@@ -46,11 +47,6 @@ public class LadeZaehldatumDTO implements Serializable {
     private Integer fussgaenger;
 
     private Integer pkwEinheiten;
-
-    @JsonGetter
-    public BigDecimal getGesamt() {
-        return CalculationUtil.getGesamt(this);
-    }
 
     @JsonGetter
     public BigDecimal getKfz() {

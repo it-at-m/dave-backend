@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.persist;
 
 import de.muenchen.dave.domain.KIPredictionResult;
@@ -20,16 +16,16 @@ import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -52,30 +48,29 @@ public class ZeitintervallPersistierungsService {
     }
 
     /**
-     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank
-     * eine Datenaufbreitung durch. D.h.:
+     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank eine Datenaufbreitung
+     * durch. D.h.:
      * <p>
-     * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft,
-     * ob der letzte Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59 aufweist.
-     * - Die im Parameter übergebenen Zeitintervalle werden mit einem Index für
-     * die Sortierung bei der Datenextraktion versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden mit
-     * dem Merkmal {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
-     * alle möglichen Fahrbeziehungspermutationen summiert.
+     * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft, ob der letzte
+     * Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59
+     * aufweist.
+     * - Die im Parameter übergebenen Zeitintervalle werden mit einem Index für die Sortierung bei der
+     * Datenextraktion versehen.
+     * - Die im Parameter übergebenen Zeitintervalle werden mit dem Merkmal
+     * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
+     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über alle möglichen
+     * Fahrbeziehungspermutationen summiert.
      * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle
-     * werden die gleitenden Spitzenstunden ermittelt.
+     * Zeitintervalle werden die gleitenden Spitzenstunden ermittelt.
      * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle
-     * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
+     * Zeitintervalle werden die Summen für die einzelnen
+     * {@link Zeitblock}e gebildet.
      *
-     * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor
-     *            der eigentlichen Persistierung.
+     * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
+     *            Persistierung.
      * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
-     * @return Alle persistierten {@link Zeitintervall}e.
      */
-    public List<Zeitintervall> aufbereitenUndPersistieren(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
+    public void aufbereitenUndPersistieren(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
 
         /*
          * - Die im Parameter übergebenen Zeitintervalle werden überprüft,
@@ -143,29 +138,26 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
-        return persistZeitintervalle(allZeitintervalle);
+        persistZeitintervalle(allZeitintervalle);
     }
 
     /**
      * Persistierung der Aufbereiteten {@link Zeitintervall}e in der relationalen Datenbank.
      *
      * @param toPersist zu speichernde Zeitintervalle
-     * @return Alle persistierten {@link Zeitintervall}e.
      */
-    public List<Zeitintervall> persistZeitintervalle(final List<Zeitintervall> toPersist) {
-        Iterable<Zeitintervall> persistedZeitintervalle = zeitintervallRepository.saveAll(toPersist);
-        zeitintervallRepository.flush();
-        return StreamSupport.stream(persistedZeitintervalle.spliterator(), false)
-                .collect(Collectors.toList());
+    public void persistZeitintervalle(final List<Zeitintervall> toPersist) {
+        log.debug("persistZeitintervalle");
+        zeitintervallRepository.saveAllAndFlush(toPersist);
     }
 
     @Transactional
-    public List<Zeitintervall> checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
+    public void checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(UUID.fromString(zaehlung.getId()),
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
         // überprüfen, ob alle Zeitintervalle vorhanden sind
         if (numberOfIntervalle == 0 || numberOfIntervalle == zeitintervalle.size()) {
-            return aufbereitenUndPersistieren(zeitintervalle, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+            aufbereitenUndPersistieren(zeitintervalle, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
                     .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
         } else {
             throw new PlausibilityException("Die Anzahl der übermittelten Zeitintervalle stimmt nicht mit den erwarteten überein");
@@ -173,11 +165,13 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    public boolean deleteZeitintervalleByFahrbeziehungId(final String fahrbeziehungId) {
-        final UUID fahrbeziehungIdAsUUID = UUID.fromString(fahrbeziehungId);
-        zeitintervallRepository.deleteAllByFahrbeziehungId(fahrbeziehungIdAsUUID);
-        zeitintervallRepository.flush();
-        return !zeitintervallRepository.existsByFahrbeziehungId(fahrbeziehungIdAsUUID);
+    public void deleteZeitintervalleByFahrbeziehungId(final List<String> fahrbeziehungIds) {
+        final var uuidsOfFahrbeziehungen = CollectionUtils
+                .emptyIfNull(fahrbeziehungIds)
+                .stream()
+                .map(UUID::fromString)
+                .toList();
+        zeitintervallRepository.deleteByFahrbeziehungIdIn(uuidsOfFahrbeziehungen);
     }
 
     @Transactional

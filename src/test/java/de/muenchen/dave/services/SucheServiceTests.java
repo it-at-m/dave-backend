@@ -26,7 +26,12 @@ import static org.hamcrest.Matchers.is;
 @Slf4j
 public class SucheServiceTests {
 
-    private SucheService service = new SucheService(
+    private final SucheService service = new SucheService(
+            null,
+            null,
+            null,
+            null,
+            null,
             null,
             null,
             null,
@@ -64,7 +69,7 @@ public class SucheServiceTests {
         ZaehlartenKarteDTO zaehlartenKarte = new ZaehlartenKarteDTO();
         zaehlartenKarte.setLatitude(1.0);
         zaehlartenKarte.setLongitude(2.0);
-        zaehlartenKarte.setZaehlarten(new TreeSet<>(Arrays.asList("H")));
+        zaehlartenKarte.setZaehlarten(new TreeSet<>(List.of("H")));
         expected.add(zaehlartenKarte);
 
         zaehlartenKarte = new ZaehlartenKarteDTO();
@@ -99,26 +104,26 @@ public class SucheServiceTests {
     }
 
     @Test
-    public void testCleanseDate() {
-        String d1 = this.service.cleanseDate("12.1.16");
+    public void testCleanseDateAndReturnIfWordIsDateOrJustReturnWord() {
+        String d1 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("12.1.16");
         assertThat(d1, is(equalTo("12.01.2016")));
 
-        String d2 = this.service.cleanseDate("foo");
+        String d2 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("foo");
         assertThat(d2, is(equalTo("foo")));
 
-        String d3 = this.service.cleanseDate("12.3");
+        String d3 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("12.3");
         assertThat(d3, is(equalTo("12.03.")));
 
-        String d4 = this.service.cleanseDate("12");
+        String d4 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("12");
         assertThat(d4, is(equalTo("12")));
 
-        String d5 = this.service.cleanseDate("1");
+        String d5 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("1");
         assertThat(d5, is(equalTo("1")));
 
-        String d6 = this.service.cleanseDate("3.");
+        String d6 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("3.");
         assertThat(d6, is(equalTo("03.")));
 
-        String d7 = this.service.cleanseDate("12.1.90");
+        String d7 = this.service.cleanseDateAndReturnIfWordIsDateOrJustReturnWord("12.1.90");
         assertThat(d7, is(equalTo("12.01.1990")));
     }
 
@@ -176,7 +181,7 @@ public class SucheServiceTests {
         // Test mit "foo" (klein)
         Optional<Zaehlung> optionalZaehlung4 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg foo Bla");
         assertThat(optionalZaehlung4.isPresent(), is(true));
-        assertThat(optionalZaehlung4.get(), is(equalTo(z2)));
+        assertThat(optionalZaehlung4.get(), is(equalTo(z1)));
 
         // Test mit falschem Text
         Optional<Zaehlung> optionalZaehlung5 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foobar Bla");

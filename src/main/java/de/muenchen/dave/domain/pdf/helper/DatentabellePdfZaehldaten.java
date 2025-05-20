@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.pdf.helper;
 
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class DatentabellePdfZaehldaten {
@@ -19,6 +20,8 @@ public class DatentabellePdfZaehldaten {
     private boolean showLastkraftwagen;
 
     private boolean showLastzuege;
+
+    private boolean showLieferwagen;
 
     private boolean showBusse;
 
@@ -55,8 +58,8 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Gibt die Spaltenbreite für Fahrzeugtypen zurück
-     * 42 steht dabei für 42% der Gesamtbreite (Fahrzeugtypen sollen in der Tabelle optimalerweise 42%
+     * Gibt die Spaltenbreite für Fahrzeugtypen zurück 42 steht dabei für 42% der Gesamtbreite
+     * (Fahrzeugtypen sollen in der Tabelle optimalerweise 42%
      * einnehmen)
      *
      * @return Prozentsatz als int
@@ -66,8 +69,8 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Gibt die Spaltenbreite für Fahrzeugklassen zurück
-     * 21 steht dabei für 21% der Gesamtbreite (Fahrzeugklassen sollen in der Tabelle optimalerweise 21%
+     * Gibt die Spaltenbreite für Fahrzeugklassen zurück 21 steht dabei für 21% der Gesamtbreite
+     * (Fahrzeugklassen sollen in der Tabelle optimalerweise 21%
      * einnehmen)
      *
      * @return Prozentsatz als int
@@ -77,8 +80,8 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Gibt die Spaltenbreite für Anteile zurück
-     * 8 steht dabei für 8% der Gesamtbreite (Anteile sollen in der Tabelle optimalerweise 8% einnehmen)
+     * Gibt die Spaltenbreite für Anteile zurück 8 steht dabei für 8% der Gesamtbreite (Anteile sollen
+     * in der Tabelle optimalerweise 8% einnehmen)
      *
      * @return Prozentsatz als int
      */
@@ -102,8 +105,9 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Fahrzeugtypen ist.
-     * Diese wird benötigt um zu wissen, wo in der Tabelle eine Border gezeichnet werden soll.
+     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Fahrzeugtypen ist. Diese
+     * wird benötigt um zu wissen, wo in der Tabelle eine Border
+     * gezeichnet werden soll.
      *
      * @return String, der im Mustache Template als CSS-Klasse hinterlegt ist
      */
@@ -116,6 +120,8 @@ public class DatentabellePdfZaehldaten {
             return "kraftraeder";
         } else if (isShowBusse()) {
             return "busse";
+        } else if (isShowLieferwagen()) {
+            return "lieferwagen";
         } else if (isShowLastzuege()) {
             return "lastzuege";
         } else if (isShowLastkraftwagen()) {
@@ -126,8 +132,9 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Fahrzeugklassen ist.
-     * Diese wird benötigt um zu wissen, wo in der Tabelle eine Border gezeichnet werden soll.
+     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Fahrzeugklassen ist. Diese
+     * wird benötigt um zu wissen, wo in der Tabelle eine
+     * Border gezeichnet werden soll.
      *
      * @return String, der im Mustache Template als CSS-Klasse hinterlegt ist
      */
@@ -142,8 +149,9 @@ public class DatentabellePdfZaehldaten {
     }
 
     /**
-     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Anteilen ist.
-     * Diese wird benötigt um zu wissen, wo in der Tabelle eine Border gezeichnet werden soll.
+     * Hier wird berechnet, welche die "rechteste" ausgewählte Spalte bei den Anteilen ist. Diese wird
+     * benötigt um zu wissen, wo in der Tabelle eine Border
+     * gezeichnet werden soll.
      *
      * @return String, der im Mustache Template als CSS-Klasse hinterlegt ist
      */

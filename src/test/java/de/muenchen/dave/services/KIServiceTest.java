@@ -1,9 +1,9 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.KIPredictionResult;
-import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
 import de.muenchen.dave.domain.KIZeitintervall;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import org.junit.jupiter.api.BeforeAll;

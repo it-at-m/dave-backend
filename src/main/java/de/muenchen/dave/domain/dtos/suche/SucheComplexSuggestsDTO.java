@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.dtos.suche;
 
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class SucheComplexSuggestsDTO {
@@ -11,5 +12,7 @@ public class SucheComplexSuggestsDTO {
     List<SucheZaehlstelleSuggestDTO> zaehlstellenSuggests;
 
     List<SucheZaehlungSuggestDTO> zaehlungenSuggests;
+
+    List<SucheMessstelleSuggestDTO> messstellenSuggests;
 
 }

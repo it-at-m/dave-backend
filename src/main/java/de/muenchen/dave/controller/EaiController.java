@@ -11,12 +11,10 @@ import de.muenchen.dave.services.auswertung.AuswertungSpitzenstundeService;
 import de.muenchen.dave.services.auswertung.AuswertungVisumService;
 import de.muenchen.dave.services.auswertung.AuswertungZaehlstellenKoordinateService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import java.time.LocalDate;
-import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -28,6 +26,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Der Controller stellt alle Endpunkt zur Verfügung welche ausschließlich durch die EAI aufgerufen
@@ -76,7 +77,8 @@ public class EaiController {
      * @param zeitauswahl darf nur die Ausprägung
      *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
      *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} annehmen.
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS}
+     *            annehmen.
      * @return die Spitzenstundenauswertung.
      */
     @GetMapping(value = "/lade-auswertung-spitzenstunde", produces = MediaType.APPLICATION_JSON_VALUE)

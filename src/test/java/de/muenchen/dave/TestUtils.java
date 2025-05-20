@@ -10,10 +10,6 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
-import org.junit.jupiter.api.Assertions;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -22,6 +18,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+import org.junit.jupiter.api.Assertions;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestUtils {
@@ -48,14 +49,15 @@ public final class TestUtils {
 
     /**
      * @param zaehlungId Die Zaehlungs-ID
-     * @param startUhrzeit Die Startuhrzeit für den Zeitintervall.
-     *            Die Endeuhrzeit entspricht der um 15 Minuten erhöhten Startuhrzeit.
+     * @param startUhrzeit Die Startuhrzeit für den Zeitintervall. Die Endeuhrzeit entspricht der um 15
+     *            Minuten erhöhten Startuhrzeit.
      * @param value Der Wert wird bei alle Fahrzeugklassen und den hochgerechneten Fahrzeugkategorien
      *            gesetzt.
      * @param vonFahrbeziehung Die Nummer des Knotenarms
      * @param nachFahrbeziehung Die Nummer des Knotenarms
      * @param fahrbewegungKreisverkehr Information ob {@link FahrbewegungKreisverkehr#HINEIN},
-     *            {@link FahrbewegungKreisverkehr#HERAUS} und {@link FahrbewegungKreisverkehr#VORBEI}.
+     *            {@link FahrbewegungKreisverkehr#HERAUS} und
+     *            {@link FahrbewegungKreisverkehr#VORBEI}.
      * @return
      */
     public static Zeitintervall createZeitintervall(final UUID zaehlungId,
@@ -95,11 +97,11 @@ public final class TestUtils {
      * @param privateMethodName Der Name der privaten statischen Methode.
      * @param classToTest Die Klasse in welcher diese statische Methode vorhanden ist.
      * @param classMethodParameter Die Typen {@link Class} welche als Parameter in der statischen
-     *            Methode erwartet werden.
-     *            Aufgelistet entsprechend der Parameterreihenfolge.
+     *            Methode erwartet werden. Aufgelistet entsprechend der
+     *            Parameterreihenfolge.
      * @param valueMethodParameter Die Werte der Parameter welcher in der statischen Methode erwartet
-     *            werden.
-     *            Aufgelistet entsprechend der Parameterreihenfolge.
+     *            werden. Aufgelistet entsprechend der
+     *            Parameterreihenfolge.
      * @param returnType Der Typ {@link Class} welcher von der statischen Methode zurückgegeben wird.
      * @param <ReturnType>
      * @param <ClassToTest>

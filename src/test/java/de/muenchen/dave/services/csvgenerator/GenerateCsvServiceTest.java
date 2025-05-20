@@ -18,24 +18,6 @@ class GenerateCsvServiceTest {
 
     final GenerateCsvService csvService = new GenerateCsvService(null, null, null);
 
-    @Test
-    public void getData() {
-        final String data1 = csvService.getData(GenerateCsvServiceTest.getOptionsDTO(), GenerateCsvServiceTest.getDatentabelleCsvZaehldatumTyp1());
-        final String dataExpected1 = "08:00;08:15;Stunde;1;2;3;4;5;6;8;9;10;1.1%;1.2%;13;";
-        assertThat(data1, is(dataExpected1));
-
-        final String data2 = csvService.getData(GenerateCsvServiceTest.getOptionsDTO(), GenerateCsvServiceTest.getDatentabelleCsvZaehldatumTyp2());
-        final String dataExpected2 = "08:00;08:15;;1;2;3;4;;6;8;9;10;1.1%;1.2%;13;";
-        assertThat(data2, is(dataExpected2));
-    }
-
-    @Test
-    public void getHeader() {
-        final String header = csvService.getHeader(GenerateCsvServiceTest.getOptionsDTO());
-        final String headerExpected = "von;bis;;Pkw;Lkw;Lz;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;PKW-Einheiten;";
-        assertThat(header, is(headerExpected));
-    }
-
     private static DatentabelleCsvZaehldatum getDatentabelleCsvZaehldatumTyp1() {
         final DatentabelleCsvZaehldatum table = new DatentabelleCsvZaehldatum();
 
@@ -115,5 +97,23 @@ class GenerateCsvServiceTest {
         optionsDTO.setNachKnotenarm(null);
 
         return optionsDTO;
+    }
+
+    @Test
+    public void getData() {
+        final String data1 = csvService.getData(GenerateCsvServiceTest.getOptionsDTO(), GenerateCsvServiceTest.getDatentabelleCsvZaehldatumTyp1());
+        final String dataExpected1 = "08:00;08:15;Stunde;1;2;3;4;5;6;8;9;10;1.1%;1.2%;13;";
+        assertThat(data1, is(dataExpected1));
+
+        final String data2 = csvService.getData(GenerateCsvServiceTest.getOptionsDTO(), GenerateCsvServiceTest.getDatentabelleCsvZaehldatumTyp2());
+        final String dataExpected2 = "08:00;08:15;;1;2;3;4;;6;8;9;10;1.1%;1.2%;13;";
+        assertThat(data2, is(dataExpected2));
+    }
+
+    @Test
+    public void getHeader() {
+        final String header = csvService.getHeader(GenerateCsvServiceTest.getOptionsDTO());
+        final String headerExpected = "von;bis;;Pkw;Lkw;Lz;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;PKW-Einheiten;";
+        assertThat(header, is(headerExpected));
     }
 }

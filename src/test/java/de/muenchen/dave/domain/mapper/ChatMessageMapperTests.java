@@ -19,9 +19,8 @@ import static org.hamcrest.Matchers.hasProperty;
 @Slf4j
 public class ChatMessageMapperTests {
 
-    private final ChatMessageMapper mapper = new ChatMessageMapperImpl();
-
     private static final ZoneId ZONE = ZoneId.of("Europe/Berlin");
+    private final ChatMessageMapper mapper = new ChatMessageMapperImpl();
 
     @Test
     public void testDto2bean() {

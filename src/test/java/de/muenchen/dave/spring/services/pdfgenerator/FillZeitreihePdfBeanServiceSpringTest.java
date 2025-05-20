@@ -6,11 +6,15 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.pdfgenerator.FillZeitreihePdfBeanService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 
@@ -19,11 +23,21 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 class FillZeitreihePdfBeanServiceSpringTest {
+
+    @MockitoBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockitoBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockitoBean
+    private CustomSuggestIndex customSuggestIndex;
 
     @Autowired
     private FillZeitreihePdfBeanService fillZeitreihePdfBeanService;

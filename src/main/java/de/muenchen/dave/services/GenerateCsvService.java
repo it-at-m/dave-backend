@@ -10,12 +10,13 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -27,11 +28,11 @@ public class GenerateCsvService {
 
     private final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper;
 
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
 
     public GenerateCsvService(final LadeZaehldatenService ladeZaehldatenService,
             final DatentabelleCsvZaehldatumMapper datentabelleCsvZaehldatumMapper,
-            final IndexService indexService) {
+            final ZaehlstelleIndexService indexService) {
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.datentabelleCsvZaehldatumMapper = datentabelleCsvZaehldatumMapper;
         this.indexService = indexService;

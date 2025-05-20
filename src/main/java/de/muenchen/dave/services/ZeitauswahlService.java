@@ -9,6 +9,10 @@ import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -31,9 +32,7 @@ public class ZeitauswahlService {
         this.zeitintervallRepository = zeitintervallRepository;
     }
 
-    public ZeitauswahlDTO determinePossibleZeitauswahl(final String zaehldauer,
-            final String zaehlungId,
-            final boolean sonderzaehlung) {
+    public ZeitauswahlDTO determinePossibleZeitauswahl(final String zaehldauer, final String zaehlungId) {
         final ZeitauswahlDTO optionsZeitauswahl;
         final Zaehldauer zd = Zaehldauer.valueOf(zaehldauer);
 
@@ -42,10 +41,10 @@ public class ZeitauswahlService {
             optionsZeitauswahl = getZeitauswahlFor2x4h();
             break;
         case DAUER_13_STUNDEN:
-            optionsZeitauswahl = getZeitauswahlFor13h(sonderzaehlung);
+            optionsZeitauswahl = getZeitauswahlFor13h();
             break;
         case DAUER_16_STUNDEN:
-            optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId, sonderzaehlung);
+            optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId);
             break;
         case SONSTIGE:
             optionsZeitauswahl = getZeitauswahlForSonstige(zaehlungId);
@@ -81,19 +80,17 @@ public class ZeitauswahlService {
      *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor13h(final boolean sonderzaehlung) {
+    private ZeitauswahlDTO getZeitauswahlFor13h() {
         final ZeitauswahlDTO zeitauswahlDTO = new ZeitauswahlDTO();
         final Set<Zeitblock> blocks = new TreeSet<>();
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_10_15);
         blocks.add(Zeitblock.ZB_15_19);
+        blocks.add(Zeitblock.ZB_06_19);
 
         final Set<Zeitblock> hours = new TreeSet<>();
         blocks.forEach(block -> hours.addAll(getAllHoursOfBlock(block)));
 
-        if (!sonderzaehlung) {
-            blocks.add(Zeitblock.ZB_06_19);
-        }
         zeitauswahlDTO.setBlocks(blocks);
         zeitauswahlDTO.setHours(hours);
         return zeitauswahlDTO;
@@ -102,11 +99,9 @@ public class ZeitauswahlService {
     /**
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor16h(final String id, final boolean sonderzaehlung) {
+    private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
         final ZeitauswahlDTO zeitauswahlDTO = getZeitauswahlDtoByZeitintervalle(id);
-        if (!sonderzaehlung) {
-            zeitauswahlDTO.getBlocks().add(Zeitblock.ZB_06_22);
-        }
+        zeitauswahlDTO.getBlocks().add(Zeitblock.ZB_06_22);
         return zeitauswahlDTO;
     }
 

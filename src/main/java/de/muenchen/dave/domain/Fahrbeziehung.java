@@ -5,24 +5,24 @@
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 
 /**
  * Je nach Kreuzungstyp sind folgende Attribute gesetzt.
  * <p>
  * Kreuzung:
- * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist immer "null".
- * Erstreckt sich ein Zeitintervall von einem Knotenarm zu allen anderen Knotenarmen:
+ * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist immer "null". Erstreckt sich ein
+ * Zeitintervall von einem Knotenarm zu allen anderen Knotenarmen:
  * - {@link Fahrbeziehung#von} mit Wert eingehenden Knotenarms gesetzt.
- * - {@link Fahrbeziehung#nach} ist "null".
- * Erstreckt sich ein Zeitintervall von allen anderen Knotenarmen zu einem Knotenarm:
+ * - {@link Fahrbeziehung#nach} ist "null". Erstreckt sich ein Zeitintervall von allen anderen
+ * Knotenarmen zu einem Knotenarm:
  * - {@link Fahrbeziehung#von} ist "null"
- * - {@link Fahrbeziehung#nach} mit Wert eingehenden Knotenarms gesetzt..
- * Erstreckt sich ein Zeitintervall über alle Fahrbeziehungen:
+ * - {@link Fahrbeziehung#nach} mit Wert eingehenden Knotenarms gesetzt.. Erstreckt sich ein
+ * Zeitintervall über alle Fahrbeziehungen:
  * - {@link Fahrbeziehung#von} ist "null".
  * - {@link Fahrbeziehung#nach} ist "null".
  * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist "null".
@@ -30,8 +30,8 @@ import lombok.Data;
  * Kreisverkehr:
  * - {@link Fahrbeziehung#von} ist immer gesetzt und repräsentiert den Knotenarm
  * - {@link Fahrbeziehung#nach} ist "null".
- * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist mit Wert gesetzt.
- * Erstreckt sich ein Zeitintervall über alle Fahrbeziehungen:
+ * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist mit Wert gesetzt. Erstreckt sich ein
+ * Zeitintervall über alle Fahrbeziehungen:
  * - {@link Fahrbeziehung#von} ist "null".
  * - {@link Fahrbeziehung#nach} ist "null".
  * - {@link Fahrbeziehung#fahrbewegungKreisverkehr} ist "null".

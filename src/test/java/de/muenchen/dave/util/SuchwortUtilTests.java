@@ -3,7 +3,6 @@ package de.muenchen.dave.util;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -27,7 +26,7 @@ public class SuchwortUtilTests {
     @Test
     public void testGenerateSuchworteOfZaehlstelle() {
         final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setStadtbezirk(Stadtbezirk.PASING_OBERMENZING.getBezeichnung());
+        zaehlstelle.setStadtbezirk("Pasing-Obermenzing");
         final List<String> expected = Arrays.asList("Pasing", "Obermenzing", "Pasing-Obermenzing");
         final Set<String> suchworte = SuchwortUtil.generateSuchworteOfZaehlstelle(zaehlstelle);
         assertThat(suchworte, containsInAnyOrder(expected.toArray(new String[0])));

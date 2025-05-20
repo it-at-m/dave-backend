@@ -12,14 +12,15 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -28,20 +29,20 @@ public class ProcessZaehldatenHeatmapService {
     private static final int SPLIT_DIVISOR = 2;
 
     /**
-     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in
-     * das im Parameter ladeZaehldatenHeatmap übergebenen Objekt ein.
-     * Des Weiteren wird ein Legendeneintrag für den Parameter legendEntry gesetzt,
-     * falls dieser noch nicht vorhanden ist.
-     * Zusätzlich werden die Variablen RangeMin und RangeMax gesetzt.
+     * Diese Methode fügt einen einzelnen in der Heatmap darzustellenden Wert in das im Parameter
+     * ladeZaehldatenHeatmap übergebenen Objekt ein. Des Weiteren
+     * wird ein Legendeneintrag für den Parameter legendEntry gesetzt, falls dieser noch nicht vorhanden
+     * ist. Zusätzlich werden die Variablen RangeMin und
+     * RangeMax gesetzt.
      *
      * @param ladeZaehldatenHeatmap Das Objekt in welchem die aufbereiteten Daten vorgehalten werden.
      * @param heatMapEntryIndex Spaltenindex der X-Achse zur Positionierung des Wertes aus Parameter
      *            value in Heatmap.
      * @param klassenKategorienIndex Zeilenindex der Y-Achse zur Positionierung des Wertes aus Parameter
      *            value in Heatmap.
-     * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex,
-     *            in der Heatmap dargestellt werde soll. Des Weiteren wird dieser Wert zur Ermittlung
-     *            von
+     * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in
+     *            der Heatmap dargestellt werde soll. Des
+     *            Weiteren wird dieser Wert zur Ermittlung von
      *            {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
      *            {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
      * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
@@ -88,15 +89,14 @@ public class ProcessZaehldatenHeatmapService {
 
     /**
      * Falls sich in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
-     * befinden, wird das Diagramm in zwei Unterdiagramme aufgeteilt.
-     * Die Aufteilung der Daten für die beiden Unterdiagramme wird in der mitte der X-Achse
-     * des Gesamtdiagramms vorgenommen.
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN} befinden, wird das Diagramm in zwei
+     * Unterdiagramme aufgeteilt. Die Aufteilung der Daten für die beiden Unterdiagramme wird in der
+     * mitte der X-Achse des Gesamtdiagramms vorgenommen.
      *
-     * @param ladeZaehldatenHeatmap Die für das Diagramm aufbereitete Daten.
-     *            Die unterteilung in Unterdiagramme ist noch nicht durchgeführt.
-     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24}
-     *            und {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
+     * @param ladeZaehldatenHeatmap Die für das Diagramm aufbereitete Daten. Die unterteilung in
+     *            Unterdiagramme ist noch nicht durchgeführt.
+     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
+     *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(
             final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
@@ -138,22 +138,21 @@ public class ProcessZaehldatenHeatmapService {
     }
 
     /**
-     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch.
-     * Als Basis zur Datenaufbereitung dienen die im Parameter zaehldatenTable
-     * übergebenen Informationen.
-     * Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien
-     * werden in dieser Methode zur Darstellung in der Heatmap aufbereitet.
+     * Diese Methode führt die Datenaufbereitung für das Heatmap-Diagramm durch. Als Basis zur
+     * Datenaufbereitung dienen die im Parameter zaehldatenTable
+     * übergebenen Informationen. Die in den options gewählten Fahrzeugklassen bzw. Fahrzeugkategorien
+     * werden in dieser Methode zur Darstellung in der Heatmap
+     * aufbereitet.
      * <p>
      * Sind in den options die Werte {@link Zeitblock#ZB_00_24} und
-     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN}
-     * zu finden, so wird die Datenaufbereitung für zwei Unterdiagramme vorgenommen.
-     * Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in zwei Unterdiagramme statt
-     * und die Daten werden für ein Diagramm aufbereitet.
+     * {@link Zaehldauer#DAUER_2_X_4_STUNDEN} zu finden, so wird die Datenaufbereitung für zwei
+     * Unterdiagramme vorgenommen. Ist diese Wertkombination nicht vorhanden, findet keine Aufteilung in
+     * zwei Unterdiagramme statt und die Daten werden für ein
+     * Diagramm aufbereitet.
      * <p>
      * Wenn die Aufteilung in zwei Unterdiagramme vorgenommen wird, werden die beiden Felder
      * {@link LadeZaehldatenHeatmapDTO}#getXAxisDataSecondChart und
-     * {@link LadeZaehldatenHeatmapDTO}#getSeriesEntriesSecondChart
-     * befüllt, die ansonsten leer bleiben.
+     * {@link LadeZaehldatenHeatmapDTO}#getSeriesEntriesSecondChart befüllt, die ansonsten leer bleiben.
      *
      * @param zaehldatenTable Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @param options Die durch den User im Frontend gewählten Optionen.

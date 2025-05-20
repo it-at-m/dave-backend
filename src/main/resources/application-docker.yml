@@ -1,0 +1,81 @@
+server:
+  port: 39146
+
+spring:
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  # Spring JPA
+  h2.console.enabled: true
+  jpa:
+    database: H2
+    hibernate:
+      # always drop and create the db should be the best
+      # configuration for local (development) mode. this
+      # is also the default, that spring offers by convention.
+      # but here explicite:
+      ddl-auto: create-drop
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    # Logging for database operation
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
+    logging.requests: all
+    oauth2:
+      resource:
+        user-info-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/userinfo
+      resourceserver:
+        jwt:
+          issuer-uri: ${SSO_BASE_URL}/auth/realms/${realm}
+          jwk-set-uri: ${SSO_BASE_URL}/auth/realms/${realm}/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            token-uri: ${SSO_BASE_URL}/auth/realms/${realm}/protocol/openid-connect/token
+        registration:
+          keycloak:
+            client-id: dave
+            client-secret: ${SSO_CLIENT_SECRET}
+            authorization-grant-type: client_credentials
+            client-authentication-method: client_secret_post
+
+# Define the local keycloak realm here
+realm: Dave
+
+elasticsearch:
+  user: elastic
+  password:
+  host: localhost
+  port: 9200
+  connectTimeout: 10
+  socketTimeout: 30
+
+dave:
+  zaehlung:
+    status:
+      #      Alle 5 min
+      updater: 0 0/5 * 1/1 * ?
+  email:
+    address: dave-dummy@muenchen.de
+    password: dummy
+    url:
+      adminportal: http://localhost:8085
+      selfserviceportal: http://localhost:8086
+    receiver:
+      # Update-Intervall in Millisekunden für den Email-Abruf
+      update-interval: 5000
+
+  messstelle:
+    cron: 0 0/17 * 1/1 * ?
+    shedlock: 4m
+
+geodaten:
+  eai:
+    url: http://localhost:8088
+

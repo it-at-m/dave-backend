@@ -1,0 +1,763 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DAVE GEODATA EAI",
+    "description": "DAVE GEODATA EAI - Service zum Abfragen von Geoinformationen",
+    "contact": {
+      "name": "DAVE Management",
+      "email": "unbekannt@muenchen.de"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8088",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Messwerte",
+      "description": "API zum Abfragen des FeatureServers für Messwerte."
+    },
+    {
+      "name": "MessstelleOptionsmenuController",
+      "description": "API für Abfragen zum vorbefüllen des OptionsMenues"
+    },
+    {
+      "name": "Messstelle",
+      "description": "API zum Abfragen des FeatureServers für die Messstellen."
+    }
+  ],
+  "paths": {
+    "/messwerte/intervals": {
+      "post": {
+        "tags": [
+          "Messwerte"
+        ],
+        "summary": "Extrahiert die Intervalle und führt eine Aggregation, Summierung und Durchschnittsbildung auf die Intervalle durch. Zum einen wird der Durchschnitt für jeden Messtag je Messquerschnitt der Messstelle über alle Tagesintervalle gebildet.Und zum anderen der Durchschnitt für jeden Messtag je Interval über die selektierten Messquerschnitte.",
+        "operationId": "getIntervalle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesswertRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Intervalle erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messwerte/daily-aggregates": {
+      "post": {
+        "tags": [
+          "Messwerte"
+        ],
+        "summary": "Extrahiert die Tagesaggregate und führt eine Durchschnittsbildung auf die Tagesaggregate pro Messquerschnitt durch.",
+        "operationId": "getMeanOfDailyAggregatesPerMQ",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagesaggregatRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Tagesaggregate erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/MessstelleOptionsmenu/validateTagesTyp": {
+      "post": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
+        "operationId": "isTagesTypDataValid",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChosenTagesTypValidRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "TagesTyp erfolgreich validiert",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/messstelle": {
+      "get": {
+        "tags": [
+          "Messstelle"
+        ],
+        "summary": "Holt alle relevanten Messstellen.",
+        "operationId": "getMessstellen",
+        "responses": {
+          "200": {
+            "description": "Messstellen erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MessstelleDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
+      "get": {
+        "tags": [
+          "MessstelleOptionsmenuController"
+        ],
+        "summary": "Holt alle nicht Plausiblen Tage.",
+        "operationId": "getNichtPlausibleTage",
+        "parameters": [
+          {
+            "name": "messstelle_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "second": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nano": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MesswertRequestDto": {
+        "required": [
+          "allMessquerschnittIds",
+          "endDate",
+          "endTime",
+          "intervalInMinutes",
+          "selectedMessquerschnittIds",
+          "startDate",
+          "startTime",
+          "tagesTyp"
+        ],
+        "type": "object",
+        "properties": {
+          "allMessquerschnittIds": {
+            "type": "array",
+            "description": "Alle Messquerschnitt-Ids der Messstelle",
+            "items": {
+              "type": "integer",
+              "description": "Alle Messquerschnitt-Ids der Messstelle",
+              "format": "int32"
+            }
+          },
+          "selectedMessquerschnittIds": {
+            "type": "array",
+            "description": "Die ausgewählten Messquerschnitt-Ids der Messstelle welche angezeigt werden sollen.",
+            "items": {
+              "type": "integer",
+              "description": "Die ausgewählten Messquerschnitt-Ids der Messstelle welche angezeigt werden sollen.",
+              "format": "int32"
+            }
+          },
+          "intervalInMinutes": {
+            "type": "string",
+            "enum": [
+              "INTERVAL_15",
+              "INTERVAL_30",
+              "INTERVAL_60"
+            ]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/LocalTime"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          }
+        }
+      },
+      "InformationResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "INFORMATION_SUCCESS",
+              "INFORMATION_NEUTRAL"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "spanId": {
+            "type": "string"
+          },
+          "httpStatus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "originalException": {
+            "type": "string"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IntervalDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlPkw": {
+            "type": "number"
+          },
+          "anzahlPkwA": {
+            "type": "number"
+          },
+          "anzahlLfw": {
+            "type": "number"
+          },
+          "anzahlKrad": {
+            "type": "number"
+          },
+          "anzahlLkw": {
+            "type": "number"
+          },
+          "anzahlLkwA": {
+            "type": "number"
+          },
+          "anzahlSattelKfz": {
+            "type": "number"
+          },
+          "anzahlBus": {
+            "type": "number"
+          },
+          "anzahlNkKfz": {
+            "type": "number"
+          },
+          "anzahlRad": {
+            "type": "number"
+          },
+          "summeAllePkw": {
+            "type": "number"
+          },
+          "summeLastzug": {
+            "type": "number"
+          },
+          "summeGueterverkehr": {
+            "type": "number"
+          },
+          "summeSchwerverkehr": {
+            "type": "number"
+          },
+          "summeKraftfahrzeugverkehr": {
+            "type": "number"
+          },
+          "prozentSchwerverkehr": {
+            "type": "number"
+          },
+          "prozentGueterverkehr": {
+            "type": "number"
+          },
+          "datumUhrzeitVon": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "datumUhrzeitBis": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          }
+        },
+        "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids."
+      },
+      "IntervalResponseDto": {
+        "type": "object",
+        "properties": {
+          "meanOfIntervalsForEachMqIdByMesstag": {
+            "type": "array",
+            "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle.",
+            "items": {
+              "$ref": "#/components/schemas/IntervalsForMqIdDto"
+            }
+          },
+          "meanOfMqIdForEachIntervalByMesstag": {
+            "type": "array",
+            "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids.",
+            "items": {
+              "$ref": "#/components/schemas/IntervalDto"
+            }
+          },
+          "includedMeasuringDays": {
+            "type": "integer",
+            "description": "Anzahl der Messtage, die in die Auswertung eingeflossenen sind.",
+            "format": "int32"
+          }
+        }
+      },
+      "IntervalsForMqIdDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meanOfIntervalsByMesstag": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntervalDto"
+            }
+          }
+        },
+        "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle."
+      },
+      "TagesaggregatRequestDto": {
+        "required": [
+          "endDate",
+          "messquerschnittIds",
+          "startDate",
+          "tagesTyp"
+        ],
+        "type": "object",
+        "properties": {
+          "messquerschnittIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          }
+        }
+      },
+      "TagesaggregatDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlPkw": {
+            "type": "number"
+          },
+          "anzahlPkwA": {
+            "type": "number"
+          },
+          "anzahlLfw": {
+            "type": "number"
+          },
+          "anzahlKrad": {
+            "type": "number"
+          },
+          "anzahlLkw": {
+            "type": "number"
+          },
+          "anzahlLkwA": {
+            "type": "number"
+          },
+          "anzahlSattelKfz": {
+            "type": "number"
+          },
+          "anzahlBus": {
+            "type": "number"
+          },
+          "anzahlNkKfz": {
+            "type": "number"
+          },
+          "anzahlRad": {
+            "type": "number"
+          },
+          "summeAllePkw": {
+            "type": "number"
+          },
+          "summeLastzug": {
+            "type": "number"
+          },
+          "summeGueterverkehr": {
+            "type": "number"
+          },
+          "summeSchwerverkehr": {
+            "type": "number"
+          },
+          "summeKraftfahrzeugverkehr": {
+            "type": "number"
+          },
+          "prozentSchwerverkehr": {
+            "type": "number"
+          },
+          "prozentGueterverkehr": {
+            "type": "number"
+          },
+          "includedMeasuringDays": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "description": "Summe aller Tagesaggregate über alle angefragten Messquerschnitt-Ids."
+      },
+      "TagesaggregatResponseDto": {
+        "type": "object",
+        "properties": {
+          "meanOfAggregatesForEachMqId": {
+            "type": "array",
+            "description": "Durchschnitt aller Tagesaggregate je angefragten Messquerschnitt-Ids.",
+            "items": {
+              "$ref": "#/components/schemas/TagesaggregatDto"
+            }
+          },
+          "sumOverAllAggregatesOfAllMqId": {
+            "$ref": "#/components/schemas/TagesaggregatDto"
+          }
+        }
+      },
+      "ChosenTagesTypValidRequestDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "tagesTyp": {
+            "type": "string",
+            "enum": [
+              "DTV_W3",
+              "DTV_W5",
+              "SAMSTAG",
+              "SONNTAG_FEIERTAG",
+              "WERKTAG_FERIEN",
+              "DTV"
+            ]
+          }
+        }
+      },
+      "ChosenTagesTypValidDTO": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MessfaehigkeitDto": {
+        "type": "object",
+        "properties": {
+          "gueltigAb": {
+            "type": "string",
+            "format": "date"
+          },
+          "gueltigBis": {
+            "type": "string",
+            "format": "date"
+          },
+          "fahrzeugklassen": {
+            "type": "string"
+          },
+          "intervall": {
+            "type": "string"
+          }
+        }
+      },
+      "MessquerschnittDto": {
+        "type": "object",
+        "properties": {
+          "mqId": {
+            "type": "string"
+          },
+          "mstId": {
+            "type": "string"
+          },
+          "strassenname": {
+            "type": "string"
+          },
+          "lageMessquerschnitt": {
+            "type": "string"
+          },
+          "fahrtrichtung": {
+            "type": "string"
+          },
+          "anzahlFahrspuren": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anzahlDetektoren": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "MessstelleDto": {
+        "type": "object",
+        "properties": {
+          "mstId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "IN_PLANUNG",
+              "IN_BESTAND",
+              "AUSSER_BETRIEB",
+              "ABGEBAUT",
+              "UNBEKANNT"
+            ]
+          },
+          "realisierungsdatum": {
+            "type": "string",
+            "format": "date"
+          },
+          "abbaudatum": {
+            "type": "string",
+            "format": "date"
+          },
+          "name": {
+            "type": "string"
+          },
+          "stadtbezirkNummer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bemerkung": {
+            "type": "string"
+          },
+          "datumLetztePlausibleMessung": {
+            "type": "string",
+            "format": "date"
+          },
+          "fahrzeugKlassen": {
+            "type": "string"
+          },
+          "detektierteVerkehrsarten": {
+            "type": "string"
+          },
+          "hersteller": {
+            "type": "string"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "messquerschnitte": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessquerschnittDto"
+            }
+          },
+          "messfaehigkeiten": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessfaehigkeitDto"
+            }
+          }
+        }
+      },
+      "NichtPlausibleTageDto": {
+        "type": "object",
+        "properties": {
+          "nichtPlausibleTage": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        }
+      }
+    }
+  }
+}

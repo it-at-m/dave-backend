@@ -17,14 +17,17 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.GenerateCsvService;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,19 +42,19 @@ import static org.mockito.Mockito.when;
 
 /**
  * In dieser Testfile werden einige Objekte mithilfe eines JSON-Strings erstellt, welcher in der
- * Produktion im Debug Mode generiert wurde.
- * Um ein aktuelles JSON zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das
- * gewünschte Objekt existiert
- * einen Breakpoint setzen, den Test hier debuggen und dort im Evaluator folgenden Code ausführen:
+ * Produktion im Debug Mode generiert wurde. Um ein aktuelles JSON
+ * zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das gewünschte Objekt
+ * existiert einen Breakpoint setzen, den Test hier debuggen und
+ * dort im Evaluator folgenden Code ausführen:
  * <p>
- * Gson gson = new Gson();
- * gson.toJson(variablenNameGewuenschtesObjekt);
+ * Gson gson = new Gson(); gson.toJson(variablenNameGewuenschtesObjekt);
  * <p>
  * Resultierenden String dann hier an die entsprechende Stelle (gson.fromJson) kopieren.
  */
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class GenerateCsvServiceSpringTest {
 
@@ -60,11 +63,20 @@ public class GenerateCsvServiceSpringTest {
     @Autowired
     private GenerateCsvService generateCsvService;
 
-    @MockBean
+    @MockitoBean
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
-    private IndexService indexService;
+    @MockitoBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
+    @MockitoBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockitoBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockitoBean
+    private ZaehlstelleIndexService indexService;
 
     private static Zaehlung getZaehlung() {
         Zaehlung zaehlung = new Zaehlung();

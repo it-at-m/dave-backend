@@ -1,13 +1,15 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2023
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.configuration.nfcconverter;
 
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
+
 import org.apache.commons.lang3.NotImplementedException;
 
 /**
@@ -40,5 +42,4 @@ public class NfcServletInputStream extends ServletInputStream {
     public void setReadListener(final ReadListener listener) {
         throw new NotImplementedException("Not implemented");
     }
-
 }

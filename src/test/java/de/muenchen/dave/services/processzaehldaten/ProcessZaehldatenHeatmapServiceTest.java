@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.is;
 
 class ProcessZaehldatenHeatmapServiceTest {
 
-    private ProcessZaehldatenHeatmapService processZaehldatenHeatmapService = new ProcessZaehldatenHeatmapService();
+    private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService = new ProcessZaehldatenHeatmapService();
 
     private LadeZaehldatenTableDTO zaehldatenTable;
 
@@ -267,11 +267,11 @@ class ProcessZaehldatenHeatmapServiceTest {
                 10,
                 "PKW");
 
-        assertThat(ladeZaehldatenHeatmap.getLegend(), is(Arrays.asList("PKW")));
+        assertThat(ladeZaehldatenHeatmap.getLegend(), is(List.of("PKW")));
         assertThat(ladeZaehldatenHeatmap.getRangeMax(), is(10));
         assertThat(ladeZaehldatenHeatmap.getRangeMin(), is(0));
         assertThat(ladeZaehldatenHeatmap.getXAxisDataFirstChart(), is(new ArrayList<>()));
-        assertThat(ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(), is(Arrays.asList(Arrays.asList(0, 1, 10))));
+        assertThat(ladeZaehldatenHeatmap.getSeriesEntriesFirstChart(), is(List.of(Arrays.asList(0, 1, 10))));
 
         ProcessZaehldatenHeatmapService.insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                 ladeZaehldatenHeatmap,

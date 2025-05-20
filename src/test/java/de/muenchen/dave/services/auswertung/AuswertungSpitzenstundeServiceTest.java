@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 @Slf4j
 class AuswertungSpitzenstundeServiceTest {
 
-    private AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null);
+    private final AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null);
 
     @Test
     void getSortingIndex() {

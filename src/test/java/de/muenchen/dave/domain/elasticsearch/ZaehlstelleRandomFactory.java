@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ZaehlstelleRandomFactory {
-    private final static FakeValuesService service = new FakeValuesService(new Locale("test"), new RandomService());
+    private final static FakeValuesService service = new FakeValuesService(new Locale.Builder().setLanguage("test").build(), new RandomService());
     private final static String BEZIRKNUMMER = "bezirknummer";
     private final static String BEZIRK = "bezirk";
     private final static String LAT = "lat";
@@ -24,8 +24,7 @@ public class ZaehlstelleRandomFactory {
     private final static String GEO = "geo";
 
     /**
-     * Creates a random "zaehlstelle". You can find the data under
-     * /test/resources/test.yml.
+     * Creates a random "zaehlstelle". You can find the data under /test/resources/test.yml.
      *
      * @return
      */
@@ -40,7 +39,7 @@ public class ZaehlstelleRandomFactory {
         // Zaehlungen
         List<Zaehlung> zls = ZaehlungRandomFactory.getSome();
         z.setZaehlungen(zls);
-        Zaehlung zl1 = IndexServiceUtils.getLetzteZaehlung(zls);
+        Zaehlung zl1 = IndexServiceUtils.getLetzteAktiveZaehlung(zls);
         z.setLetzteZaehlungMonat(zl1.getMonat());
         z.setLetzteZaehlungMonatNummer(zl1.getDatum().getMonthValue());
         z.setGrundLetzteZaehlung(zl1.getZaehlsituation());

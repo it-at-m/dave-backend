@@ -3,8 +3,7 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.InfoMessageService;
-import java.util.List;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -55,9 +56,11 @@ public class InfoMessageController {
      *
      * @return Die InfoMessage
      */
-    @PreAuthorize("hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
-            " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
+    )
     @GetMapping(value = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<InfoMessageDTO> getActiveInfoMessage() {

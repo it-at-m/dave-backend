@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.KIZeitintervall;
+import de.muenchen.dave.domain.Zeitintervall;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

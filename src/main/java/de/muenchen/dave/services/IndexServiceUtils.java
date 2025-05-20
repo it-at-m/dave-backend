@@ -1,22 +1,21 @@
 package de.muenchen.dave.services;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.dtos.TooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Stadtbezirk;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import de.muenchen.dave.domain.enums.Status;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -42,22 +41,6 @@ public final class IndexServiceUtils {
 
     public static List<String> splitStrings(String s) {
         return Splitter.on(",").omitEmptyStrings().trimResults().splitToList(s);
-    }
-
-    /**
-     * Liefert den Stadbezirksnamen für die Stadbezirksnummer.
-     *
-     * @param stadtbezirk die Nummer des Stadtbezirk.
-     * @return Die Bezeichnung des Stadtbezirks.
-     */
-    public static String getStadtbezirkBezeichnung(int stadtbezirk) {
-        Map<Integer, String> stadtbezirke = Stadtbezirk.getEnumattributesAsMap();
-        if (stadtbezirke.containsKey(stadtbezirk)) {
-            return stadtbezirke.get(stadtbezirk);
-        } else {
-            log.error("Es wurde kein Stadtbezirk mit der Nummer {} gefunden.", stadtbezirk);
-            return "";
-        }
     }
 
     /**
@@ -104,21 +87,18 @@ public final class IndexServiceUtils {
      * @param zs Zaehlungen
      * @return aktuellste Zaehlung
      */
-    public static Zaehlung getLetzteZaehlung(List<Zaehlung> zs) {
-        zs.sort(Comparator.comparing(Zaehlung::getDatum));
-
-        if (!zs.isEmpty()) {
-            return zs.get(zs.size() - 1);
-        } else {
-            log.warn("List of 'Zaehlungen' is empty. I can't give you the first entry");
-            return null;
-        }
+    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zs) {
+        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).max(Comparator.comparing(Zaehlung::getDatum))
+                .orElseGet(() -> {
+                    log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
+                    return null;
+                });
     }
 
     /**
      * @param datum für welches der Tagestyp ermittelt werden soll.
-     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben.
-     *         Andernfalls wird der Wert "Wochenende" zurückgegeben.
+     * @return Für die Tage Montag bis Freitag wird der Wert "Wochentag" zurückgegeben. Andernfalls wird
+     *         der Wert "Wochenende" zurückgegeben.
      */
     public static String getTagesTyp(final LocalDate datum) {
         final DayOfWeek dayOfWeek = datum.getDayOfWeek();
@@ -134,37 +114,8 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle.
-     * Das DTO wird im Frontend als MouseOver bei einem Marker in der Karte
-     * angezeigt.
-     *
-     * @param stadtbezirk Stadtbezirksname
-     * @param stadtbezirknummer Stadtbezirksnummer als Long
-     * @param nummer Zaehlstellennummer
-     * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
-     * @param datumLetzteZaehlung Datum der letzten Zählung im Format dd.MM.yyyy als String
-     * @param kreuzungsname Kreuzungsname als String
-     * @return TooltipDTO mit allen benötigten Feldern
-     */
-    public static TooltipDTO createTooltip(final String stadtbezirk,
-            final Integer stadtbezirknummer,
-            final String nummer,
-            final Integer anzahlZaehlungen,
-            final String datumLetzteZaehlung,
-            final String kreuzungsname) {
-        final TooltipDTO tooltipDTO = new TooltipDTO();
-        tooltipDTO.setKreuzungsname(kreuzungsname);
-        tooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
-        tooltipDTO.setStadtbezirk(stadtbezirk);
-        tooltipDTO.setStadtbezirknummer(stadtbezirknummer);
-        tooltipDTO.setZaehlstellennnummer(nummer);
-        tooltipDTO.setDatumLetzteZaehlung(datumLetzteZaehlung);
-        return tooltipDTO;
-    }
-
-    /**
-     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung
-     * falls kein expliziter Kreuzungsname gesetzt ist.
+     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung falls
+     * kein expliziter Kreuzungsname gesetzt ist.
      *
      * @param kreuzungsname welcher gegebenenfalls durch die konkatenierten Straßennamen ersetzt wird.
      * @param zaehlung zur Extraktion der Straßennamen.

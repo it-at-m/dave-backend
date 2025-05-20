@@ -12,16 +12,17 @@ import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTableRow;
 import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 public class FillZeitreihePdfBeanService {
@@ -29,12 +30,12 @@ public class FillZeitreihePdfBeanService {
     public static final String DOCUMENT_TITLE_PREFIX = "Zeitreihenvergleich - Zählstelle ";
     public static final String ZUSATZINFORMATIONEN_ZEITREIHE_ZAEHLSTELLENKOMMENTAR = "Zählstellenkommentar:";
     public static final DateTimeFormatter ZUSATZINFORMATIONEN_ZEITREIHE_DATETIMEFORMATTER_MMMM_YYYY = DateTimeFormatter.ofPattern("MMMM yyyy:");
-    private final IndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
     private final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
     private final ZeitauswahlService zeitauswahlService;
 
-    public FillZeitreihePdfBeanService(final IndexService indexService,
+    public FillZeitreihePdfBeanService(final ZaehlstelleIndexService indexService,
             final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService,
             final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper,
             final ZeitauswahlService zeitauswahlService) {
@@ -47,10 +48,10 @@ public class FillZeitreihePdfBeanService {
     /**
      * Hier werden die
      * {@link de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent}
-     * gesetzt.
-     * Es sollen die einzelnen Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist,
-     * soll auch dieser angezeigt werden.
-     * Der Platz wird nur angezeigt wenn die Straßennamen nicht im Platznamen zu finden sind.
+     * gesetzt. Es sollen die einzelnen
+     * Straßennamen der Zählung angezeigt werden. Wenn ein Platz vorhanden ist, soll auch dieser
+     * angezeigt werden. Der Platz wird nur angezeigt wenn die
+     * Straßennamen nicht im Platznamen zu finden sind.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Im Frontend ausgewählte Zählung
@@ -100,7 +101,7 @@ public class FillZeitreihePdfBeanService {
 
         final ZeitreiheTable zeitreiheTable = new ZeitreiheTable();
         zeitreiheTableOptionsMapper.options2zeitreiheTable(zeitreiheTable, options);
-        zeitreiheTable.setZeitreiheTableRows(getZeitreiheTableDataForPdf(zaehlstelle.getId(), zaehlungId, options));
+        zeitreiheTable.setZeitreiheTableRows(getZeitreiheTableDataForPdf(zaehlungId, options));
         zeitreihePdf.setZeitreiheTable(zeitreiheTable);
 
         FillPdfBeanService.fillPdfBeanWithData(zeitreihePdf, department);
@@ -114,14 +115,13 @@ public class FillZeitreihePdfBeanService {
     /**
      * Lädt die ZeitreiheDaten und wandelt sie in eine Liste von ZeitreiheTableRow um.
      *
-     * @param zaehlstelleId ID der aktuellen Zählstelle im Frontend
      * @param zaehlungId ID der aktuellen Zählung im Frontend
      * @param options Optionen aus dem Frontend
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
-    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(String zaehlstelleId, String zaehlungId, OptionsDTO options) throws DataNotFoundException {
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlstelleId, zaehlungId, options);
+    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDTO options) throws DataNotFoundException {
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {
             final ZeitreiheTableRow ztr = new ZeitreiheTableRow();
@@ -156,9 +156,9 @@ public class FillZeitreihePdfBeanService {
     }
 
     /**
-     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt.
-     * Es sollen der Zählstellenkommentar und alle Kommtare zu allen ausgewählten Zählungen erscheinen,
-     * insofern gesetzt.
+     * Hier wird die @{@link ZusatzinformationenZeitreihePdfComponent} gefüllt. Es sollen der
+     * Zählstellenkommentar und alle Kommtare zu allen ausgewählten
+     * Zählungen erscheinen, insofern gesetzt.
      *
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Aktuell im Frontend gesetzte Zählung
@@ -176,10 +176,7 @@ public class FillZeitreihePdfBeanService {
             zusatzinformationenZeitreihePdfComponentList.add(zusatzinformationenZeitreihe);
         }
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(
-                zaehlung.getZaehldauer(),
-                zaehlung.getId(),
-                zaehlung.getSonderzaehlung());
+        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(zaehlung.getZaehldauer(), zaehlung.getId());
 
         processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options, zeitauswahlDTO)
                 .filter(zaehlungForComment -> StringUtils.isNotEmpty(zaehlungForComment.getKommentar()))

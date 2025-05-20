@@ -6,6 +6,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -22,20 +23,24 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.IndexService;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,33 +52,42 @@ import static org.mockito.Mockito.when;
 
 /**
  * In dieser Testfile werden einige Objekte mithilfe eines JSON-Strings erstellt, welcher in der
- * Produktion im Debug Mode generiert wurde.
- * Um ein aktuelles JSON zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das
- * gewünschte Objekt existiert
- * einen Breakpoint setzen, den Test hier debuggen und dort im Evaluator folgenden Code ausführen:
+ * Produktion im Debug Mode generiert wurde. Um ein aktuelles JSON
+ * zu bekommen, im zu testenden Code an einer entsprechenden Stelle an der das gewünschte Objekt
+ * existiert einen Breakpoint setzen, den Test hier debuggen und
+ * dort im Evaluator folgenden Code ausführen:
  * <p>
- * Gson gson = new Gson();
- * gson.toJson(variablenNameGewuenschtesObjekt);
+ * Gson gson = new Gson(); gson.toJson(variablenNameGewuenschtesObjekt);
  * <p>
  * Resultierenden String dann hier an die entsprechende Stelle (gson.fromJson) kopieren.
  */
-@SpringBootTest(classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-        "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE",
-        "refarch.gracefulshutdown.pre-wait-seconds=0" })
+@SpringBootTest(
+        classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+)
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class FillPdfBeanServiceSpringTest {
 
     public static final String MOCKABLE_ZAEHLUNG_ID = "6837e615-ea6e-4e42-9c6f-f9aadde6599f";
     public static final String DEPARTMENT = "TestOU";
 
+    @MockitoBean
+    private MessstelleIndex messstelleIndex;
+
+    @MockitoBean
+    private CustomSuggestIndex customSuggestIndex;
+
+    @MockitoBean
+    private ZaehlstelleIndex zaehlstelleIndex;
+
     @Autowired
     private FillPdfBeanService fillPdfBeanService;
 
-    @MockBean
+    @MockitoBean
     private LadeZaehldatenService ladeZaehldatenService;
 
-    @MockBean
-    private IndexService indexService;
+    @MockitoBean
+    private ZaehlstelleIndexService indexService;
 
     public static Zaehlung getZaehlung() {
         final Zaehlung zaehlung = new Zaehlung();
@@ -339,6 +353,37 @@ public class FillPdfBeanServiceSpringTest {
         zaehlung.setZaehlart(Zaehlart.Q_.toString());
         result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
         assertThat(result, is("Q_"));
+    }
+
+    @Test
+    public void createChartTitleBelastungsplan_Messstelle() throws DataNotFoundException {
+        this.init();
+
+        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+
+        options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
+        options.setZeitraum(List.of(LocalDate.now()));
+        String actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Tageswert"));
+
+        options.setZeitraum(List.of(LocalDate.now(), LocalDate.now()));
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Durchschnittlicher Tageswert"));
+
+        options.setZeitauswahl(Zeitauswahl.BLOCK.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_00_06);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Block 0 - 6 Uhr"));
+
+        options.setZeitauswahl(Zeitauswahl.STUNDE.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_04_05);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, null);
+        assertThat(actualChartTitle, is("Stunde 4 - 5 Uhr"));
+
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
+        options.setZeitblock(Zeitblock.ZB_06_10);
+        actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(options, Collections.emptyList());
+        assertThat(actualChartTitle, is("Spitzenstunde KFZ (Block 6 - 10 Uhr)"));
     }
 
 }
