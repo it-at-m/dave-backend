@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -101,5 +102,12 @@ public class MessstelleService {
     public Optional<Messquerschnitt> getOptionalOfMessquerschnittByMstId(final String mstId, final String mqId) {
         return messstelleIndexService.findByMstIdOrThrowException(mstId).getMessquerschnitte().stream()
                 .filter(messquerschnitt -> mqId.equalsIgnoreCase(messquerschnitt.getMqId())).findFirst();
+    }
+
+    public void updateLetztePlausibleMessungOfMessstelle(final String mstId, final LocalDate letzePlausibleMessung) {
+        messstelleIndexService.findByMstId(mstId).ifPresent(messstelle -> {
+            messstelle.setDatumLetztePlausibleMessung(letzePlausibleMessung);
+            messstelleIndexService.saveMessstelle(messstelle);
+        });
     }
 }

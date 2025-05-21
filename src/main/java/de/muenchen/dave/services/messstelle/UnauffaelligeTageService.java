@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,10 @@ public class UnauffaelligeTageService {
 
     public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final String mstId) {
         return unauffaelligeTageRepository.findByMstId(mstId);
+    }
+
+    public Optional<UnauffaelligerTag> findFirstByMstIdOrderByKalendertagDatumDesc(final String mstId) {
+        return unauffaelligeTageRepository.findFirstByMstIdOrderByKalendertagDatumDesc(mstId);
     }
 
     public long countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
