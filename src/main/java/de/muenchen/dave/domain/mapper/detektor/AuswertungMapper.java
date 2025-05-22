@@ -6,15 +6,14 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AuswertungMapper {

@@ -7,16 +7,15 @@ package de.muenchen.dave.util.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {

@@ -11,14 +11,13 @@ import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class GanglinieGesamtauswertungServiceTest {
 

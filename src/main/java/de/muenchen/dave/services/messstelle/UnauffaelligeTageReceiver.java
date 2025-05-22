@@ -9,6 +9,11 @@ import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
 import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import de.muenchen.dave.repositories.relationaldb.UnauffaelligeTageRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.text.MessageFormat;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -18,12 +23,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.text.MessageFormat;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

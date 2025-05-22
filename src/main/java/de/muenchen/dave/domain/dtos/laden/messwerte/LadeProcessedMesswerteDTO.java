@@ -7,9 +7,8 @@ package de.muenchen.dave.domain.dtos.laden.messwerte;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 @Data
 public class LadeProcessedMesswerteDTO implements Serializable {

@@ -1,25 +1,24 @@
 package de.muenchen.dave.services;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.services.email.ProcessEmailService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ProcessEmailServiceTest {
 

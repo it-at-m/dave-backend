@@ -1,21 +1,19 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 @Slf4j

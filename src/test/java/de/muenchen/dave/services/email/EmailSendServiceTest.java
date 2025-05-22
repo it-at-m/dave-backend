@@ -10,6 +10,9 @@ import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +23,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

@@ -1,8 +1,7 @@
 package de.muenchen.dave.util.geo;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Locale;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Class representing UTM-coordinates. Based on code from stack overflow.

@@ -1,5 +1,9 @@
 package de.muenchen.dave.services.pdfgenerator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
@@ -27,10 +31,6 @@ import de.muenchen.dave.domain.pdf.helper.GesamtauswertungTableRow;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.BasicMessstellePdf;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -41,10 +41,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 class FillPdfBeanServiceTest {
 

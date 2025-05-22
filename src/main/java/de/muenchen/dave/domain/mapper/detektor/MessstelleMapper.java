@@ -17,6 +17,11 @@ import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -26,12 +31,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleMapper {

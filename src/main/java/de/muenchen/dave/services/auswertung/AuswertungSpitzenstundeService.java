@@ -18,16 +18,15 @@ import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -131,8 +130,8 @@ public class AuswertungSpitzenstundeService {
                 zeitblock,
                 typeSpitzenstunde,
                 kreisverkehr).stream()
-                        .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
-                        .collect(Collectors.toList());
+                .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
+                .collect(Collectors.toList());
     }
 
     /**

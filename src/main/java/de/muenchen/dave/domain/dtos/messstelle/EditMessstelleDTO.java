@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class EditMessstelleDTO implements Serializable {
