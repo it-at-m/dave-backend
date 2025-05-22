@@ -248,7 +248,9 @@ values (gen_random_uuid(),
         NULL,
         NULL,
         NULL,
-        NULL,
+        '[
+          "STUNDE_KOMPLETT"
+        ]'::jsonb,
         NULL,
         NULL,
         NULL,
