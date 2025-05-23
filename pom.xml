@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-backend</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.2.0-SNAPSHOT</version>
     <name>dave_backend</name>
     <description>Backend für DAVe</description>
 
@@ -41,7 +41,7 @@
         <shedlock.version>6.5.0</shedlock.version>
         <openapi-generator-version>7.13.0</openapi-generator-version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
-        <ai.onnxruntime>1.21.1</ai.onnxruntime>
+        <ai.onnxruntime>1.22.0</ai.onnxruntime>
     </properties>
 
     <scm>

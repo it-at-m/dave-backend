@@ -61,6 +61,11 @@ elasticsearch:
   socketTimeout: 30
 
 dave:
+  zaehlung:
+    status-updater:
+    #    disabled
+      cron: "-"
+      shedlock: 1m
   email:
     address: dave-dummy@muenchen.de
     password: dummy

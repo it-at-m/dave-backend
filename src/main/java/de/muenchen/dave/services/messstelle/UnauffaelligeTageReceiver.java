@@ -41,6 +41,8 @@ public class UnauffaelligeTageReceiver {
 
     private final MessstelleApi messstelleApi;
 
+    private final MessstelleService messstelleService;
+
     /**
      * Die Methode aktualisiert regelmäßig die unauffälligen Tage.
      *
@@ -83,6 +85,7 @@ public class UnauffaelligeTageReceiver {
                 .flatMap(dayToCheck -> ListUtils
                         .emptyIfNull(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(dayToCheck, dayToCheck).block().getBody()).stream())
                 .map(this::mapDto2Entity)
+                .peek(this::updateMessstelleWithUnauffaelligerTag)
                 .toList();
 
         log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
@@ -96,6 +99,10 @@ public class UnauffaelligeTageReceiver {
             kalendertag.setNextStartDateToLoadUnauffaelligeTage(true);
             kalendertagRepository.saveAndFlush(kalendertag);
         });
+    }
+
+    private void updateMessstelleWithUnauffaelligerTag(final UnauffaelligerTag unauffaelligerTag) {
+        messstelleService.updateLetztePlausibleMessungOfMessstelle(unauffaelligerTag.getMstId(), unauffaelligerTag.getKalendertag().getDatum());
     }
 
     /**

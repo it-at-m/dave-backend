@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,14 +22,20 @@ public class UnauffaelligeTageService {
         return unauffaelligeTageRepository.findByMstId(mstId);
     }
 
+    public Optional<UnauffaelligerTag> findFirstByMstIdOrderByKalendertagDatumDesc(final String mstId) {
+        return unauffaelligeTageRepository.findFirstByMstIdOrderByKalendertagDatumDesc(mstId);
+    }
+
     public long countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
             final String mstId,
             final LocalDate startDateIncluded,
-            final LocalDate endDateExcluded,
+            final LocalDate endDateIncluded,
             final List<TagesTyp> tagesTyp) {
-        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndKalendertagTagestypIn(mstId,
+        return unauffaelligeTageRepository.countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(
+                mstId,
                 startDateIncluded,
-                endDateExcluded, tagesTyp);
+                endDateIncluded,
+                tagesTyp);
     }
 
 }

@@ -1,14 +1,19 @@
 package de.muenchen.dave.services.email;
 
 import com.sun.mail.imap.IMAPFolder;
+import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockAssert;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -25,6 +30,7 @@ import java.util.Properties;
  */
 @Slf4j
 @Service
+@Profile({ "!konexternal && !prodexternal && !unittest" })
 public class EmailReceiveService {
 
     private static final String DUMMY_EMAIL_ADDRESS = "dave@dummy.de";
@@ -60,8 +66,12 @@ public class EmailReceiveService {
      * werden. Falls keine E-Mail Adresse oder die dummy-Email-Adresse konfiguriert ist, wird nichts
      * getan.
      */
-    @Scheduled(fixedDelayString = "${dave.email.receiver.update-interval}")
+    @Scheduled(cron = "${dave.email.receiver.cron}")
+    @SchedulerLock(name = "EmailReceiverCron", lockAtMostFor = "${dave.email.receiver.shedlock}", lockAtLeastFor = "${dave.email.receiver.shedlock}")
+    @Transactional
+    @LogExecutionTime
     public void checkEmails() {
+        LockAssert.assertLocked();
         if (ObjectUtils.isNotEmpty(emailAddress) && !emailAddress.equals(DUMMY_EMAIL_ADDRESS)) {
             log.debug("Scheduler EmailReceiveService: Check nach neuen E-Mails im Postfach {}", emailAddress);
             try {

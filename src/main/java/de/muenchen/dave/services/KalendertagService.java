@@ -30,9 +30,9 @@ public class KalendertagService {
 
     public long countAllKalendertageByDatumAndTagestypen(
             final LocalDate startDateIncluded,
-            final LocalDate endDateExcluded,
+            final LocalDate endDateIncluded,
             final List<TagesTyp> tagestypen) {
-        return kalendertagRepository.countAllByDatumGreaterThanEqualAndDatumLessThanAndTagestypIn(startDateIncluded, endDateExcluded, tagestypen);
+        return kalendertagRepository.countAllByDatumGreaterThanEqualAndDatumLessThanEqualAndTagestypIn(startDateIncluded, endDateIncluded, tagestypen);
     }
 
 }

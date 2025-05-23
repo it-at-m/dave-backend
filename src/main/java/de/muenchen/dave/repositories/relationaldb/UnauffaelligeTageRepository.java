@@ -13,12 +13,11 @@ public interface UnauffaelligeTageRepository extends JpaRepository<Unauffaellige
 
     List<UnauffaelligerTag> findByMstId(final String mstId);
 
-    /**
-     * @return den jüngsten unauffälligen Tag bezogen auf den referenzierten Kalendertag.
-     */
-    Optional<UnauffaelligerTag> findTopByOrderByKalendertagDatumDesc();
+    Optional<UnauffaelligerTag> findFirstByMstIdOrderByKalendertagDatumDesc(final String mstId);
 
-    long countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanAndKalendertagTagestypIn(final String mstId,
+    long countAllByMstIdAndKalendertagDatumGreaterThanEqualAndKalendertagDatumLessThanEqualAndKalendertagTagestypIn(
+            final String mstId,
             final LocalDate startDateIncluded,
-            final LocalDate endDateExcluded, final List<TagesTyp> tagesTyp);
+            final LocalDate endDateIncluded,
+            final List<TagesTyp> tagesTyp);
 }
