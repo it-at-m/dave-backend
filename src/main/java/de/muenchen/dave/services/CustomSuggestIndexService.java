@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.ErhebungsstelleType;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class CustomSuggestIndexService {
         final String suggestId = zaehlstelle.getId();
         // In den Suchwörtern stehen alle Suggestions für die Zählstelle
         if (CollectionUtils.isNotEmpty(zaehlstelle.getSuchwoerter())) {
-            this.createSuggestionsFromSuchwoerter(zaehlstelle.getSuchwoerter(), suggestId);
+            this.createSuggestionsFromSuchwoerter(zaehlstelle.getSuchwoerter(), suggestId, ErhebungsstelleType.ZAEHLSTELLE);
         }
     }
 
@@ -47,7 +48,7 @@ public class CustomSuggestIndexService {
     public void createSuggestionsForZaehlung(final Zaehlung zaehlung) {
         final String suggestId = zaehlung.getId();
         // In den Suchwörtern stehen alle Suggestions für die Zählung
-        this.createSuggestionsFromSuchwoerter(zaehlung.getSuchwoerter(), suggestId);
+        this.createSuggestionsFromSuchwoerter(zaehlung.getSuchwoerter(), suggestId, ErhebungsstelleType.ZAEHLSTELLE);
     }
 
     /**
@@ -59,7 +60,7 @@ public class CustomSuggestIndexService {
         final String suggestId = messstelle.getId();
         // In den Suchwörtern stehen alle Suggestions für die Zählstelle
         if (CollectionUtils.isNotEmpty(messstelle.getSuchwoerter())) {
-            this.createSuggestionsFromSuchwoerter(messstelle.getSuchwoerter(), suggestId);
+            this.createSuggestionsFromSuchwoerter(messstelle.getSuchwoerter(), suggestId, ErhebungsstelleType.MESSSTELLE);
         }
     }
 
@@ -108,17 +109,24 @@ public class CustomSuggestIndexService {
      * @param suchwoerter Suchwörter einer Zählstelle oder Zählung
      * @param suggestId ID der zugehörigen Zählstelle oder Zählung
      */
-    private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId) {
+    private void createSuggestionsFromSuchwoerter(final List<String> suchwoerter, final String suggestId, final ErhebungsstelleType type) {
         if (CollectionUtils.isNotEmpty(suchwoerter)) {
             final List<CustomSuggest> suggestionList = new ArrayList<>();
             final Set<String> suchwoerterAsSet = new HashSet<>(suchwoerter);
             suchwoerterAsSet.forEach(element -> {
                 final Completion completion = new Completion(new String[] { element });
                 completion.setWeight(DEFAULT_WEIGHT);
-                suggestionList.add(new CustomSuggest(UUID.randomUUID().toString(), SUCHWORT, suggestId, completion));
+                suggestionList.add(new CustomSuggest(UUID.randomUUID().toString(), SUCHWORT, type, suggestId, completion));
             });
             this.customSuggestIndex.saveAll(suggestionList);
         }
+    }
 
+    public void deleteAll() {
+        this.customSuggestIndex.deleteAll();
+    }
+
+    public void deleteByErhebungsstelleType(final ErhebungsstelleType type) {
+        this.customSuggestIndex.deleteAllByErhebungsstelleType(type);
     }
 }

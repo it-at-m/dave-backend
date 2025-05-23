@@ -110,4 +110,8 @@ public class MessstelleService {
             messstelleIndexService.saveMessstelle(messstelle);
         });
     }
+
+    public void generateSuggestionsForAllMessstelle() {
+        messstelleIndexService.findAllMessstellen().stream().parallel().forEach(customSuggestIndexService::createSuggestionsForMessstelle);
+    }
 }

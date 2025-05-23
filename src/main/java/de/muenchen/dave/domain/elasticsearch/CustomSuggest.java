@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.elasticsearch;
 
+import de.muenchen.dave.domain.enums.ErhebungsstelleType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class CustomSuggest {
 
     @Field(type = FieldType.Text)
     String name;
+
+    ErhebungsstelleType erhebungsstelleType;
 
     @Field(type = FieldType.Text)
     String fkid;
