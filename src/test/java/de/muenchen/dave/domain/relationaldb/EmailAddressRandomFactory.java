@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.relationaldb;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.EmailAddress;
-
 import java.util.UUID;
 
 public class EmailAddressRandomFactory {

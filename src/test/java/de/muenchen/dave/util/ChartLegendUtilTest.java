@@ -1,13 +1,12 @@
 package de.muenchen.dave.util;
 
-import org.hamcrest.core.IsNull;
-import org.junit.jupiter.api.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Test;
 
 class ChartLegendUtilTest {
 

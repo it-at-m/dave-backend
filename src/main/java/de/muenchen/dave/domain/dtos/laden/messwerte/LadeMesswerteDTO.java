@@ -9,10 +9,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalTime;
+import lombok.Data;
 
 @Data
 public class LadeMesswerteDTO implements Serializable {

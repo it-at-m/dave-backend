@@ -3,22 +3,21 @@ package de.muenchen.dave.services.email;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.services.ChatMessageService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
+import java.io.IOException;
+import java.util.Date;
+import java.util.UUID;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.util.Date;
-import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * Diese Klasse stellt eine Methode zum Verarbeiten einer Email bereit.

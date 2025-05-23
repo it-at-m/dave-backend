@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.enums;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-
-import java.time.LocalDate;
 
 /**
  * Definiert die möglichen unterjährigen Auswertungszeiträume

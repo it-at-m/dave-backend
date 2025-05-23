@@ -1,10 +1,9 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import java.time.YearMonth;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.time.YearMonth;
 
 @Data
 @AllArgsConstructor

@@ -1,7 +1,6 @@
 package de.muenchen.dave.domain.relationaldb;
 
 import de.muenchen.dave.domain.InfoMessage;
-
 import java.time.LocalDate;
 
 public class InfoMessageRandomFactory {

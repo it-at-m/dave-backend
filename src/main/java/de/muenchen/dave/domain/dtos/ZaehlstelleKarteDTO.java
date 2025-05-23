@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.dtos;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

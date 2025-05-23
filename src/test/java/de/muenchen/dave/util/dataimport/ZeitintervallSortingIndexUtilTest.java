@@ -1,15 +1,14 @@
 package de.muenchen.dave.util.dataimport;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Test;
 
 class ZeitintervallSortingIndexUtilTest {
 

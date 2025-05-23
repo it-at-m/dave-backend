@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos.external;
 
+import java.util.List;
 import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import java.util.List;
 
 @Data
 public class ExternalZaehlstelleDTO {

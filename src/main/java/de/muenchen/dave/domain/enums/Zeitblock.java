@@ -5,12 +5,11 @@
 package de.muenchen.dave.domain.enums;
 
 import de.muenchen.dave.util.DaveConstants;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * Oracle-DBs koennen nicht mit der columnDefintion 'TIME' umgehen. Daher ist es noetig gewesen, die

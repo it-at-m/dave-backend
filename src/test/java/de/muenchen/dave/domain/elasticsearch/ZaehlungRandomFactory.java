@@ -5,8 +5,6 @@ import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.services.IndexServiceUtils;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class ZaehlungRandomFactory {
 

@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.UUID;
+import lombok.Data;
 
 @Data
 public class InfoMessageDTO {

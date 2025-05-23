@@ -2,7 +2,6 @@ package de.muenchen.dave.domain.relationaldb;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.ChatMessage;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

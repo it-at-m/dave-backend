@@ -4,16 +4,15 @@
  */
 package de.muenchen.dave.services.messstelle;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import java.math.BigDecimal;
+import java.time.LocalTime;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.time.LocalTime;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 
 @Slf4j
 class RoundingServiceTest {

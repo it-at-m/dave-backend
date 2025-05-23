@@ -2,12 +2,11 @@ package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UnauffaelligeTageRepository extends JpaRepository<UnauffaelligerTag, UUID> {
 

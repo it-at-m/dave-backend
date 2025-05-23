@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class AuffaelligeTageDTO {

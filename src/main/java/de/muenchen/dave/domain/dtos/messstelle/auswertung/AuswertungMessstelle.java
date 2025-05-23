@@ -1,11 +1,10 @@
 package de.muenchen.dave.domain.dtos.messstelle.auswertung;
 
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.Data;
 
 @Data
 public class AuswertungMessstelle {

@@ -3,10 +3,9 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalKnotenarmDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
-
-import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface KnotenarmMapper {

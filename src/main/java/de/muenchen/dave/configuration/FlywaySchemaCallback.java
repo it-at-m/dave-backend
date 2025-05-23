@@ -1,15 +1,14 @@
 package de.muenchen.dave.configuration;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.api.callback.Callback;
 import org.flywaydb.core.api.callback.Context;
 import org.flywaydb.core.api.callback.Event;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
  * Die Klasse implementiert die Flyway Callback-Schnittstelle, um vor bestimmten Migrationsschritten

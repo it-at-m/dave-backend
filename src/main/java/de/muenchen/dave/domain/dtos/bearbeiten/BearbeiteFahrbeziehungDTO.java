@@ -2,9 +2,8 @@ package de.muenchen.dave.domain.dtos.bearbeiten;
 
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class BearbeiteFahrbeziehungDTO {

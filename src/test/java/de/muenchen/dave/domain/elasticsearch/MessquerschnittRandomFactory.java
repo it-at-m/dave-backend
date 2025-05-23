@@ -3,11 +3,10 @@ package de.muenchen.dave.domain.elasticsearch;
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class MessquerschnittRandomFactory {
 

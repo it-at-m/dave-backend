@@ -3,12 +3,11 @@ package de.muenchen.dave.domain.pdf.templates;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @ToString(callSuper = true)
