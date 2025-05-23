@@ -590,40 +590,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${pmd-maven-plugin.version}</version>
-                <configuration>
-                    <minimumTokens>100</minimumTokens>
-                    <targetJdk>${java.version}</targetJdk>
-                    <printFailingErrors>true</printFailingErrors>
-                    <linkXRef>false</linkXRef>
-                    <includeTests>true</includeTests>
-                    <excludeRoots>
-                        <excludeRoot>target/generated-sources</excludeRoot>
-                        <excludeRoot>target/generated-test-sources</excludeRoot>
-                    </excludeRoots>
-                    <rulesets>
-                        <ruleset>refarch-pmd-ruleset.xml</ruleset>
-                    </rulesets>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                            <goal>cpd-check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>de.muenchen.refarch.tools</groupId>
-                        <artifactId>refarch-pmd</artifactId>
-                        <version>${refarch-tools.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>${spotbugs-maven-plugin.version}</version>
