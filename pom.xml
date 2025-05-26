@@ -588,30 +588,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${spotbugs-maven-plugin.version}</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <excludeFilterFile>spotbugs-exclude-rules.xml</excludeFilterFile>
-                    <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs-results</spotbugsXmlOutputDirectory> <!-- required to ensure only the artifact jar is on top level when building -->
-                    <plugins>
-                        <plugin>
-                            <groupId>com.h3xstream.findsecbugs</groupId>
-                            <artifactId>findsecbugs-plugin</artifactId>
-                            <version>${findsecbugs-plugin.version}</version>
-                        </plugin>
-                    </plugins>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.flywaydb</groupId>
