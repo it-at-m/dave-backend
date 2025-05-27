@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.pdf.templates;
 
 import de.muenchen.dave.domain.pdf.helper.GanglinieTable;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class GangliniePdf extends DiagrammPdf {

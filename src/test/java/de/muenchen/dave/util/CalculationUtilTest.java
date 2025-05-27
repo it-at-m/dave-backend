@@ -1,14 +1,13 @@
 package de.muenchen.dave.util;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import org.hamcrest.core.IsNull;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import java.math.BigDecimal;
+import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.Test;
 
 class CalculationUtilTest {
 

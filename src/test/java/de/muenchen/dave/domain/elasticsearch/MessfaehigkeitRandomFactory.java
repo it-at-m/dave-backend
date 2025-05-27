@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

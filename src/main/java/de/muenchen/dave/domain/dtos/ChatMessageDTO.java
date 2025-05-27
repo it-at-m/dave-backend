@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 // Definition of getter, setter, ...
 @Data

@@ -3,15 +3,14 @@ package de.muenchen.dave.domain.elasticsearch;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.geo.CoordinateUtil;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

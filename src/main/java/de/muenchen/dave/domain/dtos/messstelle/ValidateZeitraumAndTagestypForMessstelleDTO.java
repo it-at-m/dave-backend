@@ -3,10 +3,9 @@ package de.muenchen.dave.domain.dtos.messstelle;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class ValidateZeitraumAndTagestypForMessstelleDTO {

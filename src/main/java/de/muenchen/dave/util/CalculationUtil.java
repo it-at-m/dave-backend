@@ -6,13 +6,12 @@ package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
