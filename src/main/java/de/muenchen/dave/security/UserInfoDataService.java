@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2023
- */
 package de.muenchen.dave.security;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
