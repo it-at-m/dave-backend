@@ -19,4 +19,6 @@ public interface UnauffaelligeTageRepository extends JpaRepository<Unauffaellige
             final LocalDate startDateIncluded,
             final LocalDate endDateIncluded,
             final List<TagesTyp> tagesTyp);
+
+    void deleteAllByKalendertagDatum(final LocalDate kalendertagDatum);
 }
