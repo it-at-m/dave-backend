@@ -4,13 +4,9 @@
      have priority over the log level maintained in this file.  -->
 <configuration>
 
-
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
 
-
-    <springProfile name="dev,kon,local,unittest,demo,hotfix,konexternal,docker">
-
-        <!-- Log appender -->
+    <springProfile name="local | unittest | debugging">
         <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>
@@ -24,7 +20,7 @@
         <logger name="de.muenchen.dave"
                 level="debug"
                 additivity="false">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="STDOUT" />
         </logger>
 
         <logger name="de.muenchen.dave.configuration.nfcconverter"
@@ -36,26 +32,23 @@
         <logger name="org.springframework.cache"
                 level="info"
                 additivity="false">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="STDOUT" />
         </logger>
 
         <logger name="org.springframework.web"
                 level="debug"
                 additivity="false">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="STDOUT" />
         </logger>
 
         <!-- Logger usage -->
         <root level="info">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="STDOUT" />
         </root>
 
     </springProfile>
 
-
-    <springProfile name="prod,prodexternal">
-
-        <!-- Log appender -->
+    <springProfile name="!local &amp; !unittest &amp; !debugging">
         <appender name="JSON_STDOUT" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="net.logstash.logback.encoder.LogstashEncoder">
                 <throwableConverter
@@ -70,13 +63,6 @@
             </encoder>
         </appender>
 
-        <!-- Logger -->
-        <logger name="de.muenchen.dave"
-                level="info"
-                additivity="false">
-            <appender-ref ref="JSON_STDOUT"/>
-        </logger>
-
         <logger name="de.muenchen.dave.configuration.nfcconverter"
                 level="error"
                 additivity="false">
@@ -85,10 +71,9 @@
 
         <!-- Logger usage -->
         <root level="info">
-            <appender-ref ref="JSON_STDOUT"/>
+            <appender-ref ref="JSON_STDOUT" />
         </root>
 
     </springProfile>
-
 
 </configuration>
