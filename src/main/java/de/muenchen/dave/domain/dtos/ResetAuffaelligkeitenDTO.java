@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class ReloadAuffaelligkeitenDTO {
+public class ResetAuffaelligkeitenDTO {
 
     @NotNull
     private LocalDate dateToReload;
