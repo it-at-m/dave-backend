@@ -44,22 +44,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Intervalle erfolgreich abgefragt.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/IntervalResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -85,22 +85,22 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Tagesaggregate erfolgreich abgefragt.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/TagesaggregatResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -116,16 +116,6 @@
         "summary": "Holt alle relevanten Messstellen.",
         "operationId": "getMessstellen",
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Messstellen erfolgreich abgefragt.",
             "content": {
@@ -135,6 +125,16 @@
                   "items": {
                     "$ref": "#/components/schemas/MessstelleDto"
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -170,16 +170,6 @@
           }
         ],
         "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
           "200": {
             "description": "Unauffällige Tage erfolgreich abgefragt.",
             "content": {
@@ -189,6 +179,16 @@
                   "items": {
                     "$ref": "#/components/schemas/UnauffaelligerTagDto"
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -330,12 +330,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "anzahlPkw": {
-            "type": "number"
-          },
-          "anzahlPkwA": {
-            "type": "number"
-          },
           "anzahlLfw": {
             "type": "number"
           },
@@ -345,16 +339,7 @@
           "anzahlLkw": {
             "type": "number"
           },
-          "anzahlLkwA": {
-            "type": "number"
-          },
-          "anzahlSattelKfz": {
-            "type": "number"
-          },
           "anzahlBus": {
-            "type": "number"
-          },
-          "anzahlNkKfz": {
             "type": "number"
           },
           "anzahlRad": {
@@ -487,12 +472,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "anzahlPkw": {
-            "type": "number"
-          },
-          "anzahlPkwA": {
-            "type": "number"
-          },
           "anzahlLfw": {
             "type": "number"
           },
@@ -502,16 +481,7 @@
           "anzahlLkw": {
             "type": "number"
           },
-          "anzahlLkwA": {
-            "type": "number"
-          },
-          "anzahlSattelKfz": {
-            "type": "number"
-          },
           "anzahlBus": {
-            "type": "number"
-          },
-          "anzahlNkKfz": {
             "type": "number"
           },
           "anzahlRad": {

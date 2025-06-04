@@ -272,15 +272,10 @@ class SpreadsheetServiceTest {
 
         final TagesaggregatDto daten = new TagesaggregatDto();
         daten.setMqId(Integer.valueOf(mqId));
-        daten.setAnzahlPkw(BigDecimal.valueOf(0));
-        daten.setAnzahlPkwA(BigDecimal.valueOf(1));
         daten.setAnzahlLfw(BigDecimal.valueOf(2));
         daten.setAnzahlKrad(BigDecimal.valueOf(3));
         daten.setAnzahlLkw(BigDecimal.valueOf(4));
-        daten.setAnzahlLkwA(BigDecimal.valueOf(5));
-        daten.setAnzahlSattelKfz(BigDecimal.valueOf(6));
         daten.setAnzahlBus(BigDecimal.valueOf(7));
-        daten.setAnzahlNkKfz(BigDecimal.valueOf(8));
         daten.setAnzahlRad(BigDecimal.valueOf(9));
         daten.setSummeAllePkw(BigDecimal.valueOf(10));
         daten.setSummeLastzug(BigDecimal.valueOf(11));
