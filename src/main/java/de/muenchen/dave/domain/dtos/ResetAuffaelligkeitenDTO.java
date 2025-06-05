@@ -8,6 +8,6 @@ import lombok.Data;
 public class ResetAuffaelligkeitenDTO {
 
     @NotNull
-    private LocalDate dateToReload;
+    private LocalDate dateToReset;
 
 }
