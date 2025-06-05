@@ -16,7 +16,7 @@ public class ShedlockConfiguration {
     private String dbschema;
 
     @Bean
-    public LockProvider lockProvider(DataSource dataSource) {
+    public LockProvider lockProvider(final DataSource dataSource) {
 
         JdbcTemplateLockProvider.Configuration configuration = JdbcTemplateLockProvider.Configuration.builder()
                 .withJdbcTemplate(new JdbcTemplate(dataSource))
