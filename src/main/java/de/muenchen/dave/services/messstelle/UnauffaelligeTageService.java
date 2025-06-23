@@ -59,6 +59,7 @@ public class UnauffaelligeTageService {
 
     public void deleteAndReloadUnauffaelligerTagByDatum(final LocalDate dateToReload) {
         unauffaelligeTageRepository.deleteAllByKalendertagDatum(dateToReload);
+        unauffaelligeTageRepository.flush();
         final List<UnauffaelligerTag> unauffaelligeTage = getUnauffaelligeTageForEachMessstelle(dateToReload).parallelStream()
                 .map(this::mapDto2Entity)
                 .toList();
