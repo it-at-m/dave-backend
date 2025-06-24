@@ -2,23 +2,21 @@ package de.muenchen.dave.scheduler;
 
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-@Component
 @Slf4j
+@Service
+@AllArgsConstructor
 public class ZaehlungStatusUpdater {
 
     private final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService;
 
-    public ZaehlungStatusUpdater(final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService) {
-        this.internalZaehlungPersistierungsService = internalZaehlungPersistierungsService;
-    }
-
-    @Scheduled(cron = "${dave.zaehlung.status.updater}", zone = "Europe/Berlin")
+    @Scheduled(cron = "${dave.zaehlung.status.updater}")
     public void updateStatus() {
         log.debug("Scheduler ZaehlungStatusUpdater start");
         try {
