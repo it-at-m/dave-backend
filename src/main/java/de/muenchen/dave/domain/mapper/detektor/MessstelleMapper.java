@@ -132,9 +132,9 @@ public interface MessstelleMapper {
         dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
 
-    MessstelleOverviewDTO bean2overviewDto(Messstelle bean);
+    MessstelleOverviewDTO bean2overviewDto(Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
+    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
     default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
