@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.MessstelleStatus;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.ObjectUtils;
@@ -50,12 +49,12 @@ public interface SucheMapper {
 
         final var realisierungsdatum = ObjectUtils.isNotEmpty(bean.getRealisierungsdatum())
                 ? bean.getRealisierungsdatum().toString()
-                : UNBEKANNT;
+                : StringUtils.EMPTY;
         dto.setRealisierungsdatum(realisierungsdatum);
 
         final var abbaudatum = ObjectUtils.isNotEmpty(bean.getAbbaudatum())
                 ? bean.getAbbaudatum().toString()
-                : (MessstelleStatus.ABGEBAUT.equals(bean.getStatus()) ? UNBEKANNT : StringUtils.EMPTY);
+                : StringUtils.EMPTY;
         dto.setAbbaudatum(abbaudatum);
 
         final var datumLetztePlausibleMessung = ObjectUtils.isNotEmpty(bean.getDatumLetztePlausibleMessung())
