@@ -419,7 +419,7 @@ public class FillPdfBeanService {
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
-                                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getFahrtrichtung(), KEINE_DATEN_VORHANDEN));
+                                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()));
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
