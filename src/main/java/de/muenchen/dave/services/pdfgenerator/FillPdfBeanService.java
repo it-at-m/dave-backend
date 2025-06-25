@@ -62,6 +62,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -386,6 +388,10 @@ public class FillPdfBeanService {
             messstelle.getMessquerschnitte().stream().filter(messquerschnitt -> options.getMessquerschnittIds().contains(messquerschnitt.getMqId()))
                     .forEach(messquerschnitt -> {
                         chartTitle.append(messquerschnitt.getMqId());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()));
                         chartTitle.append(StringUtils.SPACE);
                         chartTitle.append("-");
                         chartTitle.append(StringUtils.SPACE);
