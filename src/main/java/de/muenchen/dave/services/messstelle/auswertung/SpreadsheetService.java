@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -368,7 +369,7 @@ public class SpreadsheetService {
      * @return Messquerschnitt als String
      */
     protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
-        return String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+        return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                 messquerschnitt.getStandort());
     }
 

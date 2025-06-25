@@ -203,6 +203,10 @@ class FillPdfBeanServiceTest {
                 StringUtils.SPACE +
                 "-" +
                 StringUtils.SPACE +
+                messquerschnitt.getFahrtrichtung() +
+                StringUtils.SPACE +
+                "-" +
+                StringUtils.SPACE +
                 StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN) +
                 StringUtils.SPACE;
         assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(expectedChartTitle.trim()));

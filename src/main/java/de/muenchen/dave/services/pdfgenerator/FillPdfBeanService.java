@@ -50,6 +50,7 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -389,6 +390,10 @@ public class FillPdfBeanService {
                         chartTitle.append(StringUtils.SPACE);
                         chartTitle.append("-");
                         chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
                         chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
                         chartTitle.append(StringUtils.SPACE);
                     });
@@ -413,7 +418,7 @@ public class FillPdfBeanService {
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
-                                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getFahrtrichtung(), KEINE_DATEN_VORHANDEN));
+                                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
