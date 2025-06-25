@@ -11,14 +11,13 @@ import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -129,7 +128,8 @@ class SpreadsheetServiceTest {
 
         final List<String> cellValue = new ArrayList<>();
         mockedMessstelle.getMessquerschnitte()
-                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
+                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(),
+                        FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                         messquerschnitt.getStandort())));
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(String.join(", ", cellValue));
     }

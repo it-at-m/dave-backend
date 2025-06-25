@@ -8,11 +8,16 @@ public final class FahrtrichtungUtil {
 
     public static String getLongTextOfFahrtrichtung(final String fahrtrichtung) {
         switch (fahrtrichtung) {
-        case "N": return "Nord";
-        case "O": return "Ost";
-        case "S": return "Süd";
-        case "W": return "West";
-        default: return fahrtrichtung;
+        case "N":
+            return "Nord";
+        case "O":
+            return "Ost";
+        case "S":
+            return "Süd";
+        case "W":
+            return "West";
+        default:
+            return fahrtrichtung;
         }
     }
 }
