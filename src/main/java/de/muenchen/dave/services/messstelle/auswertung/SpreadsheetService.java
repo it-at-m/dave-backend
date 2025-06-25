@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -368,7 +370,7 @@ public class SpreadsheetService {
      * @return Messquerschnitt als String
      */
     protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
-        return String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+        return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()),
                 messquerschnitt.getStandort());
     }
 
