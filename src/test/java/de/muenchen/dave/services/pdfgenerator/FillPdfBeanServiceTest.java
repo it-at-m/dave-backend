@@ -202,6 +202,8 @@ class FillPdfBeanServiceTest {
         String expectedChartTitle = messquerschnitt.getMqId() +
                 StringUtils.SPACE +
                 "-" +
+                messquerschnitt.getFahrtrichtung() +
+                "-" +
                 StringUtils.SPACE +
                 StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), FillPdfBeanService.KEINE_DATEN_VORHANDEN) +
                 StringUtils.SPACE;

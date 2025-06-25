@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -127,7 +129,7 @@ class SpreadsheetServiceTest {
 
         final List<String> cellValue = new ArrayList<>();
         mockedMessstelle.getMessquerschnitte()
-                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                         messquerschnitt.getStandort())));
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(String.join(", ", cellValue));
     }
@@ -379,7 +381,7 @@ class SpreadsheetServiceTest {
         messquerschnitt.setFahrtrichtung("W");
         messquerschnitt.setStandort("Standort MQ");
 
-        final String expected = "12301 - W - Standort MQ";
+        final String expected = "12301 - West - Standort MQ";
 
         Assertions.assertThat(spreadsheetService.getFormattedStringForMessquerschnitt(messquerschnitt)).isEqualTo(expected);
     }
