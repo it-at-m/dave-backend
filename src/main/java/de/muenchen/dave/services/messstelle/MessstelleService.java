@@ -77,7 +77,7 @@ public class MessstelleService {
 
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
-        return messstelleMapper.bean2overviewDto(messstellen);
+        return messstelleMapper.bean2overviewDto(messstellen, stadtbezirkMapper);
     }
 
     public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {
