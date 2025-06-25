@@ -370,7 +370,7 @@ public class SpreadsheetService {
      * @return Messquerschnitt als String
      */
     protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
-        return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()),
+        return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                 messquerschnitt.getStandort());
     }
 

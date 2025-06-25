@@ -391,7 +391,7 @@ public class FillPdfBeanService {
                         chartTitle.append(StringUtils.SPACE);
                         chartTitle.append("-");
                         chartTitle.append(StringUtils.SPACE);
-                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()));
+                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
                         chartTitle.append(StringUtils.SPACE);
                         chartTitle.append("-");
                         chartTitle.append(StringUtils.SPACE);
@@ -419,7 +419,7 @@ public class FillPdfBeanService {
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
-                                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrrichtung(messquerschnitt.getFahrtrichtung()));
+                                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);

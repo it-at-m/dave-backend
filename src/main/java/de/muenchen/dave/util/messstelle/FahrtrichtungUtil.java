@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FahrtrichtungUtil {
 
-    public static String getLongTextOfFahrrichtung(final String fahrrichtung) {
-        switch (fahrrichtung) {
+    public static String getLongTextOfFahrtrichtung(final String fahrtrichtung) {
+        switch (fahrtrichtung) {
         case "N": return "Nord";
         case "O": return "Ost";
         case "S": return "Süd";
         case "W": return "West";
-        default: return fahrrichtung;
+        default: return fahrtrichtung;
         }
     }
 }
