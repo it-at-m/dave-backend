@@ -105,6 +105,8 @@ public class FillPdfBeanService {
     protected static final int MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE = 12;
     private static final String CELL_WIDTH_20_MM = "20mm";
     private static final String CELL_WIDTH_UNITS = "mm";
+    public static final String VERKEHRSART_TEXT = "Verkehrsart";
+    public static final String VERKEHRSART_TEXT_MEHRZAHL = "Verkehrsarten";
 
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
@@ -208,6 +210,7 @@ public class FillPdfBeanService {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
@@ -246,6 +249,11 @@ public class FillPdfBeanService {
         }
         messstelleninformationen
                 .setSelectedFahrzeuge(StringUtils.defaultIfEmpty(getSelectedFahrzeugeAsText(optionsDTO.getFahrzeuge()), KEINE_DATEN_VORHANDEN));
+        if (messstelleninformationen.getSelectedFahrzeuge().contains(",")) {
+            messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT_MEHRZAHL);
+        } else {
+            messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
+        }
         messstelleninformationen
                 .setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")));
         messstelleninformationen.setZeitintervallNeeded(true);

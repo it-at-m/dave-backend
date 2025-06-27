@@ -169,6 +169,7 @@ class FillPdfBeanServiceTest {
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getSelectedFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getVerkehrsartText(), is(FillPdfBeanService.VERKEHRSART_TEXT));
         assertThat(informationen.getMesszeitraum(),
                 is(String.format("%s - %s", optionsDTO.getZeitraum().getFirst().format(DDMMYYYY), optionsDTO.getZeitraum().getLast().format(DDMMYYYY))));
         assertThat(informationen.getWochentag(), is(tagesTyp));
@@ -180,6 +181,7 @@ class FillPdfBeanServiceTest {
         FillPdfBeanService.fillMessstelleninformationen(informationen, messstelle, optionsDTO, tagesTyp);
         assertThat(informationen.getStandort(), is(messstelle.getStandort()));
         assertThat(informationen.getSelectedFahrzeuge(), is(messstelle.getDetektierteVerkehrsarten()));
+        assertThat(informationen.getVerkehrsartText(), is(FillPdfBeanService.VERKEHRSART_TEXT));
         assertThat(informationen.getMesszeitraum(), is(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY)));
         assertThat(informationen.isWochentagNeeded(), is(false));
         assertThat(informationen.getWochentag(), is(nullValue()));
@@ -242,6 +244,7 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.isKommentarNeeded(), is(isSingleMessstelle));
         assertThat(informationen.getKommentar(), is(nullValue()));
         assertThat(informationen.getSelectedFahrzeuge(), is(FillPdfBeanService.KEINE_DATEN_VORHANDEN));
+        assertThat(informationen.getVerkehrsartText(), is(FillPdfBeanService.VERKEHRSART_TEXT));
         assertThat(informationen.getMesszeitraum(),
                 is(optionsDTO.getJahre().stream().map(String::valueOf).collect(Collectors.joining(", "))));
         assertThat(informationen.isZeitintervallNeeded(), is(true));
@@ -258,6 +261,7 @@ class FillPdfBeanServiceTest {
         assertThat(informationen.isKommentarNeeded(), is(isSingleMessstelle));
         assertThat(informationen.getKommentar(), is(messstelle.getKommentar()));
         assertThat(informationen.getSelectedFahrzeuge(), is(FillPdfBeanService.KEINE_DATEN_VORHANDEN));
+        assertThat(informationen.getVerkehrsartText(), is(FillPdfBeanService.VERKEHRSART_TEXT));
         assertThat(informationen.getMesszeitraum(),
                 is(optionsDTO.getJahre().stream().map(String::valueOf).collect(Collectors.joining(", "))));
         assertThat(informationen.isZeitintervallNeeded(), is(true));
