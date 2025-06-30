@@ -51,6 +51,7 @@ import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -584,7 +585,7 @@ public class FillPdfBeanService {
     public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
-            if (optionsDTO.getZeitraum().size() > 1) {
+            if (MesswerteBaseUtil.isDateRange(optionsDTO.getZeitraum())) {
                 chartTitle.append("Durchschnittlicher");
                 chartTitle.append(StringUtils.SPACE);
             }
