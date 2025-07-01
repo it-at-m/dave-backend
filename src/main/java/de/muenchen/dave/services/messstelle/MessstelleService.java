@@ -62,6 +62,11 @@ public class MessstelleService {
                         .stream()
                         .sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb).reversed())
                         .collect(Collectors.toList()));
+        messstelle.setMessquerschnitte(
+                messstelle.getMessquerschnitte()
+                        .stream()
+                        .sorted(Comparator.comparing(Messquerschnitt::getMqId))
+                        .collect(Collectors.toList()));
         return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
