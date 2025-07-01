@@ -50,6 +50,8 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -104,6 +106,8 @@ public class FillPdfBeanService {
     protected static final int MAX_ELEMENTS_IN_GESAMTAUSWERTUNG_TABLE = 12;
     private static final String CELL_WIDTH_20_MM = "20mm";
     private static final String CELL_WIDTH_UNITS = "mm";
+    public static final String VERKEHRSART_TEXT = "Verkehrsart";
+    public static final String VERKEHRSART_TEXT_MEHRZAHL = "Verkehrsarten";
 
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatenService ladeZaehldatenService;
@@ -207,6 +211,7 @@ public class FillPdfBeanService {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
             messstelleninformationen.setMesszeitraum(
@@ -245,6 +250,11 @@ public class FillPdfBeanService {
         }
         messstelleninformationen
                 .setSelectedFahrzeuge(StringUtils.defaultIfEmpty(getSelectedFahrzeugeAsText(optionsDTO.getFahrzeuge()), KEINE_DATEN_VORHANDEN));
+        if (messstelleninformationen.getSelectedFahrzeuge().contains(",")) {
+            messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT_MEHRZAHL);
+        } else {
+            messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
+        }
         messstelleninformationen
                 .setMesszeitraum(ListUtils.emptyIfNull(optionsDTO.getJahre()).stream().sorted().map(String::valueOf).collect(Collectors.joining(", ")));
         messstelleninformationen.setZeitintervallNeeded(true);
@@ -389,6 +399,10 @@ public class FillPdfBeanService {
                         chartTitle.append(StringUtils.SPACE);
                         chartTitle.append("-");
                         chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
                         chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
                         chartTitle.append(StringUtils.SPACE);
                     });
@@ -413,7 +427,7 @@ public class FillPdfBeanService {
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
-                                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getFahrtrichtung(), KEINE_DATEN_VORHANDEN));
+                                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
                                         chartTitle.append(StringUtils.SPACE);
                                         chartTitle.append("-");
                                         chartTitle.append(StringUtils.SPACE);
@@ -571,7 +585,7 @@ public class FillPdfBeanService {
     public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
-            if (optionsDTO.getZeitraum().size() > 1) {
+            if (MesswerteBaseUtil.isDateRange(optionsDTO.getZeitraum())) {
                 chartTitle.append("Durchschnittlicher");
                 chartTitle.append(StringUtils.SPACE);
             }
