@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -129,7 +130,7 @@ class GenerateCsvMstServiceTest {
     void getMetaData() {
         final ReadMessstelleInfoDTO messstelleInfoDTO = new ReadMessstelleInfoDTO();
         messstelleInfoDTO.setMstId("123");
-        messstelleInfoDTO.setDetektierteVerkehrsarten("KFZ");
+        messstelleInfoDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ);
         ReadMessquerschnittDTO mq = new ReadMessquerschnittDTO();
         mq.setMqId("0");
 
@@ -140,7 +141,7 @@ class GenerateCsvMstServiceTest {
                 optionsDTO.getZeitraum().size() == 1);
         final List<String> expectedData = new ArrayList<>();
         expectedData.add(messstelleInfoDTO.getMstId());
-        expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsarten());
+        expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsart().name());
         expectedData.add(optionsDTO.getZeitraum().getFirst().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         expectedData.add("");
         expectedData.add("Alle Messquerschnitte");

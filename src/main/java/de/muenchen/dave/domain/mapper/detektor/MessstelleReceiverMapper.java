@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.VerkehrsartMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
@@ -29,11 +30,12 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(
-        uses = FahrzeugklassenMapper.class,
+        uses = { FahrzeugklassenMapper.class, VerkehrsartMapper.class },
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public interface MessstelleReceiverMapper {
 
+    @Mapping(target = "detektierteVerkehrsart", source = "detektierteVerkehrsarten")
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
@@ -91,6 +93,7 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
+    @Mapping(target = "detektierteVerkehrsart", source = "detektierteVerkehrsarten")
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)

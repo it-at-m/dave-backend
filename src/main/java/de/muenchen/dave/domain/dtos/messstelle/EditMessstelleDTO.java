@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
@@ -22,7 +23,7 @@ public class EditMessstelleDTO implements Serializable {
     private String datumLetztePlausibleMessung;
 
     private Fahrzeugklasse fahrzeugklasse;
-    private String detektierteVerkehrsarten;
+    private Verkehrsart detektierteVerkehrsart;
     private String hersteller;
 
     private Double longitude;

@@ -2,6 +2,7 @@ package de.muenchen.dave.domain.elasticsearch.detektor;
 
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Messstelle {
 
     Fahrzeugklasse fahrzeugklasse;
 
-    String detektierteVerkehrsarten;
+    Verkehrsart detektierteVerkehrsart;
 
     String hersteller;
 

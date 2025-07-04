@@ -13,5 +13,5 @@ public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
     private String realisierungsdatum;
     private String abbaudatum;
     private String datumLetztePlausibleMessung;
-    private String detektierteVerkehrsarten;
+    private String detektierteVerkehrsart;
 }
