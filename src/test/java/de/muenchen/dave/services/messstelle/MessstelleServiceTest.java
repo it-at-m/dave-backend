@@ -20,7 +20,6 @@ import java.time.LocalDate;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -46,6 +45,11 @@ class MessstelleServiceTest {
                 customSuggestIndexService,
                 messstelleMapper,
                 stadtbezirkMapper);
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle() {
+
     }
 
     @Test
