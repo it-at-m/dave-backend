@@ -3,6 +3,7 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -113,5 +115,62 @@ public class MessstelleService {
             messstelle.setDatumLetztePlausibleMessung(letzePlausibleMessung);
             messstelleIndexService.saveMessstelle(messstelle);
         });
+    }
+
+    public List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
+            final String mstId,
+            final LocalDate startDateZeitraum,
+            final LocalDate endDateZeitraum) {
+        final var messstelle = readMessstelleInfoByMstId(mstId);
+        return messstelle
+                .getMessfaehigkeiten()
+                .stream()
+                .filter(messfaehigkeit -> {
+                    final var messfaehigkeitGueltigAb = Objects.isNull(messfaehigkeit.getGueltigAb())
+                            ? null
+                            : LocalDate.parse(messfaehigkeit.getGueltigAb());
+                    final var messfaehigkeitGueltigBis = Objects.isNull(messfaehigkeit.getGueltigBis())
+                            ? null
+                            : LocalDate.parse(messfaehigkeit.getGueltigBis());
+
+                    final var isGueltigAbBetween = isDateBetweenZeitraumInklusive(
+                            messfaehigkeitGueltigAb,
+                            startDateZeitraum,
+                            endDateZeitraum
+                            );
+
+                    final var isGueltigBisBetween = isDateBetweenZeitraumInklusive(
+                            messfaehigkeitGueltigBis,
+                            startDateZeitraum,
+                            endDateZeitraum
+                    );
+
+                    final var isStartDateBetween = isDateBetweenZeitraumInklusive(
+                            startDateZeitraum,
+                            messfaehigkeitGueltigAb,
+                            messfaehigkeitGueltigBis
+                    );
+
+                    final var isEndDateBetween = isDateBetweenZeitraumInklusive(
+                            endDateZeitraum,
+                            messfaehigkeitGueltigAb,
+                            messfaehigkeitGueltigBis
+                    );
+
+                    return isGueltigAbBetween ||
+                            isGueltigBisBetween ||
+                            isStartDateBetween ||
+                            isEndDateBetween;
+                })
+                .toList();
+    }
+
+    protected boolean isDateBetweenZeitraumInklusive(
+            final LocalDate date,
+            final LocalDate startDateZeitraum,
+            final LocalDate endDateZeitraum) {
+        return !(Objects.isNull(date) || Objects.isNull(startDateZeitraum) || Objects.isNull(endDateZeitraum)) &&
+                (date.isEqual(startDateZeitraum) || date.isAfter(startDateZeitraum)) &&
+                (date.isEqual(endDateZeitraum) || date.isBefore(endDateZeitraum));
     }
 }

@@ -79,6 +79,28 @@ public class AuswertungService {
     }
 
     /**
+     *
+     * @param options
+     * @return
+     * @throws IOException
+     */
+    @LogExecutionTime
+    public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellenNg(final MessstelleAuswertungOptionsDTO options) throws IOException {
+
+
+
+        log.debug("#ladeAuswertungMessstellen {}", options);
+        final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
+        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
+        final var zaehldatenMessstellen = this.createZaehldatenForGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
+        auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
+        final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
+        final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
+        auswertungMessstellen.setSpreadsheetBase64Encoded(spreadsheetBase64Encoded);
+        return auswertungMessstellen;
+    }
+
+    /**
      * Bereitet die im Parameter gegebenen Zähldaten für die Gangliniendarstellung auf.
      *
      * @param fahrzeugOptions die Optionen zur Aufbereitung der Zähldaten für die Gangliniendarstellung.
@@ -128,6 +150,66 @@ public class AuswertungService {
 
         // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
+
+        final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
+                // Lädt die Daten pro Messstelle
+                .emptyIfNull(options.getMessstelleAuswertungIds())
+                .parallelStream()
+                // Lädt die Daten einer Messstelle pro Zeitraum
+                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
+                        .parallelStream()
+                        .map(zeitraum -> {
+                            final var model = createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
+                            final TagesaggregatResponseDto tagesaggregatResponse;
+                            if (validierungService.isZeitraumAndTagestypValid(model)) {
+                                tagesaggregatResponse = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
+                                        zeitraum);
+                            } else {
+                                tagesaggregatResponse = new TagesaggregatResponseDto();
+                                final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+                                messstelleAuswertungIdDTO.getMqIds().forEach(mqId -> {
+                                    final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+                                    tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+                                    emptyTagesaggregate.add(tagesaggregatDto);
+                                });
+                                tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+                                tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+                            }
+                            // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
+                            // über den geladenen Zeitraum und die MstId an.
+                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregatResponse,
+                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
+                        }))
+                .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
+        return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
+    }
+
+    /**
+     * Lädt die Daten pro Messstelle je Zeitraum.
+     *
+     * @param options Definierte Optionen zum Laden der Daten
+     * @return Liste an Auswertungen Pro Messstelle
+     */
+    protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstIdNg(final MessstelleAuswertungOptionsDTO options) {
+
+        // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
+        final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
+
+        // Ermittlung der Messfaehigkeiten für jeden Zeitraum je Messstelle.
+
+        CollectionUtils
+                // Lädt die Daten pro Messstelle
+                .emptyIfNull(options.getMessstelleAuswertungIds())
+                .parallelStream()
+                .forEach(messstelleAuswertungIdDTO -> {
+
+
+
+                    //messstelleAuswertungIdDTO.getMstId().
+                });
+
+
+
 
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
                 // Lädt die Daten pro Messstelle
