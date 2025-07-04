@@ -15,6 +15,7 @@ import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.util.SuchwortUtil;
@@ -51,7 +52,7 @@ class MessstelleMapperTests {
         expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2ReadMessfaehigkeitDto(bean.getMessfaehigkeiten()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugklasse(bean.getFahrzeugklasse());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart());
         expected.setKommentar(bean.getKommentar());
         expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
@@ -63,7 +64,7 @@ class MessstelleMapperTests {
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
-        tooltip.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        tooltip.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart().name());
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
@@ -93,7 +94,7 @@ class MessstelleMapperTests {
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugklasse(bean.getFahrzeugklasse());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart());
 
         expected.setSichtbarDatenportal(bean.getSichtbarDatenportal());
         expected.setGeprueft(bean.getGeprueft());
@@ -127,7 +128,7 @@ class MessstelleMapperTests {
         updatedData.setBemerkung("darf nicht aktualisiert werden");
         updatedData.setHersteller("darf nicht aktualisiert werden");
         updatedData.setFahrzeugklasse(Fahrzeugklasse.RAD);
-        updatedData.setDetektierteVerkehrsarten("darf nicht aktualisiert werden");
+        updatedData.setDetektierteVerkehrsart(Verkehrsart.UNBEKANNT);
         updatedData.setStadtbezirkNummer(666);
         updatedData.setRealisierungsdatum("1999-11-11");
         updatedData.setAbbaudatum("1999-11-11");
@@ -162,7 +163,7 @@ class MessstelleMapperTests {
         expected.setPunkt(new GeoPoint(updatedData.getLatitude(), updatedData.getLongitude()));
         expected.setHersteller(bean.getHersteller());
         expected.setFahrzeugklasse(bean.getFahrzeugklasse());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart());
         expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
         expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
@@ -248,7 +249,7 @@ class MessstelleMapperTests {
         final MessstelleAuswertungDTO expected = new MessstelleAuswertungDTO();
         expected.setMstId(bean.getMstId());
         expected.setStandort(bean.getStandort());
-        expected.setDetektierteVerkehrsarten(bean.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart());
         expected.setMessquerschnitte(this.mapper.bean2auswertungMqDto(bean.getMessquerschnitte()));
 
         Assertions.assertThat(this.mapper.bean2auswertungDto(List.of(bean)))

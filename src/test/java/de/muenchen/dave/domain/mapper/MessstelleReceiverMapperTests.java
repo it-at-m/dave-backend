@@ -34,6 +34,7 @@ class MessstelleReceiverMapperTests {
     void beforeEach() throws IllegalAccessException {
         mapper = new MessstelleReceiverMapperImpl();
         FieldUtils.writeField(mapper, "fahrzeugklassenMapper", new FahrzeugklassenMapperImpl(), true);
+        FieldUtils.writeField(mapper, "verkehrsartMapper", new VerkehrsartMapperImpl(), true);
     }
 
     @Test
@@ -57,7 +58,7 @@ class MessstelleReceiverMapperTests {
         expected.setSuchwoerter(new ArrayList<>());
         expected.setHersteller(dto.getHersteller());
         expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(dto.getFahrzeugklasse()));
-        expected.setDetektierteVerkehrsarten(dto.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(dto.getDetektierteVerkehrsarten()));
         final String stadtbezirkBezeichnung = "Schwabing-West";
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirkBezeichnung));
         expected.getSuchwoerter().addAll(stadtbezirke);
@@ -125,7 +126,7 @@ class MessstelleReceiverMapperTests {
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setHersteller(updatedData.getHersteller());
         expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(updatedData.getFahrzeugklasse()));
-        expected.setDetektierteVerkehrsarten(updatedData.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(updatedData.getDetektierteVerkehrsarten()));
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
         expected.getSuchwoerter().add(updatedData.getMstId());
