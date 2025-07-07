@@ -54,7 +54,7 @@ class MessstelleServiceTest {
     }
 
     @Test
-    void getMessfaehigkeitenForZeitraumForMessstelle() {
+    void getMessfaehigkeitenForZeitraumForMessstelle1() {
         final var messstelle = new Messstelle();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
@@ -98,6 +98,279 @@ class MessstelleServiceTest {
         expectedMessfaehigkeit.setGueltigAb("2024-04-01");
         expectedMessfaehigkeit.setGueltigBis("2024-04-30");
         expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle2() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
+
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 3, 31),
+                LocalDate.of(2024, 5, 14));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-03-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-03-31");
+        expected.add(expectedMessfaehigkeit);
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle3() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
+
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 4, 1),
+                LocalDate.of(2024, 5, 15));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expected.add(expectedMessfaehigkeit);
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-05-15");
+        expectedMessfaehigkeit.setGueltigBis("2024-05-31");
+        expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle4() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
+
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 3, 15),
+                LocalDate.of(2024, 5, 17));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-03-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-03-31");
+        expected.add(expectedMessfaehigkeit);
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expected.add(expectedMessfaehigkeit);
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-05-15");
+        expectedMessfaehigkeit.setGueltigBis("2024-05-31");
+        expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle5() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
+
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 4, 10),
+                LocalDate.of(2024, 4, 20));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
+    }
+
+    @Test
+    void getMessfaehigkeitenForZeitraumForMessstelle6() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
+
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 5, 1),
+                LocalDate.of(2024, 5, 14));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
 
         assertThat(result, is(expected));
 
