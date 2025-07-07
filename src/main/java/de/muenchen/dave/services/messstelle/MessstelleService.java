@@ -117,7 +117,7 @@ public class MessstelleService {
         });
     }
 
-    public List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
+    protected List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
             final String mstId,
             final LocalDate startDateZeitraum,
             final LocalDate endDateZeitraum) {
