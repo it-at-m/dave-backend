@@ -87,8 +87,6 @@ public class AuswertungService {
     @LogExecutionTime
     public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellenNg(final MessstelleAuswertungOptionsDTO options) throws IOException {
 
-
-
         log.debug("#ladeAuswertungMessstellen {}", options);
         final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
@@ -203,13 +201,8 @@ public class AuswertungService {
                 .parallelStream()
                 .forEach(messstelleAuswertungIdDTO -> {
 
-
-
                     //messstelleAuswertungIdDTO.getMstId().
                 });
-
-
-
 
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
                 // Lädt die Daten pro Messstelle

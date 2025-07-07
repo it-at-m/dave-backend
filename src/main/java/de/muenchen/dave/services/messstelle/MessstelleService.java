@@ -136,26 +136,22 @@ public class MessstelleService {
                     final var isGueltigAbBetween = isDateBetweenZeitraumInklusive(
                             messfaehigkeitGueltigAb,
                             startDateZeitraum,
-                            endDateZeitraum
-                            );
+                            endDateZeitraum);
 
                     final var isGueltigBisBetween = isDateBetweenZeitraumInklusive(
                             messfaehigkeitGueltigBis,
                             startDateZeitraum,
-                            endDateZeitraum
-                    );
+                            endDateZeitraum);
 
                     final var isStartDateBetween = isDateBetweenZeitraumInklusive(
                             startDateZeitraum,
                             messfaehigkeitGueltigAb,
-                            messfaehigkeitGueltigBis
-                    );
+                            messfaehigkeitGueltigBis);
 
                     final var isEndDateBetween = isDateBetweenZeitraumInklusive(
                             endDateZeitraum,
                             messfaehigkeitGueltigAb,
-                            messfaehigkeitGueltigBis
-                    );
+                            messfaehigkeitGueltigBis);
 
                     return isGueltigAbBetween ||
                             isGueltigBisBetween ||

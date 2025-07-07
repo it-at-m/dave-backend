@@ -1,11 +1,20 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.mapper.FahrzeugklassenMapperImpl;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.time.LocalDate;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -40,6 +45,7 @@ class MessstelleServiceTest {
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
         Mockito.reset(messstelleIndexService, customSuggestIndexService);
+        FieldUtils.writeField(stadtbezirkMapper, "stadtbezirkeMap", new HashMap<String, String>(), true);
         messstelleService = new MessstelleService(
                 messstelleIndexService,
                 customSuggestIndexService,
@@ -49,7 +55,53 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle() {
+        final var messstelle = new Messstelle();
+        messstelle.setMstId("1234");
+        messstelle.setStadtbezirkNummer(1);
+        messstelle.setPunkt(new GeoPoint(1d, 2d));
 
+        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        messstelle.setMessfaehigkeiten(messfaehigkeiten);
+
+        var messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
+        messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
+        messfaehigkeiten.add(messfaehigkeit);
+
+        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+
+        final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                "1234",
+                LocalDate.of(2024, 4, 1),
+                LocalDate.of(2024, 4, 30));
+
+        final var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expected.add(expectedMessfaehigkeit);
+
+        assertThat(result, is(expected));
+
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).findByMstIdOrThrowException("1234");
     }
 
     @Test
@@ -106,6 +158,5 @@ class MessstelleServiceTest {
         result = messstelleService.isDateBetweenZeitraumInklusive(date, startDateZeitraum, endDateZeitraum);
         assertThat(result, is(false));
     }
-
 
 }
