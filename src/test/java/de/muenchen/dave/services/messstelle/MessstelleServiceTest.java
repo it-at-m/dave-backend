@@ -146,7 +146,7 @@ class MessstelleServiceTest {
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        expectedMessfaehigkeit.setGueltigAb("2024-03-01");
+        expectedMessfaehigkeit.setGueltigAb("2024-03-31");
         expectedMessfaehigkeit.setGueltigBis("2024-03-31");
         expected.add(expectedMessfaehigkeit);
         expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
@@ -210,7 +210,7 @@ class MessstelleServiceTest {
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         expectedMessfaehigkeit.setGueltigAb("2024-05-15");
-        expectedMessfaehigkeit.setGueltigBis("2024-05-31");
+        expectedMessfaehigkeit.setGueltigBis("2024-05-15");
         expected.add(expectedMessfaehigkeit);
 
         assertThat(result, is(expected));
@@ -260,7 +260,7 @@ class MessstelleServiceTest {
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        expectedMessfaehigkeit.setGueltigAb("2024-03-01");
+        expectedMessfaehigkeit.setGueltigAb("2024-03-15");
         expectedMessfaehigkeit.setGueltigBis("2024-03-31");
         expected.add(expectedMessfaehigkeit);
         expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
@@ -273,7 +273,7 @@ class MessstelleServiceTest {
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         expectedMessfaehigkeit.setGueltigAb("2024-05-15");
-        expectedMessfaehigkeit.setGueltigBis("2024-05-31");
+        expectedMessfaehigkeit.setGueltigBis("2024-05-17");
         expected.add(expectedMessfaehigkeit);
 
         assertThat(result, is(expected));
@@ -323,8 +323,8 @@ class MessstelleServiceTest {
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         expectedMessfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        expectedMessfaehigkeit.setGueltigAb("2024-04-01");
-        expectedMessfaehigkeit.setGueltigBis("2024-04-30");
+        expectedMessfaehigkeit.setGueltigAb("2024-04-10");
+        expectedMessfaehigkeit.setGueltigBis("2024-04-20");
         expected.add(expectedMessfaehigkeit);
 
         assertThat(result, is(expected));
