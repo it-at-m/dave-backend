@@ -433,6 +433,144 @@ class MessstelleServiceTest {
     }
 
     @Test
+    void setEarlierDateOrLaterDateInMessfaehigkeit() {
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        var startDateZeitraum = LocalDate.of(2024, 4, 10);
+        var endDateZeitraum = LocalDate.of(2024, 4, 20);
+        var result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        var expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 9);
+        endDateZeitraum = LocalDate.of(2024, 4, 21);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 9);
+        endDateZeitraum = LocalDate.of(2024, 4, 20);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 10);
+        endDateZeitraum = LocalDate.of(2024, 4, 21);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 11);
+        endDateZeitraum = LocalDate.of(2024, 4, 20);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-11");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 10);
+        endDateZeitraum = LocalDate.of(2024, 4, 19);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-19");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = LocalDate.of(2024, 4, 11);
+        endDateZeitraum = LocalDate.of(2024, 4, 19);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-11");
+        expected.setGueltigBis("2024-04-19");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb(null);
+        messfaehigkeit.setGueltigBis(null);
+        startDateZeitraum = LocalDate.of(2024, 4, 11);
+        endDateZeitraum = LocalDate.of(2024, 4, 19);
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-11");
+        expected.setGueltigBis("2024-04-19");
+        assertThat(result, is(expected));
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        messfaehigkeit.setGueltigAb("2024-04-10");
+        messfaehigkeit.setGueltigBis("2024-04-20");
+        startDateZeitraum = null;
+        endDateZeitraum = null;
+        result = messstelleService.setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum);
+        expected = new ReadMessfaehigkeitDTO();
+        expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
+        expected.setGueltigAb("2024-04-10");
+        expected.setGueltigBis("2024-04-20");
+        assertThat(result, is(expected));
+    }
+
+    @Test
     void getEarlierDate() {
         var date = LocalDate.of(2025, 7, 15);
         var dateToCompare = LocalDate.of(2025, 7, 15);
