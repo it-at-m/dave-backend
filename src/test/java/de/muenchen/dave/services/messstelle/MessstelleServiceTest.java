@@ -432,4 +432,82 @@ class MessstelleServiceTest {
         assertThat(result, is(false));
     }
 
+    @Test
+    void getEarlierDate() {
+        var date = LocalDate.of(2025, 7, 15);
+        var dateToCompare = LocalDate.of(2025, 7, 15);
+        var result = messstelleService.getEarlierDate(date, dateToCompare);
+        var expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 16);
+        dateToCompare = LocalDate.of(2025, 7, 15);
+        result = messstelleService.getEarlierDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 15);
+        dateToCompare = LocalDate.of(2025, 7, 16);
+        result = messstelleService.getEarlierDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = null;
+        dateToCompare = LocalDate.of(2025, 7, 15);
+        result = messstelleService.getEarlierDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 15);
+        dateToCompare = null;
+        result = messstelleService.getEarlierDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = null;
+        dateToCompare = null;
+        result = messstelleService.getEarlierDate(date, dateToCompare);
+        expected = null;
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void getLaterDate() {
+        var date = LocalDate.of(2025, 7, 15);
+        var dateToCompare = LocalDate.of(2025, 7, 15);
+        var result = messstelleService.getLaterDate(date, dateToCompare);
+        var expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 16);
+        dateToCompare = LocalDate.of(2025, 7, 15);
+        result = messstelleService.getLaterDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 16);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 15);
+        dateToCompare = LocalDate.of(2025, 7, 16);
+        result = messstelleService.getLaterDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 16);
+        assertThat(result, is(expected));
+
+        date = null;
+        dateToCompare = LocalDate.of(2025, 7, 15);
+        result = messstelleService.getLaterDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = LocalDate.of(2025, 7, 15);
+        dateToCompare = null;
+        result = messstelleService.getLaterDate(date, dateToCompare);
+        expected = LocalDate.of(2025, 7, 15);
+        assertThat(result, is(expected));
+
+        date = null;
+        dateToCompare = null;
+        result = messstelleService.getLaterDate(date, dateToCompare);
+        expected = null;
+        assertThat(result, is(expected));
+    }
+
 }

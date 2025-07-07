@@ -205,11 +205,11 @@ public class MessstelleService {
 
     protected LocalDate getEarlierDate(final LocalDate date, final LocalDate dateToCompare) {
         final LocalDate earlierDate;
-        if (Objects.isNull(date) || !Objects.isNull(dateToCompare)) {
+        if (Objects.isNull(date) && !Objects.isNull(dateToCompare)) {
             earlierDate = dateToCompare;
-        } else if (!Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+        } else if (!Objects.isNull(date) && Objects.isNull(dateToCompare)) {
             earlierDate = date;
-        } else if (Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+        } else if (Objects.isNull(date) && Objects.isNull(dateToCompare)) {
             earlierDate = null;
         } else if (date.isBefore(dateToCompare)) {
             earlierDate = date;
@@ -221,11 +221,11 @@ public class MessstelleService {
 
     protected LocalDate getLaterDate(final LocalDate date, final LocalDate dateToCompare) {
         final LocalDate laterDate;
-        if (Objects.isNull(date) || !Objects.isNull(dateToCompare)) {
+        if (Objects.isNull(date) && !Objects.isNull(dateToCompare)) {
             laterDate = dateToCompare;
-        } else if (!Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+        } else if (!Objects.isNull(date) && Objects.isNull(dateToCompare)) {
             laterDate = date;
-        } else if (Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+        } else if (Objects.isNull(date) && Objects.isNull(dateToCompare)) {
             laterDate = null;
         } else if (date.isAfter(dateToCompare)) {
             laterDate = date;
