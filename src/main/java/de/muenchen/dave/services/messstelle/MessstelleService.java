@@ -38,6 +38,7 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final UnauffaelligeTageService unauffaelligeTageService;
 
     public Messstelle getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
@@ -117,6 +118,14 @@ public class MessstelleService {
         });
     }
 
+    /**
+     *
+     *
+     * @param mstId
+     * @param startDateZeitraum
+     * @param endDateZeitraum
+     * @return
+     */
     protected List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
             final String mstId,
             final LocalDate startDateZeitraum,
@@ -158,6 +167,7 @@ public class MessstelleService {
                             isStartDateBetween ||
                             isEndDateBetween;
                 })
+                .map(messfaehigkeit -> setEarlierDateOrLaterDateInMessfaehigkeit(messfaehigkeit, startDateZeitraum, endDateZeitraum))
                 .toList();
     }
 
@@ -168,5 +178,61 @@ public class MessstelleService {
         return !(Objects.isNull(date) || Objects.isNull(startDateZeitraum) || Objects.isNull(endDateZeitraum)) &&
                 (date.isEqual(startDateZeitraum) || date.isAfter(startDateZeitraum)) &&
                 (date.isEqual(endDateZeitraum) || date.isBefore(endDateZeitraum));
+    }
+
+    protected ReadMessfaehigkeitDTO setEarlierDateOrLaterDateInMessfaehigkeit(
+            final ReadMessfaehigkeitDTO messfaehigkeit,
+            final LocalDate startDateZeitraum,
+            final LocalDate endDateZeitraum) {
+        final var messfaehigkeitGueltigAb = Objects.isNull(messfaehigkeit.getGueltigAb())
+                ? null
+                : LocalDate.parse(messfaehigkeit.getGueltigAb());
+        final var messfaehigkeitGueltigBis = Objects.isNull(messfaehigkeit.getGueltigBis())
+                ? null
+                : LocalDate.parse(messfaehigkeit.getGueltigBis());
+
+        if (!isDateBetweenZeitraumInklusive(messfaehigkeitGueltigAb, startDateZeitraum, endDateZeitraum)) {
+            final var newMessfaehigkeitGueltigAb = getLaterDate(messfaehigkeitGueltigAb, startDateZeitraum);
+            messfaehigkeit.setGueltigAb(newMessfaehigkeitGueltigAb.toString());
+        }
+
+        if (!isDateBetweenZeitraumInklusive(messfaehigkeitGueltigBis, startDateZeitraum, endDateZeitraum)) {
+            final var newMessfaehigkeitGueltigBis = getEarlierDate(messfaehigkeitGueltigBis, endDateZeitraum);
+            messfaehigkeit.setGueltigBis(newMessfaehigkeitGueltigBis.toString());
+        }
+
+        return messfaehigkeit;
+    }
+
+    protected LocalDate getEarlierDate(final LocalDate date, final LocalDate dateToCompare) {
+        final LocalDate earlierDate;
+        if (Objects.isNull(date) || !Objects.isNull(dateToCompare)) {
+            earlierDate = dateToCompare;
+        } else if (!Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+            earlierDate = date;
+        } else if (Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+            earlierDate = null;
+        } else if (date.isBefore(dateToCompare)) {
+            earlierDate = date;
+        } else {
+            earlierDate = dateToCompare;
+        }
+        return earlierDate;
+    }
+
+    protected LocalDate getLaterDate(final LocalDate date, final LocalDate dateToCompare) {
+        final LocalDate laterDate;
+        if (Objects.isNull(date) || !Objects.isNull(dateToCompare)) {
+            laterDate = dateToCompare;
+        } else if (!Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+            laterDate = date;
+        } else if (Objects.isNull(date) || Objects.isNull(dateToCompare)) {
+            laterDate = null;
+        } else if (date.isAfter(dateToCompare)) {
+            laterDate = date;
+        } else {
+            laterDate = dateToCompare;
+        }
+        return laterDate;
     }
 }
