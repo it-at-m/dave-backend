@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
@@ -8,6 +9,7 @@ import de.muenchen.dave.services.KalendertagService;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,17 +35,17 @@ public class ValidierungService {
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
     }
 
-    /* Rename */
-    public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagesTypForMessstelleModel request, final FahrzeugOptionsDTO fahrzeugoptions) {
+    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingChoosenFahrzeugoptions(
+            final ValidateZeitraumAndTagesTypForMessstelleModel request,
+            final FahrzeugOptionsDTO fahrzeugoptions) {
         final var fahrzeugklasseAccordingChoosenFahrzeugoptions = getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugoptions);
         final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
                 .stream()
                 .filter(messfaehigkeit -> containsFahrzeugklasseTheGivenFahrzeugklasseToCompare(
                         messfaehigkeit.getFahrzeugklasse(),
-                        fahrzeugklasseAccordingChoosenFahrzeugoptions
-                ))
+                        fahrzeugklasseAccordingChoosenFahrzeugoptions))
                 .toList();
-        return true;
+        return relevantMessfaehigkeiten;
     }
 
     public boolean isZeitraumAndTagestypValid(
