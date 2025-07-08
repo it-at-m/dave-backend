@@ -193,29 +193,6 @@ public class AuswertungService {
         // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
-        // Ermittlung der Messfaehigkeiten für jeden Zeitraum je Messstelle.
-
-        CollectionUtils
-
-                .emptyIfNull(options.getMessstelleAuswertungIds())
-                .parallelStream()
-                .flatMap(messstelleAuswertungIdDTO -> {
-                    final var mstId = messstelleAuswertungIdDTO.getMstId();
-                    zeitraeume.stream()
-                            .flatMap(zeitraum -> {
-                        return messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
-                                mstId,
-                                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                                zeitraum.getAuswertungsZeitraum().getZeitraumEnd()
-                                )
-                                .stream();
-                    });
-
-
-
-
-                });
-
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
                 // Lädt die Daten pro Messstelle
                 .emptyIfNull(options.getMessstelleAuswertungIds())
@@ -270,6 +247,14 @@ public class AuswertungService {
         requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
                 zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
         model.setZeitraum(requestedZeitraum);
+
+        final var messfaehigkeiten = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                        mstId,
+                        zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                        zeitraum.getAuswertungsZeitraum().getZeitraumEnd()
+                );
+        model.setMessfaehigkeiten(messfaehigkeiten);
+
         return model;
     }
 
