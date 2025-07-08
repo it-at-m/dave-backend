@@ -125,7 +125,7 @@ public class MessstelleService {
      * @param endDateZeitraum
      * @return
      */
-    protected List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
+    public List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
             final String mstId,
             final LocalDate startDateZeitraum,
             final LocalDate endDateZeitraum) {

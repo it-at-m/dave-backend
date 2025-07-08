@@ -196,12 +196,24 @@ public class AuswertungService {
         // Ermittlung der Messfaehigkeiten für jeden Zeitraum je Messstelle.
 
         CollectionUtils
-                // Lädt die Daten pro Messstelle
+
                 .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
-                .forEach(messstelleAuswertungIdDTO -> {
+                .flatMap(messstelleAuswertungIdDTO -> {
+                    final var mstId = messstelleAuswertungIdDTO.getMstId();
+                    zeitraeume.stream()
+                            .flatMap(zeitraum -> {
+                        return messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                                mstId,
+                                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                                zeitraum.getAuswertungsZeitraum().getZeitraumEnd()
+                                )
+                                .stream();
+                    });
 
-                    //messstelleAuswertungIdDTO.getMstId().
+
+
+
                 });
 
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
@@ -347,4 +359,6 @@ public class AuswertungService {
         auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
         return auswertungen;
     }
+
+    public static class
 }
