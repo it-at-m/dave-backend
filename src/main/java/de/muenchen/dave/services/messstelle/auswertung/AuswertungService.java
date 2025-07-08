@@ -197,11 +197,19 @@ public class AuswertungService {
                 // Lädt die Daten pro Messstelle
                 .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
+                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
+                        .parallelStream()
+                        .map(zeitraum -> createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp())))
+                .map(validateZeitraumAndTagesTypForMessstelle -> {
+
+                })
+
                 // Lädt die Daten einer Messstelle pro Zeitraum
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> {
                             final var model = createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
+
                             final TagesaggregatResponseDto tagesaggregatResponse;
                             if (validierungService.isZeitraumAndTagestypValid(model)) {
                                 tagesaggregatResponse = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
@@ -227,8 +235,8 @@ public class AuswertungService {
     }
 
     /**
-     * Erzeugt aus den übergebenen Parametern ein Objekt, um den angefragten Zeitraum und Tagestyp zu
-     * validieren.
+     * Erzeugt aus den übergebenen Parametern ein Objekt welches als Basis für die Validierung bezüglich
+     * Zeitraum, Tagestyp und Messfähigkeiten dient.
      *
      * @param mstId ID der angefragten Messstelle
      * @param zeitraum angefragter Zeitraum
@@ -240,8 +248,10 @@ public class AuswertungService {
             final Zeitraum zeitraum,
             final TagesTyp tagesTyp) {
         final var model = new ValidateZeitraumAndTagesTypForMessstelleModel();
+
         model.setMstId(mstId);
         model.setTagesTyp(tagesTyp);
+
         final var requestedZeitraum = new ArrayList<LocalDate>();
         requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
         requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
@@ -249,10 +259,9 @@ public class AuswertungService {
         model.setZeitraum(requestedZeitraum);
 
         final var messfaehigkeiten = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
-                        mstId,
-                        zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                        zeitraum.getAuswertungsZeitraum().getZeitraumEnd()
-                );
+                mstId,
+                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                zeitraum.getAuswertungsZeitraum().getZeitraumEnd());
         model.setMessfaehigkeiten(messfaehigkeiten);
 
         return model;
@@ -344,6 +353,4 @@ public class AuswertungService {
         auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
         return auswertungen;
     }
-
-    public static class
 }
