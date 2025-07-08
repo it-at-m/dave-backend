@@ -41,7 +41,7 @@ public class ValidierungService {
         final var fahrzeugklasseAccordingChoosenFahrzeugoptions = getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugoptions);
         final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
                 .stream()
-                .filter(messfaehigkeit -> containsFahrzeugklasseTheGivenFahrzeugklasseToCompare(
+                .filter(messfaehigkeit -> isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
                         messfaehigkeit.getFahrzeugklasse(),
                         fahrzeugklasseAccordingChoosenFahrzeugoptions))
                 .toList();
@@ -134,18 +134,20 @@ public class ValidierungService {
                 !fahrzeugOptions.isLieferwagen();
     }
 
-    protected boolean containsFahrzeugklasseTheGivenFahrzeugklasseToCompare(final Fahrzeugklasse fahrzeugklasse, final Fahrzeugklasse fahrzeugklasseToCompare) {
-        final var isContainedInAchtPlusEins = Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasse)
-                && (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseToCompare) ||
-                        Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseToCompare) ||
-                        Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseToCompare));
+    protected boolean isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+            final Fahrzeugklasse fahrzeugklasse,
+            final Fahrzeugklasse fahrzeugklasseToCompare) {
+        final var isContainedInAchtPlusEins = Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasse) &&
+                Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseToCompare);
 
         final var isContainedInZweiPlusEins = Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasse)
                 && (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseToCompare) ||
-                        Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseToCompare));
+                        Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseToCompare));
 
         final var isContainedInSummeKfz = Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasse) &&
-                Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseToCompare);
+                (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseToCompare) ||
+                Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseToCompare) ||
+                Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseToCompare));
 
         final var isContainedInRad = Fahrzeugklasse.RAD.equals(fahrzeugklasse) &&
                 Fahrzeugklasse.RAD.equals(fahrzeugklasseToCompare);

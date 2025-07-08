@@ -201,6 +201,7 @@ public class AuswertungService {
                         .parallelStream()
                         .map(zeitraum -> createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp())))
                 .map(validateZeitraumAndTagesTypForMessstelle -> {
+                    final var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingChoosenFahrzeugoptions(validateZeitraumAndTagesTypForMessstelle, options.getFahrzeuge());
 
                 })
 
