@@ -7,14 +7,13 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -135,7 +134,8 @@ public class GenerateCsvMstService {
                     final Set<String> messquerschnittIdsSorted = options.getMessquerschnittIds().stream().sorted().collect(
                             Collectors.toCollection(LinkedHashSet::new));
                     if (messquerschnittIdsSorted.contains(mq.getMqId())) {
-                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(mq.getFahrtrichtung()), mq.getStandort()));
+                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(mq.getFahrtrichtung()),
+                                mq.getStandort()));
                     }
                 });
                 metaData.append(StringUtils.join(mqData, ", "));
