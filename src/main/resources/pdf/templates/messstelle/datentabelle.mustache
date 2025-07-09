@@ -8,7 +8,7 @@
 {{{logoMustachePart}}}
 {{{footerMustachePart}}}
 <!--Ab der zweiten Seite soll über dem Content noch ein Header angezeigt werden-->
-<div style="position: running(datentabelle-header-second-page-and-onward); margin-top: 1.1cm">
+<div style="position: running(datentabelle-header-second-page-and-onward); margin-top: 1.1cm; margin-left: 0.2cm">
   <h4>{{documentTitle}}</h4>
   {{#messstelleninformationen}}
     <b>{{standort}}</b>
@@ -20,7 +20,11 @@
     </table>
     <br/>
   {{/messstelleninformationen}}
-  <h5>{{tableTitle}}</h5>
+    <table>
+        {{#datatableTitle}}
+            <tr><td><h5 class="{{cssClass}} {{cssClassOngoing}}">{{text}}</h5></td></tr>
+        {{/datatableTitle}}
+    </table>
 </div>
 
 <table><tr>
@@ -31,7 +35,9 @@
 <br/>
 <table>
     <tr class="blank_row"> <td></td></tr>
-    <tr><td><h5 class="datentabelle">{{tableTitle}}</h5></td></tr>
+    {{#datatableTitle}}
+    <tr><td><h5 class="{{cssClass}}">{{text}}</h5></td></tr>
+    {{/datatableTitle}}
 </table>
 {{{datentabelleTableMustachePart}}}
 </body>

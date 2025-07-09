@@ -1,6 +1,8 @@
 package de.muenchen.dave.domain.pdf.templates.messstelle;
 
+import de.muenchen.dave.domain.pdf.helper.DatatableTitle;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
+import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +22,6 @@ public class DatentabelleMessstellePdf extends BasicMessstellePdf {
 
     private boolean schematischeUebersichtNeeded;
 
-    private String tableTitle;
+    private List<DatatableTitle> datatableTitle;
 
 }
