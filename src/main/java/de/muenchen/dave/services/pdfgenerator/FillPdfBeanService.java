@@ -412,8 +412,10 @@ public class FillPdfBeanService {
                         titles.add(new DatatableTitle(chartTitle.toString(), "no_margin", ""));
                     });
             titles.getLast().setCssClass("no_margin_top");
+            if (titles.size() == 1) {
+                titles.getFirst().setCssClassOngoing("negativ_margin_bottom");
+            }
         }
-        System.err.println(titles);
         return titles;
     }
 
