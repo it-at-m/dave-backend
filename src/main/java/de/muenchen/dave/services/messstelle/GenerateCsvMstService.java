@@ -178,6 +178,12 @@ public class GenerateCsvMstService {
             }
             data.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            if (dataCsv.getLfw() != null) {
+                data.append(dataCsv.getLfw());
+            }
+            data.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             if (dataCsv.getLkw() != null) {
                 data.append(dataCsv.getLkw());
@@ -187,12 +193,6 @@ public class GenerateCsvMstService {
         if (options.isLastzuege()) {
             if (dataCsv.getLastzuege() != null) {
                 data.append(dataCsv.getLastzuege());
-            }
-            data.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            if (dataCsv.getLfw() != null) {
-                data.append(dataCsv.getLfw());
             }
             data.append(SEMIKOLON);
         }
@@ -277,16 +277,16 @@ public class GenerateCsvMstService {
             header.append("Pkw");
             header.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            header.append("Lfw");
+            header.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             header.append("Lkw");
             header.append(SEMIKOLON);
         }
         if (options.isLastzuege()) {
             header.append("Lz");
-            header.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            header.append("Lfw");
             header.append(SEMIKOLON);
         }
         if (options.isBusse()) {
