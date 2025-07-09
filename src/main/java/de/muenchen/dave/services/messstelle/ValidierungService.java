@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.math3.util.ArithmeticUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,9 +24,11 @@ public class ValidierungService {
 
     public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagesTypForMessstelleModel request) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
+
         final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
                 request.getZeitraum().getFirst(),
-                request.getZeitraum().getLast(), tagestypen);
+                request.getZeitraum().getLast(),
+                tagestypen);
 
         final long numberOfUnauffaelligeTage = unauffaelligeTageService
                 .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(request.getMstId(),
@@ -35,37 +38,37 @@ public class ValidierungService {
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
     }
 
-    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingChoosenFahrzeugoptions(
+    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
             final ValidateZeitraumAndTagesTypForMessstelleModel request,
-            final FahrzeugOptionsDTO fahrzeugoptions) {
-        final var fahrzeugklasseAccordingChoosenFahrzeugoptions = getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugoptions);
+            final Fahrzeugklasse fahrzeugklasse) {
         final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
                 .stream()
                 .filter(messfaehigkeit -> isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
                         messfaehigkeit.getFahrzeugklasse(),
-                        fahrzeugklasseAccordingChoosenFahrzeugoptions))
+                        fahrzeugklasse))
                 .toList();
         return relevantMessfaehigkeiten;
     }
 
-    public boolean isZeitraumAndTagestypValid(
+    public boolean areZeitraeumeAndTagesTypForMessstelleValid(
             final String mstId,
-            final LocalDate startDateZeitraum,
-            final LocalDate endDateZeitraum,
+            final List<List<LocalDate>> zeitraeume,
             final TagesTyp tagesTyp) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(tagesTyp);
 
-        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                startDateZeitraum,
-                endDateZeitraum,
-                tagestypen);
+        final long numberOfRelevantKalendertage = zeitraeume.stream().map(zeitraum ->
+                kalendertagService.countAllKalendertageByDatumAndTagestypen(
+                        zeitraum.getFirst(),
+                        zeitraum.getLast(), tagestypen)
+        ).reduce(0L, ArithmeticUtils::addAndCheck);
 
-        final long numberOfUnauffaelligeTage = unauffaelligeTageService
-                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
+        final long numberOfUnauffaelligeTage = zeitraeume.stream().map(zeitraum ->
+                unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                         mstId,
-                        startDateZeitraum,
-                        endDateZeitraum,
-                        tagestypen);
+                        zeitraum.getFirst(),
+                        zeitraum.getLast(),
+                        tagestypen)
+        ).reduce(0L, ArithmeticUtils::addAndCheck);
 
         return hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
@@ -80,7 +83,7 @@ public class ValidierungService {
                 .doubleValue() >= 0.5;
     }
 
-    protected Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions) {
+    public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions) {
         if (areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.SUMME_KFZ;
         } else if (areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(fahrzeugOptions)) {
