@@ -153,14 +153,6 @@ public class HeatmapService {
                         Objects.isNull(intervall.getAnzahlBus()) ? null : intervall.getAnzahlBus().intValue(),
                         ChartLegendUtil.BUSSE_HEATMAP);
             }
-            if (fahrzeugOptions.isLieferwagen()) {
-                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                        ladeZaehldatenHeatmap,
-                        heatMapEntryIndex.get(),
-                        klassenKategorienIndex.getAndIncrement(),
-                        Objects.isNull(intervall.getAnzahlLfw()) ? null : intervall.getAnzahlLfw().intValue(),
-                        ChartLegendUtil.LFW_HEATMAP);
-            }
             if (fahrzeugOptions.isLastzuege()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
@@ -176,6 +168,14 @@ public class HeatmapService {
                         klassenKategorienIndex.getAndIncrement(),
                         Objects.isNull(intervall.getAnzahlLkw()) ? null : intervall.getAnzahlLkw().intValue(),
                         ChartLegendUtil.LKW_HEATMAP);
+            }
+            if (fahrzeugOptions.isLieferwagen()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlLfw()) ? null : intervall.getAnzahlLfw().intValue(),
+                        ChartLegendUtil.LFW_HEATMAP);
             }
             if (fahrzeugOptions.isPersonenkraftwagen()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
