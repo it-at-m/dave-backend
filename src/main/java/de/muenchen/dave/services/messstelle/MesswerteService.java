@@ -10,6 +10,7 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.ZeitraumDto;
 import de.muenchen.dave.services.KalendertagService;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
@@ -136,14 +137,21 @@ public class MesswerteService {
      *
      * @param tagesTyp Tagestyp der zu ladenden Daten
      * @param mqIds zu ladende Messquerschnitte
-     * @param zeitraum Zeitraum der zu ladenden Daten
+     * @param zeitraeume tbd
      * @return die geladenen Tagesaggregate als DTO
      */
-    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
+    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final List<List<LocalDate>> zeitraeume) {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
-        request.setStartDate(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
-        request.setEndDate(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(), zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+        final var requestZeitraeume = zeitraeume.stream()
+                        .map(zeitraum -> {
+                            final var requestZeitraum = new ZeitraumDto();
+                            requestZeitraum.setStartDate(zeitraum.getFirst());
+                            requestZeitraum.setEndDate(zeitraum.getLast());
+                            return requestZeitraum;
+                        })
+                        .toList();
+        request.setZeitraeume(requestZeitraeume);
         request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
 
         final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(request).block();
