@@ -206,19 +206,20 @@ class SpreadsheetServiceTest {
         Cell cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Jahr");
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
+
 
         row = sheet.createRow(0);
         cellIndex = 0;
@@ -233,19 +234,19 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("MstId");
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
 
     }
 
@@ -305,19 +306,20 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getStringCellValue())
                 .isEqualTo(String.valueOf(zeitraum.getStart().getYear()));
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
+
 
         auswertung.getZeitraum().setAuswertungsZeitraum(AuswertungsZeitraum.JAHRE);
         row = sheet.createRow(0);
@@ -330,19 +332,19 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(auswertung.getObjectId());
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
 
     }
 
