@@ -140,7 +140,7 @@ public class MesswerteService {
      * @param zeitraeume tbd
      * @return die geladenen Tagesaggregate als DTO
      */
-    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final List<List<LocalDate>> zeitraeume) {
+    public TagesaggregatResponseDto ladeMeanOfTagesaggregatePerMq(final TagesTyp tagesTyp, final Set<String> mqIds, final List<List<LocalDate>> zeitraeume) {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
         final var requestZeitraeume = zeitraeume.stream()
