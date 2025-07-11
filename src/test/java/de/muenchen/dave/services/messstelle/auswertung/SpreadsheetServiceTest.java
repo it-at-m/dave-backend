@@ -220,7 +220,6 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
 
-
         row = sheet.createRow(0);
         cellIndex = 0;
         options.setZeitraum(List.of(AuswertungsZeitraum.MAERZ));
@@ -319,7 +318,6 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
         cell = row.getCell(cellIndex);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
-
 
         auswertung.getZeitraum().setAuswertungsZeitraum(AuswertungsZeitraum.JAHRE);
         row = sheet.createRow(0);
