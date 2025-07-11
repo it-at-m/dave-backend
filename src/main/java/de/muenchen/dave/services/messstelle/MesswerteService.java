@@ -144,13 +144,13 @@ public class MesswerteService {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
         final var requestZeitraeume = zeitraeume.stream()
-                        .map(zeitraum -> {
-                            final var requestZeitraum = new ZeitraumDto();
-                            requestZeitraum.setStartDate(zeitraum.getFirst());
-                            requestZeitraum.setEndDate(zeitraum.getLast());
-                            return requestZeitraum;
-                        })
-                        .toList();
+                .map(zeitraum -> {
+                    final var requestZeitraum = new ZeitraumDto();
+                    requestZeitraum.setStartDate(zeitraum.getFirst());
+                    requestZeitraum.setEndDate(zeitraum.getLast());
+                    return requestZeitraum;
+                })
+                .toList();
         request.setZeitraeume(requestZeitraeume);
         request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
 

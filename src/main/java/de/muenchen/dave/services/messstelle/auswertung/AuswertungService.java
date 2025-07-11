@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -164,14 +165,14 @@ public class AuswertungService {
                                     messstelleAuswertungIdDTO.getMstId(),
                                     messstelleAuswertungIdDTO.getMqIds(),
                                     zeitraum,
-                                    options.getTagesTyp()
-                            );
+                                    options.getTagesTyp());
                             final TagesaggregatResponseDto tagesaggregatResponse;
                             if (validierungService.isZeitraumAndTagestypValid(model)) {
                                 tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
                                         options.getTagesTyp(),
                                         messstelleAuswertungIdDTO.getMqIds(),
-                                        List.of(List.of(zeitraum.getAuswertungsZeitraum().getZeitraumStart(), zeitraum.getAuswertungsZeitraum().getZeitraumEnd())));
+                                        List.of(List.of(zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                                                zeitraum.getAuswertungsZeitraum().getZeitraumEnd())));
                             } else {
                                 tagesaggregatResponse = new TagesaggregatResponseDto();
                                 final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
@@ -185,8 +186,10 @@ public class AuswertungService {
                             }
                             // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
                             // über den geladenen Zeitraum und die MstId an.
-                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregatResponse,
-                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
+                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
+                                    tagesaggregatResponse,
+                                    zeitraum,
+                                    messstelleAuswertungIdDTO.getMstId());
                         }))
                 .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
         return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
@@ -213,17 +216,22 @@ public class AuswertungService {
                                 messstelleAuswertungIdDTO.getMstId(),
                                 messstelleAuswertungIdDTO.getMqIds(),
                                 zeitraum,
-                                options.getTagesTyp())
-                        )
-                )
+                                options.getTagesTyp())))
                 .map(validateZeitraumAndTagesTypForMessstelle -> {
-                    var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
-                    var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                    final var zeitraum = validateZeitraumAndTagesTypForMessstelle.getZeitraum();
+                    final var requestedZeitraum = new ArrayList<LocalDate>();
+                    requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
+                    requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
+                            zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+                    var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
+                            .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
+                    var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                            validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
-
-                    TagesaggregatResponseDto tagesaggregatResponse;
+                    TagesaggregatResponseDto tagesaggregatResponse = null;
                     if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
-                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
@@ -241,7 +249,8 @@ public class AuswertungService {
                     }
 
                     if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
-                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
@@ -259,7 +268,8 @@ public class AuswertungService {
                     }
 
                     if (Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
-                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
@@ -271,17 +281,11 @@ public class AuswertungService {
                                     options.getTagesTyp(),
                                     validateZeitraumAndTagesTypForMessstelle.getMqIds(),
                                     zeitraumeOfRelevantMessfaehigkeiten);
-                        } else {
-                            tagesaggregatResponse = new TagesaggregatResponseDto();
-                            final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
-                            validateZeitraumAndTagesTypForMessstelle.getMqIds().forEach(mqId -> {
-                                final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
-                                tagesaggregatDto.setMqId(Integer.valueOf(mqId));
-                                emptyTagesaggregate.add(tagesaggregatDto);
-                            });
-                            tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
-                            tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
                         }
+                    }
+
+                    if (Objects.isNull(tagesaggregatResponse)) {
+                        tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
                     }
 
                     // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
@@ -289,36 +293,9 @@ public class AuswertungService {
                     return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
                             tagesaggregatResponse,
                             zeitraum,
-                            messstelleAuswertungIdDTO.getMstId());
+                            validateZeitraumAndTagesTypForMessstelle.getMstId());
 
-                });
-
-                // Lädt die Daten einer Messstelle pro Zeitraum
-                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
-                        .parallelStream()
-                        .map(zeitraum -> {
-                            final var model = createValidateZeitraumAndTagesTyp(messstelleAuswertungIdDTO.getMstId(), zeitraum, options.getTagesTyp());
-
-                            final TagesaggregatResponseDto tagesaggregatResponse;
-                            if (validierungService.isZeitraumAndTagestypValid(model)) {
-                                tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
-                                        zeitraum);
-                            } else {
-                                tagesaggregatResponse = new TagesaggregatResponseDto();
-                                final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
-                                messstelleAuswertungIdDTO.getMqIds().forEach(mqId -> {
-                                    final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
-                                    tagesaggregatDto.setMqId(Integer.valueOf(mqId));
-                                    emptyTagesaggregate.add(tagesaggregatDto);
-                                });
-                                tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
-                                tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
-                            }
-                            // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
-                            // über den geladenen Zeitraum und die MstId an.
-                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregatResponse,
-                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
-                        }))
+                })
                 .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
         return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
     }
@@ -342,12 +319,7 @@ public class AuswertungService {
         model.setMstId(mstId);
         model.setMqIds(mqIds);
         model.setTagesTyp(tagesTyp);
-
-        final var requestedZeitraum = new ArrayList<LocalDate>();
-        requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
-        requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
-                zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
-        model.setZeitraum(requestedZeitraum);
+        model.setZeitraum(zeitraum);
 
         final var messfaehigkeiten = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 mstId,
@@ -493,5 +465,18 @@ public class AuswertungService {
             fahrzeugOptions.setLieferwagen(false);
         }
         return adaptedFahrzeugOptions;
+    }
+
+    protected TagesaggregatResponseDto createEmptyTagesaggregatResponse(final Set<String> mqIds) {
+        final var tagesaggregatResponse = new TagesaggregatResponseDto();
+        final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+        mqIds.forEach(mqId -> {
+            final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+            tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+            emptyTagesaggregate.add(tagesaggregatDto);
+        });
+        tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+        tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+        return tagesaggregatResponse;
     }
 }
