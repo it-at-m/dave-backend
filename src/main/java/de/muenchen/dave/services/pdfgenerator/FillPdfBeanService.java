@@ -812,9 +812,8 @@ public class FillPdfBeanService {
         if (gtList.size() > 1) {
             gangliniePdf.setTableCellWidth("11.5mm");
             // Wenn nur eine Tabelle => Zellenbreite anpassen
-        } else {
+        } else if (gtList.size() == 1) {
             final Integer gtSize = gt.getGanglinieTableColumns().size();
-
             gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
         }
 
@@ -849,6 +848,13 @@ public class FillPdfBeanService {
         this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
         for (final LadeMesswerteDTO messwert : messwerte) {
+
+            // Wenn 60min ausgewählt sind, muss der Type auf Stunde gesetzt werden, wenn dieser leer ist
+            if (options.getIntervall().getTypeZeitintervall() == TypeZeitintervall.STUNDE_KOMPLETT
+                    && StringUtils.isEmpty(messwert.getType())) {
+                messwert.setType(LadeZaehldatenService.STUNDE);
+            }
+
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
             if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.STUNDE)
                     || StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
@@ -911,9 +917,8 @@ public class FillPdfBeanService {
         if (gtList.size() > 1) {
             gangliniePdf.setTableCellWidth("11.5mm");
             // Wenn nur eine Tabelle => Zellenbreite anpassen
-        } else {
+        } else if (gtList.size() == 1) {
             final Integer gtSize = gt.getGanglinieTableColumns().size();
-
             gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
         }
 

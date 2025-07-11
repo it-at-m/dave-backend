@@ -196,32 +196,15 @@ public class SpreadsheetService {
         if (isGesamtSheet) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "MstId");
         }
-        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KFZ");
-        }
-        if (fahrzeugOptions.isSchwerverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV");
-        }
-        if (fahrzeugOptions.isGueterverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
-        }
-        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV%");
-        }
-        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV%");
-        }
-        if (fahrzeugOptions.isRadverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "RAD");
-        }
-        if (fahrzeugOptions.isFussverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "FUß");
-        }
-        if (fahrzeugOptions.isLastkraftwagen()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LKW");
+
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "PKW");
         }
         if (fahrzeugOptions.isLieferwagen()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LFW");
+        }
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LKW");
         }
         if (fahrzeugOptions.isLastzuege()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LZ");
@@ -232,8 +215,27 @@ public class SpreadsheetService {
         if (fahrzeugOptions.isKraftraeder()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KRAD");
         }
-        if (fahrzeugOptions.isPersonenkraftwagen()) {
-            addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "PKW");
+        if (fahrzeugOptions.isRadverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "RAD");
+        }
+        if (fahrzeugOptions.isFussverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "FUß");
+        }
+
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KFZ");
+        }
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV");
+        }
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV%");
+        }
+        if (fahrzeugOptions.isGueterverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
+        }
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "GV%");
         }
     }
 
@@ -304,33 +306,14 @@ public class SpreadsheetService {
         if (isGesamtSheet) {
             addStringToCell(row.createCell(cellIndex++, CellType.STRING), auswertung.getObjectId());
         }
-        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeKraftfahrzeugverkehr());
-        }
-        if (fahrzeugOptions.isSchwerverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeSchwerverkehr());
-        }
-        if (fahrzeugOptions.isGueterverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
-        }
-        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentSchwerverkehr());
-        }
-        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
-        }
-        if (fahrzeugOptions.isRadverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlRad());
-        }
-        if (fahrzeugOptions.isFussverkehr()) {
-            // Wird aktuell noch nicht erfasst
-            addStringToCell(row.createCell(cellIndex++, CellType.NUMERIC), StringUtils.EMPTY);
-        }
-        if (fahrzeugOptions.isLastkraftwagen()) {
-            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlLkw());
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeAllePkw());
         }
         if (fahrzeugOptions.isLieferwagen()) {
             addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlLfw());
+        }
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlLkw());
         }
         if (fahrzeugOptions.isLastzuege()) {
             addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeLastzug());
@@ -341,9 +324,29 @@ public class SpreadsheetService {
         if (fahrzeugOptions.isKraftraeder()) {
             addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlKrad());
         }
-        if (fahrzeugOptions.isPersonenkraftwagen()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeAllePkw());
+        if (fahrzeugOptions.isRadverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlRad());
         }
+        if (fahrzeugOptions.isFussverkehr()) {
+            // Wird aktuell noch nicht erfasst
+            addStringToCell(row.createCell(cellIndex++, CellType.NUMERIC), StringUtils.EMPTY);
+        }
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeKraftfahrzeugverkehr());
+        }
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeSchwerverkehr());
+        }
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentSchwerverkehr());
+        }
+        if (fahrzeugOptions.isGueterverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
+        }
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
+        }
+
     }
 
     protected void addBigDecimalToCell(final Cell cell, final BigDecimal data) {
