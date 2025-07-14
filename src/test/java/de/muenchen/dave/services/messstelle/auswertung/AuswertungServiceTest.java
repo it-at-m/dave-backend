@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
@@ -10,6 +11,8 @@ import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMe
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
+
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -271,6 +274,606 @@ class AuswertungServiceTest {
                 mstId,
                 zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
                 zeitraum.getAuswertungsZeitraum().getZeitraumEnd());
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForKraftfahrzeugverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForSchwerverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForSchwerverkehrsanteilProzent() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForGueterverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForGueterverkehrsanteilProzent() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLastkraftwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(BigDecimal.valueOf(6));
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLastzuege() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(BigDecimal.valueOf(7));
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForBusse() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(BigDecimal.valueOf(8));
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForKraftraeder() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(BigDecimal.valueOf(9));
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForPersonenkraftwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(BigDecimal.valueOf(10));
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLieferwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(BigDecimal.valueOf(11));
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForRadverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(BigDecimal.valueOf(12));
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
     }
 
 }
