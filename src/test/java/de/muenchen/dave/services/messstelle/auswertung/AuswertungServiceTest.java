@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import lombok.extern.slf4j.Slf4j;
@@ -226,19 +227,17 @@ class AuswertungServiceTest {
 
     @Test
     void createValidateZeitraumAndTagesTyp() {
-        final Zeitraum zeitraum = new Zeitraum(YearMonth.of(2006, 1), YearMonth.of(2006, 12), AuswertungsZeitraum.JAHRE);
-        final String mstId = "1234";
-        final TagesTyp tagesTyp = TagesTyp.WERKTAG_MO_FR;
-        final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, zeitraum, tagesTyp);
+        final var zeitraum = new Zeitraum(YearMonth.of(2006, 1), YearMonth.of(2006, 12), AuswertungsZeitraum.JAHRE);
+        final var mstId = "1234";
+        final var mqIds = Set.of("123401", "123402");
+        final var tagesTyp = TagesTyp.WERKTAG_MO_FR;
+        final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, mqIds, zeitraum, tagesTyp);
 
         final var expected = new ValidateZeitraumAndTagesTypForMessstelleModel();
         expected.setTagesTyp(tagesTyp);
         expected.setMstId(mstId);
-        final var expectedZeitraum = new ArrayList<LocalDate>();
-        expectedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
-        expectedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
-                zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
-        expected.setZeitraum(expectedZeitraum);
+        expected.setMqIds(mqIds);
+        expected.setZeitraum(zeitraum);
 
         Assertions.assertThat(result)
                 .isNotNull()

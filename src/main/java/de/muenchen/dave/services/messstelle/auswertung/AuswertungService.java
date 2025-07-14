@@ -219,10 +219,6 @@ public class AuswertungService {
                                 options.getTagesTyp())))
                 .map(validateZeitraumAndTagesTypForMessstelle -> {
                     final var zeitraum = validateZeitraumAndTagesTypForMessstelle.getZeitraum();
-                    final var requestedZeitraum = new ArrayList<LocalDate>();
-                    requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
-                    requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
-                            zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
 
                     var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
                             .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
@@ -285,7 +281,7 @@ public class AuswertungService {
                         }
                     }
 
-                    if (Fahrzeugklasse.RAD.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions) && options.getFahrzeuge().isRadverkehr()) {
+                    if (Fahrzeugklasse.RAD.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions) || options.getFahrzeuge().isRadverkehr()) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
