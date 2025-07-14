@@ -2,6 +2,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
@@ -22,7 +23,7 @@ public class ValidierungService {
     private final UnauffaelligeTageService unauffaelligeTageService;
     private final KalendertagService kalendertagService;
 
-    public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagesTypForMessstelleModel request) {
+    public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
 
         final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(

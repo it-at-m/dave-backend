@@ -157,59 +157,6 @@ public class AuswertungService {
                 // Lädt die Daten pro Messstelle
                 .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
-                // Lädt die Daten einer Messstelle pro Zeitraum
-                .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
-                        .parallelStream()
-                        .map(zeitraum -> {
-                            final var model = createValidateZeitraumAndTagesTyp(
-                                    messstelleAuswertungIdDTO.getMstId(),
-                                    messstelleAuswertungIdDTO.getMqIds(),
-                                    zeitraum,
-                                    options.getTagesTyp());
-                            final TagesaggregatResponseDto tagesaggregatResponse;
-                            if (validierungService.isZeitraumAndTagestypValid(model)) {
-                                tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
-                                        options.getTagesTyp(),
-                                        messstelleAuswertungIdDTO.getMqIds(),
-                                        List.of(List.of(zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                                                zeitraum.getAuswertungsZeitraum().getZeitraumEnd())));
-                            } else {
-                                tagesaggregatResponse = new TagesaggregatResponseDto();
-                                final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
-                                messstelleAuswertungIdDTO.getMqIds().forEach(mqId -> {
-                                    final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
-                                    tagesaggregatDto.setMqId(Integer.valueOf(mqId));
-                                    emptyTagesaggregate.add(tagesaggregatDto);
-                                });
-                                tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
-                                tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
-                            }
-                            // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
-                            // über den geladenen Zeitraum und die MstId an.
-                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
-                                    tagesaggregatResponse,
-                                    zeitraum,
-                                    messstelleAuswertungIdDTO.getMstId());
-                        }))
-                .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
-        return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
-    }
-
-    /**
-     * Lädt die Daten pro Messstelle je Zeitraum.
-     *
-     * @param options Definierte Optionen zum Laden der Daten
-     * @return Liste an Auswertungen Pro Messstelle
-     */
-    protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstIdNg(final MessstelleAuswertungOptionsDTO options) {
-
-        // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
-        final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
-
-        final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
-                // Lädt die Daten pro Messstelle
-                .emptyIfNull(options.getMessstelleAuswertungIds())
-                .parallelStream()
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
                         .map(zeitraum -> createValidateZeitraumAndTagesTyp(

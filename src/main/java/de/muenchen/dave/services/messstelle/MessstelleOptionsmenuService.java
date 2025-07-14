@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDTO;
-import de.muenchen.dave.domain.mapper.ValidierungMapper;
 import de.muenchen.dave.services.KalendertagService;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,7 +19,6 @@ public class MessstelleOptionsmenuService {
     private final UnauffaelligeTageService unauffaelligeTageService;
     private final KalendertagService kalendertagService;
     private final ValidierungService validierungService;
-    private final ValidierungMapper validierungMapper;
 
     public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final String mstId) {
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
@@ -38,9 +36,8 @@ public class MessstelleOptionsmenuService {
     }
 
     public ValidatedZeitraumAndTagestypDTO isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
-        final var model = validierungMapper.dto2model(request);
         final var response = new ValidatedZeitraumAndTagestypDTO();
-        response.setIsValid(validierungService.isZeitraumAndTagestypValid(model));
+        response.setIsValid(validierungService.isZeitraumAndTagestypValid(request));
         return response;
     }
 }
