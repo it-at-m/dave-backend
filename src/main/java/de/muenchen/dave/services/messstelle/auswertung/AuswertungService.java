@@ -223,6 +223,7 @@ public class AuswertungService {
                     requestedZeitraum.add(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
                     requestedZeitraum.add(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(),
                             zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+
                     var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
                             .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
                     var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
@@ -283,6 +284,26 @@ public class AuswertungService {
                                     zeitraumeOfRelevantMessfaehigkeiten);
                         }
                     }
+
+                    if (Fahrzeugklasse.RAD.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions) && options.getFahrzeuge().isRadverkehr()) {
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+
+                        final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
+                        final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                                validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                zeitraumeOfRelevantMessfaehigkeiten,
+                                validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
+                        if (isValid) {
+                            tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
+                                    options.getTagesTyp(),
+                                    validateZeitraumAndTagesTypForMessstelle.getMqIds(),
+                                    zeitraumeOfRelevantMessfaehigkeiten);
+                        }
+                    }
+
+                    //
+                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(tagesaggregatResponse, options.getFahrzeuge());
 
                     if (Objects.isNull(tagesaggregatResponse)) {
                         tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
@@ -478,5 +499,68 @@ public class AuswertungService {
         tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
         tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
         return tagesaggregatResponse;
+    }
+
+    protected TagesaggregatResponseDto nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
+            final TagesaggregatResponseDto tagesaggregatResponse,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
+        final var nulledTagesaggregate = nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
+                tagesaggregatResponse.getSumOverAllAggregatesOfAllMqId(),
+                fahrzeugOptions);
+        tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(nulledTagesaggregate);
+
+        final var meanOfAggregatesForEachMqId = tagesaggregatResponse.getMeanOfAggregatesForEachMqId();
+        if (CollectionUtils.isNotEmpty(meanOfAggregatesForEachMqId)) {
+            final var nulledMeanOfAggregatesForEachMqId = meanOfAggregatesForEachMqId
+                    .stream()
+                    .map(tagesaggregat -> nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions))
+                    .toList();
+            tagesaggregatResponse.setMeanOfAggregatesForEachMqId(nulledMeanOfAggregatesForEachMqId);
+        }
+
+        return tagesaggregatResponse;
+    }
+
+
+    protected TagesaggregatDto nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
+            final TagesaggregatDto tagesaggregat,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
+        if (!fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            tagesaggregat.setSummeKraftfahrzeugverkehr(null);
+        }
+        if (!fahrzeugOptions.isSchwerverkehr()) {
+            tagesaggregat.setSummeSchwerverkehr(null);
+        }
+        if (!fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            tagesaggregat.setProzentSchwerverkehr(null);
+        }
+        if (!fahrzeugOptions.isGueterverkehr()) {
+            tagesaggregat.setSummeGueterverkehr(null);
+        }
+        if (!fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            tagesaggregat.setProzentGueterverkehr(null);
+        }
+        if (!fahrzeugOptions.isLastkraftwagen()) {
+            tagesaggregat.setAnzahlLkw(null);
+        }
+        if (!fahrzeugOptions.isLastzuege()) {
+            tagesaggregat.setSummeLastzug(null);
+        }
+        if (!fahrzeugOptions.isBusse()) {
+            tagesaggregat.setAnzahlBus(null);
+        }
+        if (!fahrzeugOptions.isKraftraeder()) {
+            tagesaggregat.setAnzahlKrad(null);
+        }
+        if (!fahrzeugOptions.isPersonenkraftwagen()) {
+            tagesaggregat.setSummeAllePkw(null);
+        }
+        if (!fahrzeugOptions.isLieferwagen()) {
+            tagesaggregat.setAnzahlLfw(null);
+        }
+        if (!fahrzeugOptions.isRadverkehr()) {
+            tagesaggregat.setAnzahlRad(null);
+        }
+        return  tagesaggregat;
     }
 }
