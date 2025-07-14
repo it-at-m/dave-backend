@@ -277,6 +277,25 @@ class AuswertungServiceTest {
     }
 
     @Test
+    void createEmptyTagesaggregatResponse() {
+        final var result = auswertungService.createEmptyTagesaggregatResponse(Set.of("1", "2"));
+
+        final var expected = new TagesaggregatResponseDto();
+        final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+        Set.of("1", "2").forEach(mqId -> {
+            final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+            tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+            emptyTagesaggregate.add(tagesaggregatDto);
+        });
+        expected.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+        expected.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
     void nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions() {
         final var tagesaggregatResponse = new TagesaggregatResponseDto();
 
