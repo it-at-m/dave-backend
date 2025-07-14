@@ -246,7 +246,8 @@ public class AuswertungService {
                     }
 
                     //
-                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(tagesaggregatResponse, options.getFahrzeuge());
+                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(tagesaggregatResponse,
+                            options.getFahrzeuge());
 
                     if (Objects.isNull(tagesaggregatResponse)) {
                         tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
@@ -464,7 +465,6 @@ public class AuswertungService {
         return tagesaggregatResponse;
     }
 
-
     protected TagesaggregatDto nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
             final TagesaggregatDto tagesaggregat,
             final FahrzeugOptionsDTO fahrzeugOptions) {
@@ -504,6 +504,6 @@ public class AuswertungService {
         if (!fahrzeugOptions.isRadverkehr()) {
             tagesaggregat.setAnzahlRad(null);
         }
-        return  tagesaggregat;
+        return tagesaggregat;
     }
 }

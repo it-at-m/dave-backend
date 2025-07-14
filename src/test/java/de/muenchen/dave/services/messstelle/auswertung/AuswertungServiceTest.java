@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
@@ -7,8 +8,8 @@ import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +20,27 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null, null, null);
+    @Mock
+    private MessstelleService messstelleService;
+
+    private AuswertungService auswertungService;
+
+    @BeforeEach
+    void beforeEach() {
+        auswertungService = new AuswertungService(messstelleService, null, null, null, null, null);
+        Mockito.reset(messstelleService);
+    }
 
     @Test
     void calculateZeitraeume() {
@@ -231,6 +247,13 @@ class AuswertungServiceTest {
         final var mstId = "1234";
         final var mqIds = Set.of("123401", "123402");
         final var tagesTyp = TagesTyp.WERKTAG_MO_FR;
+
+        final var messfaehigkeiten = List.of(new ReadMessfaehigkeitDTO(), new ReadMessfaehigkeitDTO());
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                mstId,
+                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                zeitraum.getAuswertungsZeitraum().getZeitraumEnd())).thenReturn(messfaehigkeiten);
+
         final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, mqIds, zeitraum, tagesTyp);
 
         final var expected = new ValidateZeitraumAndTagesTypForMessstelleModel();
@@ -238,10 +261,16 @@ class AuswertungServiceTest {
         expected.setMstId(mstId);
         expected.setMqIds(mqIds);
         expected.setZeitraum(zeitraum);
+        expected.setMessfaehigkeiten(messfaehigkeiten);
 
         Assertions.assertThat(result)
                 .isNotNull()
                 .isEqualTo(expected);
+
+        Mockito.verify(messstelleService, Mockito.times(1)).getMessfaehigkeitenForZeitraumForMessstelle(
+                mstId,
+                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
+                zeitraum.getAuswertungsZeitraum().getZeitraumEnd());
     }
 
 }
