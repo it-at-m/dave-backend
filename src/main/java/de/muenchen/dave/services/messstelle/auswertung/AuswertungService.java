@@ -245,9 +245,12 @@ public class AuswertungService {
                         }
                     }
 
-                    //
-                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(tagesaggregatResponse,
+                    final var adaptedFahrzeugOptions = getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                            fahrzeugklasseAccordingChoosenFahrzeugoptions,
                             options.getFahrzeuge());
+                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
+                            tagesaggregatResponse,
+                            adaptedFahrzeugOptions);
 
                     if (Objects.isNull(tagesaggregatResponse)) {
                         tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
@@ -396,38 +399,38 @@ public class AuswertungService {
         if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasse)) {
             return adaptedFahrzeugOptions;
         } else if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasse)) {
-            fahrzeugOptions.setGueterverkehr(false);
-            fahrzeugOptions.setGueterverkehrsanteilProzent(false);
-            fahrzeugOptions.setLastkraftwagen(false);
-            fahrzeugOptions.setLastzuege(false);
-            fahrzeugOptions.setBusse(false);
-            fahrzeugOptions.setKraftraeder(false);
-            fahrzeugOptions.setPersonenkraftwagen(false);
-            fahrzeugOptions.setLieferwagen(false);
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
         } else if (Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasse)) {
-            fahrzeugOptions.setSchwerverkehr(false);
-            fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
-            fahrzeugOptions.setGueterverkehr(false);
-            fahrzeugOptions.setGueterverkehrsanteilProzent(false);
-            fahrzeugOptions.setLastkraftwagen(false);
-            fahrzeugOptions.setLastzuege(false);
-            fahrzeugOptions.setBusse(false);
-            fahrzeugOptions.setKraftraeder(false);
-            fahrzeugOptions.setPersonenkraftwagen(false);
-            fahrzeugOptions.setLieferwagen(false);
+            adaptedFahrzeugOptions.setSchwerverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
         } else {
             // RAD
-            fahrzeugOptions.setKraftfahrzeugverkehr(false);
-            fahrzeugOptions.setSchwerverkehr(false);
-            fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
-            fahrzeugOptions.setGueterverkehr(false);
-            fahrzeugOptions.setGueterverkehrsanteilProzent(false);
-            fahrzeugOptions.setLastkraftwagen(false);
-            fahrzeugOptions.setLastzuege(false);
-            fahrzeugOptions.setBusse(false);
-            fahrzeugOptions.setKraftraeder(false);
-            fahrzeugOptions.setPersonenkraftwagen(false);
-            fahrzeugOptions.setLieferwagen(false);
+            adaptedFahrzeugOptions.setKraftfahrzeugverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
         }
         return adaptedFahrzeugOptions;
     }

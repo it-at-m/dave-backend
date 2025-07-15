@@ -6,7 +6,9 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.mapper.detektor.AuswertungMapperImpl;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
@@ -41,7 +43,13 @@ class AuswertungServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        auswertungService = new AuswertungService(messstelleService, null, null, null, null, null);
+        auswertungService = new AuswertungService(
+                messstelleService,
+                null,
+                new AuswertungMapperImpl(),
+                null,
+                null,
+                null);
         Mockito.reset(messstelleService);
     }
 
@@ -289,6 +297,162 @@ class AuswertungServiceTest {
         });
         expected.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
         expected.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseAchtPlusEins() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.ACHT_PLUS_EINS,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(true);
+        expected.setSchwerverkehrsanteilProzent(true);
+        expected.setGueterverkehr(true);
+        expected.setGueterverkehrsanteilProzent(true);
+        expected.setLastkraftwagen(true);
+        expected.setLastzuege(true);
+        expected.setBusse(true);
+        expected.setKraftraeder(true);
+        expected.setPersonenkraftwagen(true);
+        expected.setLieferwagen(true);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseZweiPlusEins() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.ZWEI_PLUS_EINS,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(true);
+        expected.setSchwerverkehrsanteilProzent(true);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseSummeKfz() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.SUMME_KFZ,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(false);
+        expected.setSchwerverkehrsanteilProzent(false);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseRad() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.RAD,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(false);
+        expected.setSchwerverkehr(false);
+        expected.setSchwerverkehrsanteilProzent(false);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
 
         Assertions.assertThat(result)
                 .isNotNull()
