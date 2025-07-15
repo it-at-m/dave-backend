@@ -39,18 +39,6 @@ public class ValidierungService {
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
     }
 
-    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-            final ValidateZeitraumAndTagesTypForMessstelleModel request,
-            final Fahrzeugklasse fahrzeugklasse) {
-        final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
-                .stream()
-                .filter(messfaehigkeit -> isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
-                        messfaehigkeit.getFahrzeugklasse(),
-                        fahrzeugklasse))
-                .toList();
-        return relevantMessfaehigkeiten;
-    }
-
     public boolean areZeitraeumeAndTagesTypForMessstelleValid(
             final String mstId,
             final List<List<LocalDate>> zeitraeume,
@@ -80,6 +68,18 @@ public class ValidierungService {
     protected boolean hasMinimuOfFiftyPercentUnauffaelligeTage(final long numberOfUnauffaelligeTage, final long numberOfRelevantKalendertage) {
         return BigDecimal.valueOf(numberOfUnauffaelligeTage).divide(BigDecimal.valueOf(numberOfRelevantKalendertage), RoundingMode.HALF_UP)
                 .doubleValue() >= 0.5;
+    }
+
+    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+            final ValidateZeitraumAndTagesTypForMessstelleModel request,
+            final Fahrzeugklasse fahrzeugklasse) {
+        final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
+                .stream()
+                .filter(messfaehigkeit -> isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                        messfaehigkeit.getFahrzeugklasse(),
+                        fahrzeugklasse))
+                .toList();
+        return relevantMessfaehigkeiten;
     }
 
     public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions) {

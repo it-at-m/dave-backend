@@ -5,7 +5,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +46,139 @@ class ValidierungServiceTest {
         numberOfUnauffaelligeTage = 10;
         result = validierungService.hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
         assertThat(result, is(true));
+    }
+
+    @Test
+    void getRelevantMessfaehigkeitenAccordingFahrzeugklasseForAchtPlusEins() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final ValidateZeitraumAndTagesTypForMessstelleModel validationObject = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        validationObject.setMessfaehigkeiten(messfaehigkeiten);
+
+        var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.ACHT_PLUS_EINS);
+        var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expected.add(expectedMessfaehigkeit);
+
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.add(expectedMessfaehigkeit);
+
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expected.add(expectedMessfaehigkeit);
+        assertThat(result, is(expected));
+
+    }
+
+    @Test
+    void getRelevantMessfaehigkeitenAccordingFahrzeugklasseForZweiPlusEins() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final ValidateZeitraumAndTagesTypForMessstelleModel validationObject = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        validationObject.setMessfaehigkeiten(messfaehigkeiten);
+
+        var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.add(expectedMessfaehigkeit);
+
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expected.add(expectedMessfaehigkeit);
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void getRelevantMessfaehigkeitenAccordingFahrzeugklasseForSummeKfz() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final ValidateZeitraumAndTagesTypForMessstelleModel validationObject = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        validationObject.setMessfaehigkeiten(messfaehigkeiten);
+
+        var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.SUMME_KFZ);
+        var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expected.add(expectedMessfaehigkeit);
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void getRelevantMessfaehigkeitenAccordingFahrzeugklasseForRad() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final ValidateZeitraumAndTagesTypForMessstelleModel validationObject = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        validationObject.setMessfaehigkeiten(messfaehigkeiten);
+
+        var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.RAD);
+        var expected = new ArrayList<ReadMessfaehigkeitDTO>();
+        var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        expected.add(expectedMessfaehigkeit);
+        assertThat(result, is(expected));
     }
 
     @Test
