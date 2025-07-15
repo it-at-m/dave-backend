@@ -15,6 +15,7 @@ import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -297,6 +298,34 @@ class AuswertungServiceTest {
         });
         expected.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
         expected.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getZeitraeumeOfGivenMessfaehigkeiten() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2008-02-01");
+        messfaehigkeit.setGueltigBis("2009-05-15");
+        messfaehigkeiten.add(messfaehigkeit);
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2009-04-10");
+        messfaehigkeit.setGueltigBis("2009-07-31");
+        messfaehigkeiten.add(messfaehigkeit);
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2010-01-01");
+        messfaehigkeit.setGueltigBis("2011-12-31");
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final var result = auswertungService.getZeitraeumeOfGivenMessfaehigkeiten(messfaehigkeiten);
+
+        final var expected = List.of(
+                List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2009, 5, 15)),
+                List.of(LocalDate.of(2009, 4, 10), LocalDate.of(2009, 7, 31)),
+                List.of(LocalDate.of(2010, 1, 1), LocalDate.of(2011, 12, 31)));
 
         Assertions.assertThat(result)
                 .isNotNull()
