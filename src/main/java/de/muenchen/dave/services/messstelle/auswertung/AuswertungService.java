@@ -83,26 +83,6 @@ public class AuswertungService {
     }
 
     /**
-     *
-     * @param options
-     * @return
-     * @throws IOException
-     */
-    @LogExecutionTime
-    public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellenNg(final MessstelleAuswertungOptionsDTO options) throws IOException {
-
-        log.debug("#ladeAuswertungMessstellen {}", options);
-        final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
-        final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
-        final var zaehldatenMessstellen = this.createZaehldatenForGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
-        auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
-        final var spreadsheet = this.createAuswertungMessstellenSpreadsheet(options, auswertungenMqByMstId);
-        final var spreadsheetBase64Encoded = Base64.getEncoder().encodeToString(spreadsheet);
-        auswertungMessstellen.setSpreadsheetBase64Encoded(spreadsheetBase64Encoded);
-        return auswertungMessstellen;
-    }
-
-    /**
      * Bereitet die im Parameter gegebenen Zähldaten für die Gangliniendarstellung auf.
      *
      * @param fahrzeugOptions die Optionen zur Aufbereitung der Zähldaten für die Gangliniendarstellung.
