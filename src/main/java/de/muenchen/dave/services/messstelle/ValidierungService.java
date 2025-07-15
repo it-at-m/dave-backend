@@ -109,17 +109,17 @@ public class ValidierungService {
     }
 
     protected boolean areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
-        return fahrzeugOptions.isKraftfahrzeugverkehr() ||
+        return (fahrzeugOptions.isKraftfahrzeugverkehr() ||
                 fahrzeugOptions.isSchwerverkehr() ||
-                fahrzeugOptions.isSchwerverkehrsanteilProzent() &&
-                        !fahrzeugOptions.isGueterverkehr() &&
-                        !fahrzeugOptions.isGueterverkehrsanteilProzent() &&
-                        !fahrzeugOptions.isLastkraftwagen() &&
-                        !fahrzeugOptions.isLastzuege() &&
-                        !fahrzeugOptions.isBusse() &&
-                        !fahrzeugOptions.isKraftraeder() &&
-                        !fahrzeugOptions.isPersonenkraftwagen() &&
-                        !fahrzeugOptions.isLieferwagen();
+                fahrzeugOptions.isSchwerverkehrsanteilProzent()) &&
+                !fahrzeugOptions.isGueterverkehr() &&
+                !fahrzeugOptions.isGueterverkehrsanteilProzent() &&
+                !fahrzeugOptions.isLastkraftwagen() &&
+                !fahrzeugOptions.isLastzuege() &&
+                !fahrzeugOptions.isBusse() &&
+                !fahrzeugOptions.isKraftraeder() &&
+                !fahrzeugOptions.isPersonenkraftwagen() &&
+                !fahrzeugOptions.isLieferwagen();
     }
 
     protected boolean areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
