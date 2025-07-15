@@ -89,8 +89,10 @@ public class ValidierungService {
             return Fahrzeugklasse.ZWEI_PLUS_EINS;
         } else if (areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.ACHT_PLUS_EINS;
-        } else {
+        } else if (areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.RAD;
+        } else {
+            return null;
         }
     }
 
@@ -134,6 +136,10 @@ public class ValidierungService {
                 !fahrzeugOptions.isKraftraeder() &&
                 !fahrzeugOptions.isPersonenkraftwagen() &&
                 !fahrzeugOptions.isLieferwagen();
+    }
+
+    protected boolean areFahrzeugoptionsForFahrzeugklasseRadChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
+        return fahrzeugOptions.isRadverkehr();
     }
 
     protected boolean isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(

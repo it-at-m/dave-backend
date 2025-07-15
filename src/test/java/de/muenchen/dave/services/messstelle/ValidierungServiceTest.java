@@ -2,6 +2,7 @@ package de.muenchen.dave.services.messstelle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
@@ -44,6 +45,90 @@ class ValidierungServiceTest {
         assertThat(result, is(true));
     }
 
+    @Test
+    void getFahrzeugklasseAccordingChoosenFahrzeugoptions() {
+        var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+        var result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        assertThat(result, is(Fahrzeugklasse.ACHT_PLUS_EINS));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        assertThat(result, is(Fahrzeugklasse.ZWEI_PLUS_EINS));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        assertThat(result, is(Fahrzeugklasse.SUMME_KFZ));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        assertThat(result, is(Fahrzeugklasse.RAD));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        assertThat(result, is(nullValue()));
+    }
+
+    @Test
     void areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen() {
         var fahrzeugOptions = new FahrzeugOptionsDTO();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
@@ -657,6 +742,57 @@ class ValidierungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
         result = validierungService.areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions);
+        assertThat(result, is(false));
+    }
+
+    @Test
+    void areFahrzeugoptionsForFahrzeugklasseRadChoosen() {
+        var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+        var result = validierungService.areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions);
+        assertThat(result, is(true));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+        result = validierungService.areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions);
+        assertThat(result, is(false));
+
+        fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(false);
+        result = validierungService.areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions);
         assertThat(result, is(false));
     }
 
