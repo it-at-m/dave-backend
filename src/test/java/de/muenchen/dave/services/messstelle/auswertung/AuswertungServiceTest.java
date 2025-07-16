@@ -5,6 +5,8 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
@@ -13,12 +15,15 @@ import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMe
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.services.messstelle.ValidierungService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,18 +45,74 @@ class AuswertungServiceTest {
     @Mock
     private MessstelleService messstelleService;
 
+    @Mock
+    private MesswerteService messwerteService;
+
+    @Mock
+    private SpreadsheetService spreadsheetService;
+
+    @Mock
+    private GanglinieGesamtauswertungService ganglinieGesamtauswertungService;
+
+    @Mock
+    private ValidierungService validierungService;
+
     private AuswertungService auswertungService;
 
     @BeforeEach
     void beforeEach() {
         auswertungService = new AuswertungService(
                 messstelleService,
-                null,
+                messwerteService,
                 new AuswertungMapperImpl(),
-                null,
-                null,
-                null);
-        Mockito.reset(messstelleService);
+                spreadsheetService,
+                ganglinieGesamtauswertungService,
+                validierungService);
+        Mockito.reset(messstelleService, messwerteService, spreadsheetService, ganglinieGesamtauswertungService, validierungService);
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstId() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_3);
+
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+        jahre.add(2021);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+        messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("4567");
+        messstelleAuswertungId.setMqIds(Set.of("456701", "456702"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
     }
 
     @Test
