@@ -145,7 +145,6 @@ public class AuswertungService {
                                 zeitraum,
                                 options.getTagesTyp())))
                 .map(validateZeitraumAndTagesTypForMessstelle -> {
-                    final var zeitraum = validateZeitraumAndTagesTypForMessstelle.getZeitraum();
 
                     var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
                             .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
@@ -240,7 +239,7 @@ public class AuswertungService {
                     // über den geladenen Zeitraum und die MstId an.
                     return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
                             tagesaggregatResponse,
-                            zeitraum,
+                            validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
                             validateZeitraumAndTagesTypForMessstelle.getMstId());
 
                 })
