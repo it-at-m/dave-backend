@@ -31,9 +31,11 @@ public class ValidierungService {
                 request.getZeitraum().getLast(),
                 tagestypen);
 
-        final long numberOfUnauffaelligeTage = unauffaelligeTageService
-                .countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(request.getMstId(),
-                        request.getZeitraum().getFirst(), request.getZeitraum().getLast(), tagestypen);
+        final long numberOfUnauffaelligeTage = unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
+                request.getMstId(),
+                request.getZeitraum().getFirst(),
+                request.getZeitraum().getLast(),
+                tagestypen);
 
         return hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
