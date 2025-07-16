@@ -1212,85 +1212,86 @@ class ValidierungServiceTest {
     }
 
     @Test
-    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare() {
-        var fahrzeugklasse = Fahrzeugklasse.ACHT_PLUS_EINS;
-        var fahrzeugklasseToCompare = Fahrzeugklasse.ACHT_PLUS_EINS;
-        var result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareAchtPlusEinsEqualsAchtPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ACHT_PLUS_EINS, Fahrzeugklasse.ACHT_PLUS_EINS), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ACHT_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareZweiPlusEinsEqualsZweiPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ZWEI_PLUS_EINS, Fahrzeugklasse.ZWEI_PLUS_EINS), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.SUMME_KFZ;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ACHT_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareZweiPlusEinsContainsAchtPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ZWEI_PLUS_EINS, Fahrzeugklasse.ACHT_PLUS_EINS), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.RAD;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ACHT_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareAchtPlusEinsNotContainedInZweiPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ACHT_PLUS_EINS, Fahrzeugklasse.ZWEI_PLUS_EINS), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ACHT_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareSummeKfzContainsAchtPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.SUMME_KFZ, Fahrzeugklasse.ACHT_PLUS_EINS), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareSummeKfzContainsZweiPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.SUMME_KFZ, Fahrzeugklasse.ZWEI_PLUS_EINS), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.SUMME_KFZ;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareSummeKfzContainsItself() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.SUMME_KFZ, Fahrzeugklasse.SUMME_KFZ), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.RAD;
-        fahrzeugklasseToCompare = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareRadEqualsRad() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.RAD, Fahrzeugklasse.RAD), is(true));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ACHT_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.SUMME_KFZ;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareRadNotContainedInAchtPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.RAD, Fahrzeugklasse.ACHT_PLUS_EINS), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.SUMME_KFZ;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareRadNotContainedInZweiPlusEins() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.RAD, Fahrzeugklasse.ZWEI_PLUS_EINS), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.SUMME_KFZ;
-        fahrzeugklasseToCompare = Fahrzeugklasse.SUMME_KFZ;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareRadNotContainedInSummeKfz() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.RAD, Fahrzeugklasse.SUMME_KFZ), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.RAD;
-        fahrzeugklasseToCompare = Fahrzeugklasse.SUMME_KFZ;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareAchtPlusEinsNotContainedInRad() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ACHT_PLUS_EINS, Fahrzeugklasse.RAD), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ACHT_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.RAD;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareZweiPlusEinsNotContainedInRad() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.ZWEI_PLUS_EINS, Fahrzeugklasse.RAD), is(false));
+    }
 
-        fahrzeugklasse = Fahrzeugklasse.ZWEI_PLUS_EINS;
-        fahrzeugklasseToCompare = Fahrzeugklasse.RAD;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
-
-        fahrzeugklasse = Fahrzeugklasse.SUMME_KFZ;
-        fahrzeugklasseToCompare = Fahrzeugklasse.RAD;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(false));
-
-        fahrzeugklasse = Fahrzeugklasse.RAD;
-        fahrzeugklasseToCompare = Fahrzeugklasse.RAD;
-        result = validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(fahrzeugklasse, fahrzeugklasseToCompare);
-        assertThat(result, is(true));
+    @Test
+    void isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompareSummeKfzNotContainedInRad() {
+        assertThat(validierungService.isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
+                Fahrzeugklasse.SUMME_KFZ, Fahrzeugklasse.RAD), is(false));
     }
 }
