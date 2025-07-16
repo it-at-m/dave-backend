@@ -45,11 +45,16 @@ public class ValidierungService {
             final TagesTyp tagesTyp) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(tagesTyp);
 
-        final long numberOfRelevantKalendertage = zeitraeume.stream().map(zeitraum -> kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                zeitraum.getFirst(),
-                zeitraum.getLast(), tagestypen)).reduce(0L, ArithmeticUtils::addAndCheck);
+        final long numberOfRelevantKalendertage = zeitraeume
+                .stream()
+                .map(zeitraum -> kalendertagService.countAllKalendertageByDatumAndTagestypen(
+                        zeitraum.getFirst(),
+                        zeitraum.getLast(),
+                        tagestypen))
+                .reduce(0L, ArithmeticUtils::addAndCheck);
 
-        final long numberOfUnauffaelligeTage = zeitraeume.stream()
+        final long numberOfUnauffaelligeTage = zeitraeume
+                .stream()
                 .map(zeitraum -> unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                         mstId,
                         zeitraum.getFirst(),
