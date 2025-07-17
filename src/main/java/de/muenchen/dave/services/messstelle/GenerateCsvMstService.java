@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -133,7 +134,8 @@ public class GenerateCsvMstService {
                     final Set<String> messquerschnittIdsSorted = options.getMessquerschnittIds().stream().sorted().collect(
                             Collectors.toCollection(LinkedHashSet::new));
                     if (messquerschnittIdsSorted.contains(mq.getMqId())) {
-                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), mq.getFahrtrichtung(), mq.getStandort()));
+                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(mq.getFahrtrichtung()),
+                                mq.getStandort()));
                     }
                 });
                 metaData.append(StringUtils.join(mqData, ", "));
@@ -176,6 +178,12 @@ public class GenerateCsvMstService {
             }
             data.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            if (dataCsv.getLfw() != null) {
+                data.append(dataCsv.getLfw());
+            }
+            data.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             if (dataCsv.getLkw() != null) {
                 data.append(dataCsv.getLkw());
@@ -185,12 +193,6 @@ public class GenerateCsvMstService {
         if (options.isLastzuege()) {
             if (dataCsv.getLastzuege() != null) {
                 data.append(dataCsv.getLastzuege());
-            }
-            data.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            if (dataCsv.getLfw() != null) {
-                data.append(dataCsv.getLfw());
             }
             data.append(SEMIKOLON);
         }
@@ -275,16 +277,16 @@ public class GenerateCsvMstService {
             header.append("Pkw");
             header.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            header.append("Lfw");
+            header.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             header.append("Lkw");
             header.append(SEMIKOLON);
         }
         if (options.isLastzuege()) {
             header.append("Lz");
-            header.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            header.append("Lfw");
             header.append(SEMIKOLON);
         }
         if (options.isBusse()) {

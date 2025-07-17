@@ -16,6 +16,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOp
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -27,6 +28,7 @@ import de.muenchen.dave.domain.mapper.DiagrammPdfOptionsMapper;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
+import de.muenchen.dave.domain.pdf.helper.DatatableTitle;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.GanglinieTable;
 import de.muenchen.dave.domain.pdf.helper.GanglinieTableColumn;
@@ -56,6 +58,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -386,6 +389,34 @@ public class FillPdfBeanService {
             }
         }
         return chartTitle.toString();
+    }
+
+    protected static List<DatatableTitle> createChartTitleAsList(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+        final List<DatatableTitle> titles = new ArrayList<>();
+        if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
+            titles.add(new DatatableTitle(CHART_TITLE_GESAMTE_MESSSTELLE, "no_margin_top", "negativ_margin_bottom"));
+        } else {
+            messstelle.getMessquerschnitte().stream().sorted(Comparator.comparing(Messquerschnitt::getMqId))
+                    .filter(messquerschnitt -> options.getMessquerschnittIds().contains(messquerschnitt.getMqId()))
+                    .forEach(messquerschnitt -> {
+                        final StringBuilder chartTitle = new StringBuilder();
+                        chartTitle.append(messquerschnitt.getMqId());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()));
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append("-");
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(StringUtils.defaultIfEmpty(messquerschnitt.getStandort(), KEINE_DATEN_VORHANDEN));
+                        titles.add(new DatatableTitle(chartTitle.toString(), "no_margin", ""));
+                    });
+            titles.getLast().setCssClass("no_margin_top");
+            if (titles.size() == 1) {
+                titles.getFirst().setCssClassOngoing("negativ_margin_bottom");
+            }
+        }
+        return titles;
     }
 
     protected static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
@@ -781,9 +812,8 @@ public class FillPdfBeanService {
         if (gtList.size() > 1) {
             gangliniePdf.setTableCellWidth("11.5mm");
             // Wenn nur eine Tabelle => Zellenbreite anpassen
-        } else {
+        } else if (gtList.size() == 1) {
             final Integer gtSize = gt.getGanglinieTableColumns().size();
-
             gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
         }
 
@@ -818,6 +848,13 @@ public class FillPdfBeanService {
         this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
         for (final LadeMesswerteDTO messwert : messwerte) {
+
+            // Wenn 60min ausgewählt sind, muss der Type auf Stunde gesetzt werden, wenn dieser leer ist
+            if (options.getIntervall().getTypeZeitintervall() == TypeZeitintervall.STUNDE_KOMPLETT
+                    && StringUtils.isEmpty(messwert.getType())) {
+                messwert.setType(LadeZaehldatenService.STUNDE);
+            }
+
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
             if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.STUNDE)
                     || StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
@@ -880,9 +917,8 @@ public class FillPdfBeanService {
         if (gtList.size() > 1) {
             gangliniePdf.setTableCellWidth("11.5mm");
             // Wenn nur eine Tabelle => Zellenbreite anpassen
-        } else {
+        } else if (gtList.size() == 1) {
             final Integer gtSize = gt.getGanglinieTableColumns().size();
-
             gangliniePdf.setTableCellWidth(calculateCellWidth(gtSize));
         }
 
@@ -1099,7 +1135,7 @@ public class FillPdfBeanService {
 
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
-        datentabellePdf.setTableTitle(createChartTitle(options, messstelle));
+        datentabellePdf.setDatatableTitle(createChartTitleAsList(options, messstelle));
 
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);

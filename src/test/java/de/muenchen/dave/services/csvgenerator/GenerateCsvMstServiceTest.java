@@ -32,9 +32,9 @@ class GenerateCsvMstServiceTest {
         table.setEndeUhrzeit(LocalTime.of(8, 15));
         table.setType("Stunde");
         table.setPkw(1);
-        table.setLkw(2);
-        table.setLastzuege(3);
-        table.setLfw(4);
+        table.setLfw(2);
+        table.setLkw(3);
+        table.setLastzuege(4);
         table.setBusse(5);
         table.setFahrradfahrer(6);
         table.setFussgaenger(7);
@@ -54,9 +54,9 @@ class GenerateCsvMstServiceTest {
         table.setStartUhrzeit(LocalTime.of(8, 0));
         table.setEndeUhrzeit(LocalTime.of(8, 15));
         table.setPkw(1);
-        table.setLkw(2);
-        table.setLastzuege(3);
-        table.setLfw(4);
+        table.setLfw(2);
+        table.setLkw(3);
+        table.setLastzuege(4);
         table.setBusse(5);
         table.setFahrradfahrer(null);
         table.setFussgaenger(7);
@@ -114,7 +114,7 @@ class GenerateCsvMstServiceTest {
     @Test
     void getHeader() {
         final String header = csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge());
-        final String headerExpected = "von;bis;;Pkw;Lkw;Lz;Lfw;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;";
+        final String headerExpected = "von;bis;;Pkw;Lfw;Lkw;Lz;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;";
         assertThat(header, is(headerExpected));
     }
 

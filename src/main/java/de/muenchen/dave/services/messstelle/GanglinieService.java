@@ -32,6 +32,13 @@ public class GanglinieService {
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(interval.getSummeAllePkw()));
                     }
+                    if (fahrzeugOptions.isLieferwagen()) {
+                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
+                        GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
+                    }
                     if (fahrzeugOptions.isLastkraftwagen()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
                         seriesEntries.getSeriesEntryLkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLkw()));
@@ -45,13 +52,6 @@ public class GanglinieService {
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(interval.getSummeLastzug()));
-                    }
-                    if (fahrzeugOptions.isLieferwagen()) {
-                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
-                        GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
-                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
                     }
                     if (fahrzeugOptions.isBusse()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());
