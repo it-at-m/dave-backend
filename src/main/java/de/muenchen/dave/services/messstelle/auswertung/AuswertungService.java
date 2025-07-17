@@ -365,6 +365,14 @@ public class AuswertungService {
         return auswertungen;
     }
 
+    /**
+     * Bildet aus den gegebenen Messfähigkeiten eine Liste mit den Einzelzeiträumen bestehend aus dem
+     * Start- und Enddatum des Gültigkeitsbereichs der Messfähigkeit.
+     *
+     * @param messfaehigkeiten
+     * @return die Liste mit den Einzelzeiträumen bestehend aus dem Start- und Enddatum des
+     *         Gültigkeitsbereichs der Messfähigkeit.
+     */
     protected List<List<LocalDate>> getZeitraeumeOfGivenMessfaehigkeiten(final List<ReadMessfaehigkeitDTO> messfaehigkeiten) {
         return CollectionUtils.emptyIfNull(messfaehigkeiten)
                 .stream()
@@ -373,11 +381,13 @@ public class AuswertungService {
     }
 
     /**
-     * Die Methode setzte alle Attribute in den Fahrzeugoptions auf false die nicht zur Fahrzeugklasse gehören.
+     * Die Methode setzte alle Attribute in den Fahrzeugoptions auf false die nicht zur Fahrzeugklasse
+     * gehören.
      *
      * @param fahrzeugklasse zur Prüfung.
      * @param fahrzeugOptions
-     * @return eine Kopie der Fahrzeugoptions mit Falsifizierten attributen entsprechend der Fahrzeugklasse.
+     * @return eine Kopie der Fahrzeugoptions mit Falsifizierten attributen entsprechend der
+     *         Fahrzeugklasse.
      */
     protected FahrzeugOptionsDTO getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
             final Fahrzeugklasse fahrzeugklasse,
