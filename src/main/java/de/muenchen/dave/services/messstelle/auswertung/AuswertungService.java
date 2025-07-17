@@ -372,6 +372,13 @@ public class AuswertungService {
                 .toList();
     }
 
+    /**
+     * Die Methode setzte alle Attribute in den Fahrzeugoptions auf false die nicht zur Fahrzeugklasse gehören.
+     *
+     * @param fahrzeugklasse zur Prüfung.
+     * @param fahrzeugOptions
+     * @return eine Kopie der Fahrzeugoptions mit Falsifizierten attributen entsprechend der Fahrzeugklasse.
+     */
     protected FahrzeugOptionsDTO getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
             final Fahrzeugklasse fahrzeugklasse,
             final FahrzeugOptionsDTO fahrzeugOptions) {
