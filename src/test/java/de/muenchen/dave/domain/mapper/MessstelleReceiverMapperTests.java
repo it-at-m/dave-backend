@@ -124,7 +124,6 @@ class MessstelleReceiverMapperTests {
         expected.setRealisierungsdatum(updatedData.getRealisierungsdatum());
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setHersteller(updatedData.getHersteller());
-        expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(updatedData.getFahrzeugklasse()));
         expected.setDetektierteVerkehrsarten(updatedData.getDetektierteVerkehrsarten());
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
@@ -149,6 +148,7 @@ class MessstelleReceiverMapperTests {
         expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
+        expected.setFahrzeugklasse(bean.getFahrzeugklasse());
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");

@@ -91,6 +91,7 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
+    @Mapping(target = "fahrzeugklasse", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
