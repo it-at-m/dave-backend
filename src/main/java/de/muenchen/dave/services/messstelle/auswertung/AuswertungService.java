@@ -428,6 +428,17 @@ public class AuswertungService {
         return tagesaggregatResponse;
     }
 
+    /**
+     * Setzt Attribute der Tagesaggregate in der gegebenen {@link TagesaggregatResponseDto} basierend
+     * auf den gewählten {@link FahrzeugOptionsDTO} auf null, wenn das Attribut in den Fahrzeugoptions
+     * den Wert false besitzt.
+     *
+     * @param tagesaggregatResponse Das {@link TagesaggregatResponseDto}, dessen Attribute null gesetzt
+     *            werden sollen.
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     *            Attribute definiert.
+     * @return Das modifizierte {@link TagesaggregatResponseDto} mit ggf. null gesetzten Attributen.
+     */
     protected TagesaggregatResponseDto nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
             final TagesaggregatResponseDto tagesaggregatResponse,
             final FahrzeugOptionsDTO fahrzeugOptions) {
@@ -448,6 +459,19 @@ public class AuswertungService {
         return tagesaggregatResponse;
     }
 
+    /**
+     * Setzt bestimmte Attribute des {@link TagesaggregatDto} auf null, basierend auf den gewählten
+     * {@link FahrzeugOptionsDTO}.
+     *
+     * Diese Methode überprüft die verschiedenen Optionen in {@code fahrzeugOptions} und setzt die
+     * entsprechenden Attribute im {@code tagesaggregat} auf null, wenn die jeweilige Option false ist.
+     *
+     * @param tagesaggregat Das {@link TagesaggregatDto}, dessen Attribute null gesetzt werden sollen.
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     *            Attribute definiert.
+     * @return Das modifizierte {@link TagesaggregatDto} mit null gesetzten Attributen, die nicht den
+     *         gewählten Fahrzeugoptionen entsprechen.
+     */
     protected TagesaggregatDto nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
             final TagesaggregatDto tagesaggregat,
             final FahrzeugOptionsDTO fahrzeugOptions) {
