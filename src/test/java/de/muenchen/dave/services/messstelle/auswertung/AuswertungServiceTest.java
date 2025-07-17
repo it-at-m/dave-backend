@@ -328,8 +328,8 @@ class AuswertungServiceTest {
         final var messfaehigkeiten = List.of(new ReadMessfaehigkeitDTO(), new ReadMessfaehigkeitDTO());
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 mstId,
-                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                zeitraum.getAuswertungsZeitraum().getZeitraumEnd())).thenReturn(messfaehigkeiten);
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate())).thenReturn(messfaehigkeiten);
 
         final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, mqIds, zeitraum, tagesTyp);
 
@@ -346,8 +346,8 @@ class AuswertungServiceTest {
 
         Mockito.verify(messstelleService, Mockito.times(1)).getMessfaehigkeitenForZeitraumForMessstelle(
                 mstId,
-                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                zeitraum.getAuswertungsZeitraum().getZeitraumEnd());
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate());
     }
 
     @Test
