@@ -298,8 +298,12 @@ class ValidierungServiceTest {
 
     @Test
     void hasMinimuOfTwoUnauffaelligeTage() {
-        long numberOfUnauffaelligeTage = 1;
+        long numberOfUnauffaelligeTage = 0;
         boolean result = validierungService.hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage);
+        assertThat(result, is(false));
+
+        numberOfUnauffaelligeTage = 1;
+        result = validierungService.hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage);
         assertThat(result, is(false));
 
         numberOfUnauffaelligeTage = 2;
@@ -325,6 +329,15 @@ class ValidierungServiceTest {
         numberOfUnauffaelligeTage = 10;
         result = validierungService.hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
         assertThat(result, is(true));
+
+        numberOfUnauffaelligeTage = 0;
+        result = validierungService.hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
+        assertThat(result, is(false));
+
+        numberOfRelevantKalendertage = 0;
+        numberOfUnauffaelligeTage = 10;
+        result = validierungService.hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
+        assertThat(result, is(false));
     }
 
     @Test

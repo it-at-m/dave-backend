@@ -73,8 +73,9 @@ public class ValidierungService {
     }
 
     protected boolean hasMinimuOfFiftyPercentUnauffaelligeTage(final long numberOfUnauffaelligeTage, final long numberOfRelevantKalendertage) {
-        return BigDecimal.valueOf(numberOfUnauffaelligeTage).divide(BigDecimal.valueOf(numberOfRelevantKalendertage), RoundingMode.HALF_UP)
-                .doubleValue() >= 0.5;
+        return numberOfRelevantKalendertage > 0 &&
+                BigDecimal.valueOf(numberOfUnauffaelligeTage).divide(BigDecimal.valueOf(numberOfRelevantKalendertage), RoundingMode.HALF_UP)
+                        .doubleValue() >= 0.5;
     }
 
     public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
