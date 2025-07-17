@@ -114,7 +114,6 @@ class AuswertungServiceTest {
 
         //Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle()).thenReturn()
 
-
         //final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
 
         //final var expected =

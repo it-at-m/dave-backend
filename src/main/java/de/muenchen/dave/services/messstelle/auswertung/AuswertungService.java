@@ -271,8 +271,8 @@ public class AuswertungService {
 
         final var messfaehigkeiten = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 mstId,
-                zeitraum.getAuswertungsZeitraum().getZeitraumStart(),
-                zeitraum.getAuswertungsZeitraum().getZeitraumEnd());
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate());
         model.setMessfaehigkeiten(messfaehigkeiten);
 
         return model;
