@@ -112,7 +112,12 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+        //Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle()).thenReturn()
+
+
+        //final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        //final var expected =
     }
 
     @Test

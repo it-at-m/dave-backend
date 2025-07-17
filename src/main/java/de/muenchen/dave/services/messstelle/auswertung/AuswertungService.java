@@ -227,13 +227,14 @@ public class AuswertungService {
                     final var adaptedFahrzeugOptions = getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
                             fahrzeugklasseAccordingChoosenFahrzeugoptions,
                             options.getFahrzeuge());
-                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
-                            tagesaggregatResponse,
-                            adaptedFahrzeugOptions);
 
                     if (Objects.isNull(tagesaggregatResponse)) {
                         tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
                     }
+
+                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
+                            tagesaggregatResponse,
+                            adaptedFahrzeugOptions);
 
                     // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
                     // über den geladenen Zeitraum und die MstId an.
