@@ -90,6 +90,13 @@ public class ValidierungService {
         return relevantMessfaehigkeiten;
     }
 
+    /**
+     * Gibt für die gegebenen Fahrzeugoptions auf Basis der Attribute mit dem Wert true die passende
+     * Fahrzeugklasse zurück.
+     *
+     * @param fahrzeugOptions
+     * @return die Fahrzeugklasse auf Basis der gewählten Fahrzeugoptions.
+     */
     public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions) {
         if (areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.SUMME_KFZ;
