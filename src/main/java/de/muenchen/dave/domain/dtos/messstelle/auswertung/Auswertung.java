@@ -8,7 +8,13 @@ import lombok.Data;
 public class Auswertung {
 
     private String objectId;
+
     private Zeitraum zeitraum;
+
+    private Long numberOfRelevantKalendertage;
+
+    private Long numberOfUnauffaelligeTage;
+
     private TagesaggregatDto daten;
 
 }

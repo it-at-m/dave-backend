@@ -21,4 +21,6 @@ public class LadeZaehldatenSteplineDTO implements Serializable {
 
     private List<StepLineSeriesEntryBaseDTO> seriesEntriesSecondChart;
 
+
+
 }

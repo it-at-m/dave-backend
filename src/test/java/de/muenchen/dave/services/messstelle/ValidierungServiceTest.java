@@ -176,7 +176,11 @@ class ValidierungServiceTest {
 
         final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
 
-        assertThat(result, is(true));
+        final var expected = new ValidierungService.ValidationResult();
+        expected.setValid(true);
+        expected.setNumberOfUnauffaelligeTage(11L);
+        expected.setNumberOfRelevantKalendertage(21L);
+        assertThat(result, is(expected));
     }
 
     @Test
@@ -215,7 +219,11 @@ class ValidierungServiceTest {
 
         final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
 
-        assertThat(result, is(false));
+        final var expected = new ValidierungService.ValidationResult();
+        expected.setValid(false);
+        expected.setNumberOfUnauffaelligeTage(10L);
+        expected.setNumberOfRelevantKalendertage(21L);
+        assertThat(result, is(expected));
     }
 
     @Test
@@ -254,7 +262,11 @@ class ValidierungServiceTest {
 
         final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
 
-        assertThat(result, is(false));
+        final var expected = new ValidierungService.ValidationResult();
+        expected.setValid(false);
+        expected.setNumberOfUnauffaelligeTage(1L);
+        expected.setNumberOfRelevantKalendertage(1L);
+        assertThat(result, is(expected));
     }
 
     @Test
@@ -293,7 +305,11 @@ class ValidierungServiceTest {
 
         final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
 
-        assertThat(result, is(false));
+        final var expected = new ValidierungService.ValidationResult();
+        expected.setValid(false);
+        expected.setNumberOfUnauffaelligeTage(1L);
+        expected.setNumberOfRelevantKalendertage(3L);
+        assertThat(result, is(expected));
     }
 
     @Test

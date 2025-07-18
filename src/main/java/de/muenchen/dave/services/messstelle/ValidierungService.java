@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.ArithmeticUtils;
@@ -20,7 +21,20 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class ValidierungService {
+
+    @Data
+    public static final class ValidationResult {
+
+        private boolean valid;
+
+        private Long numberOfRelevantKalendertage;
+
+        private Long numberOfUnauffaelligeTage;
+
+    }
+
     private final UnauffaelligeTageService unauffaelligeTageService;
+
     private final KalendertagService kalendertagService;
 
     public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
@@ -41,11 +55,12 @@ public class ValidierungService {
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
     }
 
-    public boolean areZeitraeumeAndTagesTypForMessstelleValid(
+    public ValidationResult areZeitraeumeAndTagesTypForMessstelleValid(
             final String mstId,
             final List<List<LocalDate>> zeitraeume,
             final TagesTyp tagesTyp) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(tagesTyp);
+        final var validationResult = new ValidationResult();
 
         final long numberOfRelevantKalendertage = zeitraeume
                 .stream()
@@ -54,6 +69,7 @@ public class ValidierungService {
                         zeitraum.getLast(),
                         tagestypen))
                 .reduce(0L, ArithmeticUtils::addAndCheck);
+        validationResult.setNumberOfRelevantKalendertage(numberOfRelevantKalendertage);
 
         final long numberOfUnauffaelligeTage = zeitraeume
                 .stream()
@@ -63,9 +79,13 @@ public class ValidierungService {
                         zeitraum.getLast(),
                         tagestypen))
                 .reduce(0L, ArithmeticUtils::addAndCheck);
+        validationResult.setNumberOfUnauffaelligeTage(numberOfUnauffaelligeTage);
 
-        return hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
+        final boolean isValid = hasMinimuOfTwoUnauffaelligeTage(numberOfUnauffaelligeTage)
                 && hasMinimuOfFiftyPercentUnauffaelligeTage(numberOfUnauffaelligeTage, numberOfRelevantKalendertage);
+        validationResult.setValid(isValid);
+
+        return validationResult;
     }
 
     protected boolean hasMinimuOfTwoUnauffaelligeTage(final long numberOfUnauffaelligeTage) {

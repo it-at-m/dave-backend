@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -151,17 +150,19 @@ public class AuswertungService {
                     var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
                             validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
-                    TagesaggregatResponseDto tagesaggregatResponse = null;
+                    TagesaggregatResponseDto tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
+                    ValidierungService.ValidationResult validationResult = new ValidierungService.ValidationResult();
+
                     if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
-                        final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
-                        if (isValid) {
+                        if (validationResult.isValid()) {
                             tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
                                     options.getTagesTyp(),
                                     validateZeitraumAndTagesTypForMessstelle.getMqIds(),
@@ -176,11 +177,11 @@ public class AuswertungService {
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
-                        final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
-                        if (isValid) {
+                        if (validationResult.isValid()) {
                             tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
                                     options.getTagesTyp(),
                                     validateZeitraumAndTagesTypForMessstelle.getMqIds(),
@@ -195,11 +196,11 @@ public class AuswertungService {
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
-                        final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
-                        if (isValid) {
+                        if (validationResult.isValid()) {
                             tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
                                     options.getTagesTyp(),
                                     validateZeitraumAndTagesTypForMessstelle.getMqIds(),
@@ -212,11 +213,11 @@ public class AuswertungService {
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
-                        final var isValid = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
-                        if (isValid) {
+                        if (validationResult.isValid()) {
                             tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
                                     options.getTagesTyp(),
                                     validateZeitraumAndTagesTypForMessstelle.getMqIds(),
@@ -228,10 +229,6 @@ public class AuswertungService {
                             fahrzeugklasseAccordingChoosenFahrzeugoptions,
                             options.getFahrzeuge());
 
-                    if (Objects.isNull(tagesaggregatResponse)) {
-                        tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
-                    }
-
                     tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
                             tagesaggregatResponse,
                             adaptedFahrzeugOptions);
@@ -241,7 +238,8 @@ public class AuswertungService {
                     return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
                             tagesaggregatResponse,
                             validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
-                            validateZeitraumAndTagesTypForMessstelle.getMstId());
+                            validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                            validationResult);
 
                 })
                 .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
@@ -324,6 +322,8 @@ public class AuswertungService {
                 final var auswertung = new Auswertung();
                 auswertung.setObjectId(mstId);
                 auswertung.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
+                auswertung.setNumberOfUnauffaelligeTage(auswertungMessstelleUndZeitraum.getNumberOfUnauffaelligeTage());
+                auswertung.setNumberOfRelevantKalendertage(auswertungMessstelleUndZeitraum.getNumberOfRelevantKalendertage());
                 auswertung.setDaten(auswertungMessstelleUndZeitraum.getSumOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
                 final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
@@ -336,6 +336,8 @@ public class AuswertungService {
                     final var mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
                     auswertungMq.setObjectId(mqIdAsString);
                     auswertungMq.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
+                    auswertungMq.setNumberOfUnauffaelligeTage(auswertungMessstelleUndZeitraum.getNumberOfUnauffaelligeTage());
+                    auswertungMq.setNumberOfRelevantKalendertage(auswertungMessstelleUndZeitraum.getNumberOfRelevantKalendertage());
                     auswertungMq.setDaten(tagesaggregatDto);
                     // Erzeugt für jeden geladenen Messquerschnitt einen eigenen Eintrag in der Map,
                     // um die geladenen Daten pro Zeitraum abzulegen
