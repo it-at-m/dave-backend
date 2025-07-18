@@ -10,6 +10,4 @@ public class AuswertungMessstelleWithFileDTO {
 
     private String spreadsheetBase64Encoded;
 
-
-
 }
