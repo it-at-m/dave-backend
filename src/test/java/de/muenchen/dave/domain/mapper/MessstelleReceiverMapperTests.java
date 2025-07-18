@@ -6,8 +6,10 @@ import static org.mockito.Mockito.when;
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
@@ -16,6 +18,7 @@ import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -69,6 +72,18 @@ class MessstelleReceiverMapperTests {
 
         expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
         expected.setMessfaehigkeiten(mapper.createMessfaehigkeit(dto.getMessfaehigkeiten()));
+
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+                .collect(Collectors.toSet());
+        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        }
 
         final Messstelle messstelle = this.mapper.createMessstelle(dto, stadtbezirkMapper);
         Assertions.assertThat(messstelle)
@@ -148,7 +163,18 @@ class MessstelleReceiverMapperTests {
         expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
-        expected.setFahrzeugklasse(bean.getFahrzeugklasse());
+
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+                .collect(Collectors.toSet());
+        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
+            expected.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        }
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");

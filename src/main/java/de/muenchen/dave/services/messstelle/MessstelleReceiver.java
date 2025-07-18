@@ -1,10 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
@@ -17,9 +15,7 @@ import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
@@ -119,18 +115,6 @@ public class MessstelleReceiver {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();
         final Messstelle toSave = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = toSave.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
-                .collect(Collectors.toSet());
-        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
-            toSave.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
-            toSave.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
-            toSave.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
-            toSave.setFahrzeugklasse(Fahrzeugklasse.RAD);
-        }
-
         try {
             toSave.setLageplanVorhanden(lageplanService.lageplanVorhanden(toSave.getMstId()));
         } catch (final Exception exception) {
