@@ -358,7 +358,7 @@ public class SpreadsheetService {
         final var numberOfUnauffaelligeTage = Objects.isNull(auswertung.getNumberOfUnauffaelligeTage())
                 ? null
                 : BigDecimal.valueOf(auswertung.getNumberOfUnauffaelligeTage());
-        addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), numberOfUnauffaelligeTage);
+        addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), numberOfUnauffaelligeTage);
     }
 
     protected void addBigDecimalToCell(final Cell cell, final BigDecimal data) {
