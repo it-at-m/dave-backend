@@ -75,11 +75,8 @@ class AuswertungServiceTest {
     void ladeAuswertungGroupedByMstId() {
         final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
         auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
-        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_3);
-
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
-        jahre.add(2021);
 
         final var fahrzeugOptions = new FahrzeugOptionsDTO();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
@@ -100,10 +97,6 @@ class AuswertungServiceTest {
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
-        messstelleAuswertungId = new MessstelleAuswertungIdDTO();
-        messstelleAuswertungId.setMstId("4567");
-        messstelleAuswertungId.setMqIds(Set.of("456701", "456702"));
-        messtellenAuswertungIds.add(messstelleAuswertungId);
 
         final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
@@ -112,7 +105,54 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        //Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle()).thenReturn()
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        request.setZeitraum(zeitraum);
+        request.setMstId("1234");
+        request.setMqIds(Set.of("123401", "123402"));
+        request.setTagesTyp(TagesTyp.MO_SO);
+        request.setMessfaehigkeiten(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+
+        var validationResult = new ValidierungService.ValidationResult();
+        validationResult.setValid(true);
+        validationResult.setNumberOfUnauffaelligeTage(100L);
+        validationResult.setNumberOfRelevantKalendertage(75L);
+        Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO)).thenReturn(validationResult);
+
+        var tageaggregatResponse = new TagesaggregatResponseDto();
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setMqId(99);
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(1L));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(2L));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(3L));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(4L));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(5L));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(6L));
+        tagesaggregat.summeLastzug(BigDecimal.valueOf(7L));
+        tagesaggregat.summeGueterverkehr(BigDecimal.valueOf(8L));
+        tagesaggregat.summeSchwerverkehr(BigDecimal.valueOf(9L));
+        tagesaggregat.summeKraftfahrzeugverkehr(BigDecimal.valueOf(10L));
+        tagesaggregat.prozentSchwerverkehr(BigDecimal.valueOf(11L));
+        tagesaggregat.prozentGueterverkehr(BigDecimal.valueOf(12L));
+        tagesaggregat.includedMeasuringDays(13L);
+        tageaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+        tageaggregatResponse.setMeanOfAggregatesForEachMqId(List.of(tagesaggregat));
+
+        Mockito.when(messwerteService.ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))))).thenReturn(tageaggregatResponse);
 
         final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
 

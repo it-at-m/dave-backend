@@ -207,7 +207,10 @@ public class AuswertungService {
                         }
                     }
 
-                    if (Fahrzeugklasse.RAD.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions) || options.getFahrzeuge().isRadverkehr()) {
+                    if (!Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && !Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && !Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && options.getFahrzeuge().isRadverkehr()) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
                                 validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
