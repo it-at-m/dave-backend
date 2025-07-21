@@ -147,9 +147,8 @@ public class AuswertungService {
 
                     var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
                             .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
-                    var relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-                            validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
+                    List<ReadMessfaehigkeitDTO> relevantMessfaehigkeiten;
                     TagesaggregatResponseDto tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
                     ValidierungService.ValidationResult validationResult = new ValidierungService.ValidationResult();
 
