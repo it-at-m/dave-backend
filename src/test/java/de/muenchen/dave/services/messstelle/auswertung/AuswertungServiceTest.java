@@ -567,6 +567,91 @@ class AuswertungServiceTest {
     }
 
     @Test
+    void ladeAuswertungGroupedByMstIdRadWithdZeitraeumeAndTagesTypForMessstelleValidAndFahrzeugoptionsRadNotChoosen() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.RAD);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var tagesaggregatExpected = new TagesaggregatDto();
+        var tagesaggregatExpectedMqId1Expected = new TagesaggregatDto();
+        tagesaggregatExpectedMqId1Expected.setMqId(123401);
+        var tagesaggregatExpectedMqId2Expected = new TagesaggregatDto();
+        tagesaggregatExpectedMqId2Expected.setMqId(123402);
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(null);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(null);
+        auswertungProZeitraum.setDaten(tagesaggregatExpected);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq1 = new Auswertung();
+        auswertungProMq1.setObjectId("123401");
+        auswertungProMq1.setZeitraum(zeitraum);
+        auswertungProMq1.setNumberOfUnauffaelligeTage(null);
+        auswertungProMq1.setNumberOfRelevantKalendertage(null);
+        auswertungProMq1.setDaten(tagesaggregatExpectedMqId1Expected);
+        final var auswertungProMq2 = new Auswertung();
+        auswertungProMq2.setObjectId("123402");
+        auswertungProMq2.setZeitraum(zeitraum);
+        auswertungProMq2.setNumberOfUnauffaelligeTage(null);
+        auswertungProMq2.setNumberOfRelevantKalendertage(null);
+        auswertungProMq2.setDaten(tagesaggregatExpectedMqId2Expected);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("123401", List.of(auswertungProMq1), "123402", List.of(auswertungProMq2)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(Mockito.any(), Mockito.any());
+        Mockito.verify(validierungService, Mockito.times(0)).areZeitraeumeAndTagesTypForMessstelleValid(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(messwerteService, Mockito.times(0)).ladeMeanOfTagesaggregatePerMq(Mockito.any(), Mockito.any(), Mockito.any());
+    }
+
+    @Test
     void calculateZeitraeume() {
         final List<AuswertungsZeitraum> auswertungszeitraeume = new ArrayList<>();
         auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
