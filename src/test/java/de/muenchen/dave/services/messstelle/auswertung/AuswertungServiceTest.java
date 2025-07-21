@@ -182,6 +182,11 @@ class AuswertungServiceTest {
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(1)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
     }
 
     @Test
@@ -253,7 +258,6 @@ class AuswertungServiceTest {
                 .thenReturn(validationResultAchtPlusEins)
                 .thenReturn(validationResultZweiPlusEins);
 
-
         var tageaggregatResponse = new TagesaggregatResponseDto();
         var tagesaggregat = new TagesaggregatDto();
         tagesaggregat.setMqId(99);
@@ -304,6 +308,11 @@ class AuswertungServiceTest {
         Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(2)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
     }
 
     @Test
@@ -377,11 +386,10 @@ class AuswertungServiceTest {
         validationResultSummeKfz.setNumberOfUnauffaelligeTage(100L);
         validationResultSummeKfz.setNumberOfRelevantKalendertage(75L);
         Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
-                        List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO))
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO))
                 .thenReturn(validationResultAchtPlusEins)
                 .thenReturn(validationResultZweiPlusEins)
                 .thenReturn(validationResultSummeKfz);
-
 
         var tageaggregatResponse = new TagesaggregatResponseDto();
         var tagesaggregat = new TagesaggregatDto();
@@ -433,6 +441,11 @@ class AuswertungServiceTest {
         Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
         Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
         Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(3)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
     }
 
     @Test
