@@ -72,7 +72,7 @@ class AuswertungServiceTest {
     }
 
     @Test
-    void ladeAuswertungGroupedByMstId() {
+    void ladeAuswertungGroupedByMstIdAchtPlusEinsAndZeitraeumeAndTagesTypForMessstelleValid() {
         final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
         auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
         final var jahre = new ArrayList<Integer>();
@@ -156,7 +156,32 @@ class AuswertungServiceTest {
 
         final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
 
-        //final var expected =
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(100L);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(75L);
+        auswertungProZeitraum.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq = new Auswertung();
+        auswertungProMq.setObjectId("99");
+        auswertungProMq.setZeitraum(zeitraum);
+        auswertungProMq.setNumberOfUnauffaelligeTage(100L);
+        auswertungProMq.setNumberOfRelevantKalendertage(75L);
+        auswertungProMq.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("99", List.of(auswertungProMq)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
     }
 
     @Test
