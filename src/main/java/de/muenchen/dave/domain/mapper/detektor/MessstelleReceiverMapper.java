@@ -58,18 +58,23 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = CollectionUtils.emptyIfNull(bean.getMessfaehigkeiten())
+        /**
+         * Die umfangreichste Fahrzeugklasse der Messfähigkeiten einer {@link MessstelleDto}
+         * bestimmt die Fahrzeugklasse der {@link Messstelle}.
+         */
+        final Set<MessfaehigkeitDto.FahrzeugklasseEnum> distinctFahrzeugklassenOfMessfaehigkeiten = CollectionUtils
+                .emptyIfNull(dto.getMessfaehigkeiten())
                 .stream()
-                .map(Messfaehigkeit::getFahrzeugklasse)
+                .map(MessfaehigkeitDto::getFahrzeugklasse)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
+        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.ACHT_PLUS_EINS)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.ZWEI_PLUS_EINS)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.SUMME_KFZ)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.RAD)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
