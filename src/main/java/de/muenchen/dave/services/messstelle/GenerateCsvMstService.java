@@ -110,7 +110,7 @@ public class GenerateCsvMstService {
         final StringBuilder metaData = new StringBuilder();
         metaData.append(messstelle.getMstId());
         metaData.append(SEMIKOLON);
-        metaData.append(messstelle.getDetektierteVerkehrsarten());
+        metaData.append(messstelle.getDetektierteVerkehrsart().name());
         metaData.append(SEMIKOLON);
         if (CollectionUtils.isNotEmpty(options.getZeitraum())) {
             metaData.append(options.getZeitraum().getFirst().format(DDMMYYYY));

@@ -5,9 +5,11 @@ import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.VerkehrsartMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +32,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(
-        uses = FahrzeugklassenMapper.class,
+        uses = { FahrzeugklassenMapper.class, VerkehrsartMapper.class },
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public interface MessstelleReceiverMapper {
@@ -45,13 +48,25 @@ public interface MessstelleReceiverMapper {
     List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
-    default void createMessstelleAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
+    default void dto2EntityAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
 
         if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
+        }
+
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = bean.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+                .collect(Collectors.toSet());
+        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
+            bean.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
+            bean.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
+            bean.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
+            bean.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
         // Suchworte setzen
@@ -91,6 +106,7 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
+    @Mapping(target = "fahrzeugklasse", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)

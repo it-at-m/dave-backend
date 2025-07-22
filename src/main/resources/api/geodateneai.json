@@ -661,8 +661,13 @@
               "UNBEKANNT"
             ]
           },
-          "detektierteVerkehrsarten": {
-            "type": "string"
+          "detektierteVerkehrsart": {
+            "type": "string",
+            "enum": [
+              "KFZ",
+              "RAD",
+              "UNBEKANNT"
+            ]
           },
           "hersteller": {
             "type": "string"

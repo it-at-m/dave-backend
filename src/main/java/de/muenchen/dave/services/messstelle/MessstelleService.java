@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDT
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MessstelleService {
 
-    private static final String KFZ = "KFZ";
     private final MessstelleIndexService messstelleIndexService;
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
@@ -96,7 +96,7 @@ public class MessstelleService {
 
     public boolean isKfzMessstelle(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        return KFZ.equalsIgnoreCase(messstelle.getDetektierteVerkehrsarten());
+        return Verkehrsart.KFZ.equals(messstelle.getDetektierteVerkehrsart());
     }
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {

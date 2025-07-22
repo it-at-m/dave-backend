@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapperImpl;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.VerkehrsartMapperImpl;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
@@ -62,6 +63,7 @@ public class MessstelleReceiverTest {
     public void beforeEach() throws IllegalAccessException {
         messstelleReceiverMapper = new MessstelleReceiverMapperImpl();
         FieldUtils.writeField(messstelleReceiverMapper, "fahrzeugklassenMapper", new FahrzeugklassenMapperImpl(), true);
+        FieldUtils.writeField(messstelleReceiverMapper, "verkehrsartMapper", new VerkehrsartMapperImpl(), true);
         Mockito.reset(messstelleIndexService, customSuggestIndexService, lageplanService, emailSendService, messstelleApi);
         messstelleReceiver = new MessstelleReceiver(
                 messstelleIndexService,
