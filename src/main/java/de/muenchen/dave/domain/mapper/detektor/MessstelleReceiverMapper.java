@@ -17,6 +17,7 @@ import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -57,7 +58,10 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = bean.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = CollectionUtils.emptyIfNull(bean.getMessfaehigkeiten())
+                .stream()
+                .map(Messfaehigkeit::getFahrzeugklasse)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
