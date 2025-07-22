@@ -8,13 +8,13 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface VerkehrsartMapper {
 
-    default Verkehrsart map(final MessstelleDto.DetektierteVerkehrsartenEnum verkehrsart) {
+    default Verkehrsart map(final MessstelleDto.DetektierteVerkehrsartEnum verkehrsart) {
         final Verkehrsart mappingTarget;
-        if (MessstelleDto.DetektierteVerkehrsartenEnum.KFZ == verkehrsart) {
+        if (MessstelleDto.DetektierteVerkehrsartEnum.KFZ == verkehrsart) {
             mappingTarget = Verkehrsart.KFZ;
-        } else if (MessstelleDto.DetektierteVerkehrsartenEnum.RAD == verkehrsart) {
+        } else if (MessstelleDto.DetektierteVerkehrsartEnum.RAD == verkehrsart) {
             mappingTarget = Verkehrsart.RAD;
-        } else if (MessstelleDto.DetektierteVerkehrsartenEnum.UNBEKANNT == verkehrsart) {
+        } else if (MessstelleDto.DetektierteVerkehrsartEnum.UNBEKANNT == verkehrsart) {
             mappingTarget = Verkehrsart.UNBEKANNT;
         } else {
             mappingTarget = null;

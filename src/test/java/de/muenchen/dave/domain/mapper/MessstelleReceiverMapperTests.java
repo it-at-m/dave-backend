@@ -58,7 +58,7 @@ class MessstelleReceiverMapperTests {
         expected.setSuchwoerter(new ArrayList<>());
         expected.setHersteller(dto.getHersteller());
         expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(dto.getFahrzeugklasse()));
-        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(dto.getDetektierteVerkehrsarten()));
+        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(dto.getDetektierteVerkehrsart()));
         final String stadtbezirkBezeichnung = "Schwabing-West";
         final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirkBezeichnung));
         expected.getSuchwoerter().addAll(stadtbezirke);
@@ -126,7 +126,7 @@ class MessstelleReceiverMapperTests {
         expected.setAbbaudatum(updatedData.getAbbaudatum());
         expected.setHersteller(updatedData.getHersteller());
         expected.setFahrzeugklasse(new FahrzeugklassenMapperImpl().map(updatedData.getFahrzeugklasse()));
-        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(updatedData.getDetektierteVerkehrsarten()));
+        expected.setDetektierteVerkehrsart(new VerkehrsartMapperImpl().map(updatedData.getDetektierteVerkehrsart()));
         expected.setSuchwoerter(new ArrayList<>());
         expected.getSuchwoerter().addAll(bean.getCustomSuchwoerter());
         expected.getSuchwoerter().add(updatedData.getMstId());

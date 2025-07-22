@@ -35,7 +35,6 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 )
 public interface MessstelleReceiverMapper {
 
-    @Mapping(target = "detektierteVerkehrsart", source = "detektierteVerkehrsarten")
     Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
@@ -93,7 +92,6 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
-    @Mapping(target = "detektierteVerkehrsart", source = "detektierteVerkehrsarten")
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
