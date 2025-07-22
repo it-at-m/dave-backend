@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class GanglinieGesamtauswertungService {
 
-    public final String PREFIX_MESSSTELLE = "MST";
-
     /**
      * Erstellt die Repräsentation der Zähldaten zur Gangliniendarstellung für eine Messstelle.
      *
@@ -49,6 +47,13 @@ public class GanglinieGesamtauswertungService {
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeAllePkw()));
                     }
+                    if (fahrzeugOptions.isLieferwagen()) {
+                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
+                        GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLfw().getName());
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
+                    }
                     if (fahrzeugOptions.isLastkraftwagen()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
                         seriesEntries.getSeriesEntryLkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLkw()));
@@ -62,13 +67,6 @@ public class GanglinieGesamtauswertungService {
                         GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLz().getName());
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getSummeLastzug()));
-                    }
-                    if (fahrzeugOptions.isLieferwagen()) {
-                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
-                        GanglinieUtil.setLegendInZaehldatenStepline(zaehldatenStepline, seriesEntries.getSeriesEntryLfw().getName());
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(zaehldatenStepline,
-                                GanglinieUtil.getIntValueIfNotNull(auswertung.getDaten().getAnzahlLfw()));
                     }
                     if (fahrzeugOptions.isBusse()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());

@@ -102,8 +102,8 @@ class HeatmapServiceTest {
         final var result = heatmapService.ladeHeatmap(intervals, options);
 
         final var expected = new LadeZaehldatenHeatmapDTO();
-        expected.setLegend(List.of("Güterverkehr", "Schwerverkehr", "Kraftfahrzeuge", "Fahrräder", "Krafträder", "Busse", "Lieferwagen", "Lastzüge",
-                "Lastkraftwagen", "Personenkraftwagen"));
+        expected.setLegend(List.of("Güterverkehr", "Schwerverkehr", "Kraftfahrzeuge", "Fahrräder", "Krafträder", "Busse", "Lastzüge",
+                "Lastkraftwagen", "Lieferwagen", "Personenkraftwagen"));
         expected.setRangeMin(0);
         expected.setRangeMax(12);
         expected.setXAxisDataFirstChart(List.of("00:00", "00:30", "01:00"));
@@ -114,9 +114,9 @@ class HeatmapServiceTest {
                 List.of(0, 3, 5),
                 List.of(0, 4, 2),
                 List.of(0, 5, 4),
-                List.of(0, 6, 1),
-                List.of(0, 7, 7),
-                List.of(0, 8, 3),
+                List.of(0, 6, 7),
+                List.of(0, 7, 3),
+                List.of(0, 8, 1),
                 List.of(0, 9, 6),
                 List.of(1, 0, 9),
                 List.of(1, 1, 10),
@@ -124,9 +124,9 @@ class HeatmapServiceTest {
                 List.of(1, 3, 6),
                 List.of(1, 4, 3),
                 List.of(1, 5, 5),
-                List.of(1, 6, 2),
-                List.of(1, 7, 8),
-                List.of(1, 8, 4),
+                List.of(1, 6, 8),
+                List.of(1, 7, 4),
+                List.of(1, 8, 2),
                 List.of(1, 9, 7),
                 List.of(2, 0, 10),
                 List.of(2, 1, 11),
@@ -134,9 +134,9 @@ class HeatmapServiceTest {
                 List.of(2, 3, 7),
                 List.of(2, 4, 4),
                 List.of(2, 5, 6),
-                List.of(2, 6, 3),
-                List.of(2, 7, 9),
-                List.of(2, 8, 5),
+                List.of(2, 6, 9),
+                List.of(2, 7, 5),
+                List.of(2, 8, 3),
                 List.of(2, 9, 8)));
 
         Assertions.assertThat(result).isNotNull().isEqualTo(expected);

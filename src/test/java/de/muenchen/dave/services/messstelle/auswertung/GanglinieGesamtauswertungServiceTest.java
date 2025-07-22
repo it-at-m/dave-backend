@@ -91,7 +91,7 @@ class GanglinieGesamtauswertungServiceTest {
         final var result = ganglinieGesamtauswertungService.createGanglinieForSingleMessstelle(auswertungMessstelle, fahrzeugOptions);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Bus", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setLegend(List.of("Pkw", "Lfw", "Lkw", "Lz", "Bus", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(120);
         expected.setRangeMaxPercent(26);
         expected.setXAxisDataFirstChart(List.of("Q1.2024", "Q2.2024", "Q3.2024", "Q4.2024", "Q1.2025"));
