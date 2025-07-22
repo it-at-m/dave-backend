@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -124,10 +123,8 @@ public class MessstelleReceiver {
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(toSave.getMessquerschnitte(), dto.getMessquerschnitte());
         toSave.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
-        if (ObjectUtils.isEmpty(dto.getDatumLetztePlausibleMessung())) {
-            unauffaelligeTageService.findFirstByMstIdOrderByKalendertagDatumDesc(toSave.getMstId())
-                    .ifPresent(unauffaelligerTag -> toSave.setDatumLetztePlausibleMessung(unauffaelligerTag.getKalendertag().getDatum()));
-        }
+        unauffaelligeTageService.findFirstByMstIdOrderByKalendertagDatumDesc(toSave.getMstId())
+                .ifPresent(unauffaelligerTag -> toSave.setDatumLetztePlausibleMessung(unauffaelligerTag.getKalendertag().getDatum()));
         final Messstelle updated = messstelleIndexService.saveMessstelle(toSave);
         final var statusMessstelleNeu = updated.getStatus();
         if (statusMessstelleAlt != statusMessstelleNeu) {
