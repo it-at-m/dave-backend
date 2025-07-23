@@ -180,15 +180,6 @@ public class ValidierungService {
     /**
      * Überprüft, ob die gegebene Fahrzeugklasse in der Vergleichsfahrzeugklasse enthalten ist.
      *
-     * Diese Methode prüft spezifische Bedingungen für die Fahrzeugklassen:
-     * - {@link Fahrzeugklasse#ACHT_PLUS_EINS} ist nur in {@link Fahrzeugklasse#ACHT_PLUS_EINS}
-     * enthalten.
-     * - {@link Fahrzeugklasse#ZWEI_PLUS_EINS} ist in {@link Fahrzeugklasse#ZWEI_PLUS_EINS} und
-     * {@link Fahrzeugklasse#ACHT_PLUS_EINS} enthalten.
-     * - {@link Fahrzeugklasse#SUMME_KFZ} ist in {@link Fahrzeugklasse#ACHT_PLUS_EINS},
-     * {@link Fahrzeugklasse#ZWEI_PLUS_EINS} und sich selbst enthalten.
-     * - {@link Fahrzeugklasse#RAD} ist nur in {@link Fahrzeugklasse#RAD} enthalten.
-     *
      * @param fahrzeugklasse die Fahrzeugklasse, die überprüft werden soll
      * @param fahrzeugklasseToCompare die Fahrzeugklasse, mit der verglichen wird
      * @return true, wenn die Fahrzeugklasse in der Vergleichsfahrzeugklasse enthalten ist, andernfalls
