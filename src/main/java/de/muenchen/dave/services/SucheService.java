@@ -202,7 +202,7 @@ public class SucheService {
 
         if (searchAndFilterOptions.isSearchInMessstellen()) {
             // Messstellen
-            dto.setMessstellenSuggests(getMessstellenSuggest(q));
+            dto.setMessstellenSuggests(getMessstellenSuggest(q, searchAndFilterOptions));
         }
 
         return dto;
@@ -249,7 +249,7 @@ public class SucheService {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
-            searchResult.addAll(sucheMessstelle(query));
+            searchResult.addAll(sucheMessstelle(query, searchAndFilterOptions));
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
             searchResult.addAll(sucheZaehlstelle(query, searchAndFilterOptions, isAdminportal));
@@ -300,9 +300,10 @@ public class SucheService {
      * @param query Eine Suchquery
      * @return Ein Set von befüllten SucheMessstelleSuggestDTOs
      */
-    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query) {
+    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
         final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
+                .filter(messstelle -> CollectionUtils.emptyIfNull(searchAndFilterOptions.getMessstelleVerkehrsart()).contains(messstelle.getDetektierteVerkehrsart()))
                 .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
                 .collect(Collectors.toList());
         log.debug("Found {} messstelle(n)", sucheMessstelleSuggestDTOS.size());
@@ -315,7 +316,7 @@ public class SucheService {
      * @param query Eine Suchquery
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<MessstelleKarteDTO> sucheMessstelle(final String query) {
+    private Set<MessstelleKarteDTO> sucheMessstelle(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -325,7 +326,8 @@ public class SucheService {
             log.debug("query '{}'", q);
             messstellen = this.messstelleIndex.suggestSearch(q, pageable).toList();
         }
-        return sucheMapper.messstelleToMessstelleKarteDTO(messstellen, stadtbezirkMapper);
+        final var filteredMessstellen = messstellen.stream().filter(messstelle -> CollectionUtils.emptyIfNull(searchAndFilterOptions.getMessstelleVerkehrsart()).contains(messstelle.getDetektierteVerkehrsart())).toList();
+        return sucheMapper.messstelleToMessstelleKarteDTO(filteredMessstellen, stadtbezirkMapper);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {
