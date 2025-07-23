@@ -383,14 +383,6 @@ class ValidierungServiceTest {
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expected.add(expectedMessfaehigkeit);
-
-        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
-        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        expected.add(expectedMessfaehigkeit);
-
-        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
-        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
-        expected.add(expectedMessfaehigkeit);
         assertThat(result, is(expected));
 
     }
@@ -420,11 +412,11 @@ class ValidierungServiceTest {
         var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.ZWEI_PLUS_EINS);
         var expected = new ArrayList<ReadMessfaehigkeitDTO>();
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
-        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expected.add(expectedMessfaehigkeit);
 
         expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
-        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         expected.add(expectedMessfaehigkeit);
         assertThat(result, is(expected));
     }
@@ -454,6 +446,14 @@ class ValidierungServiceTest {
         var result = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(validationObject, Fahrzeugklasse.SUMME_KFZ);
         var expected = new ArrayList<ReadMessfaehigkeitDTO>();
         var expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        expected.add(expectedMessfaehigkeit);
+
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
+        expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        expected.add(expectedMessfaehigkeit);
+
+        expectedMessfaehigkeit = new ReadMessfaehigkeitDTO();
         expectedMessfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         expected.add(expectedMessfaehigkeit);
         assertThat(result, is(expected));

@@ -104,8 +104,8 @@ public class ValidierungService {
         final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
                 .stream()
                 .filter(messfaehigkeit -> isFahrzeugklasseContainedInTheGivenFahrzeugklasseToCompare(
-                        messfaehigkeit.getFahrzeugklasse(),
-                        fahrzeugklasse))
+                        fahrzeugklasse,
+                        messfaehigkeit.getFahrzeugklasse()))
                 .toList();
         return relevantMessfaehigkeiten;
     }
