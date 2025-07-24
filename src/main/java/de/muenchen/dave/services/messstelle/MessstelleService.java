@@ -118,12 +118,17 @@ public class MessstelleService {
     }
 
     /**
+     * Die Methode extrahiert die Messfähigkeiten der Messstelle für den angegebenen Zeitraum gegeben in
+     * den Parametern.
      *
+     * Extrahierte Messfähigkeiten welche sich mit dem Anfangs- und Enddatum des Zeitraums überschneiden
+     * beginnen,
+     * beginnen oder enden mit dem Start- oder Enddatum des in den Parametern gegebenen Zeitraums.
      *
      * @param mstId
      * @param startDateZeitraum
      * @param endDateZeitraum
-     * @return
+     * @return die extrahierten Messfähigkeiten.
      */
     public List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
             final String mstId,
