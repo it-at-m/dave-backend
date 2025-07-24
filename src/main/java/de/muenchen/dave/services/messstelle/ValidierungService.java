@@ -57,21 +57,19 @@ public class ValidierungService {
 
     public ValidationResult areZeitraeumeAndTagesTypForMessstelleValid(
             final String mstId,
-            final List<List<LocalDate>> zeitraeume,
+            final Zeitraum zeitraumAuswertung,
+            final List<List<LocalDate>> zeitraeumeOfRelevantMessfaehigkeiten,
             final TagesTyp tagesTyp) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(tagesTyp);
         final var validationResult = new ValidationResult();
 
-        final long numberOfRelevantKalendertage = zeitraeume
-                .stream()
-                .map(zeitraum -> kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                        zeitraum.getFirst(),
-                        zeitraum.getLast(),
-                        tagestypen))
-                .reduce(0L, ArithmeticUtils::addAndCheck);
+        final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
+                zeitraumAuswertung.getStartDate(),
+                zeitraumAuswertung.getEndDate(),
+                tagestypen);
         validationResult.setNumberOfRelevantKalendertage(numberOfRelevantKalendertage);
 
-        final long numberOfUnauffaelligeTage = zeitraeume
+        final long numberOfUnauffaelligeTage = zeitraeumeOfRelevantMessfaehigkeiten
                 .stream()
                 .map(zeitraum -> unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                         mstId,

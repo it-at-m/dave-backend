@@ -7,11 +7,13 @@ import static org.hamcrest.Matchers.nullValue;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
+import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.services.KalendertagService;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -143,6 +145,10 @@ class ValidierungServiceTest {
     @Test
     void areZeitraeumeAndTagesTypForMessstelleValidWithMoreThanTwoUnauffaelligeTageAndMoreThanFiftyPercentUnauffaelligeTage() {
         final var mstId = "1234";
+        final var zeitraumAuswertung = new Zeitraum(
+                YearMonth.of(2008, 1),
+                YearMonth.of(2008, 3),
+                AuswertungsZeitraum.QUARTAL_1);
         final var zeitraeume = List.of(
                 List.of(LocalDate.of(2008, 1, 1), LocalDate.of(2008, 1, 31)),
                 List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2008, 2, 28)));
@@ -151,16 +157,9 @@ class ValidierungServiceTest {
         Mockito.when(
                 kalendertagService.countAllKalendertageByDatumAndTagestypen(
                         LocalDate.of(2008, 1, 1),
-                        LocalDate.of(2008, 1, 31),
+                        LocalDate.of(2008, 3, 31),
                         TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(10L);
-
-        Mockito.when(
-                kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                        LocalDate.of(2008, 2, 1),
-                        LocalDate.of(2008, 2, 28),
-                        TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(11L);
+                .thenReturn(21L);
 
         Mockito.when(unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                 mstId,
@@ -174,7 +173,7 @@ class ValidierungServiceTest {
                 LocalDate.of(2008, 2, 28),
                 TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR))).thenReturn(6L);
 
-        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
+        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraumAuswertung, zeitraeume, tagesTyp);
 
         final var expected = new ValidierungService.ValidationResult();
         expected.setValid(true);
@@ -186,6 +185,10 @@ class ValidierungServiceTest {
     @Test
     void areZeitraeumeAndTagesTypForMessstelleValidWithMoreThanTwoUnauffaelligeTageAndLessThenFiftyPercentUnauffaelligeTage() {
         final var mstId = "1234";
+        final var zeitraumAuswertung = new Zeitraum(
+                YearMonth.of(2008, 1),
+                YearMonth.of(2008, 3),
+                AuswertungsZeitraum.QUARTAL_1);
         final var zeitraeume = List.of(
                 List.of(LocalDate.of(2008, 1, 1), LocalDate.of(2008, 1, 31)),
                 List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2008, 2, 28)));
@@ -194,16 +197,9 @@ class ValidierungServiceTest {
         Mockito.when(
                 kalendertagService.countAllKalendertageByDatumAndTagestypen(
                         LocalDate.of(2008, 1, 1),
-                        LocalDate.of(2008, 1, 31),
+                        LocalDate.of(2008, 3, 31),
                         TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(10L);
-
-        Mockito.when(
-                kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                        LocalDate.of(2008, 2, 1),
-                        LocalDate.of(2008, 2, 28),
-                        TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(11L);
+                .thenReturn(21L);
 
         Mockito.when(unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                 mstId,
@@ -217,7 +213,7 @@ class ValidierungServiceTest {
                 LocalDate.of(2008, 2, 28),
                 TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR))).thenReturn(5L);
 
-        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
+        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraumAuswertung, zeitraeume, tagesTyp);
 
         final var expected = new ValidierungService.ValidationResult();
         expected.setValid(false);
@@ -229,6 +225,10 @@ class ValidierungServiceTest {
     @Test
     void areZeitraeumeAndTagesTypForMessstelleValidWithLessThanTwoUnauffaelligeTageAndMoreThenFiftyPercentUnauffaelligeTage() {
         final var mstId = "1234";
+        final var zeitraumAuswertung = new Zeitraum(
+                YearMonth.of(2008, 1),
+                YearMonth.of(2008, 3),
+                AuswertungsZeitraum.QUARTAL_1);
         final var zeitraeume = List.of(
                 List.of(LocalDate.of(2008, 1, 1), LocalDate.of(2008, 1, 31)),
                 List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2008, 2, 28)));
@@ -237,16 +237,9 @@ class ValidierungServiceTest {
         Mockito.when(
                 kalendertagService.countAllKalendertageByDatumAndTagestypen(
                         LocalDate.of(2008, 1, 1),
-                        LocalDate.of(2008, 1, 31),
+                        LocalDate.of(2008, 3, 31),
                         TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
                 .thenReturn(1L);
-
-        Mockito.when(
-                kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                        LocalDate.of(2008, 2, 1),
-                        LocalDate.of(2008, 2, 28),
-                        TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(0L);
 
         Mockito.when(unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                 mstId,
@@ -260,7 +253,7 @@ class ValidierungServiceTest {
                 LocalDate.of(2008, 2, 28),
                 TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR))).thenReturn(0L);
 
-        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
+        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraumAuswertung, zeitraeume, tagesTyp);
 
         final var expected = new ValidierungService.ValidationResult();
         expected.setValid(false);
@@ -272,6 +265,10 @@ class ValidierungServiceTest {
     @Test
     void areZeitraeumeAndTagesTypForMessstelleValidWithLessThanTwoUnauffaelligeTageAndLessThenFiftyPercentUnauffaelligeTage() {
         final var mstId = "1234";
+        final var zeitraumAuswertung = new Zeitraum(
+                YearMonth.of(2008, 1),
+                YearMonth.of(2008, 3),
+                AuswertungsZeitraum.QUARTAL_1);
         final var zeitraeume = List.of(
                 List.of(LocalDate.of(2008, 1, 1), LocalDate.of(2008, 1, 31)),
                 List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2008, 2, 28)));
@@ -280,16 +277,9 @@ class ValidierungServiceTest {
         Mockito.when(
                 kalendertagService.countAllKalendertageByDatumAndTagestypen(
                         LocalDate.of(2008, 1, 1),
-                        LocalDate.of(2008, 1, 31),
+                        LocalDate.of(2008, 3, 31),
                         TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(1L);
-
-        Mockito.when(
-                kalendertagService.countAllKalendertageByDatumAndTagestypen(
-                        LocalDate.of(2008, 2, 1),
-                        LocalDate.of(2008, 2, 28),
-                        TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR)))
-                .thenReturn(2L);
+                .thenReturn(3L);
 
         Mockito.when(unauffaelligeTageService.countAllUnauffaelligetageByMstIdAndTimerangeAndTagestypen(
                 mstId,
@@ -303,7 +293,7 @@ class ValidierungServiceTest {
                 LocalDate.of(2008, 2, 28),
                 TagesTyp.getIncludedTagestypen(TagesTyp.WERKTAG_MO_FR))).thenReturn(0L);
 
-        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraeume, tagesTyp);
+        final var result = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(mstId, zeitraumAuswertung, zeitraeume, tagesTyp);
 
         final var expected = new ValidierungService.ValidationResult();
         expected.setValid(false);

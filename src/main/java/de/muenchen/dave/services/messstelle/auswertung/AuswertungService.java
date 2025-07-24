@@ -154,11 +154,13 @@ public class AuswertungService {
 
                     if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
                         if (validationResult.isValid()) {
@@ -173,11 +175,13 @@ public class AuswertungService {
 
                     if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
                         if (validationResult.isValid()) {
@@ -192,11 +196,13 @@ public class AuswertungService {
 
                     if (Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
                         if (validationResult.isValid()) {
@@ -212,11 +218,13 @@ public class AuswertungService {
                             && !Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
                             && options.getFahrzeuge().isRadverkehr()) {
                         relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
-                                validateZeitraumAndTagesTypForMessstelle, fahrzeugklasseAccordingChoosenFahrzeugoptions);
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
 
                         final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
                         validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
                                 validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
                                 zeitraumeOfRelevantMessfaehigkeiten,
                                 validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
                         if (validationResult.isValid()) {
