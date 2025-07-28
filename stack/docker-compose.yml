@@ -66,5 +66,4 @@ networks:
 volumes:
   es_data:
   es_config:
-  kb_data:
   pg_data:
