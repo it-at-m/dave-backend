@@ -1,10 +1,12 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.services.messstelle.ValidierungService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,10 +22,13 @@ public interface AuswertungMapper {
 
     @Mapping(target = "zeitraum", expression = "java( zeitraum )")
     @Mapping(target = "mstId", expression = "java( mstId )")
+    @Mapping(target = "numberOfRelevantKalendertage", expression = "java( validationResult.getNumberOfRelevantKalendertage() )")
+    @Mapping(target = "numberOfUnauffaelligeTage", expression = "java( validationResult.getNumberOfUnauffaelligeTage() )")
     AuswertungMessstelleUndZeitraum tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
             final TagesaggregatResponseDto dto,
             @Context final Zeitraum zeitraum,
-            @Context final String mstId);
+            @Context final String mstId,
+            @Context final ValidierungService.ValidationResult validationResult);
 
     List<IntervalDto> auswertungen2Intervalle(final List<Auswertung> auswertungen);
 
@@ -44,4 +49,6 @@ public interface AuswertungMapper {
     }
 
     IntervalDto tagesaggregat2Interval(final TagesaggregatDto tagesaggregat);
+
+    FahrzeugOptionsDTO deepCopyOf(final FahrzeugOptionsDTO fahrzeugOptions);
 }

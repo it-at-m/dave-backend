@@ -12,4 +12,8 @@ public class AuswertungMessstelleUndZeitraum extends TagesaggregatResponseDto {
     private String mstId;
 
     private Zeitraum zeitraum;
+
+    private Long numberOfRelevantKalendertage;
+
+    private Long numberOfUnauffaelligeTage;
 }

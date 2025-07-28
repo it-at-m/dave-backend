@@ -213,7 +213,7 @@ public class FillPdfBeanService {
             final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsarten(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);

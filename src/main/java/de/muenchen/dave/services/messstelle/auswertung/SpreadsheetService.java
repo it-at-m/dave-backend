@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -235,8 +236,10 @@ public class SpreadsheetService {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
         }
         if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "GV%");
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV%");
         }
+        addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Anzahl relevante Tage");
+        addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "Anzahl plausible Tage");
     }
 
     /**
@@ -344,9 +347,18 @@ public class SpreadsheetService {
             addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
         }
         if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
         }
 
+        final var numberOfRelevantKalendertage = Objects.isNull(auswertung.getNumberOfRelevantKalendertage())
+                ? null
+                : BigDecimal.valueOf(auswertung.getNumberOfRelevantKalendertage());
+        addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), numberOfRelevantKalendertage);
+
+        final var numberOfUnauffaelligeTage = Objects.isNull(auswertung.getNumberOfUnauffaelligeTage())
+                ? null
+                : BigDecimal.valueOf(auswertung.getNumberOfUnauffaelligeTage());
+        addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), numberOfUnauffaelligeTage);
     }
 
     protected void addBigDecimalToCell(final Cell cell, final BigDecimal data) {

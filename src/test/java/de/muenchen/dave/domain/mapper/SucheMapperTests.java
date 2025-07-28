@@ -36,7 +36,7 @@ class SucheMapperTests {
         expected.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
         expected.setAbbaudatum(messstelle.getAbbaudatum().toString());
         expected.setDatumLetztePlausibleMessung(messstelle.getDatumLetztePlausibleMessung().toString());
-        expected.setDetektierteVerkehrsarten(messstelle.getDetektierteVerkehrsarten());
+        expected.setDetektierteVerkehrsart(messstelle.getDetektierteVerkehrsart().name());
 
         Assertions.assertThat(actual)
                 .isNotNull()

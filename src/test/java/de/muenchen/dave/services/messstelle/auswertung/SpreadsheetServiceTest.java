@@ -202,7 +202,7 @@ class SpreadsheetServiceTest {
         Row row = sheet.createRow(0);
         spreadsheetService.addDataHeaderToRow(row, options, false);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(8);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(10);
         Cell cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Jahr");
         cell = row.getCell(cellIndex++);
@@ -217,15 +217,19 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
-        cell = row.getCell(cellIndex);
+        cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl relevante Tage");
+        cell = row.getCell(cellIndex);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl plausible Tage");
 
         row = sheet.createRow(0);
         cellIndex = 0;
         options.setZeitraum(List.of(AuswertungsZeitraum.MAERZ));
         spreadsheetService.addDataHeaderToRow(row, options, true);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(10);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(12);
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Monat");
         cell = row.getCell(cellIndex++);
@@ -244,8 +248,12 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV");
-        cell = row.getCell(cellIndex);
+        cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl relevante Tage");
+        cell = row.getCell(cellIndex);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl plausible Tage");
 
     }
 
@@ -291,13 +299,15 @@ class SpreadsheetServiceTest {
         final Auswertung auswertung = new Auswertung();
         auswertung.setObjectId(mqId);
         auswertung.setZeitraum(zeitraum);
+        auswertung.setNumberOfRelevantKalendertage(42L);
+        auswertung.setNumberOfUnauffaelligeTage(23L);
         auswertung.setDaten(daten);
 
         int cellIndex = 0;
         Row row = sheet.createRow(0);
         spreadsheetService.addDataToRow(row, auswertung, fahrzeugOptions, false);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(9);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(11);
         Cell cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue())
                 .isEqualTo(zeitraum.getAuswertungsZeitraum().getText());
@@ -316,15 +326,19 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex);
+        cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfRelevantKalendertage().doubleValue());
+        cell = row.getCell(cellIndex);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfUnauffaelligeTage().doubleValue());
 
         auswertung.getZeitraum().setAuswertungsZeitraum(AuswertungsZeitraum.JAHRE);
         row = sheet.createRow(0);
         cellIndex = 0;
         spreadsheetService.addDataToRow(row, auswertung, fahrzeugOptions, true);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(9);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(11);
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(String.valueOf(zeitraum.getStart().getYear()));
         cell = row.getCell(cellIndex++);
@@ -341,8 +355,12 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeGueterverkehr().doubleValue());
-        cell = row.getCell(cellIndex);
+        cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfRelevantKalendertage().doubleValue());
+        cell = row.getCell(cellIndex);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfUnauffaelligeTage().doubleValue());
 
     }
 

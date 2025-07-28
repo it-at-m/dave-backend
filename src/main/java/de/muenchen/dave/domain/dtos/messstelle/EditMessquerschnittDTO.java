@@ -17,7 +17,7 @@ public class EditMessquerschnittDTO implements Serializable {
     private String fahrtrichtung;
     private Integer anzahlFahrspuren;
     private String fahrzeugklasse;
-    private String detektierteVerkehrsarten;
+    private String detektierteVerkehrsart;
     private String hersteller;
     private Integer anzahlDetektoren;
     private String standort;

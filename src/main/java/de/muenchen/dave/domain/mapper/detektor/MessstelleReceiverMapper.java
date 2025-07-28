@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.VerkehrsartMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
@@ -16,6 +17,7 @@ import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,7 +33,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(
-        uses = FahrzeugklassenMapper.class,
+        uses = { FahrzeugklassenMapper.class, VerkehrsartMapper.class },
         componentModel = MappingConstants.ComponentModel.SPRING
 )
 public interface MessstelleReceiverMapper {
@@ -56,15 +58,23 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = bean.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+        /**
+         * Die umfangreichste Fahrzeugklasse der Messfähigkeiten einer {@link MessstelleDto}
+         * bestimmt die Fahrzeugklasse der {@link Messstelle}.
+         */
+        final Set<MessfaehigkeitDto.FahrzeugklasseEnum> distinctFahrzeugklassenOfMessfaehigkeiten = CollectionUtils
+                .emptyIfNull(dto.getMessfaehigkeiten())
+                .stream()
+                .map(MessfaehigkeitDto::getFahrzeugklasse)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
+        if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.ACHT_PLUS_EINS)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ZWEI_PLUS_EINS)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.ZWEI_PLUS_EINS)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.SUMME_KFZ)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.SUMME_KFZ)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
-        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.RAD)) {
+        } else if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(MessfaehigkeitDto.FahrzeugklasseEnum.RAD)) {
             bean.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
