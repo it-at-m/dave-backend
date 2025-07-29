@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.SucheService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class SucheController {
     @PostMapping(value = "/suggest-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggestSichtbarDatenportal(query, searchAndFilterOptions);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
@@ -55,7 +56,7 @@ public class SucheController {
     @PostMapping(value = "/suggest", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
@@ -72,7 +73,7 @@ public class SucheController {
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query,
                     searchAndFilterOptions);
@@ -90,7 +91,7 @@ public class SucheController {
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
