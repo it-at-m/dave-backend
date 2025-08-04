@@ -21,22 +21,16 @@ Beim ersten Start der docker-compose.yml wird je ein persistentes Volume für fo
 7. Zuletzt nun im jeweiligen Schema das passende Backup auswählen uns einspielen.
 
 # Backup mittels Kibana einspielen
-Zum Einspielen des Backups muss in der WSL folgendes ausgeführt werden:
+## Backup vorberieten (WSL)
 1. WSL als podman-machine-default starten
 2. Verzeichnis wechseln ins Volume vom Backup: cd /home/user/.local/share/containers/storage/volumes/dave-stack_elastic-backup
+3. Rechte des Ordners _data anpassen: sudo chmod 777 _data
+4. Alle Files des Backups nach _data kopieren: cp -r /mnt/c/<path>/<to>/<backup>/backup_es/* _data
 
-Rechte des Ordners _data anpassen
-sudo chmod 777 _data
-
-Alle Files des Backups nach _data kopieren
-cp -r /mnt/c/<path>/<to>/<backup>/backup_es/* _data
-
-Snapshot mittels Kibana einspielen
-
-Im Browser localhost:5601 aufrufen
-Login mit Nutzer elastic. Passwort steht im .env File vom docker-compose
-
-In Kibana unter Management -> Stack Management -> Snapshot and Restore wechseln (http://localhost:5601/app/management/data/snapshot_restore/snapshots)
+## Snapshot mittels Kibana einspielen
+1. Im Browser http://localhost:5601 aufrufen
+2. Login mit Nutzer **elastic**. Passwort **changeme**
+3. Management -> Stack Management -> Snapshot and Restore wechseln (http://localhost:5601/app/management/data/snapshot_restore/snapshots)
 
 Hier muss einmalig das Repository eingerichtete werden.
 
