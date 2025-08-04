@@ -19,7 +19,7 @@
         <logstash.encoder>8.1</logstash.encoder>
         <apache.commons.collections4>4.5.0</apache.commons.collections4>
         <apache.commons.csv>1.14.1</apache.commons.csv>
-        <apache.commons.io>2.19.0</apache.commons.io>
+        <apache.commons.io>2.20.0</apache.commons.io>
         <apache.commons.lang3>3.18.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.5.0</apache.commons.exec>
