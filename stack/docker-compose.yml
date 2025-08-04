@@ -66,7 +66,6 @@ services:
       - cluster.name=elastic-cluster
       - cluster.initial_master_nodes=elastic
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      #      - bootstrap.memory_lock=true
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=certs/elastic/elastic.key
@@ -79,12 +78,6 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=basic
       - path.repo=/usr/share/elasticsearch/backup
-    #      - http.cors.enabled= true
-    #      - http.cors.allow-origin= "*"
-    #      - http.cors.allow-headers= "Authorization"
-    #      - network.host=0.0.0.0
-    #      - http.host=0.0.0.0
-    #      - transport.host=0.0.0.0
     mem_limit: 1GB
     ulimits:
       memlock:
