@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ZaehlstelleConfiguration {
+public class ZaehlstelleConfigurationDTO {
 
     private boolean automaticNumberAssignment;
 }

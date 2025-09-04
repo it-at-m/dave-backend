@@ -9,6 +9,6 @@ public class ConfigurationDTO {
 
     private MapConfigurationDTO map;
 
-    private ZaehlstelleConfiguration zaehlstelle;
+    private ZaehlstelleConfigurationDTO zaehlstelle;
 
 }
