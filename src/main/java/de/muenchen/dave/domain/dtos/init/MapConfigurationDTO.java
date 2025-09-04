@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MapConfigDTO {
+public class MapConfigurationDTO {
 
     private String lat;
     private String lng;

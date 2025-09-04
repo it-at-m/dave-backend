@@ -90,6 +90,8 @@ dave:
     shedlock: 1380m
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
+  zaehlstelle:
+    automatic-number-assignment: true
 
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
