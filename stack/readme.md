@@ -1,5 +1,15 @@
 Anleitung zum Einrichten von Dave mittels docker-compose
 
+# Erklärungen
+## .env-File
+Im File .env sind drei Variablen für die docker-compose.yml hinterlegt:
+1. ELASTIC_PASSWORD definiert das Passwort für ElasticSearch. Dies wird bei der Erstellung der Zertifikate benötigt.
+2. KIBANA_PASSWORD definiert das Passwort für Kibana. Dies wird bei der Erstellung der Zertifikate benötigt.
+3. STACK_VERSION gibt die Version vom ELK-Stack vor.
+
+## pgadmin
+Enthält die Konfiguration für pgAdmin zum automatischen Verbinden mit der Datenbank.
+
 # Allgemein
 1. Podman starten
 2. docker-compose.yml starten (docker compose up)
