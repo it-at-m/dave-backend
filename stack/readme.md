@@ -35,31 +35,20 @@ Beim ersten Start der docker-compose.yml wird je ein persistentes Volume für fo
 1. WSL als podman-machine-default starten
 2. Verzeichnis wechseln ins Volume vom Backup: cd /home/user/.local/share/containers/storage/volumes/dave-stack_elastic-backup
 3. Rechte des Ordners _data anpassen: sudo chmod 777 _data
-4. Alle Files des Backups nach _data kopieren: cp -r /mnt/c/<path>/<to>/<backup>/backup_es/* _data
+4. Alle Files des Backups nach _data kopieren: cp -r /mnt/c/path/to/backup/backup_es/* _data
 
 ## Snapshot mittels Kibana einspielen
 1. Im Browser http://localhost:5601 aufrufen
 2. Login mit Nutzer **elastic**. Passwort **changeme**
 3. Management -> Stack Management -> Snapshot and Restore wechseln (http://localhost:5601/app/management/data/snapshot_restore/snapshots)
-
-Hier muss einmalig das Repository eingerichtete werden.
-
-Schritt 1:
-Im Reiter Repositories "register repository" auswählen.
-Beliebigen Namen vergeben.
-Shared file system auswählen
-Weiter mit next.
-Schritt 2:
-Unter Location folgendes eintragen: /usr/share/elasticsearch/backup
-Readonly repository aktivieren
-Weiter mit register.
-Schritt 3:
-Im Reiter Snapshots erscheint nun das vorhandene Backup
-Auf den Name des Backup klicke und restore auswählen
-Unter Data Streams and indices alle abwählen und nur die Indices von Dave aktivieren.
-Zweimal weiter mit next, dann auf restore snapshot klicken
-Wenn der Restore fertig ist, dann erscheinen unter Data -> Index Management die importierten Indices
-(http://localhost:5601/app/management/data/index_management/indices)
+4. Einmalig das Repository einrichten (register repository)
+   1. Beliebigen Namen vergeben und Shared file system auswählen. Weiter mit next 
+   2. Unter Location folgendes eintragen: /usr/share/elasticsearch/backup , Readonly repository aktivieren und weiter mit register.
+   3. Im Reiter Snapshots auf den Name des Backup klicke und restore auswählen
+   4. Unter Data Streams and indices alle abwählen und nur die Indices von Dave aktivieren.
+   5. Zweimal weiter mit next, dann auf restore snapshot klicken
+   6. Wenn der Restore fertig ist, dann erscheinen unter Data -> Index Management die importierten Indices
+      (http://localhost:5601/app/management/data/index_management/indices)
 
 # Erzeugen des Fingerprints
 Damit das Backend mit dem Elasticsearch-Server kommunizieren kann, wird der Fingerprint des Zertifikats benötigt.
