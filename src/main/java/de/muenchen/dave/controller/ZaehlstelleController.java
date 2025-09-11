@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -91,6 +92,8 @@ public class ZaehlstelleController {
             return ResponseEntity.ok(backendIdDTO);
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (final PlausibilityException plausibilityException) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, plausibilityException.getMessage());
         } catch (final DataNotFoundException dataNotFoundException) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

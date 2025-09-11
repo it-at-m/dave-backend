@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.init.MapConfigDTO;
-import de.muenchen.dave.services.MapConfigService;
+import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
+import de.muenchen.dave.services.ConfigurationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,26 +15,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
-@RequestMapping("/mapconfig")
+@RequestMapping("/configuration")
 @RequiredArgsConstructor
-public class MapConfigController {
+public class ConfigurationController {
 
-    private final MapConfigService mapConfigService;
+    private final ConfigurationService configurationService;
 
     /**
      * Rest-Endpunkt für das Laden der MapConfig.
      *
-     * @return Das MapConfigDTO
+     * @return Das MapConfigurationDTO
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<MapConfigDTO> getMapConfig() {
+    public ResponseEntity<ConfigurationDTO> getConfiguration() {
         log.debug("#getMapConfig");
         try {
-            return ResponseEntity.ok(mapConfigService.getMapConfig());
+            return ResponseEntity.ok(configurationService.getConfiguration());
         } catch (Exception ex) {
-            log.error("Unerwarteter Fehler im MapConfigController beim Laden der MapConfig.", ex);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein unerwarteter Fehler beim Laden der MapConfig aufgetreten.");
+            log.error("Unerwarteter Fehler im ConfigurationController beim Laden der Configuration.", ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein unerwarteter Fehler beim Laden der Configuration aufgetreten.");
         }
     }
 

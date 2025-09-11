@@ -22,6 +22,7 @@ import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -77,9 +78,16 @@ public class ZaehlstelleIndexService {
         this.stadtbezirkMapper = stadtbezirkMapper;
     }
 
-    public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle) throws BrokenInfrastructureException, DataNotFoundException {
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
+    public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle)
+            throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        final var backendIdDto = new BackendIdDTO();
         if (StringUtils.isEmpty(zaehlstelle.getId())) {
+            final var alreadySavedZaehlstelle = zaehlstelleIndex.findByNummer(zaehlstelle.getNummer());
+            if (alreadySavedZaehlstelle.isPresent()) {
+                final var message = "Es existiert bereits eine Zählstelle mit der Nummer " + zaehlstelle.getNummer();
+                log.error(message);
+                throw new PlausibilityException(message);
+            }
             backendIdDto.setId(this.erstelleZaehlstelle(zaehlstelle));
         } else {
             backendIdDto.setId(this.erneuereZaehlstelle(zaehlstelle, zaehlstelle.getId()));

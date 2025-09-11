@@ -5,9 +5,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MapConfigDTO {
+public class ConfigurationDTO {
 
-    private String lat;
-    private String lng;
-    private Integer zoom;
+    private MapConfigurationDTO map;
+
+    private ZaehlstelleConfigurationDTO zaehlstelle;
+
 }
