@@ -23,7 +23,7 @@ Beim ersten Start der docker-compose.yml wird je ein persistentes Volume für fo
 
 # Backup in Postgre einspielen
 1. Im Browser http://localhost:5050/ aufrufen (PG4Admin)
-2. Mit der Datenbank dave-db verbinden
+2. Mit der Datenbank dave-db verbinden, Login mit Nutzer **dave**. Passwort **1234**
 3. Unter Schemas die beiden Schemata **dave** und **dave_ng** anlegen
 4. Rechte Maustaste auf eines der neuen Schemata und **Restore** auswählen
 5. Unter Filename das Icon rechts anklicken, dann auf die 3 Pünktchen gehen und Upload auswählen. 
