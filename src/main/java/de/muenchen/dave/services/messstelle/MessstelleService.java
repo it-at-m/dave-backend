@@ -110,13 +110,6 @@ public class MessstelleService {
                 .filter(messquerschnitt -> mqId.equalsIgnoreCase(messquerschnitt.getMqId())).findFirst();
     }
 
-    public void updateLetztePlausibleMessungOfMessstelle(final String mstId, final LocalDate letzePlausibleMessung) {
-        messstelleIndexService.findByMstId(mstId).ifPresent(messstelle -> {
-            messstelle.setDatumLetztePlausibleMessung(letzePlausibleMessung);
-            messstelleIndexService.saveMessstelle(messstelle);
-        });
-    }
-
     /**
      * Die Methode extrahiert die Messfähigkeiten der Messstelle für den angegebenen Zeitraum gegeben in
      * den Parametern.

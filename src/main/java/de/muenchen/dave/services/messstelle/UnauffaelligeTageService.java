@@ -35,8 +35,6 @@ public class UnauffaelligeTageService {
 
     private final MessstelleApi messstelleApi;
 
-    private final MessstelleService messstelleService;
-
     public List<UnauffaelligerTag> getUnauffaelligeTageForMessstelle(final String mstId) {
         return unauffaelligeTageRepository.findByMstId(mstId);
     }
@@ -86,7 +84,6 @@ public class UnauffaelligeTageService {
                 .parallel()
                 .flatMap(dayToCheck -> getUnauffaelligeTageForEachMessstelle(dayToCheck).stream())
                 .map(this::mapDto2Entity)
-                .peek(this::updateMessstelleWithUnauffaelligerTag)
                 .toList();
 
         log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
@@ -111,10 +108,6 @@ public class UnauffaelligeTageService {
             log.warn("Die Response von 'getUnauffaelligeTageForEachMessstelleWithHttpInfo({})' beinhaltet keine Daten", dayToCheck);
             return List.of();
         }
-    }
-
-    private void updateMessstelleWithUnauffaelligerTag(final UnauffaelligerTag unauffaelligerTag) {
-        messstelleService.updateLetztePlausibleMessungOfMessstelle(unauffaelligerTag.getMstId(), unauffaelligerTag.getKalendertag().getDatum());
     }
 
     /**
