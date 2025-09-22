@@ -46,17 +46,13 @@ class UnauffaelligeTageServiceTest {
     @Mock
     private MessstelleApi messstelleApi;
 
-    @Mock
-    private MessstelleService messstelleService;
-
     @BeforeEach
     void beforeEach() {
         this.unauffaelligeTageService = new UnauffaelligeTageService(
                 unauffaelligeTageRepository,
                 kalendertagRepository,
                 new MessstelleReceiverMapperImpl(),
-                messstelleApi,
-                messstelleService);
+                messstelleApi);
         Mockito.reset(unauffaelligeTageRepository, kalendertagRepository, messstelleApi);
     }
 
