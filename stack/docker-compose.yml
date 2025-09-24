@@ -121,7 +121,7 @@ services:
       retries: 120
 
   postgres:
-    image: postgres:16.6-alpine3.21
+    image: postgres:16.10-alpine3.21@sha256:9758719a1f781040ce596d72b7030a25d2cabf8a711f29dfafb1253c6d53ad2f
     environment:
       - POSTGRES_DB=dave-db
       - POSTGRES_USER=dave
