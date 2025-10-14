@@ -40,9 +40,9 @@ public enum Zaehlart {
     // Querschnitt Fußverkehr je Straßenseite
     QFS(Arrays.asList("QFS", "Querschnitt", "Fußverkehr", "Straßenseite")),
     // Fußverkehr je Straßenseite
-    FS(Arrays.asList("FS", "Fußverkehr", "Fußverkehr")),
+    FS(Arrays.asList("FS", "Fußverkehr", "Straßenseite")),
     // Fußverkehr Querung
-    FQ(Arrays.asList("FQ", "Fußverkehr", "Straßenseite")),
+    FQ(Arrays.asList("FQ", "Fußverkehr", "Querung")),
     // Tunnel / Unterführung / Tief
     T(Arrays.asList("T", "Tunnel", "Unterführung", "Tief")),
     // Teilknoten
