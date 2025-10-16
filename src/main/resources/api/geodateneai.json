@@ -386,23 +386,30 @@
             ]
           }
         },
-        "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids."
+        "description": "Für jeden Interval der Durchschnitt über die Messquerschnitt-Ids und Messtage."
       },
       "IntervalResponseDto": {
         "type": "object",
         "properties": {
-          "meanOfIntervalsForEachMqIdByMesstag": {
+          "meanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt": {
             "type": "array",
-            "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle.",
+            "description": "Für jede Messquerschnitt-Id der Durchschnitt über die Summe der Tagesintervalle der Messtage.",
             "items": {
               "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
-          "meanOfMqIdForEachIntervalByMesstag": {
+          "meanOfIntervalsOverMessquerschnittAndMesstag": {
             "type": "array",
-            "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids.",
+            "description": "Für jeden Interval der Durchschnitt über die Messquerschnitt-Ids und Messtage.",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
+            }
+          },
+          "meanForEachIntervalAndEachMessquerschnittOverMesstage": {
+            "type": "array",
+            "description": "Für jeden Intervall und jede Messquerschnitt-Id der Durchschnitt über die Messtag.",
+            "items": {
+              "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
           "includedMeasuringDays": {
@@ -419,14 +426,14 @@
             "type": "integer",
             "format": "int32"
           },
-          "meanOfIntervalsByMesstag": {
+          "intervals": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
             }
           }
         },
-        "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle."
+        "description": "Für jeden Intervall und jede Messquerschnitt-Id der Durchschnitt über die Messtag."
       },
       "TagesaggregatRequestDto": {
         "required": [
