@@ -58,16 +58,16 @@ public class MesswerteService {
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
             intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
-                    ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag()),
+                    ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag()),
                     isKfzMessstelle,
                     options.getIntervall());
         } else {
-            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
+            intervals = ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag());
         }
 
-        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
+        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
                 .stream()
-                .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getMeanOfIntervalsByMesstag()).stream())
+                .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
                 .toList();
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
