@@ -15,6 +15,8 @@ import de.muenchen.dave.services.KalendertagService;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -65,17 +67,41 @@ public class MesswerteService {
             intervals = ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag());
         }
 
-        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
-                .stream()
-                .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
-                .toList();
+        final List<IntervalDto> meanPerMessquerschnitt;
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            final var uhrzeitVon = intervals.stream()
+                    .map(IntervalDto::getDatumUhrzeitVon)
+                    .map(LocalDateTime::toLocalTime)
+                    .min(LocalTime::compareTo)
+                    .get();
+            final var uhrzeitBis = intervals.stream()
+                    .map(IntervalDto::getDatumUhrzeitBis)
+                    .map(LocalDateTime::toLocalTime)
+                    .max(LocalTime::compareTo)
+                    .get();
+
+            meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanForEachIntervalAndEachMessquerschnittOverMesstage())
+                    .stream()
+                    .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals())
+                            .stream()
+                            .filter(interval -> isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                                    interval.getDatumUhrzeitVon().toLocalTime(),
+                                    uhrzeitVon,
+                                    uhrzeitBis)))
+                    .toList();
+        } else {
+            meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
+                    .stream()
+                    .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
+                    .toList();
+        }
 
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
-        processedZaehldaten
-                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
+        processedZaehldaten.setBelastungsplanMessquerschnitte(
+                belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
@@ -161,6 +187,13 @@ public class MesswerteService {
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
         return response.getBody();
+    }
+
+    private static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(final LocalTime timeToCompare,
+            final LocalTime startTime,
+            final LocalTime endTime) {
+        return (timeToCompare.equals(startTime) || timeToCompare.isAfter(startTime)) &&
+                !(timeToCompare.equals(endTime) || timeToCompare.isAfter(endTime));
     }
 
 }
