@@ -27,11 +27,11 @@ import lombok.ToString;
         },
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_kalendertag_datum ",
+                        name = "unique_kalendertag_datum",
                         columnNames = { "datum" }
                 ),
                 @UniqueConstraint(
-                        name = "unique_kalendertag_next_start_date ",
+                        name = "unique_kalendertag_next_start_date",
                         columnNames = { "next_start_date_to_load_unauffaellige_tage" }
                 )
         }
