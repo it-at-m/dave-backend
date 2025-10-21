@@ -44,22 +44,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Intervalle erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IntervalResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Intervalle erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalResponseDto"
                 }
               }
             }
@@ -85,22 +85,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Tagesaggregate erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Tagesaggregate erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagesaggregatResponseDto"
                 }
               }
             }
@@ -116,6 +116,16 @@
         "summary": "Holt alle relevanten Messstellen.",
         "operationId": "getMessstellen",
         "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Messstellen erfolgreich abgefragt.",
             "content": {
@@ -125,16 +135,6 @@
                   "items": {
                     "$ref": "#/components/schemas/MessstelleDto"
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -170,6 +170,16 @@
           }
         ],
         "responses": {
+          "500": {
+            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Unauffällige Tage erfolgreich abgefragt.",
             "content": {
@@ -179,16 +189,6 @@
                   "items": {
                     "$ref": "#/components/schemas/UnauffaelligerTagDto"
                   }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
                 }
               }
             }
@@ -386,28 +386,28 @@
             ]
           }
         },
-        "description": "Für jeden Interval der Durchschnitt über die Messquerschnitt-Ids und Messtage."
+        "description": "Für jeden Interval über jeden Messtag den Durchschnitt über die Summe selektierten Messquerschnitte."
       },
       "IntervalResponseDto": {
         "type": "object",
         "properties": {
-          "meanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt": {
+          "meanOfSummedUpDailyIntervalsForEachMessquerschnittOverMesstage": {
             "type": "array",
-            "description": "Für jede Messquerschnitt-Id der Durchschnitt über die Summe der Tagesintervalle der Messtage.",
+            "description": "Bildet für jeden Messquerschnitt den Durchschnitt über die Tagessumme eines Messtags.",
             "items": {
               "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
-          "meanOfIntervalsOverMessquerschnittAndMesstag": {
+          "meanOfSummedUpMessquerschnitteForEachIntervalOverMesstage": {
             "type": "array",
-            "description": "Für jeden Interval der Durchschnitt über die Messquerschnitt-Ids und Messtage.",
+            "description": "Für jeden Interval über jeden Messtag den Durchschnitt über die Summe selektierten Messquerschnitte.",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
             }
           },
           "meanForEachIntervalAndEachMessquerschnittOverMesstage": {
             "type": "array",
-            "description": "Für jeden Intervall und jede Messquerschnitt-Id der Durchschnitt über die Messtag.",
+            "description": "Für jeden Intervall und jede Messquerschnitt-Id den Durchschnitt über die Messtage.",
             "items": {
               "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
@@ -433,7 +433,7 @@
             }
           }
         },
-        "description": "Für jeden Intervall und jede Messquerschnitt-Id der Durchschnitt über die Messtag."
+        "description": "Für jeden Intervall und jede Messquerschnitt-Id den Durchschnitt über die Messtage."
       },
       "TagesaggregatRequestDto": {
         "required": [
