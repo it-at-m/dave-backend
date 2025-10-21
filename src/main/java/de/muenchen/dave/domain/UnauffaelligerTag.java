@@ -21,6 +21,10 @@ import lombok.ToString;
                 @Index(
                         name = "index_unauffaelliger_tag_mst_id",
                         columnList = "mst_id"
+                ),
+                @Index(
+                        name = "index_kalendertag_id",
+                        columnList = "kalendertag_id"
                 )
         },
         uniqueConstraints = {
