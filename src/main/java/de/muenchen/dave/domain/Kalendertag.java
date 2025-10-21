@@ -17,15 +17,15 @@ import lombok.ToString;
 @Table(
         indexes = {
                 @Index(
-                        name = "index_kalendertag_datum ",
+                        name = "index_kalendertag_datum",
                         columnList = "datum"
                 ),
                 @Index(
-                        name = "index_kalendertag_next_start_date ",
+                        name = "index_kalendertag_next_start_date",
                         columnList = "next_start_date_to_load_unauffaellige_tage"
                 ),
                 @Index(
-                        name = "index_kalendertag_id ",
+                        name = "index_kalendertag_id",
                         columnList = "unauffaelliger_tag"
                 )
         },
