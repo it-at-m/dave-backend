@@ -56,7 +56,7 @@ public class MesswerteService {
         final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
         final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
         final List<IntervalDto> intervals;
-        final List<IntervalDto> meanPerMessquerschnitt;
+        final List<IntervalDto> sumOfIntervalsForEachMessquerschnitt;
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
@@ -66,18 +66,10 @@ public class MesswerteService {
                     options.getIntervall());
 
             // Summieren der Intervalle je Messquerschnitt welche die Spitzenstunde ausmachen.
-            final var uhrzeitVon = intervals.stream()
-                    .map(IntervalDto::getDatumUhrzeitVon)
-                    .map(LocalDateTime::toLocalTime)
-                    .min(LocalTime::compareTo)
-                    .get();
-            final var uhrzeitBis = intervals.stream()
-                    .map(IntervalDto::getDatumUhrzeitBis)
-                    .map(LocalDateTime::toLocalTime)
-                    .max(LocalTime::compareTo)
-                    .get();
+            final var uhrzeitVon = getEarliestUhrzeitVonOfIntervals(intervals);
+            final var uhrzeitBis = getLatestUhrzeitBisOfIntervals(intervals);
 
-            meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanForEachIntervalAndEachMessquerschnittOverMesstage())
+            sumOfIntervalsForEachMessquerschnitt = ListUtils.emptyIfNull(response.getMeanForEachIntervalAndEachMessquerschnittOverMesstage())
                     .stream()
                     .map(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals())
                             .stream()
@@ -92,7 +84,7 @@ public class MesswerteService {
         } else {
             intervals = ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag());
 
-            meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
+            sumOfIntervalsForEachMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
                     .stream()
                     .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
                     .toList();
@@ -104,7 +96,11 @@ public class MesswerteService {
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
         processedZaehldaten.setBelastungsplanMessquerschnitte(
-                belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
+                belastungsplanService.ladeBelastungsplan(intervals,
+                        sumOfIntervalsForEachMessquerschnitt,
+                        messstelleId,
+                        options));
+
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
@@ -197,6 +193,22 @@ public class MesswerteService {
             final LocalTime endTime) {
         return (timeToCompare.equals(startTime) || timeToCompare.isAfter(startTime)) &&
                 !(timeToCompare.equals(endTime) || timeToCompare.isAfter(endTime));
+    }
+
+    private static LocalTime getEarliestUhrzeitVonOfIntervals(final List<IntervalDto> intervals) {
+        return intervals.stream()
+                .map(IntervalDto::getDatumUhrzeitVon)
+                .map(LocalDateTime::toLocalTime)
+                .min(LocalTime::compareTo)
+                .get();
+    }
+
+    private static LocalTime getLatestUhrzeitBisOfIntervals(final List<IntervalDto> intervals) {
+        return intervals.stream()
+                .map(IntervalDto::getDatumUhrzeitBis)
+                .map(LocalDateTime::toLocalTime)
+                .max(LocalTime::compareTo)
+                .get();
     }
 
 }
