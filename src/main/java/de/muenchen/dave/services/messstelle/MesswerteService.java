@@ -98,6 +98,7 @@ public class MesswerteService {
                     .toList();
         }
 
+        // Aufbereiten der Daten für die entsprechenden Auswertungen
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
