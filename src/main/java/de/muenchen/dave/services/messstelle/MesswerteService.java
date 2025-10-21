@@ -56,6 +56,7 @@ public class MesswerteService {
         final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
         final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
         final List<IntervalDto> intervals;
+        final List<IntervalDto> meanPerMessquerschnitt;
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
@@ -63,12 +64,8 @@ public class MesswerteService {
                     ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag()),
                     isKfzMessstelle,
                     options.getIntervall());
-        } else {
-            intervals = ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag());
-        }
 
-        final List<IntervalDto> meanPerMessquerschnitt;
-        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            // Summieren der Intervalle je Messquerschnitt welche die Spitzenstunde ausmachen.
             final var uhrzeitVon = intervals.stream()
                     .map(IntervalDto::getDatumUhrzeitVon)
                     .map(LocalDateTime::toLocalTime)
@@ -93,6 +90,8 @@ public class MesswerteService {
                                     MesswerteBaseUtil::sumIntervalsAndAdaptDatumUhrzeitVonAndBisAndReturnNewInterval))
                     .toList();
         } else {
+            intervals = ListUtils.emptyIfNull(response.getMeanOfIntervalsOverMessquerschnittAndMesstag());
+
             meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
                     .stream()
                     .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
