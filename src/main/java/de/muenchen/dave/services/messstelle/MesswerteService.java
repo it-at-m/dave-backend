@@ -82,12 +82,15 @@ public class MesswerteService {
 
             meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanForEachIntervalAndEachMessquerschnittOverMesstage())
                     .stream()
-                    .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals())
+                    .map(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals())
                             .stream()
                             .filter(interval -> isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
                                     interval.getDatumUhrzeitVon().toLocalTime(),
                                     uhrzeitVon,
-                                    uhrzeitBis)))
+                                    uhrzeitBis))
+                            .reduce(
+                                    new IntervalDto(),
+                                    MesswerteBaseUtil::sumIntervalsAndAdaptDatumUhrzeitVonAndBisAndReturnNewInterval))
                     .toList();
         } else {
             meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsOverMesstageForEachMessquerschnitt())
