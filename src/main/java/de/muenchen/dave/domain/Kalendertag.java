@@ -17,21 +17,20 @@ import lombok.ToString;
 @Table(
         indexes = {
                 @Index(
-                        name = "index_kalendertag_datum",
+                        name = "index_kalendertag_datum ",
                         columnList = "datum"
                 ),
                 @Index(
-                        name = "index_kalendertag_next_start_date",
+                        name = "index_kalendertag_next_start_date ",
                         columnList = "next_start_date_to_load_unauffaellige_tage"
                 )
         },
-        uniqueConstraints = {
+        uniqueConstraints = { @UniqueConstraint(
+                name = "unique_kalendertag_datum ",
+                columnNames = { "datum" }
+        ),
                 @UniqueConstraint(
-                        name = "unique_kalendertag_datum",
-                        columnNames = { "datum" }
-                ),
-                @UniqueConstraint(
-                        name = "unique_kalendertag_next_start_date",
+                        name = "unique_kalendertag_next_start_date ",
                         columnNames = { "next_start_date_to_load_unauffaellige_tage" }
                 )
         }
