@@ -10,6 +10,46 @@ import org.junit.jupiter.api.Test;
 class MesswerteServiceTest {
 
     @Test
+    void isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime() {
+
+        var timeToCompare = LocalTime.of(10, 0, 0);
+        var result = MesswerteService.isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                timeToCompare,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 15, 0));
+        Assertions.assertThat(result).isTrue();
+
+        timeToCompare = LocalTime.of(10, 10, 0);
+        result = MesswerteService.isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                timeToCompare,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 15, 0));
+        Assertions.assertThat(result).isTrue();
+
+        timeToCompare = LocalTime.of(10, 14, 59, 999999999);
+        result = MesswerteService.isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                timeToCompare,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 15, 0));
+        Assertions.assertThat(result).isTrue();
+
+        timeToCompare = LocalTime.of(10, 15, 0);
+        result = MesswerteService.isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                timeToCompare,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 15, 0));
+        Assertions.assertThat(result).isFalse();
+
+        timeToCompare = LocalTime.of(9, 59, 59, 999999999);
+        result = MesswerteService.isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                timeToCompare,
+                LocalTime.of(10, 0, 0),
+                LocalTime.of(10, 15, 0));
+        Assertions.assertThat(result).isFalse();
+
+    }
+
+    @Test
     void getLatestUhrzeitBisOfIntervals() {
         final var intervals = new ArrayList<IntervalDto>();
         var interval = new IntervalDto();

@@ -189,7 +189,8 @@ public class MesswerteService {
         return response.getBody();
     }
 
-    protected static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(final LocalTime timeToCompare,
+    protected static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+            final LocalTime timeToCompare,
             final LocalTime startTime,
             final LocalTime endTime) {
         return (timeToCompare.equals(startTime) || timeToCompare.isAfter(startTime)) &&
