@@ -189,14 +189,14 @@ public class MesswerteService {
         return response.getBody();
     }
 
-    private static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(final LocalTime timeToCompare,
+    protected static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(final LocalTime timeToCompare,
             final LocalTime startTime,
             final LocalTime endTime) {
         return (timeToCompare.equals(startTime) || timeToCompare.isAfter(startTime)) &&
                 !(timeToCompare.equals(endTime) || timeToCompare.isAfter(endTime));
     }
 
-    private static LocalTime getEarliestUhrzeitVonOfIntervals(final List<IntervalDto> intervals) {
+    protected static LocalTime getEarliestUhrzeitVonOfIntervals(final List<IntervalDto> intervals) {
         return intervals.stream()
                 .map(IntervalDto::getDatumUhrzeitVon)
                 .filter(Objects::nonNull)
@@ -205,7 +205,7 @@ public class MesswerteService {
                 .orElse(null);
     }
 
-    private static LocalTime getLatestUhrzeitBisOfIntervals(final List<IntervalDto> intervals) {
+    protected static LocalTime getLatestUhrzeitBisOfIntervals(final List<IntervalDto> intervals) {
         return intervals.stream()
                 .map(IntervalDto::getDatumUhrzeitBis)
                 .filter(Objects::nonNull)
