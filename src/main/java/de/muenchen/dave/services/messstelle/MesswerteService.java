@@ -53,7 +53,7 @@ public class MesswerteService {
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         log.debug("#ladeMesswerte {}", messstelleId);
 
-        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
+        final var response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
         final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
         final List<IntervalDto> intervals;
         final List<IntervalDto> sumOfIntervalsForEachMessquerschnitt;
