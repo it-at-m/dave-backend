@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -198,17 +199,19 @@ public class MesswerteService {
     private static LocalTime getEarliestUhrzeitVonOfIntervals(final List<IntervalDto> intervals) {
         return intervals.stream()
                 .map(IntervalDto::getDatumUhrzeitVon)
+                .filter(Objects::nonNull)
                 .map(LocalDateTime::toLocalTime)
                 .min(LocalTime::compareTo)
-                .get();
+                .orElse(null);
     }
 
     private static LocalTime getLatestUhrzeitBisOfIntervals(final List<IntervalDto> intervals) {
         return intervals.stream()
                 .map(IntervalDto::getDatumUhrzeitBis)
+                .filter(Objects::nonNull)
                 .map(LocalDateTime::toLocalTime)
                 .max(LocalTime::compareTo)
-                .get();
+                .orElse(null);
     }
 
 }
