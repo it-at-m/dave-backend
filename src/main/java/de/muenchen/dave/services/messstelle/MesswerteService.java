@@ -34,7 +34,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MesswerteService {
 
-    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
+    private static final String ERROR_MESSAGE = "Beim Laden der Messwerte ist ein Fehler aufgetreten";
+
     private final MessstelleService messstelleService;
     private final MesswerteApi messwerteApi;
     private final GanglinieService ganglinieService;
