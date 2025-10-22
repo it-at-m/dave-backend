@@ -21,6 +21,7 @@ public class OptionsmenueSettingsService {
 
     @Cacheable(value = CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN)
     public List<OptionsmenueSettingsDTO> getAllOptionsmenueSettingsForMessstellen() {
+        log.debug("#getAllOptionsmenueSettingsForMessstellen");
         return optionsmenueSettingsRepository
                 .findAll()
                 .stream()
