@@ -55,10 +55,7 @@ public class ReportService {
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
-    private final ResourceLoader resourceLoader;
     private final Resource logoIcon;
-//    private String logoIconDataSource;
-
 
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -85,23 +82,15 @@ public class ReportService {
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper,
-            @Value("${dave.reports.logo-icon}") final Resource logoIcon,
-            final ResourceLoader resourceLoader
+            @Value("${dave.reports.logo-icon}") final Resource logoIcon
             ) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
-        this.resourceLoader = resourceLoader;
         this.logoIcon = logoIcon;
 
-        try {
-//            Resource resource = resourceLoader.getResource(logoIcon);
-            byte[] content = logoIcon.getContentAsByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public byte[] generateReportPdf(final List<BaseAsset> assetList, final String department) throws IOException {
