@@ -35,7 +35,7 @@ public class BelastungsplanService {
 
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
             final List<IntervalDto> intervals,
-            final List<IntervalDto> totalSumOfForEachMessquerschnitt,
+            final List<IntervalDto> totalSumForEachMessquerschnitt,
             final String messstelleId,
             final MessstelleOptionsDTO options) {
 
@@ -47,7 +47,7 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitte.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
         belastungsplanMessquerschnitte.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
 
-        final var messquerschnitte = totalSumOfForEachMessquerschnitt
+        final var messquerschnitte = totalSumForEachMessquerschnitt
                 .stream()
                 .map(sumOfMessquerschnitt -> {
                     final LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
@@ -95,25 +95,25 @@ public class BelastungsplanService {
         }
         belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(sortedMessquerschnitte);
 
-        final Integer totalSumKfz = totalSumOfForEachMessquerschnitt
+        final Integer totalSumKfz = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
 
-        final Integer totalSumSv = totalSumOfForEachMessquerschnitt
+        final Integer totalSumSv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
 
-        final Integer totalSumGv = totalSumOfForEachMessquerschnitt
+        final Integer totalSumGv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
 
-        final Integer totalSumRad = totalSumOfForEachMessquerschnitt
+        final Integer totalSumRad = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue())
                 .sum();
