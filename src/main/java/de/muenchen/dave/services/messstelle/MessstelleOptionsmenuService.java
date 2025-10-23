@@ -24,7 +24,7 @@ public class MessstelleOptionsmenuService {
 
     @Cacheable(value = CachingConfiguration.AUFFAELLIGETAGE_FOR_MESSSTELLE, key = "{#p0}")
     public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final String mstId) {
-        log.debug("#getAuffaelligeTageForMessstelle {}", mstId);
+        log.debug("Zugriff auf #getAuffaelligeTageForMessstelle {}", mstId);
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
         final List<LocalDate> unauffaelligeTage = unauffaelligeTageForMessstelle
                 .stream()
