@@ -26,7 +26,6 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -108,7 +107,7 @@ public class ReportService {
         logoAsset.setLogoIcon(logoIconDataSource);
         logoAsset.setLogoSubtitle("MOR4");
         logoAsset.setType(AssetType.LOGO);
-        assetList.add(0, logoAsset);
+        assetList.addFirst(logoAsset);
         // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
         reportPdf.setCssFixed(this.generatePdfService.getHtml(this.dataTableCssMustacheFixed, logoAsset));
 
