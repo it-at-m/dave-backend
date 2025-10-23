@@ -3,6 +3,7 @@ package de.muenchen.dave.services.pdfgenerator;
 import org.apache.commons.codec.binary.Base64;
 
 public class ImageUtil {
+
     private final static String IMAGE_DATASOURCE_FORMAT = "data:image/jpeg;base64,%s";
 
     public static String getImageDatasource(final byte[] content){

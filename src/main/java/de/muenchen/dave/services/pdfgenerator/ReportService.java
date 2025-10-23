@@ -3,6 +3,7 @@ package de.muenchen.dave.services.pdfgenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import de.muenchen.dave.configuration.ReportConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -24,8 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,9 +52,7 @@ public class ReportService {
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
-
-    private final Resource logoIcon;
-    private final String logoSubtitle;
+    private final ReportConfiguration reportConfiguration;
 
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -74,24 +71,20 @@ public class ReportService {
     private Mustache dataTableCssMustacheCustom;
     private Mustache dataTableCssMustacheFixed;
 
-    private String logoIconDataSource;
-
 
     public ReportService(final GeneratePdfService generatePdfService,
-            final FillPdfBeanService fillPdfBeanService,
-            final ProcessZaehldatenService processZaehldatenService,
-            final ZaehlstelleIndexService indexService,
-            final LadeZaehldatumMapper ladeZaehldatumMapper,
-            @Value("${dave.reports.logo-icon}") final Resource logoIcon,
-            @Value("${dave.reports.logo-subtitle}") final String logoSubtitle
-            ) {
+                         final FillPdfBeanService fillPdfBeanService,
+                         final ProcessZaehldatenService processZaehldatenService,
+                         final ZaehlstelleIndexService indexService,
+                         final LadeZaehldatumMapper ladeZaehldatumMapper,
+                         final ReportConfiguration reportConfiguration
+                         ) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
-        this.logoIcon = logoIcon;
-        this.logoSubtitle = logoSubtitle;
+        this.reportConfiguration = reportConfiguration;
 
     }
 
@@ -107,8 +100,8 @@ public class ReportService {
         FillPdfBeanService.fillPdfBeanWithData(reportPdf, department);
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
         final LogoAsset logoAsset = new LogoAsset();
-        logoAsset.setLogoIcon(logoIconDataSource);
-        logoAsset.setLogoSubtitle(logoSubtitle);
+        logoAsset.setLogoIcon(reportConfiguration.getLogoIconDataSource());
+        logoAsset.setLogoSubtitle(reportConfiguration.getLogoSubtitle());
         logoAsset.setType(AssetType.LOGO);
         assetList.addFirst(logoAsset);
         // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
@@ -231,10 +224,5 @@ public class ReportService {
         this.dataTableCssMustacheCustom = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_CUSTOM, mf);
         this.dataTableCssMustacheFixed = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_FIXED, mf);
 
-        try {
-            logoIconDataSource = ImageUtil.getImageDatasource(logoIcon.getContentAsByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
