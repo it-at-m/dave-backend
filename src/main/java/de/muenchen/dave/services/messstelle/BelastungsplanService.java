@@ -5,7 +5,9 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -125,8 +127,8 @@ public class BelastungsplanService {
         final var totalPercentageSv = calcPercentage(totalSumSv, totalSum);
         belastungsplanMessquerschnitte.setTotalPercentSv(totalPercentageSv);
 
-        if (options.getMessquerschnittIds().size() == 1) {
-            final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            final var isKfzStelle = Objects.equals(options.getZeitauswahl(), Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                     options.getZeitblock(),
                     intervals,
