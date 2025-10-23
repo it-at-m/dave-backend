@@ -55,6 +55,7 @@ public class ReportService {
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
     private final Resource logoIcon;
+    private final String logoSubtitle;
 
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -81,7 +82,8 @@ public class ReportService {
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper,
-            @Value("${dave.reports.logo-icon}") final Resource logoIcon
+            @Value("${dave.reports.logo-icon}") final Resource logoIcon,
+            @Value("${dave.reports.logo-subtitle}") final String logoSubtitle
             ) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
@@ -89,6 +91,7 @@ public class ReportService {
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
         this.logoIcon = logoIcon;
+        this.logoSubtitle = logoSubtitle;
 
     }
 
@@ -105,7 +108,7 @@ public class ReportService {
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
         final LogoAsset logoAsset = new LogoAsset();
         logoAsset.setLogoIcon(logoIconDataSource);
-        logoAsset.setLogoSubtitle("MOR4");
+        logoAsset.setLogoSubtitle(logoSubtitle);
         logoAsset.setType(AssetType.LOGO);
         assetList.addFirst(logoAsset);
         // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
