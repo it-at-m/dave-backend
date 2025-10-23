@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,6 +54,12 @@ public class ReportService {
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
+
+    private final ResourceLoader resourceLoader;
+    private final Resource logoIcon;
+//    private String logoIconDataSource;
+
+
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
     private Mustache heading1AssetMustache;
@@ -68,16 +77,31 @@ public class ReportService {
     private Mustache dataTableCssMustacheCustom;
     private Mustache dataTableCssMustacheFixed;
 
+    private String logoIconDataSource;
+
+
     public ReportService(final GeneratePdfService generatePdfService,
             final FillPdfBeanService fillPdfBeanService,
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
-            final LadeZaehldatumMapper ladeZaehldatumMapper) {
+            final LadeZaehldatumMapper ladeZaehldatumMapper,
+            @Value("${dave.reports.logo-icon}") final Resource logoIcon,
+            final ResourceLoader resourceLoader
+            ) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
+        this.resourceLoader = resourceLoader;
+        this.logoIcon = logoIcon;
+
+        try {
+//            Resource resource = resourceLoader.getResource(logoIcon);
+            byte[] content = logoIcon.getContentAsByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public byte[] generateReportPdf(final List<BaseAsset> assetList, final String department) throws IOException {
@@ -92,6 +116,8 @@ public class ReportService {
         FillPdfBeanService.fillPdfBeanWithData(reportPdf, department);
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
         final LogoAsset logoAsset = new LogoAsset();
+        logoAsset.setLogoIcon(logoIconDataSource);
+        logoAsset.setLogoSubtitle("MOR4");
         logoAsset.setType(AssetType.LOGO);
         assetList.add(0, logoAsset);
         // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
@@ -214,5 +240,10 @@ public class ReportService {
         this.dataTableCssMustacheCustom = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_CUSTOM, mf);
         this.dataTableCssMustacheFixed = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_DATENTABELLE_CSS_FIXED, mf);
 
+        try {
+            logoIconDataSource = ImageUtil.getImageDatasource(logoIcon.getContentAsByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
