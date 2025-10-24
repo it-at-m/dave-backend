@@ -17,9 +17,9 @@ import java.io.IOException;
 @Slf4j
 public class ReportConfiguration {
 
-    @Value("${dave.reports.logo-icon}")
+    @Value("${dave.reports.logo-icon:#{null}}")
     private Resource logoIcon;
-    @Value("${dave.reports.logo-subtitle}")
+    @Value("${dave.reports.logo-subtitle:}")
     @Getter
     private String logoSubtitle;
 
@@ -28,10 +28,12 @@ public class ReportConfiguration {
 
     @PostConstruct
     public void init() {
-        try {
-            logoIconDataSource = ImageUtil.getImageDatasource(logoIcon.getContentAsByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException("Das Logo Icon konnte nicht gelesen werden.", e);
+        if (logoIcon != null) {
+            try {
+                logoIconDataSource = ImageUtil.getImageDatasource(logoIcon.getContentAsByteArray());
+            } catch (IOException e) {
+                throw new RuntimeException("Das Logo Icon konnte nicht gelesen werden.", e);
+            }
         }
     }
 
