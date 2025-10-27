@@ -32,6 +32,10 @@ public class CachingConfiguration {
 
     public static final String READ_ZAEHLSTELLE_DTO = "READ_ZAEHLSTELLE_DTO";
 
+    public static final String OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN = "OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN";
+
+    public static final String AUFFAELLIGETAGE_FOR_MESSSTELLE = "AUFFAELLIGETAGE_FOR_MESSSTELLE";
+
     @Value("${hazelcast.instance:data_hazl_instance}")
     public String hazelcastInstanceName;
     @Value("${hazelcast.group-name:data_hazl_group}")
@@ -108,6 +112,8 @@ public class CachingConfiguration {
         config.addMapConfig(this.getMapConfig(LADE_PROCESSED_ZAEHLDATEN, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(LADE_ZAEHLDATEN_ZEITREIHE_DTO, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(READ_ZAEHLSTELLE_DTO, this.maxIdleTimeSecondsZaehldaten));
+        config.addMapConfig(this.getMapConfig(OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN, this.maxIdleTimeSecondsZaehldaten));
+        config.addMapConfig(this.getMapConfig(AUFFAELLIGETAGE_FOR_MESSSTELLE, this.maxIdleTimeSecondsZaehldaten));
     }
 
     private MapConfig getMapConfig(final String name, final int maxIdleTime) {

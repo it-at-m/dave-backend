@@ -12,22 +12,46 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 public interface MessstelleIndex extends ElasticsearchRepository<Messstelle, String> {
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     void deleteAll();
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     void deleteAll(Iterable<? extends Messstelle> var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     void deleteById(String var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     void delete(Messstelle var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     <S extends Messstelle> S save(S var1);
 
-    @CacheEvict(value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL }, allEntries = true)
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN },
+            allEntries = true
+    )
     <S extends Messstelle> Iterable<S> saveAll(Iterable<S> var1);
 
     Optional<Messstelle> findById(String var1);
