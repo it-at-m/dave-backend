@@ -8,9 +8,6 @@ spring:
   # Wird bei der PDF-Generierung benötigt, damit das Backend auch Diagramme > 1MB verarbeiten kann
   servlet.multipart.max-file-size: 10MB
   servlet.multipart.max-request-size: 10MB
-#  hateoas:
-#    hal:
-#      enabled: false
 
 server:
   shutdown: "graceful"
