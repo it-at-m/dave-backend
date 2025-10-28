@@ -14,6 +14,7 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.Verkehrsart;
+import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -204,6 +205,7 @@ class BelastungsplanServiceTest {
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
 
         final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);

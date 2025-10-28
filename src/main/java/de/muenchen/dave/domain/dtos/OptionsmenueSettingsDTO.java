@@ -2,11 +2,12 @@ package de.muenchen.dave.domain.dtos;
 
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class OptionsmenueSettingsDTO {
+public class OptionsmenueSettingsDTO implements Serializable {
 
     private Fahrzeugklasse fahrzeugklasse;
 

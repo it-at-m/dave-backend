@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.services.KalendertagService;
 import java.math.BigDecimal;
@@ -112,17 +113,18 @@ public class ValidierungService {
      * Gibt für die gegebenen Fahrzeugoptions auf Basis der Attribute mit dem Wert true die passende
      * Fahrzeugklasse zurück.
      *
-     * @param fahrzeugOptions
+     * @param fahrzeugOptions ausgewaehlte Optionen
+     * @param verkehrsartOfMst Verkehrsart der angefragten Messstelle
      * @return die Fahrzeugklasse auf Basis der gewählten Fahrzeugoptions.
      */
-    public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions) {
-        if (areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions)) {
+    public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions, final Verkehrsart verkehrsartOfMst) {
+        if (verkehrsartOfMst.equals(Verkehrsart.KFZ) && areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.SUMME_KFZ;
-        } else if (areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(fahrzeugOptions)) {
+        } else if (verkehrsartOfMst.equals(Verkehrsart.KFZ) && areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.ZWEI_PLUS_EINS;
-        } else if (areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen(fahrzeugOptions)) {
+        } else if (verkehrsartOfMst.equals(Verkehrsart.KFZ) && areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.ACHT_PLUS_EINS;
-        } else if (areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions)) {
+        } else if (verkehrsartOfMst.equals(Verkehrsart.RAD) && areFahrzeugoptionsForFahrzeugklasseRadChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.RAD;
         } else {
             return null;

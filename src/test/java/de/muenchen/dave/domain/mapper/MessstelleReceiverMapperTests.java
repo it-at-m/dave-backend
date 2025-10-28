@@ -153,6 +153,7 @@ class MessstelleReceiverMapperTests {
             expected.getSuchwoerter().add(stadtbezirk);
         }
         expected.setMessfaehigkeiten(this.mapper.createMessfaehigkeit(updatedData.getMessfaehigkeiten()));
+        expected.setDatumLetztePlausibleMessung(updatedData.getDatumLetztePlausibleMessung());
 
         // unveraendert
         expected.setId(bean.getId());
@@ -164,7 +165,6 @@ class MessstelleReceiverMapperTests {
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
         expected.setPunkt(bean.getPunkt());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
-        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
 
         final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
                 .collect(Collectors.toSet());
