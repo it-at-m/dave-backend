@@ -123,60 +123,53 @@ public class FillPdfBeanService {
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
      *
-     * @param pdfBean PDF-Bean die befüllt werden soll
+     * @param pdfBean    PDF-Bean die befüllt werden soll
      * @param department Organisationseinheit des Benutzers
-     * @return {@link PdfBean}
      */
-    public static PdfBean fillPdfBeanWithData(final PdfBean pdfBean, final String department) {
+    public static void fillPdfBeanWithData(final PdfBean pdfBean, final String department) {
         if (StringUtils.equals(department, DEPARTMENT_FOOTER_NO_AUTHORITY)) {
             pdfBean.setFooterOrganisationseinheit(StringUtils.EMPTY);
         } else {
             pdfBean.setFooterOrganisationseinheit(department);
         }
         pdfBean.setFooterDate(LocalDate.now().format(DDMMYYYY));
-        return pdfBean;
     }
 
     /**
-     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache
-     * Templates gebraucht werden. MustacheParts werden hier
+     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache Templates gebraucht werden. MustacheParts werden hier
      * noch nicht befüllt.
      *
-     * @param basicPdf Die Bean, die befüllt werden soll.
-     * @param zaehlung Die im Frontend ausgewählte Zählung.
+     * @param basicPdf      Die Bean, die befüllt werden soll.
+     * @param zaehlung      Die im Frontend ausgewählte Zählung.
      * @param kreuzungsname ZaehlstelleHeaderDTO, da hier Kreuzungsname vorhanden.
-     * @param zaehlstelle Zählstelle aus dem Frontend.
-     * @param department Organisationseinheit des Benutzers
-     * @return Befüllte BasicPdf Bean.
+     * @param zaehlstelle   Zählstelle aus dem Frontend.
+     * @param department    Organisationseinheit des Benutzers
      */
-    protected static BasicPdf fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+    protected static void fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
             final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
         basicPdf.setZaehlstelleninformationen(fillZaehlstelleninformationen(basicPdf.getZaehlstelleninformationen(), kreuzungsname, zaehlung));
 
-        return basicPdf;
     }
 
-    protected static BasicMessstellePdf fillBasicPdf(final BasicMessstellePdf basicPdf,
+    protected static void fillBasicPdf(final BasicMessstellePdf basicPdf,
             final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
 
-        return basicPdf;
     }
 
     /**
      * Befuellt den Standardteil eines PDF-Files über Messstellen mit den Daten
      *
-     * @param basicPdf Standard-Teil eines Messstellen-PDFs
-     * @param messstelle Ausgewertete Messstelle
-     * @param department Abteilung des anfragenden Nutzers
-     * @param optionsDTO Ausgewählte Optionen der Auswertung
+     * @param basicPdf           Standard-Teil eines Messstellen-PDFs
+     * @param messstelle         Ausgewertete Messstelle
+     * @param department         Abteilung des anfragenden Nutzers
+     * @param optionsDTO         Ausgewählte Optionen der Auswertung
      * @param isSingleMessstelle Flag, ob nur eine Messstelle ausgewertet wurde
-     * @return Standardteil des PDFs
      */
-    protected static BasicMessstellePdf fillBasicPdfGesamtauswertung(
+    protected static void fillBasicPdfGesamtauswertung(
             final BasicMessstellePdf basicPdf,
             final Messstelle messstelle,
             final String department,
@@ -186,7 +179,6 @@ public class FillPdfBeanService {
         basicPdf.setMessstelleninformationen(
                 fillMessstelleninformationenGesamtauswertung(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, isSingleMessstelle));
 
-        return basicPdf;
     }
 
     /**
@@ -665,19 +657,17 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den
-     * Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param diagrammPdf DiagrammPdf bean die befüllt werden soll.
-     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
-     * @param options Die im Frontend ausgewählten Optionen.
+     * @param diagrammPdf      DiagrammPdf bean die befüllt werden soll.
+     * @param zaehlungId       Die ID der im Frontend ausgewählten Zählung.
+     * @param options          Die im Frontend ausgewählten Optionen.
      * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
-     * @param department Organisationseinheit des Benutzers
-     * @return {@link DiagrammPdf}
+     * @param department       Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
-    public DiagrammPdf fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
+    public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
@@ -693,10 +683,9 @@ public class FillPdfBeanService {
 
         diagrammPdf.setChartTitle(this.createChartTitleZeitauswahl(zaehlungId, options));
 
-        return diagrammPdf;
     }
 
-    public BelastungsplanMessstellePdf fillBelastungsplanPdf(
+    public void fillBelastungsplanPdf(
             final BelastungsplanMessstellePdf belastungsplanPdf,
             final String messstelleId,
             final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
@@ -711,24 +700,21 @@ public class FillPdfBeanService {
 
         belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(options, ladeProcessedMesswerte.getZaehldatenTable().getZaehldaten()));
 
-        return belastungsplanPdf;
     }
 
     /**
-     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den
-     * Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param gangliniePdf GangliniePdf bean die befüllt werden soll.
-     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
-     * @param options Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
+     * @param gangliniePdf                      GangliniePdf bean die befüllt werden soll.
+     * @param zaehlungId                        Die ID der im Frontend ausgewählten Zählung.
+     * @param options                           Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png                  Der Graph aus dem Frontend als Base64-PNG
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department Organisationseinheit des Benutzers
-     * @return Die befüllte Bean als {@link GangliniePdf}
+     * @param department                        Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
-    public GangliniePdf fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
+    public void fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
@@ -823,10 +809,9 @@ public class FillPdfBeanService {
 
         gangliniePdf.setGanglinieTables(gtList);
 
-        return gangliniePdf;
     }
 
-    public GanglinieMessstellePdf fillGangliniePdf(
+    public void fillGangliniePdf(
             final GanglinieMessstellePdf gangliniePdf,
             final String messstelleId,
             final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
@@ -931,20 +916,18 @@ public class FillPdfBeanService {
 
         gangliniePdf.setGanglinieTables(gtList);
 
-        return gangliniePdf;
     }
 
     /**
      * Befuellt das PDf-Objekt der Auswertung mit den ausgewerteten Daten.
      *
      * @param gesamtauswertungPdf zu füllendes PDF-Objekt
-     * @param options ausgewählte Optionen der Auswertung
-     * @param auswertung zugrunde liegende Messwerte der Auswertung
-     * @param chartAsBase64Png Grafik der Auswertung
-     * @param department Abteilung des anfragenden Nutzers
-     * @return gefüllte PDF-Objekt
+     * @param options             ausgewählte Optionen der Auswertung
+     * @param auswertung          zugrunde liegende Messwerte der Auswertung
+     * @param chartAsBase64Png    Grafik der Auswertung
+     * @param department          Abteilung des anfragenden Nutzers
      */
-    public GesamtauswertungMessstellePdf fillGesamtauswertungPdf(
+    public void fillGesamtauswertungPdf(
             final GesamtauswertungMessstellePdf gesamtauswertungPdf,
             final MessstelleAuswertungOptionsDTO options,
             final LadeZaehldatenSteplineDTO auswertung,
@@ -991,7 +974,6 @@ public class FillPdfBeanService {
             }
             gesamtauswertungPdf.setGesamtauswertungTables(gtList);
         }
-        return gesamtauswertungPdf;
     }
 
     /**
@@ -1096,19 +1078,17 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den
-     * Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param datentabellePdf Die zu befüllende Bean
-     * @param zaehlungId ID der im Frontend ausgewählten Zählung
-     * @param options Die im Frontend ausgewählten Optionen.
+     * @param datentabellePdf                   Die zu befüllende Bean
+     * @param zaehlungId                        ID der im Frontend ausgewählten Zählung
+     * @param options                           Die im Frontend ausgewählten Optionen.
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department Organisationseinheit des Benutzers
-     * @return die befüllte Datentabelle als {@link DatentabellePdf}
+     * @param department                        Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung gefunden wurde
      */
-    public DatentabellePdf fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
+    public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
             final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
@@ -1126,10 +1106,9 @@ public class FillPdfBeanService {
         final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.getDatentabellePdfZaehldaten(options, zaehlungId);
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfZaehldaten);
 
-        return datentabellePdf;
     }
 
-    public DatentabelleMessstellePdf fillDatentabellePdf(
+    public void fillDatentabellePdf(
             final DatentabelleMessstellePdf datentabellePdf,
             final String messstelleId,
             final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
@@ -1151,7 +1130,6 @@ public class FillPdfBeanService {
                 .getZaehldaten());
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
 
-        return datentabellePdf;
     }
 
     /**
