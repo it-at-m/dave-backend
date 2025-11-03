@@ -1,6 +1,5 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
@@ -126,7 +125,6 @@ public class GeneratePdfController {
      * @return ResponseEntity of type byte-Array
      */
     @PostMapping(value = "/messstelle")
-    @LogExecutionTime
     public ResponseEntity<byte[]> generatePdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
