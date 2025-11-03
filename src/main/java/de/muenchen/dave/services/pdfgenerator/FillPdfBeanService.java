@@ -123,11 +123,11 @@ public class FillPdfBeanService {
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
      *
-     * @param pdfBean    PDF-Bean die befüllt werden soll
+     * @param pdfBean PDF-Bean die befüllt werden soll
      * @param department Organisationseinheit des Benutzers
      */
     public static void fillPdfBeanWithData(final PdfBean pdfBean, final String department) {
-        if (StringUtils.equals(department, DEPARTMENT_FOOTER_NO_AUTHORITY)) {
+        if (DEPARTMENT_FOOTER_NO_AUTHORITY.equals(department)) {
             pdfBean.setFooterOrganisationseinheit(StringUtils.EMPTY);
         } else {
             pdfBean.setFooterOrganisationseinheit(department);
@@ -136,14 +136,15 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache Templates gebraucht werden. MustacheParts werden hier
+     * Diese Methode befüllt eine BasicPdf Bean mit allen relevanten Daten, die später in den Mustache
+     * Templates gebraucht werden. MustacheParts werden hier
      * noch nicht befüllt.
      *
-     * @param basicPdf      Die Bean, die befüllt werden soll.
-     * @param zaehlung      Die im Frontend ausgewählte Zählung.
+     * @param basicPdf Die Bean, die befüllt werden soll.
+     * @param zaehlung Die im Frontend ausgewählte Zählung.
      * @param kreuzungsname ZaehlstelleHeaderDTO, da hier Kreuzungsname vorhanden.
-     * @param zaehlstelle   Zählstelle aus dem Frontend.
-     * @param department    Organisationseinheit des Benutzers
+     * @param zaehlstelle Zählstelle aus dem Frontend.
+     * @param department Organisationseinheit des Benutzers
      */
     protected static void fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
             final String department) {
@@ -163,10 +164,10 @@ public class FillPdfBeanService {
     /**
      * Befuellt den Standardteil eines PDF-Files über Messstellen mit den Daten
      *
-     * @param basicPdf           Standard-Teil eines Messstellen-PDFs
-     * @param messstelle         Ausgewertete Messstelle
-     * @param department         Abteilung des anfragenden Nutzers
-     * @param optionsDTO         Ausgewählte Optionen der Auswertung
+     * @param basicPdf Standard-Teil eines Messstellen-PDFs
+     * @param messstelle Ausgewertete Messstelle
+     * @param department Abteilung des anfragenden Nutzers
+     * @param optionsDTO Ausgewählte Optionen der Auswertung
      * @param isSingleMessstelle Flag, ob nur eine Messstelle ausgewertet wurde
      */
     protected static void fillBasicPdfGesamtauswertung(
@@ -555,20 +556,19 @@ public class FillPdfBeanService {
      */
     public String createChartTitleZeitauswahl(final String zaehlungId, final OptionsDTO optionsDTO) throws DataNotFoundException {
         final StringBuilder chartTitle = new StringBuilder();
-        if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
+        if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
-        } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
-                || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
+        } else if (Zeitauswahl.BLOCK.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                || Zeitauswahl.STUNDE.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
                     chartTitle.append(optionsDTO.getZeitauswahl());
                     chartTitle.append(StringUtils.SPACE);
 
                     chartTitle.append(getTimeblockForChartTitle(optionsDTO));
 
                 } else
-            if (StringUtils.equalsAny(optionsDTO.getZeitauswahl(),
-                    Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName(),
-                    Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName(),
-                    Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName())) {
+            if (Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                    || Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                    || Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
 
                         chartTitle.append(optionsDTO.getZeitauswahl());
                         chartTitle.append(StringUtils.SPACE);
@@ -579,9 +579,8 @@ public class FillPdfBeanService {
                         final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
 
                         final Optional<LadeZaehldatumDTO> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
-                                .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
-                                        LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
-                                        LadeZaehldatenService.SPITZENSTUNDE_TAG))
+                                .filter(ladeZaehldatumDTO -> (LadeZaehldatenService.SPITZENSTUNDE_BLOCK.equals(ladeZaehldatumDTO.getType())
+                                        || LadeZaehldatenService.SPITZENSTUNDE_TAG.equals(ladeZaehldatumDTO.getType())))
                                 .findFirst();
                         if (optSpitzenStundeBlock.isPresent()) {
                             final LadeZaehldatumDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
@@ -607,32 +606,29 @@ public class FillPdfBeanService {
 
     public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
-        if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.TAGESWERT.getCapitalizedName())) {
+        if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             if (MesswerteBaseUtil.isDateRange(optionsDTO.getZeitraum())) {
                 chartTitle.append("Durchschnittlicher");
                 chartTitle.append(StringUtils.SPACE);
             }
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
-        } else if (StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.BLOCK.getCapitalizedName())
-                || StringUtils.equals(optionsDTO.getZeitauswahl(), Zeitauswahl.STUNDE.getCapitalizedName())) {
+        } else if (Zeitauswahl.BLOCK.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                || Zeitauswahl.STUNDE.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
                     chartTitle.append(optionsDTO.getZeitauswahl());
                     chartTitle.append(StringUtils.SPACE);
-
                     chartTitle.append(getTimeblockForChartTitle(optionsDTO));
 
                 } else
-            if (StringUtils.equalsAny(optionsDTO.getZeitauswahl(),
-                    Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName(),
-                    Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName(),
-                    Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName())) {
+            if (Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                    || Zeitauswahl.SPITZENSTUNDE_RAD.getCapitalizedName().equals(optionsDTO.getZeitauswahl())
+                    || Zeitauswahl.SPITZENSTUNDE_FUSS.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
 
                         chartTitle.append(optionsDTO.getZeitauswahl());
                         chartTitle.append(StringUtils.SPACE);
                         // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
                         final Optional<LadeMesswerteDTO> optSpitzenStundeBlock = zaehldaten.stream()
-                                .filter(ladeZaehldatumDTO -> StringUtils.containsAny(ladeZaehldatumDTO.getType(),
-                                        LadeZaehldatenService.SPITZENSTUNDE_BLOCK,
-                                        LadeZaehldatenService.SPITZENSTUNDE_TAG))
+                                .filter(ladeZaehldatumDTO -> (LadeZaehldatenService.SPITZENSTUNDE_BLOCK.equals(ladeZaehldatumDTO.getType())
+                                        || LadeZaehldatenService.SPITZENSTUNDE_TAG.equals(ladeZaehldatumDTO.getType())))
                                 .findFirst();
                         if (optSpitzenStundeBlock.isPresent()) {
                             final LadeMesswerteDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
@@ -657,14 +653,15 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine DiagrammPdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param diagrammPdf      DiagrammPdf bean die befüllt werden soll.
-     * @param zaehlungId       Die ID der im Frontend ausgewählten Zählung.
-     * @param options          Die im Frontend ausgewählten Optionen.
+     * @param diagrammPdf DiagrammPdf bean die befüllt werden soll.
+     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
+     * @param options Die im Frontend ausgewählten Optionen.
      * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
-     * @param department       Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
@@ -703,15 +700,16 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine GangliniePdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param gangliniePdf                      GangliniePdf bean die befüllt werden soll.
-     * @param zaehlungId                        Die ID der im Frontend ausgewählten Zählung.
-     * @param options                           Die im Frontend ausgewählten Optionen.
-     * @param chartAsBase64Png                  Der Graph aus dem Frontend als Base64-PNG
+     * @param gangliniePdf GangliniePdf bean die befüllt werden soll.
+     * @param zaehlungId Die ID der im Frontend ausgewählten Zählung.
+     * @param options Die im Frontend ausgewählten Optionen.
+     * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public void fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
@@ -741,20 +739,20 @@ public class FillPdfBeanService {
 
         for (final LadeZaehldatumDTO lzDto : ladeZaehldatumDTOS) {
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
-            if (StringUtils.equals(lzDto.getType(), LadeZaehldatenService.STUNDE)
-                    || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.GESAMT)
-                    || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.TAGESWERT)
+            if (LadeZaehldatenService.STUNDE.equals(lzDto.getType())
+                    || LadeZaehldatenService.GESAMT.equals(lzDto.getType())
+                    || LadeZaehldatenService.TAGESWERT.equals(lzDto.getType())
                     //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
-                    || (StringUtils.equals(lzDto.getType(), LadeZaehldatenService.BLOCK)
+                    || (LadeZaehldatenService.BLOCK.equals(lzDto.getType())
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
 
                 final GanglinieTableColumn gtc = new GanglinieTableColumn();
 
                 // Uhrzeit setzen
                 final StringBuilder sbUhrzeit = new StringBuilder();
-                if (StringUtils.equals(lzDto.getType(), LadeZaehldatenService.GESAMT)
-                        || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.TAGESWERT)
-                        || StringUtils.equals(lzDto.getType(), LadeZaehldatenService.BLOCK)) {
+                if (LadeZaehldatenService.GESAMT.equals(lzDto.getType())
+                        || LadeZaehldatenService.TAGESWERT.equals(lzDto.getType())
+                        || LadeZaehldatenService.BLOCK.equals(lzDto.getType())) {
                     sbUhrzeit.append(lzDto.getType());
                 } else if (lzDto.getStartUhrzeit().getHour() == 23 && lzDto.getEndeUhrzeit().getHour() == 23) {
                     sbUhrzeit.append(UHRZEIT_23_24);
@@ -848,20 +846,20 @@ public class FillPdfBeanService {
             }
 
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
-            if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.STUNDE)
-                    || StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
-                    || StringUtils.equals(messwert.getType(), LadeZaehldatenService.TAGESWERT)
+            if (LadeZaehldatenService.STUNDE.equals(messwert.getType())
+                    || LadeZaehldatenService.GESAMT.equals(messwert.getType())
+                    || LadeZaehldatenService.TAGESWERT.equals(messwert.getType())
                     //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
-                    || (StringUtils.equals(messwert.getType(), LadeZaehldatenService.BLOCK)
+                    || (LadeZaehldatenService.BLOCK.equals(messwert.getType())
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
 
                 final GanglinieTableColumn gtc = new GanglinieTableColumn();
 
                 // Uhrzeit setzen
                 final StringBuilder sbUhrzeit = new StringBuilder();
-                if (StringUtils.equals(messwert.getType(), LadeZaehldatenService.GESAMT)
-                        || StringUtils.equals(messwert.getType(), LadeZaehldatenService.TAGESWERT)
-                        || StringUtils.equals(messwert.getType(), LadeZaehldatenService.BLOCK)) {
+                if (LadeZaehldatenService.GESAMT.equals(messwert.getType())
+                        || LadeZaehldatenService.TAGESWERT.equals(messwert.getType())
+                        || LadeZaehldatenService.BLOCK.equals(messwert.getType())) {
                     sbUhrzeit.append(messwert.getType());
                 } else if (messwert.getStartUhrzeit().getHour() == 23 && messwert.getEndeUhrzeit().getHour() == 23) {
                     sbUhrzeit.append(UHRZEIT_23_24);
@@ -922,10 +920,10 @@ public class FillPdfBeanService {
      * Befuellt das PDf-Objekt der Auswertung mit den ausgewerteten Daten.
      *
      * @param gesamtauswertungPdf zu füllendes PDF-Objekt
-     * @param options             ausgewählte Optionen der Auswertung
-     * @param auswertung          zugrunde liegende Messwerte der Auswertung
-     * @param chartAsBase64Png    Grafik der Auswertung
-     * @param department          Abteilung des anfragenden Nutzers
+     * @param options ausgewählte Optionen der Auswertung
+     * @param auswertung zugrunde liegende Messwerte der Auswertung
+     * @param chartAsBase64Png Grafik der Auswertung
+     * @param department Abteilung des anfragenden Nutzers
      */
     public void fillGesamtauswertungPdf(
             final GesamtauswertungMessstellePdf gesamtauswertungPdf,
@@ -1078,14 +1076,15 @@ public class FillPdfBeanService {
     }
 
     /**
-     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den Templates gebraucht werden. MustacheParts werden hier noch
+     * Diese Methode befüllt eine DatentabellePdf Bean mit allen relevanten Daten, die später in den
+     * Templates gebraucht werden. MustacheParts werden hier noch
      * nicht befüllt.
      *
-     * @param datentabellePdf                   Die zu befüllende Bean
-     * @param zaehlungId                        ID der im Frontend ausgewählten Zählung
-     * @param options                           Die im Frontend ausgewählten Optionen.
+     * @param datentabellePdf Die zu befüllende Bean
+     * @param zaehlungId ID der im Frontend ausgewählten Zählung
+     * @param options Die im Frontend ausgewählten Optionen.
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
-     * @param department                        Organisationseinheit des Benutzers
+     * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung gefunden wurde
      */
     public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
@@ -1147,7 +1146,7 @@ public class FillPdfBeanService {
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()
-                .filter(ladeZaehldatumDTO -> StringUtils.equalsIgnoreCase(ladeZaehldatumDTO.getType(), LadeZaehldatenService.TAGESWERT))
+                .filter(ladeZaehldatumDTO -> LadeZaehldatenService.TAGESWERT.equalsIgnoreCase(ladeZaehldatumDTO.getType()))
                 .forEach(ladeZaehldatumDTO -> {
                     ladeZaehldatumDTO.setEndeUhrzeit(null);
                     ladeZaehldatumDTO.setStartUhrzeit(null);
@@ -1185,7 +1184,7 @@ public class FillPdfBeanService {
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDTO> ladeMesswerteDTOS) {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeMesswerteDTOS.stream()
-                .filter(ladeMesswerteDTO -> StringUtils.equalsIgnoreCase(ladeMesswerteDTO.getType(), LadeZaehldatenService.TAGESWERT))
+                .filter(ladeMesswerteDTO -> LadeZaehldatenService.TAGESWERT.equalsIgnoreCase(ladeMesswerteDTO.getType()))
                 .forEach(ladeMesswerteDTO -> {
                     ladeMesswerteDTO.setEndeUhrzeit(null);
                     ladeMesswerteDTO.setStartUhrzeit(null);
@@ -1314,7 +1313,7 @@ public class FillPdfBeanService {
      *         {@link Zaehlart#N}.
      */
     public String getCorrectZaehlartString(final Zaehlung zaehlung) {
-        return StringUtils.equals(zaehlung.getZaehlart(), Zaehlart.N.toString())
+        return Zaehlart.N.toString().equals(zaehlung.getZaehlart())
                 ? StringUtils.EMPTY
                 : zaehlung.getZaehlart();
     }

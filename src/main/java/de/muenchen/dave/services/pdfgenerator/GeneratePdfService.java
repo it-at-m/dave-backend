@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Objects;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -242,7 +241,8 @@ public class GeneratePdfService {
     }
 
     /**
-     * Hier wird das entsprechende Mustache-Table-Template ausgesucht - bei 2_X_4 Stunden sind die Zellen größer als bei 24
+     * Hier wird das entsprechende Mustache-Table-Template ausgesucht - bei 2_X_4 Stunden sind die
+     * Zellen größer als bei 24
      *
      * @param bean GangliniePdf
      */
