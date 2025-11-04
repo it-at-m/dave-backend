@@ -8,6 +8,7 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
@@ -408,11 +409,15 @@ public class GeneratePdfService {
         return createPdf(html);
     }
 
-    public byte[] generateBelastungsplanPdf(final String messstelleId, final MessstelleOptionsDTO options, final String chartAsBase64Png,
+    public byte[] generateBelastungsplanPdf(
+            final String messstelleId,
+            final LadeProcessedMesswerteDTO messwerte,
+            final MessstelleOptionsDTO options,
+            final String chartAsBase64Png,
             final String department)
             throws IOException, DataNotFoundException {
         final BelastungsplanMessstellePdf belastungsplanPdf = new BelastungsplanMessstellePdf();
-        fillPdfBeanService.fillBelastungsplanPdf(belastungsplanPdf, messstelleId, options, chartAsBase64Png, department);
+        fillPdfBeanService.fillBelastungsplanPdf(belastungsplanPdf, messstelleId, messwerte, options, chartAsBase64Png, department);
         final String html = createBelastungsplanHTML(belastungsplanPdf);
 
         return createPdf(html);
@@ -440,10 +445,16 @@ public class GeneratePdfService {
         return createPdf(html);
     }
 
-    public byte[] generateGangliniePdf(final String messstelleId, final MessstelleOptionsDTO options, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
+    public byte[] generateGangliniePdf(
+            final String messstelleId,
+            final LadeProcessedMesswerteDTO messwerte,
+            final MessstelleOptionsDTO options,
+            final String chartAsBase64Png,
+            final String schematischeUebersichtAsBase64Png,
+            final String department) throws IOException, DataNotFoundException {
         final GanglinieMessstellePdf gangliniePdf = new GanglinieMessstellePdf();
-        fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
+        fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, messwerte, options, chartAsBase64Png, schematischeUebersichtAsBase64Png,
+                department);
         final String html = createGanglinieHTML(gangliniePdf);
 
         return createPdf(html);
@@ -515,10 +526,14 @@ public class GeneratePdfService {
         return createPdf(html);
     }
 
-    public byte[] generateDatentabellePdf(final String messstelleId, final MessstelleOptionsDTO options, final String schematischeUebersichtAsBase64Png,
+    public byte[] generateDatentabellePdf(
+            final String messstelleId,
+            final LadeProcessedMesswerteDTO messwerte,
+            final MessstelleOptionsDTO options,
+            final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {
         final DatentabelleMessstellePdf datentabellePdf = new DatentabelleMessstellePdf();
-        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, options, schematischeUebersichtAsBase64Png, department);
+        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, messwerte, options, schematischeUebersichtAsBase64Png, department);
         final String html = createDatentabelleHTML(datentabellePdf);
 
         return createPdf(html);

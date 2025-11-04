@@ -696,16 +696,20 @@ public class FillPdfBeanService {
         return diagrammPdf;
     }
 
-    public BelastungsplanMessstellePdf fillBelastungsplanPdf(final BelastungsplanMessstellePdf belastungsplanPdf, final String messstelleId,
-            final MessstelleOptionsDTO options, final String chartAsBase64Png, final String department) {
+    public BelastungsplanMessstellePdf fillBelastungsplanPdf(
+            final BelastungsplanMessstellePdf belastungsplanPdf,
+            final String messstelleId,
+            final LadeProcessedMesswerteDTO messwerte,
+            final MessstelleOptionsDTO options,
+            final String chartAsBase64Png,
+            final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
-        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = this.messwerteService.ladeMesswerte(messstelle.getId(), options);
-        fillBasicPdf(belastungsplanPdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+        fillBasicPdf(belastungsplanPdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 
         belastungsplanPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_MESSSTELLE + messstelle.getMstId());
         belastungsplanPdf.setChart(chartAsBase64Png);
 
-        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten()));
+        belastungsplanPdf.setChartTitle(this.createChartTitleZeitauswahl(options, messwerte.getZaehldatenTable().getZaehldaten()));
 
         return belastungsplanPdf;
     }
@@ -823,13 +827,16 @@ public class FillPdfBeanService {
     }
 
     public GanglinieMessstellePdf fillGangliniePdf(
-            final GanglinieMessstellePdf gangliniePdf, final String messstelleId,
-            final MessstelleOptionsDTO options, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final String department) {
+            final GanglinieMessstellePdf gangliniePdf,
+            final String messstelleId,
+            final LadeProcessedMesswerteDTO messwerte,
+            final MessstelleOptionsDTO options,
+            final String chartAsBase64Png,
+            final String schematischeUebersichtAsBase64Png,
+            final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
-        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
 
-        fillBasicPdf(gangliniePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+        fillBasicPdf(gangliniePdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_MESSSTELLE + messstelle.getMstId());
         gangliniePdf.setChart(chartAsBase64Png);
@@ -837,7 +844,7 @@ public class FillPdfBeanService {
         gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final List<LadeMesswerteDTO> messwerte = ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten();
+        final List<LadeMesswerteDTO> messwerteDataTable = messwerte.getZaehldatenTable().getZaehldaten();
         final List<GanglinieTable> gtList = new ArrayList<>();
 
         // Initialisierung vor erstem Schleifendurchlauf
@@ -847,7 +854,7 @@ public class FillPdfBeanService {
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
         this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
-        for (final LadeMesswerteDTO messwert : messwerte) {
+        for (final LadeMesswerteDTO messwert : messwerteDataTable) {
 
             // Wenn 60min ausgewählt sind, muss der Type auf Stunde gesetzt werden, wenn dieser leer ist
             if (options.getIntervall().getTypeZeitintervall() == TypeZeitintervall.STUNDE_KOMPLETT
@@ -1125,13 +1132,13 @@ public class FillPdfBeanService {
     public DatentabelleMessstellePdf fillDatentabellePdf(
             final DatentabelleMessstellePdf datentabellePdf,
             final String messstelleId,
+            final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
-        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
 
-        fillBasicPdf(datentabellePdf, messstelle, department, options, ladeProcessedMesswerteDTO.getTagesTyp().getBeschreibung());
+        fillBasicPdf(datentabellePdf, messstelle, department, options, ladeProcessedMesswerte.getTagesTyp().getBeschreibung());
 
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
@@ -1140,7 +1147,7 @@ public class FillPdfBeanService {
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable()
+        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, ladeProcessedMesswerte.getZaehldatenTable()
                 .getZaehldaten());
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
 
