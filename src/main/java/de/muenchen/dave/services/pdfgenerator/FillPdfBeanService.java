@@ -1110,13 +1110,13 @@ public class FillPdfBeanService {
     public void fillDatentabellePdf(
             final DatentabelleMessstellePdf datentabellePdf,
             final String messstelleId,
-            final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
+            final LadeProcessedMesswerteDTO messwerte,
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
 
-        fillBasicPdf(datentabellePdf, messstelle, department, options, ladeProcessedMesswerte.getTagesTyp().getBeschreibung());
+        fillBasicPdf(datentabellePdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
@@ -1125,7 +1125,7 @@ public class FillPdfBeanService {
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, ladeProcessedMesswerte.getZaehldatenTable()
+        final DatentabellePdfZaehldaten datentabellePdfMessstelle = this.getDatentabellePdfZaehldaten(options, messwerte.getZaehldatenTable()
                 .getZaehldaten());
         datentabellePdf.setDatentabelleZaehldaten(datentabellePdfMessstelle);
 
@@ -1177,8 +1177,8 @@ public class FillPdfBeanService {
     }
 
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
-        final LadeProcessedMesswerteDTO ladeProcessedMesswerteDTO = messwerteService.ladeMesswerte(messstelleId, options);
-        return getDatentabellePdfZaehldaten(options, ladeProcessedMesswerteDTO.getZaehldatenTable().getZaehldaten());
+        final LadeProcessedMesswerteDTO messwerte = messwerteService.ladeMesswerte(messstelleId, options);
+        return getDatentabellePdfZaehldaten(options, messwerte.getZaehldatenTable().getZaehldaten());
     }
 
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDTO> ladeMesswerteDTOS) {
