@@ -408,13 +408,13 @@ public class GeneratePdfService {
 
     public byte[] generateBelastungsplanPdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
+            final LadeProcessedMesswerteDTO messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String department)
             throws IOException, DataNotFoundException {
         final BelastungsplanMessstellePdf belastungsplanPdf = new BelastungsplanMessstellePdf();
-        fillPdfBeanService.fillBelastungsplanPdf(belastungsplanPdf, messstelleId, ladeProcessedMesswerte, options, chartAsBase64Png, department);
+        fillPdfBeanService.fillBelastungsplanPdf(belastungsplanPdf, messstelleId, messwerte, options, chartAsBase64Png, department);
         final String html = createBelastungsplanHTML(belastungsplanPdf);
 
         return createPdf(html);
@@ -444,13 +444,13 @@ public class GeneratePdfService {
 
     public byte[] generateGangliniePdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
+            final LadeProcessedMesswerteDTO messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {
         final GanglinieMessstellePdf gangliniePdf = new GanglinieMessstellePdf();
-        fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, ladeProcessedMesswerte, options, chartAsBase64Png, schematischeUebersichtAsBase64Png,
+        fillPdfBeanService.fillGangliniePdf(gangliniePdf, messstelleId, messwerte, options, chartAsBase64Png, schematischeUebersichtAsBase64Png,
                 department);
         final String html = createGanglinieHTML(gangliniePdf);
 
@@ -525,12 +525,12 @@ public class GeneratePdfService {
 
     public byte[] generateDatentabellePdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO ladeProcessedMesswerte,
+            final LadeProcessedMesswerteDTO messwerte,
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {
         final DatentabelleMessstellePdf datentabellePdf = new DatentabelleMessstellePdf();
-        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, ladeProcessedMesswerte, options, schematischeUebersichtAsBase64Png, department);
+        fillPdfBeanService.fillDatentabellePdf(datentabellePdf, messstelleId, messwerte, options, schematischeUebersichtAsBase64Png, department);
         final String html = createDatentabelleHTML(datentabellePdf);
 
         return createPdf(html);
