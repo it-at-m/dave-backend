@@ -18,6 +18,15 @@ server:
     whitelabel:
       enabled: false
 
+# OpenAPi configuration
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    csrf:
+      enabled: 'true'
+
 # Config for spring actuator endpoints
 management:
   server.port: ${server.port}
