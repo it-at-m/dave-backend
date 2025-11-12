@@ -33,16 +33,12 @@ public enum Zaehlart {
     QR(Arrays.asList("QR", "Querschnitt", "Radverkehr")),
     // Radverkehrszählung
     R(Arrays.asList("R", "Rad", "Fahrrad", "Radverkehr", "Radverkehrszählung")),
-    // Querschnitt Fußverkehr
-    QF(Arrays.asList("QF", "Querschnitt", "Fußverkehr")),
-    // Querschnitt Fuß- und Radverkehr
-    QFR(Arrays.asList("QFR", "Querschnitt", "Fußverkehr", "Radverkehr")),
-    // Querschnitt Fußverkehr je Straßenseite
-    QFS(Arrays.asList("QFS", "Querschnitt", "Fußverkehr", "Straßenseite")),
-    // Fußverkehr je Straßenseite
-    FS(Arrays.asList("FS", "Fußverkehr", "Straßenseite")),
-    // Fußverkehr Querung
-    FQ(Arrays.asList("FQ", "Fußverkehr", "Querung")),
+    // Querschnitt je Straßenseite
+    QJS(Arrays.asList("QjS", "Querschnitt", "Straßenseite")),
+    // Fuß & Rad je Straßenseite
+    FJS(Arrays.asList("FjS", "Fußverkehr", "Radverkehr", "Straßenseite")),
+    // Querung
+    QU(Arrays.asList("Qu", "Querung")),
     // Tunnel / Unterführung / Tief
     T(Arrays.asList("T", "Tunnel", "Unterführung", "Tief")),
     // Teilknoten
