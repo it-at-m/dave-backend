@@ -66,7 +66,6 @@ public interface MessstelleMapper {
     @Mapping(target = "hersteller", ignore = true)
     @Mapping(target = "fahrzeugklasse", ignore = true)
     @Mapping(target = "detektierteVerkehrsart", ignore = true)
-    @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)

@@ -52,8 +52,6 @@ public class MessstelleReceiverTest {
 
     @Mock
     private MessstelleApi messstelleApi;
-    @Mock
-    private UnauffaelligeTageService unauffaelligeTageService;
 
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
@@ -72,8 +70,7 @@ public class MessstelleReceiverTest {
                 lageplanService,
                 emailSendService,
                 messstelleApi,
-                messstelleReceiverMapper,
-                unauffaelligeTageService);
+                messstelleReceiverMapper);
     }
 
     @Test

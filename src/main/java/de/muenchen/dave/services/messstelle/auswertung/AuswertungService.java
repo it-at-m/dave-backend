@@ -146,7 +146,8 @@ public class AuswertungService {
                 .map(validateZeitraumAndTagesTypForMessstelle -> {
 
                     var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
-                            .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge());
+                            .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge(),
+                                    messstelleService.getMessstelleByMstId(validateZeitraumAndTagesTypForMessstelle.getMstId()).getDetektierteVerkehrsart());
 
                     List<ReadMessfaehigkeitDTO> relevantMessfaehigkeiten;
                     TagesaggregatResponseDto tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());

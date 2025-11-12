@@ -44,7 +44,6 @@ public class MessstelleReceiver {
     private final EmailSendService emailSendService;
     private MessstelleApi messstelleApi;
     private MessstelleReceiverMapper messstelleReceiverMapper;
-    private UnauffaelligeTageService unauffaelligeTageService;
 
     /**
      * Diese Methode lädt regelmäßig alle relevanten Messstellen aus MobidaM.
@@ -123,8 +122,6 @@ public class MessstelleReceiver {
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(toSave.getMessquerschnitte(), dto.getMessquerschnitte());
         toSave.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
-        unauffaelligeTageService.findFirstByMstIdOrderByKalendertagDatumDesc(toSave.getMstId())
-                .ifPresent(unauffaelligerTag -> toSave.setDatumLetztePlausibleMessung(unauffaelligerTag.getKalendertag().getDatum()));
         final Messstelle updated = messstelleIndexService.saveMessstelle(toSave);
         final var statusMessstelleNeu = updated.getStatus();
         if (statusMessstelleAlt != statusMessstelleNeu) {

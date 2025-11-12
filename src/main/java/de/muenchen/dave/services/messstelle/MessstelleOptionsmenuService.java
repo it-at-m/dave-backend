@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +22,9 @@ public class MessstelleOptionsmenuService {
     private final KalendertagService kalendertagService;
     private final ValidierungService validierungService;
 
+    @Cacheable(value = CachingConfiguration.AUFFAELLIGETAGE_FOR_MESSSTELLE, key = "{#p0}")
     public AuffaelligeTageDTO getAuffaelligeTageForMessstelle(final String mstId) {
+        log.debug("Zugriff auf #getAuffaelligeTageForMessstelle {}", mstId);
         final List<UnauffaelligerTag> unauffaelligeTageForMessstelle = unauffaelligeTageService.getUnauffaelligeTageForMessstelle(mstId);
         final List<LocalDate> unauffaelligeTage = unauffaelligeTageForMessstelle
                 .stream()
