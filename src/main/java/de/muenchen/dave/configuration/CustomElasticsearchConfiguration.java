@@ -56,7 +56,7 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
                                 final var headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
 
                                 while (headerIterator.hasNext()) {
-                                    final HeaderElement header = headerIterator.nextElement();
+                                    final var header = headerIterator.nextElement();
                                     final var headerName = header.getName();
                                     final var headerValue = header.getValue();
 
