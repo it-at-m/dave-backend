@@ -3,7 +3,6 @@ package de.muenchen.dave.configuration;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HeaderElement;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Value;
