@@ -2,9 +2,14 @@ package de.muenchen.dave.configuration;
 
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HeaderElement;
+import org.apache.http.message.BasicHeaderElementIterator;
+import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchClients;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
@@ -42,6 +47,36 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
                 .withBasicAuth(this.user, this.password)
                 .withConnectTimeout(Duration.ofSeconds(connectTimeout))
                 .withSocketTimeout(Duration.ofSeconds(socketTimeout))
+                .withClientConfigurer(ElasticsearchClients.ElasticsearchHttpClientConfigurationCallback
+                        .from(clientBuilder -> {
+                            /**
+                             * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
+                             */
+                            clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
+                                final var headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
+
+                                while (headerIterator.hasNext()) {
+                                    final HeaderElement header = headerIterator.nextElement();
+                                    final var headerName = header.getName();
+                                    final var headerValue = header.getValue();
+
+                                    if (StringUtils.isNotEmpty(headerValue) && headerName.equalsIgnoreCase("timeout")) {
+                                        try {
+                                            final var timeoutSeconds = Long.parseLong(headerValue);
+                                            // to millis
+                                            return timeoutSeconds * 1000;
+                                        } catch (NumberFormatException ignore) {
+                                        }
+                                    }
+                                }
+
+                                // Connections nicht unendlich lange offen halten,
+                                // da Netzwerk-Firewall sie sonst evtl. mit deny auslaufen lässt.
+                                // 30000 Millisekunden
+                                return 30 * 1000;
+                            });
+                            return clientBuilder;
+                        }))
                 .build();
     }
 
