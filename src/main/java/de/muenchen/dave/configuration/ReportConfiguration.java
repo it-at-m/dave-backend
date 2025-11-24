@@ -2,13 +2,12 @@ package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.services.pdfgenerator.ImageUtil;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
-import java.io.IOException;
 
 /**
  * Config for report settings.

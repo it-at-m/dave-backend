@@ -71,14 +71,12 @@ public class ReportService {
     private Mustache dataTableCssMustacheCustom;
     private Mustache dataTableCssMustacheFixed;
 
-
     public ReportService(final GeneratePdfService generatePdfService,
-                         final FillPdfBeanService fillPdfBeanService,
-                         final ProcessZaehldatenService processZaehldatenService,
-                         final ZaehlstelleIndexService indexService,
-                         final LadeZaehldatumMapper ladeZaehldatumMapper,
-                         final ReportConfiguration reportConfiguration
-                         ) {
+            final FillPdfBeanService fillPdfBeanService,
+            final ProcessZaehldatenService processZaehldatenService,
+            final ZaehlstelleIndexService indexService,
+            final LadeZaehldatumMapper ladeZaehldatumMapper,
+            final ReportConfiguration reportConfiguration) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;

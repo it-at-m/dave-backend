@@ -134,7 +134,8 @@ public class GeneratePdfService {
     private Mustache zeitreiheTables;
     private Mustache zeitreiheCss;
 
-    public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService, ReportConfiguration reportConfiguration) {
+    public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService,
+            ReportConfiguration reportConfiguration) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.fillZeitreihePdfBeanService = fillZeitreihePdfBeanService;
         this.reportConfiguration = reportConfiguration;

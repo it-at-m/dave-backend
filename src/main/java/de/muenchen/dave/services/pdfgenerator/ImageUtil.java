@@ -6,7 +6,7 @@ public class ImageUtil {
 
     private final static String IMAGE_DATASOURCE_FORMAT = "data:image/jpeg;base64,%s";
 
-    public static String getImageDatasource(final byte[] content){
+    public static String getImageDatasource(final byte[] content) {
         return String.format(IMAGE_DATASOURCE_FORMAT, Base64.encodeBase64String(content));
     }
 }
