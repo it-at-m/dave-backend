@@ -45,3 +45,4 @@ nbdist/
 src/**/application-local.yml
 /.openapi-generator/
 /*_logfile
+application.yml
