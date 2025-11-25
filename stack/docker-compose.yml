@@ -1,0 +1,170 @@
+name: dave-stack
+
+services:
+  setup:
+    image: elasticsearch:${STACK_VERSION}
+    volumes:
+      - elastic-certs:/usr/share/elasticsearch/config/certs
+    user: "0"
+    command: >
+      bash -c '
+        if [ x${ELASTIC_PASSWORD} == x ]; then
+          echo "Set the ELASTIC_PASSWORD environment variable in the .env file";
+          exit 1;
+        elif [ x${KIBANA_PASSWORD} == x ]; then
+          echo "Set the KIBANA_PASSWORD environment variable in the .env file";
+          exit 1;
+        fi;
+        if [ ! -f config/certs/ca.zip ]; then
+          echo "Creating CA";
+          bin/elasticsearch-certutil ca --silent --pem -out config/certs/ca.zip;
+          unzip config/certs/ca.zip -d config/certs;
+        fi;
+        if [ ! -f config/certs/certs.zip ]; then
+          echo "Creating certs";
+          echo -ne \
+          "instances:\n"\
+          "  - name: elastic\n"\
+          "    dns:\n"\
+          "      - elastic\n"\
+          "      - localhost\n"\
+          "    ip:\n"\
+          "      - 127.0.0.1\n"\
+          > config/certs/instances.yml;
+          bin/elasticsearch-certutil cert --silent --pem -out config/certs/certs.zip --in config/certs/instances.yml --ca-cert config/certs/ca/ca.crt --ca-key config/certs/ca/ca.key;
+          unzip config/certs/certs.zip -d config/certs;
+        fi;
+        echo "Setting file permissions"
+        chown -R root:root config/certs;
+        find . -type d -exec chmod 750 \{\} \;;
+        find . -type f -exec chmod 640 \{\} \;;
+        echo "Waiting for Elasticsearch availability";
+        until curl -s --cacert config/certs/ca/ca.crt https://elastic:9200 | grep -q "missing authentication credentials"; do sleep 30; done;
+        echo "Setting kibana_system password";
+        until curl -s -X POST --cacert config/certs/ca/ca.crt -u "elastic:${ELASTIC_PASSWORD}" -H "Content-Type: application/json" https://elastic:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}" | grep -q "^{}"; do sleep 10; done;
+        echo "All done!";
+      '
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f config/certs/elastic/elastic.crt ]"]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  elastic:
+    depends_on:
+      setup:
+        condition: service_healthy
+    image: elasticsearch:${STACK_VERSION}
+    volumes:
+      - elastic-certs:/usr/share/elasticsearch/config/certs
+      - elastic-data:/usr/share/elasticsearch/data
+      - elastic-backup:/usr/share/elasticsearch/backup
+    ports:
+      - 9200:9200
+    environment:
+      - node.name=elastic
+      - cluster.name=elastic-cluster
+      - cluster.initial_master_nodes=elastic
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/elastic/elastic.key
+      - xpack.security.http.ssl.certificate=certs/elastic/elastic.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.key=certs/elastic/elastic.key
+      - xpack.security.transport.ssl.certificate=certs/elastic/elastic.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.license.self_generated.type=basic
+      - path.repo=/usr/share/elasticsearch/backup
+    mem_limit: 1GB
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  kibana:
+    depends_on:
+      elastic:
+        condition: service_healthy
+    image: kibana:${STACK_VERSION}
+    volumes:
+      - elastic-certs:/usr/share/kibana/config/certs
+      - kibana-data:/usr/share/kibana/data
+    ports:
+      - 5601:5601
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=https://elastic:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+    mem_limit: 1GB
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s -I http://localhost:5601 | grep -q 'HTTP/1.1 302 Found'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  postgres:
+    image: postgres:16.6-alpine3.21
+    environment:
+      - POSTGRES_DB=dave-db
+      - POSTGRES_USER=dave
+      - POSTGRES_PASSWORD=1234
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck: &healthcheck
+      test: [ "CMD-SHELL", "pg_isready -d postgres -U dave" ]
+      interval: 30s
+      timeout: 60s
+      retries: 3
+      start_period: 60s
+    security_opt: &security_settings
+      - no-new-privileges:true
+
+  # see https://event-driven.io/en/automatically_connect_pgadmin_to_database/
+  pg-admin:
+    image: dpage/pgadmin4:8.14
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+      - PGADMIN_LISTEN_PORT=5050
+    ports:
+      - "5050:5050"
+    depends_on:
+      - postgres
+    healthcheck:
+      <<: *healthcheck
+      test: [ "CMD", "wget", "-O", "-", "http://localhost:5050/misc/ping" ]
+    security_opt: *security_settings
+    volumes:
+      - './pgadmin/servers.json:/pgadmin4/servers.json:ro'
+      - './pgadmin/pgpass:/pgadmin4/pgpass'
+    user: root # see https://github.com/pgadmin-org/pgadmin4/issues/6257
+    entrypoint: /bin/sh -c "chmod 600 /pgadmin4/pgpass; /entrypoint.sh;" # see https://www.postgresql.org/docs/current/libpq-pgpass.html#LIBPQ-PGPASS (last paragraph)
+
+volumes:
+  pg_data:
+  elastic-certs:
+  elastic-data:
+  elastic-backup:
+  kibana-data:

@@ -17,8 +17,8 @@ import lombok.ToString;
 @Table(
         indexes = {
                 @Index(
-                        name = "index_kalendertag_datum ",
-                        columnList = "datum"
+                        name = "index_combined_datum_tagestyp ",
+                        columnList = "datum, tagestyp"
                 ),
                 @Index(
                         name = "index_kalendertag_next_start_date ",

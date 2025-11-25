@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -158,7 +159,6 @@ class MessstelleMapperTests {
         expected.setBemerkung(bean.getBemerkung());
         expected.setRealisierungsdatum(bean.getRealisierungsdatum());
         expected.setAbbaudatum(bean.getAbbaudatum());
-        expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
         expected.setPunkt(new GeoPoint(updatedData.getLatitude(), updatedData.getLongitude()));
         expected.setHersteller(bean.getHersteller());
@@ -167,6 +167,7 @@ class MessstelleMapperTests {
         expected.setMessfaehigkeiten(bean.getMessfaehigkeiten());
         expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
+        expected.setDatumLetztePlausibleMessung(LocalDate.parse(updatedData.getDatumLetztePlausibleMessung()));
         expected.setSichtbarDatenportal(updatedData.getSichtbarDatenportal());
         expected.setGeprueft(true);
         expected.setKommentar(updatedData.getKommentar());

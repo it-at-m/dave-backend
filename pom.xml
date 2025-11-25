@@ -40,6 +40,7 @@
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
         <shedlock.version>6.8.0</shedlock.version>
         <openapi-generator-version>7.13.0</openapi-generator-version>
+        <openapi-ui.version>2.8.13</openapi-ui.version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
         <ai.onnxruntime>1.22.0</ai.onnxruntime>
 
@@ -149,6 +150,13 @@
             <groupId>com.microsoft.onnxruntime</groupId>
             <artifactId>onnxruntime</artifactId>
             <version>${ai.onnxruntime}</version>
+        </dependency>
+
+        <!-- OpenAPI / Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${openapi-ui.version}</version>
         </dependency>
 
         <!-- ElasticSearch -->
@@ -338,10 +346,6 @@
         </dependency>
 
         <!-- Spring developer tools -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-hal-explorer</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

@@ -7,9 +7,11 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapperImpl;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
@@ -113,7 +115,13 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
         var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
@@ -233,7 +241,13 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
         var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
@@ -361,7 +375,13 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
 
         var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
         var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
@@ -496,7 +516,12 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.RAD);
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD)).thenReturn(Fahrzeugklasse.RAD);
 
         var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
         var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
@@ -616,7 +641,12 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions)).thenReturn(Fahrzeugklasse.RAD);
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD)).thenReturn(Fahrzeugklasse.RAD);
 
         final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
 

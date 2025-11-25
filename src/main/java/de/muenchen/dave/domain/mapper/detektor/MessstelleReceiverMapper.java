@@ -58,7 +58,7 @@ public interface MessstelleReceiverMapper {
             bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
         }
 
-        /**
+        /*
          * Die umfangreichste Fahrzeugklasse der Messfähigkeiten einer {@link MessstelleDto}
          * bestimmt die Fahrzeugklasse der {@link Messstelle}.
          */
@@ -114,7 +114,6 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "geprueft", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
-    @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
     @Mapping(target = "fahrzeugklasse", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 

@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMes
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.services.KalendertagService;
 import java.time.LocalDate;
@@ -494,7 +495,11 @@ class ValidierungServiceTest {
         fahrzeugOptions.setPersonenkraftwagen(true);
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
-        var result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        var result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.UNBEKANNT);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD);
+        assertThat(result, is(Fahrzeugklasse.RAD));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ);
         assertThat(result, is(Fahrzeugklasse.ACHT_PLUS_EINS));
 
         fahrzeugOptions = new FahrzeugOptionsDTO();
@@ -510,7 +515,11 @@ class ValidierungServiceTest {
         fahrzeugOptions.setPersonenkraftwagen(false);
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setRadverkehr(true);
-        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.UNBEKANNT);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD);
+        assertThat(result, is(Fahrzeugklasse.RAD));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ);
         assertThat(result, is(Fahrzeugklasse.ZWEI_PLUS_EINS));
 
         fahrzeugOptions = new FahrzeugOptionsDTO();
@@ -526,7 +535,11 @@ class ValidierungServiceTest {
         fahrzeugOptions.setPersonenkraftwagen(false);
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setRadverkehr(true);
-        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.UNBEKANNT);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD);
+        assertThat(result, is(Fahrzeugklasse.RAD));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ);
         assertThat(result, is(Fahrzeugklasse.SUMME_KFZ));
 
         fahrzeugOptions = new FahrzeugOptionsDTO();
@@ -542,7 +555,11 @@ class ValidierungServiceTest {
         fahrzeugOptions.setPersonenkraftwagen(false);
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setRadverkehr(true);
-        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.UNBEKANNT);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD);
         assertThat(result, is(Fahrzeugklasse.RAD));
 
         fahrzeugOptions = new FahrzeugOptionsDTO();
@@ -558,7 +575,11 @@ class ValidierungServiceTest {
         fahrzeugOptions.setPersonenkraftwagen(false);
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setRadverkehr(false);
-        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions);
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.UNBEKANNT);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD);
+        assertThat(result, is(nullValue()));
+        result = validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ);
         assertThat(result, is(nullValue()));
     }
 
