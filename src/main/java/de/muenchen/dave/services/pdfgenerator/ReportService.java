@@ -3,7 +3,6 @@ package de.muenchen.dave.services.pdfgenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import de.muenchen.dave.configuration.ReportConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -52,7 +51,7 @@ public class ReportService {
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
-    private final ReportConfiguration reportConfiguration;
+    private final ReportLogoService reportConfiguration;
 
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -76,13 +75,13 @@ public class ReportService {
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper,
-            final ReportConfiguration reportConfiguration) {
+            final ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
-        this.reportConfiguration = reportConfiguration;
+        this.reportConfiguration = reportLogoService;
 
     }
 

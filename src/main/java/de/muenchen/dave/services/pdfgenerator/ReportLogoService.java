@@ -1,20 +1,19 @@
-package de.muenchen.dave.configuration;
+package de.muenchen.dave.services.pdfgenerator;
 
-import de.muenchen.dave.services.pdfgenerator.ImageUtil;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Service;
 
 /**
  * Config for report settings.
  */
-@Configuration
+@Service
 @Slf4j
-public class ReportConfiguration {
+public class ReportLogoService {
 
     @Value("${dave.reports.logo-icon:#{null}}")
     private Resource logoIcon;

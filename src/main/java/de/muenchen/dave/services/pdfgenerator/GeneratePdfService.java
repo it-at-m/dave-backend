@@ -6,7 +6,6 @@ import com.github.mustachejava.MustacheFactory;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
-import de.muenchen.dave.configuration.ReportConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -99,7 +98,7 @@ public class GeneratePdfService {
 
     final FillPdfBeanService fillPdfBeanService;
     final FillZeitreihePdfBeanService fillZeitreihePdfBeanService;
-    final ReportConfiguration reportConfiguration;
+    final ReportLogoService reportLogoService;
 
     // Templates
     private Mustache belastungsplan;
@@ -135,10 +134,10 @@ public class GeneratePdfService {
     private Mustache zeitreiheCss;
 
     public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService,
-            ReportConfiguration reportConfiguration) {
+            ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.fillZeitreihePdfBeanService = fillZeitreihePdfBeanService;
-        this.reportConfiguration = reportConfiguration;
+        this.reportLogoService = reportLogoService;
 
     }
 
@@ -264,8 +263,8 @@ public class GeneratePdfService {
      */
     public PdfBean fillPdfBeanMustacheParts(final PdfBean bean) {
         bean.setGlobalCssMustachePart(getHtml(this.globalCss, bean));
-        bean.setLogoIcon(reportConfiguration.getLogoIconDataSource());
-        bean.setLogoSubtitle(reportConfiguration.getLogoSubtitle());
+        bean.setLogoIcon(reportLogoService.getLogoIconDataSource());
+        bean.setLogoSubtitle(reportLogoService.getLogoSubtitle());
         bean.setLogoMustachePart(getHtml(this.header, bean));
         bean.setFooterMustachePart(getHtml(this.footer, bean));
         return bean;
