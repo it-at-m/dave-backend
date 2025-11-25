@@ -104,7 +104,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
     public List<ExternalZaehlungDTO> getZaehlungenForExternal(final String dienstleisterKennung, final boolean isFachadmin)
             throws BrokenInfrastructureException {
-        return this.indexService.getZaehlungenForExternal(dienstleisterKennung, isFachadmin);
+        return this.indexService.getZaehlungenForExternal(dienstleisterKennung, true);
     }
 
     /**

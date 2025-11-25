@@ -101,6 +101,7 @@ dave:
     model-path: model/Rad_Modell_DAVE.onnx
   zaehlstelle:
     automatic-number-assignment: true
+    link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/src/de/SysSpec-arc42.md
 
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
