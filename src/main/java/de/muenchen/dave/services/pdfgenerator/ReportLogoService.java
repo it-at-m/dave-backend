@@ -9,7 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 /**
- * Config for report settings.
+ * Service for report logo settings.
  */
 @Service
 @Slf4j
