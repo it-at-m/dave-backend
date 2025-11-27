@@ -1,4 +1,4 @@
-package de.muenchen.dave.services.pdfgenerator;
+package de.muenchen.dave.util;
 
 import org.apache.commons.codec.binary.Base64;
 

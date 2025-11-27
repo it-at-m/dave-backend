@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.pdfgenerator;
 
+import de.muenchen.dave.util.ImageUtil;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import lombok.Getter;
