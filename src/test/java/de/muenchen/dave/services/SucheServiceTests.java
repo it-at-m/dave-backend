@@ -45,22 +45,22 @@ public class SucheServiceTests {
         assertThat(SucheService.mapZaehlungenToZaehlartenKarte(zaehlungen), is(new HashSet<>()));
 
         Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.getZaehlartkürzel(Zaehlart.H));
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
         zaehlung.setPunkt(new GeoPoint(1, 2));
         zaehlungen.add(zaehlung);
 
         zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.getZaehlartkürzel(Zaehlart.QR));
+        zaehlung.setZaehlart(Zaehlart.QJS.name());
         zaehlung.setPunkt(new GeoPoint(3, 4));
         zaehlungen.add(zaehlung);
 
         zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.getZaehlartkürzel(Zaehlart.N));
+        zaehlung.setZaehlart(Zaehlart.N.name());
         zaehlung.setPunkt(new GeoPoint(3, 4));
         zaehlungen.add(zaehlung);
 
         zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.getZaehlartkürzel(Zaehlart.T));
+        zaehlung.setZaehlart(Zaehlart.T.name());
         zaehlung.setPunkt(new GeoPoint(3, 4));
         zaehlungen.add(zaehlung);
 
@@ -68,13 +68,13 @@ public class SucheServiceTests {
         ZaehlartenKarteDTO zaehlartenKarte = new ZaehlartenKarteDTO();
         zaehlartenKarte.setLatitude(1.0);
         zaehlartenKarte.setLongitude(2.0);
-        zaehlartenKarte.setZaehlarten(new TreeSet<>(List.of("H")));
+        zaehlartenKarte.setZaehlarten(new TreeSet<>(List.of("FjS")));
         expected.add(zaehlartenKarte);
 
         zaehlartenKarte = new ZaehlartenKarteDTO();
         zaehlartenKarte.setLatitude(3.0);
         zaehlartenKarte.setLongitude(4.0);
-        zaehlartenKarte.setZaehlarten(new TreeSet<>(Arrays.asList("K", "QR", "T")));
+        zaehlartenKarte.setZaehlarten(new TreeSet<>(Arrays.asList("K", "QjS", "T")));
         expected.add(zaehlartenKarte);
 
         assertThat(SucheService.mapZaehlungenToZaehlartenKarte(zaehlungen), is(expected));
