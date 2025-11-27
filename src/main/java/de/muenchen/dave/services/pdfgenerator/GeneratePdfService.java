@@ -95,8 +95,10 @@ public class GeneratePdfService {
     Resource robotoBold;
     @Value("classpath:pdf/fonts/roboto/Roboto-Black.ttf")
     Resource robotoBlack;
-    FillPdfBeanService fillPdfBeanService;
-    FillZeitreihePdfBeanService fillZeitreihePdfBeanService;
+
+    final FillPdfBeanService fillPdfBeanService;
+    final FillZeitreihePdfBeanService fillZeitreihePdfBeanService;
+    final ReportLogoService reportLogoService;
 
     // Templates
     private Mustache belastungsplan;
@@ -131,9 +133,11 @@ public class GeneratePdfService {
     private Mustache zeitreiheTables;
     private Mustache zeitreiheCss;
 
-    public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService) {
+    public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService,
+            ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.fillZeitreihePdfBeanService = fillZeitreihePdfBeanService;
+        this.reportLogoService = reportLogoService;
 
     }
 
@@ -259,6 +263,8 @@ public class GeneratePdfService {
      */
     public PdfBean fillPdfBeanMustacheParts(final PdfBean bean) {
         bean.setGlobalCssMustachePart(getHtml(this.globalCss, bean));
+        bean.setLogoIcon(reportLogoService.getLogoIconDataSource());
+        bean.setLogoSubtitle(reportLogoService.getLogoSubtitle());
         bean.setLogoMustachePart(getHtml(this.header, bean));
         bean.setFooterMustachePart(getHtml(this.footer, bean));
         return bean;
