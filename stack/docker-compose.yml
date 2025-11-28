@@ -2,7 +2,7 @@ name: dave-stack
 
 services:
   setup:
-    image: elasticsearch:${STACK_VERSION}
+    image: docker.io/library/elasticsearch:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/elasticsearch/config/certs
     user: "0"
@@ -54,7 +54,7 @@ services:
     depends_on:
       setup:
         condition: service_healthy
-    image: elasticsearch:${STACK_VERSION}
+    image: docker.io/library/elasticsearch:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/elasticsearch/config/certs
       - elastic-data:/usr/share/elasticsearch/data
@@ -97,7 +97,7 @@ services:
     depends_on:
       elastic:
         condition: service_healthy
-    image: kibana:${STACK_VERSION}
+    image: docker.io/library/kibana:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/kibana/config/certs
       - kibana-data:/usr/share/kibana/data
