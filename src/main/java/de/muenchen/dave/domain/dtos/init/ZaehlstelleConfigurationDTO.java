@@ -8,4 +8,6 @@ import lombok.Data;
 public class ZaehlstelleConfigurationDTO {
 
     private boolean automaticNumberAssignment;
+
+    private String linkDocumentationCsvFileForUploadZaehlung;
 }
