@@ -2,6 +2,7 @@ name: dave-stack
 
 services:
   setup:
+    container_name: setup
     image: docker.io/library/elasticsearch:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/elasticsearch/config/certs
@@ -51,6 +52,7 @@ services:
       retries: 120
 
   elastic:
+    container_name: elastic
     depends_on:
       setup:
         condition: service_healthy
@@ -61,6 +63,8 @@ services:
       - elastic-backup:/usr/share/elasticsearch/backup
     ports:
       - 9200:9200
+    networks:
+      - dave-network
     environment:
       - node.name=elastic
       - cluster.name=elastic-cluster
@@ -93,7 +97,8 @@ services:
       timeout: 10s
       retries: 120
 
-  kibana:
+  dave-stack_kibana:
+    container_name: kibana
     depends_on:
       elastic:
         condition: service_healthy
@@ -103,6 +108,8 @@ services:
       - kibana-data:/usr/share/kibana/data
     ports:
       - 5601:5601
+    networks:
+      - dave-network
     environment:
       - SERVERNAME=kibana
       - ELASTICSEARCH_HOSTS=https://elastic:9200
@@ -121,6 +128,7 @@ services:
       retries: 120
 
   postgres:
+    container_name: postgres
     image: postgres:16.6-alpine3.21
     environment:
       - POSTGRES_DB=dave-db
@@ -130,6 +138,8 @@ services:
       - pg_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - dave-network
     healthcheck: &healthcheck
       test: [ "CMD-SHELL", "pg_isready -d postgres -U dave" ]
       interval: 30s
@@ -141,6 +151,7 @@ services:
 
   # see https://event-driven.io/en/automatically_connect_pgadmin_to_database/
   pg-admin:
+    container_name: pg-admin
     image: dpage/pgadmin4:8.14
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
@@ -150,6 +161,8 @@ services:
       - PGADMIN_LISTEN_PORT=5050
     ports:
       - "5050:5050"
+    networks:
+      - dave-network
     depends_on:
       - postgres
     healthcheck:
@@ -168,3 +181,7 @@ volumes:
   elastic-data:
   elastic-backup:
   kibana-data:
+
+networks:
+  dave-network:
+    driver: bridge  # Standardnetzwerktyp
