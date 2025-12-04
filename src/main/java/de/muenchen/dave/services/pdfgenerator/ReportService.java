@@ -51,6 +51,8 @@ public class ReportService {
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
+    private final ReportLogoService reportLogoService;
+
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
     private Mustache heading1AssetMustache;
@@ -72,12 +74,15 @@ public class ReportService {
             final FillPdfBeanService fillPdfBeanService,
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
-            final LadeZaehldatumMapper ladeZaehldatumMapper) {
+            final LadeZaehldatumMapper ladeZaehldatumMapper,
+            final ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
+        this.reportLogoService = reportLogoService;
+
     }
 
     public byte[] generateReportPdf(final List<BaseAsset> assetList, final String department) throws IOException {
@@ -92,8 +97,10 @@ public class ReportService {
         FillPdfBeanService.fillPdfBeanWithData(reportPdf, department);
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
         final LogoAsset logoAsset = new LogoAsset();
+        logoAsset.setLogoIcon(reportLogoService.getLogoIconDataSource());
+        logoAsset.setLogoSubtitle(reportLogoService.getLogoSubtitle());
         logoAsset.setType(AssetType.LOGO);
-        assetList.add(0, logoAsset);
+        assetList.addFirst(logoAsset);
         // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
         reportPdf.setCssFixed(this.generatePdfService.getHtml(this.dataTableCssMustacheFixed, logoAsset));
 

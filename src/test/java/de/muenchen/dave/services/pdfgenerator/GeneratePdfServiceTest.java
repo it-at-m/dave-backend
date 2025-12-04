@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class GeneratePdfServiceTest {
 
-    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null);
+    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null, null);
 
     @BeforeEach
     public void init() {

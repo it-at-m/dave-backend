@@ -3,9 +3,11 @@ package de.muenchen.dave.domain.enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.EnumUtils;
 
 @AllArgsConstructor
 @Getter
@@ -33,6 +35,12 @@ public enum Zaehlart {
     QR(Arrays.asList("QR", "Querschnitt", "Radverkehr")),
     // Radverkehrszählung
     R(Arrays.asList("R", "Rad", "Fahrrad", "Radverkehr", "Radverkehrszählung")),
+    // Querschnitt je Straßenseite
+    QJS(Arrays.asList("QjS", "Querschnitt", "Straßenseite")),
+    // Fuß & Rad je Straßenseite
+    FJS(Arrays.asList("FjS", "Fußverkehr", "Radverkehr", "Straßenseite")),
+    // Querung
+    QU(Arrays.asList("Qu", "Querung")),
     // Tunnel / Unterführung / Tief
     T(Arrays.asList("T", "Tunnel", "Unterführung", "Tief")),
     // Teilknoten
@@ -52,17 +60,26 @@ public enum Zaehlart {
     }
 
     /**
+     * @param zaehlart für welche das Kürzel zurückgegeben werden soll.
+     * @return das Kürzel der Zählart oder null falls die Zählart nicht existiert.
+     */
+    public static String getKuerzelForZaehlartOrNullIfZaehlartNotExisting(final String zaehlart) {
+        final var zaehlartAsEnum = EnumUtils.getEnum(Zaehlart.class, zaehlart);
+        return Objects.isNull(zaehlartAsEnum) ? null : getZaehlartKuerzel(zaehlartAsEnum);
+    }
+
+    /**
      * @return Eine {@link Map} mit dem Zaehlartkürzel als Key und der Liste an Bedeutungen als Value.
      */
     public static Map<String, List<String>> getEnumattributeAsMap() {
         return Arrays.stream(Zaehlart.values())
                 .collect(Collectors.toMap(
-                        Zaehlart::getZaehlartkürzel,
+                        Zaehlart::getZaehlartKuerzel,
                         Zaehlart::getBedeutung));
     }
 
-    public static String getZaehlartkürzel(final Zaehlart zaehlart) {
-        return zaehlart.getBedeutung().get(0);
+    public static String getZaehlartKuerzel(final Zaehlart zaehlart) {
+        return zaehlart.getBedeutung().getFirst();
     }
 
 }

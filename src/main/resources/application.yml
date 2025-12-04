@@ -18,6 +18,15 @@ server:
     whitelabel:
       enabled: false
 
+# OpenAPi configuration
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    csrf:
+      enabled: 'true'
+
 # Config for spring actuator endpoints
 management:
   server.port: ${server.port}
@@ -90,6 +99,9 @@ dave:
     shedlock: 1380m
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
+  zaehlstelle:
+    automatic-number-assignment: true
+    link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md
 
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
