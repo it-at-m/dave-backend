@@ -1,13 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.util;
 
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ChartLegendUtil {
@@ -18,7 +13,7 @@ public final class ChartLegendUtil {
 
     public static final String LASTZUEGE = "Lz";
 
-    public static final String BUSSE = "Busse";
+    public static final String BUSSE = "Bus";
 
     public static final String KRAFTRAEDER = "Krad";
 

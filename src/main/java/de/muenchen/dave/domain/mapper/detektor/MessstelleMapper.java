@@ -14,10 +14,14 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.SuchwortUtil;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -27,12 +31,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface MessstelleMapper {
@@ -66,13 +64,13 @@ public interface MessstelleMapper {
     @Mapping(target = "stadtbezirkNummer", ignore = true)
     @Mapping(target = "bemerkung", ignore = true)
     @Mapping(target = "hersteller", ignore = true)
-    @Mapping(target = "fahrzeugKlassen", ignore = true)
-    @Mapping(target = "detektierteVerkehrsarten", ignore = true)
-    @Mapping(target = "datumLetztePlausibleMessung", ignore = true)
+    @Mapping(target = "fahrzeugklasse", ignore = true)
+    @Mapping(target = "detektierteVerkehrsart", ignore = true)
     @Mapping(target = "punkt", ignore = true)
     @Mapping(target = "suchwoerter", ignore = true)
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "messfaehigkeiten", ignore = true)
+    @Mapping(target = "lageplanVorhanden", ignore = true)
     Messstelle updateMessstelle(@MappingTarget Messstelle actual, EditMessstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     default void updateMessquerschnitt(Messquerschnitt actual, EditMessquerschnittDTO dto) {
@@ -133,9 +131,9 @@ public interface MessstelleMapper {
         dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
 
-    MessstelleOverviewDTO bean2overviewDto(Messstelle bean);
+    MessstelleOverviewDTO bean2overviewDto(Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
+    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
     default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean, @Context StadtbezirkMapper stadtbezirkMapper) {
@@ -161,22 +159,8 @@ public interface MessstelleMapper {
         }
     }
 
-    @Mapping(target = "intervall", ignore = true)
     ReadMessfaehigkeitDTO messfaehigkeitBean2ReadMessfaehigkeitDto(Messfaehigkeit bean);
 
     List<ReadMessfaehigkeitDTO> messfaehigkeitBean2ReadMessfaehigkeitDto(List<Messfaehigkeit> bean);
-
-    @AfterMapping
-    default void messfaehigkeitBean2MessfaehigkeitDtoAftermapping(@MappingTarget ReadMessfaehigkeitDTO dto, Messfaehigkeit bean) {
-        if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_KOMPLETT.getMinutesPerIntervall().toString(), bean.getIntervall())) {
-            dto.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
-        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_HALB.getMinutesPerIntervall().toString(), bean.getIntervall())) {
-            dto.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
-        } else if (StringUtils.equalsIgnoreCase(ZaehldatenIntervall.STUNDE_VIERTEL.getMinutesPerIntervall().toString(), bean.getIntervall())) {
-            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
-        } else {
-            dto.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
-        }
-    }
 
 }

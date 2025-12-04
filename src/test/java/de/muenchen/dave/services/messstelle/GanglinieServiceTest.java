@@ -6,6 +6,12 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -101,7 +100,7 @@ class GanglinieServiceTest {
         final var result = ganglinieService.ladeGanglinie(intervals, optionsFahrzeuge);
 
         final var expected = new LadeZaehldatenSteplineDTO();
-        expected.setLegend(List.of("Pkw", "Lkw", "Lz", "Lfw", "Busse", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
+        expected.setLegend(List.of("Pkw", "Lfw", "Lkw", "Lz", "Bus", "Krad", "Rad", "Kfz", "SV", "SV %", "GV", "GV %"));
         expected.setRangeMax(20);
         expected.setRangeMaxPercent(14);
         expected.setXAxisDataFirstChart(List.of("00:00", "00:30", "01:00"));
@@ -113,19 +112,19 @@ class GanglinieServiceTest {
         seriesEntry.setYAxisIndex(0);
         seriesEntries.add(seriesEntry);
         seriesEntry = new StepLineSeriesEntryIntegerDTO();
-        seriesEntry.setName("Lkw");
+        seriesEntry.setName("Lfw");
         seriesEntry.setYAxisData(List.of(3, 4, 5));
         seriesEntry.setXAxisIndex(0);
         seriesEntry.setYAxisIndex(0);
         seriesEntries.add(seriesEntry);
         seriesEntry = new StepLineSeriesEntryIntegerDTO();
-        seriesEntry.setName("Lz");
+        seriesEntry.setName("Lkw");
         seriesEntry.setYAxisData(List.of(7, 8, 9));
         seriesEntry.setXAxisIndex(0);
         seriesEntry.setYAxisIndex(0);
         seriesEntries.add(seriesEntry);
         seriesEntry = new StepLineSeriesEntryIntegerDTO();
-        seriesEntry.setName("Lfw");
+        seriesEntry.setName("Lz");
         seriesEntry.setYAxisData(List.of(1, 2, 3));
         seriesEntry.setXAxisIndex(0);
         seriesEntry.setYAxisIndex(0);

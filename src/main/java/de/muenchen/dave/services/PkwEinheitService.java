@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
- */
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.PkwEinheit;
@@ -9,9 +5,8 @@ import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PkwEinheitService {

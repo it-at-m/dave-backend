@@ -1,13 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.domain.dtos.laden;
-
-import lombok.Data;
 
 import java.util.Map;
 import java.util.Set;
+import lombok.Data;
 
 /**
  * Klasse stellt die möglichen Fahrbeziehung zur Verfügung welche ausgewählt werden können.

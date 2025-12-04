@@ -1,8 +1,10 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
@@ -10,7 +12,16 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.Verkehrsart;
+import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,19 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class BelastungsplanServiceTest {
@@ -207,6 +205,7 @@ class BelastungsplanServiceTest {
         //result
         final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
         options.setMessquerschnittIds(Set.of("1"));
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
 
         final IntervalDto interval = new IntervalDto();
         var result = belastungsplanService.ladeBelastungsplan(List.of(interval), totalSumOfAllMessquerschnitte, "123", options);
@@ -283,8 +282,8 @@ class BelastungsplanServiceTest {
         readMessstelleInfoDTO.setStandort("Hauptstraße 1");
         readMessstelleInfoDTO.setStadtbezirk("Mitte");
         readMessstelleInfoDTO.setStadtbezirkNummer(1);
-        readMessstelleInfoDTO.setFahrzeugKlassen("PKW, LKW");
-        readMessstelleInfoDTO.setDetektierteVerkehrsarten("PKW, LKW, Motorrad");
+        readMessstelleInfoDTO.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
+        readMessstelleInfoDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ);
         readMessstelleInfoDTO.setHersteller("Messung GmbH");
         readMessstelleInfoDTO.setLongitude(10.12345);
         readMessstelleInfoDTO.setLatitude(50.67890);
@@ -325,4 +324,24 @@ class BelastungsplanServiceTest {
         return readMessstelleInfoDTO;
     }
 
+    @Test
+    void isDirectionNorthOrSouth() {
+        ReadMessstelleInfoDTO messstelle = getMessstelle();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("O");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("W");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("w");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("O");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("N");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("S");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isTrue();
+        messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("s");
+        messstelle.getMessquerschnitte().getLast().setFahrtrichtung("n");
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isTrue();
+
+        messstelle.setMessquerschnitte(null);
+        Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();
+    }
 }

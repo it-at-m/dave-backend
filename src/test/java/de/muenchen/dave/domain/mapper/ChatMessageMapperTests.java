@@ -1,20 +1,18 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
-import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
-import de.muenchen.dave.domain.dtos.MessageTimeDTO;
-import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.UUID;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
+
+import de.muenchen.dave.domain.ChatMessage;
+import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
+import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class ChatMessageMapperTests {
@@ -35,11 +33,10 @@ public class ChatMessageMapperTests {
         assertThat(bean, hasProperty("uploaded", equalTo(dto.isUploaded())));
         assertThat(bean, hasProperty("viewed", equalTo(dto.isViewed())));
 
-        LocalDateTime localDateTime = LocalDateTime.of(2021, 1, 1, 10, 30, 0, 0);
-        assertThat(bean, hasProperty("timestamp", equalTo(localDateTime)));
+        assertThat(bean, hasProperty("timestamp", equalTo(dto.getTimestamp())));
 
         // Test für neue Nachricht ohne Zeitstempel
-        dto.setMessageTimeDTO(null);
+        dto.setTimestamp(null);
         bean = this.mapper.dto2bean(dto);
         // Millisekunden auf 0 setzen (sind sowieso irrelevant), da sonst LocalDateTime.now() nicht verglichen werden kann
         bean.setTimestamp(bean.getTimestamp().minusNanos(bean.getTimestamp().getNano()));
@@ -60,16 +57,7 @@ public class ChatMessageMapperTests {
         assertThat(dto, hasProperty("participantId", equalTo(bean.getParticipantId())));
         assertThat(dto, hasProperty("uploaded", equalTo(bean.getUploaded())));
         assertThat(dto, hasProperty("viewed", equalTo(bean.getViewed())));
-
-        MessageTimeDTO messageTimeDTO = new MessageTimeDTO();
-        messageTimeDTO.setYear(2021);
-        messageTimeDTO.setMonth(1);
-        messageTimeDTO.setDay(1);
-        messageTimeDTO.setHour(10);
-        messageTimeDTO.setMinute(30);
-        messageTimeDTO.setSecond(0);
-        messageTimeDTO.setMillisecond(0);
-        assertThat(dto, hasProperty("messageTimeDTO", equalTo(messageTimeDTO)));
+        assertThat(dto, hasProperty("timestamp", equalTo(bean.getTimestamp())));
     }
 
 }

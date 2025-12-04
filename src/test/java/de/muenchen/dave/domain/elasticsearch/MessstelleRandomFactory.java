@@ -2,14 +2,16 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class MessstelleRandomFactory {
     private static final Faker fakerInstance = Faker.instance();
@@ -20,8 +22,8 @@ public class MessstelleRandomFactory {
         messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
         messstelle.setStatus(MessstelleStatus.IN_BESTAND);
-        messstelle.setFahrzeugKlassen(fakerInstance.pokemon().name());
-        messstelle.setDetektierteVerkehrsarten("KFZ");
+        messstelle.setFahrzeugklasse(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
+        messstelle.setDetektierteVerkehrsart(Verkehrsart.KFZ);
         messstelle.setHersteller(fakerInstance.pokemon().name());
         messstelle.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
@@ -51,6 +53,7 @@ public class MessstelleRandomFactory {
         messstelle.setCustomSuchwoerter(customSuchwoerter);
         messstelle.setMessquerschnitte(MessquerschnittRandomFactory.getSomeMessquerschnitte());
         messstelle.setMessfaehigkeiten(MessfaehigkeitRandomFactory.getSomeMessfaehigkeiten());
+        messstelle.setLageplanVorhanden(fakerInstance.bool().bool());
         return messstelle;
     }
 
@@ -59,8 +62,9 @@ public class MessstelleRandomFactory {
         dto.setMstId(UUID.randomUUID().toString());
         dto.setName(fakerInstance.pokemon().name());
         dto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        dto.setFahrzeugKlassen(fakerInstance.pokemon().name());
-        dto.setDetektierteVerkehrsarten("KFZ");
+        dto.setFahrzeugklasse(
+                MessstelleDto.FahrzeugklasseEnum.values()[ThreadLocalRandom.current().nextInt(MessstelleDto.FahrzeugklasseEnum.values().length)]);
+        dto.setDetektierteVerkehrsart(MessstelleDto.DetektierteVerkehrsartEnum.KFZ);
         dto.setHersteller(fakerInstance.pokemon().name());
         dto.setRealisierungsdatum(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()

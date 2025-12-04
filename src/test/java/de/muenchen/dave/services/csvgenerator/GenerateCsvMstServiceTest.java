@@ -1,26 +1,26 @@
 package de.muenchen.dave.services.csvgenerator;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.messstelle.GenerateCsvMstService;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 class GenerateCsvMstServiceTest {
 
@@ -33,9 +33,9 @@ class GenerateCsvMstServiceTest {
         table.setEndeUhrzeit(LocalTime.of(8, 15));
         table.setType("Stunde");
         table.setPkw(1);
-        table.setLkw(2);
-        table.setLastzuege(3);
-        table.setLfw(4);
+        table.setLfw(2);
+        table.setLkw(3);
+        table.setLastzuege(4);
         table.setBusse(5);
         table.setFahrradfahrer(6);
         table.setFussgaenger(7);
@@ -55,9 +55,9 @@ class GenerateCsvMstServiceTest {
         table.setStartUhrzeit(LocalTime.of(8, 0));
         table.setEndeUhrzeit(LocalTime.of(8, 15));
         table.setPkw(1);
-        table.setLkw(2);
-        table.setLastzuege(3);
-        table.setLfw(4);
+        table.setLfw(2);
+        table.setLkw(3);
+        table.setLastzuege(4);
         table.setBusse(5);
         table.setFahrradfahrer(null);
         table.setFussgaenger(7);
@@ -115,14 +115,14 @@ class GenerateCsvMstServiceTest {
     @Test
     void getHeader() {
         final String header = csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge());
-        final String headerExpected = "von;bis;;Pkw;Lkw;Lz;Lfw;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;";
+        final String headerExpected = "von;bis;;Pkw;Lfw;Lkw;Lz;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;";
         assertThat(header, is(headerExpected));
     }
 
     @Test
     void getMetaHeader() {
-        final String header = csvService.getMetaHeader(csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge()));
-        final String headerExpected = "ID Messstelle;KFZ oder RAD;ausgewählter Messzeitraum / Einzeltag;ausgewählter Wochentag;ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\";;;;;;;;;;;";
+        final String header = csvService.getMetaHeader(csvService.getHeader(GenerateCsvMstServiceTest.getOptionsDTO().getFahrzeuge()), false);
+        final String headerExpected = "ID Messstelle;Detektierte Fahrzeuge;ausgewählter Messzeitraum / Einzeltag;ausgewählter Wochentag;ausgewählte MQ;;;;;;;;;;;";
         assertThat(header, is(headerExpected));
     }
 
@@ -130,18 +130,19 @@ class GenerateCsvMstServiceTest {
     void getMetaData() {
         final ReadMessstelleInfoDTO messstelleInfoDTO = new ReadMessstelleInfoDTO();
         messstelleInfoDTO.setMstId("123");
-        messstelleInfoDTO.setDetektierteVerkehrsarten("KFZ");
+        messstelleInfoDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ);
         ReadMessquerschnittDTO mq = new ReadMessquerschnittDTO();
         mq.setMqId("0");
 
         messstelleInfoDTO.setMessquerschnitte(List.of(mq));
 
         MessstelleOptionsDTO optionsDTO = GenerateCsvMstServiceTest.getOptionsDTO();
-        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO);
+        final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO,
+                optionsDTO.getZeitraum().size() == 1);
         final List<String> expectedData = new ArrayList<>();
         expectedData.add(messstelleInfoDTO.getMstId());
-        expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsarten());
-        expectedData.add(optionsDTO.getZeitraum().get(0).format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        expectedData.add(messstelleInfoDTO.getDetektierteVerkehrsart().name());
+        expectedData.add(optionsDTO.getZeitraum().getFirst().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         expectedData.add("");
         expectedData.add("Alle Messquerschnitte");
         expectedData.add(";;;;;;;;;;");

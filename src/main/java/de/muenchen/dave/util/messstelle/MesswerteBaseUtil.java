@@ -1,23 +1,27 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2023
- */
 package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MesswerteBaseUtil {
+
+    public static boolean isDateRange(final List<LocalDate> zeitraum) {
+        return CollectionUtils.isNotEmpty(zeitraum) && zeitraum.size() == 2 && !zeitraum.getFirst().isEqual(zeitraum.getLast());
+    }
 
     public static boolean isIntervalWithingZeitblock(final IntervalDto interval, final Zeitblock zeitblock) {
         return isTimeWithinZeitblock(interval.getDatumUhrzeitVon().toLocalTime(), zeitblock)
@@ -84,4 +88,82 @@ public final class MesswerteBaseUtil {
                         .scaleByPowerOfTen(2)
                         .doubleValue();
     }
+
+    /**
+     * Die Methode summiert die in den Parameter gegebenen Intervalle.
+     * <p>
+     * Der Messquerschnitt und der Tagestyp für den summierten Interval
+     * wird aus dem zweiten Interval entnommen.
+     * <p>
+     * Das Attribut {@link IntervalDto#getDatumUhrzeitVon()} des summierten Intervalls wird auf das
+     * kleinere gleichlautende Attribut der im Parameter gegebenen Intervalle gesetzt.
+     * <p>
+     * Das Attribut {@link IntervalDto#getDatumUhrzeitBis()} des summierten Intervalls wird auf das
+     * größere gleichlautende Attribut der im Parameter gegebenen Intervalle gesetzt.
+     *
+     * @param interval1 zum Summieren
+     * @param interval2 zum Summieren
+     * @return einen neuen Interval mit den summierten Werten
+     */
+    public static IntervalDto sumIntervalsAndAdaptDatumUhrzeitVonAndBisAndReturnNewInterval(
+            final IntervalDto interval1,
+            final IntervalDto interval2) {
+        final var interval = sumCountingValuesOfIntervalsAndReturnNewInterval(interval1, interval2);
+        interval.setMqId(interval2.getMqId());
+        interval.setTagesTyp(interval2.getTagesTyp());
+        final var intervalVon = getMin(interval1.getDatumUhrzeitVon(), interval2.getDatumUhrzeitVon());
+        interval.setDatumUhrzeitVon(intervalVon);
+        final var intervalBis = getMax(interval1.getDatumUhrzeitBis(), interval2.getDatumUhrzeitBis());
+        interval.setDatumUhrzeitBis(intervalBis);
+        return interval;
+    }
+
+    public static IntervalDto sumCountingValuesOfIntervalsAndReturnNewInterval(
+            final IntervalDto interval1,
+            final IntervalDto interval2) {
+        return sumCountingValuesOfAggregatesAndReturnNewTagesaggregatModelForMesswerte(interval1, interval2);
+    }
+
+    private static IntervalDto sumCountingValuesOfAggregatesAndReturnNewTagesaggregatModelForMesswerte(
+            final IntervalDto interval1,
+            final IntervalDto interval2) {
+        final var interval = new IntervalDto();
+        interval.setAnzahlLfw(sumValuesIfAnyNotNullOrReturnNull(interval1.getAnzahlLfw(), interval2.getAnzahlLfw()));
+        interval.setAnzahlKrad(sumValuesIfAnyNotNullOrReturnNull(interval1.getAnzahlKrad(), interval2.getAnzahlKrad()));
+        interval.setAnzahlLkw(sumValuesIfAnyNotNullOrReturnNull(interval1.getAnzahlLkw(), interval2.getAnzahlLkw()));
+        interval.setAnzahlBus(sumValuesIfAnyNotNullOrReturnNull(interval1.getAnzahlBus(), interval2.getAnzahlBus()));
+        interval.setAnzahlRad(sumValuesIfAnyNotNullOrReturnNull(interval1.getAnzahlRad(), interval2.getAnzahlRad()));
+        interval.setSummeAllePkw(sumValuesIfAnyNotNullOrReturnNull(interval1.getSummeAllePkw(), interval2.getSummeAllePkw()));
+        interval.setSummeLastzug(sumValuesIfAnyNotNullOrReturnNull(interval1.getSummeLastzug(), interval2.getSummeLastzug()));
+        interval.setSummeGueterverkehr(sumValuesIfAnyNotNullOrReturnNull(interval1.getSummeGueterverkehr(), interval2.getSummeGueterverkehr()));
+        interval.setSummeSchwerverkehr(sumValuesIfAnyNotNullOrReturnNull(interval1.getSummeSchwerverkehr(), interval2.getSummeSchwerverkehr()));
+        interval.setSummeKraftfahrzeugverkehr(
+                sumValuesIfAnyNotNullOrReturnNull(interval1.getSummeKraftfahrzeugverkehr(), interval2.getSummeKraftfahrzeugverkehr()));
+        return interval;
+    }
+
+    public static BigDecimal sumValuesIfAnyNotNullOrReturnNull(final BigDecimal... values) {
+        BigDecimal summedValue = null;
+        if (ObjectUtils.anyNotNull(values)) {
+            summedValue = Stream.of(values)
+                    .reduce(BigDecimal.ZERO,
+                            (value1, value2) -> ObjectUtils.defaultIfNull(value1, BigDecimal.ZERO).add(ObjectUtils.defaultIfNull(value2, BigDecimal.ZERO)));
+        }
+        return summedValue;
+    }
+
+    static LocalDateTime getMin(final LocalDateTime dateTime1, final LocalDateTime dateTime2) {
+        return Stream.of(dateTime1, dateTime2)
+                .filter(ObjectUtils::isNotEmpty)
+                .min(Comparator.naturalOrder())
+                .orElse(null);
+    }
+
+    static LocalDateTime getMax(final LocalDateTime dateTime1, final LocalDateTime dateTime2) {
+        return Stream.of(dateTime1, dateTime2)
+                .filter(ObjectUtils::isNotEmpty)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+    }
+
 }

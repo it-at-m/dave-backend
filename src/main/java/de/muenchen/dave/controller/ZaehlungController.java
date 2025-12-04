@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
@@ -19,6 +15,7 @@ import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @Slf4j
 @RestController

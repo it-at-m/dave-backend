@@ -1,18 +1,18 @@
 package de.muenchen.dave.domain.dtos.suche;
 
-import lombok.Data;
-
+import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class SucheComplexSuggestsDTO {
 
-    List<SucheWordSuggestDTO> wordSuggests;
+    List<SucheWordSuggestDTO> wordSuggests = new ArrayList<>();
 
-    List<SucheZaehlstelleSuggestDTO> zaehlstellenSuggests;
+    List<SucheZaehlstelleSuggestDTO> zaehlstellenSuggests = new ArrayList<>();
 
-    List<SucheZaehlungSuggestDTO> zaehlungenSuggests;
+    List<SucheZaehlungSuggestDTO> zaehlungenSuggests = new ArrayList<>();
 
-    List<SucheMessstelleSuggestDTO> messstellenSuggests;
+    List<SucheMessstelleSuggestDTO> messstellenSuggests = new ArrayList<>();
 
 }

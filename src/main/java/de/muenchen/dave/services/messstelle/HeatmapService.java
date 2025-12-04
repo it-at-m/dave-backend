@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
@@ -10,15 +6,14 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -158,14 +153,6 @@ public class HeatmapService {
                         Objects.isNull(intervall.getAnzahlBus()) ? null : intervall.getAnzahlBus().intValue(),
                         ChartLegendUtil.BUSSE_HEATMAP);
             }
-            if (fahrzeugOptions.isLieferwagen()) {
-                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-                        ladeZaehldatenHeatmap,
-                        heatMapEntryIndex.get(),
-                        klassenKategorienIndex.getAndIncrement(),
-                        Objects.isNull(intervall.getAnzahlLfw()) ? null : intervall.getAnzahlLfw().intValue(),
-                        ChartLegendUtil.LFW_HEATMAP);
-            }
             if (fahrzeugOptions.isLastzuege()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
                         ladeZaehldatenHeatmap,
@@ -181,6 +168,14 @@ public class HeatmapService {
                         klassenKategorienIndex.getAndIncrement(),
                         Objects.isNull(intervall.getAnzahlLkw()) ? null : intervall.getAnzahlLkw().intValue(),
                         ChartLegendUtil.LKW_HEATMAP);
+            }
+            if (fahrzeugOptions.isLieferwagen()) {
+                insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
+                        ladeZaehldatenHeatmap,
+                        heatMapEntryIndex.get(),
+                        klassenKategorienIndex.getAndIncrement(),
+                        Objects.isNull(intervall.getAnzahlLfw()) ? null : intervall.getAnzahlLfw().intValue(),
+                        ChartLegendUtil.LFW_HEATMAP);
             }
             if (fahrzeugOptions.isPersonenkraftwagen()) {
                 insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(

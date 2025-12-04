@@ -2,24 +2,22 @@ package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
-import de.muenchen.dave.domain.mapper.ChatMessageMapper;
 import de.muenchen.dave.services.ChatMessageService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
+import java.io.IOException;
+import java.util.Date;
+import java.util.UUID;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.util.Date;
-import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * Diese Klasse stellt eine Methode zum Verarbeiten einer Email bereit.
@@ -32,14 +30,10 @@ public class ProcessEmailService {
 
     private final String beginsWithStrings;
 
-    private final ChatMessageMapper chatMessageMapper;
-
     public ProcessEmailService(@Value("${dave.email.receiver.cut-email-body.line-contains-strings}") final String containsStrings,
-            @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}") final String beginsWithStrings,
-            final ChatMessageMapper chatMessageMapper) {
+            @Value("${dave.email.receiver.cut-email-body.line-begins-with-strings}") final String beginsWithStrings) {
         this.containsStrings = containsStrings;
         this.beginsWithStrings = beginsWithStrings;
-        this.chatMessageMapper = chatMessageMapper;
     }
 
     /**
@@ -227,10 +221,9 @@ public class ProcessEmailService {
         // MessageTimeDTO setzen
         final Date sentDate = msg.getSentDate();
         if (ObjectUtils.isNotEmpty(sentDate)) {
-            chatMessageDTO.setMessageTimeDTO(
-                    chatMessageMapper.localDateTimeToMessageTimeDTO(sentDate.toInstant()
-                            .atZone(ChatMessageService.ZONE)
-                            .toLocalDateTime()));
+            chatMessageDTO.setTimestamp(sentDate.toInstant()
+                    .atZone(ChatMessageService.ZONE)
+                    .toLocalDateTime());
         } else {
             log.warn("Der Sendezeitpunk der Email konnte nicht ermittelt werden. " +
                     "Der Zeitstempel der ChatMessage erhält beim Abspeichern die aktuelle Systemzeit.");

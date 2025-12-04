@@ -1,27 +1,24 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
-import de.muenchen.dave.domain.dtos.MessageTimeDTO;
-import de.muenchen.dave.domain.enums.Participant;
-import de.muenchen.dave.domain.mapper.ChatMessageMapperImpl;
-import de.muenchen.dave.services.email.ProcessEmailService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
+import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.enums.Participant;
+import de.muenchen.dave.services.email.ProcessEmailService;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Date;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ProcessEmailServiceTest {
 
@@ -32,8 +29,7 @@ public class ProcessEmailServiceTest {
     public ProcessEmailServiceTest() {
         this.processEmailService = new ProcessEmailService(
                 "Landeshauptstadt München;Schuh&Co.GmbH",
-                "Von:;-----Ursprüngliche Nachricht-----",
-                new ChatMessageMapperImpl());
+                "Von:;-----Ursprüngliche Nachricht-----");
         this.message = Mockito.mock(Message.class);
         this.date = new Date();
     }
@@ -56,15 +52,8 @@ public class ProcessEmailServiceTest {
         chatMessageDTO.setContent("Antwort");
         chatMessageDTO.setType("text");
 
-        final MessageTimeDTO messageTimeDTO = new MessageTimeDTO();
         final LocalDateTime sentDate = date.toInstant().atZone(ChatMessageService.ZONE).toLocalDateTime();
-        messageTimeDTO.setYear(sentDate.getYear());
-        messageTimeDTO.setMonth(sentDate.getMonth().getValue());
-        messageTimeDTO.setDay(sentDate.getDayOfMonth());
-        messageTimeDTO.setHour(sentDate.getHour());
-        messageTimeDTO.setMinute(sentDate.getMinute());
-        messageTimeDTO.setSecond(sentDate.getSecond());
-        chatMessageDTO.setMessageTimeDTO(messageTimeDTO);
+        chatMessageDTO.setTimestamp(sentDate);
 
         assertThat(processEmailService.processEmail(message), is(chatMessageDTO));
 
@@ -75,7 +64,7 @@ public class ProcessEmailServiceTest {
 
         // Email ohne Zeitstempel
         Mockito.when(message.getSentDate()).thenReturn(null);
-        Assertions.assertNull(processEmailService.processEmail(message).getMessageTimeDTO());
+        Assertions.assertNull(processEmailService.processEmail(message).getTimestamp());
 
         // Email ohne Inhalt
         Mockito.when(message.getContent()).thenReturn(null);

@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
- */
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.ChatMessage;
@@ -15,13 +11,12 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ChatMessageService {
@@ -67,7 +62,7 @@ public class ChatMessageService {
         final Zaehlung zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId().toString());
         if (chatMessage.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId() ||
                 SEND_EMAIL_TO_EXTERNAL_FOR_STATUS.contains(zaehlung.getStatus())) {
-            emailSendService.sendEmail(chatMessage);
+            emailSendService.sendEmailForChatMessage(chatMessage);
         }
 
         final Participant participant = (chatMessageDTO.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.MOBILITAETSREFERAT
@@ -151,7 +146,7 @@ public class ChatMessageService {
         chatMessageRepository.saveAndFlush(message);
 
         if (sendEmail) {
-            emailSendService.sendEmail(message);
+            emailSendService.sendEmailForChatMessage(message);
         }
     }
 

@@ -1,5 +1,4 @@
 {{#datentabelleZaehldaten}}
-  <h5 class="datentabelle">{{tableTitle}}</h5>
   <table class="datentabelle">
     <thead>
     <tr>
@@ -41,6 +40,11 @@
           Pkw
         </th>
       {{/showPersonenkraftwagen}}
+      {{#showLieferwagen}}
+        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-lieferwagen">
+            Lfw
+        </th>
+      {{/showLieferwagen}}
       {{#showLastkraftwagen}}
         <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-lastkraftwagen">
           Lkw
@@ -51,11 +55,6 @@
           Lz
         </th>
       {{/showLastzuege}}
-      {{#showLieferwagen}}
-        <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-lieferwagen">
-          Lfw
-        </th>
-      {{/showLieferwagen}}
       {{#showBusse}}
         <th class="datentabelle-header datentabelle-border-bottom datentabelle-fahrzeugtypen datentabelle-busse">
           Bus
@@ -119,6 +118,11 @@
             {{pkw}}
           </td>
         {{/showPersonenkraftwagen}}
+        {{#showLieferwagen}}
+          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-lieferwagen">
+            {{lfw}}
+          </td>
+        {{/showLieferwagen}}
         {{#showLastkraftwagen}}
           <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-lastkraftwagen">
             {{lkw}}
@@ -129,11 +133,6 @@
             {{lastzuege}}
           </td>
         {{/showLastzuege}}
-        {{#showLieferwagen}}
-          <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-lieferwagen">
-            {{lfw}}
-          </td>
-        {{/showLieferwagen}}
         {{#showBusse}}
           <td class="datentabelle-cell-numeric datentabelle-fahrzeugtypen datentabelle-busse">
             {{busse}}

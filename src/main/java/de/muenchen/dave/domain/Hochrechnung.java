@@ -1,15 +1,10 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
-
 import java.math.BigDecimal;
+import lombok.Data;
 
 /**
  * Die Hochrechnung und die hochgerechneten Werte zur Ermittlung des Tageswert einer Zaehlung vom

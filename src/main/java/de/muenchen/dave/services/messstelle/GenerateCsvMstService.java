@@ -7,19 +7,19 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -48,20 +48,23 @@ public class GenerateCsvMstService {
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
         final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
 
+        final boolean isSingleDay = !options.getZeitraum().isEmpty() && options.getZeitraum().getFirst().isEqual(options.getZeitraum().getLast());
+
         final StringBuilder csvBuilder = new StringBuilder();
+
         final String header = getHeader(fahrzeugOptions);
 
-        final String metaHeader = getMetaHeader(header);
-        final String metaData = getMetaData(messstelle, header, options);
+        final String metaHeader = getMetaHeader(header, isSingleDay);
+        final String metaData = getMetaData(messstelle, header, options, isSingleDay);
         csvBuilder.append(metaHeader);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         csvBuilder.append(metaData);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         csvBuilder.append(header);
-        csvBuilder.append("\n");
+        csvBuilder.append(StringUtils.LF);
         data.forEach(dat -> {
             csvBuilder.append(getData(fahrzeugOptions, dat));
-            csvBuilder.append("\n");
+            csvBuilder.append(StringUtils.LF);
         });
         final CsvDTO csvAsString = new CsvDTO();
         csvAsString.setCsvAsString(new String(csvBuilder));
@@ -74,19 +77,21 @@ public class GenerateCsvMstService {
      * @param header Zur Berechnung der Anzahl der Semikolons
      * @return Csv-Zeile
      */
-    public String getMetaHeader(final String header) {
+    public String getMetaHeader(final String header, final boolean isSingleDay) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
 
         final StringBuilder metaHeader = new StringBuilder();
         metaHeader.append("ID Messstelle");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("KFZ oder RAD");
+        metaHeader.append("Detektierte Fahrzeuge");
         metaHeader.append(SEMIKOLON);
         metaHeader.append("ausgewählter Messzeitraum / Einzeltag");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("ausgewählter Wochentag");
+        if (!isSingleDay) {
+            metaHeader.append("ausgewählter Wochentag");
+        }
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+        metaHeader.append("ausgewählte MQ");
 
         metaHeader.append(SEMIKOLON.repeat(Math.max(0, neededSemikolons - 3)));
         return new String(metaHeader);
@@ -100,22 +105,22 @@ public class GenerateCsvMstService {
      * @param options Zur Anzeige der Fahrbeziehung
      * @return Csv-Zeile
      */
-    public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options) {
+    public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options, final boolean isSingleDay) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
         final StringBuilder metaData = new StringBuilder();
         metaData.append(messstelle.getMstId());
         metaData.append(SEMIKOLON);
-        metaData.append(messstelle.getDetektierteVerkehrsarten());
+        metaData.append(messstelle.getDetektierteVerkehrsart().name());
         metaData.append(SEMIKOLON);
         if (CollectionUtils.isNotEmpty(options.getZeitraum())) {
-            metaData.append(options.getZeitraum().get(0).format(DDMMYYYY));
-            if (options.getZeitraum().size() == 2) {
+            metaData.append(options.getZeitraum().getFirst().format(DDMMYYYY));
+            if (!isSingleDay) {
                 metaData.append(" bis ");
-                metaData.append(options.getZeitraum().get(1).format(DDMMYYYY));
+                metaData.append(options.getZeitraum().getLast().format(DDMMYYYY));
             }
         }
         metaData.append(SEMIKOLON);
-        if (ObjectUtils.isNotEmpty(options.getTagesTyp())) {
+        if (!isSingleDay && ObjectUtils.isNotEmpty(options.getTagesTyp())) {
             metaData.append(options.getTagesTyp().getBeschreibung());
         }
         metaData.append(SEMIKOLON);
@@ -129,7 +134,8 @@ public class GenerateCsvMstService {
                     final Set<String> messquerschnittIdsSorted = options.getMessquerschnittIds().stream().sorted().collect(
                             Collectors.toCollection(LinkedHashSet::new));
                     if (messquerschnittIdsSorted.contains(mq.getMqId())) {
-                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), mq.getFahrtrichtung(), mq.getStandort()));
+                        mqData.add(String.format("%s - %s - %s", mq.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(mq.getFahrtrichtung()),
+                                mq.getStandort()));
                     }
                 });
                 metaData.append(StringUtils.join(mqData, ", "));
@@ -154,10 +160,11 @@ public class GenerateCsvMstService {
         }
         data.append(SEMIKOLON);
         if (ObjectUtils.isNotEmpty(dataCsv.getEndeUhrzeit())) {
-            if (StringUtils.equals(dataCsv.getEndeUhrzeit().toString(), UHRZEIT_23_59)) {
+            if (StringUtils.startsWith(dataCsv.getEndeUhrzeit().toString(), UHRZEIT_23_59)) {
                 data.append(UHRZEIT_24_00);
+            } else {
+                data.append(dataCsv.getEndeUhrzeit());
             }
-            data.append(dataCsv.getEndeUhrzeit());
         }
         data.append(SEMIKOLON);
         if (StringUtils.isNotEmpty(dataCsv.getType())) {
@@ -171,6 +178,12 @@ public class GenerateCsvMstService {
             }
             data.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            if (dataCsv.getLfw() != null) {
+                data.append(dataCsv.getLfw());
+            }
+            data.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             if (dataCsv.getLkw() != null) {
                 data.append(dataCsv.getLkw());
@@ -180,12 +193,6 @@ public class GenerateCsvMstService {
         if (options.isLastzuege()) {
             if (dataCsv.getLastzuege() != null) {
                 data.append(dataCsv.getLastzuege());
-            }
-            data.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            if (dataCsv.getLfw() != null) {
-                data.append(dataCsv.getLfw());
             }
             data.append(SEMIKOLON);
         }
@@ -270,16 +277,16 @@ public class GenerateCsvMstService {
             header.append("Pkw");
             header.append(SEMIKOLON);
         }
+        if (options.isLieferwagen()) {
+            header.append("Lfw");
+            header.append(SEMIKOLON);
+        }
         if (options.isLastkraftwagen()) {
             header.append("Lkw");
             header.append(SEMIKOLON);
         }
         if (options.isLastzuege()) {
             header.append("Lz");
-            header.append(SEMIKOLON);
-        }
-        if (options.isLieferwagen()) {
-            header.append("Lfw");
             header.append(SEMIKOLON);
         }
         if (options.isBusse()) {

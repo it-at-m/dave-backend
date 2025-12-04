@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
@@ -10,11 +6,10 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.util.messstelle.GanglinieUtil;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -37,6 +32,13 @@ public class GanglinieService {
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(interval.getSummeAllePkw()));
                     }
+                    if (fahrzeugOptions.isLieferwagen()) {
+                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
+                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
+                        GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
+                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
+                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
+                    }
                     if (fahrzeugOptions.isLastkraftwagen()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLkw());
                         seriesEntries.getSeriesEntryLkw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLkw()));
@@ -50,13 +52,6 @@ public class GanglinieService {
                         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LASTZUEGE);
                         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
                                 GanglinieUtil.getIntValueIfNotNull(interval.getSummeLastzug()));
-                    }
-                    if (fahrzeugOptions.isLieferwagen()) {
-                        GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryLfw());
-                        seriesEntries.getSeriesEntryLfw().getYAxisData().add(GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
-                        GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, ChartLegendUtil.LFW);
-                        GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline,
-                                GanglinieUtil.getIntValueIfNotNull(interval.getAnzahlLfw()));
                     }
                     if (fahrzeugOptions.isBusse()) {
                         GanglinieUtil.setSeriesIndexForFirstChartValue(seriesEntries.getSeriesEntryBus());

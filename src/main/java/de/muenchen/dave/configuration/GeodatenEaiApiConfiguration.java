@@ -1,7 +1,6 @@
 package de.muenchen.dave.configuration;
 
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
-import de.muenchen.dave.geodateneai.gen.api.MessstelleOptionsmenuControllerApi;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.geodaten.ApiClient;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +41,6 @@ public class GeodatenEaiApiConfiguration {
     }
 
     @Bean
-    @Profile("no-security")
-    public MessstelleOptionsmenuControllerApi messstelleOptionsmenuControllerApi() {
-        final WebClient webClient = WebClient.builder().build();
-        final ApiClient apiClient = this.geodatenEaiApiClient(webClient);
-        return new MessstelleOptionsmenuControllerApi(apiClient);
-    }
-
-    @Bean
     @Profile("!no-security")
     public MesswerteApi securedMesswerteApi(final ClientRegistrationRepository clientRegistrationRepository,
             final OAuth2AuthorizedClientService authorizedClientService) {
@@ -65,15 +56,6 @@ public class GeodatenEaiApiConfiguration {
         final WebClient webClient = this.webClient(clientRegistrationRepository, authorizedClientService);
         final ApiClient apiClient = geodatenEaiApiClient(webClient);
         return new MessstelleApi(apiClient);
-    }
-
-    @Bean
-    @Profile("!no-security")
-    public MessstelleOptionsmenuControllerApi securedMessstelleOptionsmenuControllerApi(final ClientRegistrationRepository clientRegistrationRepository,
-            final OAuth2AuthorizedClientService authorizedClientService) {
-        final WebClient webClient = this.webClient(clientRegistrationRepository, authorizedClientService);
-        final ApiClient apiClient = geodatenEaiApiClient(webClient);
-        return new MessstelleOptionsmenuControllerApi(apiClient);
     }
 
     private ApiClient geodatenEaiApiClient(final WebClient webClient) {

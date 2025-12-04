@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
- */
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
@@ -9,13 +5,13 @@ import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.mapper.HochrechnungsfaktorMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.HochrechnungsfaktorRepository;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class HochrechnungsfaktorService {
@@ -85,6 +81,7 @@ public class HochrechnungsfaktorService {
         return hochrechnungsfaktorRepository.findAll(Sort.by(SORTING_ATTRIBUTE).descending())
                 .stream()
                 .map(hochrechnungsfaktorMapper::bean2Dto)
+                .sorted(Comparator.comparing(HochrechnungsfaktorDTO::getMatrix))
                 .collect(Collectors.toList());
     }
 

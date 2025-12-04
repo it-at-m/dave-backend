@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-backend</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>3.0.0</version>
     <name>dave_backend</name>
     <description>Backend für DAVe</description>
 
@@ -14,34 +14,43 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>3.4.0</spring.boot.version>
-        <spring.cloud.version>2024.0.0</spring.cloud.version>
-        <logstash.encoder>7.4</logstash.encoder>
-        <apache.commons.collections4>4.4</apache.commons.collections4>
-        <apache.commons.csv>1.12.0</apache.commons.csv>
-        <apache.commons.io>2.18.0</apache.commons.io>
-        <apache.commons.lang3>3.17.0</apache.commons.lang3>
+        <spring.boot.version>3.5.4</spring.boot.version>
+        <spring.cloud.version>2025.0.0</spring.cloud.version>
+        <logstash.encoder>8.1</logstash.encoder>
+        <apache.commons.collections4>4.5.0</apache.commons.collections4>
+        <apache.commons.csv>1.14.1</apache.commons.csv>
+        <apache.commons.io>2.20.0</apache.commons.io>
+        <apache.commons.lang3>3.18.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
-        <apache.commons.exec>1.4.0</apache.commons.exec>
-        <apache.poi>5.3.0</apache.poi>
-        <guava>33.3.1-jre</guava>
+        <apache.commons.exec>1.5.0</apache.commons.exec>
+        <apache.poi>5.4.1</apache.poi>
+        <guava>33.4.8-jre</guava>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
         <apache.sis.version>1.4</apache.sis.version>
-        <org.jsoup.version>1.18.1</org.jsoup.version>
+        <org.jsoup.version>1.20.1</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>2.1.0</maven-scm-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
-        <org.projectlombok.lombok.version>1.18.36</org.projectlombok.lombok.version>
+        <org.projectlombok.lombok.version>1.18.38</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
-        <shedlock.version>6.0.2</shedlock.version>
-        <openapi-generator-version>7.10.0</openapi-generator-version>
+        <shedlock.version>6.8.0</shedlock.version>
+        <openapi-generator-version>7.13.0</openapi-generator-version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
-        <ai.onnxruntime>1.20.0</ai.onnxruntime>
+        <ai.onnxruntime>1.22.0</ai.onnxruntime>
+
+        <!-- Linting & Formatting -->
+        <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
+        <itm-java-codeformat.version>1.0.10</itm-java-codeformat.version>
+
+        <!-- Spotless P2 Mirror configuration (e.g. required when using company internal registry -->
+        <p2.username /> <!-- must be empty, override via Maven settings.xml if needed -->
+        <p2.password /> <!-- must be empty, override via Maven settings.xml if needed -->
+        <p2.mirror>download.eclipse.org</p2.mirror>
     </properties>
 
     <scm>
@@ -76,7 +85,7 @@
                             <dependency>
                                 <groupId>org.junit.jupiter</groupId>
                                 <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.10.5</version>
+                                <version>5.12.2</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -102,7 +111,7 @@
                             <dependency>
                                 <groupId>org.junit.jupiter</groupId>
                                 <artifactId>junit-jupiter-engine</artifactId>
-                                <version>5.10.5</version>
+                                <version>5.12.2</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -305,7 +314,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.11.0</version>
+            <version>2.13.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -531,30 +540,39 @@
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
+
+
+            <!-- Linting -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.28.0</version>
+                <version>${spotless-maven-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>de.muenchen.oss</groupId>
                         <artifactId>itm-java-codeformat</artifactId>
-                        <version>1.0.7</version>
+                        <version>${itm-java-codeformat.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
                     <java>
                         <includes>
-                            <include>src/main/java/**/*.java</include>
-                            <!--  Check application code  -->
-                            <include>src/test/java/**/*.java</include>
-                            <!--  Check application tests code  -->
+                            <include>src/main/java/**/*.java</include> <!-- Check application code -->
+                            <include>src/test/java/**/*.java</include> <!-- Check application tests code -->
                         </includes>
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
+                            <p2Mirrors>
+                                <p2Mirror>
+                                    <prefix>https://download.eclipse.org</prefix>
+                                    <url>https://${p2.username}:${p2.password}@${p2.mirror}</url>
+                                </p2Mirror>
+                            </p2Mirrors>
                         </eclipse>
                         <trimTrailingWhitespace />
                         <endWithNewline />
+                        <importOrder />
+                        <removeUnusedImports />
                     </java>
                 </configuration>
                 <executions>
@@ -564,6 +582,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
             </plugin>
 
             <plugin>
@@ -617,7 +640,55 @@
                             </globalProperties>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>dave-document-storage</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api/document-storage.json</inputSpec>
+                            <library>webclient</library>
+                            <generatorName>java</generatorName>
+
+                            <apiPackage>de.muenchen.dave.documentstorage.gen.api</apiPackage>
+                            <modelPackage>de.muenchen.dave.documentstorage.gen.model</modelPackage>
+                            <invokerPackage>de.muenchen.dave.documentstorage.gen.daten</invokerPackage>
+
+                            <!-- Die Mappings sind erforderlich um den Request und Response-Datentyp java.time.LocalTime verwenden zu können -->
+                            <!-- OpenApi besitzt keine Interpretation des Java-Datentyp java.time.LocalTime analog zu java.time.LocalDate und java.time.LocalDateTime -->
+                            <typeMappings>
+                                <typeMapping>ModelLocalTime=LocalTime</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>de.muenchen.dave.documentstorage.gen.model.ModelLocalTime=java.time.LocalTime</importMapping>
+                            </importMappings>
+
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelDocumentation>false</generateModelDocumentation>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+
+                            <configOptions>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
+
+                            <globalProperties>
+                                <supportingFiles>
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                </supportingFiles>
+                            </globalProperties>
+                        </configuration>
+                    </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -1,13 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import java.io.Serializable;
+import lombok.Data;
 
 @Data
 public class FahrzeugOptionsDTO implements Serializable {

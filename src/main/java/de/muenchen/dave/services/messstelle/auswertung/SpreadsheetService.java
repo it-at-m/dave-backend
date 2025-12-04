@@ -9,6 +9,16 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,15 +32,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 @RequiredArgsConstructor
 @Service
@@ -60,7 +61,7 @@ public class SpreadsheetService {
         addMetaHeaderToRow(gesamtSheet.createRow(gesamtRowIndex++), false);
         addMetaDataToRow(gesamtSheet.createRow(gesamtRowIndex++), options);
         addEmptyRowToSheetAtIndex(gesamtSheet, gesamtRowIndex++);
-        addDataHeaderToRow(gesamtSheet.createRow(gesamtRowIndex), options.getFahrzeuge(), true);
+        addDataHeaderToRow(gesamtSheet.createRow(gesamtRowIndex), options, true);
 
         final AtomicReference<Integer> rowOffset = new AtomicReference<>(0);
         // Füge Daten zum Dokument hinzu.
@@ -71,7 +72,7 @@ public class SpreadsheetService {
             addMetaHeaderToRow(mstSheet.createRow(mstRowIndex++), false);
             addMetaDataToRow(mstSheet.createRow(mstRowIndex++), options);
             addEmptyRowToSheetAtIndex(mstSheet, mstRowIndex++);
-            addDataHeaderToRow(mstSheet.createRow(mstRowIndex), options.getFahrzeuge(), false);
+            addDataHeaderToRow(mstSheet.createRow(mstRowIndex), options, false);
             final List<Auswertung> auswertungen = ListUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
             addDataToSheet(
                     mstSheet,
@@ -90,7 +91,7 @@ public class SpreadsheetService {
                 addMetaHeaderToRow(mqSheet.createRow(mqRowIndex++), true);
                 addMetaDataToMessquerschnittRow(mqSheet.createRow(mqRowIndex++), options, auswertungMessstelle.getMstId(), mqId);
                 addEmptyRowToSheetAtIndex(mqSheet, mqRowIndex++);
-                addDataHeaderToRow(mqSheet.createRow(mqRowIndex), options.getFahrzeuge(), false);
+                addDataHeaderToRow(mqSheet.createRow(mqRowIndex), options, false);
                 addDataToSheet(
                         mqSheet,
                         ListUtils.emptyIfNull(auswertungenProMessquerschnitt),
@@ -120,7 +121,7 @@ public class SpreadsheetService {
             addStringToCell(row.createCell(cellIndex, CellType.STRING), "Messquerschnitt (Merkmale \"MQ-ID - Richtung - Standort MQ\")");
         } else {
             addStringToCell(row.createCell(cellIndex, CellType.STRING),
-                    "ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+                    "ausgewählter Messquerschnitt");
         }
     }
 
@@ -135,7 +136,7 @@ public class SpreadsheetService {
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), options.getTagesTyp().getBeschreibung());
 
         if (CollectionUtils.isNotEmpty(options.getMessstelleAuswertungIds())) {
-            String cellValue = "Alle Messquerschnitte";
+            String cellValue = "alle Messquerschnitte";
             if (options.getMessstelleAuswertungIds().size() == 1) {
                 final Optional<MessstelleAuswertungIdDTO> first = options.getMessstelleAuswertungIds().stream().findFirst();
                 final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = first.get();
@@ -176,41 +177,35 @@ public class SpreadsheetService {
      * Legt pro gewählte Fahrzeugoption eine Zelle mit dem Header in der Zeile an.
      *
      * @param row aktuelle Zeile
-     * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
+     * @param options bei der Auswertung gewählte Optionen
      * @param isGesamtSheet Flag falls es das GesamtSheet ist
      */
-    protected void addDataHeaderToRow(final Row row, final FahrzeugOptionsDTO fahrzeugOptions, final boolean isGesamtSheet) {
+    protected void addDataHeaderToRow(final Row row, final MessstelleAuswertungOptionsDTO options, final boolean isGesamtSheet) {
         int headerCellIndex = 0;
-        addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Zeitintervall");
+        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final List<AuswertungsZeitraum> zeitraum = options.getZeitraum();
+        if (CollectionUtils.isNotEmpty(zeitraum)) {
+            if (AuswertungsZeitraum.isHalbjahr(zeitraum.getFirst())) {
+                addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Halbjahr");
+            } else if (AuswertungsZeitraum.isQuartal(zeitraum.getFirst())) {
+                addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Quartal");
+            } else if (!AuswertungsZeitraum.isJahr(zeitraum.getFirst())) {
+                addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Monat");
+            }
+        }
+        addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Jahr");
         if (isGesamtSheet) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "MstId");
         }
-        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KFZ");
-        }
-        if (fahrzeugOptions.isSchwerverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV");
-        }
-        if (fahrzeugOptions.isGueterverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
-        }
-        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV%");
-        }
-        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV%");
-        }
-        if (fahrzeugOptions.isRadverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "RAD");
-        }
-        if (fahrzeugOptions.isFussverkehr()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "FUß");
-        }
-        if (fahrzeugOptions.isLastkraftwagen()) {
-            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LKW");
+
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "PKW");
         }
         if (fahrzeugOptions.isLieferwagen()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LFW");
+        }
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LKW");
         }
         if (fahrzeugOptions.isLastzuege()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "LZ");
@@ -221,9 +216,30 @@ public class SpreadsheetService {
         if (fahrzeugOptions.isKraftraeder()) {
             addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KRAD");
         }
-        if (fahrzeugOptions.isPersonenkraftwagen()) {
-            addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "PKW");
+        if (fahrzeugOptions.isRadverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "RAD");
         }
+        if (fahrzeugOptions.isFussverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "FUß");
+        }
+
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "KFZ");
+        }
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV");
+        }
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "SV%");
+        }
+        if (fahrzeugOptions.isGueterverkehr()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV");
+        }
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "GV%");
+        }
+        addStringToCell(row.createCell(headerCellIndex++, CellType.STRING), "Anzahl relevante Tage");
+        addStringToCell(row.createCell(headerCellIndex, CellType.STRING), "Anzahl plausible Tage");
     }
 
     /**
@@ -285,70 +301,64 @@ public class SpreadsheetService {
             final boolean isGesamtSheet) {
 
         int cellIndex = 0;
-        if (AuswertungsZeitraum.JAHRE.equals(auswertung.getZeitraum().getAuswertungsZeitraum())) {
-            addStringToCell(row.createCell(cellIndex, CellType.STRING), String.valueOf(auswertung.getZeitraum().getStart().getYear()));
-        } else {
-            addStringToCell(row.createCell(cellIndex, CellType.STRING),
-                    String.format("%s / %s", auswertung.getZeitraum().getAuswertungsZeitraum().getText(), auswertung.getZeitraum().getStart().getYear()));
+        if (!AuswertungsZeitraum.JAHRE.equals(auswertung.getZeitraum().getAuswertungsZeitraum())) {
+            addStringToCell(row.createCell(cellIndex++, CellType.STRING), auswertung.getZeitraum().getAuswertungsZeitraum().getText());
         }
-        cellIndex++;
+        addStringToCell(row.createCell(cellIndex++, CellType.STRING), String.valueOf(auswertung.getZeitraum().getStart().getYear()));
 
         if (isGesamtSheet) {
-            addStringToCell(row.createCell(cellIndex, CellType.STRING), auswertung.getObjectId());
-            cellIndex++;
+            addStringToCell(row.createCell(cellIndex++, CellType.STRING), auswertung.getObjectId());
         }
-        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeKraftfahrzeugverkehr());
-            cellIndex++;
+        if (fahrzeugOptions.isPersonenkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeAllePkw());
         }
-        if (fahrzeugOptions.isSchwerverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeSchwerverkehr());
-            cellIndex++;
+        if (fahrzeugOptions.isLieferwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlLfw());
         }
-        if (fahrzeugOptions.isGueterverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
-            cellIndex++;
+        if (fahrzeugOptions.isLastkraftwagen()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlLkw());
         }
-        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentSchwerverkehr());
-            cellIndex++;
+        if (fahrzeugOptions.isLastzuege()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeLastzug());
         }
-        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
-            cellIndex++;
+        if (fahrzeugOptions.isBusse()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlBus());
+        }
+        if (fahrzeugOptions.isKraftraeder()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlKrad());
         }
         if (fahrzeugOptions.isRadverkehr()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlRad());
-            cellIndex++;
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getAnzahlRad());
         }
         if (fahrzeugOptions.isFussverkehr()) {
             // Wird aktuell noch nicht erfasst
-            addStringToCell(row.createCell(cellIndex, CellType.NUMERIC), StringUtils.EMPTY);
-            cellIndex++;
+            addStringToCell(row.createCell(cellIndex++, CellType.NUMERIC), StringUtils.EMPTY);
         }
-        if (fahrzeugOptions.isLastkraftwagen()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlLkw());
-            cellIndex++;
+        if (fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeKraftfahrzeugverkehr());
         }
-        if (fahrzeugOptions.isLieferwagen()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlLfw());
-            cellIndex++;
+        if (fahrzeugOptions.isSchwerverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeSchwerverkehr());
         }
-        if (fahrzeugOptions.isLastzuege()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeLastzug());
-            cellIndex++;
+        if (fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentSchwerverkehr());
         }
-        if (fahrzeugOptions.isBusse()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlBus());
-            cellIndex++;
+        if (fahrzeugOptions.isGueterverkehr()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getSummeGueterverkehr());
         }
-        if (fahrzeugOptions.isKraftraeder()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getAnzahlKrad());
-            cellIndex++;
+        if (fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), auswertung.getDaten().getProzentGueterverkehr());
         }
-        if (fahrzeugOptions.isPersonenkraftwagen()) {
-            addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), auswertung.getDaten().getSummeAllePkw());
-        }
+
+        final var numberOfRelevantKalendertage = Objects.isNull(auswertung.getNumberOfRelevantKalendertage())
+                ? null
+                : BigDecimal.valueOf(auswertung.getNumberOfRelevantKalendertage());
+        addBigDecimalToCell(row.createCell(cellIndex++, CellType.NUMERIC), numberOfRelevantKalendertage);
+
+        final var numberOfUnauffaelligeTage = Objects.isNull(auswertung.getNumberOfUnauffaelligeTage())
+                ? null
+                : BigDecimal.valueOf(auswertung.getNumberOfUnauffaelligeTage());
+        addBigDecimalToCell(row.createCell(cellIndex, CellType.NUMERIC), numberOfUnauffaelligeTage);
     }
 
     protected void addBigDecimalToCell(final Cell cell, final BigDecimal data) {
@@ -374,7 +384,7 @@ public class SpreadsheetService {
      * @return Messquerschnitt als String
      */
     protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
-        return String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+        return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                 messquerschnitt.getStandort());
     }
 

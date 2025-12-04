@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS optionsmenuesettings (
+    id character varying(36) NOT NULL,
+    created_time timestamp without time zone NOT NULL,
+    version bigint,
+    fahrzeugklasse character varying(255),
+    intervall character varying(255),
+    kraftfahrzeugverkehr_choosable_intervals jsonb,
+    schwerverkehr_choosable_intervals jsonb,
+    gueterverkehr_choosable_intervals jsonb,
+    schwerverkehrsanteil_prozent_choosable_intervals jsonb,
+    gueterverkehrsanteil_prozent_choosable_intervals jsonb,
+    radverkehr_choosable_intervals jsonb,
+    fussverkehr_choosable_intervals jsonb,
+    lastkraftwagen_choosable_intervals jsonb,
+    lastzuege_choosable_intervals jsonb,
+    busse_choosable_intervals jsonb,
+    kraftraeder_choosable_intervals jsonb,
+    personenkraftwagen_choosable_intervals jsonb,
+    lieferwagen_choosable_intervals jsonb,
+    CONSTRAINT optionsmenuesettings_pkey PRIMARY KEY (id),
+    CONSTRAINT unique_optionsmenuesettings_fahrzeugklasse_intervall UNIQUE (fahrzeugklasse, intervall)
+);

@@ -1,3 +1,6 @@
+# Environment-specific db schema name
+db.schema: dave
+
 spring:
 
   # Spring data rest
@@ -26,6 +29,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        default_schema: ${db.schema}
         format_sql: true
   datasource:
     username: sa
@@ -45,6 +49,8 @@ spring:
           client-secret:
           authorization-grant-type: client_credentials
 
+# Environment-specific suffix appended to the index name (may be empty)
+elasticsearch.index.suffix:
 elasticsearch:
   user: elastic
   password:
@@ -55,10 +61,19 @@ elasticsearch:
   socketTimeout: 30
 
 dave:
+  zaehlung:
+    status-updater:
+    #    disabled
+      cron: "-"
+      shedlock: 1m
   email:
     address: dave-dummy@muenchen.de
     password: dummy
   messstelle:
+    #    disabled
+    cron: "-"
+    shedlock: 1m
+  unauffaellige-tage:
     #    disabled
     cron: "-"
     shedlock: 1m

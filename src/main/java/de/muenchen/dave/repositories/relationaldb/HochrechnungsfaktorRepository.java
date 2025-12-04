@@ -1,16 +1,11 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface HochrechnungsfaktorRepository extends JpaRepository<Hochrechnungsfaktor, UUID> { //NOSONAR
 

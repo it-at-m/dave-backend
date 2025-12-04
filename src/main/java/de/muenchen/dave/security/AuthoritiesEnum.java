@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.security;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,5 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public enum AuthoritiesEnum {
 
     // Rollen
-    POWERUSER, ANWENDER, FACHADMIN, EXTERNAL,
+    POWERUSER,
+    ANWENDER,
+    FACHADMIN,
+    EXTERNAL,
 }

@@ -3,6 +3,7 @@ package de.muenchen.dave.services.messstelle.auswertung;
 import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
@@ -10,25 +11,31 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWi
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.mapper.detektor.AuswertungMapper;
+import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.services.messstelle.ValidierungService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -44,6 +51,8 @@ public class AuswertungService {
     private final SpreadsheetService spreadsheetService;
 
     private final GanglinieGesamtauswertungService ganglinieGesamtauswertungService;
+
+    private final ValidierungService validierungService;
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
@@ -120,25 +129,162 @@ public class AuswertungService {
      */
     protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
 
+        // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());
 
         final ConcurrentMap<String, List<AuswertungMessstelleUndZeitraum>> auswertungenGroupedByMstId = CollectionUtils
                 // Lädt die Daten pro Messstelle
                 .emptyIfNull(options.getMessstelleAuswertungIds())
                 .parallelStream()
-                // Lädt die Daten einer Messstelle pro Zeitraum
                 .flatMap(messstelleAuswertungIdDTO -> CollectionUtils.emptyIfNull(zeitraeume)
                         .parallelStream()
-                        .map(zeitraum -> {
-                            // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
-                            // über den geladenen Zeitraum und die MstId an.
-                            final var tagesaggregate = messwerteService.ladeTagesaggregate(options.getTagesTyp(), messstelleAuswertungIdDTO.getMqIds(),
-                                    zeitraum);
-                            return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(tagesaggregate,
-                                    zeitraum, messstelleAuswertungIdDTO.getMstId());
-                        }))
+                        .map(zeitraum -> createValidateZeitraumAndTagesTyp(
+                                messstelleAuswertungIdDTO.getMstId(),
+                                messstelleAuswertungIdDTO.getMqIds(),
+                                zeitraum,
+                                options.getTagesTyp())))
+                .map(validateZeitraumAndTagesTypForMessstelle -> {
+
+                    var fahrzeugklasseAccordingChoosenFahrzeugoptions = validierungService
+                            .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge(),
+                                    messstelleService.getMessstelleByMstId(validateZeitraumAndTagesTypForMessstelle.getMstId()).getDetektierteVerkehrsart());
+
+                    List<ReadMessfaehigkeitDTO> relevantMessfaehigkeiten;
+                    TagesaggregatResponseDto tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
+                    ValidierungService.ValidationResult validationResult = new ValidierungService.ValidationResult();
+
+                    if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
+
+                        final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                                validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
+                                zeitraumeOfRelevantMessfaehigkeiten,
+                                validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
+                        if (validationResult.isValid()) {
+                            tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
+                                    options.getTagesTyp(),
+                                    validateZeitraumAndTagesTypForMessstelle.getMqIds(),
+                                    zeitraumeOfRelevantMessfaehigkeiten);
+                        } else {
+                            fahrzeugklasseAccordingChoosenFahrzeugoptions = Fahrzeugklasse.ZWEI_PLUS_EINS;
+                        }
+                    }
+
+                    if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
+
+                        final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                                validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
+                                zeitraumeOfRelevantMessfaehigkeiten,
+                                validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
+                        if (validationResult.isValid()) {
+                            tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
+                                    options.getTagesTyp(),
+                                    validateZeitraumAndTagesTypForMessstelle.getMqIds(),
+                                    zeitraumeOfRelevantMessfaehigkeiten);
+                        } else {
+                            fahrzeugklasseAccordingChoosenFahrzeugoptions = Fahrzeugklasse.SUMME_KFZ;
+                        }
+                    }
+
+                    if (Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)) {
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
+
+                        final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                                validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
+                                zeitraumeOfRelevantMessfaehigkeiten,
+                                validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
+                        if (validationResult.isValid()) {
+                            tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
+                                    options.getTagesTyp(),
+                                    validateZeitraumAndTagesTypForMessstelle.getMqIds(),
+                                    zeitraumeOfRelevantMessfaehigkeiten);
+                        }
+                    }
+
+                    if (!Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && !Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && !Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasseAccordingChoosenFahrzeugoptions)
+                            && options.getFahrzeuge().isRadverkehr()) {
+                        relevantMessfaehigkeiten = validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+                                validateZeitraumAndTagesTypForMessstelle,
+                                fahrzeugklasseAccordingChoosenFahrzeugoptions);
+
+                        final var zeitraumeOfRelevantMessfaehigkeiten = getZeitraeumeOfGivenMessfaehigkeiten(relevantMessfaehigkeiten);
+                        validationResult = validierungService.areZeitraeumeAndTagesTypForMessstelleValid(
+                                validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                                validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
+                                zeitraumeOfRelevantMessfaehigkeiten,
+                                validateZeitraumAndTagesTypForMessstelle.getTagesTyp());
+                        if (validationResult.isValid()) {
+                            tagesaggregatResponse = messwerteService.ladeMeanOfTagesaggregatePerMq(
+                                    options.getTagesTyp(),
+                                    validateZeitraumAndTagesTypForMessstelle.getMqIds(),
+                                    zeitraumeOfRelevantMessfaehigkeiten);
+                        }
+                    }
+
+                    final var adaptedFahrzeugOptions = getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                            fahrzeugklasseAccordingChoosenFahrzeugoptions,
+                            options.getFahrzeuge());
+
+                    tagesaggregatResponse = nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
+                            tagesaggregatResponse,
+                            adaptedFahrzeugOptions);
+
+                    // Mappt die geladenen Daten auf ein eigenes Objekt und reichert dieses mit den Informationen
+                    // über den geladenen Zeitraum und die MstId an.
+                    return auswertungMapper.tagesaggregatDto2AuswertungProMessstelleUndZeitraum(
+                            tagesaggregatResponse,
+                            validateZeitraumAndTagesTypForMessstelle.getZeitraum(),
+                            validateZeitraumAndTagesTypForMessstelle.getMstId(),
+                            validationResult);
+
+                })
                 .collect(Collectors.groupingByConcurrent(AuswertungMessstelleUndZeitraum::getMstId));
         return mapAuswertungMapToListOfAuswertungProMessstelle(auswertungenGroupedByMstId);
+    }
+
+    /**
+     * Erzeugt aus den übergebenen Parametern ein Objekt welches als Basis für die Validierung bezüglich
+     * Zeitraum, Tagestyp und Messfähigkeiten dient.
+     *
+     * @param mstId ID der angefragten Messstelle
+     * @param zeitraum angefragter Zeitraum
+     * @param tagesTyp angefragter Tagestyp
+     * @return ValidateZeitraumAndTagesTypForMessstelleModel
+     */
+    protected ValidateZeitraumAndTagesTypForMessstelleModel createValidateZeitraumAndTagesTyp(
+            final String mstId,
+            final Set<String> mqIds,
+            final Zeitraum zeitraum,
+            final TagesTyp tagesTyp) {
+        final var model = new ValidateZeitraumAndTagesTypForMessstelleModel();
+
+        model.setMstId(mstId);
+        model.setMqIds(mqIds);
+        model.setTagesTyp(tagesTyp);
+        model.setZeitraum(zeitraum);
+
+        final var messfaehigkeiten = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                mstId,
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate());
+        model.setMessfaehigkeiten(messfaehigkeiten);
+
+        return model;
     }
 
     /**
@@ -187,6 +333,8 @@ public class AuswertungService {
                 final var auswertung = new Auswertung();
                 auswertung.setObjectId(mstId);
                 auswertung.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
+                auswertung.setNumberOfUnauffaelligeTage(auswertungMessstelleUndZeitraum.getNumberOfUnauffaelligeTage());
+                auswertung.setNumberOfRelevantKalendertage(auswertungMessstelleUndZeitraum.getNumberOfRelevantKalendertage());
                 auswertung.setDaten(auswertungMessstelleUndZeitraum.getSumOverAllAggregatesOfAllMqId());
                 auswertungProMessstelle.getAuswertungenProZeitraum().add(auswertung);
                 final List<TagesaggregatDto> meanOfAggregatesForEachMqId = ListUtils
@@ -199,6 +347,8 @@ public class AuswertungService {
                     final var mqIdAsString = String.valueOf(tagesaggregatDto.getMqId());
                     auswertungMq.setObjectId(mqIdAsString);
                     auswertungMq.setZeitraum(auswertungMessstelleUndZeitraum.getZeitraum());
+                    auswertungMq.setNumberOfUnauffaelligeTage(auswertungMessstelleUndZeitraum.getNumberOfUnauffaelligeTage());
+                    auswertungMq.setNumberOfRelevantKalendertage(auswertungMessstelleUndZeitraum.getNumberOfRelevantKalendertage());
                     auswertungMq.setDaten(tagesaggregatDto);
                     // Erzeugt für jeden geladenen Messquerschnitt einen eigenen Eintrag in der Map,
                     // um die geladenen Daten pro Zeitraum abzulegen
@@ -226,5 +376,171 @@ public class AuswertungService {
         // Sortierung nach Messtelle
         auswertungen.sort(Comparator.comparing(AuswertungMessstelle::getMstId));
         return auswertungen;
+    }
+
+    /**
+     * Bildet aus den gegebenen Messfähigkeiten eine Liste mit den Einzelzeiträumen bestehend aus dem
+     * Start- und Enddatum des Gültigkeitsbereichs der Messfähigkeit.
+     *
+     * @param messfaehigkeiten
+     * @return die Liste mit den Einzelzeiträumen bestehend aus dem Start- und Enddatum des
+     *         Gültigkeitsbereichs der Messfähigkeit.
+     */
+    protected List<List<LocalDate>> getZeitraeumeOfGivenMessfaehigkeiten(final List<ReadMessfaehigkeitDTO> messfaehigkeiten) {
+        return CollectionUtils.emptyIfNull(messfaehigkeiten)
+                .stream()
+                .map(messfaehigkeit -> List.of(LocalDate.parse(messfaehigkeit.getGueltigAb()), LocalDate.parse(messfaehigkeit.getGueltigBis())))
+                .toList();
+    }
+
+    /**
+     * Die Methode setzte alle Attribute in den Fahrzeugoptions auf false die nicht zur Fahrzeugklasse
+     * gehören.
+     *
+     * @param fahrzeugklasse zur Prüfung.
+     * @param fahrzeugOptions
+     * @return eine Kopie der Fahrzeugoptions mit Falsifizierten attributen entsprechend der
+     *         Fahrzeugklasse.
+     */
+    protected FahrzeugOptionsDTO getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+            final Fahrzeugklasse fahrzeugklasse,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
+        final FahrzeugOptionsDTO adaptedFahrzeugOptions = auswertungMapper.deepCopyOf(fahrzeugOptions);
+        if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasse)) {
+            return adaptedFahrzeugOptions;
+        } else if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasse)) {
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
+        } else if (Fahrzeugklasse.SUMME_KFZ.equals(fahrzeugklasse)) {
+            adaptedFahrzeugOptions.setSchwerverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
+        } else {
+            // RAD
+            adaptedFahrzeugOptions.setKraftfahrzeugverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehr(false);
+            adaptedFahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setGueterverkehr(false);
+            adaptedFahrzeugOptions.setGueterverkehrsanteilProzent(false);
+            adaptedFahrzeugOptions.setLastkraftwagen(false);
+            adaptedFahrzeugOptions.setLastzuege(false);
+            adaptedFahrzeugOptions.setBusse(false);
+            adaptedFahrzeugOptions.setKraftraeder(false);
+            adaptedFahrzeugOptions.setPersonenkraftwagen(false);
+            adaptedFahrzeugOptions.setLieferwagen(false);
+        }
+        return adaptedFahrzeugOptions;
+    }
+
+    protected TagesaggregatResponseDto createEmptyTagesaggregatResponse(final Set<String> mqIds) {
+        final var tagesaggregatResponse = new TagesaggregatResponseDto();
+        final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+        mqIds.forEach(mqId -> {
+            final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+            tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+            emptyTagesaggregate.add(tagesaggregatDto);
+        });
+        tagesaggregatResponse.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+        tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+        return tagesaggregatResponse;
+    }
+
+    /**
+     * Setzt Attribute der Tagesaggregate in der gegebenen {@link TagesaggregatResponseDto} basierend
+     * auf den gewählten {@link FahrzeugOptionsDTO} auf null, wenn das Attribut in den Fahrzeugoptions
+     * den Wert false besitzt.
+     *
+     * @param tagesaggregatResponse Das {@link TagesaggregatResponseDto}, dessen Attribute null gesetzt
+     *            werden sollen.
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     *            Attribute definiert.
+     * @return Das modifizierte {@link TagesaggregatResponseDto} mit ggf. null gesetzten Attributen.
+     */
+    protected TagesaggregatResponseDto nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
+            final TagesaggregatResponseDto tagesaggregatResponse,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
+        final var nulledTagesaggregate = nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
+                tagesaggregatResponse.getSumOverAllAggregatesOfAllMqId(),
+                fahrzeugOptions);
+        tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(nulledTagesaggregate);
+
+        final var meanOfAggregatesForEachMqId = tagesaggregatResponse.getMeanOfAggregatesForEachMqId();
+        if (CollectionUtils.isNotEmpty(meanOfAggregatesForEachMqId)) {
+            final var nulledMeanOfAggregatesForEachMqId = meanOfAggregatesForEachMqId
+                    .stream()
+                    .map(tagesaggregat -> nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions))
+                    .toList();
+            tagesaggregatResponse.setMeanOfAggregatesForEachMqId(nulledMeanOfAggregatesForEachMqId);
+        }
+
+        return tagesaggregatResponse;
+    }
+
+    /**
+     * Setzt bestimmte Attribute des {@link TagesaggregatDto} auf null, basierend auf den gewählten
+     * {@link FahrzeugOptionsDTO}.
+     *
+     * Diese Methode überprüft die verschiedenen Optionen in {@code fahrzeugOptions} und setzt die
+     * entsprechenden Attribute im {@code tagesaggregat} auf null, wenn die jeweilige Option false ist.
+     *
+     * @param tagesaggregat Das {@link TagesaggregatDto}, dessen Attribute null gesetzt werden sollen.
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     *            Attribute definiert.
+     * @return Das modifizierte {@link TagesaggregatDto} mit null gesetzten Attributen, die nicht den
+     *         gewählten Fahrzeugoptionen entsprechen.
+     */
+    protected TagesaggregatDto nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
+            final TagesaggregatDto tagesaggregat,
+            final FahrzeugOptionsDTO fahrzeugOptions) {
+        if (!fahrzeugOptions.isKraftfahrzeugverkehr()) {
+            tagesaggregat.setSummeKraftfahrzeugverkehr(null);
+        }
+        if (!fahrzeugOptions.isSchwerverkehr()) {
+            tagesaggregat.setSummeSchwerverkehr(null);
+        }
+        if (!fahrzeugOptions.isSchwerverkehrsanteilProzent()) {
+            tagesaggregat.setProzentSchwerverkehr(null);
+        }
+        if (!fahrzeugOptions.isGueterverkehr()) {
+            tagesaggregat.setSummeGueterverkehr(null);
+        }
+        if (!fahrzeugOptions.isGueterverkehrsanteilProzent()) {
+            tagesaggregat.setProzentGueterverkehr(null);
+        }
+        if (!fahrzeugOptions.isLastkraftwagen()) {
+            tagesaggregat.setAnzahlLkw(null);
+        }
+        if (!fahrzeugOptions.isLastzuege()) {
+            tagesaggregat.setSummeLastzug(null);
+        }
+        if (!fahrzeugOptions.isBusse()) {
+            tagesaggregat.setAnzahlBus(null);
+        }
+        if (!fahrzeugOptions.isKraftraeder()) {
+            tagesaggregat.setAnzahlKrad(null);
+        }
+        if (!fahrzeugOptions.isPersonenkraftwagen()) {
+            tagesaggregat.setSummeAllePkw(null);
+        }
+        if (!fahrzeugOptions.isLieferwagen()) {
+            tagesaggregat.setAnzahlLfw(null);
+        }
+        if (!fahrzeugOptions.isRadverkehr()) {
+            tagesaggregat.setAnzahlRad(null);
+        }
+        return tagesaggregat;
     }
 }

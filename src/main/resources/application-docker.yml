@@ -58,9 +58,11 @@ elasticsearch:
 
 dave:
   zaehlung:
-    status:
+    status-updater:
       #      Alle 5 min
-      updater: 0 0/5 * 1/1 * ?
+      cron: 0 0/5 * 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 4m
   email:
     address: dave-dummy@muenchen.de
     password: dummy
@@ -68,8 +70,10 @@ dave:
       adminportal: http://localhost:8085
       selfserviceportal: http://localhost:8086
     receiver:
-      # Update-Intervall in Millisekunden für den Email-Abruf
-      update-interval: 5000
+      #      Alle 1 min
+      cron: 0 0/1 * 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 55s
 
   messstelle:
     cron: 0 0/17 * 1/1 * ?

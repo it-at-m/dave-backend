@@ -1,13 +1,8 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2022
- */
 package de.muenchen.dave.configuration.nfcconverter;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 

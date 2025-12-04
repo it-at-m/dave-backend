@@ -21,10 +21,6 @@
       "description": "API zum Abfragen des FeatureServers für Messwerte."
     },
     {
-      "name": "MessstelleOptionsmenuController",
-      "description": "API für Abfragen zum vorbefüllen des OptionsMenues"
-    },
-    {
       "name": "Messstelle",
       "description": "API zum Abfragen des FeatureServers für die Messstellen."
     }
@@ -48,22 +44,22 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "Intervalle erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IntervalResponseDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Intervalle erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntervalResponseDto"
                 }
               }
             }
@@ -112,47 +108,6 @@
         }
       }
     },
-    "/MessstelleOptionsmenu/validateTagesTyp": {
-      "post": {
-        "tags": [
-          "MessstelleOptionsmenuController"
-        ],
-        "summary": "Gibt zurück, ob der im Optionsmenue ausgewählte TagesTyp valide ist",
-        "operationId": "isTagesTypDataValid",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChosenTagesTypValidRequestDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "500": {
-            "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InformationResponseDto"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "TagesTyp erfolgreich validiert",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChosenTagesTypValidDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/messstelle": {
       "get": {
         "tags": [
@@ -187,40 +142,53 @@
         }
       }
     },
-    "/MessstelleOptionsmenu/nichtPlausibleDaten": {
+    "/messstelle/unauffaellige-tage-for-each-messstelle": {
       "get": {
         "tags": [
-          "MessstelleOptionsmenuController"
+          "Messstelle"
         ],
-        "summary": "Holt alle nicht Plausiblen Tage.",
-        "operationId": "getNichtPlausibleTage",
+        "summary": "Gibt die unauffälligen Tage für jede existierende Messstelle im gegebenen Zeitraum zurück.",
+        "operationId": "getUnauffaelligeTageForEachMessstelle",
         "parameters": [
           {
-            "name": "messstelle_id",
+            "name": "start-date",
             "in": "query",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end-date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Nicht Plausible Tage erfolgreich abgefragt.",
-            "content": {
-              "application/hal+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NichtPlausibleTageDto"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Bei der Erstellung oder Durchführung des Requests ist ein Fehler aufgetreten.",
             "content": {
               "application/hal+json": {
                 "schema": {
                   "$ref": "#/components/schemas/InformationResponseDto"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Unauffällige Tage erfolgreich abgefragt.",
+            "content": {
+              "application/hal+json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UnauffaelligerTagDto"
+                  }
                 }
               }
             }
@@ -362,12 +330,6 @@
             "type": "integer",
             "format": "int32"
           },
-          "anzahlPkw": {
-            "type": "number"
-          },
-          "anzahlPkwA": {
-            "type": "number"
-          },
           "anzahlLfw": {
             "type": "number"
           },
@@ -377,16 +339,7 @@
           "anzahlLkw": {
             "type": "number"
           },
-          "anzahlLkwA": {
-            "type": "number"
-          },
-          "anzahlSattelKfz": {
-            "type": "number"
-          },
           "anzahlBus": {
-            "type": "number"
-          },
-          "anzahlNkKfz": {
             "type": "number"
           },
           "anzahlRad": {
@@ -433,23 +386,30 @@
             ]
           }
         },
-        "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids."
+        "description": "Für jeden Interval über jeden Messtag den Durchschnitt über die Summe selektierten Messquerschnitte."
       },
       "IntervalResponseDto": {
         "type": "object",
         "properties": {
-          "meanOfIntervalsForEachMqIdByMesstag": {
+          "meanOfSummedUpDailyIntervalsForEachMessquerschnittOverMesstage": {
             "type": "array",
-            "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle.",
+            "description": "Für jeden Messquerschnitt den Durchschnitt der Messtage über die Tagessumme.",
             "items": {
               "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
-          "meanOfMqIdForEachIntervalByMesstag": {
+          "meanOfSummedUpMessquerschnitteForEachIntervalOverMesstage": {
             "type": "array",
-            "description": "Für jeden Messtag je Interval der Durchschnitt über die selektierten Messquerschnitt-Ids.",
+            "description": "Für jeden Interval über jeden Messtag den Durchschnitt über die Summe selektierten Messquerschnitte.",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
+            }
+          },
+          "meanForEachIntervalAndEachMessquerschnittOverMesstage": {
+            "type": "array",
+            "description": "Für jeden Intervall und jede Messquerschnitt-Id den Durchschnitt über die Messtage.",
+            "items": {
+              "$ref": "#/components/schemas/IntervalsForMqIdDto"
             }
           },
           "includedMeasuringDays": {
@@ -466,21 +426,20 @@
             "type": "integer",
             "format": "int32"
           },
-          "meanOfIntervalsByMesstag": {
+          "intervals": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/IntervalDto"
             }
           }
         },
-        "description": "Für jeden Messtag je Messquerschnitt-Id der Messstelle der Durchschnitt über alle Tagesintervalle."
+        "description": "Für jeden Intervall und jede Messquerschnitt-Id den Durchschnitt über die Messtage."
       },
       "TagesaggregatRequestDto": {
         "required": [
-          "endDate",
           "messquerschnittIds",
-          "startDate",
-          "tagesTyp"
+          "tagesTyp",
+          "zeitraeume"
         ],
         "type": "object",
         "properties": {
@@ -491,13 +450,11 @@
               "format": "int32"
             }
           },
-          "startDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date"
+          "zeitraeume": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZeitraumDto"
+            }
           },
           "tagesTyp": {
             "type": "string",
@@ -512,18 +469,29 @@
           }
         }
       },
+      "ZeitraumDto": {
+        "required": [
+          "endDate",
+          "startDate"
+        ],
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
       "TagesaggregatDto": {
         "type": "object",
         "properties": {
           "mqId": {
             "type": "integer",
             "format": "int32"
-          },
-          "anzahlPkw": {
-            "type": "number"
-          },
-          "anzahlPkwA": {
-            "type": "number"
           },
           "anzahlLfw": {
             "type": "number"
@@ -534,16 +502,7 @@
           "anzahlLkw": {
             "type": "number"
           },
-          "anzahlLkwA": {
-            "type": "number"
-          },
-          "anzahlSattelKfz": {
-            "type": "number"
-          },
           "anzahlBus": {
-            "type": "number"
-          },
-          "anzahlNkKfz": {
             "type": "number"
           },
           "anzahlRad": {
@@ -592,36 +551,6 @@
           }
         }
       },
-      "ChosenTagesTypValidRequestDto": {
-        "type": "object",
-        "properties": {
-          "startDate": {
-            "type": "string"
-          },
-          "endDate": {
-            "type": "string"
-          },
-          "tagesTyp": {
-            "type": "string",
-            "enum": [
-              "DTV_W3",
-              "DTV_W5",
-              "SAMSTAG",
-              "SONNTAG_FEIERTAG",
-              "WERKTAG_FERIEN",
-              "DTV"
-            ]
-          }
-        }
-      },
-      "ChosenTagesTypValidDTO": {
-        "type": "object",
-        "properties": {
-          "isValid": {
-            "type": "boolean"
-          }
-        }
-      },
       "MessfaehigkeitDto": {
         "type": "object",
         "properties": {
@@ -633,11 +562,25 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugklassen": {
-            "type": "string"
+          "fahrzeugklasse": {
+            "type": "string",
+            "enum": [
+              "RAD",
+              "SUMME_KFZ",
+              "ZWEI_PLUS_EINS",
+              "ACHT_PLUS_EINS",
+              "UNBEKANNT"
+            ]
           },
           "intervall": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "STUNDE_VIERTEL",
+              "STUNDE_VIERTEL_EINGESCHRAENKT",
+              "STUNDE_HALB",
+              "STUNDE_KOMPLETT",
+              "UNBEKANNT"
+            ]
           }
         }
       },
@@ -715,11 +658,23 @@
             "type": "string",
             "format": "date"
           },
-          "fahrzeugKlassen": {
-            "type": "string"
+          "fahrzeugklasse": {
+            "type": "string",
+            "enum": [
+              "RAD",
+              "SUMME_KFZ",
+              "ZWEI_PLUS_EINS",
+              "ACHT_PLUS_EINS",
+              "UNBEKANNT"
+            ]
           },
-          "detektierteVerkehrsarten": {
-            "type": "string"
+          "detektierteVerkehrsart": {
+            "type": "string",
+            "enum": [
+              "KFZ",
+              "RAD",
+              "UNBEKANNT"
+            ]
           },
           "hersteller": {
             "type": "string"
@@ -746,15 +701,15 @@
           }
         }
       },
-      "NichtPlausibleTageDto": {
+      "UnauffaelligerTagDto": {
         "type": "object",
         "properties": {
-          "nichtPlausibleTage": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date"
-            }
+          "mstId": {
+            "type": "string"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date"
           }
         }
       }

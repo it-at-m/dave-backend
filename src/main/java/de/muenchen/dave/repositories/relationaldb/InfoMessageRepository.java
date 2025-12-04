@@ -1,15 +1,10 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
- */
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.InfoMessage;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InfoMessageRepository extends JpaRepository<InfoMessage, UUID> { //NOSONAR
 

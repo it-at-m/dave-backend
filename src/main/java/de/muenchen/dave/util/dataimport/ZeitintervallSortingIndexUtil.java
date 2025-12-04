@@ -1,16 +1,11 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.util.dataimport;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalTime;
 
 /**
  * Der Sortierindex ist erforderlich, um bei der Extraktion der {@link Zeitintervall}e einer

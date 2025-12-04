@@ -1,18 +1,15 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.domain.enums;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
-import org.apache.commons.lang3.BooleanUtils;
-
 import java.util.Optional;
+import org.apache.commons.lang3.BooleanUtils;
 
 public enum FahrbewegungKreisverkehr {
 
-    HINEIN, HERAUS, VORBEI;
+    HINEIN,
+    HERAUS,
+    VORBEI;
 
     public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
         final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional;

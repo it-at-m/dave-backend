@@ -3,7 +3,6 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import de.muenchen.dave.exceptions.BadRequestException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -11,7 +10,17 @@ import de.muenchen.dave.geodateneai.gen.model.IntervalResponseDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.geodateneai.gen.model.ZeitraumDto;
+import de.muenchen.dave.services.KalendertagService;
 import de.muenchen.dave.util.OptionsUtil;
+import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,18 +29,13 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 @Slf4j
 @Service
 @AllArgsConstructor
 public class MesswerteService {
 
-    private static final String ERROR_MESSAGE = "Beim Laden der AverageMeasurementValuesPerIntervalResponse ist ein Fehler aufgetreten";
+    private static final String ERROR_MESSAGE = "Beim Laden der Messwerte ist ein Fehler aufgetreten";
+
     private final MessstelleService messstelleService;
     private final MesswerteApi messwerteApi;
     private final GanglinieService ganglinieService;
@@ -39,6 +43,7 @@ public class MesswerteService {
     private final ListenausgabeService listenausgabeService;
     private final BelastungsplanService belastungsplanService;
     private final SpitzenstundeService spitzenstundeService;
+    private final KalendertagService kalendertagService;
 
     /**
      * Bereitet die geladenen Messwerte der gewünschten Messstelle für die GUI auf.
@@ -48,46 +53,71 @@ public class MesswerteService {
      * @return aufbereitete Daten
      */
     public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
-        validateOptions(options);
         log.debug("#ladeMesswerte {}", messstelleId);
 
-        final IntervalResponseDto response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
+        final var response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
         final var isKfzMessstelle = messstelleService.isKfzMessstelle(messstelleId);
         final List<IntervalDto> intervals;
+        final List<IntervalDto> sumOfIntervalsForEachMessquerschnitt;
 
         if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
             // Extrahieren der Intervalle welche die Spitzenstunde ausmachen.
             intervals = spitzenstundeService.getIntervalsOfSpitzenstunde(
-                    ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag()),
+                    ListUtils.emptyIfNull(response.getMeanOfSummedUpMessquerschnitteForEachIntervalOverMesstage()),
                     isKfzMessstelle,
                     options.getIntervall());
+
+            // Summieren der Intervalle je Messquerschnitt welche die Spitzenstunde ausmachen.
+            final var uhrzeitVon = getEarliestUhrzeitVonOfIntervals(intervals);
+            final var uhrzeitBis = getLatestUhrzeitBisOfIntervals(intervals);
+
+            sumOfIntervalsForEachMessquerschnitt = ListUtils.emptyIfNull(response.getMeanForEachIntervalAndEachMessquerschnittOverMesstage())
+                    .stream()
+                    .map(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals())
+                            .stream()
+                            .filter(interval -> isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+                                    interval.getDatumUhrzeitVon().toLocalTime(),
+                                    uhrzeitVon,
+                                    uhrzeitBis))
+                            .reduce(
+                                    new IntervalDto(),
+                                    MesswerteBaseUtil::sumIntervalsAndAdaptDatumUhrzeitVonAndBisAndReturnNewInterval))
+                    .toList();
         } else {
-            intervals = ListUtils.emptyIfNull(response.getMeanOfMqIdForEachIntervalByMesstag());
+            intervals = ListUtils.emptyIfNull(response.getMeanOfSummedUpMessquerschnitteForEachIntervalOverMesstage());
+
+            sumOfIntervalsForEachMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfSummedUpDailyIntervalsForEachMessquerschnittOverMesstage())
+                    .stream()
+                    .flatMap(intervalsForMqId -> ListUtils.emptyIfNull(intervalsForMqId.getIntervals()).stream())
+                    .toList();
         }
 
-        final var meanPerMessquerschnitt = ListUtils.emptyIfNull(response.getMeanOfIntervalsForEachMqIdByMesstag())
-                .stream()
-                .flatMap(intervalsForMqId -> intervalsForMqId.getMeanOfIntervalsByMesstag().stream())
-                .toList();
-
+        // Aufbereiten der Daten für die entsprechenden Auswertungen
         final var processedZaehldaten = new LadeProcessedMesswerteDTO();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));
-        processedZaehldaten
-                .setBelastungsplanMessquerschnitte(belastungsplanService.ladeBelastungsplan(intervals, meanPerMessquerschnitt, messstelleId, options));
+        processedZaehldaten.setBelastungsplanMessquerschnitte(
+                belastungsplanService.ladeBelastungsplan(intervals,
+                        sumOfIntervalsForEachMessquerschnitt,
+                        messstelleId,
+                        options));
+
         if (CollectionUtils.isNotEmpty(intervals)) {
             processedZaehldaten.setTagesTyp(TagesTyp.getByIntervallTyp(intervals.getFirst().getTagesTyp()));
         }
-        processedZaehldaten.setRequestedMeasuringDays(ChronoUnit.DAYS.between(options.getZeitraum().getFirst(), options.getZeitraum().getLast()) + 1);
-        processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
-        return processedZaehldaten;
-    }
 
-    protected void validateOptions(final MessstelleOptionsDTO options) {
-        if (options.getZeitraum().size() == 2 && ObjectUtils.isEmpty(options.getTagesTyp())) {
-            throw new BadRequestException("Bei einem Zeitraum muss der Wochentag angegeben sein.");
+        // Da für die Auswertung nicht alle Tage innerhalb des Zeitraums relevant sind,
+        // werden anhand des ausgewählten Tagestyps die relevanten Kalendertage ermittelt
+        if (MesswerteBaseUtil.isDateRange(options.getZeitraum())) {
+            final var tagestypen = TagesTyp.getIncludedTagestypen(options.getTagesTyp());
+            final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
+                    options.getZeitraum().getFirst(),
+                    options.getZeitraum().getLast(), tagestypen);
+            processedZaehldaten.setRequestedMeasuringDays(numberOfRelevantKalendertage);
+            processedZaehldaten.setIncludedMeasuringDays(response.getIncludedMeasuringDays());
         }
+        return processedZaehldaten;
     }
 
     /**
@@ -134,14 +164,21 @@ public class MesswerteService {
      *
      * @param tagesTyp Tagestyp der zu ladenden Daten
      * @param mqIds zu ladende Messquerschnitte
-     * @param zeitraum Zeitraum der zu ladenden Daten
+     * @param zeitraeume tbd
      * @return die geladenen Tagesaggregate als DTO
      */
-    public TagesaggregatResponseDto ladeTagesaggregate(final TagesTyp tagesTyp, final Set<String> mqIds, final Zeitraum zeitraum) {
+    public TagesaggregatResponseDto ladeMeanOfTagesaggregatePerMq(final TagesTyp tagesTyp, final Set<String> mqIds, final List<List<LocalDate>> zeitraeume) {
         final var request = new TagesaggregatRequestDto();
         request.setMessquerschnittIds(mqIds.stream().map(Integer::valueOf).toList());
-        request.setStartDate(LocalDate.of(zeitraum.getStart().getYear(), zeitraum.getStart().getMonthValue(), 1));
-        request.setEndDate(LocalDate.of(zeitraum.getEnd().getYear(), zeitraum.getEnd().getMonthValue(), zeitraum.getEnd().atEndOfMonth().getDayOfMonth()));
+        final var requestZeitraeume = zeitraeume.stream()
+                .map(zeitraum -> {
+                    final var requestZeitraum = new ZeitraumDto();
+                    requestZeitraum.setStartDate(zeitraum.getFirst());
+                    requestZeitraum.setEndDate(zeitraum.getLast());
+                    return requestZeitraum;
+                })
+                .toList();
+        request.setZeitraeume(requestZeitraeume);
         request.setTagesTyp(tagesTyp.getTagesaggregatTyp());
 
         final ResponseEntity<TagesaggregatResponseDto> response = messwerteApi.getMeanOfDailyAggregatesPerMQWithHttpInfo(request).block();
@@ -151,6 +188,32 @@ public class MesswerteService {
             throw new ResourceNotFoundException(ERROR_MESSAGE);
         }
         return response.getBody();
+    }
+
+    protected static boolean isTimeToCompareEqualOrAfterStarttimeAndBeforeEndTime(
+            final LocalTime timeToCompare,
+            final LocalTime startTime,
+            final LocalTime endTime) {
+        return (timeToCompare.equals(startTime) || timeToCompare.isAfter(startTime)) &&
+                !(timeToCompare.equals(endTime) || timeToCompare.isAfter(endTime));
+    }
+
+    protected static LocalTime getEarliestUhrzeitVonOfIntervals(final List<IntervalDto> intervals) {
+        return intervals.stream()
+                .map(IntervalDto::getDatumUhrzeitVon)
+                .filter(Objects::nonNull)
+                .map(LocalDateTime::toLocalTime)
+                .min(LocalTime::compareTo)
+                .orElse(null);
+    }
+
+    protected static LocalTime getLatestUhrzeitBisOfIntervals(final List<IntervalDto> intervals) {
+        return intervals.stream()
+                .map(IntervalDto::getDatumUhrzeitBis)
+                .filter(Objects::nonNull)
+                .map(LocalDateTime::toLocalTime)
+                .max(LocalTime::compareTo)
+                .orElse(null);
     }
 
 }

@@ -1,27 +1,694 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.enums.Verkehrsart;
+import de.muenchen.dave.domain.mapper.detektor.AuswertungMapperImpl;
+import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.services.messstelle.ValidierungService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 class AuswertungServiceTest {
 
-    private final AuswertungService auswertungService = new AuswertungService(null, null, null, null, null);
+    @Mock
+    private MessstelleService messstelleService;
+
+    @Mock
+    private MesswerteService messwerteService;
+
+    @Mock
+    private SpreadsheetService spreadsheetService;
+
+    @Mock
+    private GanglinieGesamtauswertungService ganglinieGesamtauswertungService;
+
+    @Mock
+    private ValidierungService validierungService;
+
+    private AuswertungService auswertungService;
+
+    @BeforeEach
+    void beforeEach() {
+        auswertungService = new AuswertungService(
+                messstelleService,
+                messwerteService,
+                new AuswertungMapperImpl(),
+                spreadsheetService,
+                ganglinieGesamtauswertungService,
+                validierungService);
+        Mockito.reset(messstelleService, messwerteService, spreadsheetService, ganglinieGesamtauswertungService, validierungService);
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstIdAchtPlusEinsWithdZeitraeumeAndTagesTypForMessstelleValid() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        request.setZeitraum(zeitraum);
+        request.setMstId("1234");
+        request.setMqIds(Set.of("123401", "123402"));
+        request.setTagesTyp(TagesTyp.MO_SO);
+        request.setMessfaehigkeiten(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+
+        var validationResult = new ValidierungService.ValidationResult();
+        validationResult.setValid(true);
+        validationResult.setNumberOfUnauffaelligeTage(100L);
+        validationResult.setNumberOfRelevantKalendertage(75L);
+        Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO)).thenReturn(validationResult);
+
+        var tageaggregatResponse = new TagesaggregatResponseDto();
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setMqId(99);
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(1L));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(2L));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(3L));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(4L));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(5L));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(6L));
+        tagesaggregat.summeLastzug(BigDecimal.valueOf(7L));
+        tagesaggregat.summeGueterverkehr(BigDecimal.valueOf(8L));
+        tagesaggregat.summeSchwerverkehr(BigDecimal.valueOf(9L));
+        tagesaggregat.summeKraftfahrzeugverkehr(BigDecimal.valueOf(10L));
+        tagesaggregat.prozentSchwerverkehr(BigDecimal.valueOf(11L));
+        tagesaggregat.prozentGueterverkehr(BigDecimal.valueOf(12L));
+        tagesaggregat.includedMeasuringDays(13L);
+        tageaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+        tageaggregatResponse.setMeanOfAggregatesForEachMqId(List.of(tagesaggregat));
+
+        Mockito.when(messwerteService.ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))))).thenReturn(tageaggregatResponse);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(100L);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(75L);
+        auswertungProZeitraum.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq = new Auswertung();
+        auswertungProMq.setObjectId("99");
+        auswertungProMq.setZeitraum(zeitraum);
+        auswertungProMq.setNumberOfUnauffaelligeTage(100L);
+        auswertungProMq.setNumberOfRelevantKalendertage(75L);
+        auswertungProMq.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("99", List.of(auswertungProMq)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(1)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstIdAchtPlusEinsWithZeitraeumeAndTagesTypForMessstelleInvalidAndZweiPlusEinsWithZeitraeumeAndTagesTypForMessstelleValid() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        request.setZeitraum(zeitraum);
+        request.setMstId("1234");
+        request.setMqIds(Set.of("123401", "123402"));
+        request.setTagesTyp(TagesTyp.MO_SO);
+        request.setMessfaehigkeiten(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+
+        var validationResultAchtPlusEins = new ValidierungService.ValidationResult();
+        validationResultAchtPlusEins.setValid(false);
+        validationResultAchtPlusEins.setNumberOfUnauffaelligeTage(100L);
+        validationResultAchtPlusEins.setNumberOfRelevantKalendertage(75L);
+        var validationResultZweiPlusEins = new ValidierungService.ValidationResult();
+        validationResultZweiPlusEins.setValid(true);
+        validationResultZweiPlusEins.setNumberOfUnauffaelligeTage(100L);
+        validationResultZweiPlusEins.setNumberOfRelevantKalendertage(75L);
+        Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO))
+                .thenReturn(validationResultAchtPlusEins)
+                .thenReturn(validationResultZweiPlusEins);
+
+        var tageaggregatResponse = new TagesaggregatResponseDto();
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setMqId(99);
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(1L));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(2L));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(3L));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(4L));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(5L));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(6L));
+        tagesaggregat.summeLastzug(BigDecimal.valueOf(7L));
+        tagesaggregat.summeGueterverkehr(BigDecimal.valueOf(8L));
+        tagesaggregat.summeSchwerverkehr(BigDecimal.valueOf(9L));
+        tagesaggregat.summeKraftfahrzeugverkehr(BigDecimal.valueOf(10L));
+        tagesaggregat.prozentSchwerverkehr(BigDecimal.valueOf(11L));
+        tagesaggregat.prozentGueterverkehr(BigDecimal.valueOf(12L));
+        tagesaggregat.includedMeasuringDays(13L);
+        tageaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+        tageaggregatResponse.setMeanOfAggregatesForEachMqId(List.of(tagesaggregat));
+
+        Mockito.when(messwerteService.ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))))).thenReturn(tageaggregatResponse);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(100L);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(75L);
+        auswertungProZeitraum.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq = new Auswertung();
+        auswertungProMq.setObjectId("99");
+        auswertungProMq.setZeitraum(zeitraum);
+        auswertungProMq.setNumberOfUnauffaelligeTage(100L);
+        auswertungProMq.setNumberOfRelevantKalendertage(75L);
+        auswertungProMq.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("99", List.of(auswertungProMq)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(2)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstIdAchtPlusEinsWithZeitraeumeAndTagesTypForMessstelleInvalidAndZweiPlusEinsWithZeitraeumeAndTagesTypForMessstelleInvalidAndSummeKfzWithZeitraeumeAndTagesTypForMessstelleInvalid() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
+                .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        request.setZeitraum(zeitraum);
+        request.setMstId("1234");
+        request.setMqIds(Set.of("123401", "123402"));
+        request.setTagesTyp(TagesTyp.MO_SO);
+        request.setMessfaehigkeiten(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS))
+                .thenReturn(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ))
+                .thenReturn(messfaehigkeiten);
+
+        var validationResultAchtPlusEins = new ValidierungService.ValidationResult();
+        validationResultAchtPlusEins.setValid(false);
+        validationResultAchtPlusEins.setNumberOfUnauffaelligeTage(100L);
+        validationResultAchtPlusEins.setNumberOfRelevantKalendertage(75L);
+        var validationResultZweiPlusEins = new ValidierungService.ValidationResult();
+        validationResultZweiPlusEins.setValid(false);
+        validationResultZweiPlusEins.setNumberOfUnauffaelligeTage(100L);
+        validationResultZweiPlusEins.setNumberOfRelevantKalendertage(75L);
+        var validationResultSummeKfz = new ValidierungService.ValidationResult();
+        validationResultSummeKfz.setValid(true);
+        validationResultSummeKfz.setNumberOfUnauffaelligeTage(100L);
+        validationResultSummeKfz.setNumberOfRelevantKalendertage(75L);
+        Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO))
+                .thenReturn(validationResultAchtPlusEins)
+                .thenReturn(validationResultZweiPlusEins)
+                .thenReturn(validationResultSummeKfz);
+
+        var tageaggregatResponse = new TagesaggregatResponseDto();
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setMqId(99);
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(1L));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(2L));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(3L));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(4L));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(5L));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(6L));
+        tagesaggregat.summeLastzug(BigDecimal.valueOf(7L));
+        tagesaggregat.summeGueterverkehr(BigDecimal.valueOf(8L));
+        tagesaggregat.summeSchwerverkehr(BigDecimal.valueOf(9L));
+        tagesaggregat.summeKraftfahrzeugverkehr(BigDecimal.valueOf(10L));
+        tagesaggregat.prozentSchwerverkehr(BigDecimal.valueOf(11L));
+        tagesaggregat.prozentGueterverkehr(BigDecimal.valueOf(12L));
+        tagesaggregat.includedMeasuringDays(13L);
+        tageaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+        tageaggregatResponse.setMeanOfAggregatesForEachMqId(List.of(tagesaggregat));
+
+        Mockito.when(messwerteService.ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))))).thenReturn(tageaggregatResponse);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(100L);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(75L);
+        auswertungProZeitraum.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq = new Auswertung();
+        auswertungProMq.setObjectId("99");
+        auswertungProMq.setZeitraum(zeitraum);
+        auswertungProMq.setNumberOfUnauffaelligeTage(100L);
+        auswertungProMq.setNumberOfRelevantKalendertage(75L);
+        auswertungProMq.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("99", List.of(auswertungProMq)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(3)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstIdRadWithdZeitraeumeAndTagesTypForMessstelleValidAndFahrzeugoptionsRadChoosen() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD)).thenReturn(Fahrzeugklasse.RAD);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var request = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        request.setZeitraum(zeitraum);
+        request.setMstId("1234");
+        request.setMqIds(Set.of("123401", "123402"));
+        request.setTagesTyp(TagesTyp.MO_SO);
+        request.setMessfaehigkeiten(messfaehigkeiten);
+        Mockito.when(validierungService.getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD))
+                .thenReturn(messfaehigkeiten);
+
+        var validationResult = new ValidierungService.ValidationResult();
+        validationResult.setValid(true);
+        validationResult.setNumberOfUnauffaelligeTage(100L);
+        validationResult.setNumberOfRelevantKalendertage(75L);
+        Mockito.when(validierungService.areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO)).thenReturn(validationResult);
+
+        var tageaggregatResponse = new TagesaggregatResponseDto();
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setMqId(99);
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(1L));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(2L));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(3L));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(4L));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(5L));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(6L));
+        tagesaggregat.summeLastzug(BigDecimal.valueOf(7L));
+        tagesaggregat.summeGueterverkehr(BigDecimal.valueOf(8L));
+        tagesaggregat.summeSchwerverkehr(BigDecimal.valueOf(9L));
+        tagesaggregat.summeKraftfahrzeugverkehr(BigDecimal.valueOf(10L));
+        tagesaggregat.prozentSchwerverkehr(BigDecimal.valueOf(11L));
+        tagesaggregat.prozentGueterverkehr(BigDecimal.valueOf(12L));
+        tagesaggregat.includedMeasuringDays(13L);
+        tageaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+        tageaggregatResponse.setMeanOfAggregatesForEachMqId(List.of(tagesaggregat));
+
+        Mockito.when(messwerteService.ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))))).thenReturn(tageaggregatResponse);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(100L);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(75L);
+        auswertungProZeitraum.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq = new Auswertung();
+        auswertungProMq.setObjectId("99");
+        auswertungProMq.setZeitraum(zeitraum);
+        auswertungProMq.setNumberOfUnauffaelligeTage(100L);
+        auswertungProMq.setNumberOfRelevantKalendertage(75L);
+        auswertungProMq.setDaten(tagesaggregat);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("99", List.of(auswertungProMq)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ACHT_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.ZWEI_PLUS_EINS);
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.SUMME_KFZ);
+        Mockito.verify(validierungService, Mockito.times(1)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(request, Fahrzeugklasse.RAD);
+
+        Mockito.verify(validierungService, Mockito.times(1)).areZeitraeumeAndTagesTypForMessstelleValid("1234",
+                zeitraum,
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))), TagesTyp.MO_SO);
+        Mockito.verify(messwerteService, Mockito.times(1)).ladeMeanOfTagesaggregatePerMq(TagesTyp.MO_SO, Set.of("123401", "123402"),
+                List.of(List.of(LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31))));
+    }
+
+    @Test
+    void ladeAuswertungGroupedByMstIdRadWithdZeitraeumeAndTagesTypForMessstelleValidAndFahrzeugoptionsRadNotChoosen() {
+        final var auswertungszeitraeume = new ArrayList<AuswertungsZeitraum>();
+        auswertungszeitraeume.add(AuswertungsZeitraum.QUARTAL_1);
+        final var jahre = new ArrayList<Integer>();
+        jahre.add(2020);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        messstelleAuswertungId.setMstId("1234");
+        messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
+        messtellenAuswertungIds.add(messstelleAuswertungId);
+
+        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        auswertungOptions.setZeitraum(auswertungszeitraeume);
+        auswertungOptions.setJahre(jahre);
+        auswertungOptions.setFahrzeuge(fahrzeugOptions);
+        auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
+        auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
+
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2020-01-01");
+        messfaehigkeit.setGueltigBis("2020-03-31");
+        messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
+        var messfaehigkeiten = List.of(messfaehigkeit);
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
+                .thenReturn(messfaehigkeiten);
+
+        final Messstelle mockedMessstele = new Messstelle();
+        mockedMessstele.setMstId("1234");
+        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+
+        Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD)).thenReturn(Fahrzeugklasse.RAD);
+
+        final var result = auswertungService.ladeAuswertungGroupedByMstId(auswertungOptions);
+
+        var zeitraum = new Zeitraum(YearMonth.of(2020, 1), YearMonth.of(2020, 3), AuswertungsZeitraum.QUARTAL_1);
+        var tagesaggregatExpected = new TagesaggregatDto();
+        var tagesaggregatExpectedMqId1Expected = new TagesaggregatDto();
+        tagesaggregatExpectedMqId1Expected.setMqId(123401);
+        var tagesaggregatExpectedMqId2Expected = new TagesaggregatDto();
+        tagesaggregatExpectedMqId2Expected.setMqId(123402);
+        final var auswertungMesstelle = new AuswertungMessstelle();
+        auswertungMesstelle.setMstId("1234");
+        final var auswertungProZeitraum = new Auswertung();
+        auswertungProZeitraum.setObjectId("1234");
+        auswertungProZeitraum.setZeitraum(zeitraum);
+        auswertungProZeitraum.setNumberOfUnauffaelligeTage(null);
+        auswertungProZeitraum.setNumberOfRelevantKalendertage(null);
+        auswertungProZeitraum.setDaten(tagesaggregatExpected);
+        auswertungMesstelle.setAuswertungenProZeitraum(List.of(auswertungProZeitraum));
+        final var auswertungProMq1 = new Auswertung();
+        auswertungProMq1.setObjectId("123401");
+        auswertungProMq1.setZeitraum(zeitraum);
+        auswertungProMq1.setNumberOfUnauffaelligeTage(null);
+        auswertungProMq1.setNumberOfRelevantKalendertage(null);
+        auswertungProMq1.setDaten(tagesaggregatExpectedMqId1Expected);
+        final var auswertungProMq2 = new Auswertung();
+        auswertungProMq2.setObjectId("123402");
+        auswertungProMq2.setZeitraum(zeitraum);
+        auswertungProMq2.setNumberOfUnauffaelligeTage(null);
+        auswertungProMq2.setNumberOfRelevantKalendertage(null);
+        auswertungProMq2.setDaten(tagesaggregatExpectedMqId2Expected);
+        auswertungMesstelle.setAuswertungenProMq(Map.of("123401", List.of(auswertungProMq1), "123402", List.of(auswertungProMq2)));
+        final var expected = List.of(auswertungMesstelle);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(validierungService, Mockito.times(0)).getRelevantMessfaehigkeitenAccordingFahrzeugklasse(Mockito.any(), Mockito.any());
+        Mockito.verify(validierungService, Mockito.times(0)).areZeitraeumeAndTagesTypForMessstelleValid(Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any());
+        Mockito.verify(messwerteService, Mockito.times(0)).ladeMeanOfTagesaggregatePerMq(Mockito.any(), Mockito.any(), Mockito.any());
+    }
 
     @Test
     void calculateZeitraeume() {
@@ -219,6 +886,965 @@ class AuswertungServiceTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringCollectionOrderInFieldsMatchingRegexes(".*")
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void createValidateZeitraumAndTagesTyp() {
+        final var zeitraum = new Zeitraum(YearMonth.of(2006, 1), YearMonth.of(2006, 12), AuswertungsZeitraum.JAHRE);
+        final var mstId = "1234";
+        final var mqIds = Set.of("123401", "123402");
+        final var tagesTyp = TagesTyp.WERKTAG_MO_FR;
+
+        final var messfaehigkeiten = List.of(new ReadMessfaehigkeitDTO(), new ReadMessfaehigkeitDTO());
+        Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
+                mstId,
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate())).thenReturn(messfaehigkeiten);
+
+        final var result = auswertungService.createValidateZeitraumAndTagesTyp(mstId, mqIds, zeitraum, tagesTyp);
+
+        final var expected = new ValidateZeitraumAndTagesTypForMessstelleModel();
+        expected.setTagesTyp(tagesTyp);
+        expected.setMstId(mstId);
+        expected.setMqIds(mqIds);
+        expected.setZeitraum(zeitraum);
+        expected.setMessfaehigkeiten(messfaehigkeiten);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+
+        Mockito.verify(messstelleService, Mockito.times(1)).getMessfaehigkeitenForZeitraumForMessstelle(
+                mstId,
+                zeitraum.getStartDate(),
+                zeitraum.getEndDate());
+    }
+
+    @Test
+    void createEmptyTagesaggregatResponse() {
+        final var result = auswertungService.createEmptyTagesaggregatResponse(Set.of("1", "2"));
+
+        final var expected = new TagesaggregatResponseDto();
+        final var emptyTagesaggregate = new ArrayList<TagesaggregatDto>();
+        Set.of("1", "2").forEach(mqId -> {
+            final TagesaggregatDto tagesaggregatDto = new TagesaggregatDto();
+            tagesaggregatDto.setMqId(Integer.valueOf(mqId));
+            emptyTagesaggregate.add(tagesaggregatDto);
+        });
+        expected.setMeanOfAggregatesForEachMqId(emptyTagesaggregate);
+        expected.setSumOverAllAggregatesOfAllMqId(new TagesaggregatDto());
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getZeitraeumeOfGivenMessfaehigkeiten() {
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
+        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2008-02-01");
+        messfaehigkeit.setGueltigBis("2009-05-15");
+        messfaehigkeiten.add(messfaehigkeit);
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2009-04-10");
+        messfaehigkeit.setGueltigBis("2009-07-31");
+        messfaehigkeiten.add(messfaehigkeit);
+        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit.setGueltigAb("2010-01-01");
+        messfaehigkeit.setGueltigBis("2011-12-31");
+        messfaehigkeiten.add(messfaehigkeit);
+
+        final var result = auswertungService.getZeitraeumeOfGivenMessfaehigkeiten(messfaehigkeiten);
+
+        final var expected = List.of(
+                List.of(LocalDate.of(2008, 2, 1), LocalDate.of(2009, 5, 15)),
+                List.of(LocalDate.of(2009, 4, 10), LocalDate.of(2009, 7, 31)),
+                List.of(LocalDate.of(2010, 1, 1), LocalDate.of(2011, 12, 31)));
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseAchtPlusEins() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.ACHT_PLUS_EINS,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(true);
+        expected.setSchwerverkehrsanteilProzent(true);
+        expected.setGueterverkehr(true);
+        expected.setGueterverkehrsanteilProzent(true);
+        expected.setLastkraftwagen(true);
+        expected.setLastzuege(true);
+        expected.setBusse(true);
+        expected.setKraftraeder(true);
+        expected.setPersonenkraftwagen(true);
+        expected.setLieferwagen(true);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseZweiPlusEins() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.ZWEI_PLUS_EINS,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(true);
+        expected.setSchwerverkehrsanteilProzent(true);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseSummeKfz() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.SUMME_KFZ,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(true);
+        expected.setSchwerverkehr(false);
+        expected.setSchwerverkehrsanteilProzent(false);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseRad() {
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+                Fahrzeugklasse.RAD,
+                fahrzeugOptions);
+
+        final var expected = new FahrzeugOptionsDTO();
+        expected.setKraftfahrzeugverkehr(false);
+        expected.setSchwerverkehr(false);
+        expected.setSchwerverkehrsanteilProzent(false);
+        expected.setGueterverkehr(false);
+        expected.setGueterverkehrsanteilProzent(false);
+        expected.setLastkraftwagen(false);
+        expected.setLastzuege(false);
+        expected.setBusse(false);
+        expected.setKraftraeder(false);
+        expected.setPersonenkraftwagen(false);
+        expected.setLieferwagen(false);
+        expected.setRadverkehr(true);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions() {
+        final var tagesaggregatResponse = new TagesaggregatResponseDto();
+
+        var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        tagesaggregatResponse.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+
+        var tagesaggregate = new ArrayList<TagesaggregatDto>();
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(13));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(14));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(15));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(16));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(17));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(18));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(19));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(20));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(21));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(22));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(23));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(24));
+        tagesaggregate.add(tagesaggregat);
+
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(25));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(26));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(27));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(28));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(29));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(30));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(31));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(32));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(33));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(34));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(35));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(36));
+        tagesaggregate.add(tagesaggregat);
+
+        tagesaggregatResponse.setMeanOfAggregatesForEachMqId(tagesaggregate);
+
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(tagesaggregatResponse,
+                fahrzeugOptions);
+
+        final var expected = new TagesaggregatResponseDto();
+
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(null);
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(null);
+        tagesaggregat.setSummeGueterverkehr(null);
+        tagesaggregat.setProzentGueterverkehr(null);
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(null);
+        tagesaggregat.setAnzahlBus(null);
+        tagesaggregat.setAnzahlKrad(null);
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(null);
+        tagesaggregat.setAnzahlRad(null);
+        expected.setSumOverAllAggregatesOfAllMqId(tagesaggregat);
+
+        tagesaggregate = new ArrayList<>();
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(null);
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(14));
+        tagesaggregat.setProzentSchwerverkehr(null);
+        tagesaggregat.setSummeGueterverkehr(null);
+        tagesaggregat.setProzentGueterverkehr(null);
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(18));
+        tagesaggregat.setSummeLastzug(null);
+        tagesaggregat.setAnzahlBus(null);
+        tagesaggregat.setAnzahlKrad(null);
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(22));
+        tagesaggregat.setAnzahlLfw(null);
+        tagesaggregat.setAnzahlRad(null);
+        tagesaggregate.add(tagesaggregat);
+
+        tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(null);
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(26));
+        tagesaggregat.setProzentSchwerverkehr(null);
+        tagesaggregat.setSummeGueterverkehr(null);
+        tagesaggregat.setProzentGueterverkehr(null);
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(30));
+        tagesaggregat.setSummeLastzug(null);
+        tagesaggregat.setAnzahlBus(null);
+        tagesaggregat.setAnzahlKrad(null);
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(34));
+        tagesaggregat.setAnzahlLfw(null);
+        tagesaggregat.setAnzahlRad(null);
+        tagesaggregate.add(tagesaggregat);
+
+        expected.setMeanOfAggregatesForEachMqId(tagesaggregate);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForKraftfahrzeugverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(true);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForSchwerverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(true);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForSchwerverkehrsanteilProzent() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForGueterverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(true);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForGueterverkehrsanteilProzent() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(true);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLastkraftwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(true);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(BigDecimal.valueOf(6));
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLastzuege() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(true);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(BigDecimal.valueOf(7));
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForBusse() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(true);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(BigDecimal.valueOf(8));
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForKraftraeder() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(true);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(BigDecimal.valueOf(9));
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForPersonenkraftwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(true);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(BigDecimal.valueOf(10));
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForLieferwagen() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(true);
+        fahrzeugOptions.setRadverkehr(false);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(BigDecimal.valueOf(11));
+        expected.setAnzahlRad(null);
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    void nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptionsForRadverkehr() {
+        final var tagesaggregat = new TagesaggregatDto();
+        tagesaggregat.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(1));
+        tagesaggregat.setSummeSchwerverkehr(BigDecimal.valueOf(2));
+        tagesaggregat.setProzentSchwerverkehr(BigDecimal.valueOf(3));
+        tagesaggregat.setSummeGueterverkehr(BigDecimal.valueOf(4));
+        tagesaggregat.setProzentGueterverkehr(BigDecimal.valueOf(5));
+        tagesaggregat.setAnzahlLkw(BigDecimal.valueOf(6));
+        tagesaggregat.setSummeLastzug(BigDecimal.valueOf(7));
+        tagesaggregat.setAnzahlBus(BigDecimal.valueOf(8));
+        tagesaggregat.setAnzahlKrad(BigDecimal.valueOf(9));
+        tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
+        tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
+        tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
+        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        fahrzeugOptions.setKraftfahrzeugverkehr(false);
+        fahrzeugOptions.setSchwerverkehr(false);
+        fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
+        fahrzeugOptions.setGueterverkehr(false);
+        fahrzeugOptions.setGueterverkehrsanteilProzent(false);
+        fahrzeugOptions.setLastkraftwagen(false);
+        fahrzeugOptions.setLastzuege(false);
+        fahrzeugOptions.setBusse(false);
+        fahrzeugOptions.setKraftraeder(false);
+        fahrzeugOptions.setPersonenkraftwagen(false);
+        fahrzeugOptions.setLieferwagen(false);
+        fahrzeugOptions.setRadverkehr(true);
+
+        final var result = auswertungService.nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(tagesaggregat, fahrzeugOptions);
+
+        final var expected = new TagesaggregatDto();
+        expected.setSummeKraftfahrzeugverkehr(null);
+        expected.setSummeSchwerverkehr(null);
+        expected.setProzentSchwerverkehr(null);
+        expected.setSummeGueterverkehr(null);
+        expected.setProzentGueterverkehr(null);
+        expected.setAnzahlLkw(null);
+        expected.setSummeLastzug(null);
+        expected.setAnzahlBus(null);
+        expected.setAnzahlKrad(null);
+        expected.setSummeAllePkw(null);
+        expected.setAnzahlLfw(null);
+        expected.setAnzahlRad(BigDecimal.valueOf(12));
+
+        Assertions.assertThat(result)
+                .isNotNull()
                 .isEqualTo(expected);
     }
 

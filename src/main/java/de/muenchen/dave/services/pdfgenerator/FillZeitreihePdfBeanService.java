@@ -15,14 +15,14 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FillZeitreihePdfBeanService {
@@ -94,7 +94,7 @@ public class FillZeitreihePdfBeanService {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
 
-        zeitreihePdf.setDocumentTitle(DOCUMENT_TITLE_PREFIX + zaehlstelle.getNummer());
+        zeitreihePdf.setDocumentTitle(String.format("%s %s %s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), zaehlung.getZaehlart()));
         zeitreihePdf.setChart(chartAsBase64Png);
         zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
@@ -187,7 +187,7 @@ public class FillZeitreihePdfBeanService {
                     zusatzinformationenZeitreihePdfComponentList.add(zusatzinformationenZeitreihe);
                 });
         // Falls Zusatzinformationen vorhanden sind => true
-        zeitreihePdf.setSindZusatzinformationenVorhanden(zusatzinformationenZeitreihePdfComponentList.size() > 0);
+        zeitreihePdf.setSindZusatzinformationenVorhanden(CollectionUtils.isNotEmpty(zusatzinformationenZeitreihePdfComponentList));
 
         zeitreihePdf.setZusatzinformationenZeitreihe(zusatzinformationenZeitreihePdfComponentList);
     }

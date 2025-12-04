@@ -44,3 +44,4 @@ nbdist/
 # do not check in local application profile yml
 src/**/application-local.yml
 /.openapi-generator/
+/*_logfile

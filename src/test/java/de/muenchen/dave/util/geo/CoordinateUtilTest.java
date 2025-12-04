@@ -1,10 +1,10 @@
 package de.muenchen.dave.util.geo;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 class CoordinateUtilTest {
 

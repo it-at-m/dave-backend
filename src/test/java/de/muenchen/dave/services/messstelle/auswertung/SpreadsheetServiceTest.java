@@ -11,6 +11,13 @@ import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
+import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
+import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,13 +32,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.math.BigDecimal;
-import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -61,7 +61,7 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("ausgewählter Wochentag");
         cell = row.getCell(1);
         Assertions.assertThat(cell.getStringCellValue())
-                .isEqualTo("ausgewählter MQ (Merkmale \"MQ-ID - Richtung - Standort MQ\") bzw. \"Alle Messquerschnitte\"");
+                .isEqualTo("ausgewählter Messquerschnitt");
 
         spreadsheetService.addMetaHeaderToRow(sheet.createRow(0), true);
         Assertions.assertThat(sheet.getPhysicalNumberOfRows()).isEqualTo(1);
@@ -98,7 +98,7 @@ class SpreadsheetServiceTest {
         Cell cell = row.getCell(0);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(options.getTagesTyp().getBeschreibung());
         cell = row.getCell(1);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Alle Messquerschnitte");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("alle Messquerschnitte");
 
         final Messstelle mockedMessstelle = new Messstelle();
         mockedMessstelle.setMstId("123");
@@ -128,7 +128,8 @@ class SpreadsheetServiceTest {
 
         final List<String> cellValue = new ArrayList<>();
         mockedMessstelle.getMessquerschnitte()
-                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(), messquerschnitt.getFahrtrichtung(),
+                .forEach(messquerschnitt -> cellValue.add(String.format("%s - %s - %s", messquerschnitt.getMqId(),
+                        FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                         messquerschnitt.getStandort())));
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(String.join(", ", cellValue));
     }
@@ -179,6 +180,8 @@ class SpreadsheetServiceTest {
         final var spreadsheetDocument = new XSSFWorkbook();
         final Sheet sheet = spreadsheetDocument.createSheet("Test");
 
+        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
+        options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
         final FahrzeugOptionsDTO fahrzeugOptions = new FahrzeugOptionsDTO();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(false);
@@ -193,14 +196,23 @@ class SpreadsheetServiceTest {
         fahrzeugOptions.setBusse(true);
         fahrzeugOptions.setKraftraeder(false);
         fahrzeugOptions.setPersonenkraftwagen(true);
+        options.setFahrzeuge(fahrzeugOptions);
 
         int cellIndex = 0;
         Row row = sheet.createRow(0);
-        spreadsheetService.addDataHeaderToRow(row, fahrzeugOptions, false);
+        spreadsheetService.addDataHeaderToRow(row, options, false);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(8);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(10);
         Cell cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Zeitintervall");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Jahr");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
         cell = row.getCell(cellIndex++);
@@ -208,23 +220,30 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl relevante Tage");
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl plausible Tage");
 
         row = sheet.createRow(0);
         cellIndex = 0;
-        spreadsheetService.addDataHeaderToRow(row, fahrzeugOptions, true);
+        options.setZeitraum(List.of(AuswertungsZeitraum.MAERZ));
+        spreadsheetService.addDataHeaderToRow(row, options, true);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(9);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(12);
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Zeitintervall");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Monat");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Jahr");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("MstId");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("KFZ");
         cell = row.getCell(cellIndex++);
@@ -232,13 +251,9 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("GV%");
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("FUß");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("LFW");
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("BUS");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl relevante Tage");
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("PKW");
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo("Anzahl plausible Tage");
 
     }
 
@@ -267,15 +282,10 @@ class SpreadsheetServiceTest {
 
         final TagesaggregatDto daten = new TagesaggregatDto();
         daten.setMqId(Integer.valueOf(mqId));
-        daten.setAnzahlPkw(BigDecimal.valueOf(0));
-        daten.setAnzahlPkwA(BigDecimal.valueOf(1));
         daten.setAnzahlLfw(BigDecimal.valueOf(2));
         daten.setAnzahlKrad(BigDecimal.valueOf(3));
         daten.setAnzahlLkw(BigDecimal.valueOf(4));
-        daten.setAnzahlLkwA(BigDecimal.valueOf(5));
-        daten.setAnzahlSattelKfz(BigDecimal.valueOf(6));
         daten.setAnzahlBus(BigDecimal.valueOf(7));
-        daten.setAnzahlNkKfz(BigDecimal.valueOf(8));
         daten.setAnzahlRad(BigDecimal.valueOf(9));
         daten.setSummeAllePkw(BigDecimal.valueOf(10));
         daten.setSummeLastzug(BigDecimal.valueOf(11));
@@ -289,16 +299,29 @@ class SpreadsheetServiceTest {
         final Auswertung auswertung = new Auswertung();
         auswertung.setObjectId(mqId);
         auswertung.setZeitraum(zeitraum);
+        auswertung.setNumberOfRelevantKalendertage(42L);
+        auswertung.setNumberOfUnauffaelligeTage(23L);
         auswertung.setDaten(daten);
 
         int cellIndex = 0;
         Row row = sheet.createRow(0);
         spreadsheetService.addDataToRow(row, auswertung, fahrzeugOptions, false);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(8);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(11);
         Cell cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue())
-                .isEqualTo(String.format("%s / %s", zeitraum.getAuswertungsZeitraum().getText(), zeitraum.getStart().getYear()));
+                .isEqualTo(zeitraum.getAuswertungsZeitraum().getText());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue())
+                .isEqualTo(String.valueOf(zeitraum.getStart().getYear()));
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
@@ -306,24 +329,28 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfRelevantKalendertage().doubleValue());
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfUnauffaelligeTage().doubleValue());
 
         auswertung.getZeitraum().setAuswertungsZeitraum(AuswertungsZeitraum.JAHRE);
         row = sheet.createRow(0);
         cellIndex = 0;
         spreadsheetService.addDataToRow(row, auswertung, fahrzeugOptions, true);
 
-        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(9);
+        Assertions.assertThat(row.getPhysicalNumberOfCells()).isEqualTo(11);
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(String.valueOf(zeitraum.getStart().getYear()));
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(auswertung.getObjectId());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        cell = row.getCell(cellIndex++);
+        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeKraftfahrzeugverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
@@ -331,13 +358,9 @@ class SpreadsheetServiceTest {
         cell = row.getCell(cellIndex++);
         Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getProzentGueterverkehr().doubleValue());
         cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getStringCellValue()).isEqualTo(StringUtils.EMPTY);
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlLfw().doubleValue());
-        cell = row.getCell(cellIndex++);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getAnzahlBus().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfRelevantKalendertage().doubleValue());
         cell = row.getCell(cellIndex);
-        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(daten.getSummeAllePkw().doubleValue());
+        Assertions.assertThat(cell.getNumericCellValue()).isEqualTo(auswertung.getNumberOfUnauffaelligeTage().doubleValue());
 
     }
 
@@ -376,7 +399,7 @@ class SpreadsheetServiceTest {
         messquerschnitt.setFahrtrichtung("W");
         messquerschnitt.setStandort("Standort MQ");
 
-        final String expected = "12301 - W - Standort MQ";
+        final String expected = "12301 - West - Standort MQ";
 
         Assertions.assertThat(spreadsheetService.getFormattedStringForMessquerschnitt(messquerschnitt)).isEqualTo(expected);
     }

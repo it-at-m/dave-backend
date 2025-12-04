@@ -1,7 +1,3 @@
-/*
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2020
- */
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
@@ -9,17 +5,19 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
+import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class BelastungsplanService {
 
     public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
             final List<IntervalDto> intervals,
-            final List<IntervalDto> totalSumOfAllMessquerschnitte,
+            final List<IntervalDto> totalSumForEachMessquerschnitt,
             final String messstelleId,
             final MessstelleOptionsDTO options) {
 
@@ -51,7 +49,7 @@ public class BelastungsplanService {
         belastungsplanMessquerschnitte.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
         belastungsplanMessquerschnitte.setStrassenname(getStrassennameFromMessquerschnitt(messstelle));
 
-        final var messquerschnitte = totalSumOfAllMessquerschnitte
+        final var messquerschnitte = totalSumForEachMessquerschnitt
                 .stream()
                 .map(sumOfMessquerschnitt -> {
                     final LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
@@ -83,31 +81,41 @@ public class BelastungsplanService {
 
                     final var direction = getDirection(messstelle, sumOfMessquerschnitt.getMqId().toString());
                     messquerschnitt.setDirection(direction);
-
                     return messquerschnitt;
-                })
-                .toList();
-        belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(messquerschnitte);
+                });
+        final List<LadeBelastungsplanMessquerschnittDataDTO> sortedMessquerschnitte;
+        if (isDirectionNorthOrSouth(messstelle)) {
+            sortedMessquerschnitte = messquerschnitte
+                    .sorted(
+                            Comparator.comparing(
+                                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)
+                                    .reversed())
+                    .toList();
+        } else {
+            sortedMessquerschnitte = messquerschnitte.sorted(Comparator.comparing(
+                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)).toList();
+        }
+        belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(sortedMessquerschnitte);
 
-        final Integer totalSumKfz = totalSumOfAllMessquerschnitte
+        final Integer totalSumKfz = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
 
-        final Integer totalSumSv = totalSumOfAllMessquerschnitte
+        final Integer totalSumSv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
 
-        final Integer totalSumGv = totalSumOfAllMessquerschnitte
+        final Integer totalSumGv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
         belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
 
-        final Integer totalSumRad = totalSumOfAllMessquerschnitte
+        final Integer totalSumRad = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue())
                 .sum();
@@ -119,8 +127,8 @@ public class BelastungsplanService {
         final var totalPercentageSv = calcPercentage(totalSumSv, totalSum);
         belastungsplanMessquerschnitte.setTotalPercentSv(totalPercentageSv);
 
-        if (options.getMessquerschnittIds().size() == 1) {
-            final var isKfzStelle = Objects.equals(options.getZeitauswahl(), "Spitzenstunde KFZ");
+        if (OptionsUtil.isZeitauswahlSpitzenstunde(options.getZeitauswahl())) {
+            final var isKfzStelle = Objects.equals(options.getZeitauswahl(), Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
             final var spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                     options.getZeitblock(),
                     intervals,
@@ -139,6 +147,14 @@ public class BelastungsplanService {
                 .toList()
                 .getFirst();
         return messquerschnittDto.getFahrtrichtung();
+    }
+
+    protected boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDTO messstelle) {
+        if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
+            return false;
+        }
+        final String direction = messstelle.getMessquerschnitte().getFirst().getFahrtrichtung();
+        return direction.equalsIgnoreCase("n") || direction.equalsIgnoreCase("s");
     }
 
     protected BigDecimal calcPercentage(final Integer dividend, final Integer divisor) {

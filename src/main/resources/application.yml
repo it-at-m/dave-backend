@@ -49,9 +49,11 @@ dave:
   radius:
     distance-check-meter: 25
   zaehlung:
-    status:
-      #      Jeden Tag um 04:00 Uhr
-      updater: 0 0 4 1/1 * ?
+    status-updater:
+      # Jeden Tag um 04:00 Uhr
+      cron: 0 0 4 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 1380m
   email:
     sender:
       # Server Einstellungen
@@ -66,15 +68,33 @@ dave:
       protocol: imap
       port: 993
       # Default Update-Intervall in Millisekunden für den Email-Abruf
-      update-interval: 3600000
+      #      Alle 60 min
+      cron: 0 0 0/1 1/1 * ?
+      # Sollte immer knapp unter dem Cron sein
+      shedlock: 59m
       folder-success: Erfolgreich
       folder-error: Fehlerhaft
       cut-email-body:
         # Antwortemails ab hier bereinigen. Semikolon ist ein ODER
         line-contains-strings: "Parameter1;Parameter2;-----Ursprüngliche Nachricht-----"
         line-begins-with-strings: "Von:;Gesendet:"
+  messstelle:
+    # Jeden Tag um 01:00 Uhr
+    cron: 0 0 1 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 1380m
+  unauffaellige-tage:
+    # Jeden Tag um 02:00 Uhr
+    cron: 0 0 2 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 1380m
   onnx:
     model-path: model/Rad_Modell_DAVE.onnx
 
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 
+  map:
+    center:
+      lat: "48.137227"
+      lng: "11.575517"
+      zoom: 12

@@ -11,6 +11,7 @@ import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RequestMapping(value = "/zaehlstelle")
 @RestController
@@ -129,7 +128,7 @@ public class ZaehlstelleController {
     public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenByUnreadMessages(
             @RequestParam(value = REQUEST_PARAMETER_PARTICIPANT) final int participantId) {
         try {
-            final List<LadeZaehlstelleWithUnreadMessageDTO> dto = this.indexService.readZaehlstellenWithUnreadMessages(participantId);
+            final List<LadeZaehlstelleWithUnreadMessageDTO> dto = this.indexService.readZaehlstellenWithUnreadMessagesExternal();
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im ZaehlstellenController, Zählstellen mit ungelesenen Nachrichten konnten nicht gefunden werden. ParticipantId: {}",
@@ -138,6 +137,29 @@ public class ZaehlstelleController {
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im ZaehlstellenController beim Laden der Zählstellen mit ungelesenen Nachrichten. ParticipantId: {}", participantId,
                     e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Es ist ein unerwarteter Fehler beim Laden der Zählstellen mit ungelesenen Nachrichten aufgetreten.");
+        }
+    }
+
+    /**
+     * Gibt die Zählstellen zurück, für die für das Mobilitätsreferat ungelesene Nachrichten
+     * vorliegen.
+     *
+     * @return Zählstellen mit ungelesenen Nachrichten bei Zählungen
+     */
+    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @GetMapping(value = "/unread-messages", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenWithUnreadMessages() {
+        try {
+            final List<LadeZaehlstelleWithUnreadMessageDTO> dto = this.indexService.readZaehlstellenWithUnreadMessages();
+            return ResponseEntity.ok(dto);
+        } catch (final ResourceNotFoundException e) {
+            log.error("Fehler im ZaehlstellenController, Zählstellen mit ungelesenen Nachrichten für das Mobilitätsreferat konnten nicht gefunden werden", e);
+            throw e;
+        } catch (final Exception e) {
+            log.error("Unerwarteter Fehler im ZaehlstellenController beim Laden der Zählstellen mit ungelesenen Nachrichten für das Mobilitätsreferat.", e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Es ist ein unerwarteter Fehler beim Laden der Zählstellen mit ungelesenen Nachrichten aufgetreten.");
         }

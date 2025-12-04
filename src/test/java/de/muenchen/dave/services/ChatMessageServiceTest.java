@@ -1,5 +1,9 @@
 package de.muenchen.dave.services;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
@@ -9,15 +13,10 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import java.util.List;
 import java.util.UUID;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 public class ChatMessageServiceTest {
 

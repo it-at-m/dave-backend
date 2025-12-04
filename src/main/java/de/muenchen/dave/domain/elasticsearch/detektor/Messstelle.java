@@ -1,6 +1,11 @@
 package de.muenchen.dave.domain.elasticsearch.detektor;
 
+import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
+import de.muenchen.dave.domain.enums.Verkehrsart;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -9,12 +14,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
-@Document(indexName = "messstelle")
+@Document(indexName = "#{ 'messstelle' + @environment.getProperty('elasticsearch.index.suffix') }")
 public class Messstelle {
 
     @Id
@@ -35,8 +36,11 @@ public class Messstelle {
     Integer stadtbezirkNummer;
 
     String bemerkung;
-    String fahrzeugKlassen;
-    String detektierteVerkehrsarten;
+
+    Fahrzeugklasse fahrzeugklasse;
+
+    Verkehrsart detektierteVerkehrsart;
+
     String hersteller;
 
     @Field(type = FieldType.Date, pattern = "dd.MM.uuuu")
@@ -58,4 +62,5 @@ public class Messstelle {
     List<String> customSuchwoerter;
     List<Messquerschnitt> messquerschnitte = new ArrayList<>();
     List<Messfaehigkeit> messfaehigkeiten = new ArrayList<>();
+    Boolean lageplanVorhanden = false;
 }
