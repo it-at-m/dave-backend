@@ -3,7 +3,7 @@ server:
 
 logging:
   level:
-    root: INFO
+    root: WARN
     de.muenchen.dave: INFO
 
 db.schema: dave_ng
@@ -38,20 +38,20 @@ spring:
         default_schema: ${db.schema}
         format_sql: true
 
-  security: # CHECK to remove
+  security:
     # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
     logging.requests: all
     oauth2:
       resource:
-        user-info-uri: ${keycloak.auth-server-url}/realms/${realm}/protocol/openid-connect/userinfo
+        user-info-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/userinfo
       resourceserver:
         jwt:
-          issuer-uri: ${keycloak.auth-server-url}/realms/${realm}
-          jwk-set-uri: ${keycloak.auth-server-url}/realms/${realm}/protocol/openid-connect/certs
+          issuer-uri: ${SSO_BASE_URL}/realms/${realm}
+          jwk-set-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-            token-uri: ${keycloak.auth-server-url}/realms/${realm}/protocol/openid-connect/token
+            token-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/token
         registration:
           keycloak:
             client-id: dave
@@ -62,10 +62,8 @@ spring:
 # Management
 management.health.elasticsearch.enabled: false
 
-# Define the local keycloak realm here
-realm: Dave  # CHECK to remove
-keycloak:  # CHECK to remove
-  auth-server-url: https://sso.de/auth
+# Define the keycloak realm here
+realm: Dave
 
 elasticsearch.index.suffix: -ng
 elasticsearch:
@@ -80,7 +78,7 @@ dave:
   zaehlung:
     status:
       #      Alle 5 min
-      updater: 0 0/5 * 1/1 * ?
+      updater: 0 0 * 1/1 * ?
   email:
     address: dave-dummy@mail.de
     password: dummy
