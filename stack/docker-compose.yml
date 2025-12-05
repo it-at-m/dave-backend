@@ -97,7 +97,7 @@ services:
       timeout: 10s
       retries: 120
 
-  dave-stack_kibana:
+  kibana:
     container_name: kibana
     depends_on:
       elastic:
@@ -184,4 +184,5 @@ volumes:
 
 networks:
   dave-network:
-    driver: bridge  # Standardnetzwerktyp
+#    driver: bridge  # Standardnetzwerktyp
+    external: true
