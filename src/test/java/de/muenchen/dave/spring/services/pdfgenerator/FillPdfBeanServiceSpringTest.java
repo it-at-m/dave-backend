@@ -241,7 +241,7 @@ public class FillPdfBeanServiceSpringTest {
 
         final String chartAsBase64Png = "Hier könnte ihre Reklame stehen!";
         DiagrammPdf diagrammPdf = new DiagrammPdf();
-        diagrammPdf = this.fillPdfBeanService.fillBelastungsplanPdf(diagrammPdf, MOCKABLE_ZAEHLUNG_ID, options, chartAsBase64Png, DEPARTMENT);
+        this.fillPdfBeanService.fillBelastungsplanPdf(diagrammPdf, MOCKABLE_ZAEHLUNG_ID, options, chartAsBase64Png, DEPARTMENT);
 
         assertThat(diagrammPdf.getChart(), is("Hier könnte ihre Reklame stehen!"));
         assertThat(diagrammPdf.getChartTitle(), is("Tageswert"));
@@ -271,7 +271,7 @@ public class FillPdfBeanServiceSpringTest {
         final String chartAsBase64Png = "Hier könnte ihre Reklame stehen!";
         final String schematischeUebersicht = "Übersicht";
         GangliniePdf gangliniePdfActual = new GangliniePdf();
-        gangliniePdfActual = this.fillPdfBeanService.fillGangliniePdf(gangliniePdfActual, MOCKABLE_ZAEHLUNG_ID, options, chartAsBase64Png,
+        this.fillPdfBeanService.fillGangliniePdf(gangliniePdfActual, MOCKABLE_ZAEHLUNG_ID, options, chartAsBase64Png,
                 schematischeUebersicht, DEPARTMENT);
 
         /*
@@ -293,7 +293,7 @@ public class FillPdfBeanServiceSpringTest {
         final String schematischeUebersicht = "Base64 String";
 
         DatentabellePdf datentabellePdfActual = new DatentabellePdf();
-        datentabellePdfActual = this.fillPdfBeanService.fillDatentabellePdf(datentabellePdfActual, MOCKABLE_ZAEHLUNG_ID, options, schematischeUebersicht,
+        this.fillPdfBeanService.fillDatentabellePdf(datentabellePdfActual, MOCKABLE_ZAEHLUNG_ID, options, schematischeUebersicht,
                 DEPARTMENT);
 
         /*

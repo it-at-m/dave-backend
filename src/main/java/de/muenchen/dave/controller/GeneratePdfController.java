@@ -2,6 +2,7 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
@@ -14,7 +15,6 @@ import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,6 +45,7 @@ public class GeneratePdfController {
     private static final String HTTP_HEADER_FILENAME = "davePdf.pdf";
     private static final String REQUEST_PART_DEPARTMENT = "department";
     private static final String REQUEST_PART_OPTIONS = "options";
+    private static final String REQUEST_PART_MESSWERTE = "messswerte";
     private static final String REQUEST_PART_AUSWERTUNG = "auswertung";
     private static final String REQUEST_PART_CHART_AS_BASE64_PNG = "chartAsBase64Png";
     private static final String REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG = "schematischeUebersichtAsBase64Png";
@@ -87,13 +88,13 @@ public class GeneratePdfController {
             ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
-            if (StringUtils.equalsIgnoreCase(charttype, TYPE_BELASTUNGSPLAN)) {
+            if (TYPE_BELASTUNGSPLAN.equalsIgnoreCase(charttype)) {
                 pdf = generatePdfService.generateBelastungsplanPdf(zaehlungId, options, chartAsBase64Png, department);
-            } else if (StringUtils.equalsIgnoreCase(charttype, TYPE_GANGLINIE)) {
+            } else if (TYPE_GANGLINIE.equalsIgnoreCase(charttype)) {
                 pdf = generatePdfService.generateGangliniePdf(zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
-            } else if (StringUtils.equalsIgnoreCase(charttype, TYPE_DATENTABELLE)) {
+            } else if (TYPE_DATENTABELLE.equalsIgnoreCase(charttype)) {
                 pdf = generatePdfService.generateDatentabellePdf(zaehlungId, options, schematischeUebersichtAsBase64Png, department);
-            } else if (StringUtils.equalsIgnoreCase(charttype, TYPE_ZEITREIHE)) {
+            } else if (TYPE_ZEITREIHE.equalsIgnoreCase(charttype)) {
                 pdf = generatePdfService.generateZeitreihePdf(zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, charttype + " nicht implementiert.");
@@ -129,18 +130,20 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleOptionsDTO options,
+            @Valid @RequestPart(value = REQUEST_PART_MESSWERTE) @NotNull final LadeProcessedMesswerteDTO messwerte,
             @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
             @RequestPart(
                     value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
             ) final String schematischeUebersichtAsBase64Png) {
         try {
             final byte[] pdf;
-            if (StringUtils.equalsIgnoreCase(type, TYPE_BELASTUNGSPLAN)) {
-                pdf = generatePdfService.generateBelastungsplanPdf(messstelleId, options, chartAsBase64Png, department);
-            } else if (StringUtils.equalsIgnoreCase(type, TYPE_GANGLINIE)) {
-                pdf = generatePdfService.generateGangliniePdf(messstelleId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
-            } else if (StringUtils.equalsIgnoreCase(type, TYPE_DATENTABELLE)) {
-                pdf = generatePdfService.generateDatentabellePdf(messstelleId, options, schematischeUebersichtAsBase64Png, department);
+            if (TYPE_BELASTUNGSPLAN.equalsIgnoreCase(type)) {
+                pdf = generatePdfService.generateBelastungsplanPdf(messstelleId, messwerte, options, chartAsBase64Png, department);
+            } else if (TYPE_GANGLINIE.equalsIgnoreCase(type)) {
+                pdf = generatePdfService.generateGangliniePdf(messstelleId, messwerte, options, chartAsBase64Png, schematischeUebersichtAsBase64Png,
+                        department);
+            } else if (TYPE_DATENTABELLE.equalsIgnoreCase(type)) {
+                pdf = generatePdfService.generateDatentabellePdf(messstelleId, messwerte, options, schematischeUebersichtAsBase64Png, department);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, type + " nicht implementiert.");
             }
