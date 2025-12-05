@@ -54,7 +54,7 @@ spring:
         registration:
           keycloak:
             client-id: dave
-            client-secret: 36181282-0eb1-4915-afe5-655b9ddbc427
+            client-secret: ${SSO_CLIENT_SECRET}
             authorization-grant-type: client_credentials
             client-authentication-method: client_secret_post
 
