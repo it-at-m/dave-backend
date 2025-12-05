@@ -29,7 +29,6 @@ spring:
       # but here explicite:
       ddl-auto: create-drop
       naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl # CHECK to remove
 
     # Logging for database operation
     show-sql: true
