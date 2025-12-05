@@ -184,5 +184,4 @@ volumes:
 
 networks:
   dave-network:
-#    driver: bridge  # Standardnetzwerktyp
-    external: true
+    driver: bridge  # Standardnetzwerktyp
