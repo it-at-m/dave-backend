@@ -172,6 +172,7 @@ services:
     profiles: [sample-stack]
     image: ghcr.io/it-at-m/dave-backend/dave-backend:latest
     environment:
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTICSEARCH_HTTPCACERTIFICATE=${ELASTICSEARCH_CERT_FINGERPRINT}
       - SPRING_PROFILES_ACTIVE=docker,no-security,debugging,sample
       - SSO_BASE_URL=http://sso.de

@@ -67,7 +67,6 @@ realm: Dave
 elasticsearch.index.suffix: -ng
 elasticsearch:
   user: elastic
-  password: changeme
   host: elastic
   port: 9200
   connectTimeout: 10
