@@ -85,6 +85,11 @@ public class ProcessZaehldatenService {
                 options);
         processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
 
+        /**
+         * @TODO
+         *
+         * Anpassungen in der Methode getBelastungsplanDTO erforderlich.
+         */
         log.debug("Process Zaehldaten Zeitreihe");
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
                 zaehlungId,
