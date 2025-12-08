@@ -42,15 +42,15 @@ spring:
     logging.requests: all
     oauth2:
       resource:
-        user-info-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/userinfo
+        user-info-uri: ${SSO_BASE_URL}/auth/realms/${realm}/protocol/openid-connect/userinfo
       resourceserver:
         jwt:
-          issuer-uri: ${SSO_BASE_URL}/realms/${realm}
-          jwk-set-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/certs
+          issuer-uri: ${SSO_BASE_URL}/auth/realms/${realm}
+          jwk-set-uri: ${SSO_BASE_URL}/auth/realms/${realm}/protocol/openid-connect/certs
       client:
         provider:
           keycloak:
-            token-uri: ${SSO_BASE_URL}/realms/${realm}/protocol/openid-connect/token
+            token-uri: ${SSO_BASE_URL}/auth/realms/${realm}/protocol/openid-connect/token
         registration:
           keycloak:
             client-id: dave
