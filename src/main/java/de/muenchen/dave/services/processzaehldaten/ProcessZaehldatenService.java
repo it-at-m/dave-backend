@@ -52,6 +52,11 @@ public class ProcessZaehldatenService {
 
         log.debug("Lade Zaehldaten for Table");
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
+        /**
+         * @TODO
+         *
+         * Anpassung in Methode "ladeZaehldaten" erforderlich.
+         */
         final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlungId),
                 options);
@@ -69,6 +74,11 @@ public class ProcessZaehldatenService {
                 options);
         processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
 
+        /**
+         * @TODO
+         *
+         * Anpassungen in der Methode getBelastungsplanDTO erforderlich.
+         */
         log.debug("Process Zaehldaten Belastungsplan");
         final LadeBelastungsplanDTO ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
                 zaehlungId,
