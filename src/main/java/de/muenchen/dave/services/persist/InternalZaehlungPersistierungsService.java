@@ -152,6 +152,11 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                     .forEach(zeitintervalleToPersist::add);
         });
 
+        /**
+         * @TODO
+         *
+         * Anpassungen in den Vorberechnungen.
+         */
         this.zeitintervallPersistierungsService.aufbereitenUndPersistieren(zeitintervalleToPersist,
                 List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
                         .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
