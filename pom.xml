@@ -22,7 +22,7 @@
         <apache.commons.io>2.20.0</apache.commons.io>
         <apache.commons.lang3>3.18.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
-        <apache.commons.exec>1.5.0</apache.commons.exec>
+        <apache.commons.exec>1.6.0</apache.commons.exec>
         <apache.poi>5.4.1</apache.poi>
         <guava>33.4.8-jre</guava>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
