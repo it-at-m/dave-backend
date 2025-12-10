@@ -202,6 +202,11 @@ public class ProcessZaehldatenZeitreiheService {
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
+                        /**
+                         * @TODO
+                         *
+                         * Anpassung der Zeitintervallextraktion.
+                         */
                         final Zeitintervall zeitintervall = zeitintervallRepository
                                 .findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
                                         UUID.fromString(zaehlung.getId()),

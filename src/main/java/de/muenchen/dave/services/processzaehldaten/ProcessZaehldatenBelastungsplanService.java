@@ -329,8 +329,18 @@ public class ProcessZaehldatenBelastungsplanService {
             // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
             findByZaehlungenId(options.getVergleichszaehlungsId());
             log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
+            /**
+             * @TODO
+             *
+             * In der Methode "getDifferenzdatenBelastungsplanDTO" wird implizit wieder die Methode "ladeProcessedZaehldatenBelastungsplan" aufgerufen.
+             */
             return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
         } else {
+            /**
+             * @TODO
+             *
+             * Anpassung der nachfolgenden Methode.
+             */
             return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
         }
     }
@@ -363,8 +373,18 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
+            /**
+             * @TODO
+             *
+             * Anpassungen in nachfolgender Methode erforderlich.
+             */
             zeitintervalle = extractZeitintervalleSpitzenstunde(zaehlung, options);
         } else {
+            /**
+             * @TODO
+             *
+             * Anpassungen in nachfolgender Methode erforderlich.
+             */
             zeitintervalle = extractZeitintervalle(zaehlungId, options);
         }
         final Map<Fahrbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
@@ -672,6 +692,11 @@ public class ProcessZaehldatenBelastungsplanService {
 
     public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
             final OptionsDTO options) {
+        /**
+         * @TODO
+         *
+         * Extraktion der Intervalle je Verkehrsbeziehung, Querung, ... und zusätzliche SUmmenbildung über die Verkehrsbeizheung für den gewählten Zeitraum und Zeitblock.
+         */
         return zeitintervallRepository
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
@@ -695,6 +720,13 @@ public class ProcessZaehldatenBelastungsplanService {
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(final Zaehlung zaehlung,
             final OptionsDTO options) {
+        /**
+         * @TODO
+         * Unter Wiederverwendung der Spitzenstundenfunktion in {@link LadeZaehldatenService#extractZeitintervalleForSpitzenstunde}
+         * ist die Spitzenstunde über die summierten Intervalle der Verkehrsbeziehung,... zu ermitteln.
+         *
+         * Anschließend sind je gewählte (oder alle?) Verkehrsbeziehungen, ... die Intervalle für die ebig ermittelte Spitzenstunde zu extrahieren.
+         */
         final TypeZeitintervall chosenSpitzenstunde;
         if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;

@@ -34,6 +34,13 @@ public final class ZeitintervallZeitblockSummationUtil {
     public static List<Zeitintervall> getSummen(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
+        /**
+         * @TODO
+         *
+         * Generischmachung bzw. Anpassung um Verkehrsbeziehungen, Querverkehr und Längeverkehrs unterscheiden zu können.
+         *
+         * Erforder auch Anpassung der Methode {@link ZeitintervallZeitblockSummationUtil#getSummenForFahrbeziehung}
+         */
         final Set<Fahrbeziehung> possibleFahrbeziehungen = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
         final List<Zeitintervall> blockSummen = new ArrayList<>();
         possibleFahrbeziehungen.forEach(fahrbeziehung -> blockSummen.addAll(getSummenForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall)));
@@ -50,6 +57,11 @@ public final class ZeitintervallZeitblockSummationUtil {
      */
     private static List<Zeitintervall> getSummenForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
+        /**
+         * @TODO
+         *
+         * Extraktion der Zeitintervalle für Verkehrsbeziehung, Querverkehr und Längsverkehr erforderlich.
+         */
         final List<Zeitintervall> zeitintervalleForFahrbeziehung = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung,
                 zeitintervalleGroupedByIntervall);
         final Optional<UUID> zaehlungId = zeitintervalleForFahrbeziehung.stream()

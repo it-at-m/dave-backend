@@ -70,6 +70,11 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      */
     public static List<Zeitintervall> getUeberFahrbeziehungSummierteZeitintervalle(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = createDataStructureForSummation(zeitintervalle);
+        /**
+         * @TODO
+         *
+         * Die hier aufgerufenen Methode ist zu Refaktorieren.
+         */
         final List<Zeitintervall> ueberFahrbeziehungSummierteZeitintervalle = getUeberFahrbeziehungSummierteZeitintervalle(zeitintervalleGroupedByIntervall);
         return ueberFahrbeziehungSummierteZeitintervalle;
     }
@@ -82,12 +87,20 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
             // Alle nach alle
             summierteZeitintervalle.add(
                     getSummedZeitintervallForAllFahrbeziehungen(intervall, zeitintervallePerIntervall));
+            /**
+             * @TODO
+             * Die folgende Summation x nach Alle kann entfallen.
+             */
             // X nach alle
             final Set<Integer> allVonFahrbeziehungen = getAllVonFahrbeziehungen(zeitintervallePerIntervall);
             allVonFahrbeziehungen.forEach(vonFahrbeziehung -> {
                 summierteZeitintervalle.add(
                         getSummedZeitintervallForCertainVonFahrbeziehungen(vonFahrbeziehung, intervall, zeitintervallePerIntervall));
             });
+            /**
+             * @TODO
+             * Die folgende Summation alle nach X kann entfallen.
+             */
             // Alle nach X
             final Set<Integer> allNachFahrbeziehungen = getAllNachFahrbeziehungen(zeitintervallePerIntervall);
             allNachFahrbeziehungen.forEach(nachFahrbeziehung -> {
