@@ -67,3 +67,47 @@ Bevor das Backend gestartet werde kann muss die application-local agepasst werde
 * elasticsearch:
 * * password:changeme
 * * http-ca-certificate: <generate>
+
+# DAVe sample stack
+
+DAVe __sollte__ in Produktionsumgebungen via [helm chart](https://artifacthub.io/packages/helm/it-at-m/dave?modal=install) installiert und betrieben werden.
+
+Aber für einen ersten Einblick in das, was DAVe zu bieten hat oder für Entwicklungsumgebungen stellen wir eine 
+[docker-compose](https://github.com/it-at-m/dave-backend/blob/sprint/stack/docker-compose.yml)-Datei zur Verfügung, 
+die neben der benötigten Infrastruktur auch Frontend und Backend mit einem Beispieldatensatz einer Zählstelle startet.
+
+Folgende Schritte sind hierfür nötig:
+
+1. Docker und Docker Compose installieren: Sie müssen Docker und Docker Compose auf Ihrem System installiert haben.
+   Wenn Sie diese noch nicht installiert haben, können Sie die offizielle Dokumentation befolgen, um sie zu installieren.
+   Mit den folgenden Befehlen können Sie überprüfen, ob sie installiert sind:
+```
+docker --version
+docker compose --version
+```
+Alternativ zu Docker kann auch [Podman](https://podman.io/) verwendet werden.
+
+2. Infrastruktur starten: Die Infrastruktur-Container können mit folgenden Befehlen gestartet werden:
+```
+cd stack
+source .env
+docker compose up
+```
+
+3. Elasticsearch Zertifikat einbinden: Folgen Sie den Anweisungen unter [Erzeugen des Fingerprints](#erzeugen-des-fingerprints),
+   um das von Elasticsearch verwendete Zertifikat für die verschlüsselte Verbindung zu erhalten.
+   Dann fügen Sie den Fingerprint als Umgebungsvariable ELASTICSEARCH_CERT_FINGERPRINT im [.env-File](https://github.com/it-at-m/dave-frontend/blob/sprint/stack/.env) ein
+   und lesen die Datei nochmal ein:
+```
+source .env
+```
+
+4. Backend und Frontend hochfahren: Fahren Sie die beiden Container wie folgt hoch:
+```
+docker compose --profile sample-stack up
+```
+
+5. Auf die Anwendung zugreifen: Sobald alle Container betriebsbereit sind, können Sie die DAVe UI verwenden,
+   indem Sie im Browser zu http://localhost:8082 navigieren.
+
+Das war's! Sie haben den Anwendungsstack für DAVe erfolgreich installiert und gestartet.

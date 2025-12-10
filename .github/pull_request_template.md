@@ -1,25 +1,17 @@
----
-name: Pull request template
-about: Create a pull request to contribute to our software
-title: ""
-labels: ""
-assignees: ""
----
+# Description
 
-## Pull Request 
+<!-- Add a short description of what the request is all about here -->
 
-### Description
+# Issue References
 
-### Reference
+<!-- Add the corresponding issues here -->
+ 
+# Definition of Done
 
-Issues: 
+<!-- Check all completed DoD requirements here -->
 
-### Definition of Done
 - [ ] Acceptance criteria are met
+- [ ] Testing is done (unit-tests, DEV-environment)
 - [ ] Build/Test workflow has successfully finished
 - [ ] Release notes are complemented
-- [ ] Documentation is complemented (operator manual, system specification)
-- [ ] Frontend is locally smoke-tested
-- [ ] Side branches are deleted
-- [ ] Board is updated
-- [ ] Infrastructure is adjusted
+- [ ] Documentation is complemented (operator manual, system specification, etc.)
