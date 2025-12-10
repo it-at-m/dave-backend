@@ -50,12 +50,12 @@ public class BearbeiteZaehlungValidator implements ConstraintValidator<Bearbeite
         boolean isValid = true;
         if (Zaehlart.QJS.name().equals(toValidate.getZaehlart())) {
             isValid = toValidate.getKnotenarme().size() == 2;
-            final Optional<Integer> reduce = toValidate.getKnotenarme()
-                    .stream()
-                    .map(BearbeiteKnotenarmDTO::getNummer)
-                    .reduce((integer, integer2) -> Math.abs(integer - integer2));
-            if (reduce.isPresent()) {
-                isValid = isValid && reduce.get() == 2;
+            if (isValid) {
+                final Optional<Integer> reduce = toValidate.getKnotenarme()
+                        .stream()
+                        .map(BearbeiteKnotenarmDTO::getNummer)
+                        .reduce((integer, integer2) -> Math.abs(integer - integer2));
+                isValid = reduce.get() == 2;
             }
         }
         return isValid;
