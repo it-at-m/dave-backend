@@ -35,18 +35,18 @@ public class BearbeiteZaehlungValidator implements ConstraintValidator<Bearbeite
      * @return true, wenn alle Validierungen erfolgreich waren, sonst false.
      */
     private boolean validateZaehlung(final BearbeiteZaehlungDTO toValidate) {
-        return areZaehlartAndSelectedCategoriesValid(toValidate) && areZaehlartAndSelctedKnotenarmeValid(toValidate);
+        return areZaehlartAndSelectedCategoriesValid(toValidate) && areZaehlartAndSelectedKnotenarmeValid(toValidate);
     }
 
     /**
      * Validiert anhand der ausgewaehlten Zaehlart, ob exakt 2 sich gegenueberliegende Knotenarme
      * ausgewaehlt wurden.
-     * Erlaubte Knotenarme bei der {@link Zaehlart}.QJS : 1 & 3 || 2 & 4 || 5 & 7 || 6 & 8
+     * Erlaubte Knotenarme bei der {@link Zaehlart#QJS} : 1 & 3 || 2 & 4 || 5 & 7 || 6 & 8
      *
      * @param toValidate {@link BearbeiteZaehlungDTO} zum Validieren.
      * @return true, wenn die Validierung erfolgreich waren, sonst false.
      */
-    protected boolean areZaehlartAndSelctedKnotenarmeValid(final BearbeiteZaehlungDTO toValidate) {
+    protected boolean areZaehlartAndSelectedKnotenarmeValid(final BearbeiteZaehlungDTO toValidate) {
         boolean isValid = true;
         if (Zaehlart.QJS.name().equals(toValidate.getZaehlart())) {
             isValid = toValidate.getKnotenarme().size() == 2;
@@ -63,7 +63,8 @@ public class BearbeiteZaehlungValidator implements ConstraintValidator<Bearbeite
 
     /**
      * Validiert anhand der ausgewaehlten Zaehlart, ob die richtigen Fahrzeuge ausgewaehlt wurden.
-     * Bei den {@link Zaehlart}.QJS FJS QU darf nur {@link Fahrzeug}.RAD und/oder .FUSS ausgewaehlt
+     * Bei den {@link Zaehlart#QJS}, {@link Zaehlart#FJS} und {@link Zaehlart#QU} darf nur
+     * {@link Fahrzeug#RAD}.RAD und/oder {@link Fahrzeug#FUSS} ausgewaehlt sein
      * sein.
      *
      * @param toValidate {@link BearbeiteZaehlungDTO} zum Validieren.

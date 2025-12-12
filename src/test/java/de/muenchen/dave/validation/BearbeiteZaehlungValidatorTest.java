@@ -21,25 +21,25 @@ public class BearbeiteZaehlungValidatorTest {
     }
 
     @Test
-    void areZaehlartAndSelctedKnotenarmeValidTest() {
+    void areZaehlartAndSelectedKnotenarmeValidTest() {
         final BearbeiteZaehlungDTO toValidate = new BearbeiteZaehlungDTO();
         toValidate.setZaehlart(Zaehlart.FJS.name());
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(true));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(true));
         toValidate.setZaehlart(Zaehlart.QJS.name());
         toValidate.setKnotenarme(new ArrayList<>());
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(false));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(false));
         final BearbeiteKnotenarmDTO node1 = new BearbeiteKnotenarmDTO();
         node1.setNummer(1);
         toValidate.getKnotenarme().add(node1);
         final BearbeiteKnotenarmDTO node2 = new BearbeiteKnotenarmDTO();
         toValidate.getKnotenarme().add(node2);
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(false));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(false));
         node2.setNummer(2);
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(false));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(false));
         node2.setNummer(3);
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(true));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(true));
         toValidate.getKnotenarme().add(new BearbeiteKnotenarmDTO());
-        assertThat(this.validator.areZaehlartAndSelctedKnotenarmeValid(toValidate), is(false));
+        assertThat(this.validator.areZaehlartAndSelectedKnotenarmeValid(toValidate), is(false));
     }
 
     @Test
