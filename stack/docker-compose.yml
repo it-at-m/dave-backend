@@ -125,7 +125,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:16.6-alpine3.21
+    image: postgres:16.6-alpine3.21@sha256:1d04b9ba1d4996401f2552b51beda8187f175c0645c091e4781134fc9c9a3eef
     environment:
       - POSTGRES_DB=dave-db
       - POSTGRES_USER=dave
@@ -146,7 +146,7 @@ services:
   # see https://event-driven.io/en/automatically_connect_pgadmin_to_database/
   pg-admin:
     container_name: pg-admin
-    image: dpage/pgadmin4:8.14
+    image: dpage/pgadmin4:8.14@sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=admin
@@ -170,7 +170,7 @@ services:
   dave-backend:
     container_name: dave-backend
     profiles: [sample-stack]
-    image: ghcr.io/it-at-m/dave-backend/dave-backend:latest
+    image: ghcr.io/it-at-m/dave-backend/dave-backend:latest@sha256:eb592e4eb8fa12dbf1d0f0d55c919ef80b9eaa0cc49785d3c5707f38a1a3b5b9
     environment:
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTICSEARCH_HTTPCACERTIFICATE=${ELASTICSEARCH_CERT_FINGERPRINT}
@@ -192,7 +192,7 @@ services:
     depends_on:
       dave-backend:
         condition: service_healthy
-    image: ghcr.io/it-at-m/dave-frontend/dave-frontend:latest
+    image: ghcr.io/it-at-m/dave-frontend/dave-frontend:latest@sha256:dc40439b50820ee108f1d34ad9df3e735f6119e1e9c5e0da16ef09b04a0ea1b9
     environment:
       - SPRING_PROFILES_ACTIVE=docker,no-security
       - SSO_BASE_URL=http://sso.de
