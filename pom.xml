@@ -29,7 +29,7 @@
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
         <apache.sis.version>1.4</apache.sis.version>
-        <org.jsoup.version>1.20.1</org.jsoup.version>
+        <org.jsoup.version>1.21.2</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>2.1.0</maven-scm-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
