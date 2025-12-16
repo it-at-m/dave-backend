@@ -125,7 +125,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:16.6-alpine3.21
+    image: postgres:16.11-alpine3.21@sha256:9ed02337f0d52b7ce97d7f89120a2305af10ae1da42d4542c21d942f14ee52ea
     environment:
       - POSTGRES_DB=dave-db
       - POSTGRES_USER=dave
