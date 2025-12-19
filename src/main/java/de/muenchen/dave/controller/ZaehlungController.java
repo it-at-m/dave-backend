@@ -14,6 +14,7 @@ import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,7 @@ public class ZaehlungController {
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<BackendIdDTO> saveZaehlung(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
+    public ResponseEntity<BackendIdDTO> saveZaehlung(@RequestBody @NotNull @Valid final BearbeiteZaehlungDTO zaehlung,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
         log.debug("Zaehlung speichern: {}", zaehlung);
         try {
