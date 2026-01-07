@@ -2,7 +2,7 @@ name: compliance check and build test
 
 on:
   pull_request:
-    branches: [main]
+    branches: [sprint,main]
   workflow_dispatch:
 
 jobs:
