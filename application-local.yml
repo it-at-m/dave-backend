@@ -1,0 +1,60 @@
+spring:
+  log:
+    level:
+      root: debug
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dave-db
+    username: dave
+    password: 1234
+  jpa:
+    properties:
+      hibernate.search.default.directory_provider: filesystem
+      hibernate.search.default.indexBase: ./index/default
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.format_sql: true
+    # Spring JPA
+    hibernate:
+      # always drop and create the db should be the best
+      # configuration for local (development) mode. this
+      # is also the default, that spring offers by convention.
+      # but here explicite:
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    # Logging for database operation
+    show-sql: false
+  # Wird bei der PDF-Generierung benötigt, damit das Backend auch Diagramme > 1MB verarbeiten kann
+  servlet.multipart.max-file-size: 10MB
+  servlet.multipart.max-request-size: 10MB
+
+db.schema: dave_ng
+elasticsearch:
+  host: localhost
+  port: 9200
+  user: elastic
+  password: changeme
+  http-ca-certificate: 39:E5:78:92:01:97:A1:16:FD:C8:57:C9:8A:A3:25:62:D5:34:DE:E5:AF:D4:5A:41:FD:58:65:85:DF:60:37:39
+  connectTimeout: 10
+  socketTimeout: 30
+
+dave:
+  zaehlung:
+    status:
+      #      Alle 5 min
+      updater: 0 0 * 1/1 * ?
+  email:
+    address: dave-dummy@mail.de
+    password: dummy
+    url:
+      adminportal: http://localhost:8085
+      selfserviceportal: http://localhost:8086
+    receiver:
+      # Update-Intervall in Millisekunden für den Email-Abruf
+      update-interval: 50000000000
+      hostname: imap.de
+  messstelle:
+    # Alle 5 min
+    cron: 0 0 * 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 4m
+  reports:
+    logo-icon: classpath:/pdf/images/kindl.jpg
+    logo-subtitle: "Landeshauptstadt<br/>München<br/><b>Mobilitätsreferat</b>"
