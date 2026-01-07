@@ -19,8 +19,10 @@ jobs:
         with:
           policy: GeekMasher/security-queries
           policy-path: $GITHUB_WORKSPACE/policies/default.yml
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           argvs: '--disable-dependabot --disable-secret-scanning --disable-code-scanning'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-maven:
     needs: compliance
