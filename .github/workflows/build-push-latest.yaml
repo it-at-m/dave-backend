@@ -1,0 +1,76 @@
+name: build maven and image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: read
+
+env:
+  IMAGE_NAME: "dave-backend"
+  DOCKERHUB_USERNAME: starwit
+  DOCKERHUB_ORG: starwitorg
+
+jobs:
+  build-maven:
+    name: "Build with Maven"
+    runs-on: [self-hosted, linux, X64]
+    outputs:
+      VERSION_BUILD: ${{ steps.get-version.outputs.VERSION_BUILD }}
+
+    steps:
+      - name: Set up JDK 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: 25
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.2
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
+
+      - name: Build with Maven
+        run: mvn clean -B package --file pom.xml
+        env:
+          CI: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: get version from pom.xml
+        id: get-version
+        run: |
+          echo "VERSION_BUILD=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
+
+  publish_docker:
+    name: "Build and publish docker"
+    needs: build-maven
+    runs-on: [self-hosted, linux, X64]
+
+    steps:
+      - name: Get tag name
+        run: |
+          echo "TAG=$( git describe --abbrev=0 )" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dockerfile
+          push: true
+          sbom: true
+          provenance: mode=max
+          tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_BUILD }}-${{ github.run_number }}
