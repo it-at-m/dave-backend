@@ -413,7 +413,7 @@ public class SucheService {
                                 .collect(Collectors.toList())));
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
-                .filter(zaehlstelle -> CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen()))
+                //.filter(zaehlstelle -> CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen()))
                 .collect(Collectors.toList());
     }
 

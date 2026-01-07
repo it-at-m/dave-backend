@@ -41,8 +41,10 @@ dave:
       #      Alle 5 min
       updater: 0 0 * 1/1 * ?
   email:
-    address: dave-dummy@mail.de
-    password: dummy
+    sender:
+      hostname: localhost
+    address: test@example.com
+    password: password
     url:
       adminportal: http://localhost:8085
       selfserviceportal: http://localhost:8086
