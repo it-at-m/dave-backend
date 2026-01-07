@@ -1,4 +1,4 @@
-name: build maven and image
+name: build maven/ Docker image and publish with build number
 
 on:
   workflow_dispatch:
@@ -50,12 +50,10 @@ jobs:
     name: "Build and publish docker"
     needs: build-maven
     runs-on: [self-hosted, linux, X64]
+    env:
+      VERSION_BUILD: ${{ needs.build.outputs.VERSION_BUILD }}
 
     steps:
-      - name: Get tag name
-        run: |
-          echo "TAG=$( git describe --abbrev=0 )" >> $GITHUB_ENV
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
