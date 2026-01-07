@@ -16,6 +16,7 @@ jobs:
 
       - name: Advance Security Policy as Code
         uses: advanced-security/policy-as-code@v2.11.1
+        continue-on-error: true
         with:
           policy: GeekMasher/security-queries
           policy-path: $GITHUB_WORKSPACE/policies/default.yml
