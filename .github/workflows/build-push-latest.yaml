@@ -45,16 +45,18 @@ jobs:
         id: get-version
         run: |
           echo "VERSION_BUILD=$( mvn org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
-          mvn org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -q -DforceStdout
 
   publish_docker:
     name: "Build and publish docker"
     needs: build-maven
     runs-on: [self-hosted, linux, X64]
     env:
-      VERSION_BUILD: ${{ needs.build.outputs.VERSION_BUILD }}
+      VERSION_BUILD: ${{ needs.build-maven.outputs.VERSION_BUILD }}
 
     steps:
+      - name: "echo version"
+        run: |
+          echo "Version is $VERSION_BUILD"
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
