@@ -49,7 +49,7 @@ jobs:
           if [ ! -z "${{ env.RELEASE_VERSION }}" ]
           then
             echo "new version manually set to ${{ env.RELEASE_VERSION }}"
-            mvn -B build-helper:parse-version versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-SNAPSHOT versions:commit --settings .github/workflows/settings.xml --file pom.xml
+            mvn -B build-helper:parse-version versions:set -DnewVersion=${{ env.RELEASE_VERSION }}-SNAPSHOT versions:commit --file pom.xml
           fi
           echo "mvn generate-sources --file pom.xml"
           mvn generate-sources --file pom.xml
@@ -62,8 +62,8 @@ jobs:
             git commit -m "modified changelog"
             git push
           fi
-          mvn -B release:clean release:prepare -Darguments="-DskipTests" --settings .github/workflows/settings.xml --file pom.xml
-          mvn -B release:clean --settings .github/workflows/settings.xml --settings .github/workflows/settings.xml --file pom.xml
+          mvn -B release:clean release:prepare -Darguments="-DskipTests" --file pom.xml
+          mvn -B release:clean --file pom.xml
         env:
           CI: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
