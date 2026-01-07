@@ -28,7 +28,7 @@ jobs:
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
-          maven-version: 3.9.2
+          maven-version: 3.9.12
 
       - name: checkout
         uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
         id: get-version
         run: |
           echo "VERSION_BUILD=$( mvn org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
-          echo "Version is $VERSION_BUILD"
+          mvn org.apache.maven.plugins:maven-help-plugin:3.5.1:evaluate -Dexpression=project.version -q -DforceStdout
 
   publish_docker:
     name: "Build and publish docker"
