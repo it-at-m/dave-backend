@@ -6,6 +6,10 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: read
+
 jobs:
   compliance:
     runs-on: ubuntu-latest
