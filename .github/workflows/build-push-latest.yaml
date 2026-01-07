@@ -45,6 +45,7 @@ jobs:
         id: get-version
         run: |
           echo "VERSION_BUILD=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
+          echo "Version is $VERSION_BUILD"
 
   publish_docker:
     name: "Build and publish docker"
@@ -54,6 +55,11 @@ jobs:
       VERSION_BUILD: ${{ needs.build.outputs.VERSION_BUILD }}
 
     steps:
+      - name: get version from pom.xml
+        id: get-version
+        run: |
+          echo "VERSION_BUILD=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"  >> "$GITHUB_OUTPUT"
+          echo "Version is $VERSION_BUILD"
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
