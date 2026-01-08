@@ -35,7 +35,8 @@ public interface ZaehlstelleMapper {
 
     Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    de.muenchen.dave.domain.analytics.Zaehlstelle elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics, Zaehlstelle elastic);
+    de.muenchen.dave.domain.analytics.Zaehlstelle elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics,
+            Zaehlstelle elastic);
 
     Zaehlstelle analytics2elastic(de.muenchen.dave.domain.analytics.Zaehlstelle analytics);
 

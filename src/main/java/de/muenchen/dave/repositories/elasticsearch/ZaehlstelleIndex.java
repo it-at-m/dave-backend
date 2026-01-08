@@ -6,7 +6,6 @@ import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,7 +49,7 @@ public class ZaehlstelleIndex {
             return null;
         } else if (var1.getId() != null && !var1.getId().isBlank()) {
             zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
-            .orElse(zaehlstelleEntity);
+                    .orElse(zaehlstelleEntity);
         }
         zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1);
         zaehlstelleEntity = zaehlstelleRepository.save(zaehlstelleEntity);
@@ -62,12 +61,12 @@ public class ZaehlstelleIndex {
     }
 
     public Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
-        if(var1 == null) {
+        if (var1 == null) {
             return null;
         }
         List<Zaehlstelle> zaehlstellenList = new java.util.ArrayList<>();
         for (Zaehlstelle zaehlstelle : var1) {
-                zaehlstellenList.add(this.save(zaehlstelle));
+            zaehlstellenList.add(this.save(zaehlstelle));
         }
         return zaehlstellenList;
     }
