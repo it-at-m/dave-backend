@@ -1,4 +1,9 @@
+db.schema: dave
 spring:
+  flyway:
+    enabled: true
+    schemas: ${db.schema}
+    defaultSchema: ${db.schema}
   log:
     level:
       root: debug
@@ -25,13 +30,12 @@ spring:
   servlet.multipart.max-file-size: 10MB
   servlet.multipart.max-request-size: 10MB
 
-db.schema: dave_ng
 elasticsearch:
   host: localhost
   port: 9200
   user: elastic
   password: changeme
-  http-ca-certificate: 39:E5:78:92:01:97:A1:16:FD:C8:57:C9:8A:A3:25:62:D5:34:DE:E5:AF:D4:5A:41:FD:58:65:85:DF:60:37:39
+  http-ca-certificate: AC:FD:49:0D:B7:51:97:D2:68:03:C3:4C:C9:37:55:FC:06:B1:8A:B5:1E:CE:0A:AF:0A:50:42:44:79:E9:5A:F0
   connectTimeout: 10
   socketTimeout: 30
 
