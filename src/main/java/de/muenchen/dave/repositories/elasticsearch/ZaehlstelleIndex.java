@@ -5,6 +5,8 @@ import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,12 +44,32 @@ public class ZaehlstelleIndex {
         zaehlstelleIndexElasticRepository.delete(var1);
     }
 
-    public <S extends Zaehlstelle> S save(S var1) {
+    public Zaehlstelle save(Zaehlstelle var1) {
+        de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
+        if (var1 == null) {
+            return null;
+        } else if (var1.getId() != null && !var1.getId().isBlank()) {
+            zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
+            .orElse(zaehlstelleEntity);
+        }
+        zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1);
+        zaehlstelleEntity = zaehlstelleRepository.save(zaehlstelleEntity);
+        if (var1.getId() == null || var1.getId().isBlank()) {
+            var1.setId(zaehlstelleEntity.getId().toString());
+            //zaehlstelle.setId(UUID.randomUUID().toString());
+        }
         return zaehlstelleIndexElasticRepository.save(var1);
     }
 
-    public <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1) {
-        return zaehlstelleIndexElasticRepository.saveAll(var1);
+    public Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
+        if(var1 == null) {
+            return null;
+        }
+        List<Zaehlstelle> zaehlstellenList = new java.util.ArrayList<>();
+        for (Zaehlstelle zaehlstelle : var1) {
+                zaehlstellenList.add(this.save(zaehlstelle));
+        }
+        return zaehlstellenList;
     }
 
     public Optional<Zaehlstelle> findById(String var1) {

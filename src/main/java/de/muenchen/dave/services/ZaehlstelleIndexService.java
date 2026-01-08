@@ -123,7 +123,6 @@ public class ZaehlstelleIndexService {
     public String erstelleZaehlstelle(final BearbeiteZaehlstelleDTO zdto) throws BrokenInfrastructureException {
 
         final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
-        zaehlstelle.setId(UUID.randomUUID().toString());
         zaehlstelle.setZaehlungen(new ArrayList<>());
         customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
         this.speichereZaehlstelleInDatenbank(zaehlstelle);
