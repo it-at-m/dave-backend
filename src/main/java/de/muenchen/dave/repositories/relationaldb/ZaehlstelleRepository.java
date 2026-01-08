@@ -1,16 +1,14 @@
 package de.muenchen.dave.repositories.relationaldb;
 
+import de.muenchen.dave.domain.analytics.Zaehlstelle;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import de.muenchen.dave.domain.analytics.Zaehlstelle;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> { //NOSONAR
 
@@ -37,29 +35,30 @@ public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> 
 
     List<Zaehlstelle> findAll(final Sort sort);
 
-        Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
+    @Query(value = "select z from Zaehlstelle z order by id")
+    Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
-    @Query(value = "select * from zaehlstelle order by id")
+    @Query(value = "select z from Zaehlstelle z order by id")
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 
     List<Zaehlstelle> findAll();
 
-    @Query(value = "select * from zaehlstelle where zaehlstelle.id = ?1")
+    @Query(value = "select z from Zaehlstelle z where z.id = ?1")
     Optional<Zaehlstelle> findByZaehlungenId(String id);
 
     List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
 
     Optional<Zaehlstelle> findByNummer(String nummer);
 
-    @Query(value = "select * from zaehlstelle order by id")
+    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenStatus(String status);
 
-    @Query(value = "select * from zaehlstelle order by id")
+    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenJahr(String jahr);
 
-    @Query(value = "select * from zaehlstelle order by id")
+    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
 
-    @Query(value = "select * from zaehlstelle order by id")
+    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue();
 }
