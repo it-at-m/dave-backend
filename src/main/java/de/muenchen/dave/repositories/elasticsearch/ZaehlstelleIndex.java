@@ -1,111 +1,97 @@
 package de.muenchen.dave.repositories.elasticsearch;
 
-import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
+import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Service;
 
-public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
+@Service
+public class ZaehlstelleIndex {
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteAll();
+    private final ZaehlstelleIndexElasticRepository zaehlstelleIndexElasticRepository;
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteAll(Iterable<? extends Zaehlstelle> var1);
+    private final ZaehlstelleRepository zaehlstelleRepository;
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteById(String var1);
+    private final ZaehlstelleMapper zaehlstelleMapper;
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void delete(Zaehlstelle var1);
+    public ZaehlstelleIndex(final ZaehlstelleIndexElasticRepository zaehlstelleIndexElasticRepository,
+            final ZaehlstelleRepository zaehlstelleRepository,
+            final ZaehlstelleMapper zaehlstelleMapper) {
+        this.zaehlstelleIndexElasticRepository = zaehlstelleIndexElasticRepository;
+        this.zaehlstelleRepository = zaehlstelleRepository;
+        this.zaehlstelleMapper = zaehlstelleMapper;
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    <S extends Zaehlstelle> S save(S var1);
+    public void deleteAll() {
+        zaehlstelleIndexElasticRepository.deleteAll();
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1);
+    public void deleteAll(Iterable<? extends Zaehlstelle> var1) {
+        zaehlstelleIndexElasticRepository.deleteAll(var1);
+    }
 
-    Optional<Zaehlstelle> findById(String var1);
+    public void deleteById(String var1) {
+        zaehlstelleIndexElasticRepository.deleteById(var1);
+    }
 
-    @Query(
-        "{\"simple_query_string\": {" +
-                " \"fields\": [" +
-                "\"nummer^5\"," +
-                "\"stadtbezirk^2\"," +
-                "\"kreuzungsname^4\"," +
-                "\"suchwoerter^3\"," +
-                "\"zaehlungen.suchwoerter^3\"," +
-                "\"zaehlungen.zaehlsituation\"," +
-                "\"zaehlungen.zaehlsituationErweitert\"" +
-                "]," +
-                " \"query\": \"?0\"," +
-                " \"analyze_wildcard\": true," +
-                " \"default_operator\": \"AND\"," +
-                " \"lenient\": true" +
-                "}" +
-                "}"
-    )
-    Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
+    public void delete(Zaehlstelle var1) {
+        zaehlstelleIndexElasticRepository.delete(var1);
+    }
 
-    @Query(
-        "{" +
-                "\"query_string\": {" +
-                "\"query\": " +
-                "\"?0\"" +
-                "}" +
-                "}"
-    )
-    Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
+    public <S extends Zaehlstelle> S save(S var1) {
+        return zaehlstelleIndexElasticRepository.save(var1);
+    }
 
-    List<Zaehlstelle> findAll();
+    public <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1) {
+        return zaehlstelleIndexElasticRepository.saveAll(var1);
+    }
 
-    Optional<Zaehlstelle> findByZaehlungenId(String id);
+    public Optional<Zaehlstelle> findById(String var1) {
+        return zaehlstelleIndexElasticRepository.findById(var1);
+    }
 
-    List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
+    public Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
+        return zaehlstelleIndexElasticRepository.suggestSearch(query, pageable);
+    }
 
-    Optional<Zaehlstelle> findByNummer(String nummer);
+    public Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable) {
+        return zaehlstelleIndexElasticRepository.findAllByStatus(query, pageable);
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenStatus(String status);
+    public List<Zaehlstelle> findAll() {
+        return zaehlstelleIndexElasticRepository.findAll();
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenJahr(String jahr);
+    public Optional<Zaehlstelle> findByZaehlungenId(String id) {
+        return zaehlstelleIndexElasticRepository.findByZaehlungenId(id);
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
+    public List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
+        return zaehlstelleIndexElasticRepository.findAllByNummerStartsWithAndStadtbezirkNummer(nummer, stadtbezirksnummer);
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue();
+    public Optional<Zaehlstelle> findByNummer(String nummer) {
+        return zaehlstelleIndexElasticRepository.findByNummer(nummer);
+    }
+
+    public List<Zaehlstelle> findAllByZaehlungenStatus(String status) {
+        return zaehlstelleIndexElasticRepository.findAllByZaehlungenStatus(status);
+    }
+
+    public List<Zaehlstelle> findAllByZaehlungenJahr(String jahr) {
+        return zaehlstelleIndexElasticRepository.findAllByZaehlungenJahr(jahr);
+    }
+
+    public List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue() {
+        return zaehlstelleIndexElasticRepository.findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
+    }
+
+    public List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
+        return zaehlstelleIndexElasticRepository.findAllByZaehlungenUnreadMessagesDienstleisterTrue();
+    }
 
 }

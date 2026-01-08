@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local, no-security
   application.name: @project.artifactId@
   banner.location: banner.txt
   jpa.properties:
