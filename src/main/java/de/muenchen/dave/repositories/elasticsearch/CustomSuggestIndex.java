@@ -2,12 +2,28 @@ package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import java.util.List;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.stereotype.Service;
 
-public interface CustomSuggestIndex extends ElasticsearchRepository<CustomSuggest, String> {
+@Service
+public class CustomSuggestIndex {
 
-    List<CustomSuggest> findAllByNameAndFkid(String name, String fkid);
+    private final CustomSuggestIndexElasticRepository customSuggestIndexElasticRepository;
 
-    void deleteAllByFkid(String fkid);
+    public CustomSuggestIndex(final CustomSuggestIndexElasticRepository customSuggestIndexElasticRepository) {
+        this.customSuggestIndexElasticRepository = customSuggestIndexElasticRepository;
+    }
+
+    public List<CustomSuggest> findAllByNameAndFkid(String name, String fkid) {
+        //TODO not implemented yet
+        return null;
+    }
+
+    public void deleteAllByFkid(String fkid) {
+        //TODO not implemented yet
+    }
+
+    public void saveAll(List<CustomSuggest> suggestions) {
+        //TODO not implemented yet
+    }
 
 }

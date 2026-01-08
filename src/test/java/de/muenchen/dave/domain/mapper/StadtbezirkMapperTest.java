@@ -6,7 +6,9 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import com.github.javafaker.Faker;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndexElasticRepository;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndexElasticRepository;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndexElasticRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
@@ -37,6 +39,15 @@ public class StadtbezirkMapperTest {
 
     @MockitoBean
     private ZaehlstelleRepository zaehlstelleRepository;
+
+    @MockitoBean
+    private MessstelleIndexElasticRepository messstelleIndexElasticRepository;
+
+    @MockitoBean
+    private ZaehlstelleMapper zaehlstelleMapper;
+
+    @MockitoBean
+    private CustomSuggestIndexElasticRepository customSuggestIndexElasticRepository;
 
     @MockitoBean
     private MessstelleIndex messstelleIndex;
