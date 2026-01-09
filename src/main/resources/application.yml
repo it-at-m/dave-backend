@@ -1,6 +1,6 @@
 app:
   scan:
-    packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.elasticimpl
+    packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.relationalimpl
 spring:
   profiles:
     active: local, no-security
