@@ -1,4 +1,4 @@
-package de.muenchen.dave.configuration;
+package de.muenchen.elasticimpl;
 
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
