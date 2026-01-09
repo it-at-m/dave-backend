@@ -58,6 +58,18 @@ Local requirements:
 
 **OR** you can go straight to the [dave-frontend](https://github.com/it-at-m/dave-frontend/) and try out our [test stack](https://github.com/it-at-m/dave-frontend/tree/opensource/docker-compose2/stack) based on docker-compose.  
 
+## Running with or without elastic
+
+The default way to run the application is without elastic. To run it with elastic, you have to set in application.yml
+
+```
+app:
+  scan:
+    packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.elasticimpl
+```
+
+An according profile named "elastic is prepared" and you can run `sh ./runLocalNoSecurityElastic.sh` in order to use it.
+
 ## License
 
 Distributed under the MIT License. See LICENSE for more information.

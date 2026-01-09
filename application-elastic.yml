@@ -1,0 +1,69 @@
+app:
+  scan:
+    packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.elasticimpl
+db.schema: dave
+spring:
+  flyway:
+    enabled: true
+    schemas: ${db.schema}
+    defaultSchema: ${db.schema}
+  log:
+    level:
+      root: debug
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dave-db
+    username: dave
+    password: 1234
+  jpa:
+    properties:
+      hibernate.search.default.directory_provider: filesystem
+      hibernate.search.default.indexBase: ./index/default
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.format_sql: true
+    # Spring JPA
+    hibernate:
+      # always drop and create the db should be the best
+      # configuration for local (development) mode. this
+      # is also the default, that spring offers by convention.
+      # but here explicite:
+      naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    # Logging for database operation
+    show-sql: false
+  # Wird bei der PDF-Generierung benötigt, damit das Backend auch Diagramme > 1MB verarbeiten kann
+  servlet.multipart.max-file-size: 10MB
+  servlet.multipart.max-request-size: 10MB
+
+elasticsearch:
+  host: localhost
+  port: 9200
+  user: elastic
+  password: changeme
+  http-ca-certificate: AC:FD:49:0D:B7:51:97:D2:68:03:C3:4C:C9:37:55:FC:06:B1:8A:B5:1E:CE:0A:AF:0A:50:42:44:79:E9:5A:F0
+  connectTimeout: 10
+  socketTimeout: 30
+
+dave:
+  zaehlung:
+    status:
+      #      Alle 5 min
+      updater: 0 0 * 1/1 * ?
+  email:
+    sender:
+      hostname: localhost
+    address: test@example.com
+    password: password
+    url:
+      adminportal: http://localhost:8085
+      selfserviceportal: http://localhost:8086
+    receiver:
+      # Update-Intervall in Millisekunden für den Email-Abruf
+      update-interval: 50000000000
+      hostname: imap.de
+  messstelle:
+    # Alle 5 min
+    cron: 0 0 * 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 4m
+  reports:
+    logo-icon: classpath:/pdf/images/kindl.jpg
+    logo-subtitle: "Landeshauptstadt<br/>München<br/><b>Mobilitätsreferat</b>"
