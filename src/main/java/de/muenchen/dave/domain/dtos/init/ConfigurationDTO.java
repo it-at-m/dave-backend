@@ -7,8 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class ConfigurationDTO {
 
-    private MapConfigurationDTO map;
-
     private ZaehlstelleConfigurationDTO zaehlstelle;
+
+    private TenantConfigurationDTO tenant;
 
 }
