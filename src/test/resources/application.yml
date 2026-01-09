@@ -2,9 +2,6 @@ app:
   scan:
     packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.elasticimpl
 spring:
-  profiles:
-    active: local, no-security
-  application.name: @project.artifactId@
   banner.location: banner.txt
   jpa.properties:
     hibernate.search.default.directory_provider: filesystem
@@ -13,7 +10,7 @@ spring:
   # Wird bei der PDF-Generierung benötigt, damit das Backend auch Diagramme > 1MB verarbeiten kann
   servlet.multipart.max-file-size: 10MB
   servlet.multipart.max-request-size: 10MB
-  
+
 server:
   shutdown: "graceful"
   port: 8080
@@ -55,8 +52,6 @@ management:
   info:
     env:
       enabled: true
-info.application.name: @project.artifactId@
-info.application.version: @project.version@
 
 
 dave:

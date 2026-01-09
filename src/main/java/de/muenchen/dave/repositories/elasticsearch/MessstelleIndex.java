@@ -5,69 +5,56 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-@Service
-public class MessstelleIndex {
+public interface MessstelleIndex {
 
-    private final MessstelleIndexElasticRepository messstelleIndexElasticRepository;
-
-    public MessstelleIndex(final MessstelleIndexElasticRepository messstelleIndexElasticRepository) {
-        this.messstelleIndexElasticRepository = messstelleIndexElasticRepository;
-    }
-
-    public void deleteAll() {
+    default void deleteAll() {
         //TODO not implemented yet
     }
 
-    public void deleteAll(Iterable<? extends Messstelle> var1) {
+    default void deleteAll(Iterable<? extends Messstelle> var1) {
         //TODO not implemented yet
     }
 
-    public void deleteById(String var1) {
+    default void deleteById(String var1) {
         //TODO not implemented yet
     }
 
-    public void delete(Messstelle var1) {
+    default void delete(Messstelle var1) {
         //TODO not implemented yet
     }
 
-    public Messstelle save(Messstelle var1) {
+    default Messstelle save(Messstelle var1) {
         //TODO not implemented yet
         return null;
     }
 
-    public Iterable<Messstelle> saveAll(Iterable<Messstelle> var1) {
-        //TODO not implemented yet
-        return null;
-    }
-
-    public Optional<Messstelle> findById(String var1) {
+    default Optional<Messstelle> findById(String var1) {
         //TODO not implemented yet
         return Optional.empty();
     }
 
-    public Page<Messstelle> suggestSearch(String query, Pageable pageable) {
+    default Page<Messstelle> suggestSearch(String query, Pageable pageable) {
         //TODO not implemented yet
         return null;
     }
 
-    public List<Messstelle> findAll() {
+    default List<Messstelle> findAll() {
         //TODO not implemented yet
         return null;
     }
 
-    public List<Messstelle> findAllBySichtbarDatenportalIsTrue() {
+    default List<Messstelle> findAllBySichtbarDatenportalIsTrue() {
         //TODO not implemented yet
         return null;
     }
 
-    public Optional<Messstelle> findByMstId(String mstId) {
+    default Optional<Messstelle> findByMstId(String mstId) {
         //TODO not implemented yet
         return Optional.empty();
     }
 
-    public Optional<Messstelle> findByMessquerschnitteId(String id) {
+    default Optional<Messstelle> findByMessquerschnitteId(String id) {
         //TODO not implemented yet
         return Optional.empty();
     }

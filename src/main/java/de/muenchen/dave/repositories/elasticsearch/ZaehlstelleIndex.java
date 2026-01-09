@@ -1,118 +1,92 @@
 package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
-import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-@Service
-public class ZaehlstelleIndex {
+public interface ZaehlstelleIndex {
 
-    private final ZaehlstelleIndexElasticRepository zaehlstelleIndexElasticRepository;
-
-    private final ZaehlstelleRepository zaehlstelleRepository;
-
-    private final ZaehlstelleMapper zaehlstelleMapper;
-
-    public ZaehlstelleIndex(final ZaehlstelleIndexElasticRepository zaehlstelleIndexElasticRepository,
-            final ZaehlstelleRepository zaehlstelleRepository,
-            final ZaehlstelleMapper zaehlstelleMapper) {
-        this.zaehlstelleIndexElasticRepository = zaehlstelleIndexElasticRepository;
-        this.zaehlstelleRepository = zaehlstelleRepository;
-        this.zaehlstelleMapper = zaehlstelleMapper;
+    default void deleteAll() {
+        //TODO not implemented yet
     }
 
-    public void deleteAll() {
-        zaehlstelleIndexElasticRepository.deleteAll();
+    default void deleteAll(Iterable<? extends Zaehlstelle> var1) {
+        //TODO not implemented yet
     }
 
-    public void deleteAll(Iterable<? extends Zaehlstelle> var1) {
-        zaehlstelleIndexElasticRepository.deleteAll(var1);
+    default void deleteById(String var1) {
+        //TODO not implemented yet
     }
 
-    public void deleteById(String var1) {
-        zaehlstelleIndexElasticRepository.deleteById(var1);
+    default void delete(Zaehlstelle var1) {
+        //TODO not implemented yet
     }
 
-    public void delete(Zaehlstelle var1) {
-        zaehlstelleIndexElasticRepository.delete(var1);
+    default Zaehlstelle save(Zaehlstelle var1) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public Zaehlstelle save(Zaehlstelle var1) {
-        de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
-        if (var1 == null) {
-            return null;
-        } else if (var1.getId() != null && !var1.getId().isBlank()) {
-            zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
-                    .orElse(zaehlstelleEntity);
-        }
-        zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1);
-        zaehlstelleEntity = zaehlstelleRepository.save(zaehlstelleEntity);
-        if (var1.getId() == null || var1.getId().isBlank()) {
-            var1.setId(zaehlstelleEntity.getId().toString());
-            //zaehlstelle.setId(UUID.randomUUID().toString());
-        }
-        return zaehlstelleIndexElasticRepository.save(var1);
+    default Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
-        if (var1 == null) {
-            return null;
-        }
-        List<Zaehlstelle> zaehlstellenList = new java.util.ArrayList<>();
-        for (Zaehlstelle zaehlstelle : var1) {
-            zaehlstellenList.add(this.save(zaehlstelle));
-        }
-        return zaehlstellenList;
+    default Optional<Zaehlstelle> findById(String var1) {
+        //TODO not implemented yet
+        return Optional.empty();
     }
 
-    public Optional<Zaehlstelle> findById(String var1) {
-        return zaehlstelleIndexElasticRepository.findById(var1);
+    default Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
-        return zaehlstelleIndexElasticRepository.suggestSearch(query, pageable);
+    default Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable) {
-        return zaehlstelleIndexElasticRepository.findAllByStatus(query, pageable);
+    default List<Zaehlstelle> findAll() {
+        //TODO not implemented yet
+        return null;
     }
 
-    public List<Zaehlstelle> findAll() {
-        return zaehlstelleIndexElasticRepository.findAll();
+    default Optional<Zaehlstelle> findByZaehlungenId(String id) {
+        //TODO not implemented yet
+        return Optional.empty();
     }
 
-    public Optional<Zaehlstelle> findByZaehlungenId(String id) {
-        return zaehlstelleIndexElasticRepository.findByZaehlungenId(id);
+    default List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
-        return zaehlstelleIndexElasticRepository.findAllByNummerStartsWithAndStadtbezirkNummer(nummer, stadtbezirksnummer);
+    default Optional<Zaehlstelle> findByNummer(String nummer) {
+        //TODO not implemented yet
+        return Optional.empty();
     }
 
-    public Optional<Zaehlstelle> findByNummer(String nummer) {
-        return zaehlstelleIndexElasticRepository.findByNummer(nummer);
+    default List<Zaehlstelle> findAllByZaehlungenStatus(String status) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public List<Zaehlstelle> findAllByZaehlungenStatus(String status) {
-        return zaehlstelleIndexElasticRepository.findAllByZaehlungenStatus(status);
+    default List<Zaehlstelle> findAllByZaehlungenJahr(String jahr) {
+        //TODO not implemented yet
+        return null;
     }
 
-    public List<Zaehlstelle> findAllByZaehlungenJahr(String jahr) {
-        return zaehlstelleIndexElasticRepository.findAllByZaehlungenJahr(jahr);
+    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue() {
+        //TODO not implemented yet
+        return null;
     }
 
-    public List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue() {
-        return zaehlstelleIndexElasticRepository.findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
-    }
-
-    public List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
-        return zaehlstelleIndexElasticRepository.findAllByZaehlungenUnreadMessagesDienstleisterTrue();
+    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
+        //TODO not implemented yet
+        return null;
     }
 
 }

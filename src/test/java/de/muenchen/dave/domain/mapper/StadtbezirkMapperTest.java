@@ -6,12 +6,12 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import com.github.javafaker.Faker;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
-import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndexElasticRepository;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndexElasticRepository;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndexElasticRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
+import de.muenchen.elasticimpl.CustomSuggestIndexElasticRepository;
+import de.muenchen.elasticimpl.MessstelleIndexElasticRepository;
+import de.muenchen.elasticimpl.ZaehlstelleIndexElasticRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,16 +38,16 @@ public class StadtbezirkMapperTest {
     private ZaehlstelleIndexElasticRepository zaehlstelleIndexElasticRepository;
 
     @MockitoBean
-    private ZaehlstelleRepository zaehlstelleRepository;
-
-    @MockitoBean
     private MessstelleIndexElasticRepository messstelleIndexElasticRepository;
 
     @MockitoBean
-    private ZaehlstelleMapper zaehlstelleMapper;
+    private CustomSuggestIndexElasticRepository customSuggestIndexElasticRepository;
 
     @MockitoBean
-    private CustomSuggestIndexElasticRepository customSuggestIndexElasticRepository;
+    private ZaehlstelleRepository zaehlstelleRepository;
+
+    @MockitoBean
+    private ZaehlstelleMapper zaehlstelleMapper;
 
     @MockitoBean
     private MessstelleIndex messstelleIndex;

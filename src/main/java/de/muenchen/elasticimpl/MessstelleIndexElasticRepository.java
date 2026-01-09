@@ -1,4 +1,4 @@
-package de.muenchen.dave.repositories.elasticsearch;
+package de.muenchen.elasticimpl;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
