@@ -38,6 +38,8 @@ public interface ZaehlstelleMapper {
     de.muenchen.dave.domain.analytics.Zaehlstelle elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics,
             Zaehlstelle elastic);
 
+    Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> elasticlist2analyticslist(Iterable<? extends Zaehlstelle> elastic);
+
     Zaehlstelle analytics2elastic(de.muenchen.dave.domain.analytics.Zaehlstelle analytics);
 
     @AfterMapping
@@ -76,6 +78,12 @@ public interface ZaehlstelleMapper {
 
     @AfterMapping
     default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDTO dto, Zaehlstelle bean) {
+        dto.setLat(bean.getPunkt().getLat());
+        dto.setLng(bean.getPunkt().getLon());
+    }
+
+    @AfterMapping
+    default void bean2LadeZaehlstelleWithUnreadMessageDTO(@MappingTarget LadeZaehlstelleWithUnreadMessageDTO dto, Zaehlstelle bean) {
         dto.setLat(bean.getPunkt().getLat());
         dto.setLng(bean.getPunkt().getLon());
     }

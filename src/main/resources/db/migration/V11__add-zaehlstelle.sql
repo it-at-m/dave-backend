@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS zaehlstelle (
     letzte_zaehlung_monat character varying(255),
     letzte_zaehlung_jahr integer,
     grund_letzte_zaehlung character varying(255),
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     sichtbar_datenportal boolean
 );
 
