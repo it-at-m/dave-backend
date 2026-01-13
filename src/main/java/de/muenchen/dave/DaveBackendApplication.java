@@ -14,16 +14,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Application class for starting the micro-service.
  */
 @Configuration
-@ComponentScan(
-        basePackages = {
-                "org.springframework.data.jpa.convert.threeten",
-                "de.muenchen.dave"
-        }
-)
+@ComponentScan("${app.scan.packages}")
 @EntityScan(
         basePackages = {
                 "org.springframework.data.jpa.convert.threeten",
-                "de.muenchen.dave"
+                "de.muenchen.dave", "de.muenchen.dave.elasticimpl"
         }
 )
 @EnableJpaRepositories(basePackages = { "de.muenchen.dave" })

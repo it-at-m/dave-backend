@@ -1,4 +1,4 @@
-package de.muenchen.dave.configuration;
+package de.muenchen.elasticimpl;
 
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "de.muenchen.dave.repositories.elasticsearch")
+@EnableElasticsearchRepositories(basePackages = "de.muenchen.elasticimpl")
 @Slf4j
 public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration {
 

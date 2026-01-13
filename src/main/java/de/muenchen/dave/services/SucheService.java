@@ -254,7 +254,8 @@ public class SucheService {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
-            searchResult.addAll(sucheMessstelle(query, searchAndFilterOptions));
+            //TODO implement sucheMessstelle
+            //searchResult.addAll(sucheMessstelle(query, searchAndFilterOptions));
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
             searchResult.addAll(sucheZaehlstelle(query, searchAndFilterOptions, isAdminportal));

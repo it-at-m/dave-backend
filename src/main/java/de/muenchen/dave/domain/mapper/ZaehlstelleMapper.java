@@ -35,6 +35,13 @@ public interface ZaehlstelleMapper {
 
     Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
+    de.muenchen.dave.domain.analytics.Zaehlstelle elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics,
+            Zaehlstelle elastic);
+
+    Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> elasticlist2analyticslist(Iterable<? extends Zaehlstelle> elastic);
+
+    Zaehlstelle analytics2elastic(de.muenchen.dave.domain.analytics.Zaehlstelle analytics);
+
     @AfterMapping
     default void toZaehlstelle(@MappingTarget Zaehlstelle bean, BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
@@ -71,6 +78,12 @@ public interface ZaehlstelleMapper {
 
     @AfterMapping
     default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDTO dto, Zaehlstelle bean) {
+        dto.setLat(bean.getPunkt().getLat());
+        dto.setLng(bean.getPunkt().getLon());
+    }
+
+    @AfterMapping
+    default void bean2LadeZaehlstelleWithUnreadMessageDTO(@MappingTarget LadeZaehlstelleWithUnreadMessageDTO dto, Zaehlstelle bean) {
         dto.setLat(bean.getPunkt().getLat());
         dto.setLng(bean.getPunkt().getLon());
     }

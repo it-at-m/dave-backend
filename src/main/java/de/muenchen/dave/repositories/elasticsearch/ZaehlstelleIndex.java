@@ -1,111 +1,92 @@
 package de.muenchen.dave.repositories.elasticsearch;
 
-import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.annotations.Query;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
-public interface ZaehlstelleIndex extends ElasticsearchRepository<Zaehlstelle, String> {
+public interface ZaehlstelleIndex {
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteAll();
+    default void deleteAll() {
+        //TODO not implemented yet
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteAll(Iterable<? extends Zaehlstelle> var1);
+    default void deleteAll(Iterable<? extends Zaehlstelle> var1) {
+        //TODO not implemented yet
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void deleteById(String var1);
+    default void deleteById(String var1) {
+        //TODO not implemented yet
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    void delete(Zaehlstelle var1);
+    default void delete(Zaehlstelle var1) {
+        //TODO not implemented yet
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    <S extends Zaehlstelle> S save(S var1);
+    default Zaehlstelle save(Zaehlstelle var1) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    @CacheEvict(
-            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
-                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
-                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
-            allEntries = true
-    )
-    <S extends Zaehlstelle> Iterable<S> saveAll(Iterable<S> var1);
+    default Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    Optional<Zaehlstelle> findById(String var1);
+    default Optional<Zaehlstelle> findById(String var1) {
+        //TODO not implemented yet
+        return Optional.empty();
+    }
 
-    @Query(
-        "{\"simple_query_string\": {" +
-                " \"fields\": [" +
-                "\"nummer^5\"," +
-                "\"stadtbezirk^2\"," +
-                "\"kreuzungsname^4\"," +
-                "\"suchwoerter^3\"," +
-                "\"zaehlungen.suchwoerter^3\"," +
-                "\"zaehlungen.zaehlsituation\"," +
-                "\"zaehlungen.zaehlsituationErweitert\"" +
-                "]," +
-                " \"query\": \"?0\"," +
-                " \"analyze_wildcard\": true," +
-                " \"default_operator\": \"AND\"," +
-                " \"lenient\": true" +
-                "}" +
-                "}"
-    )
-    Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
+    default Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    @Query(
-        "{" +
-                "\"query_string\": {" +
-                "\"query\": " +
-                "\"?0\"" +
-                "}" +
-                "}"
-    )
-    Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
+    default Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    List<Zaehlstelle> findAll();
+    default List<Zaehlstelle> findAll() {
+        //TODO not implemented yet
+        return null;
+    }
 
-    Optional<Zaehlstelle> findByZaehlungenId(String id);
+    default Optional<Zaehlstelle> findByZaehlungenId(String id) {
+        //TODO not implemented yet
+        return Optional.empty();
+    }
 
-    List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
+    default List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    Optional<Zaehlstelle> findByNummer(String nummer);
+    default Optional<Zaehlstelle> findByNummer(String nummer) {
+        //TODO not implemented yet
+        return Optional.empty();
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenStatus(String status);
+    default List<Zaehlstelle> findAllByZaehlungenStatus(String status) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenJahr(String jahr);
+    default List<Zaehlstelle> findAllByZaehlungenJahr(String jahr) {
+        //TODO not implemented yet
+        return null;
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
+    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue() {
+        //TODO not implemented yet
+        return null;
+    }
 
-    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue();
+    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
+        //TODO not implemented yet
+        return null;
+    }
 
 }

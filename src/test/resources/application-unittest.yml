@@ -1,6 +1,5 @@
 # Environment-specific db schema name
 db.schema: dave
-
 spring:
 
   # Spring data rest
