@@ -1,14 +1,14 @@
 package de.muenchen.relationalimpl;
 
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,31 +26,61 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
         this.zaehlstelleMapper = zaehlstelleMapper;
     }
 
-        public void deleteAll() {
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    public void deleteAll() {
         zaehlstelleRepository.deleteAll();
     }
 
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     public void deleteAll(Iterable<? extends Zaehlstelle> var1) {
         Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> analyticsList = zaehlstelleMapper.elasticlist2analyticslist(var1);
         zaehlstelleRepository.deleteAll(analyticsList);
     }
 
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     public void deleteById(String var1) {
         zaehlstelleRepository.deleteById(UUID.fromString(var1));
     }
 
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     public void delete(Zaehlstelle var1) {
         de.muenchen.dave.domain.analytics.Zaehlstelle zs = zaehlstelleMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlstelle(), var1);
         zaehlstelleRepository.delete(zs);
     }
 
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
     public Zaehlstelle save(Zaehlstelle var1) {
         de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
         if (var1 == null) {
             return null;
         } else if (var1.getId() != null && !var1.getId().isBlank()) {
-                zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
-                        .orElse(zaehlstelleEntity);
+            zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
+                    .orElse(zaehlstelleEntity);
         }
         zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1);
         zaehlstelleEntity = zaehlstelleRepository.save(zaehlstelleEntity);
@@ -87,7 +117,8 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
-        List<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.findAllByNummerStartsWithAndStadtbezirkNummer(nummer, stadtbezirksnummer);
+        List<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.findAllByNummerStartsWithAndStadtbezirkNummer(nummer,
+                stadtbezirksnummer);
         return zs.stream().map(zaehlstelleMapper::analytics2elastic).toList();
     }
 
@@ -115,6 +146,5 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
         List<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.findAllByZaehlungenUnreadMessagesDienstleisterTrue();
         return zs.stream().map(zaehlstelleMapper::analytics2elastic).toList();
     }
-
 
 }

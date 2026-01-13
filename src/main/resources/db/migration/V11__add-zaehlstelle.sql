@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS zaehlstelle (
     grund_letzte_zaehlung character varying(255),
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION,
+    suchwoerter character varying(500),
+    custom_suchwoerter character varying(500),
     sichtbar_datenportal boolean
 );
 
