@@ -80,7 +80,7 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.license.self_generated.type=basic
       - path.repo=/usr/share/elasticsearch/backup
-    mem_limit: 3GB
+    mem_limit: 1GB
     ulimits:
       memlock:
         soft: -1
@@ -170,7 +170,7 @@ services:
   dave-backend:
     container_name: dave-backend
     profiles: [sample-stack]
-    image: ghcr.io/it-at-m/dave-backend/dave-backend:latest
+    image: dave-backend/dave-backend:latest
     environment:
       - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - ELASTICSEARCH_HTTPCACERTIFICATE=${ELASTICSEARCH_CERT_FINGERPRINT}
@@ -178,7 +178,7 @@ services:
       - SSO_BASE_URL=http://sso.de
     ports:
       - "50001:50001"
-    pull_policy: always
+    pull_policy: if_not_present
     restart: on-failure
     healthcheck:
       test: [ "CMD-SHELL", "curl http://dave-backend:50001/actuator/health | grep -q '\"status\":\"UP\"'", ]

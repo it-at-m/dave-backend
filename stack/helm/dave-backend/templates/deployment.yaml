@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "daveBackend.fullname" . }}
+  labels:
+    {{- include "daveBackend.labels" . | nindent 4 }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "daveBackend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "daveBackend.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "daveBackend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        {{- with .Values.initContainers }}
+        {{- toYaml . | nindent 8}}
+        {{- end }}
+      containers:
+        - name: {{ .Chart.Name }} 
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DB_SCHEMA
+              value: {{ .Values.app.db_schema }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.app.spring.profile.active }}
+            - name: LOG_LEVEL_ROOT
+              value: {{ .Values.app.log.level.root }}
+            - name: SPRING_DATASOURCE_URL 
+              value: {{ .Values.app.datasource.url }}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: {{ .Values.app.datasource.username }}
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: {{ .Values.app.datasource.password }}
+            - name: JPA_HIBERNATE_DIALECT
+              value: {{ .Values.app.jpa.properties.hibernate.dialect }}
+            - name: JPA_HIBERNATE_FORMAT_SQL
+              value: {{ .Values.app.jpa.properties.hibernate.format_sql }}
+            - name: JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY
+              value: {{ .Values.app.jpa.hibernate.naming.physical_strategy | quote }}
+            - name: JPA_SHOW_SQL
+              value: {{ .Values.app.jpa.show_sql | quote }}
+            - name: SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE
+              value: {{ .Values.app.servlet.multipart.max_file_size }}
+            - name: SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE
+              value: {{ .Values.app.servlet.multipart.max_request_size }}
+            - name: DAVE_ZAEHLUNG_STATUS_UPDATER_CRON
+              value: {{ .Values.dave.zaehlung.status.updater }}
+            - name: DAVE_EMAIL_SENDER_HOSTNAME
+              value: {{ .Values.dave.email.sender.hostname }}
+            - name: DAVE_EMAIL_ADDRESS
+              value: {{ .Values.dave.email.address }}
+            - name: DAVE_EMAIL_PASSWORD
+              value: {{ .Values.dave.email.password }}
+            - name: DAVE_EMAIL_URL_ADMINPORTAL
+              value: {{ .Values.dave.email.url.adminportal }}
+            - name: DAVE_EMAIL_URL_SELFSERVICEPORTAL
+              value: {{ .Values.dave.email.url.selfserviceportal }}
+            - name: DAVE_EMAIL_RECEIVER_UPDATE_INTERVAL
+              value: {{ .Values.dave.email.receiver.update_interval | quote }}
+            - name: DAVE_EMAIL_RECEIVER_HOSTNAME
+              value: {{ .Values.dave.email.receiver.hostname }}
+            - name: DAVE_MESSSTELLE_CRON
+              value: {{ .Values.dave.messstelle.cron }}
+            - name: DAVE_MESSSTELLE_SHEDLOCK
+              value: {{ .Values.dave.messstelle.shedlock }}
+            - name: DAVE_REPORTS_LOGO_ICON
+              value: {{ .Values.dave.reports.logo_icon }}
+            - name: DAVE_REPORTS_LOGO_SUBTITLE
+              value: {{ .Values.dave.reports.logo_subtitle | quote }}
+            - name: ELASTICSEARCH_HOST
+              value: {{ .Values.elasticsearch.host }}
+            - name: ELASTICSEARCH_PORT
+              value: {{ .Values.elasticsearch.port | quote }}
+            - name: ELASTICSEARCH_USER
+              value: {{ .Values.elasticsearch.user }}
+            - name: ELASTICSEARCH_PASSWORD
+              value: {{ .Values.elasticsearch.password }}
+            - name: ELASTICSEARCH_HTTP_CA_CERTIFICATE
+              value: {{ .Values.elasticsearch.http_ca_certificate }}
+            - name: ELASTICSEARCH_CONNECTTIMEOUT
+              value: {{ .Values.elasticsearch.connectTimeout | quote }}
+            - name: ELASTICSEARCH_SOCKETTIMEOUT
+              value: {{ .Values.elasticsearch.socketTimeout | quote }}
+            {{- with .Values.extraEnvVars }}
+            {{- range $name, $value := . }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "daveBackend.fullname" . }}-secret
+          ports:
+            {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .port }}
+              protocol: {{ .protocol }}  
+            {{- end }}
+          volumeMounts:
+          {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+      {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
