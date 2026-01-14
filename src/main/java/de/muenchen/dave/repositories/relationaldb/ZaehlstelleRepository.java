@@ -44,7 +44,7 @@ public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> 
     List<Zaehlstelle> findAll();
 
     @Query(value = "select z from Zaehlstelle z where z.id = ?1")
-    Optional<Zaehlstelle> findByZaehlungenId(String id);
+    Optional<Zaehlstelle> findByZaehlungenId(UUID id);
 
     List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
 

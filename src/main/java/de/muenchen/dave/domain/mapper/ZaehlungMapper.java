@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -21,6 +22,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
@@ -36,6 +38,38 @@ public interface ZaehlungMapper {
     BearbeiteZaehlungDTO bean2BearbeiteDto(Zaehlung bean);
 
     LadeZaehlungVisumDTO bean2ladeVisumDto(Zaehlung bean);
+
+    de.muenchen.dave.domain.analytics.Zaehlung elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics,
+            Zaehlung elastic);
+
+    @BeforeMapping
+    default void beforeElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics) {
+        // Ensure all list fields are mutable ArrayLists to avoid UnsupportedOperationException
+        // when MapStruct tries to clear them during mapping
+        if (analytics.getSuchwoerter() == null) {
+            analytics.setSuchwoerter(new ArrayList<>());
+        } else if (!(analytics.getSuchwoerter() instanceof ArrayList)) {
+            analytics.setSuchwoerter(new ArrayList<>(analytics.getSuchwoerter()));
+        }
+        
+        if (analytics.getCustomSuchwoerter() == null) {
+            analytics.setCustomSuchwoerter(new ArrayList<>());
+        } else if (!(analytics.getCustomSuchwoerter() instanceof ArrayList)) {
+            analytics.setCustomSuchwoerter(new ArrayList<>(analytics.getCustomSuchwoerter()));
+        }
+        
+        if (analytics.getGeographie() == null) {
+            analytics.setGeographie(new ArrayList<>());
+        } else if (!(analytics.getGeographie() instanceof ArrayList)) {
+            analytics.setGeographie(new ArrayList<>(analytics.getGeographie()));
+        }
+    }
+
+    Iterable<de.muenchen.dave.domain.analytics.Zaehlung> elasticlist2analyticslist(Iterable<? extends Zaehlung> elastic);
+
+    Iterable<Zaehlung> analyticslist2elasticlist(Iterable<? extends de.muenchen.dave.domain.analytics.Zaehlung> elastic);
+
+    Zaehlung analytics2elastic(de.muenchen.dave.domain.analytics.Zaehlung analytics);
 
     @AfterMapping
     default void toZaehlung(@MappingTarget Zaehlung bean, BearbeiteZaehlungDTO dto) {

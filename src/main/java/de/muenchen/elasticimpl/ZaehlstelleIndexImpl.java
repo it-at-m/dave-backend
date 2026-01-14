@@ -4,6 +4,8 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,12 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public Zaehlstelle save(Zaehlstelle var1) {
+        if (var1 == null) {
+            return null;
+        }
+        if (var1.getId() == null || var1.getId().isBlank()) {
+            var1.setId(UUID.randomUUID().toString());
+        }
         return zaehlstelleIndexElasticRepository.save(var1);
     }
 

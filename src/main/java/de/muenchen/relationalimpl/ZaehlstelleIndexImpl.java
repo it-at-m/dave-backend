@@ -1,17 +1,20 @@
 package de.muenchen.relationalimpl;
 
-import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
+import de.muenchen.dave.domain.mapper.ZaehlungMapper;
+import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 
 @Service
 public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
@@ -20,10 +23,14 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
 
     private final ZaehlstelleMapper zaehlstelleMapper;
 
+    private final ZaehlungMapper zaehlungMapper;
+
     public ZaehlstelleIndexImpl(final ZaehlstelleRepository zaehlstelleRepository,
-            final ZaehlstelleMapper zaehlstelleMapper) {
+            final ZaehlstelleMapper zaehlstelleMapper,
+            final ZaehlungMapper zaehlungMapper) {
         this.zaehlstelleRepository = zaehlstelleRepository;
         this.zaehlstelleMapper = zaehlstelleMapper;
+        this.zaehlungMapper = zaehlungMapper;
     }
 
     @CacheEvict(
@@ -64,7 +71,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
             allEntries = true
     )
     public void delete(Zaehlstelle var1) {
-        de.muenchen.dave.domain.analytics.Zaehlstelle zs = zaehlstelleMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlstelle(), var1);
+        de.muenchen.dave.domain.analytics.Zaehlstelle zs = zaehlstelleMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlstelle(), var1, zaehlungMapper);
         zaehlstelleRepository.delete(zs);
     }
 
@@ -75,19 +82,22 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
             allEntries = true
     )
     public Zaehlstelle save(Zaehlstelle var1) {
-        de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
         if (var1 == null) {
             return null;
-        } else if (var1.getId() != null && !var1.getId().isBlank()) {
+        }
+        
+        de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity;
+        if (var1.getId() != null && !var1.getId().isBlank()) {
             zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
-                    .orElse(zaehlstelleEntity);
+                    .orElse(new de.muenchen.dave.domain.analytics.Zaehlstelle());
+        } else {
+            zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
         }
-        zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1);
+        
+        //Iterable<de.muenchen.dave.domain.analytics.Zaehlung> zaehlungen = zaehlungMapper.elasticlist2analyticslist(var1.getZaehlungen());
+        zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1, zaehlungMapper);
+        //zaehlstelleEntity.setZaehlungen((List<de.muenchen.dave.domain.analytics.Zaehlung>) zaehlungen);
         zaehlstelleEntity = zaehlstelleRepository.save(zaehlstelleEntity);
-        if (var1.getId() == null || var1.getId().isBlank()) {
-            var1.setId(zaehlstelleEntity.getId().toString());
-            //zaehlstelle.setId(UUID.randomUUID().toString());
-        }
         return zaehlstelleMapper.analytics2elastic(zaehlstelleEntity);
     }
 
@@ -112,7 +122,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public Optional<Zaehlstelle> findByZaehlungenId(String id) {
-        Optional<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.findByZaehlungenId(id);
+        Optional<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.findByZaehlungenId(UUID.fromString(id));
         return zs.map(zaehlstelleMapper::analytics2elastic);
     }
 
