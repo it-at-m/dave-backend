@@ -1,9 +1,9 @@
 apiVersion: v2
-name: backend
+name: dave-backend-chart
 description: DAVe traffic counting plattform, backend
 type: application
-version: 3.0.1
-appVersion: "3.0.1-SNAPSHOT-9"
+version: ${project.version}
+appVersion: "${project.version}"
 maintainers:
   - name: klml
     email: klml@muenchen.de
