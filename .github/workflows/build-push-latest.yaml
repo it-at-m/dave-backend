@@ -93,7 +93,7 @@ jobs:
         run: helm dep update
 
       - name: run helm package
-        working-directory: target/helm/dave-backend
+        working-directory: target/helm
         run: helm package dave-backend
 
       - name: get version number
