@@ -103,10 +103,11 @@ public class ZaehlstelleIndexService {
      * @param zaehlstelle zu Speichernede Zaehlstelle
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public void speichereZaehlstelleInDatenbank(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
+    public Zaehlstelle speichereZaehlstelleInDatenbank(final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
         try {
             final Zaehlstelle save = this.zaehlstelleIndex.save(zaehlstelle);
             log.warn("Zählstelle {} wurde erfolgreich gespeichert", save.getId());
+            return save;
         } catch (final DataAccessResourceFailureException e) {
             log.error("cannot access elasticsearch index on {}:{}", this.elasticsearchHost, this.elasticsearchPort);
             throw new BrokenInfrastructureException();
@@ -122,10 +123,10 @@ public class ZaehlstelleIndexService {
      */
     public String erstelleZaehlstelle(final BearbeiteZaehlstelleDTO zdto) throws BrokenInfrastructureException {
 
-        final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
+        Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
         zaehlstelle.setZaehlungen(new ArrayList<>());
         customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
-        this.speichereZaehlstelleInDatenbank(zaehlstelle);
+        zaehlstelle = this.speichereZaehlstelleInDatenbank(zaehlstelle);
         return zaehlstelle.getId();
     }
 
@@ -169,17 +170,8 @@ public class ZaehlstelleIndexService {
      * @throws DataNotFoundException Bei Ladefehlern
      */
     public Zaehlung erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
-        final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set Zaehlung ID
-        if (StringUtils.isEmpty(zaehlung.getId())) {
-            zaehlung.setId(UUID.randomUUID().toString());
-        }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+        final Zaehlung zaehlung = this.zaehlstelleIndex.initializeZaehlung(this.zaehlungMapper.bearbeiteDto2bean(zdto), zaehlstelleId);
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
@@ -205,17 +197,9 @@ public class ZaehlstelleIndexService {
      * @throws DataNotFoundException Bei Ladefehlern
      */
     public Zaehlung erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
-        final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
+        Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set Zaehlung ID
-        if (StringUtils.isEmpty(zaehlung.getId())) {
-            zaehlung.setId(UUID.randomUUID().toString());
-        }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+        zaehlung = this.zaehlstelleIndex.initializeZaehlung(zaehlung, zaehlstelleId);
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);

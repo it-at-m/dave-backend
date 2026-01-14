@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.analytics;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import de.muenchen.dave.domain.BaseEntity;
@@ -36,7 +35,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class Zaehlung extends BaseEntity {
-
 
     @Column(nullable = false, name = "datum")
     LocalDate datum;
