@@ -31,7 +31,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = ZaehlungMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {ZaehlungMapper.class, FahrbeziehungMapper.class})
 public interface ZaehlstelleMapper {
 
     BearbeiteZaehlstelleDTO bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
@@ -43,7 +43,7 @@ public interface ZaehlstelleMapper {
 
     @Mapping(target = "zaehlungen", ignore = true)
      de.muenchen.dave.domain.analytics.Zaehlstelle elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics,
-            Zaehlstelle elastic, @Context ZaehlungMapper zaehlungMapper);
+            Zaehlstelle elastic, @Context ZaehlungMapper zaehlungMapper, @Context FahrbeziehungMapper fahrbeziehungMapper);
 
     @BeforeMapping
     default void beforeElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics) {
@@ -64,7 +64,7 @@ public interface ZaehlstelleMapper {
 
     @AfterMapping
     default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics, 
-            Zaehlstelle elastic, @Context ZaehlungMapper zaehlungMapper) {
+            Zaehlstelle elastic, @Context ZaehlungMapper zaehlungMapper, @Context FahrbeziehungMapper fahrbeziehungMapper) {
         // Initialize collection if null
         if (analytics.getZaehlungen() == null) {
             analytics.setZaehlungen(new ArrayList<>());
@@ -101,7 +101,7 @@ public interface ZaehlstelleMapper {
             }
             
             // Map properties from elastic to analytics
-            analyticsZaehlung = zaehlungMapper.elastic2analytics(analyticsZaehlung, elasticZaehlung);
+            analyticsZaehlung = zaehlungMapper.elastic2analytics(analyticsZaehlung, elasticZaehlung, fahrbeziehungMapper);
             // Set bidirectional relationship
             analyticsZaehlung.setZaehlstelle(analytics);
             updatedZaehlungen.add(analyticsZaehlung);

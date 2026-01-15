@@ -30,11 +30,12 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = FahrbeziehungMapper.class)
 public interface ZaehlungMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
@@ -45,8 +46,10 @@ public interface ZaehlungMapper {
 
     LadeZaehlungVisumDTO bean2ladeVisumDto(Zaehlung bean);
 
+    @Mapping(target = "knotenarme", ignore = true)
+    @Mapping(target = "fahrbeziehungen", ignore = true)
     de.muenchen.dave.domain.analytics.Zaehlung elastic2analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics,
-            Zaehlung elastic);
+            Zaehlung elastic, @Context FahrbeziehungMapper fahrbeziehungMapper);
 
     @BeforeMapping
     default void beforeElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics) {
@@ -69,11 +72,19 @@ public interface ZaehlungMapper {
         } else if (!(analytics.getGeographie() instanceof ArrayList)) {
             analytics.setGeographie(new ArrayList<>(analytics.getGeographie()));
         }
+
+        if (analytics.getKategorien() == null) {
+            analytics.setKategorien(new ArrayList<>());
+        } else if (!(analytics.getKategorien() instanceof ArrayList)) {
+            analytics.setKategorien(new ArrayList<>(analytics.getKategorien()));
+        }
     }
+
 
     @AfterMapping
     default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics, 
-            Zaehlung elastic) {
+            Zaehlung elastic, @Context FahrbeziehungMapper fahrbeziehungMapper) {
+       
         // Initialize collection if null
         if (analytics.getKnotenarme() == null) {
             analytics.setKnotenarme(new ArrayList<>());
@@ -126,6 +137,41 @@ public interface ZaehlungMapper {
         // Clear and replace the collection content (preserves Hibernate wrapper)
         analytics.getKnotenarme().clear();
         analytics.getKnotenarme().addAll(updatedKnotenarme);
+
+        // Create a map of existing fahrbeziehungen by ID for quick lookup
+        Map<UUID, de.muenchen.dave.domain.analytics.Fahrbeziehung> existingFahrbeziehungenMap = new HashMap<>();
+        for (de.muenchen.dave.domain.analytics.Fahrbeziehung f : analytics.getFahrbeziehungen()) {
+            if (f.getId() != null) {
+                existingFahrbeziehungenMap.put(f.getId(), f);
+            }
+        }
+
+        // Process incoming fahrbeziehungen
+        List<de.muenchen.dave.domain.analytics.Fahrbeziehung> updatedFahrbeziehungen = new ArrayList<>();
+        for (Fahrbeziehung elasticFahrbeziehung : elastic.getFahrbeziehungen()) {
+            de.muenchen.dave.domain.analytics.Fahrbeziehung analyticsFahrbeziehung;
+            
+            if (elasticFahrbeziehung.getId() != null && !elasticFahrbeziehung.getId().isBlank()) {
+                UUID fahrbeziehungId = UUID.fromString(elasticFahrbeziehung.getId());
+                // Update existing fahrbeziehung
+                analyticsFahrbeziehung = existingFahrbeziehungenMap.get(fahrbeziehungId);
+                if (analyticsFahrbeziehung == null) {
+                    analyticsFahrbeziehung = new de.muenchen.dave.domain.analytics.Fahrbeziehung();
+                }
+            } else {
+                // Create new fahrbeziehung
+                analyticsFahrbeziehung = new de.muenchen.dave.domain.analytics.Fahrbeziehung();
+            }
+            // Map properties from elastic to analytics
+            analyticsFahrbeziehung = fahrbeziehungMapper.elastic2analytics(analyticsFahrbeziehung, elasticFahrbeziehung);
+            // Set bidirectional relationship
+            analyticsFahrbeziehung.setZaehlung(analytics);
+            updatedFahrbeziehungen.add(analyticsFahrbeziehung);
+        }
+        
+        // Clear and replace the collection content (preserves Hibernate wrapper)
+        analytics.getFahrbeziehungen().clear();
+        analytics.getFahrbeziehungen().addAll(updatedFahrbeziehungen);
     }
 
     Iterable<de.muenchen.dave.domain.analytics.Zaehlung> elasticlist2analyticslist(Iterable<? extends Zaehlung> elastic);
@@ -182,7 +228,14 @@ public interface ZaehlungMapper {
         final List<Fahrbeziehung> fahrbeziehungenBean = bean.getFahrbeziehungen();
         if (CollectionUtils.isNotEmpty(fahrbeziehungenBean)) {
             dto.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenBean.forEach(fahr -> dto.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr)));
+            fahrbeziehungenBean.forEach(fahr -> {
+                BearbeiteFahrbeziehungDTO fahrDto = new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr);
+                // Map version to entityVersion for hochrechnungsfaktor
+                if (fahr.getHochrechnungsfaktor() != null && fahrDto.getHochrechnungsfaktor() != null) {
+                    fahrDto.getHochrechnungsfaktor().setEntityVersion(fahr.getHochrechnungsfaktor().getVersion());
+                }
+                dto.getFahrbeziehungen().add(fahrDto);
+            });
         }
     }
 

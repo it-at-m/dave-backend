@@ -7,7 +7,9 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.PkwEinheit;
+import de.muenchen.dave.domain.converter.FahrzeugListConverter;
 import de.muenchen.dave.domain.converter.StringListConverter;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import jakarta.persistence.AttributeOverride;
@@ -83,7 +85,9 @@ public class Zaehlung extends BaseEntity {
     @Column(name = "kreisverkehr")
     private Boolean kreisverkehr;
 
-    //List<Fahrzeug> kategorien;
+    @Convert(converter = FahrzeugListConverter.class)
+    @Column(name = "kategorien")
+    private List<Fahrzeug> kategorien;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -142,7 +146,8 @@ public class Zaehlung extends BaseEntity {
     @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Knotenarm> knotenarme;
 
-    //List<Fahrbeziehung> fahrbeziehungen;
+    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Fahrbeziehung> fahrbeziehungen;
 
     @Column(name = "unread_messages_mobilitaetsreferat")
     private Boolean unreadMessagesMobilitaetsreferat;

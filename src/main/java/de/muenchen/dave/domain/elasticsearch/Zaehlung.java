@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
@@ -17,6 +19,9 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 public class Zaehlung {
 
     String id;
+
+    @Transient
+    Long version;
 
     @Field(type = FieldType.Date, format = {}, pattern = "dd.MM.uuuu")
     @JsonFormat(pattern = "dd.MM.yyyy")

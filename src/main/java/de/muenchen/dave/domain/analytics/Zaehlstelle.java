@@ -1,5 +1,10 @@
 package de.muenchen.dave.domain.analytics;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
 import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.converter.StringListConverter;
 import jakarta.persistence.AttributeOverride;
@@ -9,16 +14,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Entity
 // Definition of getter, setter, ...

@@ -3,12 +3,18 @@ package de.muenchen.dave.domain.dtos.bearbeiten;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
 import java.util.List;
+
+import org.springframework.data.annotation.Transient;
+
 import lombok.Data;
 
 @Data
 public class BearbeiteFahrbeziehungDTO {
 
     String id;
+
+    @Transient
+    Long version;
 
     Boolean isKreuzung;
 
