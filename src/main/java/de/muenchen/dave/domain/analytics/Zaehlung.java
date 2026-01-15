@@ -21,6 +21,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -130,7 +131,7 @@ public class Zaehlung extends BaseEntity {
     @JoinColumn(name = "zaehlstelle", referencedColumnName = "id")
     private Zaehlstelle zaehlstelle;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = true)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = true)
     @JoinColumn(name = "pkw_einheit")
     private PkwEinheit pkwEinheit;
 
@@ -138,7 +139,8 @@ public class Zaehlung extends BaseEntity {
     @Column(name = "geographie")
     private List<String> geographie = new ArrayList<>();
 
-    //List<Knotenarm> knotenarme;
+    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Knotenarm> knotenarme;
 
     //List<Fahrbeziehung> fahrbeziehungen;
 

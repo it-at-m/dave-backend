@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -16,13 +17,18 @@ import de.muenchen.dave.util.SuchwortUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeforeMapping;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
@@ -63,6 +69,63 @@ public interface ZaehlungMapper {
         } else if (!(analytics.getGeographie() instanceof ArrayList)) {
             analytics.setGeographie(new ArrayList<>(analytics.getGeographie()));
         }
+    }
+
+    @AfterMapping
+    default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics, 
+            Zaehlung elastic) {
+        // Initialize collection if null
+        if (analytics.getKnotenarme() == null) {
+            analytics.setKnotenarme(new ArrayList<>());
+        }
+        
+        if (elastic.getKnotenarme() == null || elastic.getKnotenarme().isEmpty()) {
+            analytics.getKnotenarme().clear();
+            return;
+        }
+        
+        // Create a map of existing knotenarme by ID for quick lookup
+        Map<UUID, de.muenchen.dave.domain.analytics.Knotenarm> existingKnotenarmeMap = new HashMap<>();
+        for (de.muenchen.dave.domain.analytics.Knotenarm k : analytics.getKnotenarme()) {
+            if (k.getId() != null) {
+                existingKnotenarmeMap.put(k.getId(), k);
+            }
+        }
+        
+        // Process incoming knotenarme
+        List<de.muenchen.dave.domain.analytics.Knotenarm> updatedKnotenarme = new ArrayList<>();
+        for (Knotenarm elasticKnotenarm : elastic.getKnotenarme()) {
+            de.muenchen.dave.domain.analytics.Knotenarm analyticsKnotenarm;
+            
+            if (elasticKnotenarm.getId() != null && !elasticKnotenarm.getId().isBlank()) {
+                UUID knotenarmId = UUID.fromString(elasticKnotenarm.getId());
+                // Update existing knotenarm
+                analyticsKnotenarm = existingKnotenarmeMap.get(knotenarmId);
+                if (analyticsKnotenarm == null) {
+                    analyticsKnotenarm = new de.muenchen.dave.domain.analytics.Knotenarm();
+                }
+            } else {
+                // Create new knotenarm
+                analyticsKnotenarm = new de.muenchen.dave.domain.analytics.Knotenarm();
+            }
+            
+            // Map properties from elastic to analytics
+            if (elasticKnotenarm.getId() != null && !elasticKnotenarm.getId().isBlank()) {
+                analyticsKnotenarm.setId(UUID.fromString(elasticKnotenarm.getId()));
+                analyticsKnotenarm.setVersion(elasticKnotenarm.getVersion());
+            }
+            analyticsKnotenarm.setNummer(elasticKnotenarm.getNummer());
+            analyticsKnotenarm.setStrassenname(elasticKnotenarm.getStrassenname());
+            analyticsKnotenarm.setFilename(elasticKnotenarm.getFilename());
+        
+            // Set bidirectional relationship
+            analyticsKnotenarm.setZaehlung(analytics);
+            updatedKnotenarme.add(analyticsKnotenarm);
+        }
+        
+        // Clear and replace the collection content (preserves Hibernate wrapper)
+        analytics.getKnotenarme().clear();
+        analytics.getKnotenarme().addAll(updatedKnotenarme);
     }
 
     Iterable<de.muenchen.dave.domain.analytics.Zaehlung> elasticlist2analyticslist(Iterable<? extends Zaehlung> elastic);

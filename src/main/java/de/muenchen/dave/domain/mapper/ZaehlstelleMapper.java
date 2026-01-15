@@ -62,7 +62,6 @@ public interface ZaehlstelleMapper {
         }
     }
 
-
     @AfterMapping
     default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlstelle analytics, 
             Zaehlstelle elastic, @Context ZaehlungMapper zaehlungMapper) {

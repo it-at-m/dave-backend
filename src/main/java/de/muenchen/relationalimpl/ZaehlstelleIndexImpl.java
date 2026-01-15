@@ -4,21 +4,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlungRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
 
     private final ZaehlstelleRepository zaehlstelleRepository;
@@ -167,12 +172,15 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     public Zaehlung initializeZaehlung(Zaehlung zaehlung, String zaehlstelleId) {
         if (zaehlung == null || zaehlstelleId == null || zaehlstelleId.isBlank()) {
             return null;
-        } else if (zaehlung.getId() == null || zaehlung.getId().isBlank()) {
-        de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelle = zaehlstelleRepository.findById(UUID.fromString(zaehlstelleId)).orElseThrow();
-        de.muenchen.dave.domain.analytics.Zaehlung zaehlungEntity = zaehlungMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlung(), zaehlung);
-        zaehlungEntity.setZaehlstelle(zaehlstelle);
-        zaehlungEntity = zaehlungRepository.save(zaehlungEntity);
-        return zaehlungMapper.analytics2elastic(zaehlungEntity);
+        }
+        
+        if (zaehlung.getId() == null || zaehlung.getId().isBlank()) {
+            de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelle = zaehlstelleRepository.findById(UUID.fromString(zaehlstelleId)).orElseThrow();
+            de.muenchen.dave.domain.analytics.Zaehlung zaehlungEntity = zaehlungMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlung(), zaehlung);
+
+            zaehlungEntity.setZaehlstelle(zaehlstelle);
+            zaehlungEntity = zaehlungRepository.save(zaehlungEntity);
+            return zaehlungMapper.analytics2elastic(zaehlungEntity);
         } else {
             return zaehlung;
         }

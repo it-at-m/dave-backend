@@ -58,7 +58,7 @@ CREATE TABLE zaehlung (
     geographie character varying(500),
     unread_messages_mobilitaetsreferat boolean,
     unread_messages_dienstleister boolean,
-    zaehlstelle character varying(36),
+    zaehlstelle character varying(36) NOT NULL,
     dienstleisterkennung character varying(255)
 );
 
@@ -66,3 +66,24 @@ ALTER TABLE zaehlung OWNER TO dave;
 
 ALTER TABLE ONLY zaehlung
     ADD CONSTRAINT zaehlung_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY zaehlung
+    ADD CONSTRAINT fk_zaehlung_zaehlstelle FOREIGN KEY (zaehlstelle) REFERENCES zaehlstelle(id);
+
+CREATE TABLE knotenarm (
+    id character varying(36) NOT NULL,
+    created_time timestamp without time zone NOT NULL,
+    version bigint,
+    nummer integer,
+    strassenname character varying(255),
+    filename character varying(255),
+    zaehlung character varying(36) NOT NULL
+);
+
+ALTER TABLE knotenarm OWNER TO dave;
+
+ALTER TABLE ONLY knotenarm
+    ADD CONSTRAINT knotenarm_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY knotenarm
+    ADD CONSTRAINT fk_knotenarm_zaehlung FOREIGN KEY (zaehlung) REFERENCES zaehlung(id);

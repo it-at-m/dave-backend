@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.converter.StringListConverter;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
@@ -69,7 +70,7 @@ public class Zaehlstelle extends BaseEntity {
     @Column(name = "custom_suchwoerter")
     private List<String> customSuchwoerter = new ArrayList<>();
 
-    @OneToMany(mappedBy = "zaehlstelle", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "zaehlstelle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Zaehlung> zaehlungen = new ArrayList<>();
 
     /**
