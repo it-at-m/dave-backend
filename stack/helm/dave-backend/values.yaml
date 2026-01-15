@@ -18,7 +18,7 @@ app:
   db_schema: dave
   spring:
     profile:
-      active: no-security, local
+      active: no-security, prod
   log:
     level:
       root: info
