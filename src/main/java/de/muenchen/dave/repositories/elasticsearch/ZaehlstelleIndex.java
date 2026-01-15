@@ -1,9 +1,11 @@
 package de.muenchen.dave.repositories.elasticsearch;
 
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,85 +13,74 @@ public interface ZaehlstelleIndex {
 
     Zaehlung initializeZaehlung(Zaehlung zaehlung, String zaehlstelleId);
 
-    default void deleteAll() {
-        //TODO not implemented yet
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    void deleteAll();
 
-    default void deleteAll(Iterable<? extends Zaehlstelle> var1) {
-        //TODO not implemented yet
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    void deleteAll(Iterable<? extends Zaehlstelle> var1);
 
-    default void deleteById(String var1) {
-        //TODO not implemented yet
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    void deleteById(String var1);
 
-    default void delete(Zaehlstelle var1) {
-        //TODO not implemented yet
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    void delete(Zaehlstelle var1);
 
-    default Zaehlstelle save(Zaehlstelle var1) {
-        //TODO not implemented yet
-        return null;
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    Zaehlstelle save(Zaehlstelle var1);
 
-    default Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1) {
-        //TODO not implemented yet
-        return null;
-    }
+    @CacheEvict(
+            value = { CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL,
+                    CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN,
+                    CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, CachingConfiguration.READ_ZAEHLSTELLE_DTO },
+            allEntries = true
+    )
+    Iterable<Zaehlstelle> saveAll(Iterable<Zaehlstelle> var1);
 
-    default Optional<Zaehlstelle> findById(String var1) {
-        //TODO not implemented yet
-        return Optional.empty();
-    }
+    Optional<Zaehlstelle> findById(String var1);
 
-    default Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
-        //TODO not implemented yet
-        return null;
-    }
+    Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
-    default Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable) {
-        //TODO not implemented yet
-        return null;
-    }
+    Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 
-    default List<Zaehlstelle> findAll() {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAll();
 
-    default Optional<Zaehlstelle> findByZaehlungenId(String id) {
-        //TODO not implemented yet
-        return Optional.empty();
-    }
+    Optional<Zaehlstelle> findByZaehlungenId(String id);
 
-    default List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer) {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
 
-    default Optional<Zaehlstelle> findByNummer(String nummer) {
-        //TODO not implemented yet
-        return Optional.empty();
-    }
+    Optional<Zaehlstelle> findByNummer(String nummer);
 
-    default List<Zaehlstelle> findAllByZaehlungenStatus(String status) {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAllByZaehlungenStatus(String status);
 
-    default List<Zaehlstelle> findAllByZaehlungenJahr(String jahr) {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAllByZaehlungenJahr(String jahr);
 
-    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue() {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
 
-    default List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
-        //TODO not implemented yet
-        return null;
-    }
+    List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue();
 
 }
