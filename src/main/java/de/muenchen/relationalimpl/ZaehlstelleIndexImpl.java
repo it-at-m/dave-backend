@@ -1,14 +1,5 @@
 package de.muenchen.relationalimpl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -18,7 +9,14 @@ import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlungRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -84,7 +82,8 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
             allEntries = true
     )
     public void delete(Zaehlstelle var1) {
-        de.muenchen.dave.domain.analytics.Zaehlstelle zs = zaehlstelleMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlstelle(), var1, zaehlungMapper, fahrbeziehungMapper);
+        de.muenchen.dave.domain.analytics.Zaehlstelle zs = zaehlstelleMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlstelle(), var1,
+                zaehlungMapper, fahrbeziehungMapper);
         zaehlstelleRepository.delete(zs);
     }
 
@@ -98,7 +97,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
         if (var1 == null) {
             return null;
         }
-        
+
         de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelleEntity;
         if (var1.getId() != null && !var1.getId().isBlank()) {
             zaehlstelleEntity = zaehlstelleRepository.findById(UUID.fromString(var1.getId()))
@@ -106,7 +105,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
         } else {
             zaehlstelleEntity = new de.muenchen.dave.domain.analytics.Zaehlstelle();
         }
-        
+
         //Iterable<de.muenchen.dave.domain.analytics.Zaehlung> zaehlungen = zaehlungMapper.elasticlist2analyticslist(var1.getZaehlungen());
         zaehlstelleEntity = zaehlstelleMapper.elastic2analytics(zaehlstelleEntity, var1, zaehlungMapper, fahrbeziehungMapper);
         //zaehlstelleEntity.setZaehlungen((List<de.muenchen.dave.domain.analytics.Zaehlung>) zaehlungen);
@@ -175,10 +174,11 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
         if (zaehlung == null || zaehlstelleId == null || zaehlstelleId.isBlank()) {
             return null;
         }
-        
+
         if (zaehlung.getId() == null || zaehlung.getId().isBlank()) {
             de.muenchen.dave.domain.analytics.Zaehlstelle zaehlstelle = zaehlstelleRepository.findById(UUID.fromString(zaehlstelleId)).orElseThrow();
-            de.muenchen.dave.domain.analytics.Zaehlung zaehlungEntity = zaehlungMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlung(), zaehlung, fahrbeziehungMapper);
+            de.muenchen.dave.domain.analytics.Zaehlung zaehlungEntity = zaehlungMapper.elastic2analytics(new de.muenchen.dave.domain.analytics.Zaehlung(),
+                    zaehlung, fahrbeziehungMapper);
 
             zaehlungEntity.setZaehlstelle(zaehlstelle);
             zaehlungEntity = zaehlungRepository.save(zaehlungEntity);

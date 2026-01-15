@@ -6,12 +6,11 @@ package de.muenchen.dave.domain.converter;
 
 import static java.util.Collections.*;
 
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.Arrays;
 import java.util.List;
-
-import de.muenchen.dave.domain.enums.Fahrzeug;
 
 @Converter
 public class FahrzeugListConverter implements AttributeConverter<List<Fahrzeug>, String> {

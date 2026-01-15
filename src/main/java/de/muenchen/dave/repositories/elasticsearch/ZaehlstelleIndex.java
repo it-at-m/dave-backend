@@ -2,7 +2,6 @@ package de.muenchen.dave.repositories.elasticsearch;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

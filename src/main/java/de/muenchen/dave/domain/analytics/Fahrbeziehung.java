@@ -47,7 +47,7 @@ public class Fahrbeziehung extends BaseEntity {
 
     // Knoten-Kanten-Modell
     @Column(name = "vonknotvonstrnr")
-    private String vonknotvonstrnr; 
+    private String vonknotvonstrnr;
 
     @Column(name = "nachknotvonstrnr")
     private String nachknotvonstrnr;

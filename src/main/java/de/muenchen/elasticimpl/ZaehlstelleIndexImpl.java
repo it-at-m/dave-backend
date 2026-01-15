@@ -6,7 +6,6 @@ import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;

@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +33,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = FahrbeziehungMapper.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ZaehlungMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
@@ -60,13 +58,13 @@ public interface ZaehlungMapper {
         } else if (!(analytics.getSuchwoerter() instanceof ArrayList)) {
             analytics.setSuchwoerter(new ArrayList<>(analytics.getSuchwoerter()));
         }
-        
+
         if (analytics.getCustomSuchwoerter() == null) {
             analytics.setCustomSuchwoerter(new ArrayList<>());
         } else if (!(analytics.getCustomSuchwoerter() instanceof ArrayList)) {
             analytics.setCustomSuchwoerter(new ArrayList<>(analytics.getCustomSuchwoerter()));
         }
-        
+
         if (analytics.getGeographie() == null) {
             analytics.setGeographie(new ArrayList<>());
         } else if (!(analytics.getGeographie() instanceof ArrayList)) {
@@ -80,21 +78,20 @@ public interface ZaehlungMapper {
         }
     }
 
-
     @AfterMapping
-    default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics, 
+    default void afterElastic2Analytics(@MappingTarget de.muenchen.dave.domain.analytics.Zaehlung analytics,
             Zaehlung elastic, @Context FahrbeziehungMapper fahrbeziehungMapper) {
-       
+
         // Initialize collection if null
         if (analytics.getKnotenarme() == null) {
             analytics.setKnotenarme(new ArrayList<>());
         }
-        
+
         if (elastic.getKnotenarme() == null || elastic.getKnotenarme().isEmpty()) {
             analytics.getKnotenarme().clear();
             return;
         }
-        
+
         // Create a map of existing knotenarme by ID for quick lookup
         Map<UUID, de.muenchen.dave.domain.analytics.Knotenarm> existingKnotenarmeMap = new HashMap<>();
         for (de.muenchen.dave.domain.analytics.Knotenarm k : analytics.getKnotenarme()) {
@@ -102,12 +99,12 @@ public interface ZaehlungMapper {
                 existingKnotenarmeMap.put(k.getId(), k);
             }
         }
-        
+
         // Process incoming knotenarme
         List<de.muenchen.dave.domain.analytics.Knotenarm> updatedKnotenarme = new ArrayList<>();
         for (Knotenarm elasticKnotenarm : elastic.getKnotenarme()) {
             de.muenchen.dave.domain.analytics.Knotenarm analyticsKnotenarm;
-            
+
             if (elasticKnotenarm.getId() != null && !elasticKnotenarm.getId().isBlank()) {
                 UUID knotenarmId = UUID.fromString(elasticKnotenarm.getId());
                 // Update existing knotenarm
@@ -119,7 +116,7 @@ public interface ZaehlungMapper {
                 // Create new knotenarm
                 analyticsKnotenarm = new de.muenchen.dave.domain.analytics.Knotenarm();
             }
-            
+
             // Map properties from elastic to analytics
             if (elasticKnotenarm.getId() != null && !elasticKnotenarm.getId().isBlank()) {
                 analyticsKnotenarm.setId(UUID.fromString(elasticKnotenarm.getId()));
@@ -128,12 +125,12 @@ public interface ZaehlungMapper {
             analyticsKnotenarm.setNummer(elasticKnotenarm.getNummer());
             analyticsKnotenarm.setStrassenname(elasticKnotenarm.getStrassenname());
             analyticsKnotenarm.setFilename(elasticKnotenarm.getFilename());
-        
+
             // Set bidirectional relationship
             analyticsKnotenarm.setZaehlung(analytics);
             updatedKnotenarme.add(analyticsKnotenarm);
         }
-        
+
         // Clear and replace the collection content (preserves Hibernate wrapper)
         analytics.getKnotenarme().clear();
         analytics.getKnotenarme().addAll(updatedKnotenarme);
@@ -150,7 +147,7 @@ public interface ZaehlungMapper {
         List<de.muenchen.dave.domain.analytics.Fahrbeziehung> updatedFahrbeziehungen = new ArrayList<>();
         for (Fahrbeziehung elasticFahrbeziehung : elastic.getFahrbeziehungen()) {
             de.muenchen.dave.domain.analytics.Fahrbeziehung analyticsFahrbeziehung;
-            
+
             if (elasticFahrbeziehung.getId() != null && !elasticFahrbeziehung.getId().isBlank()) {
                 UUID fahrbeziehungId = UUID.fromString(elasticFahrbeziehung.getId());
                 // Update existing fahrbeziehung
@@ -168,7 +165,7 @@ public interface ZaehlungMapper {
             analyticsFahrbeziehung.setZaehlung(analytics);
             updatedFahrbeziehungen.add(analyticsFahrbeziehung);
         }
-        
+
         // Clear and replace the collection content (preserves Hibernate wrapper)
         analytics.getFahrbeziehungen().clear();
         analytics.getFahrbeziehungen().addAll(updatedFahrbeziehungen);
