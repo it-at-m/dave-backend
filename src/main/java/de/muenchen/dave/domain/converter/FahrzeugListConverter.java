@@ -29,7 +29,14 @@ public class FahrzeugListConverter implements AttributeConverter<List<Fahrzeug>,
     @Override
     public List<Fahrzeug> convertToEntityAttribute(String string) {
         List<String> result = string != null && !string.isEmpty() ? Arrays.asList(string.split(SPLIT_CHAR)) : emptyList();
-        List<Fahrzeug> fahrzeugList = result.stream().map(value -> Fahrzeug.valueOf(value)).toList();
+
+        List<Fahrzeug> fahrzeugList = result.stream()
+                .map(name -> Arrays.stream(Fahrzeug.values())
+                        .filter(fahrzeug -> fahrzeug.getName().equals(name))
+                        .findFirst()
+                        .orElse(null))
+                .filter(fahrzeug -> fahrzeug != null)
+                .toList();
         return fahrzeugList;
     }
 }
