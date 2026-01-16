@@ -89,7 +89,8 @@ public interface ZaehlstelleRelationalMapper {
         analytics.getZaehlungen().addAll(updatedZaehlungen);
     }
 
-    Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> elasticlist2analyticslist(Iterable<? extends Zaehlstelle> elastic, @Context ZaehlungRelationalMapper zaehlungMapper, @Context FahrbeziehungRelationalMapper fahrbeziehungMapper);
+    Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> elasticlist2analyticslist(Iterable<? extends Zaehlstelle> elastic,
+            @Context ZaehlungRelationalMapper zaehlungMapper, @Context FahrbeziehungRelationalMapper fahrbeziehungMapper);
 
     Zaehlstelle analytics2elastic(de.muenchen.dave.domain.analytics.Zaehlstelle analytics);
 }
