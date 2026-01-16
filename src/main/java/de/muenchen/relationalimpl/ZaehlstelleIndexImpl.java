@@ -47,7 +47,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public void deleteAll(Iterable<? extends Zaehlstelle> var1) {
-        Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> analyticsList = zaehlstelleMapper.elasticlist2analyticslist(var1);
+        Iterable<de.muenchen.dave.domain.analytics.Zaehlstelle> analyticsList = zaehlstelleMapper.elasticlist2analyticslist(var1, zaehlungMapper, fahrbeziehungMapper);
         zaehlstelleRepository.deleteAll(analyticsList);
     }
 
