@@ -7,6 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class TenantConfigurationDTO {
 
-    private String department;
+    private String datenportalHeader;
     private MapConfigurationDTO mapConfiguration;
 }

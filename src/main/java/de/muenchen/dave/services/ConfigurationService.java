@@ -21,13 +21,13 @@ public class ConfigurationService {
             @Value("${dave.tenant.map.center.lng:11.575517}") final String lng,
             @Value("${dave.tenant.map.center.zoom:12}") final Integer zoom,
             @Value("${dave.zaehlstelle.automatic-number-assignment:true}") final boolean zaehlstelleAutomaticNumberAssignment,
-            @Value("${dave.tenant.department:Mobilitätsreferat}") final String department,
+            @Value("${dave.tenant.datenportal-header:Datenportal}") final String datenportalHeader,
             @Value("${dave.zaehlstelle.link-documentation-csv-file-for-upload-zaehlung}") final String linkDocumentationCsvFileForUploadZaehlung) {
         final var zaehlstelleConfig = new ZaehlstelleConfigurationDTO(
                 zaehlstelleAutomaticNumberAssignment,
                 linkDocumentationCsvFileForUploadZaehlung);
         final var mapConfiguration = new MapConfigurationDTO(lat, lng, zoom);
-        final var tenantConfiguration = new TenantConfigurationDTO(department, mapConfiguration);
+        final var tenantConfiguration = new TenantConfigurationDTO(datenportalHeader, mapConfiguration);
         this.configuration = new ConfigurationDTO(zaehlstelleConfig, tenantConfiguration);
     }
 
