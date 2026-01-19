@@ -64,6 +64,7 @@ public interface MessstelleRepository extends JpaRepository<Messstelle, UUID> {
     @Override
     List<Messstelle> findAll(final Sort sort);
 
+    //TODO: Implement search method properly
     @Query(value = "select z from Messstelle z order by id")
     Page<Messstelle> suggestSearch(String query, Pageable pageable);
 
