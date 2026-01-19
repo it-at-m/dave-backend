@@ -85,7 +85,14 @@ public interface ZaehlungMapper {
         final List<Fahrbeziehung> fahrbeziehungenBean = bean.getFahrbeziehungen();
         if (CollectionUtils.isNotEmpty(fahrbeziehungenBean)) {
             dto.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenBean.forEach(fahr -> dto.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr)));
+            fahrbeziehungenBean.forEach(fahr -> {
+                BearbeiteFahrbeziehungDTO fahrDto = new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr);
+                // Map version to entityVersion for hochrechnungsfaktor
+                if (fahr.getHochrechnungsfaktor() != null && fahrDto.getHochrechnungsfaktor() != null) {
+                    fahrDto.getHochrechnungsfaktor().setEntityVersion(fahr.getHochrechnungsfaktor().getVersion());
+                }
+                dto.getFahrbeziehungen().add(fahrDto);
+            });
         }
     }
 

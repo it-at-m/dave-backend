@@ -6,6 +6,10 @@ import lombok.Data;
 @Data
 public class PkwEinheitDTO {
 
+    String id;
+
+    Long version;
+
     BigDecimal pkw;
 
     BigDecimal lkw;
