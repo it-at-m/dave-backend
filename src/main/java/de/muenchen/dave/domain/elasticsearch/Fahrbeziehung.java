@@ -2,11 +2,15 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import java.io.Serializable;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
 
 @Data
 public class Fahrbeziehung implements Serializable {
 
     String id;
+
+    @Transient
+    Long version;
 
     Boolean isKreuzung;
 

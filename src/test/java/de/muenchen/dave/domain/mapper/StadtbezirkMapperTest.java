@@ -12,6 +12,7 @@ import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
 import de.muenchen.elasticimpl.CustomSuggestIndexElasticRepository;
 import de.muenchen.elasticimpl.MessstelleIndexElasticRepository;
 import de.muenchen.elasticimpl.ZaehlstelleIndexElasticRepository;
+import de.muenchen.relationalimpl.MessstelleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ public class StadtbezirkMapperTest {
 
     @MockitoBean
     private ZaehlstelleRepository zaehlstelleRepository;
+
+    @MockitoBean
+    private MessstelleRepository messstelleRepository;
 
     @MockitoBean
     private ZaehlstelleMapper zaehlstelleMapper;

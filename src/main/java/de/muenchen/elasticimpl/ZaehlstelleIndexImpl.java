@@ -1,9 +1,13 @@
 package de.muenchen.elasticimpl;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,12 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public Zaehlstelle save(Zaehlstelle var1) {
+        if (var1 == null) {
+            return null;
+        }
+        if (var1.getId() == null || var1.getId().isBlank()) {
+            var1.setId(UUID.randomUUID().toString());
+        }
         return zaehlstelleIndexElasticRepository.save(var1);
     }
 
@@ -90,6 +100,22 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
 
     public List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue() {
         return zaehlstelleIndexElasticRepository.findAllByZaehlungenUnreadMessagesDienstleisterTrue();
+    }
+
+    @Override
+    public Zaehlung initializeZaehlung(Zaehlung zaehlung, String zaehlstelleId) {
+        // Set Zaehlung ID
+        if (StringUtils.isEmpty(zaehlung.getId())) {
+            zaehlung.setId(UUID.randomUUID().toString());
+        }
+        // Set Fahrbeziehung ID
+        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
+            zaehlung.getFahrbeziehungen().stream()
+                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
+                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
+        }
+
+        return zaehlung;
     }
 
 }

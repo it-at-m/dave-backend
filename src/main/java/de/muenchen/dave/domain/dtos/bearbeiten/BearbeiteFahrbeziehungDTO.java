@@ -4,11 +4,15 @@ import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
 import java.util.List;
 import lombok.Data;
+import org.springframework.data.annotation.Transient;
 
 @Data
 public class BearbeiteFahrbeziehungDTO {
 
     String id;
+
+    @Transient
+    Long version;
 
     Boolean isKreuzung;
 

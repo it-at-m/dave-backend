@@ -35,30 +35,30 @@ public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> 
 
     List<Zaehlstelle> findAll(final Sort sort);
 
+    //TODO: Implement search method properly
     @Query(value = "select z from Zaehlstelle z order by id")
     Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
+    //TODO: Implement search method properly
     @Query(value = "select z from Zaehlstelle z order by id")
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 
     List<Zaehlstelle> findAll();
 
-    @Query(value = "select z from Zaehlstelle z where z.id = ?1")
-    Optional<Zaehlstelle> findByZaehlungenId(String id);
+    @Query(value = "select z from Zaehlstelle z join z.zaehlungen za where za.id = ?1")
+    Optional<Zaehlstelle> findByZaehlungenId(UUID id);
 
     List<Zaehlstelle> findAllByNummerStartsWithAndStadtbezirkNummer(String nummer, Integer stadtbezirksnummer);
 
     Optional<Zaehlstelle> findByNummer(String nummer);
 
-    @Query(value = "select z from Zaehlstelle z order by id")
+    @Query(value = "select z from Zaehlstelle z join z.zaehlungen za where za.status = ?1")
     List<Zaehlstelle> findAllByZaehlungenStatus(String status);
 
-    @Query(value = "select z from Zaehlstelle z order by id")
+    @Query(value = "select z from Zaehlstelle z join z.zaehlungen za where za.jahr = ?1 order by z.id")
     List<Zaehlstelle> findAllByZaehlungenJahr(String jahr);
 
-    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenUnreadMessagesMobilitaetsreferatTrue();
 
-    @Query(value = "select z from Zaehlstelle z order by id")
     List<Zaehlstelle> findAllByZaehlungenUnreadMessagesDienstleisterTrue();
 }
