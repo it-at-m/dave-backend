@@ -12,7 +12,7 @@ env:
   DOCKERHUB_ORG: starwitorg
 
 jobs:
-  build-maven:
+  build:
     name: "Build with Maven"
     runs-on: [self-hosted, linux, X64]
     outputs:
@@ -48,10 +48,10 @@ jobs:
 
   publish_docker:
     name: "Build and publish docker"
-    needs: build-maven
+    needs: build
     runs-on: [self-hosted, linux, X64]
     env:
-      VERSION_BUILD: ${{ needs.build-maven.outputs.VERSION_BUILD }}
+      VERSION_BUILD: ${{ needs.build.outputs.VERSION_BUILD }}
 
     steps:
       - name: "echo version"
@@ -75,3 +75,32 @@ jobs:
           sbom: true
           provenance: mode=max
           tags: ${{ env.DOCKERHUB_ORG }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_BUILD }}-${{ github.run_number }}
+
+  publish_helm:
+    name: "Publish helm chart"
+    needs: build
+    runs-on: [self-hosted, linux, X64]
+
+    steps:
+      - name: get helm
+        uses: azure/setup-helm@v4
+
+      - name: login to Helm registry
+        run: helm registry login registry-1.docker.io -u starwit -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: run helm dependency update
+        working-directory: target/helm/dave-backend
+        run: helm dep update
+
+      - name: run helm package
+        working-directory: target/helm
+        run: helm package dave-backend
+
+      - name: get version number
+        working-directory: target/helm/dave-backend
+        run: |
+          echo "HELM_VERSION=$(grep version: Chart.yaml | head -1 | awk '{print $2}')" >> $GITHUB_ENV
+
+      - name: run helm push
+        working-directory: target/helm
+        run: helm push dave-backend-chart-${{ env.HELM_VERSION }}.tgz oci://registry-1.docker.io/starwitorg

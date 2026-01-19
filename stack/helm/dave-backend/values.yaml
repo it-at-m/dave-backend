@@ -1,0 +1,140 @@
+# Default values for dave-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: starwitorg/dave-backend
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "3.0.1-SNAPSHOT-10"
+
+imagePullSecrets: []
+# nameOverride: ""
+# fullnameOverride: ""
+
+app:
+  db_schema: dave
+  spring:
+    profile:
+      active: no-security, prod
+  log:
+    level:
+      root: info
+  datasource:
+    url: jdbc:postgresql://postgres-chart-dave-db:5432/dave
+    username: dave
+    password: dave_pw
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+      format_sql: true
+    hibernate:
+      naming:
+        physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show_sql: false
+  servlet:
+    multipart:
+      max_file_size: 10MB
+      max_request_size: 10MB
+
+dave:
+  zaehlung:
+    status:
+      # every 5 min
+      updater: 0 0 * 1/1 * ?
+  email:
+    sender:
+      hostname: localhost
+    address: test@example.com
+    password: password
+    url:
+      adminportal: http://localhost:8085 # TODO
+      selfserviceportal: http://localhost:8086 # TODO
+    receiver:
+      # Update-Intervall in Millisekunden für den Email-Abruf
+      update_interval: 50000000000
+      hostname: imap.de
+  messstelle:
+    # Alle 5 min
+    cron: 0 0 * 1/1 * ?
+    # Sollte immer knapp unter dem Cron sein
+    shedlock: 4m
+  reports:
+    logo_icon: classpath:/pdf/images/kindl.jpg
+    logo_subtitle: "Landeshauptstadt<br/>München<br/><b>Mobilitätsreferat</b>"
+
+# To be removed in future versions
+elasticsearch:
+  host: 192.168.100.79
+  port: 9200
+  user: elastic
+  password: changeme
+  http_ca_certificate: 55:F0:DF:A1:E6:25:A6:79:C5:64:10:0C:B5:4C:08:FD:34:4E:C4:B7:2A:3F:13:30:0F:91:4E:54:13:81:E4:AD
+  connectTimeout: 10
+  socketTimeout: 30
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: service
+  - port: 5701
+    targetPort: 5701
+    protocol: TCP
+    name: hazelcast
+
+extraEnvVars:
+  TZ: "Europe/Berlin"
+
+extraVolumeMounts: []
+
+extraVolumes: []
+
+# can be used to add init containers
+initContainers: []
+
+credentials:
+  # secret must contain keys USER_DN and PASSWORD for ldap authentication
+  existingSecret: ""
+
+serviceMonitor:
+  enabled: false
+
+podAnnotations: {}
+
+deploymentAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext:  {}
+
+resources:
+  limits:
+    cpu: 1500m
+    memory: 3512Mi
+  requests:
+    cpu: 50m
+    memory: 3512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
