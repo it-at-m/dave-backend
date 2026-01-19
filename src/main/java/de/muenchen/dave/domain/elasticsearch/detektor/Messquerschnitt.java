@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.elasticsearch.detektor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -12,6 +13,9 @@ public class Messquerschnitt {
 
     @Id
     String id;
+
+    @Transient
+    Long version;
 
     String mqId;
 

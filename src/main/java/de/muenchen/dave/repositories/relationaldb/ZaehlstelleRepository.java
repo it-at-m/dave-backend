@@ -35,9 +35,11 @@ public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> 
 
     List<Zaehlstelle> findAll(final Sort sort);
 
+    //TODO: Implement search method properly
     @Query(value = "select z from Zaehlstelle z order by id")
     Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
+    //TODO: Implement search method properly
     @Query(value = "select z from Zaehlstelle z order by id")
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 

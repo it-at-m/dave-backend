@@ -18,10 +18,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EntityScan(
         basePackages = {
                 "org.springframework.data.jpa.convert.threeten",
-                "de.muenchen.dave", "de.muenchen.dave.elasticimpl"
+                "de.muenchen.dave.domain"
         }
 )
-@EnableJpaRepositories(basePackages = { "de.muenchen.dave" })
+@EnableJpaRepositories(
+        basePackages = { "de.muenchen.dave.repositories.relationaldb", "de.muenchen.relationalimpl" }
+)
 @EnableAutoConfiguration
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "1380m")
