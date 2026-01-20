@@ -8,7 +8,7 @@ image:
   repository: starwitorg/dave-backend
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.0.1-SNAPSHOT-10"
+  tag: "3.0.1-SNAPSHOT-16"
 
 imagePullSecrets: []
 # nameOverride: ""
@@ -18,7 +18,7 @@ app:
   db_schema: dave
   spring:
     profile:
-      active: no-security, prod
+      active: prod
   log:
     level:
       root: info
