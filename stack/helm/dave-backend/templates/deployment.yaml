@@ -54,13 +54,13 @@ spec:
               value: {{ .Values.app.datasource.username }}
             - name: SPRING_DATASOURCE_PASSWORD
               value: {{ .Values.app.datasource.password }}
-            - name: JPA_HIBERNATE_DIALECT
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT
               value: {{ .Values.app.jpa.properties.hibernate.dialect }}
-            - name: JPA_HIBERNATE_FORMAT_SQL
+            - name: SPRING_JPA_HIBERNATE_FORMAT_SQL
               value: {{ .Values.app.jpa.properties.hibernate.format_sql }}
-            - name: JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY
+            - name: SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY
               value: {{ .Values.app.jpa.hibernate.naming.physical_strategy | quote }}
-            - name: JPA_SHOW_SQL
+            - name: SPRING_JPA_SHOW_SQL
               value: {{ .Values.app.jpa.show_sql | quote }}
             - name: SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE
               value: {{ .Values.app.servlet.multipart.max_file_size }}
