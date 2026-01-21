@@ -5,7 +5,7 @@ import java.util.Set;
 import lombok.Data;
 
 /**
- * Klasse stellt die möglichen Fahrbeziehung zur Verfügung welche ausgewählt werden können.
+ * Klasse stellt die möglichen Verkehrsbeziehung zur Verfügung welche ausgewählt werden können.
  */
 @Data
 public class FahrbeziehungenDTO {

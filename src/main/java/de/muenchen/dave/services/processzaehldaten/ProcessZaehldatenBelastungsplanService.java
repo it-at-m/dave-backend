@@ -176,7 +176,7 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Die Grafiken im Frontend erwarten pro Fahrbeziehung einen einzelnen Wert. Um an alle Werte
+     * Die Grafiken im Frontend erwarten pro Verkehrsbeziehung einen einzelnen Wert. Um an alle Werte
      * mittels Index zugreifen zu können ist ein 2-Stufiges Array
      * erforderlich. Ebene 1: Enthält alle Werte für die Von-Spuren Ebene 2: Enthält die Werte für die
      * Nach-Spur pro Von-Spur Bsp.: [ [Nach_1, Nach_2, ...,
@@ -687,7 +687,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * Diese Spitzenstunde dient mit der
      * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als
      * Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
-     * Zeitintervalle je Fahrbeziehung.
+     * Zeitintervalle je Verkehrsbeziehung.
      *
      * @param zaehlung zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.

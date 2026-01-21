@@ -336,7 +336,7 @@ public class FillPdfBeanService {
 
     /**
      * Erstellt und setzt den Titel des Diagramms. Hier wird überprüft ob in den Optionen eine bestimmte
-     * Fahrbeziehung ausgewählt wurde (VonKnotenarm oder / und
+     * Verkehrsbeziehung ausgewählt wurde (VonKnotenarm oder / und
      * NachKnotenarm) und ggf. die Straßennamen und Knotenarmnummern gesetzt. Wenn nichts ausgewählt:
      * "Gesamte Zählstelle" VonKnotenarm ausgewählt: "von
      * [straßenname] ([knotenarmnummer]) " NachKnotenarm ausgewählt: "nach [straßenname]

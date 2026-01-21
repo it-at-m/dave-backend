@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.FahrbeziehungVisumDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -39,7 +39,7 @@ class AuswertungVisumServiceTest {
     @Test
     public void getFahrbeziehungenVisum() {
         // Kreuzung
-        var fahrbeziehung = new Fahrbeziehung();
+        var fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setIsKreuzung(true);
         fahrbeziehung.setVon(98);
         fahrbeziehung.setNach(99);
@@ -58,7 +58,7 @@ class AuswertungVisumServiceTest {
         assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Hinein
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setIsKreuzung(false);
         fahrbeziehung.setKnotenarm(55);
         fahrbeziehung.setHinein(true);
@@ -76,7 +76,7 @@ class AuswertungVisumServiceTest {
         assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Heraus
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setIsKreuzung(false);
         fahrbeziehung.setKnotenarm(56);
         fahrbeziehung.setHinein(false);
@@ -94,7 +94,7 @@ class AuswertungVisumServiceTest {
         assertThat(AuswertungVisumService.getFahrbeziehungenVisum(fahrbeziehung, zaehlung), is(expectedList));
 
         // Kreisverkehr Vorbei
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setIsKreuzung(false);
         fahrbeziehung.setKnotenarm(57);
         fahrbeziehung.setHinein(false);

@@ -19,15 +19,15 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
- * Diese Klasse ermittelt die gleitende Spitzenstunde je mögliche Ausprägung der Fahrbeziehung.
+ * Diese Klasse ermittelt die gleitende Spitzenstunde je mögliche Ausprägung der Verkehrsbeziehung.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
-     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Fahrbeziehung
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Verkehrsbeziehung
      * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
-     * Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
+     * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
      * ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
@@ -37,7 +37,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_00_24}
      *
      * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
-     *            Ausprägung der Fahrbeziehung ermittelt werden soll.
+     *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
      * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für KFZ-, Rad-
      *         und Fussverkehr.
      */
@@ -52,9 +52,9 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     }
 
     /**
-     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Fahrbeziehung
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Verkehrsbeziehung
      * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
-     * Ausprägung der Fahrbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
+     * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
      * ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
@@ -101,7 +101,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @param zaehlungId Die ID der Zaehlung.
      * @param zeitblock Der {@link Zeitblock} für welchen die gleitende Spitzenstunde ermittelt werden
      *            soll.
-     * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Fahrbeziehung.
+     * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Verkehrsbeziehung.
      * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
      *            {@link Fahrbeziehung}.
      * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr.

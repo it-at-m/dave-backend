@@ -158,7 +158,7 @@ public class AuswertungSpitzenstundeService {
                 UUID.fromString(zaehlungId),
                 typeSpitzenstunde,
                 sortingIndex).orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
-        // Extrahieren der Zeitintervalle je Fahrbeziehung welche die Spitzstunde ausmachen.
+        // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
         final List<Zeitintervall> spitzenstundeZeitintevalle;
         if (kreisverkehr) {
             spitzenstundeZeitintevalle = zeitintervallRepository
@@ -176,8 +176,8 @@ public class AuswertungSpitzenstundeService {
                             spitzenstunde.getEndeUhrzeit(),
                             TypeZeitintervall.STUNDE_VIERTEL);
         }
-        // Erstellen der aggregierten Spitzenstunde je Fahrbeziehung
-        // aus den vorherigen vier Zeitintervallen je Fahrbeziehung.
+        // Erstellen der aggregierten Spitzenstunde je Verkehrsbeziehung
+        // aus den vorherigen vier Zeitintervallen je Verkehrsbeziehung.
         return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(spitzenstundeZeitintevalle)
                 .stream()
                 .filter(zeitintervall -> zeitintervall.getType().equals(typeSpitzenstunde))

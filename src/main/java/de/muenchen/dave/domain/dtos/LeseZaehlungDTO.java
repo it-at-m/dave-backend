@@ -1,7 +1,8 @@
 package de.muenchen.dave.domain.dtos;
 
 import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -74,7 +75,7 @@ public class LeseZaehlungDTO implements Serializable {
 
     List<Knotenarm> knotenarme;
 
-    List<Fahrbeziehung> fahrbeziehungen;
+    List<Bewegungsbeziehung> bewegungsbeziehungen;
 
     ZeitauswahlDTO zeitauswahl;
 

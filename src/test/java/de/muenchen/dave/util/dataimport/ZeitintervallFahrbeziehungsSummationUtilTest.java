@@ -133,7 +133,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setFahrbeziehung(new Fahrbeziehung());
 
-        // Fahrbeziehung Kreuzung
+        // Verkehrsbeziehung Kreuzung
         zeitintervall.getFahrbeziehung().setVon(1);
         zeitintervall.getFahrbeziehung().setNach(2);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
@@ -145,7 +145,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(true));
 
-        // Fahrbeziehung Kreisverkehr
+        // Verkehrsbeziehung Kreisverkehr
         zeitintervall.getFahrbeziehung().setVon(1);
         zeitintervall.getFahrbeziehung().setNach(null);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
@@ -157,7 +157,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(true));
 
-        // Keine gültige konkrete Fahrbeziehung
+        // Keine gültige konkrete Verkehrsbeziehung
         zeitintervall.getFahrbeziehung().setVon(1);
         zeitintervall.getFahrbeziehung().setNach(null);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
@@ -169,7 +169,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(false));
 
-        // Keine gültige konkrete Fahrbeziehung
+        // Keine gültige konkrete Verkehrsbeziehung
         zeitintervall.getFahrbeziehung().setVon(null);
         zeitintervall.getFahrbeziehung().setNach(null);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
@@ -181,7 +181,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(false));
 
-        // Keine gültige Fahrbeziehung
+        // Keine gültige Verkehrsbeziehung
         zeitintervall.getFahrbeziehung().setVon(null);
         zeitintervall.getFahrbeziehung().setNach(1);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
@@ -193,7 +193,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(false));
 
-        // Keine gültige Fahrbeziehung
+        // Keine gültige Verkehrsbeziehung
         zeitintervall.getFahrbeziehung().setVon(null);
         zeitintervall.getFahrbeziehung().setNach(null);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
@@ -205,7 +205,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 Boolean.class);
         assertThat(result, is(false));
 
-        // Keine gültige Fahrbeziehung
+        // Keine gültige Verkehrsbeziehung
         zeitintervall.getFahrbeziehung().setVon(null);
         zeitintervall.getFahrbeziehung().setNach(1);
         zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);

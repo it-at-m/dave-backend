@@ -8,8 +8,9 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -62,22 +63,22 @@ class ZaehlungPersistierungsServiceTest {
         final UUID uuidZaehlung = UUID.randomUUID();
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setId(uuidZaehlung.toString());
-        final List<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> fahrbeziehungen = new ArrayList<>();
+        final List<Verkehrsbeziehung> fahrbeziehungen = new ArrayList<>();
         final UUID uuidFahrbeziehung1 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung1 = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung1.setId(uuidFahrbeziehung1.toString());
-        fahrbeziehung1.setIsKreuzung(true);
-        fahrbeziehung1.setVon(1);
-        fahrbeziehung1.setNach(2);
-        fahrbeziehungen.add(fahrbeziehung1);
+        Verkehrsbeziehung verkehrsbeziehung1 = new Verkehrsbeziehung();
+        verkehrsbeziehung1.setId(uuidFahrbeziehung1.toString());
+        verkehrsbeziehung1.setIsKreuzung(true);
+        verkehrsbeziehung1.setVon(1);
+        verkehrsbeziehung1.setNach(2);
+        fahrbeziehungen.add(verkehrsbeziehung1);
         final UUID uuidFahrbeziehung2 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung2 = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung2.setId(uuidFahrbeziehung2.toString());
-        fahrbeziehung2.setIsKreuzung(true);
-        fahrbeziehung2.setVon(1);
-        fahrbeziehung2.setNach(5);
-        fahrbeziehungen.add(fahrbeziehung2);
-        zaehlung.setFahrbeziehungen(fahrbeziehungen);
+        Verkehrsbeziehung verkehrsbeziehung2 = new Verkehrsbeziehung();
+        verkehrsbeziehung2.setId(uuidFahrbeziehung2.toString());
+        verkehrsbeziehung2.setIsKreuzung(true);
+        verkehrsbeziehung2.setVon(1);
+        verkehrsbeziehung2.setNach(5);
+        fahrbeziehungen.add(verkehrsbeziehung2);
+        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
 
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.valueOf(1));
@@ -102,7 +103,7 @@ class ZaehlungPersistierungsServiceTest {
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);
 
-        final BearbeiteFahrbeziehungDTO fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
@@ -144,77 +145,77 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getFromBearbeiteFahrbeziehungDto() {
         final Zaehlung zaehlung = new Zaehlung();
-        final List<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> fahrbeziehungen = new ArrayList<>();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung.setIsKreuzung(true);
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        fahrbeziehungen.add(fahrbeziehung);
-        fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung.setIsKreuzung(true);
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(5);
-        fahrbeziehungen.add(fahrbeziehung);
-        zaehlung.setFahrbeziehungen(fahrbeziehungen);
+        final List<Verkehrsbeziehung> fahrbeziehungen = new ArrayList<>();
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setIsKreuzung(true);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        fahrbeziehungen.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setIsKreuzung(true);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(5);
+        fahrbeziehungen.add(verkehrsbeziehung);
+        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
 
-        assertThat(zaehlung.getFahrbeziehungen().size(), is(2));
+        assertThat(zaehlung.getBewegungsbeziehungen().size(), is(2));
 
-        final BearbeiteFahrbeziehungDTO fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
 
-        Optional<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> result = internalZaehlungPersistierungsService.getFromBearbeiteFahrbeziehungDto(zaehlung,
+        Optional<Verkehrsbeziehung> result = internalZaehlungPersistierungsService.getFromBearbeiteFahrbeziehungDto(zaehlung,
                 fahrbeziehungDto);
-        fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung.setIsKreuzung(true);
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        Optional<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> expected = Optional.of(fahrbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setIsKreuzung(true);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        Optional<Verkehrsbeziehung> expected = Optional.of(verkehrsbeziehung);
         assertThat(result, is(expected));
     }
 
     @Test
     public void isSameFahrbeziehung() {
-        BearbeiteFahrbeziehungDTO fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        boolean result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung);
+        BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        boolean result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(true));
 
-        fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
-        fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(false));
 
-        fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
-        fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung.setIsKreuzung(true);
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setIsKreuzung(true);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(true));
 
-        fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
-        fahrbeziehung = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung.setIsKreuzung(true);
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        fahrbeziehung.setKnotenarm(1); // Unterscheidet sich zu "fahrbeziehungDto"
-        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setIsKreuzung(true);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setKnotenarm(1); // Unterscheidet sich zu "fahrbeziehungDto"
+        result = internalZaehlungPersistierungsService.isSameFahrbeziehung(fahrbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(false));
 
     }
 
     @Test
     public void mapToFahrbeziehungForZeitintervallInternal() {
-        final BearbeiteFahrbeziehungDTO fahrbeziehungDto = new BearbeiteFahrbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
@@ -326,22 +327,22 @@ class ZaehlungPersistierungsServiceTest {
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setId(uuidZaehlung.toString());
         zaehlung.setPkwEinheit(new de.muenchen.dave.domain.elasticsearch.PkwEinheit());
-        final List<de.muenchen.dave.domain.elasticsearch.Fahrbeziehung> fahrbeziehungen = new ArrayList<>();
+        final List<Verkehrsbeziehung> fahrbeziehungen = new ArrayList<>();
         final UUID uuidFahrbeziehung1 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung1 = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung1.setId(uuidFahrbeziehung1.toString());
-        fahrbeziehung1.setIsKreuzung(true);
-        fahrbeziehung1.setVon(1);
-        fahrbeziehung1.setNach(2);
-        fahrbeziehungen.add(fahrbeziehung1);
+        Verkehrsbeziehung verkehrsbeziehung1 = new Verkehrsbeziehung();
+        verkehrsbeziehung1.setId(uuidFahrbeziehung1.toString());
+        verkehrsbeziehung1.setIsKreuzung(true);
+        verkehrsbeziehung1.setVon(1);
+        verkehrsbeziehung1.setNach(2);
+        fahrbeziehungen.add(verkehrsbeziehung1);
         final UUID uuidFahrbeziehung2 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Fahrbeziehung fahrbeziehung2 = new de.muenchen.dave.domain.elasticsearch.Fahrbeziehung();
-        fahrbeziehung2.setId(uuidFahrbeziehung2.toString());
-        fahrbeziehung2.setIsKreuzung(true);
-        fahrbeziehung2.setVon(1);
-        fahrbeziehung2.setNach(5);
-        fahrbeziehungen.add(fahrbeziehung2);
-        zaehlung.setFahrbeziehungen(fahrbeziehungen);
+        Verkehrsbeziehung verkehrsbeziehung2 = new Verkehrsbeziehung();
+        verkehrsbeziehung2.setId(uuidFahrbeziehung2.toString());
+        verkehrsbeziehung2.setIsKreuzung(true);
+        verkehrsbeziehung2.setVon(1);
+        verkehrsbeziehung2.setNach(5);
+        fahrbeziehungen.add(verkehrsbeziehung2);
+        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
 
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.valueOf(1));
@@ -367,7 +368,7 @@ class ZaehlungPersistierungsServiceTest {
         hochrechnungsfaktorDto.setGv(4.0);
 
         final ExternalFahrbeziehungDTO fahrbeziehungDto = new ExternalFahrbeziehungDTO();
-        fahrbeziehungDto.setId(fahrbeziehung1.getId());
+        fahrbeziehungDto.setId(verkehrsbeziehung1.getId());
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);

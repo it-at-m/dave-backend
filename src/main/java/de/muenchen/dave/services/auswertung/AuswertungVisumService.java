@@ -6,7 +6,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
@@ -53,7 +53,7 @@ public class AuswertungVisumService {
     }
 
     /**
-     * Diese Methode erstellt für eine Fahrbeziehung folgende Visum-relevanten Objekte.
+     * Diese Methode erstellt für eine Verkehrsbeziehung folgende Visum-relevanten Objekte.
      * <p>
      * Für eine Kreuzung wird eine FahrbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und ein
      * zweite FahrbeziehungVisum für alle Knotenarme zum
@@ -61,30 +61,30 @@ public class AuswertungVisumService {
      * <p>
      * Für den Kreisverkehr wird nur eine FahrbeziehungVisum erstellt.
      *
-     * @param fahrbeziehung Fahrbeziehung
+     * @param verkehrsbeziehung Verkehrsbeziehung
      * @return die Visum-relevanten Fahrbeziehungsobjekte zur Extraktion der Zeitintervalle.
      */
-    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Fahrbeziehung fahrbeziehung, final Zaehlung zaehlung) {
+    public static List<FahrbeziehungVisumDTO> getFahrbeziehungenVisum(final Verkehrsbeziehung verkehrsbeziehung, final Zaehlung zaehlung) {
         final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = new ArrayList<>();
         FahrbeziehungVisumDTO fahrbeziehungVisum;
-        boolean isKreuzung = fahrbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : fahrbeziehung.getIsKreuzung();
+        boolean isKreuzung = verkehrsbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : verkehrsbeziehung.getIsKreuzung();
         if (isKreuzung) {
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(fahrbeziehung.getVon());
+            fahrbeziehungVisum.setVon(verkehrsbeziehung.getVon());
             fahrbeziehungVisum.setNach(null);
             fahrbeziehungenVisum.add(fahrbeziehungVisum);
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
             fahrbeziehungVisum.setVon(null);
-            fahrbeziehungVisum.setNach(fahrbeziehung.getNach());
+            fahrbeziehungVisum.setNach(verkehrsbeziehung.getNach());
             fahrbeziehungenVisum.add(fahrbeziehungVisum);
         } else {
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
-            fahrbeziehungVisum.setVon(fahrbeziehung.getKnotenarm());
+            fahrbeziehungVisum.setVon(verkehrsbeziehung.getKnotenarm());
             fahrbeziehungVisum.setNach(null);
             fahrbeziehungenVisum.add(fahrbeziehungVisum);
             fahrbeziehungVisum = new FahrbeziehungVisumDTO();
             fahrbeziehungVisum.setVon(null);
-            fahrbeziehungVisum.setNach(fahrbeziehung.getKnotenarm());
+            fahrbeziehungVisum.setNach(verkehrsbeziehung.getKnotenarm());
             fahrbeziehungenVisum.add(fahrbeziehungVisum);
         }
         return fahrbeziehungenVisum;
@@ -109,14 +109,14 @@ public class AuswertungVisumService {
 
     /**
      * Diese Methode ermittelt für den in den Parametern angegeben Monatszeitraum die durchgeführten
-     * Zählungen je Zählstelle. Je relevante Fahrbeziehung werden
-     * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Fahrbeziehung "x nach alle"
+     * Zählungen je Zählstelle. Je relevante Verkehrsbeziehung werden
+     * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Verkehrsbeziehung "x nach alle"
      * und "alle nach x" betrachtet. Der Kreisverkehr
      * beinhaltet nur die Fahrbeziehungen "x nach alle".
      *
      * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
-     * @return durchgeführten Zählungen je Zählstelle mit den Zähldaten je relevante Fahrbeziehung.
+     * @return durchgeführten Zählungen je Zählstelle mit den Zähldaten je relevante Verkehrsbeziehung.
      */
     public LadeAuswertungVisumDTO getAuswertungVisum(final Integer jahr, final Integer monat) {
         final var auswertungVisum = new LadeAuswertungVisumDTO();
@@ -135,7 +135,7 @@ public class AuswertungVisumService {
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
-                                final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getFahrbeziehungen().stream()
+                                final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getBewegungsbeziehungen().stream()
                                         .map(fz -> AuswertungVisumService.getFahrbeziehungenVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
                                         // Entfernen von eventuell auftretenden Duplikaten
@@ -171,9 +171,9 @@ public class AuswertungVisumService {
      * fahrbeziehungVisum zurück.
      *
      * @param fahrbeziehungVisum die für die Datenextraktion relevanten Knotenarme welche die
-     *            Fahrbeziehung definieren.
+     *            Verkehrsbeziehung definieren.
      * @param zaehlung für welche die Daten extrahiert werden sollen.
-     * @return die fahrbeziehungVisum mit den Zaehldaten für die Zaehlung der Fahrbeziehung.
+     * @return die fahrbeziehungVisum mit den Zaehldaten für die Zaehlung der Verkehrsbeziehung.
      */
     public FahrbeziehungVisumDTO ladeZaehldaten(final FahrbeziehungVisumDTO fahrbeziehungVisum,
             final Zaehlung zaehlung) {

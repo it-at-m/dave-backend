@@ -39,7 +39,7 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * Filterung durchgeführt werden soll.
      *
      * @param zeitintervall Ein {@link Zeitintervall} der geprüft werden soll.
-     * @return true wenn die Fahrbeziehung "von" sowie Fahrbeziehung "nach" bzw. die
+     * @return true wenn die Verkehrsbeziehung "von" sowie Verkehrsbeziehung "nach" bzw. die
      *         "fahrbewegungKreisverkehr" nicht "null" ist.
      */
     private static boolean filterValidFahrbeziehung(final Zeitintervall zeitintervall) {
@@ -54,7 +54,7 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * <p>
      * Beispiel:
      * <p>
-     * Zeitintervalle je Fahrbeziehung im Parameter:
+     * Zeitintervalle je Verkehrsbeziehung im Parameter:
      * - 00:15-00:30 von 1 nach 2
      * - 00:15-00:30 von 1 nach 3
      * - 00:15-00:30 von 2 nach 1
@@ -119,7 +119,7 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     /**
      * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
-     * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Fahrbeziehung aus dem Parameter
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Verkehrsbeziehung aus dem Parameter
      * vonFahrbeziehung gesetzt haben.
      *
      * @param vonFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
@@ -144,7 +144,7 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     /**
      * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
-     * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Fahrbeziehung aus dem Parameter
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Verkehrsbeziehung aus dem Parameter
      * nachFahrbeziehung gesetzt haben.
      *
      * @param nachFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden

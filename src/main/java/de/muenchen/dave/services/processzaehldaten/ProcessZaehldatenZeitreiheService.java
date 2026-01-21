@@ -6,7 +6,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
@@ -48,29 +48,29 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
-     * Fahrbeziehung besitzt
+     * Verkehrsbeziehung besitzt
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options
      * @return
      */
     private static boolean checkFahrbeziehungen(Zaehlung zaehlung, OptionsDTO options) {
-        List<Fahrbeziehung> fahrbeziehungList;
+        List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
-            fahrbeziehungList = zaehlung.getFahrbeziehungen()
+            verkehrsbeziehungList = zaehlung.getBewegungsbeziehungen()
                     .stream()
                     .filter(fahrbeziehung -> fahrbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
                     .collect(Collectors.toList());
         } else {
             // Bei Kreuzung: Prüfe auf Von und Nach
-            fahrbeziehungList = zaehlung.getFahrbeziehungen()
+            verkehrsbeziehungList = zaehlung.getBewegungsbeziehungen()
                     .stream()
                     .filter(fahrbeziehung -> fahrbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
                     .filter(fahrbeziehung -> fahrbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
                     .collect(Collectors.toList());
         }
-        return fahrbeziehungList.size() > 0;
+        return verkehrsbeziehungList.size() > 0;
     }
 
     /**

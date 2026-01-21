@@ -63,11 +63,11 @@ public class ZeitintervallZeitblockSummationUtilTest {
     @Test
     public void getSummen() {
         final List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummen(zeitintervalle);
-        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Fahrbeziehung
-        // abzüglich der beiden ZB_06_19 und ZB_06_22 je Fahrbeziehung.
+        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Verkehrsbeziehung
+        // abzüglich der beiden ZB_06_19 und ZB_06_22 je Verkehrsbeziehung.
         assertThat(result.size(), is(Zeitblock.values().length * 2 - 4));
 
-        // List for each Fahrbeziehung in result has same sorting as Zeitblock-Enum entries
+        // List for each Verkehrsbeziehung in result has same sorting as Zeitblock-Enum entries
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);

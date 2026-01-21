@@ -5,21 +5,21 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.BearbeiteFahrbeziehungKreuzungDTORandomFactory;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.FahrbeziehungKreuzungRandomFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class FahrbeziehungMapperTests {
+public class VerkehrsbeziehungMapperTests {
 
-    private final FahrbeziehungMapper mapper = new FahrbeziehungMapperImpl();
+    private final BewegungsbeziehungMapper mapper = new BewegungsbeziehungMapperImpl();
 
     @Test
     public void testDto2bean() {
-        BearbeiteFahrbeziehungDTO dto = BearbeiteFahrbeziehungKreuzungDTORandomFactory.getOne();
-        Fahrbeziehung bean = this.mapper.bearbeiteFahrbeziehungDto2bean(dto);
+        BearbeiteVerkehrsbeziehungDTO dto = BearbeiteFahrbeziehungKreuzungDTORandomFactory.getOne();
+        Verkehrsbeziehung bean = this.mapper.dto2Bean(dto);
 
         assertThat(bean.getVon(), is(equalTo(dto.getVon())));
         assertThat(bean.getNach(), is(equalTo(dto.getNach())));
@@ -28,8 +28,8 @@ public class FahrbeziehungMapperTests {
 
     @Test
     public void testBean2dto() {
-        Fahrbeziehung bean = FahrbeziehungKreuzungRandomFactory.getOne();
-        BearbeiteFahrbeziehungDTO dto = this.mapper.bean2bearbeiteFahrbeziehunDto(bean);
+        Verkehrsbeziehung bean = FahrbeziehungKreuzungRandomFactory.getOne();
+        BearbeiteVerkehrsbeziehungDTO dto = this.mapper.bean2Dto(bean);
 
         assertThat(dto.getVon(), is(equalTo(bean.getVon())));
         assertThat(dto.getNach(), is(equalTo(bean.getNach())));

@@ -66,7 +66,7 @@ public class KIService {
 
     /**
      * Diese Methode berechnet für eine zweidimensionale Liste von Zeitintervallen einer Zählung (d.h.
-     * für jede Fahrbeziehung der Zählung eine Liste von
+     * für jede Verkehrsbeziehung der Zählung eine Liste von
      * Zeitintervallen) die resultierenden Tagessummen der einzelnen Fahrzeugklassen.
      *
      * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Fahrbeziehungen in Form einer
@@ -124,7 +124,7 @@ public class KIService {
     /**
      * @param inputData zweidimensionales long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
      *            Ebene: Zählungdaten der einzelnen Fahrzeugtypen der
-     *            Fahrbeziehung)
+     *            Verkehrsbeziehung)
      * @return Map von OnnxTensor's, die zur Vorhersage benötigt wird.
      * @throws PredictionFailedException wenn bei der Erstellung des Tensors ein Fehler aufgetreten ist.
      */
@@ -142,7 +142,7 @@ public class KIService {
      * @param tensorData Inputdaten in Form einer Map von String zu OnnxTensor
      * @return Ergebnisse der Berechnung als long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
      *         Ebene: Tagessummen der einzelnen Fahrzeugtypen der
-     *         Fahrbeziehung)
+     *         Verkehrsbeziehung)
      * @throws PredictionFailedException wenn eine Inkompatibilität der Daten zum Modell vorliegt oder
      *             kein bzw. ein Ergebnis unbekannten Formates
      *             zurückgeliefert wurde.

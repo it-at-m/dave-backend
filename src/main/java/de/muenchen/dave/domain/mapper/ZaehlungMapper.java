@@ -1,12 +1,10 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -15,7 +13,6 @@ import de.muenchen.dave.util.SuchwortUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,7 +23,10 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = { BewegungsbeziehungMapper.class }
+)
 public interface ZaehlungMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
@@ -54,10 +54,13 @@ public interface ZaehlungMapper {
             bean.setPunkt(dto.getPunkt());
         }
 
-        final List<BearbeiteFahrbeziehungDTO> fahrbeziehungenDTO = dto.getFahrbeziehungen();
-        if (CollectionUtils.isNotEmpty(fahrbeziehungenDTO)) {
-            bean.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenDTO.forEach(fahr -> bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr)));
+        final var bewegungsbeziehungen = dto.getBewegungsbeziehungen();
+        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
+            bean.setBewegungsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
+                    bean.getBewegungsbeziehungen()
+                            .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung))
+            );
         }
 
         if (StringUtils.isNotEmpty(dto.getZaehlart())) {
@@ -82,10 +85,13 @@ public interface ZaehlungMapper {
     @AfterMapping
     default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, Zaehlung bean) {
 
-        final List<Fahrbeziehung> fahrbeziehungenBean = bean.getFahrbeziehungen();
-        if (CollectionUtils.isNotEmpty(fahrbeziehungenBean)) {
-            dto.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenBean.forEach(fahr -> dto.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bean2bearbeiteFahrbeziehunDto(fahr)));
+        final var bewegungsbeziehungen = bean.getBewegungsbeziehungen();
+        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
+            dto.setBewegungsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
+                    dto.getBewegungsbeziehungen()
+                            .add(new BewegungsbeziehungMapperImpl().beanBewegungsbeziehung2DtoBewegungsbeziehung(bewegungsbeziehung))
+            );
         }
     }
 
@@ -105,10 +111,13 @@ public interface ZaehlungMapper {
 
         bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
 
-        final List<BearbeiteFahrbeziehungDTO> fahrbeziehungenDTO = dto.getFahrbeziehungen();
-        if (CollectionUtils.isNotEmpty(fahrbeziehungenDTO)) {
-            bean.setFahrbeziehungen(new ArrayList<>());
-            fahrbeziehungenDTO.forEach(fahr -> bean.getFahrbeziehungen().add(new FahrbeziehungMapperImpl().bearbeiteFahrbeziehungDto2bean(fahr)));
+        final var bewegungsbeziehungen = dto.getBewegungsbeziehungen();
+        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
+            bean.setBewegungsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
+                    bean.getBewegungsbeziehungen()
+                            .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung))
+            );
         }
     }
 

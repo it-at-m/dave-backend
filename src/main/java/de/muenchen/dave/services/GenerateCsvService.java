@@ -94,7 +94,7 @@ public class GenerateCsvService {
         metaHeader.append(SEMIKOLON);
         metaHeader.append("Zähldatum");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("Fahrbeziehung");
+        metaHeader.append("Verkehrsbeziehung");
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaHeader.append(SEMIKOLON);
@@ -107,7 +107,7 @@ public class GenerateCsvService {
      *
      * @param metaObject enthält die Zählstelle und Zählung
      * @param header Zur Berechnung der Anzahl der Semikolons
-     * @param options Zur Anzeige der Fahrbeziehung
+     * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDTO options) {

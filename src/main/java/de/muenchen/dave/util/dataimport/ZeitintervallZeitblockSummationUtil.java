@@ -67,11 +67,11 @@ public final class ZeitintervallZeitblockSummationUtil {
     }
 
     /**
-     * Summierung der {@link Zeitintervall} einer Fahrbeziehung.
+     * Summierung der {@link Zeitintervall} einer Verkehrsbeziehung.
      *
      * @param zaehlungId Die ID der Zaehlung.
      * @param zeitblock Der {@link Zeitblock} für welchen die Summe ermittelt werden soll.
-     * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Fahrbeziehung.
+     * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Verkehrsbeziehung.
      * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
      *            {@link Fahrbeziehung}.
      * @return Die Summe für den {@link Zeitblock} als {@link Zeitintervall}.

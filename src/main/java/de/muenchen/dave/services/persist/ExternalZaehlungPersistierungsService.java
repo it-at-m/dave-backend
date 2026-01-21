@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -80,7 +80,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                             .map(ExternalFahrbeziehungDTO::getId)
                             .toList();
 
-                    // Zeitintervalle zur Fahrbeziehung löschen, bevor neue gespeichert werden sollen
+                    // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
                     this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(fahrbeziehungsIdsForZeitintervalleToDelete);
 
                     // Zeitintervall nur speichern, ohne was zu berechnen
@@ -111,7 +111,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode setzt zusätzliche Informationen in den {@link Zeitintervall}.
      * <p>
      * - Die UUID der {@link Zaehlung}
-     * - Die UUID der {@link Fahrbeziehung}
+     * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
      * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
      *

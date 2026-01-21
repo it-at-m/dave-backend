@@ -27,13 +27,13 @@ public final class ZeitintervallKIUtil {
     public static final String LIST_LENGTH_MISMATCH = "Mismatch in list size of predictionResults and firstZeitintervalleOfFahrbeziehungen";
 
     /**
-     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Fahrbeziehung) für die
+     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Verkehrsbeziehung) für die
      * KI-Tagessummen.
      *
-     * @param predictionResults Liste von KIPredictionResults, wobei für jede Fahrbeziehung ein
+     * @param predictionResults Liste von KIPredictionResults, wobei für jede Verkehrsbeziehung ein
      *            KIPredictionResult enthalten ist.
      * @param firstZeitintervalleOfFahrbeziehungen List mit je einem importierten Zeitintervall pro
-     *            Fahrbeziehung
+     *            Verkehrsbeziehung
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
     public static List<Zeitintervall> createKIZeitintervalleFromKIPredictionResults(List<KIPredictionResult> predictionResults,
@@ -48,7 +48,7 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Fahrbeziehung und gibt diese als
+     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Verkehrsbeziehung und gibt diese als
      * zweidimensionale Liste von Zeitintervallen zurück.
      *
      * @param zeitintervalle Zu gruppierende Liste von Zeitintervallen
@@ -64,7 +64,7 @@ public final class ZeitintervallKIUtil {
      * Diese Method extrahiert das erste Zeitintervall aus einer nach fahrbeziehungId-gruppierten Liste
      *
      * @param zeitintervalle nach fahrbeziehungId-gruppierte Listen als zweidimensionale Liste
-     * @return Liste von je dem ersten Zeitintervall pro Fahrbeziehung
+     * @return Liste von je dem ersten Zeitintervall pro Verkehrsbeziehung
      */
     public static List<Zeitintervall> extractZeitintervallForEachFahrbeziehung(List<List<Zeitintervall>> zeitintervalle) {
         return zeitintervalle.stream().map(list -> list.get(0)).collect(Collectors.toList());
@@ -76,7 +76,7 @@ public final class ZeitintervallKIUtil {
      *
      * @param predictionResult KIPredictionResult, dass die Tagessummen der Fahrzeugtypen enthält
      * @param zeitintervall Zeitintervall zur Übertragung der ZaehlungID, FahrbeziehungID und
-     *            Fahrbeziehung
+     *            Verkehrsbeziehung
      * @return Zeitintervall vom Typ TypeZeitintervall.GESAMT_KI, dass die Tageshochrechnungen für
      *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der
      *         Hochrechnung) enthält.

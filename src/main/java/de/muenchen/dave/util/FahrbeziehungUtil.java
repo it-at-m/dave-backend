@@ -1,6 +1,6 @@
 package de.muenchen.dave.util;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.laden.FahrbeziehungenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import java.util.HashMap;
@@ -28,14 +28,14 @@ public final class FahrbeziehungUtil {
     private static FahrbeziehungenDTO determinePossibleFahrbeziehungenKreisverkehr(final LadeZaehlungDTO ladeZaehlung) {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(
-                ladeZaehlung.getFahrbeziehungen().stream()
-                        .filter(BearbeiteFahrbeziehungDTO::getHinein)
-                        .map(BearbeiteFahrbeziehungDTO::getKnotenarm)
+                ladeZaehlung.getBewegungsbeziehungen().stream()
+                        .filter(BearbeiteVerkehrsbeziehungDTO::getHinein)
+                        .map(BearbeiteVerkehrsbeziehungDTO::getKnotenarm)
                         .collect(Collectors.toCollection(TreeSet::new)));
         optionsFahrbeziehungen.setNachKnotenarme(new HashMap<>());
-        final TreeSet<Integer> possibleNachKnotenarme = ladeZaehlung.getFahrbeziehungen().stream()
-                .filter(BearbeiteFahrbeziehungDTO::getHeraus)
-                .map(BearbeiteFahrbeziehungDTO::getKnotenarm)
+        final TreeSet<Integer> possibleNachKnotenarme = ladeZaehlung.getBewegungsbeziehungen().stream()
+                .filter(BearbeiteVerkehrsbeziehungDTO::getHeraus)
+                .map(BearbeiteVerkehrsbeziehungDTO::getKnotenarm)
                 .collect(Collectors.toCollection(TreeSet::new));
         optionsFahrbeziehungen.getVonKnotenarme().forEach(vonKnotenarm -> {
             optionsFahrbeziehungen.getNachKnotenarme().put(
@@ -49,7 +49,7 @@ public final class FahrbeziehungUtil {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(new TreeSet<>());
         optionsFahrbeziehungen.setNachKnotenarme(new HashMap<>());
-        ladeZaehlung.getFahrbeziehungen().stream()
+        ladeZaehlung.getBewegungsbeziehungen().stream()
                 .forEach(bearbeiteFahrbeziehung -> {
                     optionsFahrbeziehungen.getVonKnotenarme().add(bearbeiteFahrbeziehung.getVon());
                     if (optionsFahrbeziehungen.getNachKnotenarme().containsKey(bearbeiteFahrbeziehung.getVon())) {

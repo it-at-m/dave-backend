@@ -266,7 +266,7 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und
+     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung und
      * Kreisverkehr die für die Datenextraktion relevante
      * {@link FahrbewegungKreisverkehr}.
      *
@@ -362,7 +362,7 @@ public class LadeZaehldatenService {
         final Integer nachKnotenarm;
         if (isKreisverkehr) {
             /*
-             * In {@link de.muenchen.dave.domain.Fahrbeziehung} definiert das Attribut "von"
+             * In {@link de.muenchen.dave.domain.Verkehrsbeziehung} definiert das Attribut "von"
              * den im Kreisverkehr jeweils betroffenen Knotenarm.
              * Das Attribut "nach" ist immer "null".
              */
