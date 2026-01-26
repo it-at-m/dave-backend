@@ -145,7 +145,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
         // Zeitintervalle persistieren
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        zaehlungDto.getBewegungsbeziehungen().forEach(fahrbeziehungDto -> {
+        zaehlungDto.getVerkehrsbeziehungen().forEach(fahrbeziehungDto -> {
             fahrbeziehungDto.getZeitintervalle().stream()
                     .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
                     .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
@@ -206,20 +206,22 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return die gefundene {@link Verkehrsbeziehung}.
      */
     public Optional<Verkehrsbeziehung> getFromBearbeiteFahrbeziehungDto(final Zaehlung zaehlung,
-                                                                        final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto) {
-        return zaehlung.getBewegungsbeziehungen().stream()
+            final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto) {
+        return zaehlung.getVerkehrsbeziehungen().stream()
                 .filter(fahrbeziehung -> this.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung))
                 .findFirst();
     }
 
     /**
-     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe Verkehrsbeziehung
+     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe
+     * Verkehrsbeziehung
      * einer Kreuzung oder eines Kreisverkehrs
      * repräsentieren.
      *
      * @param fahrbeziehungDto zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
      * @param verkehrsbeziehung zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
-     * @return true falls die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentiert
+     * @return true falls die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs
+     *         repräsentiert
      *         wird.
      */
     public boolean isSameFahrbeziehung(final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto,

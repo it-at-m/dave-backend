@@ -15,43 +15,43 @@ class VerkehrsbeziehungUtilTest {
     public void determinePossibleFahrbeziehungenKreuzung() {
         final LadeZaehlungDTO ladeZaehlung = new LadeZaehlungDTO();
         ladeZaehlung.setKreisverkehr(Boolean.FALSE);
-        ladeZaehlung.setBewegungsbeziehungen(new ArrayList<>());
+        ladeZaehlung.setVerkehrsbeziehungen(new ArrayList<>());
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung1nach1 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung1nach1.setIsKreuzung(true);
         fahrbeziehungKreuzung1nach1.setVon(1);
         fahrbeziehungKreuzung1nach1.setNach(1);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung1nach1);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung1nach1);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung1nach2 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung1nach2.setIsKreuzung(true);
         fahrbeziehungKreuzung1nach2.setVon(1);
         fahrbeziehungKreuzung1nach2.setNach(2);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung1nach2);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung1nach2);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung1nach3 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung1nach3.setIsKreuzung(true);
         fahrbeziehungKreuzung1nach3.setVon(1);
         fahrbeziehungKreuzung1nach3.setNach(3);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung1nach3);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung1nach3);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung2nach2 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung2nach2.setIsKreuzung(true);
         fahrbeziehungKreuzung2nach2.setVon(2);
         fahrbeziehungKreuzung2nach2.setNach(2);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung2nach2);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung2nach2);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung2nach3 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung2nach3.setIsKreuzung(true);
         fahrbeziehungKreuzung2nach3.setVon(2);
         fahrbeziehungKreuzung2nach3.setNach(3);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung2nach3);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung2nach3);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzung3nach1 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzung3nach1.setIsKreuzung(true);
         fahrbeziehungKreuzung3nach1.setVon(3);
         fahrbeziehungKreuzung3nach1.setNach(1);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzung3nach1);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung3nach1);
 
         final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleFahrbeziehungen(ladeZaehlung);
 
@@ -78,49 +78,49 @@ class VerkehrsbeziehungUtilTest {
     public void determinePossibleFahrbeziehungenKreisverkehr() {
         final LadeZaehlungDTO ladeZaehlung = new LadeZaehlungDTO();
         ladeZaehlung.setKreisverkehr(Boolean.TRUE);
-        ladeZaehlung.setBewegungsbeziehungen(new ArrayList<>());
+        ladeZaehlung.setVerkehrsbeziehungen(new ArrayList<>());
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHinein1 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHinein1.setIsKreuzung(false);
         fahrbeziehungKreuzungHinein1.setKnotenarm(1);
         fahrbeziehungKreuzungHinein1.setHinein(Boolean.TRUE);
         fahrbeziehungKreuzungHinein1.setHeraus(Boolean.FALSE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHinein1);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHinein1);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHeraus1 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHeraus1.setIsKreuzung(false);
         fahrbeziehungKreuzungHeraus1.setKnotenarm(1);
         fahrbeziehungKreuzungHeraus1.setHinein(Boolean.FALSE);
         fahrbeziehungKreuzungHeraus1.setHeraus(Boolean.TRUE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHeraus1);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHeraus1);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHinein2 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHinein2.setIsKreuzung(false);
         fahrbeziehungKreuzungHinein2.setKnotenarm(2);
         fahrbeziehungKreuzungHinein2.setHinein(Boolean.TRUE);
         fahrbeziehungKreuzungHinein2.setHeraus(Boolean.FALSE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHinein2);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHinein2);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHeraus2 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHeraus2.setIsKreuzung(false);
         fahrbeziehungKreuzungHeraus2.setKnotenarm(2);
         fahrbeziehungKreuzungHeraus2.setHinein(Boolean.FALSE);
         fahrbeziehungKreuzungHeraus2.setHeraus(Boolean.TRUE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHeraus2);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHeraus2);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHinein3 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHinein3.setIsKreuzung(false);
         fahrbeziehungKreuzungHinein3.setKnotenarm(3);
         fahrbeziehungKreuzungHinein3.setHinein(Boolean.TRUE);
         fahrbeziehungKreuzungHinein3.setHeraus(Boolean.FALSE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHinein3);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHinein3);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungHeraus4 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungHeraus4.setIsKreuzung(false);
         fahrbeziehungKreuzungHeraus4.setKnotenarm(4);
         fahrbeziehungKreuzungHeraus4.setHinein(Boolean.FALSE);
         fahrbeziehungKreuzungHeraus4.setHeraus(Boolean.TRUE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungHeraus4);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungHeraus4);
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungKreuzungVorbei4 = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungKreuzungVorbei4.setIsKreuzung(false);
@@ -128,7 +128,7 @@ class VerkehrsbeziehungUtilTest {
         fahrbeziehungKreuzungVorbei4.setHinein(Boolean.FALSE);
         fahrbeziehungKreuzungVorbei4.setHeraus(Boolean.FALSE);
         fahrbeziehungKreuzungVorbei4.setVorbei(Boolean.TRUE);
-        ladeZaehlung.getBewegungsbeziehungen().add(fahrbeziehungKreuzungVorbei4);
+        ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungVorbei4);
 
         final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleFahrbeziehungen(ladeZaehlung);
 

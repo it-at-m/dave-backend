@@ -110,7 +110,8 @@ public class AuswertungVisumService {
     /**
      * Diese Methode ermittelt für den in den Parametern angegeben Monatszeitraum die durchgeführten
      * Zählungen je Zählstelle. Je relevante Verkehrsbeziehung werden
-     * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Verkehrsbeziehung "x nach alle"
+     * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Verkehrsbeziehung "x nach
+     * alle"
      * und "alle nach x" betrachtet. Der Kreisverkehr
      * beinhaltet nur die Fahrbeziehungen "x nach alle".
      *
@@ -135,7 +136,7 @@ public class AuswertungVisumService {
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
-                                final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getBewegungsbeziehungen().stream()
+                                final List<FahrbeziehungVisumDTO> fahrbeziehungenVisum = zaehlung.getVerkehrsbeziehungen().stream()
                                         .map(fz -> AuswertungVisumService.getFahrbeziehungenVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
                                         // Entfernen von eventuell auftretenden Duplikaten

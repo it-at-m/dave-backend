@@ -119,7 +119,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     /**
      * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
-     * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Verkehrsbeziehung aus dem Parameter
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Verkehrsbeziehung aus dem
+     * Parameter
      * vonFahrbeziehung gesetzt haben.
      *
      * @param vonFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
@@ -144,7 +145,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     /**
      * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
-     * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Verkehrsbeziehung aus dem Parameter
+     * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Verkehrsbeziehung aus dem
+     * Parameter
      * nachFahrbeziehung gesetzt haben.
      *
      * @param nachFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden

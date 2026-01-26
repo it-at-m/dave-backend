@@ -88,7 +88,7 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     public int getNumberOfNecessaryZeitintervalle(final Zaehlung zaehlung) {
-        return Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle() * zaehlung.getBewegungsbeziehungen().size();
+        return Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle() * zaehlung.getVerkehrsbeziehungen().size();
     }
 
     /**

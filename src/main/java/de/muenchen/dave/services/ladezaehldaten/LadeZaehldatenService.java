@@ -266,7 +266,8 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung und
+     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung
+     * und
      * Kreisverkehr die für die Datenextraktion relevante
      * {@link FahrbewegungKreisverkehr}.
      *

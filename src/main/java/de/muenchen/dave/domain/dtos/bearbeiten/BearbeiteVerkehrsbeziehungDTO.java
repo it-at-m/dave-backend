@@ -1,7 +1,6 @@
 package de.muenchen.dave.domain.dtos.bearbeiten;
 
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
-
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

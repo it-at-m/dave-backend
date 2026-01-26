@@ -78,7 +78,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehung2.setVon(1);
         verkehrsbeziehung2.setNach(5);
         fahrbeziehungen.add(verkehrsbeziehung2);
-        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
+        zaehlung.setVerkehrsbeziehungen(fahrbeziehungen);
 
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.valueOf(1));
@@ -156,9 +156,9 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(5);
         fahrbeziehungen.add(verkehrsbeziehung);
-        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
+        zaehlung.setVerkehrsbeziehungen(fahrbeziehungen);
 
-        assertThat(zaehlung.getBewegungsbeziehungen().size(), is(2));
+        assertThat(zaehlung.getVerkehrsbeziehungen().size(), is(2));
 
         final BearbeiteVerkehrsbeziehungDTO fahrbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
@@ -342,7 +342,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehung2.setVon(1);
         verkehrsbeziehung2.setNach(5);
         fahrbeziehungen.add(verkehrsbeziehung2);
-        zaehlung.setBewegungsbeziehungen(fahrbeziehungen);
+        zaehlung.setVerkehrsbeziehungen(fahrbeziehungen);
 
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.valueOf(1));

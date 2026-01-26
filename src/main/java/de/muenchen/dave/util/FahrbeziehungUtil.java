@@ -28,12 +28,12 @@ public final class FahrbeziehungUtil {
     private static FahrbeziehungenDTO determinePossibleFahrbeziehungenKreisverkehr(final LadeZaehlungDTO ladeZaehlung) {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(
-                ladeZaehlung.getBewegungsbeziehungen().stream()
+                ladeZaehlung.getVerkehrsbeziehungen().stream()
                         .filter(BearbeiteVerkehrsbeziehungDTO::getHinein)
                         .map(BearbeiteVerkehrsbeziehungDTO::getKnotenarm)
                         .collect(Collectors.toCollection(TreeSet::new)));
         optionsFahrbeziehungen.setNachKnotenarme(new HashMap<>());
-        final TreeSet<Integer> possibleNachKnotenarme = ladeZaehlung.getBewegungsbeziehungen().stream()
+        final TreeSet<Integer> possibleNachKnotenarme = ladeZaehlung.getVerkehrsbeziehungen().stream()
                 .filter(BearbeiteVerkehrsbeziehungDTO::getHeraus)
                 .map(BearbeiteVerkehrsbeziehungDTO::getKnotenarm)
                 .collect(Collectors.toCollection(TreeSet::new));
@@ -49,7 +49,7 @@ public final class FahrbeziehungUtil {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(new TreeSet<>());
         optionsFahrbeziehungen.setNachKnotenarme(new HashMap<>());
-        ladeZaehlung.getBewegungsbeziehungen().stream()
+        ladeZaehlung.getVerkehrsbeziehungen().stream()
                 .forEach(bearbeiteFahrbeziehung -> {
                     optionsFahrbeziehungen.getVonKnotenarme().add(bearbeiteFahrbeziehung.getVon());
                     if (optionsFahrbeziehungen.getNachKnotenarme().containsKey(bearbeiteFahrbeziehung.getVon())) {

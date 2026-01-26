@@ -25,7 +25,8 @@ import org.apache.commons.lang3.ObjectUtils;
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
-     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Verkehrsbeziehung
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
+     * Verkehrsbeziehung
      * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
      * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
      * ermittelt:
@@ -52,7 +53,8 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     }
 
     /**
-     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der Verkehrsbeziehung
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
+     * Verkehrsbeziehung
      * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
      * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
      * ermittelt:

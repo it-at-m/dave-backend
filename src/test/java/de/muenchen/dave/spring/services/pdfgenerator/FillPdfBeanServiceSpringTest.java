@@ -112,7 +112,7 @@ public class FillPdfBeanServiceSpringTest {
         zaehlung.setQuelle(Quelle.MANUALLY.toString());
         zaehlung.setSchulZeiten(null);
         zaehlung.setSuchwoerter(null);
-        zaehlung.setBewegungsbeziehungen(Lists.newArrayList());
+        zaehlung.setVerkehrsbeziehungen(Lists.newArrayList());
         zaehlung.setKreuzungsname("Leopoldstr. - Feilitzschstr. - Herzogstr.");
 
         final Knotenarm knotenarm1 = new Knotenarm();

@@ -58,13 +58,13 @@ public class ProcessZaehldatenZeitreiheService {
         List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
-            verkehrsbeziehungList = zaehlung.getBewegungsbeziehungen()
+            verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
                     .filter(fahrbeziehung -> fahrbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
                     .collect(Collectors.toList());
         } else {
             // Bei Kreuzung: Prüfe auf Von und Nach
-            verkehrsbeziehungList = zaehlung.getBewegungsbeziehungen()
+            verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
                     .filter(fahrbeziehung -> fahrbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
                     .filter(fahrbeziehung -> fahrbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)

@@ -176,8 +176,8 @@ public class ZaehlstelleIndexService {
             zaehlung.setId(UUID.randomUUID().toString());
         }
         // Set Verkehrsbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getBewegungsbeziehungen())) {
-            zaehlung.getBewegungsbeziehungen().stream()
+        if (CollectionUtils.isNotEmpty(zaehlung.getVerkehrsbeziehungen())) {
+            zaehlung.getVerkehrsbeziehungen().stream()
                     .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
                     .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
         }
@@ -212,8 +212,8 @@ public class ZaehlstelleIndexService {
             zaehlung.setId(UUID.randomUUID().toString());
         }
         // Set Verkehrsbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getBewegungsbeziehungen())) {
-            zaehlung.getBewegungsbeziehungen().stream()
+        if (CollectionUtils.isNotEmpty(zaehlung.getVerkehrsbeziehungen())) {
+            zaehlung.getVerkehrsbeziehungen().stream()
                     .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
                     .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
         }

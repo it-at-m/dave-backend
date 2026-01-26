@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.BearbeiteFahrbeziehungKreuzungDTORandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.FahrbeziehungKreuzungRandomFactory;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

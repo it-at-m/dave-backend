@@ -54,13 +54,11 @@ public interface ZaehlungMapper {
             bean.setPunkt(dto.getPunkt());
         }
 
-        final var bewegungsbeziehungen = dto.getBewegungsbeziehungen();
+        final var bewegungsbeziehungen = dto.getVerkehrsbeziehungen();
         if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            bean.setBewegungsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
-                    bean.getBewegungsbeziehungen()
-                            .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung))
-            );
+            bean.setVerkehrsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung -> bean.getVerkehrsbeziehungen()
+                    .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung)));
         }
 
         if (StringUtils.isNotEmpty(dto.getZaehlart())) {
@@ -85,13 +83,11 @@ public interface ZaehlungMapper {
     @AfterMapping
     default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, Zaehlung bean) {
 
-        final var bewegungsbeziehungen = bean.getBewegungsbeziehungen();
+        final var bewegungsbeziehungen = bean.getVerkehrsbeziehungen();
         if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            dto.setBewegungsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
-                    dto.getBewegungsbeziehungen()
-                            .add(new BewegungsbeziehungMapperImpl().beanBewegungsbeziehung2DtoBewegungsbeziehung(bewegungsbeziehung))
-            );
+            dto.setVerkehrsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung -> dto.getVerkehrsbeziehungen()
+                    .add(new BewegungsbeziehungMapperImpl().beanBewegungsbeziehung2DtoBewegungsbeziehung(bewegungsbeziehung)));
         }
     }
 
@@ -111,13 +107,11 @@ public interface ZaehlungMapper {
 
         bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
 
-        final var bewegungsbeziehungen = dto.getBewegungsbeziehungen();
+        final var bewegungsbeziehungen = dto.getVerkehrsbeziehungen();
         if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            bean.setBewegungsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung ->
-                    bean.getBewegungsbeziehungen()
-                            .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung))
-            );
+            bean.setVerkehrsbeziehungen(new ArrayList<>());
+            bewegungsbeziehungen.forEach(bewegungsbeziehung -> bean.getVerkehrsbeziehungen()
+                    .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung)));
         }
     }
 
