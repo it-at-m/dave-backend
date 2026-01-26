@@ -15,17 +15,17 @@ import org.apache.commons.lang3.ObjectUtils;
 @Slf4j
 public final class FahrbeziehungUtil {
 
-    public static FahrbeziehungenDTO determinePossibleFahrbeziehungen(final LadeZaehlungDTO ladeZaehlung) {
+    public static FahrbeziehungenDTO determinePossibleVerkehrsbeziehung(final LadeZaehlungDTO ladeZaehlung) {
         final FahrbeziehungenDTO optionsFahrbeziehungen;
         if (ObjectUtils.isNotEmpty(ladeZaehlung.getKreisverkehr()) && ladeZaehlung.getKreisverkehr()) {
-            optionsFahrbeziehungen = determinePossibleFahrbeziehungenKreisverkehr(ladeZaehlung);
+            optionsFahrbeziehungen = determinePossibleVerkehrsbeziehungenKreisverkehr(ladeZaehlung);
         } else {
-            optionsFahrbeziehungen = determinePossibleFahrbeziehungenKreuzung(ladeZaehlung);
+            optionsFahrbeziehungen = determinePossibleVerkehrsbeziehungKreuzung(ladeZaehlung);
         }
         return optionsFahrbeziehungen;
     }
 
-    private static FahrbeziehungenDTO determinePossibleFahrbeziehungenKreisverkehr(final LadeZaehlungDTO ladeZaehlung) {
+    private static FahrbeziehungenDTO determinePossibleVerkehrsbeziehungenKreisverkehr(final LadeZaehlungDTO ladeZaehlung) {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(
                 ladeZaehlung.getVerkehrsbeziehungen().stream()
@@ -45,7 +45,7 @@ public final class FahrbeziehungUtil {
         return optionsFahrbeziehungen;
     }
 
-    private static FahrbeziehungenDTO determinePossibleFahrbeziehungenKreuzung(final LadeZaehlungDTO ladeZaehlung) {
+    private static FahrbeziehungenDTO determinePossibleVerkehrsbeziehungKreuzung(final LadeZaehlungDTO ladeZaehlung) {
         final FahrbeziehungenDTO optionsFahrbeziehungen = new FahrbeziehungenDTO();
         optionsFahrbeziehungen.setVonKnotenarme(new TreeSet<>());
         optionsFahrbeziehungen.setNachKnotenarme(new HashMap<>());

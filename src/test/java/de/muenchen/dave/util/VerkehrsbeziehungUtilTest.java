@@ -53,7 +53,7 @@ class VerkehrsbeziehungUtilTest {
         fahrbeziehungKreuzung3nach1.setNach(1);
         ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzung3nach1);
 
-        final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleFahrbeziehungen(ladeZaehlung);
+        final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleVerkehrsbeziehung(ladeZaehlung);
 
         assertThat(optionsFahrbeziehungen.getVonKnotenarme().size(), is(3));
         assertThat(optionsFahrbeziehungen.getVonKnotenarme().toArray()[0], is(1));
@@ -130,7 +130,7 @@ class VerkehrsbeziehungUtilTest {
         fahrbeziehungKreuzungVorbei4.setVorbei(Boolean.TRUE);
         ladeZaehlung.getVerkehrsbeziehungen().add(fahrbeziehungKreuzungVorbei4);
 
-        final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleFahrbeziehungen(ladeZaehlung);
+        final FahrbeziehungenDTO optionsFahrbeziehungen = FahrbeziehungUtil.determinePossibleVerkehrsbeziehung(ladeZaehlung);
 
         assertThat(optionsFahrbeziehungen.getVonKnotenarme().size(), is(3));
         assertThat(optionsFahrbeziehungen.getVonKnotenarme().toArray()[0], is(1));
