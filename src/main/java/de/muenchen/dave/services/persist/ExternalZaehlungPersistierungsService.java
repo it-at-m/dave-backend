@@ -3,7 +3,7 @@ package de.muenchen.dave.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -61,27 +61,27 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
 
                 // Fahrbeziehungen werden nach Zeitintervallen durchsucht
-                if (CollectionUtils.isNotEmpty(zaehlungDto.getFahrbeziehungen())) {
+                if (CollectionUtils.isNotEmpty(zaehlungDto.getVerkehrsbeziehungen())) {
                     // Zeitintervalle persistieren
                     final var zeitintervalleToPersist = new ArrayList<Zeitintervall>();
 
-                    final var fahrbeziehungsIdsForZeitintervalleToDelete = zaehlungDto
-                            .getFahrbeziehungen()
+                    final var bewegungsbeziehungIdsForZeitintervalleToDelete = zaehlungDto
+                            .getVerkehrsbeziehungen()
                             .stream()
-                            .peek(fahrbeziehungDto -> {
-                                if (CollectionUtils.isNotEmpty(fahrbeziehungDto.getZeitintervalle())) {
-                                    fahrbeziehungDto.getZeitintervalle()
+                            .peek(bewegungsbeziehung -> {
+                                if (CollectionUtils.isNotEmpty(bewegungsbeziehung.getZeitintervalle())) {
+                                    bewegungsbeziehung.getZeitintervalle()
                                             .stream()
                                             .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                                            .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
+                                            .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
                                             .forEach(zeitintervalleToPersist::add);
                                 }
                             })
-                            .map(ExternalFahrbeziehungDTO::getId)
+                            .map(ExternalVerkehrsbeziehungDTO::getId)
                             .toList();
 
                     // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
-                    this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(fahrbeziehungsIdsForZeitintervalleToDelete);
+                    this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(bewegungsbeziehungIdsForZeitintervalleToDelete);
 
                     // Zeitintervall nur speichern, ohne was zu berechnen
                     if (CollectionUtils.isNotEmpty(zeitintervalleToPersist)) {
@@ -120,9 +120,10 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
-    public Zeitintervall setAdditionalDataToZeitintervall(final Zeitintervall zeitintervall,
+    public Zeitintervall setAdditionalDataToZeitintervall(
+            final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final ExternalFahrbeziehungDTO fahrbeziehungDto) {
+            final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
         zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehungDto.getId()));
         zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
@@ -144,7 +145,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final ExternalFahrbeziehungDTO fahrbeziehungDto) {
+    public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
         final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
         if (BooleanUtils.isTrue(fahrbeziehungDto.getIsKreuzung())) {
             fahrbeziehung.setVon(fahrbeziehungDto.getVon());

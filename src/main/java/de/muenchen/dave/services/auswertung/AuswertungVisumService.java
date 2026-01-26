@@ -1,11 +1,11 @@
 package de.muenchen.dave.services.auswertung;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
+import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -56,7 +56,8 @@ public class AuswertungVisumService {
     /**
      * Diese Methode erstellt für eine Verkehrsbeziehung folgende Visum-relevanten Objekte.
      * <p>
-     * Für eine Kreuzung wird eine VerkehrsbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und ein
+     * Für eine Kreuzung wird eine VerkehrsbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und
+     * ein
      * zweite VerkehrsbeziehungVisum für alle Knotenarme zum nach-Knotenarm erstellt.
      * <p>
      * Für den Kreisverkehr wird nur eine VerkehrsbeziehungVisum erstellt.
@@ -136,7 +137,8 @@ public class AuswertungVisumService {
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
-                                final List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungenVisum = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()).stream()
+                                final List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungenVisum = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen())
+                                        .stream()
                                         .map(fz -> AuswertungVisumService.getVerkehrsbeziehungVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
                                         // Entfernen von eventuell auftretenden Duplikaten
@@ -177,7 +179,7 @@ public class AuswertungVisumService {
      * @return die VerkehrsbeziehungVisum mit den Zaehldaten für die Zaehlung der Verkehrsbeziehung.
      */
     public VerkehrsbeziehungVisumDTO ladeZaehldaten(final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
-                                                    final Zaehlung zaehlung) {
+            final Zaehlung zaehlung) {
         List<LadeZaehldatumDTO> zaehldaten;
         try {
             zaehldaten = ladeZaehldatenService.ladeZaehldaten(

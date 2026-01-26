@@ -9,7 +9,7 @@ import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -367,7 +367,7 @@ class ZaehlungPersistierungsServiceTest {
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);
 
-        final ExternalFahrbeziehungDTO fahrbeziehungDto = new ExternalFahrbeziehungDTO();
+        final ExternalVerkehrsbeziehungDTO fahrbeziehungDto = new ExternalVerkehrsbeziehungDTO();
         fahrbeziehungDto.setId(verkehrsbeziehung1.getId());
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
@@ -411,7 +411,7 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void mapToFahrbeziehungForZeitintervallExternal() {
-        final ExternalFahrbeziehungDTO fahrbeziehungDto = new ExternalFahrbeziehungDTO();
+        final ExternalVerkehrsbeziehungDTO fahrbeziehungDto = new ExternalVerkehrsbeziehungDTO();
         fahrbeziehungDto.setIsKreuzung(true);
         fahrbeziehungDto.setVon(1);
         fahrbeziehungDto.setNach(2);
