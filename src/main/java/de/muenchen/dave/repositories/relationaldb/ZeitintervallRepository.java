@@ -14,43 +14,43 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
 
     @Override
-    Optional<Zeitintervall> findById(UUID id);
+    Optional<Zeitintervall> findById(final UUID id);
 
     @Override
-    <S extends Zeitintervall> S save(S theEntity);
+    <S extends Zeitintervall> S save(final S theEntity);
 
     @Override
-    <S extends Zeitintervall> List<S> saveAll(Iterable<S> entities);
+    <S extends Zeitintervall> List<S> saveAll(final Iterable<S> entities);
 
     @Override
-    void deleteById(UUID id);
+    void deleteById(final UUID id);
 
     @Override
-    void delete(Zeitintervall entity);
+    void delete(final Zeitintervall entity);
 
     @Override
-    void deleteAll(Iterable<? extends Zeitintervall> entities);
+    void deleteAll(final Iterable<? extends Zeitintervall> entities);
 
     @Override
     void deleteAll();
 
-    Long deleteAllByZaehlungId(UUID zaehlungId);
+    Long deleteAllByZaehlungId(final UUID zaehlungId);
 
-    void deleteByFahrbeziehungIdIn(List<UUID> fahrbeziehungIds);
+    void deleteByBewegungsbeziehungIdIn(final List<UUID> fahrbeziehungIds);
 
-    boolean existsByZaehlungId(UUID zaehlungId);
+    boolean existsByZaehlungId(final UUID zaehlungId);
 
     List<Zeitintervall> findAll(final Sort sort);
 
     List<Zeitintervall> findByZaehlungId(final UUID zaehlungId, final Sort sort);
 
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final TypeZeitintervall type);
 
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
@@ -59,7 +59,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types);
 
-    Zeitintervall findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+    Zeitintervall findByZaehlungIdAndTypeAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungFahrbewegungKreisverkehrIsNull(
             final UUID zaehlungId,
             final TypeZeitintervall type,
             final Integer fahrbeziehungVon,
@@ -70,7 +70,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
     /*
      * Extrahiert den Zeitintervall entsprechend des SortingIndex über alle vorhandenen Fahrbeziehungen.
      */
-    Optional<Zeitintervall> findByZaehlungIdAndTypeAndFahrbeziehungVonNullAndFahrbeziehungNachNullAndSortingIndex(
+    Optional<Zeitintervall> findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
             final UUID zaehlungId,
             final TypeZeitintervall type,
             final Integer sortingIndex);
@@ -80,7 +80,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
      * bei der Endeuhrzeit, entsprechend des angegebenen {@link TypeZeitintervall} zu extrahieren.
      * Es werden nur konkrete Fahrbeziehungen einer KREUZUNG (von und nach nicht NULL) berücksichtigt.
      */
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
@@ -92,7 +92,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
      * Es werden nur Fahrbeziehungen für einen KREISVERKEHR (von und nach nicht NULL)
      * entsprechend der Ausprägung {@link FahrbewegungKreisverkehr} berücksichtigt.
      */
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,

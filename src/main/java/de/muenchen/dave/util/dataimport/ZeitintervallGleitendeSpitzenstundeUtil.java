@@ -1,6 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     public static List<Zeitintervall> getGleitendeSpitzenstunden(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Set<Fahrbeziehung> possibleFahrbeziehungen = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
+        final Set<Verkehrsbeziehung> possibleFahrbeziehungen = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
         final List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
         possibleFahrbeziehungen.forEach(
                 fahrbeziehung -> gleitendeSpitzenstunden.addAll(getGleitendeSpitzenstundenForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall)));
@@ -65,14 +65,14 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_19_24}
      * - {@link Zeitblock#ZB_00_24}
      *
-     * @param fahrbeziehung Die {@link Fahrbeziehung} für welche die gleitende Spitzenstunde je
+     * @param fahrbeziehung Die {@link Verkehrsbeziehung} für welche die gleitende Spitzenstunde je
      *            {@link Zeitblock} ermittelt werden soll.
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
      *            Intervallen.
      * @return die gleitenden Spitzenstunde je {@link Zeitblock} als List von {@link Zeitintervall}en
      *         jeweils für KFZ-, Rad- und Fussverkehr.
      */
-    private static List<Zeitintervall> getGleitendeSpitzenstundenForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
+    private static List<Zeitintervall> getGleitendeSpitzenstundenForFahrbeziehung(final Verkehrsbeziehung fahrbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForFahrbeziehung = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung,
                 zeitintervalleGroupedByIntervall);
@@ -105,12 +105,12 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      *            soll.
      * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Verkehrsbeziehung.
      * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
-     *            {@link Fahrbeziehung}.
+     *            {@link Verkehrsbeziehung}.
      * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr.
      */
     private static GleitendeSpstdZeitintervallKfzRadFuss berechneGleitendeSpitzenstunde(final UUID zaehlungId,
             final Zeitblock zeitblock,
-            final Fahrbeziehung fahrbeziehung,
+            final Verkehrsbeziehung fahrbeziehung,
             final List<Zeitintervall> sortedZeitintervalle) {
         Integer valueGleitendeSpitzenstundeKfz = 0;
         Integer valueGleitendeSpitzenstundeRad = 0;
@@ -145,19 +145,19 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         // Finalisierung Kfz
         gleitendeSpitzenstundeKfz.ifPresent(zeitintervall -> {
             zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setFahrbeziehung(fahrbeziehung);
+            zeitintervall.setVerkehrsbeziehung(fahrbeziehung);
             zeitintervall.setSortingIndex(getSortingIndexKfz(zeitintervall, zeitblock));
         });
         // Finalisierung Rad
         gleitendeSpitzenstundeRad.ifPresent(zeitintervall -> {
             zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setFahrbeziehung(fahrbeziehung);
+            zeitintervall.setVerkehrsbeziehung(fahrbeziehung);
             zeitintervall.setSortingIndex(getSortingIndexRad(zeitintervall, zeitblock));
         });
         // Finalisierung Fuss
         gleitendeSpitzenstundeFuss.ifPresent(zeitintervall -> {
             zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setFahrbeziehung(fahrbeziehung);
+            zeitintervall.setVerkehrsbeziehung(fahrbeziehung);
             zeitintervall.setSortingIndex(getSortingIndexFuss(zeitintervall, zeitblock));
         });
         return new GleitendeSpstdZeitintervallKfzRadFuss(

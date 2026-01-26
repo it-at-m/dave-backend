@@ -29,7 +29,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-// Definition of getter, setter, ...
 @Getter
 @Setter
 @Builder
@@ -40,12 +39,12 @@ import org.hibernate.type.SqlTypes;
 @Table(
         indexes = {
                 @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
-                @Index(name = "index_fahrbeziehungid", columnList = "fahrbeziehung_id"),
-                @Index(name = "index_combined_1", columnList = "zaehlung_id, type, fahrbeziehung_von, fahrbeziehung_nach"),
-                @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, type"),
+                @Index(name = "index_bewegungsbeziehungid", columnList = "bewegungsbeziehung_id"),
+                @Index(name = "index_combined_1", columnList = "zaehlung_id, type, verkehrsbeziehung_von, verkehrsbeziehung_nach"),
+                @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, type"),
                 @Index(
                         name = "index_combined_3",
-                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, fahrbeziehung_von, fahrbeziehung_nach, fahrbeziehung_fahrbewegungkreisverkehr, type"
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, verkehrsbeziehung_nach, verkehrsbeziehung_fahrbewegungkreisverkehr, type"
                 )
         }
 )
@@ -55,9 +54,9 @@ public class Zeitintervall extends BaseEntity {
     @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID zaehlungId;
 
-    @Column(name = "fahrbeziehung_id")
+    @Column(name = "bewegungsbeziehung_id")
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    private UUID fahrbeziehungId;
+    private UUID bewegungsbeziehungId;
 
     @Column(name = "startuhrzeit")
     @NotNull
@@ -120,11 +119,28 @@ public class Zeitintervall extends BaseEntity {
     @Embedded
     @AttributeOverrides(
         {
-                @AttributeOverride(name = "von", column = @Column(name = "fahrbeziehung_von")),
-                @AttributeOverride(name = "nach", column = @Column(name = "fahrbeziehung_nach")),
-                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "fahrbeziehung_fahrbewegungkreisverkehr"))
+                @AttributeOverride(name = "richtung", column = @Column(name = "querungsverkehr_richtung"))
         }
     )
-    private Fahrbeziehung fahrbeziehung;
+    private Querungsverkehr querungsverkehr;
+
+    @Embedded
+    @AttributeOverrides(
+        {
+                @AttributeOverride(name = "richtung", column = @Column(name = "laengsverkehr_richtung")),
+                @AttributeOverride(name = "strassenseite", column = @Column(name = "laengsverkehr_strassenseite"))
+        }
+    )
+    private Laengsverkehr laengsverkehr;
+
+    @Embedded
+    @AttributeOverrides(
+        {
+                @AttributeOverride(name = "von", column = @Column(name = "verkehrsbeziehung_von")),
+                @AttributeOverride(name = "nach", column = @Column(name = "verkehrsbeziehung_nach")),
+                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "verkehrsbeziehung_fahrbewegungkreisverkehr"))
+        }
+    )
+    private Verkehrsbeziehung verkehrsbeziehung;
 
 }

@@ -203,7 +203,7 @@ public class ProcessZaehldatenZeitreiheService {
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
                         final Zeitintervall zeitintervall = zeitintervallRepository
-                                .findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+                                .findByZaehlungIdAndTypeAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungFahrbewegungKreisverkehrIsNull(
                                         UUID.fromString(zaehlung.getId()),
                                         options.getZeitblock().getTypeZeitintervall(),
                                         options.getVonKnotenarm(),

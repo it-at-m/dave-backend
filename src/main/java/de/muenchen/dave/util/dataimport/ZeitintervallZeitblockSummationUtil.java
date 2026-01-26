@@ -1,6 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -19,36 +19,37 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
- * Diese Klasse bildet die Summen je möglichen {@link Zeitblock} je {@link Fahrbeziehung}.
+ * Diese Klasse bildet die Summen je möglichen {@link Zeitblock} je {@link Verkehrsbeziehung}.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallZeitblockSummationUtil {
 
     /**
-     * In dieser Methode werden die {@link Zeitintervall}e je {@link Fahrbeziehung} über die
+     * In dieser Methode werden die {@link Zeitintervall}e je {@link Verkehrsbeziehung} über die
      * {@link Zeitblock}e summiert.
      *
      * @param zeitintervalle Die zur Summierung vorgesehenen Zeitintervalle.
-     * @return Die Summen je {@link Fahrbeziehung} und je {@link Zeitblock}.
+     * @return Die Summen je {@link Verkehrsbeziehung} und je {@link Zeitblock}.
      */
     public static List<Zeitintervall> getSummen(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Set<Fahrbeziehung> possibleFahrbeziehungen = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
+        final Set<Verkehrsbeziehung> possibleFahrbeziehungen = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
         final List<Zeitintervall> blockSummen = new ArrayList<>();
         possibleFahrbeziehungen.forEach(fahrbeziehung -> blockSummen.addAll(getSummenForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall)));
         return blockSummen;
     }
 
     /**
-     * Summierung der {@link Zeitintervall}e der {@link Fahrbeziehung} über alle {@link Zeitblock}e.
+     * Summierung der {@link Zeitintervall}e der {@link Verkehrsbeziehung} über alle {@link Zeitblock}e.
      *
-     * @param fahrbeziehung Die für die Summierung relevante {@link Fahrbeziehung}.
+     * @param fahrbeziehung Die für die Summierung relevante {@link Verkehrsbeziehung}.
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
      *            Intervallen.
-     * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene {@link Fahrbeziehung}.
+     * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene
+     *         {@link Verkehrsbeziehung}.
      */
-    private static List<Zeitintervall> getSummenForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
+    private static List<Zeitintervall> getSummenForFahrbeziehung(final Verkehrsbeziehung fahrbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForFahrbeziehung = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung,
                 zeitintervalleGroupedByIntervall);
@@ -73,12 +74,12 @@ public final class ZeitintervallZeitblockSummationUtil {
      * @param zeitblock Der {@link Zeitblock} für welchen die Summe ermittelt werden soll.
      * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Verkehrsbeziehung.
      * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
-     *            {@link Fahrbeziehung}.
+     *            {@link Verkehrsbeziehung}.
      * @return Die Summe für den {@link Zeitblock} als {@link Zeitintervall}.
      */
     private static Optional<Zeitintervall> getSumme(final UUID zaehlungId,
             final Zeitblock zeitblock,
-            final Fahrbeziehung fahrbeziehung,
+            final Verkehrsbeziehung fahrbeziehung,
             final List<Zeitintervall> sortedZeitintervalle) {
         final Optional<Zeitintervall> summeOptional;
         Zeitintervall zeitintervallSumme = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(

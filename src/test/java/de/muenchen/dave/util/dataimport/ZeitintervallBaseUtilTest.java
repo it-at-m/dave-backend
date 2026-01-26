@@ -4,8 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -155,39 +155,39 @@ class ZeitintervallBaseUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(19));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(19));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(19));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(3);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(3);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(summed, is(expected));
     }
 
     @Test
     public void getAllPossibleFahrbeziehungen() {
-        final Set<Fahrbeziehung> result = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
+        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
 
-        final Set<Fahrbeziehung> expected = new HashSet<>();
-        Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Set<Verkehrsbeziehung> expected = new HashSet<>();
+        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(1);
         fahrbeziehung.setNach(2);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
         expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(1);
         fahrbeziehung.setNach(3);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
         expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(1);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
         expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(3);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
         expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(3);
         fahrbeziehung.setNach(1);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);
@@ -206,7 +206,7 @@ class ZeitintervallBaseUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
         zeitintervalleGroupedByIntervall.put(intervall, zeitintervalle.subList(5, 10));
 
-        Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(3);
         fahrbeziehung.setFahrbewegungKreisverkehr(null);

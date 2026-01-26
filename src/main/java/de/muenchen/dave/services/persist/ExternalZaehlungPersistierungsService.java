@@ -113,7 +113,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die UUID der {@link Zaehlung}
      * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
-     * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
+     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
@@ -125,8 +125,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final Zaehlung zaehlung,
             final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
-        zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehungDto.getId()));
-        zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
+        zeitintervall.setBewegungsbeziehungId(UUID.fromString(fahrbeziehungDto.getId()));
+        zeitintervall.setVerkehrsbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
 
         zeitintervall.setHochrechnung(
                 this.createHochrechnung(
@@ -137,16 +137,17 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
+     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen
+     *            an
      *            einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
-        final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
+    public de.muenchen.dave.domain.Verkehrsbeziehung mapToFahrbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
+        final de.muenchen.dave.domain.Verkehrsbeziehung fahrbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
         if (BooleanUtils.isTrue(fahrbeziehungDto.getIsKreuzung())) {
             fahrbeziehung.setVon(fahrbeziehungDto.getVon());
             fahrbeziehung.setNach(fahrbeziehungDto.getNach());

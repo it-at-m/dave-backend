@@ -154,15 +154,17 @@ public class AuswertungSpitzenstundeService {
             final boolean kreisverkehr) throws DataNotFoundException {
         final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
         // Extrahieren der Spitzenstunde der Zählung über alle Fahrbeziehungen.
-        final Zeitintervall spitzenstunde = zeitintervallRepository.findByZaehlungIdAndTypeAndFahrbeziehungVonNullAndFahrbeziehungNachNullAndSortingIndex(
-                UUID.fromString(zaehlungId),
-                typeSpitzenstunde,
-                sortingIndex).orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
+        final Zeitintervall spitzenstunde = zeitintervallRepository
+                .findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
+                        UUID.fromString(zaehlungId),
+                        typeSpitzenstunde,
+                        sortingIndex)
+                .orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
         // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
         final List<Zeitintervall> spitzenstundeZeitintevalle;
         if (kreisverkehr) {
             spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlungId),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
@@ -170,7 +172,7 @@ public class AuswertungSpitzenstundeService {
                             TypeZeitintervall.STUNDE_VIERTEL);
         } else {
             spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlungId),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
@@ -205,8 +207,8 @@ public class AuswertungSpitzenstundeService {
                 new OptionsDTO());
         final LadeAuswertungSpitzenstundeDTO ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
                 .ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(ladeZaehldatumDTO);
-        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getFahrbeziehung().getVon());
-        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getFahrbeziehung().getNach());
+        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getVerkehrsbeziehung().getVon());
+        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getVerkehrsbeziehung().getNach());
         return ladeZaehldatumWithDirectionDTO;
     }
 

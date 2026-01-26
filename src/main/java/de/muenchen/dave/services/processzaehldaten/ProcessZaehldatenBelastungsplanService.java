@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
@@ -170,7 +170,7 @@ public class ProcessZaehldatenBelastungsplanService {
         return fff;
     }
 
-    private static boolean isKreisverkehr(final Fahrbeziehung fahrbeziehung) {
+    private static boolean isKreisverkehr(final Verkehrsbeziehung fahrbeziehung) {
         return ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr())
                 && ObjectUtils.isEmpty(fahrbeziehung.getNach());
     }
@@ -200,8 +200,8 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     private static boolean isFahrbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
-        return ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getNach())
-                || ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getFahrbewegungKreisverkehr());
+        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
+                || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
     }
 
     /**
@@ -344,7 +344,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * gewählt, so wird die Spitzenstunde des Tages verwendet.
      * Ist bei {@link OptionsDTO}#getZeitauswahl() der Wert
      * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
-     * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Fahrbeziehung}.
+     * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Verkehrsbeziehung}.
      * <p>
      * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die
      * erste Dimension stellt die von Knotenarme dar. In der
@@ -367,10 +367,10 @@ public class ProcessZaehldatenBelastungsplanService {
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, options);
         }
-        final Map<Fahrbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
+        final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
                 .filter(ProcessZaehldatenBelastungsplanService::isFahrbeziehungNachOrKreisverkehrSet)
                 .collect(Collectors.toMap(
-                        Zeitintervall::getFahrbeziehung,
+                        Zeitintervall::getVerkehrsbeziehung,
                         zeitintervall -> new TupelTageswertZaehldatum(
                                 LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options),
                                 roundToNearestIfRoundingIsChoosen(
@@ -673,7 +673,7 @@ public class ProcessZaehldatenBelastungsplanService {
     public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
             final OptionsDTO options) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
                         options.getZeitblock().getEnd(),
@@ -723,7 +723,7 @@ public class ProcessZaehldatenBelastungsplanService {
              */
             final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
             final List<Zeitintervall> zeitintervalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenStunde.getStartUhrzeit(),
                             spitzenStunde.getEndeUhrzeit(),
@@ -756,7 +756,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param zaehlung wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
      * @return eine Map mit Key: Fahrzeug und Value:BelastungsplanDataDTO.
      */
-    public Map<Fahrzeug, BelastungsplanDataDTO> getBelastungsplanData(final Map<Fahrbeziehung, TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung,
+    public Map<Fahrzeug, BelastungsplanDataDTO> getBelastungsplanData(final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, BelastungsplanDataDTO> returnValue = new HashMap<>();
 

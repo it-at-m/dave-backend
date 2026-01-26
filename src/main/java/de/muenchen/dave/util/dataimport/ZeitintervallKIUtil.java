@@ -56,7 +56,7 @@ public final class ZeitintervallKIUtil {
      */
     public static List<List<Zeitintervall>> groupZeitintervalleByFahrbeziehung(List<Zeitintervall> zeitintervalle) {
         final Map<UUID, List<Zeitintervall>> groupedByFahrbeziehungId = zeitintervalle.stream()
-                .collect(Collectors.groupingBy(Zeitintervall::getFahrbeziehungId));
+                .collect(Collectors.groupingBy(Zeitintervall::getBewegungsbeziehungId));
         return new ArrayList<>(groupedByFahrbeziehungId.values());
     }
 
@@ -87,8 +87,8 @@ public final class ZeitintervallKIUtil {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MIDNIGHT),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX),
                 TypeZeitintervall.GESAMT_KI,
-                zeitintervall.getFahrbeziehung());
-        kiZeitintervall.setFahrbeziehungId(zeitintervall.getFahrbeziehungId());
+                zeitintervall.getVerkehrsbeziehung());
+        kiZeitintervall.setBewegungsbeziehungId(zeitintervall.getBewegungsbeziehungId());
 
         // Setze KI-Ergebnisse für einzelne Fahrzeugtypen
         kiZeitintervall.setFahrradfahrer(predictionResult.getRadTagessumme());
@@ -125,7 +125,7 @@ public final class ZeitintervallKIUtil {
         allZeitintervalle.stream()
                 .filter(intervall -> TypeZeitintervall.GESAMT.equals(intervall.getType()))
                 .forEach(intervall -> kiIntervalle.stream()
-                        .filter(prediction -> prediction.getFahrbeziehung().equals(intervall.getFahrbeziehung()))
+                        .filter(prediction -> prediction.getVerkehrsbeziehung().equals(intervall.getVerkehrsbeziehung()))
                         .findFirst()
                         .ifPresent(prediction -> intervall.getHochrechnung().setHochrechnungRad(prediction.getFahrradfahrer())));
     }

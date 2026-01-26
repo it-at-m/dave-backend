@@ -1,6 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      *         "fahrbewegungKreisverkehr" nicht "null" ist.
      */
     private static boolean filterValidFahrbeziehung(final Zeitintervall zeitintervall) {
-        final Fahrbeziehung fahrbeziehung = zeitintervall.getFahrbeziehung();
+        final Verkehrsbeziehung fahrbeziehung = zeitintervall.getVerkehrsbeziehung();
         return ObjectUtils.isNotEmpty(fahrbeziehung.getVon())
                 && (ObjectUtils.isNotEmpty(fahrbeziehung.getNach())
                         || ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr()));
@@ -110,9 +110,9 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     private static Zeitintervall getSummedZeitintervallForAllFahrbeziehungen(final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
         final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalle);
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         return zeitintervall;
     }
 
@@ -133,12 +133,12 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
             final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> zeitintervalleCertainFahrbeziehung = zeitintervalle.stream()
-                .filter(zeitintervall -> zeitintervall.getFahrbeziehung().getVon().equals(vonFahrbeziehung))
+                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getVon().equals(vonFahrbeziehung))
                 .collect(Collectors.toList());
         final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setVon(vonFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(vonFahrbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         return zeitintervall;
     }
 
@@ -159,13 +159,13 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
             final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> zeitintervalleCertainFahrbeziehung = zeitintervalle.stream()
-                .filter(zeitintervall -> zeitintervall.getFahrbeziehung().getNach().equals(nachFahrbeziehung)
-                        && ObjectUtils.isEmpty(zeitintervall.getFahrbeziehung().getFahrbewegungKreisverkehr()))
+                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getNach().equals(nachFahrbeziehung)
+                        && ObjectUtils.isEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()))
                 .collect(Collectors.toList());
         final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(nachFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(nachFahrbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         return zeitintervall;
     }
 
@@ -199,8 +199,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     private static Set<Integer> getAllVonFahrbeziehungen(final List<Zeitintervall> zeitintervalle) {
         final Set<Integer> allVonFahrbeziehungen = new HashSet<>();
         zeitintervalle.stream()
-                .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getVon()))
-                .forEach(zeitintervall -> allVonFahrbeziehungen.add(zeitintervall.getFahrbeziehung().getVon()));
+                .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getVon()))
+                .forEach(zeitintervall -> allVonFahrbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getVon()));
         return allVonFahrbeziehungen;
     }
 
@@ -214,9 +214,9 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
     private static Set<Integer> getAllNachFahrbeziehungen(final List<Zeitintervall> zeitintervalle) {
         final Set<Integer> allNachFahrbeziehungen = new HashSet<>();
         zeitintervalle.stream()
-                .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getFahrbeziehung().getNach())
-                        && ObjectUtils.isEmpty(zeitintervall.getFahrbeziehung().getFahrbewegungKreisverkehr()))
-                .forEach(zeitintervall -> allNachFahrbeziehungen.add(zeitintervall.getFahrbeziehung().getNach()));
+                .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
+                        && ObjectUtils.isEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()))
+                .forEach(zeitintervall -> allNachFahrbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getNach()));
         return allNachFahrbeziehungen;
     }
 

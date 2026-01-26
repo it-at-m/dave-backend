@@ -170,7 +170,7 @@ public class ZeitintervallPersistierungsService {
                 .stream()
                 .map(UUID::fromString)
                 .toList();
-        zeitintervallRepository.deleteByFahrbeziehungIdIn(uuidsOfFahrbeziehungen);
+        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfFahrbeziehungen);
     }
 
     @Transactional

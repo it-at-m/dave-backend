@@ -4,8 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -131,12 +131,12 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     @Test
     public void filterValidFahrbeziehung() {
         Zeitintervall zeitintervall = new Zeitintervall();
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
         // Verkehrsbeziehung Kreuzung
-        zeitintervall.getFahrbeziehung().setVon(1);
-        zeitintervall.getFahrbeziehung().setNach(2);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         boolean result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -146,9 +146,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(true));
 
         // Verkehrsbeziehung Kreisverkehr
-        zeitintervall.getFahrbeziehung().setVon(1);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -158,9 +158,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(true));
 
         // Keine gültige konkrete Verkehrsbeziehung
-        zeitintervall.getFahrbeziehung().setVon(1);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -170,9 +170,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(false));
 
         // Keine gültige konkrete Verkehrsbeziehung
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -182,9 +182,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(false));
 
         // Keine gültige Verkehrsbeziehung
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(1);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(null);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -194,9 +194,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(false));
 
         // Keine gültige Verkehrsbeziehung
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(null);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(null);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -206,9 +206,9 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         assertThat(result, is(false));
 
         // Keine gültige Verkehrsbeziehung
-        zeitintervall.getFahrbeziehung().setVon(null);
-        zeitintervall.getFahrbeziehung().setNach(1);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+        zeitintervall.getVerkehrsbeziehung().setVon(null);
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidFahrbeziehung",
                 ZeitintervallFahrbeziehungsSummationUtil.class,
@@ -242,7 +242,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(15));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(15));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(15));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 1 nach alle
@@ -263,8 +263,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 2 nach alle
@@ -285,8 +285,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(7));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(7));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(7));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 3 nach alle
@@ -307,8 +307,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(5));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(5));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(5));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: Alle nach alle
@@ -329,7 +329,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 1 nach alle
@@ -350,8 +350,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(13));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(13));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(13));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 2 nach alle
@@ -372,8 +372,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(17));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(17));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(17));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 3 nach alle
@@ -394,8 +394,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(10));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(10));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(10));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 1
@@ -416,8 +416,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(8));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(8));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(8));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 2
@@ -438,8 +438,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(1));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(1));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(1));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 3
@@ -460,8 +460,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(6));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 1
@@ -482,8 +482,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(18));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(18));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(18));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 2
@@ -504,8 +504,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(6));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 3
@@ -526,8 +526,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
         assertThat(result.size(), is(expected.size()));
@@ -576,7 +576,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 1 nach alle
@@ -597,8 +597,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(13));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(13));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(13));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 2 nach alle
@@ -619,8 +619,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(17));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(17));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(17));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: 3 nach alle
@@ -641,8 +641,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(10));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(10));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(10));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: Alle nach alle
@@ -663,7 +663,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(15));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(15));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(15));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 1 nach alle
@@ -684,8 +684,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 2 nach alle
@@ -706,8 +706,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(7));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(7));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(7));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: 3 nach alle
@@ -728,8 +728,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(5));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(5));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(5));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 1
@@ -750,8 +750,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(8));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(8));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(8));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 2
@@ -772,8 +772,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(1));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(1));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(1));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:30: alle nach 3
@@ -794,8 +794,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(6));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 1
@@ -816,8 +816,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(18));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(18));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(18));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(1);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 2
@@ -838,8 +838,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(6));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(6));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
         // Fahrbeziehungen ab 10:45: alle nach 3
@@ -860,8 +860,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
         zeitintervall.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
         zeitintervall.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setNach(3);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
         assertThat(result.size(), is(expected.size()));
@@ -899,7 +899,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(15));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(15));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(15));
-        expected.setFahrbeziehung(new Fahrbeziehung());
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
         assertThat(result, is(expected));
 
@@ -930,7 +930,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
         assertThat(result, is(expected));
     }
@@ -964,8 +964,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(7));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(7));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(7));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
 
         assertThat(result, is(expected));
 
@@ -996,8 +996,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(17));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(17));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(17));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
 
         assertThat(result, is(expected));
     }
@@ -1031,8 +1031,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(6));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(6));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(6));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setNach(3);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setNach(3);
 
         assertThat(result, is(expected));
 
@@ -1063,8 +1063,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setNach(3);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setNach(3);
 
         assertThat(result, is(expected));
     }
@@ -1098,7 +1098,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(15));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(15));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(15));
-        expected.setFahrbeziehung(new Fahrbeziehung());
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
         assertThat(result, is(expected));
 
@@ -1129,7 +1129,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
         assertThat(result, is(expected));
     }

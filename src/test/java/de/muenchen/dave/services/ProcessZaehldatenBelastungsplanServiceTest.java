@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
@@ -27,7 +27,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void isKreisverkehr() {
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
 
         fahrbeziehung.setVon(1);
         fahrbeziehung.setNach(null);
@@ -35,7 +35,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         boolean result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Fahrbeziehung.class),
+                ArrayUtils.toArray(Verkehrsbeziehung.class),
                 ArrayUtils.toArray(fahrbeziehung),
                 Boolean.class);
         assertThat(result, is(true));
@@ -46,7 +46,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Fahrbeziehung.class),
+                ArrayUtils.toArray(Verkehrsbeziehung.class),
                 ArrayUtils.toArray(fahrbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
@@ -57,7 +57,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Fahrbeziehung.class),
+                ArrayUtils.toArray(Verkehrsbeziehung.class),
                 ArrayUtils.toArray(fahrbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
@@ -68,7 +68,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Fahrbeziehung.class),
+                ArrayUtils.toArray(Verkehrsbeziehung.class),
                 ArrayUtils.toArray(fahrbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
@@ -76,8 +76,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void getBelastunsplanData() {
-        final Map<Fahrbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung = new HashMap<>();
-        Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung = new HashMap<>();
+        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(3);
 
@@ -93,7 +93,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         zaehldatenJeFahrbeziehung.put(fahrbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
 
-        fahrbeziehung = new Fahrbeziehung();
+        fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(5);
         fahrbeziehung.setNach(2);
 

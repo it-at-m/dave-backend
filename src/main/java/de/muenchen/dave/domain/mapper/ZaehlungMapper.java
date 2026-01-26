@@ -24,8 +24,7 @@ import org.mapstruct.MappingTarget;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        uses = { BewegungsbeziehungMapper.class }
+        componentModel = MappingConstants.ComponentModel.SPRING
 )
 public interface ZaehlungMapper {
 

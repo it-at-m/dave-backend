@@ -1,7 +1,7 @@
 package de.muenchen.dave.util.dataimport;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -63,7 +63,7 @@ public final class ZeitintervallBaseUtil {
         zeitintervall.setStartUhrzeit(startUhrzeit);
         zeitintervall.setEndeUhrzeit(endeUhrzeit);
         zeitintervall.setHochrechnung(new Hochrechnung());
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         zeitintervall.setType(type);
         return zeitintervall;
     }
@@ -72,9 +72,9 @@ public final class ZeitintervallBaseUtil {
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final TypeZeitintervall type,
-            final Fahrbeziehung fahrbeziehung) {
+            final Verkehrsbeziehung fahrbeziehung) {
         final Zeitintervall zeitintervall = createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
-        zeitintervall.setFahrbeziehung(fahrbeziehung);
+        zeitintervall.setVerkehrsbeziehung(fahrbeziehung);
         return zeitintervall;
     }
 
@@ -85,7 +85,7 @@ public final class ZeitintervallBaseUtil {
                 zeitintervall1.getStartUhrzeit(),
                 zeitintervall1.getEndeUhrzeit(),
                 zeitintervall1.getType(),
-                zeitintervall1.getFahrbeziehung());
+                zeitintervall1.getVerkehrsbeziehung());
         summedZeitintervall.setPkw(CalculationUtil.nullSafeSummation(zeitintervall1.getPkw(), zeitintervall2.getPkw()));
         summedZeitintervall.setLkw(CalculationUtil.nullSafeSummation(zeitintervall1.getLkw(), zeitintervall2.getLkw()));
         summedZeitintervall.setLastzuege(CalculationUtil.nullSafeSummation(zeitintervall1.getLastzuege(), zeitintervall2.getLastzuege()));
@@ -116,24 +116,24 @@ public final class ZeitintervallBaseUtil {
      * @param zeitintervalle Die Zeitintervalle zur extraktion der Fahrbeziehungen.
      * @return Die möglichen Fahrbeziehungen aller Zeitintervalle.
      */
-    public static Set<Fahrbeziehung> getAllPossibleFahrbeziehungen(List<Zeitintervall> zeitintervalle) {
+    public static Set<Verkehrsbeziehung> getAllPossibleFahrbeziehungen(List<Zeitintervall> zeitintervalle) {
         return zeitintervalle.stream()
-                .map(Zeitintervall::getFahrbeziehung)
+                .map(Zeitintervall::getVerkehrsbeziehung)
                 .collect(Collectors.toSet());
     }
 
     /**
-     * @param fahrbeziehung Die {@link Fahrbeziehung} der betroffenen Zeitintervalle.
+     * @param fahrbeziehung Die {@link Verkehrsbeziehung} der betroffenen Zeitintervalle.
      * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall}
      *            gruppierten {@link Zeitintervall}e.
-     * @return Alle {@link Zeitintervall}e welche die {@link Fahrbeziehung} besitzen.
+     * @return Alle {@link Zeitintervall}e welche die {@link Verkehrsbeziehung} besitzen.
      */
-    public static List<Zeitintervall> getZeitintervalleForFahrbeziehung(final Fahrbeziehung fahrbeziehung,
+    public static List<Zeitintervall> getZeitintervalleForFahrbeziehung(final Verkehrsbeziehung fahrbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForFahrbeziehung = new ArrayList<>();
         zeitintervalleGroupedByIntervall.keySet().forEach(intervall -> {
             zeitintervalleGroupedByIntervall.get(intervall).stream()
-                    .filter(zeitintervall -> zeitintervall.getFahrbeziehung().equals(fahrbeziehung))
+                    .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().equals(fahrbeziehung))
                     .findFirst()
                     .ifPresent(zeitintervalleForFahrbeziehung::add);
         });

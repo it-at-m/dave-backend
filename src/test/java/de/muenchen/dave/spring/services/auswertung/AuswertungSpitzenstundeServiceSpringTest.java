@@ -6,7 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
@@ -52,7 +52,7 @@ class AuswertungSpitzenstundeServiceSpringTest {
     void mapToZaehldatum() {
         final Zeitintervall spitzenstunde = new Zeitintervall();
         spitzenstunde.setZaehlungId(UUID.randomUUID());
-        spitzenstunde.setFahrbeziehungId(UUID.randomUUID());
+        spitzenstunde.setBewegungsbeziehungId(UUID.randomUUID());
         spitzenstunde.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(7, 15)));
         spitzenstunde.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15)));
         spitzenstunde.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad());
@@ -64,10 +64,10 @@ class AuswertungSpitzenstundeServiceSpringTest {
         spitzenstunde.setFahrradfahrer(6);
         spitzenstunde.setFussgaenger(7);
         spitzenstunde.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(3);
-        spitzenstunde.setFahrbeziehung(fahrbeziehung);
+        spitzenstunde.setVerkehrsbeziehung(fahrbeziehung);
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.TEN);
         pkwEinheit.setLkw(BigDecimal.TEN);

@@ -4,8 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -86,9 +86,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(2), is(expected));
 
@@ -109,9 +109,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(4));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(result.size() / 2 - 2), is(expected));
 
@@ -132,9 +132,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(20));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(20));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(20));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() / 2 + 2), is(expected));
 
@@ -155,9 +155,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() - 2), is(expected));
     }
@@ -166,14 +166,14 @@ public class ZeitintervallZeitblockSummationUtilTest {
     public void getSummenForFahrbeziehung() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(2);
         fahrbeziehung.setNach(1);
 
         List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
                 "getSummenForFahrbeziehung",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Fahrbeziehung.class, Map.class),
+                ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
                 ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
                 List.class);
 
@@ -199,9 +199,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(2), is(expected));
 
@@ -222,22 +222,22 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(4));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(result.size() - 2), is(expected));
     }
 
     @Test
     public void getSumme() {
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
+        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
         fahrbeziehung.setVon(1);
         fahrbeziehung.setNach(2);
         Optional<Zeitintervall> result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
                 Optional.class);
 
@@ -258,16 +258,16 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(96));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(96));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(96));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, fahrbeziehung, zeitintervalle12),
                 Optional.class);
 
@@ -288,16 +288,16 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, fahrbeziehung, zeitintervalle12),
                 Optional.class);
 
@@ -318,16 +318,16 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, fahrbeziehung, zeitintervalle12.subList(0, 7)),
                 Optional.class);
 
@@ -348,16 +348,16 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
         result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
                 ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, fahrbeziehung, zeitintervalle12.subList(0, 16)),
                 Optional.class);
 

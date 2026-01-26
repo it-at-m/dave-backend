@@ -400,7 +400,7 @@ public class LadeZaehldatenService {
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         startUhrzeit,
                         endeUhrzeit,
