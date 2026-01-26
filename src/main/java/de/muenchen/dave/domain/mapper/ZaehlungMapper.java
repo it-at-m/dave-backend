@@ -54,11 +54,27 @@ public interface ZaehlungMapper {
             bean.setPunkt(dto.getPunkt());
         }
 
-        final var bewegungsbeziehungen = dto.getVerkehrsbeziehungen();
-        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            bean.setVerkehrsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung -> bean.getVerkehrsbeziehungen()
-                    .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung)));
+        if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
+            final var laengsverkehr = dto.getLaengsverkehr();
+            if (CollectionUtils.isNotEmpty(laengsverkehr)) {
+                bean.setLaengsverkehr(new ArrayList<>());
+                laengsverkehr.forEach(bearbeiteLaengsverkehrs -> bean.getLaengsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteLaengsverkehrs)));
+            }
+        } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
+            final var querungsverkehr = dto.getQuerungsverkehr();
+            if (CollectionUtils.isNotEmpty(querungsverkehr)) {
+                bean.setQuerungsverkehr(new ArrayList<>());
+                querungsverkehr.forEach(bearbeiteQuerungsverkehr -> bean.getQuerungsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteQuerungsverkehr)));
+            }
+        } else {
+            final var verkehrsbeziehungen = dto.getVerkehrsbeziehungen();
+            if (CollectionUtils.isNotEmpty(verkehrsbeziehungen)) {
+                bean.setVerkehrsbeziehungen(new ArrayList<>());
+                verkehrsbeziehungen.forEach(bearbeiteVerkehrsbeziehung -> bean.getVerkehrsbeziehungen()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteVerkehrsbeziehung)));
+            }
         }
 
         if (StringUtils.isNotEmpty(dto.getZaehlart())) {
@@ -83,11 +99,27 @@ public interface ZaehlungMapper {
     @AfterMapping
     default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, Zaehlung bean) {
 
-        final var bewegungsbeziehungen = bean.getVerkehrsbeziehungen();
-        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            dto.setVerkehrsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung -> dto.getVerkehrsbeziehungen()
-                    .add(new BewegungsbeziehungMapperImpl().beanBewegungsbeziehung2DtoBewegungsbeziehung(bewegungsbeziehung)));
+        if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
+            final var laengsverkehr = bean.getLaengsverkehr();
+            if (CollectionUtils.isNotEmpty(laengsverkehr)) {
+                dto.setLaengsverkehr(new ArrayList<>());
+                laengsverkehr.forEach(beanLaengsverkehrs -> dto.getLaengsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().bean2Dto(beanLaengsverkehrs)));
+            }
+        } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
+            final var querungsverkehr = bean.getQuerungsverkehr();
+            if (CollectionUtils.isNotEmpty(querungsverkehr)) {
+                dto.setQuerungsverkehr(new ArrayList<>());
+                querungsverkehr.forEach(beanQuerungsverkehr -> dto.getQuerungsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().bean2Dto(beanQuerungsverkehr)));
+            }
+        } else {
+            final var verkehrsbeziehungen = bean.getVerkehrsbeziehungen();
+            if (CollectionUtils.isNotEmpty(verkehrsbeziehungen)) {
+                dto.setVerkehrsbeziehungen(new ArrayList<>());
+                verkehrsbeziehungen.forEach(beanVerkehrsbeziehung -> dto.getVerkehrsbeziehungen()
+                        .add(new BewegungsbeziehungMapperImpl().bean2Dto(beanVerkehrsbeziehung)));
+            }
         }
     }
 
@@ -107,11 +139,27 @@ public interface ZaehlungMapper {
 
         bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
 
-        final var bewegungsbeziehungen = dto.getVerkehrsbeziehungen();
-        if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
-            bean.setVerkehrsbeziehungen(new ArrayList<>());
-            bewegungsbeziehungen.forEach(bewegungsbeziehung -> bean.getVerkehrsbeziehungen()
-                    .add(new BewegungsbeziehungMapperImpl().dtoBewegungsbeziehung2BeanBewegungsbeziehung(bewegungsbeziehung)));
+        if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
+            final var laengsverkehr = dto.getLaengsverkehr();
+            if (CollectionUtils.isNotEmpty(laengsverkehr)) {
+                bean.setLaengsverkehr(new ArrayList<>());
+                laengsverkehr.forEach(bearbeiteLaengsverkehr -> bean.getLaengsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteLaengsverkehr)));
+            }
+        } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
+            final var querungsverkehr = dto.getQuerungsverkehr();
+            if (CollectionUtils.isNotEmpty(querungsverkehr)) {
+                bean.setQuerungsverkehr(new ArrayList<>());
+                querungsverkehr.forEach(bearbeiteQuerungsverkehr -> bean.getQuerungsverkehr()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteQuerungsverkehr)));
+            }
+        } else {
+            final var verkehrsbeziehungen = dto.getVerkehrsbeziehungen();
+            if (CollectionUtils.isNotEmpty(verkehrsbeziehungen)) {
+                bean.setVerkehrsbeziehungen(new ArrayList<>());
+                verkehrsbeziehungen.forEach(bearbeiteVerkehrsbeziehung -> bean.getVerkehrsbeziehungen()
+                        .add(new BewegungsbeziehungMapperImpl().dto2Bean(bearbeiteVerkehrsbeziehung)));
+            }
         }
     }
 
