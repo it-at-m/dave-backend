@@ -16,7 +16,7 @@ public class FahrbeziehungenDTO {
     Set<Integer> vonKnotenarme;
 
     /**
-     * Je in die in die Kreuzung/in den Kreisverkehr führenden Knotenarm die möglichen Zielknotenarme.
+     * Je in die Kreuzung/in den Kreisverkehr führenden Knotenarm die möglichen Zielknotenarme.
      */
     Map<Integer, Set<Integer>> nachKnotenarme;
 
