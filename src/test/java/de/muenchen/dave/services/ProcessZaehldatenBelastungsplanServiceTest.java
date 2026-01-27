@@ -27,59 +27,59 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void isKreisverkehr() {
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
 
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(null);
-        fahrbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(null);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         boolean result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(fahrbeziehung),
+                ArrayUtils.toArray(verkehrsbeziehung),
                 Boolean.class);
         assertThat(result, is(true));
 
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(null);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(null);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(fahrbeziehung),
+                ArrayUtils.toArray(verkehrsbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
 
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(fahrbeziehung),
+                ArrayUtils.toArray(verkehrsbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
 
-        fahrbeziehung.setVon(null);
-        fahrbeziehung.setNach(null);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
+        verkehrsbeziehung.setVon(null);
+        verkehrsbeziehung.setNach(null);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "isKreisverkehr",
                 ProcessZaehldatenBelastungsplanService.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(fahrbeziehung),
+                ArrayUtils.toArray(verkehrsbeziehung),
                 Boolean.class);
         assertThat(result, is(false));
     }
 
     @Test
     public void getBelastunsplanData() {
-        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung = new HashMap<>();
-        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
 
         LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
         ladeZaehldatum.setPkw(1);
@@ -91,11 +91,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatum.setFussgaenger(7);
         ladeZaehldatum.setPkwEinheiten(100);
 
-        zaehldatenJeFahrbeziehung.put(fahrbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
 
-        fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(5);
-        fahrbeziehung.setNach(2);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(5);
+        verkehrsbeziehung.setNach(2);
 
         ladeZaehldatum = new LadeZaehldatumDTO();
         ladeZaehldatum.setPkw(10);
@@ -107,7 +107,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatum.setFussgaenger(70);
         ladeZaehldatum.setPkwEinheiten(1000);
 
-        zaehldatenJeFahrbeziehung.put(fahrbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
 
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.SV, Fahrzeug.GV, Fahrzeug.SV_P, Fahrzeug.GV_P, Fahrzeug.RAD, Fahrzeug.FUSS));
@@ -115,7 +115,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zaehlung.setKreisverkehr(false);
 
         final Map<Fahrzeug, BelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
-                .getBelastungsplanData(zaehldatenJeFahrbeziehung, zaehlung);
+                .getBelastungsplanData(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
         assertThat(belastungsplanData.get(Fahrzeug.KFZ).getValues()[1][2], is(BigDecimal.valueOf(15)));
         assertThat(belastungsplanData.get(Fahrzeug.SV).getValues()[1][2], is(BigDecimal.valueOf(9)));

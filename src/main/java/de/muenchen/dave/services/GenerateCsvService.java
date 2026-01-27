@@ -123,20 +123,20 @@ public class GenerateCsvService {
             metaData.append(metaObject.getZaehlung().getDatum());
         }
         metaData.append(SEMIKOLON);
-        final StringBuilder fahrbeziehung = new StringBuilder("Von: ");
+        final StringBuilder verkehrsbeziehung = new StringBuilder("Von: ");
         if (options.getVonKnotenarm() != null) {
-            fahrbeziehung.append(options.getVonKnotenarm());
+            verkehrsbeziehung.append(options.getVonKnotenarm());
         } else {
-            fahrbeziehung.append("Alle");
+            verkehrsbeziehung.append("Alle");
         }
-        fahrbeziehung.append(" - Nach: ");
+        verkehrsbeziehung.append(" - Nach: ");
         if (options.getNachKnotenarm() != null) {
-            fahrbeziehung.append(options.getNachKnotenarm());
+            verkehrsbeziehung.append(options.getNachKnotenarm());
         } else {
-            fahrbeziehung.append("Alle");
+            verkehrsbeziehung.append("Alle");
         }
 
-        metaData.append(fahrbeziehung);
+        metaData.append(verkehrsbeziehung);
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaData.append(SEMIKOLON);

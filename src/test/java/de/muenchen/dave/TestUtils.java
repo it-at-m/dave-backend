@@ -47,8 +47,8 @@ public final class TestUtils {
      *            Minuten erhöhten Startuhrzeit.
      * @param value Der Wert wird bei alle Fahrzeugklassen und den hochgerechneten Fahrzeugkategorien
      *            gesetzt.
-     * @param vonFahrbeziehung Die Nummer des Knotenarms
-     * @param nachFahrbeziehung Die Nummer des Knotenarms
+     * @param vonVerkehrsbeziehung Die Nummer des Knotenarms
+     * @param nachVerkehrsbeziehung Die Nummer des Knotenarms
      * @param fahrbewegungKreisverkehr Information ob {@link FahrbewegungKreisverkehr#HINEIN},
      *            {@link FahrbewegungKreisverkehr#HERAUS} und
      *            {@link FahrbewegungKreisverkehr#VORBEI}.
@@ -57,8 +57,8 @@ public final class TestUtils {
     public static Zeitintervall createZeitintervall(final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final Integer value,
-            final Integer vonFahrbeziehung,
-            final Integer nachFahrbeziehung,
+            final Integer vonVerkehrsbeziehung,
+            final Integer nachVerkehrsbeziehung,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr) {
         final Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zaehlungId);
@@ -81,8 +81,8 @@ public final class TestUtils {
         zeitintervall.getHochrechnung().setHochrechnungGv(ObjectUtils.isNotEmpty(value) ? BigDecimal.valueOf(value) : null);
         zeitintervall.getHochrechnung().setHochrechnungSv(ObjectUtils.isNotEmpty(value) ? BigDecimal.valueOf(value) : null);
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        zeitintervall.getVerkehrsbeziehung().setVon(vonFahrbeziehung);
-        zeitintervall.getVerkehrsbeziehung().setNach(nachFahrbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setVon(vonVerkehrsbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setNach(nachVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(fahrbewegungKreisverkehr);
         return zeitintervall;
     }

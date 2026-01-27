@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 class ZeitintervallKIUtilTest {
 
     @Test
-    void testGroupZeitintervalleByFahrbeziehung() {
+    void testGroupZeitintervalleByVerkehrsbeziehung() {
         // Arrange
         Zeitintervall zeitintervall1 = new Zeitintervall();
         zeitintervall1.setBewegungsbeziehungId(UUID.randomUUID());
@@ -35,7 +35,7 @@ class ZeitintervallKIUtilTest {
 
         // Act
         List<List<Zeitintervall>> result = ZeitintervallKIUtil
-                .groupZeitintervalleByFahrbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
+                .groupZeitintervalleByVerkehrsbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
         result.sort(Comparator.comparingInt(List::size));
 
         // Assert
@@ -68,21 +68,21 @@ class ZeitintervallKIUtilTest {
 
         List<KIPredictionResult> predictionResults = Arrays.asList(predictionResult1, predictionResult2);
 
-        Verkehrsbeziehung fahrbeziehung1 = new Verkehrsbeziehung();
-        fahrbeziehung1.setVon(1);
-        fahrbeziehung1.setVon(2);
-        Verkehrsbeziehung fahrbeziehung2 = new Verkehrsbeziehung();
-        fahrbeziehung2.setVon(2);
-        fahrbeziehung2.setVon(3);
+        Verkehrsbeziehung verkehrsbeziehung1 = new Verkehrsbeziehung();
+        verkehrsbeziehung1.setVon(1);
+        verkehrsbeziehung1.setVon(2);
+        Verkehrsbeziehung verkehrsbeziehung2 = new Verkehrsbeziehung();
+        verkehrsbeziehung2.setVon(2);
+        verkehrsbeziehung2.setVon(3);
 
         Zeitintervall zeitintervall1 = new Zeitintervall();
         zeitintervall1.setZaehlungId(UUID.randomUUID());
         zeitintervall1.setBewegungsbeziehungId(UUID.randomUUID());
-        zeitintervall1.setVerkehrsbeziehung(fahrbeziehung1);
+        zeitintervall1.setVerkehrsbeziehung(verkehrsbeziehung1);
         Zeitintervall zeitintervall2 = new Zeitintervall();
         zeitintervall2.setZaehlungId(zeitintervall1.getZaehlungId());
         zeitintervall2.setBewegungsbeziehungId(UUID.randomUUID());
-        zeitintervall2.setVerkehrsbeziehung(fahrbeziehung2);
+        zeitintervall2.setVerkehrsbeziehung(verkehrsbeziehung2);
 
         List<Zeitintervall> zeitintervalle = Arrays.asList(zeitintervall1, zeitintervall2);
 

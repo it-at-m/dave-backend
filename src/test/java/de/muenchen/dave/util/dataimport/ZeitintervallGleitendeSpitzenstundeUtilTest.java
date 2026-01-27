@@ -252,22 +252,22 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
     }
 
     @Test
-    public void getGleitendeSpitzenstundenForFahrbeziehung() {
+    public void getGleitendeSpitzenstundenForVerkehrsbeziehung() {
         zeitintervalle12.get(8).setPkw(2);
 
         zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
 
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
 
         List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getGleitendeSpitzenstundenForFahrbeziehung",
+                "getGleitendeSpitzenstundenForVerkehrsbeziehung",
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
-                ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
+                ArrayUtils.toArray(verkehrsbeziehung, zeitintervalleGroupedByIntervall),
                 List.class);
 
         assertThat(result.size(), is(18));
@@ -410,15 +410,15 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         // Change Zeitintervall 04:00 - 04:15 to provoke Spitzenstunde from 03:15 - 04:15
         zeitintervalle12.get(16).setFussgaenger(4);
 
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
 
         ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss result = TestUtils.privateStaticMethodCall(
                 "berechneGleitendeSpitzenstunde",
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12),
                 ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss.class);
 
         Zeitintervall expected = new Zeitintervall();

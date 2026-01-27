@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class PredictionFailedException extends Exception {
 
-    public static final String NO_FAHRBEZIEHUNGEN = "Outer list (Fahrbeziehungen) is empty";
+    public static final String NO_VERKEHRSBEZIEHUNGEN = "Outer list (Verkehrsbeziehungen) is empty";
     public static final String ONNX_INVALID_INPUT_DIMENSION = "ONNX invalid input dimension";
 
     public static final String ONNX_SESSION_CREATION_ERROR = "ONNX session could not be created";

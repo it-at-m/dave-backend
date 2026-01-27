@@ -347,7 +347,7 @@ public class FillPdfBeanService {
      * @param zaehlung Die im Frontend gewählte Zählung
      * @return chartTitle als String
      */
-    static String createChartTitleFahrbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
+    static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
             chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
@@ -722,7 +722,7 @@ public class FillPdfBeanService {
 
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
         gangliniePdf.setChart(chartAsBase64Png);
-        gangliniePdf.setChartTitle(createChartTitleFahrbeziehung(options, zaehlung));
+        gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
@@ -1097,7 +1097,7 @@ public class FillPdfBeanService {
 
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
 
-        datentabellePdf.setTableTitle(createChartTitleFahrbeziehung(options, zaehlung));
+        datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
 
         datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);

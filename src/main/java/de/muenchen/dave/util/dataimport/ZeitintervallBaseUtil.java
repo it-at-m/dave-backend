@@ -72,9 +72,9 @@ public final class ZeitintervallBaseUtil {
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final TypeZeitintervall type,
-            final Verkehrsbeziehung fahrbeziehung) {
+            final Verkehrsbeziehung verkehrsbeziehung) {
         final Zeitintervall zeitintervall = createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
-        zeitintervall.setVerkehrsbeziehung(fahrbeziehung);
+        zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
         return zeitintervall;
     }
 
@@ -113,31 +113,32 @@ public final class ZeitintervallBaseUtil {
     }
 
     /**
-     * @param zeitintervalle Die Zeitintervalle zur extraktion der Fahrbeziehungen.
-     * @return Die möglichen Fahrbeziehungen aller Zeitintervalle.
+     * @param zeitintervalle Die Zeitintervalle zur extraktion der Verkehrsbeziehungen.
+     * @return Die möglichen Verkehrsbeziehungen aller Zeitintervalle.
      */
-    public static Set<Verkehrsbeziehung> getAllPossibleFahrbeziehungen(List<Zeitintervall> zeitintervalle) {
+    public static Set<Verkehrsbeziehung> getAllPossibleVerkehrsbeziehungen(List<Zeitintervall> zeitintervalle) {
         return zeitintervalle.stream()
                 .map(Zeitintervall::getVerkehrsbeziehung)
                 .collect(Collectors.toSet());
     }
 
     /**
-     * @param fahrbeziehung Die {@link Verkehrsbeziehung} der betroffenen Zeitintervalle.
+     * @param verkehrsbeziehung Die {@link Verkehrsbeziehung} der betroffenen Zeitintervalle.
      * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall}
      *            gruppierten {@link Zeitintervall}e.
      * @return Alle {@link Zeitintervall}e welche die {@link Verkehrsbeziehung} besitzen.
      */
-    public static List<Zeitintervall> getZeitintervalleForFahrbeziehung(final Verkehrsbeziehung fahrbeziehung,
+    public static List<Zeitintervall> getZeitintervalleForVerkehrsbeziehung(
+            final Verkehrsbeziehung verkehrsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
-        final List<Zeitintervall> zeitintervalleForFahrbeziehung = new ArrayList<>();
+        final List<Zeitintervall> zeitintervalleForVerkehrsbeziehung = new ArrayList<>();
         zeitintervalleGroupedByIntervall.keySet().forEach(intervall -> {
             zeitintervalleGroupedByIntervall.get(intervall).stream()
-                    .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().equals(fahrbeziehung))
+                    .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().equals(verkehrsbeziehung))
                     .findFirst()
-                    .ifPresent(zeitintervalleForFahrbeziehung::add);
+                    .ifPresent(zeitintervalleForVerkehrsbeziehung::add);
         });
-        return zeitintervalleForFahrbeziehung;
+        return zeitintervalleForVerkehrsbeziehung;
     }
 
     public static boolean isZeitintervallWithinZeitblock(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {

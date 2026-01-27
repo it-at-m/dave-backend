@@ -55,8 +55,6 @@ public class LadeZaehlungDTO {
 
     List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
-    FahrbeziehungenDTO auswaehlbareFahrbeziehungen;
-
     ZeitauswahlDTO zeitauswahl;
 
 }

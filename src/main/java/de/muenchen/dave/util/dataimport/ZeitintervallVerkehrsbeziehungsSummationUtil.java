@@ -14,10 +14,11 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
- * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung entsprechend den Fahrbeziehungen.
+ * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung entsprechend den
+ * Verkehrsbeziehungen.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ZeitintervallFahrbeziehungsSummationUtil {
+public final class ZeitintervallVerkehrsbeziehungsSummationUtil {
 
     /**
      * Diese Methode erstellt die Grundlegende Datenstruktur um Summierung über Zeitintervalle zu
@@ -28,29 +29,30 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      */
     private static Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> createDataStructureForSummation(final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> filteredZeitintervalle = zeitintervalle.stream()
-                .filter(ZeitintervallFahrbeziehungsSummationUtil::filterValidFahrbeziehung)
+                .filter(ZeitintervallVerkehrsbeziehungsSummationUtil::filterValidVerkehrsbeziehung)
                 .collect(Collectors.toList());
         return ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(filteredZeitintervalle);
     }
 
     /**
-     * Methode prüft auf Basis der im {@link Zeitintervall} hinterlegten Fahrbeziehungen, ob in Methode
-     * {@link ZeitintervallFahrbeziehungsSummationUtil#createDataStructureForSummation(List)} eine
+     * Methode prüft auf Basis der im {@link Zeitintervall} hinterlegten Verkehrsbeziehung, ob in
+     * Methode
+     * {@link ZeitintervallVerkehrsbeziehungsSummationUtil#createDataStructureForSummation(List)} eine
      * Filterung durchgeführt werden soll.
      *
      * @param zeitintervall Ein {@link Zeitintervall} der geprüft werden soll.
      * @return true wenn die Verkehrsbeziehung "von" sowie Verkehrsbeziehung "nach" bzw. die
      *         "fahrbewegungKreisverkehr" nicht "null" ist.
      */
-    private static boolean filterValidFahrbeziehung(final Zeitintervall zeitintervall) {
-        final Verkehrsbeziehung fahrbeziehung = zeitintervall.getVerkehrsbeziehung();
-        return ObjectUtils.isNotEmpty(fahrbeziehung.getVon())
-                && (ObjectUtils.isNotEmpty(fahrbeziehung.getNach())
-                        || ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr()));
+    private static boolean filterValidVerkehrsbeziehung(final Zeitintervall zeitintervall) {
+        final Verkehrsbeziehung verkehrsbeziehung = zeitintervall.getVerkehrsbeziehung();
+        return ObjectUtils.isNotEmpty(verkehrsbeziehung.getVon())
+                && (ObjectUtils.isNotEmpty(verkehrsbeziehung.getNach())
+                        || ObjectUtils.isNotEmpty(verkehrsbeziehung.getFahrbewegungKreisverkehr()));
     }
 
     /**
-     * Summiert die Fahrbeziehungen im Parameter über die {@link Zeitintervall}e.
+     * Summiert die Verkehrsbeziehungen im Parameter über die {@link Zeitintervall}e.
      * <p>
      * Beispiel:
      * <p>
@@ -60,39 +62,40 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * - 00:15-00:30 von 2 nach 1
      * - 00:15-00:30 von 2 nach 3
      * <p>
-     * Ergebnis der Methode ist Summe über Fahrbeziehungen:
+     * Ergebnis der Methode ist Summe über Verkehrsbeziehungen:
      * - 00:15-00:30 von 1 nach alle = Summe über 1 nach 2 und 1 nach 3
      * - 00:15-00:30 von 2 nach alle = Summe über 2 nach 1 und 2 nach 3
      * - 00:15-00:30 von alle nach alle = Summe über 1 nach 2, 1 nach 3, 2 nach 1 sowie 2 nach 3
      *
-     * @param zeitintervalle Die Zeitintervalle für bestimmte Fahrbeziehungen
+     * @param zeitintervalle Die Zeitintervalle für bestimmte Verkehrsbeziehungen
      * @return Die summierten Zeitintervalle.
      */
-    public static List<Zeitintervall> getUeberFahrbeziehungSummierteZeitintervalle(final List<Zeitintervall> zeitintervalle) {
+    public static List<Zeitintervall> getUeberVerkehrsbeziehungSummierteZeitintervalle(final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = createDataStructureForSummation(zeitintervalle);
-        final List<Zeitintervall> ueberFahrbeziehungSummierteZeitintervalle = getUeberFahrbeziehungSummierteZeitintervalle(zeitintervalleGroupedByIntervall);
-        return ueberFahrbeziehungSummierteZeitintervalle;
+        final List<Zeitintervall> ueberVerkehrsbeziehungSummierteZeitintervalle = getUeberVerkehrsbeziehungSummierteZeitintervalle(
+                zeitintervalleGroupedByIntervall);
+        return ueberVerkehrsbeziehungSummierteZeitintervalle;
     }
 
-    private static List<Zeitintervall> getUeberFahrbeziehungSummierteZeitintervalle(
+    private static List<Zeitintervall> getUeberVerkehrsbeziehungSummierteZeitintervalle(
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> summierteZeitintervalle = new ArrayList<>();
         zeitintervalleGroupedByIntervall.keySet().forEach(intervall -> {
             final List<Zeitintervall> zeitintervallePerIntervall = zeitintervalleGroupedByIntervall.get(intervall);
             // Alle nach alle
             summierteZeitintervalle.add(
-                    getSummedZeitintervallForAllFahrbeziehungen(intervall, zeitintervallePerIntervall));
+                    getSummedZeitintervallForAllVerkehrsbeziehungen(intervall, zeitintervallePerIntervall));
             // X nach alle
-            final Set<Integer> allVonFahrbeziehungen = getAllVonFahrbeziehungen(zeitintervallePerIntervall);
-            allVonFahrbeziehungen.forEach(vonFahrbeziehung -> {
+            final Set<Integer> allVonVerkehrsbeziehungen = getAllVonVerkehrsbeziehungen(zeitintervallePerIntervall);
+            allVonVerkehrsbeziehungen.forEach(vonVerkehrsbeziehung -> {
                 summierteZeitintervalle.add(
-                        getSummedZeitintervallForCertainVonFahrbeziehungen(vonFahrbeziehung, intervall, zeitintervallePerIntervall));
+                        getSummedZeitintervallForCertainVonVerkehrsbeziehungen(vonVerkehrsbeziehung, intervall, zeitintervallePerIntervall));
             });
             // Alle nach X
-            final Set<Integer> allNachFahrbeziehungen = getAllNachFahrbeziehungen(zeitintervallePerIntervall);
-            allNachFahrbeziehungen.forEach(nachFahrbeziehung -> {
+            final Set<Integer> allNachVerkehrsbeziehungen = getAllNachVerkehrsbeziehungen(zeitintervallePerIntervall);
+            allNachVerkehrsbeziehungen.forEach(nachVerkehrsbeziehung -> {
                 summierteZeitintervalle.add(
-                        getSummedZeitintervallForCertainNachFahrbeziehungen(nachFahrbeziehung, intervall, zeitintervallePerIntervall));
+                        getSummedZeitintervallForCertainNachVerkehrsbeziehungen(nachVerkehrsbeziehung, intervall, zeitintervallePerIntervall));
             });
         });
         summierteZeitintervalle
@@ -107,7 +110,8 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * @param zeitintervalle Die Liste der Zeitintervalle zum summiern.
      * @return Der Zeitintervall mit den Summen je Fahrzeugklasse.
      */
-    private static Zeitintervall getSummedZeitintervallForAllFahrbeziehungen(final ZeitintervallBaseUtil.Intervall intervall,
+    private static Zeitintervall getSummedZeitintervallForAllVerkehrsbeziehungen(
+            final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
         final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalle);
         zeitintervall.getVerkehrsbeziehung().setVon(null);
@@ -120,23 +124,24 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * Diese Methode bildet aus der im Parameter zeitintervalle übergebenen Liste die Summe je
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
      * {@link Zeitintervall}e gebildet, welche die entsprechende "von"-Verkehrsbeziehung aus dem
-     * Parameter
-     * vonFahrbeziehung gesetzt haben.
+     * Parameter vonVerkehrsbeziehung gesetzt haben.
      *
-     * @param vonFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
+     * @param vonVerkehrsbeziehung Der Verkehrsbeziehungsparameter für welche die Summierung getätigt
+     *            werden
      *            soll.
      * @param intervall Der Intervall mit Anfangs und Endzeitpunkt für den Ergebniszeitintervall.
      * @param zeitintervalle Die Liste der Zeitintervalle zum summieren.
      * @return Der Zeitintervall mit den Summen je Fahrzeugklasse.
      */
-    private static Zeitintervall getSummedZeitintervallForCertainVonFahrbeziehungen(final Integer vonFahrbeziehung,
+    private static Zeitintervall getSummedZeitintervallForCertainVonVerkehrsbeziehungen(
+            final Integer vonVerkehrsbeziehung,
             final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
-        final List<Zeitintervall> zeitintervalleCertainFahrbeziehung = zeitintervalle.stream()
-                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getVon().equals(vonFahrbeziehung))
+        final List<Zeitintervall> zeitintervalleCertainVerkehrsbeziehung = zeitintervalle.stream()
+                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getVon().equals(vonVerkehrsbeziehung))
                 .collect(Collectors.toList());
-        final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainFahrbeziehung);
-        zeitintervall.getVerkehrsbeziehung().setVon(vonFahrbeziehung);
+        final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainVerkehrsbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setVon(vonVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setNach(null);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         return zeitintervall;
@@ -147,24 +152,26 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      * Fahrzeugkategorie. Die Summe wird nur für {@link}
      * {@link Zeitintervall}e gebildet, welche die entsprechende "nach"-Verkehrsbeziehung aus dem
      * Parameter
-     * nachFahrbeziehung gesetzt haben.
+     * nachVerkehrsbeziehung gesetzt haben.
      *
-     * @param nachFahrbeziehung Der Fahrbeziehungsparameter für welche die Summierung getätigt werden
+     * @param nachVerkehrsbeziehung Der Verkehrsbeziehungsparameter für welche die Summierung getätigt
+     *            werden
      *            soll.
      * @param intervall Der Intervall mit Anfangs und Endzeitpunkt für den Ergebniszeitintervall.
      * @param zeitintervalle Die Liste der Zeitintervalle zum summieren.
      * @return Der Zeitintervall mit den Summen je Fahrzeugklasse.
      */
-    private static Zeitintervall getSummedZeitintervallForCertainNachFahrbeziehungen(final Integer nachFahrbeziehung,
+    private static Zeitintervall getSummedZeitintervallForCertainNachVerkehrsbeziehungen(
+            final Integer nachVerkehrsbeziehung,
             final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
-        final List<Zeitintervall> zeitintervalleCertainFahrbeziehung = zeitintervalle.stream()
-                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getNach().equals(nachFahrbeziehung)
+        final List<Zeitintervall> zeitintervalleCertainVerkehrsbeziehung = zeitintervalle.stream()
+                .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().getNach().equals(nachVerkehrsbeziehung)
                         && ObjectUtils.isEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()))
                 .collect(Collectors.toList());
-        final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainFahrbeziehung);
+        final Zeitintervall zeitintervall = getSummedZeitintervallOverAllGivenZeitintervalle(intervall, zeitintervalleCertainVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setVon(null);
-        zeitintervall.getVerkehrsbeziehung().setNach(nachFahrbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setNach(nachVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         return zeitintervall;
     }
@@ -178,46 +185,46 @@ public final class ZeitintervallFahrbeziehungsSummationUtil {
      */
     private static Zeitintervall getSummedZeitintervallOverAllGivenZeitintervalle(final ZeitintervallBaseUtil.Intervall intervall,
             final List<Zeitintervall> zeitintervalle) {
-        final Zeitintervall zeitintervallAllFahrbeziehungen = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
+        final Zeitintervall zeitintervallAllVerkehrsbeziehungen = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervalle.get(0).getZaehlungId(),
                 intervall.getStartUhrzeit(),
                 intervall.getEndeUhrzeit(),
                 TypeZeitintervall.STUNDE_VIERTEL);
         return zeitintervalle.stream()
                 .reduce(
-                        zeitintervallAllFahrbeziehungen,
+                        zeitintervallAllVerkehrsbeziehungen,
                         ZeitintervallBaseUtil::summation);
     }
 
     /**
-     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "von"-Fahrbeziehugen
+     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "von"-Verkehrsbeziehungen
      * extrahiert.
      *
-     * @param zeitintervalle Die Zeitintervalle zur Fahrbeziehungsextraktion.
-     * @return Alle "von"-Fahrbeziehungen aus den Zeitintervallen.
+     * @param zeitintervalle Die Zeitintervalle zur Verkehrsbeziehungsextraktion.
+     * @return Alle "von"-Verkehrsbeziehungen aus den Zeitintervallen.
      */
-    private static Set<Integer> getAllVonFahrbeziehungen(final List<Zeitintervall> zeitintervalle) {
-        final Set<Integer> allVonFahrbeziehungen = new HashSet<>();
+    private static Set<Integer> getAllVonVerkehrsbeziehungen(final List<Zeitintervall> zeitintervalle) {
+        final Set<Integer> allVonVerkehrsbeziehungen = new HashSet<>();
         zeitintervalle.stream()
                 .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getVon()))
-                .forEach(zeitintervall -> allVonFahrbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getVon()));
-        return allVonFahrbeziehungen;
+                .forEach(zeitintervall -> allVonVerkehrsbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getVon()));
+        return allVonVerkehrsbeziehungen;
     }
 
     /**
-     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "nach"-Fahrbeziehugen
+     * Hier werden aus der Liste der übergebenen {@link Zeitintervall}e alle "nach"-Verkehrsbeziehungen
      * extrahiert.
      *
-     * @param zeitintervalle Die Zeitintervalle zur Fahrbeziehungsextraktion.
-     * @return Alle "nach"-Fahrbeziehungen aus den Zeitintervallen.
+     * @param zeitintervalle Die Zeitintervalle zur Verkehrsbeziehungsextraktion.
+     * @return Alle "nach"-Verkehrsbeziehungen aus den Zeitintervallen.
      */
-    private static Set<Integer> getAllNachFahrbeziehungen(final List<Zeitintervall> zeitintervalle) {
-        final Set<Integer> allNachFahrbeziehungen = new HashSet<>();
+    private static Set<Integer> getAllNachVerkehrsbeziehungen(final List<Zeitintervall> zeitintervalle) {
+        final Set<Integer> allNachVerkehrsbeziehungen = new HashSet<>();
         zeitintervalle.stream()
                 .filter(zeitintervall -> ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
                         && ObjectUtils.isEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()))
-                .forEach(zeitintervall -> allNachFahrbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getNach()));
-        return allNachFahrbeziehungen;
+                .forEach(zeitintervall -> allNachVerkehrsbeziehungen.add(zeitintervall.getVerkehrsbeziehung().getNach()));
+        return allNachVerkehrsbeziehungen;
     }
 
 }

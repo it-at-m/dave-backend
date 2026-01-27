@@ -112,7 +112,7 @@ public class AuswertungSpitzenstundeService {
      *            darf.
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
      *            Kreisverkehr extrahiert werden sollen, anderfalls false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
@@ -125,12 +125,12 @@ public class AuswertungSpitzenstundeService {
             final String zeitauswahl,
             final boolean kreisverkehr) throws IncorrectZeitauswahlException, DataNotFoundException {
         final TypeZeitintervall typeSpitzenstunde = getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        return extractSpitzenstundenAllFahrbeziehungen(
+        return extractSpitzenstundenAllVerkehrsbeziehungen(
                 zaehlung.getId(),
                 zeitblock,
                 typeSpitzenstunde,
                 kreisverkehr).stream()
-                .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
+                .map(spStdVerkehrsbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdVerkehrsbeziehung, zaehlung.getPkwEinheit()))
                 .collect(Collectors.toList());
     }
 
@@ -145,15 +145,16 @@ public class AuswertungSpitzenstundeService {
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
      *            Kreisverkehr extrahiert werden sollen, anderfalls
      *            false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws DataNotFoundException falls keine Spitzenstunde gefunden wurde.
      */
-    public List<Zeitintervall> extractSpitzenstundenAllFahrbeziehungen(final String zaehlungId,
+    public List<Zeitintervall> extractSpitzenstundenAllVerkehrsbeziehungen(
+            final String zaehlungId,
             final Zeitblock zeitblock,
             final TypeZeitintervall typeSpitzenstunde,
             final boolean kreisverkehr) throws DataNotFoundException {
         final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
-        // Extrahieren der Spitzenstunde der Zählung über alle Fahrbeziehungen.
+        // Extrahieren der Spitzenstunde der Zählung über alle Verkehrsbeziehungen.
         final Zeitintervall spitzenstunde = zeitintervallRepository
                 .findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
                         UUID.fromString(zaehlungId),

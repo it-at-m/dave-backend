@@ -64,10 +64,10 @@ class AuswertungSpitzenstundeServiceSpringTest {
         spitzenstunde.setFahrradfahrer(6);
         spitzenstunde.setFussgaenger(7);
         spitzenstunde.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
-        spitzenstunde.setVerkehrsbeziehung(fahrbeziehung);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
+        spitzenstunde.setVerkehrsbeziehung(verkehrsbeziehung);
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.TEN);
         pkwEinheit.setLkw(BigDecimal.TEN);

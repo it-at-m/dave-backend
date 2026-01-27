@@ -25,7 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ZeitintervallFahrbeziehungsSummationUtilTest {
+public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
     private List<Zeitintervall> zeitintervalle;
 
@@ -109,7 +109,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     public void createDataStructureForSummation() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result = TestUtils.privateStaticMethodCall(
                 "createDataStructureForSummation",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Map.class);
@@ -129,7 +129,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void filterValidFahrbeziehung() {
+    public void filterValidVerkehrsbeziehung() {
         Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
 
@@ -138,8 +138,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(2);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         boolean result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -150,8 +150,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(null);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -162,8 +162,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(null);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -174,8 +174,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(null);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -186,8 +186,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -198,8 +198,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(null);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -210,8 +210,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
-                "filterValidFahrbeziehung",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "filterValidVerkehrsbeziehung",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -219,12 +219,12 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getUeberFahrbeziehungSummierteZeitintervalleList() {
-        final List<Zeitintervall> result = ZeitintervallFahrbeziehungsSummationUtil.getUeberFahrbeziehungSummierteZeitintervalle(zeitintervalle);
+    public void getUeberVerkehrsbeziehungSummierteZeitintervalleList() {
+        final List<Zeitintervall> result = ZeitintervallVerkehrsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
 
         final List<Zeitintervall> expected = new ArrayList<>();
 
-        // Fahrbeziehungen ab 10:30: Alle nach alle
+        // Verkehrsbeziehungen ab 10:30: Alle nach alle
         Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -245,7 +245,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 1 nach alle
+        // Verkehrsbeziehungen ab 10:30: 1 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -267,7 +267,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 2 nach alle
+        // Verkehrsbeziehungen ab 10:30: 2 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -289,7 +289,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 3 nach alle
+        // Verkehrsbeziehungen ab 10:30: 3 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -311,7 +311,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: Alle nach alle
+        // Verkehrsbeziehungen ab 10:45: Alle nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -332,7 +332,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 1 nach alle
+        // Verkehrsbeziehungen ab 10:45: 1 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -354,7 +354,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 2 nach alle
+        // Verkehrsbeziehungen ab 10:45: 2 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -376,7 +376,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 3 nach alle
+        // Verkehrsbeziehungen ab 10:45: 3 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -398,7 +398,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 1
+        // Verkehrsbeziehungen ab 10:30: alle nach 1
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -420,7 +420,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 2
+        // Verkehrsbeziehungen ab 10:30: alle nach 2
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -442,7 +442,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 3
+        // Verkehrsbeziehungen ab 10:30: alle nach 3
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -464,7 +464,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 1
+        // Verkehrsbeziehungen ab 10:45: alle nach 1
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -486,7 +486,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 2
+        // Verkehrsbeziehungen ab 10:45: alle nach 2
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -508,7 +508,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 3
+        // Verkehrsbeziehungen ab 10:45: alle nach 3
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -538,7 +538,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getUeberFahrbeziehungSummierteZeitintervalleMap() {
+    public void getUeberVerkehrsbeziehungSummierteZeitintervalleMap() {
         ZeitintervallBaseUtil.Intervall intervall1030 = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -550,15 +550,15 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervalleGroupedByIntervall.put(intervall1045, zeitintervalle.subList(5, 10));
 
         final List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getUeberFahrbeziehungSummierteZeitintervalle",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getUeberVerkehrsbeziehungSummierteZeitintervalle",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Map.class),
                 ArrayUtils.toArray(zeitintervalleGroupedByIntervall),
                 List.class);
 
         final List<Zeitintervall> expected = new ArrayList<>();
 
-        // Fahrbeziehungen ab 10:45: Alle nach alle
+        // Verkehrsbeziehungen ab 10:45: Alle nach alle
         Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -579,7 +579,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 1 nach alle
+        // Verkehrsbeziehungen ab 10:45: 1 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -601,7 +601,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 2 nach alle
+        // Verkehrsbeziehungen ab 10:45: 2 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -623,7 +623,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: 3 nach alle
+        // Verkehrsbeziehungen ab 10:45: 3 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -645,7 +645,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: Alle nach alle
+        // Verkehrsbeziehungen ab 10:30: Alle nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -666,7 +666,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 1 nach alle
+        // Verkehrsbeziehungen ab 10:30: 1 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -688,7 +688,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 2 nach alle
+        // Verkehrsbeziehungen ab 10:30: 2 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -710,7 +710,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: 3 nach alle
+        // Verkehrsbeziehungen ab 10:30: 3 nach alle
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -732,7 +732,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setVon(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 1
+        // Verkehrsbeziehungen ab 10:30: alle nach 1
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -754,7 +754,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 2
+        // Verkehrsbeziehungen ab 10:30: alle nach 2
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -776,7 +776,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:30: alle nach 3
+        // Verkehrsbeziehungen ab 10:30: alle nach 3
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
@@ -798,7 +798,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(3);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 1
+        // Verkehrsbeziehungen ab 10:45: alle nach 1
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -820,7 +820,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(1);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 2
+        // Verkehrsbeziehungen ab 10:45: alle nach 2
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -842,7 +842,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setNach(2);
         expected.add(zeitintervall);
 
-        // Fahrbeziehungen ab 10:45: alle nach 3
+        // Verkehrsbeziehungen ab 10:45: alle nach 3
         zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zeitintervalle.get(zeitintervalle.size() - 1).getZaehlungId());
         zeitintervall.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
@@ -871,14 +871,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getSummedZeitintervallForAllFahrbeziehungen() {
+    public void getSummedZeitintervallForAllVerkehrsbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForAllFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForAllVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -908,8 +908,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForAllFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForAllVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -936,14 +936,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getSummedZeitintervallForCertainVonFahrbeziehungen() {
+    public void getSummedZeitintervallForCertainVonVerkehrsbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForCertainVonFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForCertainVonVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -974,8 +974,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForCertainVonFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForCertainVonVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1003,14 +1003,14 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getSummedZeitintervallForCertainNachFahrbeziehungen() {
+    public void getSummedZeitintervallForCertainNachVerkehrsbeziehungen() {
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 45)));
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForCertainNachFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForCertainNachVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -1041,8 +1041,8 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(11, 0)));
 
         result = TestUtils.privateStaticMethodCall(
-                "getSummedZeitintervallForCertainNachFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                "getSummedZeitintervallForCertainNachVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1077,7 +1077,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -1108,7 +1108,7 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1135,31 +1135,31 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
     }
 
     @Test
-    public void getAllVonFahrbeziehungen() {
-        Set<Integer> vonFahrbeziehungen = TestUtils.privateStaticMethodCall(
-                "getAllVonFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+    public void getAllVonVerkehrsbeziehungen() {
+        Set<Integer> vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
+                "getAllVonVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Set.class);
 
         Set<Integer> expected = new HashSet<>();
         expected.addAll(Arrays.asList(1, 2, 3));
-        assertThat(vonFahrbeziehungen, is(expected));
+        assertThat(vonVerkehrsbeziehungen, is(expected));
     }
 
     @Test
-    public void getAllNachFahrbeziehungen() {
-        Set<Integer> vonFahrbeziehungen = TestUtils.privateStaticMethodCall(
-                "getAllNachFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+    public void getAllNachVerkehrsbeziehungen() {
+        Set<Integer> vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
+                "getAllNachVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Set.class);
 
         Set<Integer> expected = new HashSet<>();
         expected.addAll(Arrays.asList(1, 2, 3));
-        assertThat(vonFahrbeziehungen, is(expected));
+        assertThat(vonVerkehrsbeziehungen, is(expected));
 
         final UUID zaehlungId = UUID.randomUUID();
         List<Zeitintervall> zeitintervallKreisverkehr = new ArrayList<>();
@@ -1185,16 +1185,16 @@ public class ZeitintervallFahrbeziehungsSummationUtilTest {
                 100,
                 FahrbewegungKreisverkehr.HERAUS));
 
-        vonFahrbeziehungen = TestUtils.privateStaticMethodCall(
-                "getAllNachFahrbeziehungen",
-                ZeitintervallFahrbeziehungsSummationUtil.class,
+        vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
+                "getAllNachVerkehrsbeziehungen",
+                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervallKreisverkehr),
                 Set.class);
 
         expected = new HashSet<>();
         expected.addAll(List.of(99));
-        assertThat(vonFahrbeziehungen, is(expected));
+        assertThat(vonVerkehrsbeziehungen, is(expected));
 
     }
 

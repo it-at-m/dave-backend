@@ -18,7 +18,7 @@ import lombok.Data;
  * Knotenarmen zu einem Knotenarm:
  * - {@link Verkehrsbeziehung#von} ist "null"
  * - {@link Verkehrsbeziehung#nach} mit Wert eingehenden Knotenarms gesetzt.. Erstreckt sich ein
- * Zeitintervall über alle Fahrbeziehungen:
+ * Zeitintervall über alle Verkehrsbeziehungen:
  * - {@link Verkehrsbeziehung#von} ist "null".
  * - {@link Verkehrsbeziehung#nach} ist "null".
  * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist "null".
@@ -27,7 +27,7 @@ import lombok.Data;
  * - {@link Verkehrsbeziehung#von} ist immer gesetzt und repräsentiert den Knotenarm
  * - {@link Verkehrsbeziehung#nach} ist "null".
  * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist mit Wert gesetzt. Erstreckt sich ein
- * Zeitintervall über alle Fahrbeziehungen:
+ * Zeitintervall über alle Verkehrsbeziehungen:
  * - {@link Verkehrsbeziehung#von} ist "null".
  * - {@link Verkehrsbeziehung#nach} ist "null".
  * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist "null".

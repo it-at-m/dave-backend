@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BearbeiteFahrbeziehungKreuzungDTORandomFactory {
+public class BearbeiteVerkehrsbeziehungKreuzungDTORandomFactory {
 
     public static BearbeiteVerkehrsbeziehungDTO getOne() {
         BearbeiteVerkehrsbeziehungDTO dto = new BearbeiteVerkehrsbeziehungDTO();

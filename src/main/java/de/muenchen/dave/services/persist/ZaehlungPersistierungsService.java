@@ -69,8 +69,7 @@ public abstract class ZaehlungPersistierungsService {
                     // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.checkZeitintervalleIfPlausible(zaehlung, this.getNumberOfNecessaryZeitintervalle(zaehlung));
                 } else if (zaehlung.getStatus().equalsIgnoreCase(Status.CORRECTION.name())) {
-                    // Wird eine Zaehlung korrigert, dann
-                    //      alle Zeitintervalle zu den Fahrbeziehungen löschen, die keine FahrbeziehungId enthalten
+                    // Wird eine Zaehlung korrigert, dann alle Zeitintervalle zu den Verkehrsbeziehungen löschen, die keine bewegungsbeziehungId enthalten
                     this.zeitintervallPersistierungsService.deleteZeitintervalleForCorrection(zaehlung.getId());
                     // Alle Filenames aus den Knotenarmen löschen
                     zaehlung.getKnotenarme().forEach(arm -> arm.setFilename(""));

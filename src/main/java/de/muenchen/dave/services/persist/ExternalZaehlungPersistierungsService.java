@@ -60,7 +60,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
 
-                // Fahrbeziehungen werden nach Zeitintervallen durchsucht
+                // Verkehrsbeziehungen werden nach Zeitintervallen durchsucht
                 if (CollectionUtils.isNotEmpty(zaehlungDto.getVerkehrsbeziehungen())) {
                     // Zeitintervalle persistieren
                     final var zeitintervalleToPersist = new ArrayList<Zeitintervall>();
@@ -81,7 +81,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                             .toList();
 
                     // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
-                    this.zeitintervallPersistierungsService.deleteZeitintervalleByFahrbeziehungId(bewegungsbeziehungIdsForZeitintervalleToDelete);
+                    this.zeitintervallPersistierungsService
+                            .deleteZeitintervalleByIdOfVerkehrsbeziehungQuerverkehrOrLaengsverkehr(bewegungsbeziehungIdsForZeitintervalleToDelete);
 
                     // Zeitintervall nur speichern, ohne was zu berechnen
                     if (CollectionUtils.isNotEmpty(zeitintervalleToPersist)) {
@@ -117,21 +118,21 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
-     * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
+     * @param verkehrsbeziehung zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
     public Zeitintervall setAdditionalDataToZeitintervall(
             final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
+            final ExternalVerkehrsbeziehungDTO verkehrsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
-        zeitintervall.setBewegungsbeziehungId(UUID.fromString(fahrbeziehungDto.getId()));
-        zeitintervall.setVerkehrsbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
+        zeitintervall.setBewegungsbeziehungId(UUID.fromString(verkehrsbeziehung.getId()));
+        zeitintervall.setVerkehrsbeziehung(this.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehung));
 
         zeitintervall.setHochrechnung(
                 this.createHochrechnung(
                         zeitintervall,
-                        fahrbeziehungDto.getHochrechnungsfaktor(),
+                        verkehrsbeziehung.getHochrechnungsfaktor(),
                         zaehlung.getZaehldauer()));
         return zeitintervall;
     }
@@ -140,26 +141,27 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen
+     * @param verkehrsbeziehungDto aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum
+     *            Anfügen
      *            an
      *            einen {@link Zeitintervall} erstellt werden soll.
      * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Verkehrsbeziehung mapToFahrbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO fahrbeziehungDto) {
-        final de.muenchen.dave.domain.Verkehrsbeziehung fahrbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
-        if (BooleanUtils.isTrue(fahrbeziehungDto.getIsKreuzung())) {
-            fahrbeziehung.setVon(fahrbeziehungDto.getVon());
-            fahrbeziehung.setNach(fahrbeziehungDto.getNach());
+    public de.muenchen.dave.domain.Verkehrsbeziehung mapToVerkehrsbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO verkehrsbeziehungDto) {
+        final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
+        if (BooleanUtils.isTrue(verkehrsbeziehungDto.getIsKreuzung())) {
+            verkehrsbeziehung.setVon(verkehrsbeziehungDto.getVon());
+            verkehrsbeziehung.setNach(verkehrsbeziehungDto.getNach());
         } else {
-            fahrbeziehung.setVon(fahrbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
+            verkehrsbeziehung.setVon(verkehrsbeziehungDto.getKnotenarm());
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(verkehrsbeziehungDto);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
-                fahrbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {
-                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", fahrbeziehungDto);
+                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", verkehrsbeziehungDto);
             }
         }
-        return fahrbeziehung;
+        return verkehrsbeziehung;
     }
 }

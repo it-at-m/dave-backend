@@ -95,15 +95,16 @@ public class AuswertungVisumService {
      * Diese Methode erstellt die Optionen zur extraktion der Daten in Methode
      * {@link AuswertungVisumService#ladeZaehldaten(VerkehrsbeziehungVisumDTO, Zaehlung)}.
      *
-     * @param fahrbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
+     * @param verkehrsbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
      * @param zaehlung zum setzen der Optionen.
      * @return die Optionen für die Datenextraktion.
      */
-    public static OptionsDTO createOptions(final VerkehrsbeziehungVisumDTO fahrbeziehungVisum,
+    public static OptionsDTO createOptions(
+            final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
             final Zaehlung zaehlung) {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
-        options.setVonKnotenarm(fahrbeziehungVisum.getVon());
-        options.setNachKnotenarm(fahrbeziehungVisum.getNach());
+        options.setVonKnotenarm(verkehrsbeziehungVisum.getVon());
+        options.setNachKnotenarm(verkehrsbeziehungVisum.getNach());
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         return options;
     }
@@ -114,7 +115,7 @@ public class AuswertungVisumService {
      * die Zahldaten an die Zählung angehangen. Für eine Kreuzung werden die Verkehrsbeziehung "x nach
      * alle"
      * und "alle nach x" betrachtet. Der Kreisverkehr
-     * beinhaltet nur die Fahrbeziehungen "x nach alle".
+     * beinhaltet nur die Verkehrsbeziehungen "x nach alle".
      *
      * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
@@ -136,7 +137,7 @@ public class AuswertungVisumService {
                             .filter(zaehlung -> isZaehlungRelevant(zaehlung, jahr.toString(), monatTextuell))
                             .parallel()
                             .map(zaehlung -> {
-                                // Extrahieren der Zähldaten für alle Fahrbeziehungen einer Zählung
+                                // Extrahieren der Zähldaten für alle Verkehrsbeziehungen einer Zählung
                                 final List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungenVisum = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen())
                                         .stream()
                                         .map(fz -> AuswertungVisumService.getVerkehrsbeziehungVisum(fz, zaehlung))

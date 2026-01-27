@@ -170,9 +170,9 @@ public class ProcessZaehldatenBelastungsplanService {
         return fff;
     }
 
-    private static boolean isKreisverkehr(final Verkehrsbeziehung fahrbeziehung) {
-        return ObjectUtils.isNotEmpty(fahrbeziehung.getFahrbewegungKreisverkehr())
-                && ObjectUtils.isEmpty(fahrbeziehung.getNach());
+    private static boolean isKreisverkehr(final Verkehrsbeziehung verkehrsbeziehung) {
+        return ObjectUtils.isNotEmpty(verkehrsbeziehung.getFahrbewegungKreisverkehr())
+                && ObjectUtils.isEmpty(verkehrsbeziehung.getNach());
     }
 
     /**
@@ -199,7 +199,7 @@ public class ProcessZaehldatenBelastungsplanService {
         return data;
     }
 
-    private static boolean isFahrbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
+    private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
         return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
                 || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
     }
@@ -368,7 +368,7 @@ public class ProcessZaehldatenBelastungsplanService {
             zeitintervalle = extractZeitintervalle(zaehlungId, options);
         }
         final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
-                .filter(ProcessZaehldatenBelastungsplanService::isFahrbeziehungNachOrKreisverkehrSet)
+                .filter(ProcessZaehldatenBelastungsplanService::isVerkehrsbeziehungNachOrKreisverkehrSet)
                 .collect(Collectors.toMap(
                         Zeitintervall::getVerkehrsbeziehung,
                         zeitintervall -> new TupelTageswertZaehldatum(
@@ -752,11 +752,11 @@ public class ProcessZaehldatenBelastungsplanService {
      * Liefert eine {@link BelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den
      * Belastungsplan
      *
-     * @param zaehldatenJeFahrbeziehung aus der DB ermittelten Werte
+     * @param zaehldatenJeVerkehrsbeziehung aus der DB ermittelten Werte
      * @param zaehlung wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
      * @return eine Map mit Key: Fahrzeug und Value:BelastungsplanDataDTO.
      */
-    public Map<Fahrzeug, BelastungsplanDataDTO> getBelastungsplanData(final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeFahrbeziehung,
+    public Map<Fahrzeug, BelastungsplanDataDTO> getBelastungsplanData(final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, BelastungsplanDataDTO> returnValue = new HashMap<>();
 
@@ -802,14 +802,14 @@ public class ProcessZaehldatenBelastungsplanService {
         belastungsplanDataGvProzent.setLabel(Fahrzeug.GV_P.getName());
         belastungsplanDataGvProzent.setValues(getEmptyDatastructure());
 
-        zaehldatenJeFahrbeziehung.forEach((fahrbeziehung, tupelTageswertZaehldatum) -> {
+        zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
             final int index1;
             final int index2;
-            if (isKreisverkehr(fahrbeziehung)) {
+            if (isKreisverkehr(verkehrsbeziehung)) {
                 // Von-Knotennummer - 1
-                index1 = fahrbeziehung.getVon() - 1;
+                index1 = verkehrsbeziehung.getVon() - 1;
                 // HINEIN = 0, VORBEI = 1, HERAUS = 2
-                switch (fahrbeziehung.getFahrbewegungKreisverkehr()) {
+                switch (verkehrsbeziehung.getFahrbewegungKreisverkehr()) {
                 case HINEIN:
                     index2 = 0;
                     break;
@@ -823,8 +823,8 @@ public class ProcessZaehldatenBelastungsplanService {
                     index2 = -1;
                 }
             } else {
-                index1 = fahrbeziehung.getVon() - 1;
-                index2 = fahrbeziehung.getNach() - 1;
+                index1 = verkehrsbeziehung.getVon() - 1;
+                index2 = verkehrsbeziehung.getNach() - 1;
             }
 
             belastungsplanDataKfz.getValues()[index1][index2] = tupelTageswertZaehldatum.getLadeZaehldatum().getKfz();

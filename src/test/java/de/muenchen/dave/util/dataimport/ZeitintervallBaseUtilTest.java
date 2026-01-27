@@ -163,41 +163,41 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void getAllPossibleFahrbeziehungen() {
-        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
+    public void getAllPossibleVerkehrsbeziehungen() {
+        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleVerkehrsbeziehungen(zeitintervalle);
 
         final Set<Verkehrsbeziehung> expected = new HashSet<>();
-        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(1);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(3);
-        fahrbeziehung.setNach(1);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(1);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(3);
+        verkehrsbeziehung.setNach(1);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
 
         assertThat(result, is(expected));
     }
 
     @Test
-    public void getZeitintervalleForFahrbeziehung() {
+    public void getZeitintervalleForVerkehrsbeziehung() {
         Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
@@ -206,12 +206,12 @@ class ZeitintervallBaseUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
         zeitintervalleGroupedByIntervall.put(intervall, zeitintervalle.subList(5, 10));
 
-        Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
 
-        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
         List<Zeitintervall> expected = Arrays.asList(
                 zeitintervalle.get(3),

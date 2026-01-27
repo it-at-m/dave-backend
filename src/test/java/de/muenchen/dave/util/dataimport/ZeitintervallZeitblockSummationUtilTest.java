@@ -163,18 +163,18 @@ public class ZeitintervallZeitblockSummationUtilTest {
     }
 
     @Test
-    public void getSummenForFahrbeziehung() {
+    public void getSummenForVerkehrsbeziehung() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(1);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(1);
 
         List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getSummenForFahrbeziehung",
+                "getSummenForVerkehrsbeziehung",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
-                ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
+                ArrayUtils.toArray(verkehrsbeziehung, zeitintervalleGroupedByIntervall),
                 List.class);
 
         // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
@@ -231,14 +231,14 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
     @Test
     public void getSumme() {
-        final Verkehrsbeziehung fahrbeziehung = new Verkehrsbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
         Optional<Zeitintervall> result = TestUtils.privateStaticMethodCall(
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12),
                 Optional.class);
 
         Zeitintervall expected = new Zeitintervall();
@@ -268,7 +268,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, fahrbeziehung, zeitintervalle12),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, verkehrsbeziehung, zeitintervalle12),
                 Optional.class);
 
         expected = new Zeitintervall();
@@ -298,7 +298,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, fahrbeziehung, zeitintervalle12),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, verkehrsbeziehung, zeitintervalle12),
                 Optional.class);
 
         expected = new Zeitintervall();
@@ -328,7 +328,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, fahrbeziehung, zeitintervalle12.subList(0, 7)),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, verkehrsbeziehung, zeitintervalle12.subList(0, 7)),
                 Optional.class);
 
         expected = new Zeitintervall();
@@ -358,7 +358,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
                 "getSumme",
                 ZeitintervallZeitblockSummationUtil.class,
                 ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, fahrbeziehung, zeitintervalle12.subList(0, 16)),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, verkehrsbeziehung, zeitintervalle12.subList(0, 16)),
                 Optional.class);
 
         assertThat(result.isPresent(), is(false));

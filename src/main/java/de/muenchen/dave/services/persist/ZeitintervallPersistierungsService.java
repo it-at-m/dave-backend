@@ -11,10 +11,10 @@ import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.KIService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallFahrbeziehungsSummationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import de.muenchen.dave.util.dataimport.ZeitintervallVerkehrsbeziehungsSummationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,10 +58,10 @@ public class ZeitintervallPersistierungsService {
      * - Die im Parameter übergebenen Zeitintervalle werden mit dem Merkmal
      * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
      * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über alle möglichen
-     * Fahrbeziehungspermutationen summiert.
-     * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+     * Verkehrsbeziehungspermutationen summiert.
+     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
      * Zeitintervalle werden die gleitenden Spitzenstunden ermittelt.
-     * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
      * Zeitintervalle werden die Summen für die einzelnen
      * {@link Zeitblock}e gebildet.
      *
@@ -87,28 +87,28 @@ public class ZeitintervallPersistierungsService {
 
         /*
          * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
-         * alle möglichen Fahrbeziehungspermutationen summiert.
+         * alle möglichen Verkehrsbeziehungspermutationen summiert.
          */
-        final List<Zeitintervall> summierteFahrbeziehungen = ZeitintervallFahrbeziehungsSummationUtil
-                .getUeberFahrbeziehungSummierteZeitintervalle(zeitintervalle);
+        final List<Zeitintervall> summierteVerkehrsbeziehungen = ZeitintervallVerkehrsbeziehungsSummationUtil
+                .getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
 
-        List<Zeitintervall> allPossibleFahrbeziehungen = new ArrayList<>();
-        allPossibleFahrbeziehungen.addAll(zeitintervalle);
-        allPossibleFahrbeziehungen.addAll(summierteFahrbeziehungen);
+        List<Zeitintervall> allPossibleVerkehrsbeziehungen = new ArrayList<>();
+        allPossibleVerkehrsbeziehungen.addAll(zeitintervalle);
+        allPossibleVerkehrsbeziehungen.addAll(summierteVerkehrsbeziehungen);
 
         /*
-         * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
          * Zeitintervalle
          * werden die gleitenden Spitzenstunden ermittelt.
          */
-        final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleFahrbeziehungen);
+        final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleVerkehrsbeziehungen);
 
         /*
-         * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
          * Zeitintervalle
          * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
          */
-        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleFahrbeziehungen);
+        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleVerkehrsbeziehungen);
 
         /*
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt, wenn der
@@ -116,14 +116,16 @@ public class ZeitintervallPersistierungsService {
          */
         final List<Zeitintervall> kiZeitintervalle = new ArrayList<>();
         if (kiAufbereitung) {
-            final List<List<Zeitintervall>> groupedZeitintervalleByFahrbeziehung = ZeitintervallKIUtil.groupZeitintervalleByFahrbeziehung(zeitintervalle);
+            final List<List<Zeitintervall>> groupedZeitintervalleByVerkehrsbeziehung = ZeitintervallKIUtil
+                    .groupZeitintervalleByVerkehrsbeziehung(zeitintervalle);
             try {
                 final KIPredictionResult[] predictionResults = kiService
-                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByFahrbeziehung);
-                final List<Zeitintervall> zeitintervallForEachFahrbeziehung = ZeitintervallKIUtil
-                        .extractZeitintervallForEachFahrbeziehung(groupedZeitintervalleByFahrbeziehung);
+                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByVerkehrsbeziehung);
+                final List<Zeitintervall> zeitintervallForEachVerkehrsbeziehung = ZeitintervallKIUtil
+                        .extractZeitintervallForEachVerkehrsbeziehung(groupedZeitintervalleByVerkehrsbeziehung);
                 kiZeitintervalle.addAll(
-                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(Arrays.asList(predictionResults), zeitintervallForEachFahrbeziehung));
+                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(Arrays.asList(predictionResults),
+                                zeitintervallForEachVerkehrsbeziehung));
                 ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
                 ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
             } catch (PredictionFailedException exception) {
@@ -132,7 +134,7 @@ public class ZeitintervallPersistierungsService {
         }
 
         List<Zeitintervall> allZeitintervalle = new ArrayList<>();
-        allZeitintervalle.addAll(allPossibleFahrbeziehungen);
+        allZeitintervalle.addAll(allPossibleVerkehrsbeziehungen);
         allZeitintervalle.addAll(gleitendeSpitzenstunden);
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
@@ -164,13 +166,13 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    public void deleteZeitintervalleByFahrbeziehungId(final List<String> fahrbeziehungIds) {
-        final var uuidsOfFahrbeziehungen = CollectionUtils
-                .emptyIfNull(fahrbeziehungIds)
+    public void deleteZeitintervalleByIdOfVerkehrsbeziehungQuerverkehrOrLaengsverkehr(final List<String> verkehrsbeziehungIds) {
+        final var uuidsOfVerkehrsbeziehungen = CollectionUtils
+                .emptyIfNull(verkehrsbeziehungIds)
                 .stream()
                 .map(UUID::fromString)
                 .toList();
-        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfFahrbeziehungen);
+        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfVerkehrsbeziehungen);
     }
 
     @Transactional

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProcessZaehldatenZeitreiheService {
 
-    private static final String FAHRBEZIEHUNG_NICHT_VORHANDEN = "\n(Fahrbez. nicht vorh.)";
+    private static final String VERKEHRSBEZIEHUNG_NICHT_VORHANDEN = "\n(Verkehrsbez. nicht vorh.)";
     private final ZeitintervallRepository zeitintervallRepository;
     private final ZaehlstelleIndexService indexService;
     private final ZeitauswahlService zeitauswahlService;
@@ -54,20 +54,20 @@ public class ProcessZaehldatenZeitreiheService {
      * @param options
      * @return
      */
-    private static boolean checkFahrbeziehungen(Zaehlung zaehlung, OptionsDTO options) {
-        List<Verkehrsbeziehung> verkehrsbeziehungList;
+    private static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
+        final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
             verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(fahrbeziehung -> fahrbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
                     .collect(Collectors.toList());
         } else {
             // Bei Kreuzung: Prüfe auf Von und Nach
             verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(fahrbeziehung -> fahrbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
-                    .filter(fahrbeziehung -> fahrbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
                     .collect(Collectors.toList());
         }
         return verkehrsbeziehungList.size() > 0;
@@ -197,7 +197,7 @@ public class ProcessZaehldatenZeitreiheService {
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
                 .forEach(zaehlung -> {
-                    if (checkFahrbeziehungen(zaehlung, options)) {
+                    if (checkVerkehrsbeziehungen(zaehlung, options)) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
@@ -226,7 +226,7 @@ public class ProcessZaehldatenZeitreiheService {
                         ladeZaehldatumDTO.setFussgaenger(0);
                         ladeZaehldatumDTO.setPkwEinheiten(0);
 
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + FAHRBEZIEHUNG_NICHT_VORHANDEN);
+                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
                     }
                 });
