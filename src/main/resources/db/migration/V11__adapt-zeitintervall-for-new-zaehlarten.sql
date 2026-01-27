@@ -2,7 +2,7 @@
 ALTER TABLE zeitintervall
     DROP CONSTRAINT zeitintervall_fahrbeziehung_fahrbewegungkreisverkehr_check;
 
-DROP INDEX IF EXISTS index_bewegungsbeziehung;
+DROP INDEX IF EXISTS index_fahrbeziehungid;
 
 DROP INDEX IF EXISTS index_combined_1;
 
