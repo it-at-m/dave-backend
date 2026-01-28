@@ -129,16 +129,20 @@ Um die Instanz so zu konfigurieren, dass sie für DAVe als IAM-Schicht arbeiten 
 4) Bei Bedarf fügen Sie dem neuen Client neue User hinzu
 5) Erstellen Sie die Client Roles, die hier definiert sind: https://github.com/it-at-m/dave/blob/sprint/docs/src/de/SysSpec-arc42.md#security
 6) Weisen Sie Ihren Usern die entsprechende Rolle zu
-7) Konfigurieren Sie folgende SSO-Properties mit der Adresse Ihrer Keycloak-Instanz:
+7) Konfigurieren Sie folgende Properties mit den entspr. Daten Ihrer Keycloak-Instanz:
 - Für Backend und Integrationsanwendungen: 
-  - ${keycloak.auth-server-url} bzw. 
-  - ${keycloak.auth-server-url.dave}
-- Für die Frontends: 
-  - ${spring.cloud.gateway.routes.0.uri}
-  - ${spring.security.oauth2.client.provider.keycloak.issueruri}
-  - ${spring.security.oauth2.resource.userinfouri}
+  - ${spring.security.oauth2.resource.userinfouri} 
   - ${spring.security.oauth2.resourceserver.jwt.issueruri}
   - ${spring.security.oauth2.resourceserver.jwt.jwkseturi}
   - ${spring.security.oauth2.client.provider.keycloak.token.uri}
+  - ${spring.security.oauth2.client.registration.keycloak.client-id}
+  - ${spring.security.oauth2.client.registration.keycloak.client-secret}   
+- Für die Frontends: 
+  - ${spring.cloud.gateway.routes.0.uri}
+  - ${spring.cloud.gateway.routes.0.filters}
+  - ${spring.security.oauth2.client.provider.keycloak.issueruri}
+  - ${spring.security.oauth2.client.registration.keycloak.client-id}
+  - ${spring.security.oauth2.client.registration.keycloak.client-secret}
+
 
 
