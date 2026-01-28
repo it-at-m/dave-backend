@@ -10,6 +10,8 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class BearbeiteQuerungsverkehrDTO extends BearbeiteBewegungsbeziehungDTO {
 
+    private Integer knotenarm;
+
     private Himmelsrichtung richtung;
 
 }

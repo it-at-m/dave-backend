@@ -10,6 +10,8 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class Querungsverkehr extends Bewegungsbeziehung {
 
+    private Integer knotenarm;
+
     private Himmelsrichtung richtung;
 
 }

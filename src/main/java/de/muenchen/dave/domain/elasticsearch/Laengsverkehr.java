@@ -11,6 +11,8 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class Laengsverkehr extends Bewegungsbeziehung {
 
+    private Integer knotenarm;
+
     private Bewegungsrichtung richtung;
 
     private Himmelsrichtung strassenseite;
