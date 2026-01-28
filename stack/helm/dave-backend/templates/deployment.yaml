@@ -90,6 +90,12 @@ spec:
               value: {{ .Values.dave.reports.logo_icon }}
             - name: DAVE_REPORTS_LOGO_SUBTITLE
               value: {{ .Values.dave.reports.logo_subtitle | quote }}
+            - name: DAVE_MAP_CENTER_LAT
+              value: {{ .Values.dave.map.center.lat | quote }}
+            - name: MAP_CENTER_LNG
+              value: {{ .Values.dave.map.center.lng | quote }}
+            - name: DAVE_MAP_CENTER_ZOOM
+              value: {{ .Values.dave.map.center.zoom | quote }}
             - name: ELASTICSEARCH_HOST
               value: {{ .Values.elasticsearch.host }}
             - name: ELASTICSEARCH_PORT
