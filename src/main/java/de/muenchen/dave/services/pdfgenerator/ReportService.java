@@ -89,13 +89,13 @@ public class ReportService {
     public String fillReportPdf(final ReportPdf reportPdf, final List<BaseAsset> assetList, final String department) {
         FillPdfBeanService.fillPdfBeanWithData(reportPdf, department);
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
+        // BaseAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
         BaseAsset dummy;
         if (CollectionUtils.isNotEmpty(assetList)) {
             dummy = assetList.getFirst();
         } else {
             dummy = new BaseAsset();
         }
-        // HeadingAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
         reportPdf.setCssFixed(this.generatePdfService.getHtml(this.dataTableCssMustacheFixed, dummy));
 
         reportPdf.setBody(this.generateReportBody(assetList));
