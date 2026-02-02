@@ -5,6 +5,8 @@ import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
@@ -34,8 +36,10 @@ public class Messfaehigkeit extends BaseEntity {
     LocalDate gueltigBis;
 
     @Column(name = "fahrzeugklasse")
+    @Enumerated(EnumType.STRING)
     Fahrzeugklasse fahrzeugklasse;
 
     @Column(name = "intervall")
+    @Enumerated(EnumType.STRING)
     ZaehldatenIntervall intervall;
 }

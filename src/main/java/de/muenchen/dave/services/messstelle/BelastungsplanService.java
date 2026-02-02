@@ -1,5 +1,15 @@
 package de.muenchen.dave.services.messstelle;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
+
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -9,15 +19,7 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -142,10 +144,17 @@ public class BelastungsplanService {
     }
 
     protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
-        final ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
-                .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId))
-                .toList()
-                .getFirst();
+        List<ReadMessquerschnittDTO> messquerschnitte = messstelle.getMessquerschnitte();
+        if (messquerschnitte == null || messquerschnitte.isEmpty()) {
+            return "";
+        }
+        List<ReadMessquerschnittDTO> filteredMessquerschnitte = messquerschnitte.stream()
+                .filter(mq -> Objects.equals(mq.getMqId(), messquerschnittId))
+                .toList();
+        if (filteredMessquerschnitte.isEmpty()) {
+            return "";
+        }
+        final ReadMessquerschnittDTO messquerschnittDto = filteredMessquerschnitte.getFirst();
         return messquerschnittDto.getFahrtrichtung();
     }
 
