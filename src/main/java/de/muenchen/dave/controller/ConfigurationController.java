@@ -1,14 +1,21 @@
 package de.muenchen.dave.controller;
 
+import de.muenchen.dave.domain.ConfigurationEntity;
 import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
 import de.muenchen.dave.services.ConfigurationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,5 +44,24 @@ public class ConfigurationController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein unerwarteter Fehler beim Laden der Configuration aufgetreten.");
         }
     }
+
+    @Operation(summary = "Get all configuration entries")
+    @GetMapping(value = "/all")
+    public List<ConfigurationEntity> getAllConfigurations() {
+        return configurationService.getRepository().findAll();
+    }    
+
+    @Operation(summary = "Set configuration entry by key")
+    @PostMapping(value = "/setbykey")
+    public ResponseEntity<ConfigurationEntity> setConfigurationByKey(@RequestBody ConfigurationEntity config) {
+
+        try {
+            ConfigurationEntity result = configurationService.saveOrUpdate(config);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            log.error("Error setting configuration for key {}: {}", config.getKeyname(), e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    } 
 
 }
