@@ -18,7 +18,6 @@ import lombok.Data;
             @JsonSubTypes.Type(value = HeadingAsset.class, name = "HEADING5"),
             @JsonSubTypes.Type(value = PagebreakAsset.class, name = "PAGEBREAK"),
             @JsonSubTypes.Type(value = NewlineAsset.class, name = "NEWLINE"),
-            @JsonSubTypes.Type(value = LogoAsset.class, name = "LOGO"),
             @JsonSubTypes.Type(value = DatatableAsset.class, name = "DATATABLE"),
             @JsonSubTypes.Type(value = MessstelleDatatableAsset.class, name = "DATATABLE_MESSSTELLE"),
             @JsonSubTypes.Type(value = ZaehlungskenngroessenAsset.class, name = "ZAEHLUNGSKENNGROESSEN") }

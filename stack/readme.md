@@ -111,3 +111,38 @@ docker compose --profile sample-stack up
    indem Sie im Browser zu http://localhost:8082 navigieren.
 
 Das war's! Sie haben den Anwendungsstack für DAVe erfolgreich installiert und gestartet.
+
+# Autorisierung via Keycloak
+
+Anwendungen, die auf der LHM-eigenen [Referenzarchitektur](https://refarch.oss.muenchen.de) aufgebaut sind (und dazu gehört DAVe), 
+nutzen für Authentifizierung und Autorisierung OAuth 2.0 und OpenID Connect (siehe https://refarch.oss.muenchen.de/cross-cutting-concepts/security.html#security).
+Intern verwenden wir für DAVe die Open-Source Identitäts- und Zugriffsmanagement-Lösung Keycloak.
+
+Wie Sie eine eigene Keycloak-Instanz neben dem DAVe-Stack zur Verfügung stellen können, entnehmen Sie bitte den Anweisungen 
+in der RefArch-Dokumentation zur [Container-Engine](https://refarch.oss.muenchen.de/templates/develop.html#container-engine).
+
+Um die Instanz so zu konfigurieren, dass sie für DAVe als IAM-Schicht arbeiten kann, können Sie folgende Schritte durchführen: 
+
+1) Legen Sie ein Keycloak-Realm mit Namen "Dave" in Keycloak an
+2) Importieren Sie den DAVe-Client aus der Datei "sso-config/sso-client.json" in das angelegte Realm
+3) Importieren Sie die grundlegenden Authorizations aus der Datei "sso-config/sso-authorisation.json" in den Client
+4) Bei Bedarf fügen Sie dem neuen Client neue User hinzu
+5) Erstellen Sie die Client Roles, die hier definiert sind: https://github.com/it-at-m/dave/blob/sprint/docs/src/de/SysSpec-arc42.md#security
+6) Weisen Sie Ihren Usern die entsprechende Rolle zu
+7) Konfigurieren Sie folgende Properties mit den entspr. Daten Ihrer Keycloak-Instanz:
+- Für Backend und Integrationsanwendungen: 
+  - ${spring.security.oauth2.resource.userinfouri} 
+  - ${spring.security.oauth2.resourceserver.jwt.issueruri}
+  - ${spring.security.oauth2.resourceserver.jwt.jwkseturi}
+  - ${spring.security.oauth2.client.provider.keycloak.token.uri}
+  - ${spring.security.oauth2.client.registration.keycloak.client-id}
+  - ${spring.security.oauth2.client.registration.keycloak.client-secret}   
+- Für die Frontends: 
+  - ${spring.cloud.gateway.routes.0.uri}
+  - ${spring.cloud.gateway.routes.0.filters}
+  - ${spring.security.oauth2.client.provider.keycloak.issueruri}
+  - ${spring.security.oauth2.client.registration.keycloak.client-id}
+  - ${spring.security.oauth2.client.registration.keycloak.client-secret}
+
+
+
