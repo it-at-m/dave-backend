@@ -324,9 +324,9 @@ public class LadeZaehldatenService {
         final List<Zeitintervall> zeitintervalle;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
-            zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getKreisverkehr(), options);
+            zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         } else {
-            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getKreisverkehr(), options);
+            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(),zaehlung.getKreisverkehr(), options);
         }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
         List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
@@ -338,12 +338,14 @@ public class LadeZaehldatenService {
     }
 
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+            final String zaehldauer,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
                 zaehlungId,
+                zaehldauer,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
                 options.getVonKnotenarm(),
@@ -356,7 +358,8 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+    private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+            final String zaehldauer,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Integer von,
@@ -389,6 +392,7 @@ public class LadeZaehldatenService {
         }
         return extractZeitintervalle(
                 zaehlungId,
+                zaehldauer,
                 startUhrzeit,
                 endeUhrzeit,
                 vonKnotenarm,
@@ -397,25 +401,27 @@ public class LadeZaehldatenService {
                 types);
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+    public List<Zeitintervall> extractZeitintervalle(
+            final UUID zaehlungId, 
+            final String zaehldauer,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Integer von,
             final Integer nach,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types) {
+        
         List<Zeitintervall> zi = zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrOrderBySortingIndexAsc(
                         zaehlungId,
                         startUhrzeit,
                         endeUhrzeit,
-                        von,
-                        nach,
                         fahrbewegungKreisverkehr);
 
-                        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
-                        zi = zi.stream().filter(zeitintervall -> types.contains(zeitintervall.getType())).collect(Collectors.toList());
+        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                .contains(Zaehldauer.valueOf(zaehldauer)));
         
+        zi = zi.stream().filter(zeitintervall -> types.contains(zeitintervall.getType()) && zeitintervall.getFahrbeziehung().getVon() == von && zeitintervall.getFahrbeziehung().getNach() == nach).collect(Collectors.toList());
         return zi;
     }
 
@@ -429,9 +435,10 @@ public class LadeZaehldatenService {
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
+            final String zaehldauer,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
-        final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, isKreisverkehr, options);
+        final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, zaehldauer, isKreisverkehr, options);
         final List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
             /*
@@ -444,6 +451,7 @@ public class LadeZaehldatenService {
             final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
             extractedZeitintervalle = extractZeitintervalle(
                     zaehlungId,
+                    zaehldauer,
                     spitzenStunde.getStartUhrzeit(),
                     spitzenStunde.getEndeUhrzeit(),
                     options.getVonKnotenarm(),

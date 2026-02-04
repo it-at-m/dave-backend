@@ -715,6 +715,7 @@ public class ProcessZaehldatenBelastungsplanService {
         }
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
+                zaehlung.getZaehldauer(),
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
                 options.getVonKnotenarm(),

@@ -18,6 +18,8 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
+import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,13 +40,16 @@ public class ProcessZaehldatenZeitreiheService {
     private final ZeitintervallRepository zeitintervallRepository;
     private final ZaehlstelleIndexService indexService;
     private final ZeitauswahlService zeitauswahlService;
+    private final ZeitintervallPersistierungsService zeitintervallPersistierungsService;
 
     public ProcessZaehldatenZeitreiheService(final ZaehlstelleIndexService indexService,
             final ZeitintervallRepository zeitintervallRepository,
-            final ZeitauswahlService zeitauswahlService) {
+            final ZeitauswahlService zeitauswahlService,
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService) {
         this.zeitauswahlService = zeitauswahlService;
         this.indexService = indexService;
         this.zeitintervallRepository = zeitintervallRepository;
+        this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
     }
 
     /**
@@ -202,18 +208,37 @@ public class ProcessZaehldatenZeitreiheService {
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-                        final Zeitintervall zeitintervall = zeitintervallRepository
-                                .findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+                        List<Zeitintervall> zi = zeitintervallRepository
+                                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
                                         UUID.fromString(zaehlung.getId()),
-                                        options.getZeitblock().getTypeZeitintervall(),
-                                        options.getVonKnotenarm(),
-                                        options.getNachKnotenarm(),
                                         options.getZeitblock().getStart(),
                                         options.getZeitblock().getEnd());
 
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options);
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
-
+                                
+                        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false).stream()
+                                .filter(z -> filterZeitreihe(z, options))
+                                .collect(Collectors.toList());
+                        
+                        LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+                        
+                        if (zi.isEmpty()) {
+                            log.warn("Kein Zeitintervall gefunden für Zählung " + zaehlung.getId() + " mit den Parametern: Type " + options.getZeitblock().getTypeZeitintervall() +
+                                    ", Von " + options.getVonKnotenarm() + ", Nach " + options.getNachKnotenarm() +
+                                    ", Start " + options.getZeitblock().getStart() + ", Ende " + options.getZeitblock().getEnd());
+                                                        
+                            ladeZaehldatumDTO.setPkw(0);
+                            ladeZaehldatumDTO.setLkw(0);
+                            ladeZaehldatumDTO.setLastzuege(0);
+                            ladeZaehldatumDTO.setBusse(0);
+                            ladeZaehldatumDTO.setKraftraeder(0);
+                            ladeZaehldatumDTO.setFahrradfahrer(0);
+                            ladeZaehldatumDTO.setFussgaenger(0);
+                            ladeZaehldatumDTO.setPkwEinheiten(0);
+                            ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + FAHRBEZIEHUNG_NICHT_VORHANDEN);
+                        } else {
+                            ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zi.getFirst(), zaehlung.getPkwEinheit(), options);
+                            ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                        }
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
                     } else {
                         final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
@@ -231,6 +256,14 @@ public class ProcessZaehldatenZeitreiheService {
                     }
                 });
         return ladeZaehldatenZeitreiheDTO;
+    }
+
+    private boolean filterZeitreihe (Zeitintervall zi, OptionsDTO options) {
+        boolean matches = false;
+        matches = zi.getType() == options.getZeitblock().getTypeZeitintervall();
+        matches = matches && options.getVonKnotenarm() == zi.getFahrbeziehung().getVon();
+        matches = matches && options.getNachKnotenarm() == zi.getFahrbeziehung().getNach();
+        return matches;
     }
 
     /**

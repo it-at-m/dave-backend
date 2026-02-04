@@ -69,7 +69,7 @@ public class ZeitintervallPersistierungsService {
      *            Persistierung.
      * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
      */
-    public void aufbereitenUndPersistieren(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
+    public List<Zeitintervall> aufbereitenUndPersistieren(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
 
         /*
          * - Die im Parameter übergebenen Zeitintervalle werden überprüft,
@@ -137,8 +137,11 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
-        persistZeitintervalle(allZeitintervalle);
+        return allZeitintervalle;
+
+        //persistZeitintervalle(allZeitintervalle);
     }
+
 
     /**
      * Persistierung der Aufbereiteten {@link Zeitintervall}e in der relationalen Datenbank.
