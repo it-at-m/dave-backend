@@ -15,6 +15,7 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,10 +59,14 @@ public class LadeZaehldatenService {
 
     private final ZaehlstelleIndexService indexService;
 
+    private final ZeitintervallPersistierungsService zeitintervallPersistierungsService;
+
     public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
-            final ZaehlstelleIndexService indexService) {
+            final ZaehlstelleIndexService indexService,
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
+        this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         // Kfz
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
@@ -398,15 +404,19 @@ public class LadeZaehldatenService {
             final Integer nach,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types) {
-        return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+        List<Zeitintervall> zi = zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrOrderBySortingIndexAsc(
                         zaehlungId,
                         startUhrzeit,
                         endeUhrzeit,
                         von,
                         nach,
-                        fahrbewegungKreisverkehr,
-                        types);
+                        fahrbewegungKreisverkehr);
+
+                        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
+                        zi = zi.stream().filter(zeitintervall -> types.contains(zeitintervall.getType())).collect(Collectors.toList());
+        
+        return zi;
     }
 
     /**

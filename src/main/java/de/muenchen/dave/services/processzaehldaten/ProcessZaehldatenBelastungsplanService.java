@@ -20,6 +20,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
@@ -58,16 +59,20 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private final ZeitintervallRepository zeitintervallRepository;
 
+    private final ZeitintervallPersistierungsService zeitintervallPersistierungsService;
+
     private final ZaehlstelleIndex zaehlstelleIndex;
 
     private final LadeZaehldatenService ladeZaehldatenService;
 
     public ProcessZaehldatenBelastungsplanService(final ZeitintervallRepository zeitintervallRepository,
             final ZaehlstelleIndex zaehlstelleIndex,
-            final LadeZaehldatenService ladeZaehldatenService) {
+            final LadeZaehldatenService ladeZaehldatenService,
+            final ZeitintervallPersistierungsService zeitintervallPersistierungsService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.ladeZaehldatenService = ladeZaehldatenService;
+        this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
     }
 
     /**
@@ -672,12 +677,17 @@ public class ProcessZaehldatenBelastungsplanService {
 
     public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
             final OptionsDTO options) {
-        return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+        List<Zeitintervall> zi = zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall());
+                        options.getZeitblock().getEnd()
+                        );
+        
+        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
+        zi = zi.stream()
+            .filter(zeitintervall -> options.getZeitblock().getTypeZeitintervall() == zeitintervall.getType() && zeitintervall.getFahrbeziehung().getVon() != null).collect(Collectors.toList());
+        return zi;
     }
 
     /**
