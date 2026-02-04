@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -33,22 +34,13 @@ public class ConfigurationService {
 
     private String linkDocumentationCsvFileForUploadZaehlung = "https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md";
 
-    @PostConstruct
-    public void initConfigurationService() {
-        final var zaehlstelleConfig = new ZaehlstelleConfigurationDTO(
-                zaehlstelleAutomaticNumberAssignment,
-                linkDocumentationCsvFileForUploadZaehlung);
-        final var mapConfiguration = new MapConfigurationDTO("" + latitude, "" + longitude, zoom);
-        this.configuration = new ConfigurationDTO(mapConfiguration, zaehlstelleConfig);
-    }
-
     public ConfigurationDTO getConfiguration() {
 
         for (ConfigurationEntity ce : repository.findAll()) {
             if ("location_lat".equals(ce.getKeyname())) {
                 latitude = Double.parseDouble(ce.getValuefield());
             }
-            if ("location_long".equals(ce.getKeyname())) {
+            if ("location_lon".equals(ce.getKeyname())) {
                 longitude = Double.parseDouble(ce.getValuefield());
             }
         }
@@ -60,7 +52,27 @@ public class ConfigurationService {
         return configuration;
     }
 
+    public List<ConfigurationEntity> saveOrUpdateList(List<ConfigurationEntity> configs) throws IllegalArgumentException {
+        configs.forEach(this::testTypeCorrectness);
+        return repository.saveAll(configs);
+    }
+
     public ConfigurationEntity saveOrUpdate(ConfigurationEntity config) throws IllegalArgumentException {
+        testTypeCorrectness(config);
+
+        ConfigurationEntity existingConfig = repository.findByKeyname(config.getKeyname());
+        if (existingConfig != null) {
+            existingConfig.setValuefield(config.getValuefield());
+            existingConfig.setCategory(config.getCategory());
+            existingConfig.setDatatype(config.getDatatype());
+            existingConfig.setVersion(existingConfig.getVersion() + 1);
+            return repository.save(existingConfig);
+        } else {
+            return repository.save(config);
+        }
+    }
+
+    private void testTypeCorrectness(ConfigurationEntity config) throws IllegalArgumentException {
         ConfigDataTypes type = config.getDatatype();
         switch (type) {
             case INTEGER:
@@ -91,17 +103,5 @@ public class ConfigurationService {
                 // String requires no special handling
                 break;
         }
-
-        ConfigurationEntity existingConfig = repository.findByKeyname(config.getKeyname());
-        if (existingConfig != null) {
-            existingConfig.setValuefield(config.getValuefield());
-            existingConfig.setCategory(config.getCategory());
-            existingConfig.setDatatype(config.getDatatype());
-            existingConfig.setVersion(existingConfig.getVersion() + 1);
-            return repository.save(existingConfig);
-        } else {
-            return repository.save(config);
-        }
     }
-
 }

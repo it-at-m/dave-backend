@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,9 +50,18 @@ public class ConfigurationController {
     @GetMapping(value = "/all")
     public List<ConfigurationEntity> getAllConfigurations() {
         return configurationService.getRepository().findAll();
-    }    
+    }
+    
+    @Operation(summary = "Set all configuration entries")
+    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
+    @PostMapping(value = "/all")
+    public List<ConfigurationEntity> setConfiguration(@RequestBody List<ConfigurationEntity> configs) {
+        return configurationService.saveOrUpdateList(configs);
+    }
+
 
     @Operation(summary = "Set configuration entry by key")
+    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PostMapping(value = "/setbykey")
     public ResponseEntity<ConfigurationEntity> setConfigurationByKey(@RequestBody ConfigurationEntity config) {
 
