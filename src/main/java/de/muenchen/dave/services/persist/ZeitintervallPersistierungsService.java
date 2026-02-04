@@ -142,7 +142,6 @@ public class ZeitintervallPersistierungsService {
         //persistZeitintervalle(allZeitintervalle);
     }
 
-
     /**
      * Persistierung der Aufbereiteten {@link Zeitintervall}e in der relationalen Datenbank.
      *

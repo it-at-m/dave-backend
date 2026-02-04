@@ -19,7 +19,6 @@ import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -214,18 +212,18 @@ public class ProcessZaehldatenZeitreiheService {
                                         options.getZeitblock().getStart(),
                                         options.getZeitblock().getEnd());
 
-                                
                         zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false).stream()
                                 .filter(z -> filterZeitreihe(z, options))
                                 .collect(Collectors.toList());
-                        
+
                         LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
-                        
+
                         if (zi.isEmpty()) {
-                            log.warn("Kein Zeitintervall gefunden für Zählung " + zaehlung.getId() + " mit den Parametern: Type " + options.getZeitblock().getTypeZeitintervall() +
+                            log.warn("Kein Zeitintervall gefunden für Zählung " + zaehlung.getId() + " mit den Parametern: Type "
+                                    + options.getZeitblock().getTypeZeitintervall() +
                                     ", Von " + options.getVonKnotenarm() + ", Nach " + options.getNachKnotenarm() +
                                     ", Start " + options.getZeitblock().getStart() + ", Ende " + options.getZeitblock().getEnd());
-                                                        
+
                             ladeZaehldatumDTO.setPkw(0);
                             ladeZaehldatumDTO.setLkw(0);
                             ladeZaehldatumDTO.setLastzuege(0);
@@ -258,7 +256,7 @@ public class ProcessZaehldatenZeitreiheService {
         return ladeZaehldatenZeitreiheDTO;
     }
 
-    private boolean filterZeitreihe (Zeitintervall zi, OptionsDTO options) {
+    private boolean filterZeitreihe(Zeitintervall zi, OptionsDTO options) {
         boolean matches = false;
         matches = zi.getType() == options.getZeitblock().getTypeZeitintervall();
         matches = matches && options.getVonKnotenarm() == zi.getFahrbeziehung().getVon();

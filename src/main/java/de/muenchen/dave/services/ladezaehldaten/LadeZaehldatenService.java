@@ -31,7 +31,6 @@ import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -326,7 +325,7 @@ public class LadeZaehldatenService {
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         } else {
-            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(),zaehlung.getKreisverkehr(), options);
+            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
         List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
@@ -402,7 +401,7 @@ public class LadeZaehldatenService {
     }
 
     public List<Zeitintervall> extractZeitintervalle(
-            final UUID zaehlungId, 
+            final UUID zaehlungId,
             final String zaehldauer,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
@@ -410,7 +409,7 @@ public class LadeZaehldatenService {
             final Integer nach,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types) {
-        
+
         List<Zeitintervall> zi = zeitintervallRepository
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrOrderBySortingIndexAsc(
                         zaehlungId,
@@ -418,10 +417,12 @@ public class LadeZaehldatenService {
                         endeUhrzeit,
                         fahrbewegungKreisverkehr);
 
-        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                .contains(Zaehldauer.valueOf(zaehldauer)));
-        
-        zi = zi.stream().filter(zeitintervall -> types.contains(zeitintervall.getType()) && zeitintervall.getFahrbeziehung().getVon() == von && zeitintervall.getFahrbeziehung().getNach() == nach).collect(Collectors.toList());
+        zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi,
+                List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                        .contains(Zaehldauer.valueOf(zaehldauer)));
+
+        zi = zi.stream().filter(zeitintervall -> types.contains(zeitintervall.getType()) && zeitintervall.getFahrbeziehung().getVon() == von
+                && zeitintervall.getFahrbeziehung().getNach() == nach).collect(Collectors.toList());
         return zi;
     }
 

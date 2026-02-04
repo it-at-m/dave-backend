@@ -681,12 +681,13 @@ public class ProcessZaehldatenBelastungsplanService {
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd()
-                        );
-        
+                        options.getZeitblock().getEnd());
+
         zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
         zi = zi.stream()
-            .filter(zeitintervall -> options.getZeitblock().getTypeZeitintervall() == zeitintervall.getType() && zeitintervall.getFahrbeziehung().getVon() != null).collect(Collectors.toList());
+                .filter(zeitintervall -> options.getZeitblock().getTypeZeitintervall() == zeitintervall.getType()
+                        && zeitintervall.getFahrbeziehung().getVon() != null)
+                .collect(Collectors.toList());
         return zi;
     }
 
