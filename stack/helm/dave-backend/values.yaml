@@ -31,9 +31,6 @@ app:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
-    hibernate:
-      naming:
-        physical_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show_sql: false
   servlet:
     multipart:
@@ -87,11 +84,6 @@ dave:
   reports:
     logo_icon: classpath:/pdf/images/kindl.jpg
     logo_subtitle: "Landeshauptstadt<br/>München<br/><b>Mobilitätsreferat</b>"
-  map:
-    center:
-      lat: 52.4199491
-      lng: 10.7171103
-      zoom: 12
 
 # To be removed in future versions
 elasticsearch:
