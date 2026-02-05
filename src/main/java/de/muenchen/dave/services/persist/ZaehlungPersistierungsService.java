@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -87,7 +88,11 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     public int getNumberOfNecessaryZeitintervalle(final Zaehlung zaehlung) {
-        return Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle() * zaehlung.getVerkehrsbeziehungen().size();
+        final int intervalCount = Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle();
+        final int totalRelationships = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()).size()
+                + CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()).size()
+                + CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()).size();
+        return intervalCount * totalRelationships;
     }
 
     /**
