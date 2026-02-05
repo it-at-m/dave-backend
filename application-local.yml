@@ -4,6 +4,7 @@ spring:
     enabled: true
     schemas: ${db.schema}
     defaultSchema: ${db.schema}
+    locations: classpath:db/migration, classpath:data2
   log:
     level:
       root: debug
