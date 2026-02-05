@@ -49,7 +49,6 @@ Parameters to configure application details like Spring datasource and authentic
 | `app.datasource.password` | Database password | `dave_pw` |
 | `app.jpa.properties.hibernate.dialect` | Hibernate dialect | `org.hibernate.dialect.PostgreSQLDialect` |
 | `app.jpa.properties.hibernate.format_sql` | Format SQL queries | `true` |
-| `app.jpa.hibernate.naming.physical_strategy` | Hibernate naming strategy | `org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl` |
 | `app.jpa.show_sql` | Show SQL queries in logs | `false` |
 | `app.servlet.multipart.max_file_size` | Maximum file upload size | `10MB` |
 | `app.servlet.multipart.max_request_size` | Maximum request size | `10MB` |
@@ -84,9 +83,6 @@ Configuration to control DAVe application parameters.
 | `dave.messstelle.shedlock` | Messstelle shedlock duration | `4m` |
 | `dave.reports.logo_icon` | Report logo icon path | `classpath:/pdf/images/kindl.jpg` |
 | `dave.reports.logo_subtitle` | Report logo subtitle | `Landeshauptstadt<br/>München<br/><b>Mobilitätsreferat</b>` |
-| `dave.map.center.lat` | Map center latitude | `52.4199491` |
-| `dave.map.center.lng` | Map center longitude | `10.7171103` |
-| `dave.map.center.zoom` | Map center zoom level | `12` |
 
 ### Elasticsearch Configuration
 If you want to use Elasticsearch, here are the the necessary parameters.

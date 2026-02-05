@@ -58,8 +58,6 @@ spec:
               value: {{ .Values.app.jpa.properties.hibernate.dialect }}
             - name: SPRING_JPA_HIBERNATE_FORMAT_SQL
               value: {{ .Values.app.jpa.properties.hibernate.format_sql }}
-            - name: SPRING_JPA_HIBERNATE_NAMING_PHYSICAL_STRATEGY
-              value: {{ .Values.app.jpa.hibernate.naming.physical_strategy | quote }}
             - name: SPRING_JPA_SHOW_SQL
               value: {{ .Values.app.jpa.show_sql | quote }}
             - name: SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE
@@ -90,12 +88,6 @@ spec:
               value: {{ .Values.dave.reports.logo_icon }}
             - name: DAVE_REPORTS_LOGO_SUBTITLE
               value: {{ .Values.dave.reports.logo_subtitle | quote }}
-            - name: DAVE_MAP_CENTER_LAT
-              value: {{ .Values.dave.map.center.lat | quote }}
-            - name: MAP_CENTER_LNG
-              value: {{ .Values.dave.map.center.lng | quote }}
-            - name: DAVE_MAP_CENTER_ZOOM
-              value: {{ .Values.dave.map.center.zoom | quote }}
             - name: ELASTICSEARCH_HOST
               value: {{ .Values.elasticsearch.host }}
             - name: ELASTICSEARCH_PORT
