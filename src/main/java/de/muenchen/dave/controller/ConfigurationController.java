@@ -4,11 +4,9 @@ import de.muenchen.dave.domain.ConfigurationEntity;
 import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
 import de.muenchen.dave.services.ConfigurationService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,14 +49,13 @@ public class ConfigurationController {
     public List<ConfigurationEntity> getAllConfigurations() {
         return configurationService.getRepository().findAll();
     }
-    
+
     @Operation(summary = "Set all configuration entries")
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PostMapping(value = "/all")
     public List<ConfigurationEntity> setConfiguration(@RequestBody List<ConfigurationEntity> configs) {
         return configurationService.saveOrUpdateList(configs);
     }
-
 
     @Operation(summary = "Set configuration entry by key")
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
@@ -72,6 +69,6 @@ public class ConfigurationController {
             log.error("Error setting configuration for key {}: {}", config.getKeyname(), e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    } 
+    }
 
 }

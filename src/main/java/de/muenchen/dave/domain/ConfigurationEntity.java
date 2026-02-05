@@ -24,7 +24,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "configuration")
 public class ConfigurationEntity extends BaseEntity {
-    
+
     @Column(name = "keyname", unique = true, nullable = false, length = 255)
     private String keyname;
 

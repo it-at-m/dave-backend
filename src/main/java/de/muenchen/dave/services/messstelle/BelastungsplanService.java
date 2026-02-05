@@ -1,15 +1,5 @@
 package de.muenchen.dave.services.messstelle;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
-
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -19,7 +9,15 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.OptionsUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
