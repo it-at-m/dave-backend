@@ -24,16 +24,19 @@ import org.springframework.stereotype.Component;
  * {
  *   "script": {
  *     "source":"""
- *     for (int i=0; i< ctx._source.zaehlungen.length; i++){
- *       ctx._source.zaehlungen[i].verkehrsbeziehungen = ctx._source.zaehlungen[i].fahrbeziehungen;
- *       ctx._source.zaehlungen[i].remove('fahrbeziehungen');
- *     }
- *     """
- *   },
+ *    for (int i=0; i< ctx._source.zaehlungen.length; i++){
+ *      if (ctx._source.zaehlungen[i].fahrbeziehungen != null) {
+ *        ctx._source.zaehlungen[i].verkehrsbeziehungen = ctx._source.zaehlungen[i].fahrbeziehungen;
+ *        ctx._source.zaehlungen[i].remove('fahrbeziehungen');
+ *      }
+ *    }
+ *    """
+ *  },
  *   "query": {
  *     "match_all": {}
  *   }
- * }
+ *  }
+ *
  */
 // spotless:on
 @Component
@@ -41,10 +44,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class V12__FahrbeziehungToVerkehrsbeziehung extends BaseJavaMigration {
 
-    private static final String SCRIPT_SOURCE_ZAEHLSTELLE_COPY_FAHRBEZIEHUNG_TO_VERKEHRSBEZIEHUNG_AND_REMOVE_FAHRBEZIEHUNGEN = "    for (int i=0; i< ctx._source.zaehlungen.length; i++){\n"
-            +
-            "  ctx._source.zaehlungen[i].verkehrsbeziehungen = ctx._source.zaehlungen[i].fahrbeziehungen;\n" +
-            "  ctx._source.zaehlungen[i].remove('fahrbeziehungen');" +
+    private static final String SCRIPT_SOURCE_ZAEHLSTELLE_COPY_FAHRBEZIEHUNG_TO_VERKEHRSBEZIEHUNG_AND_REMOVE_FAHRBEZIEHUNGEN = "" +
+            "for (int i=0; i< ctx._source.zaehlungen.length; i++){\n" +
+            "  if (ctx._source.zaehlungen[i].fahrbeziehungen != null) {\n" +
+            "    ctx._source.zaehlungen[i].verkehrsbeziehungen = ctx._source.zaehlungen[i].fahrbeziehungen;\n" +
+            "    ctx._source.zaehlungen[i].remove('fahrbeziehungen');\n" +
+            "  }\n" +
             "}";
 
     private final ElasticsearchOperations elasticsearchOperations;
