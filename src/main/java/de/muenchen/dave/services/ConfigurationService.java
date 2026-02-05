@@ -20,19 +20,13 @@ public class ConfigurationService {
 
     private final ConfigurationRepository repository;
 
-    private ConfigurationDTO configuration;
-
-    private double latitude = 52.41988232741599;
-
-    private double longitude = 10.779998775029739;
-
-    private int zoom = 12;
-
-    private boolean zaehlstelleAutomaticNumberAssignment = true;
-
-    private String linkDocumentationCsvFileForUploadZaehlung = "https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md";
-
     public ConfigurationDTO getConfiguration() {
+
+        double latitude = 52.41988232741599;
+        double longitude = 10.779998775029739;
+        int zoom = 12;
+        boolean zaehlstelleAutomaticNumberAssignment = true;
+        String linkDocumentationCsvFileForUploadZaehlung = "https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md";
 
         for (ConfigurationEntity ce : repository.findAll()) {
             if ("location_lat".equals(ce.getKeyname())) {
@@ -41,12 +35,21 @@ public class ConfigurationService {
             if ("location_lon".equals(ce.getKeyname())) {
                 longitude = Double.parseDouble(ce.getValuefield());
             }
+            if ("zoom".equals(ce.getKeyname())) {
+                zoom = Integer.parseInt(ce.getValuefield());
+            }
+            if ("zaehlstelleAutomaticNumberAssignment".equals(ce.getKeyname())) {
+                zaehlstelleAutomaticNumberAssignment = Boolean.parseBoolean(ce.getValuefield());
+            }
+            if ("linkDocumentationCsvFileForUploadZaehlung".equals(ce.getKeyname())) {
+                linkDocumentationCsvFileForUploadZaehlung = ce.getValuefield();
+            }
         }
-        final var zaehlstelleConfig = new ZaehlstelleConfigurationDTO(
+        ZaehlstelleConfigurationDTO zaehlstelleConfig = new ZaehlstelleConfigurationDTO(
                 zaehlstelleAutomaticNumberAssignment,
                 linkDocumentationCsvFileForUploadZaehlung);
-        final var mapConfiguration = new MapConfigurationDTO("" + latitude, "" + longitude, zoom);
-        this.configuration = new ConfigurationDTO(mapConfiguration, zaehlstelleConfig);
+        MapConfigurationDTO mapConfiguration = new MapConfigurationDTO("" + latitude, "" + longitude, zoom);
+        ConfigurationDTO configuration = new ConfigurationDTO(mapConfiguration, zaehlstelleConfig);
         return configuration;
     }
 
@@ -63,7 +66,6 @@ public class ConfigurationService {
             existingConfig.setValuefield(config.getValuefield());
             existingConfig.setCategory(config.getCategory());
             existingConfig.setDatatype(config.getDatatype());
-            existingConfig.setVersion(existingConfig.getVersion() + 1);
             return repository.save(existingConfig);
         } else {
             return repository.save(config);

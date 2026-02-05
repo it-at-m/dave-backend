@@ -45,6 +45,7 @@ public class ConfigurationController {
     }
 
     @Operation(summary = "Get all configuration entries")
+    @Transactional(readOnly = true)
     @GetMapping(value = "/all")
     public List<ConfigurationEntity> getAllConfigurations() {
         return configurationService.getRepository().findAll();
@@ -66,8 +67,7 @@ public class ConfigurationController {
             ConfigurationEntity result = configurationService.saveOrUpdate(config);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            log.error("Error setting configuration for key {}: {}", config.getKeyname(), e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid configuration: " + e.getMessage());
         }
     }
 
