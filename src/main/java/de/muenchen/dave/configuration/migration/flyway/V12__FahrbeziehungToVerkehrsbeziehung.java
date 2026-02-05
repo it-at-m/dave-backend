@@ -1,4 +1,4 @@
-package de.muenchen.dave.migration.flyway;
+package de.muenchen.dave.configuration.migration.flyway;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Script;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 
 // spotless:off
 /**
- * Das Migrationsscript führt das folgend Elasticsearch painless-Skripte aus.
+ * Das Migrationsscript führt das folgende Elasticsearch painless-Skript aus.
  *
  * POST /<INDEX>/_update_by_query
  * {
@@ -82,7 +82,7 @@ public class V12__FahrbeziehungToVerkehrsbeziehung extends BaseJavaMigration {
             }
             log.info(response.toString());
         } catch (final IOException e) {
-            final var message = "Die Elasticsearchmigration V12 ist fehlgeschlagen.";
+            final var message = "Die Elasticsearchmigration V12 mittels flyway ist fehlgeschlagen.";
             throw new SQLException(message, e);
         }
     }
