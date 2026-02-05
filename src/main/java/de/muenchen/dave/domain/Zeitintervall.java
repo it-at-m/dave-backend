@@ -39,11 +39,11 @@ import org.hibernate.type.SqlTypes;
 @Table(
         indexes = {
                 @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
-                @Index(name = "index_bewegungsbeziehungid", columnList = "bewegungsbeziehung_id"),
-                @Index(name = "index_combined_1", columnList = "zaehlung_id, type, verkehrsbeziehung_von, verkehrsbeziehung_nach"),
-                @Index(name = "index_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, type"),
+                @Index(name = "index_zeitintervall_bewegungsbeziehung_id", columnList = "bewegungsbeziehung_id"),
+                @Index(name = "index_zeitintervall_combined_1", columnList = "zaehlung_id, type, verkehrsbeziehung_von, verkehrsbeziehung_nach"),
+                @Index(name = "index_zeitintervall_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, type"),
                 @Index(
-                        name = "index_combined_3",
+                        name = "index_zeitintervall_combined_3",
                         columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, verkehrsbeziehung_nach, verkehrsbeziehung_fahrbewegungkreisverkehr, type"
                 )
         }
