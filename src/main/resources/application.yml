@@ -115,3 +115,4 @@ dave:
       lat: "48.137227"
       lng: "11.575517"
       zoom: 12
+geodaten.eai.url: http://localhost:8088
