@@ -1,32 +1,34 @@
 package de.muenchen.dave.domain.dtos.external;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class DetectionDTO {
 
-    String zaehlungId;
+    UUID zaehlungId;
 
-    private String startUhrzeit;
+    LocalDateTime startUhrzeit;
 
-    private String endeUhrzeit;
+    LocalDateTime endeUhrzeit;
 
-    private Integer pkw;
+    Integer pkw;
 
-    private Integer lkw;
+    Integer lkw;
 
-    private Integer lastzuege;
+    Integer lastzuege;
 
-    private Integer busse;
+    Integer busse;
 
-    private Integer kraftraeder;
+    Integer kraftraeder;
 
-    private Integer fahrradfahrer;
+    Integer fahrradfahrer;
 
-    private Integer fussgaenger;
+    Integer fussgaenger;
 
-    private Integer von;
+    Integer von;
 
-    private Integer nach;
+    Integer nach;
 
 }

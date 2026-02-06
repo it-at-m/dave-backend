@@ -32,4 +32,6 @@ public interface HochrechnungsfaktorRepository extends JpaRepository<Hochrechnun
 
     List<Hochrechnungsfaktor> findAll(Sort sort);
 
+    Hochrechnungsfaktor findByDefaultFaktorTrue();
+
 }
