@@ -50,6 +50,11 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime endeUhrzeit,
             final TypeZeitintervall type);
 
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit);
+
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
@@ -59,11 +64,22 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types);
 
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr);
+
     Zeitintervall findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
             final UUID zaehlungId,
             final TypeZeitintervall type,
             final Integer fahrbeziehungVon,
             final Integer fahrbeziehungNach,
+            final LocalDateTime startuhrzeit,
+            final LocalDateTime endeuhrzeit);
+
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+            final UUID zaehlungId,
             final LocalDateTime startuhrzeit,
             final LocalDateTime endeuhrzeit);
 

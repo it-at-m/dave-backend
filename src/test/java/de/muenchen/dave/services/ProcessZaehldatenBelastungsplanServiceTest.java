@@ -114,7 +114,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zaehlung.setZaehlart(Zaehlart.N.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, BelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
+        final Map<Fahrzeug, BelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null, null)
                 .getBelastungsplanData(zaehldatenJeFahrbeziehung, zaehlung);
 
         assertThat(belastungsplanData.get(Fahrzeug.KFZ).getValues()[1][2], is(BigDecimal.valueOf(15)));
