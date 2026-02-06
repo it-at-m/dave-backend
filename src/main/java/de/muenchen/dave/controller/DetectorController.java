@@ -22,8 +22,8 @@ public class DetectorController {
         "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
-    @PostMapping(value = "/saveExternal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> saveExternalZaehlung(@RequestBody @NotNull final DetectionDTO detection) {
+    @PostMapping(value = "/saveDetection", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> saveDetection(@RequestBody @NotNull final DetectionDTO detection) {
         log.debug("Detection received: {}", detection);
         try {
             //TODO: persist detection
