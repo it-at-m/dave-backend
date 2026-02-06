@@ -68,7 +68,8 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime endeuhrzeit);
 
     /*
-     * Extrahiert das Zeitintervall entsprechend des SortingIndex über alle vorhandenen Verkehrsbeziehungen.
+     * Extrahiert das Zeitintervall entsprechend des SortingIndex über alle vorhandenen
+     * Verkehrsbeziehungen.
      */
     Optional<Zeitintervall> findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
             final UUID zaehlungId,
