@@ -6,6 +6,8 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * Je nach Kreuzungstyp sind folgende Attribute gesetzt.
@@ -34,7 +36,9 @@ import lombok.Data;
  */
 @Embeddable
 @Data
-public class Verkehrsbeziehung {
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Verkehrsbeziehung extends Bewegungsbeziehung {
 
     @Column(name = "von")
     private Integer von;

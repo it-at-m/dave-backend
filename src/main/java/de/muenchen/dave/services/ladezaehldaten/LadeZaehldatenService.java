@@ -57,7 +57,8 @@ public class LadeZaehldatenService {
 
     private final ZaehlstelleIndexService indexService;
 
-    public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
+    public LadeZaehldatenService(
+            final ZeitintervallRepository zeitintervallRepository,
             final ZaehlstelleIndexService indexService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
@@ -210,7 +211,7 @@ public class LadeZaehldatenService {
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.
      */
-    private static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
+    public static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
         final Set<TypeZeitintervall> types = new HashSet<>();
         if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_KFZ);

@@ -2,6 +2,7 @@ package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -100,5 +101,14 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime endeUhrzeit,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
+
+    // Querungsverkehr
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer knotenarm,
+            Himmelsrichtung richtung,
+            final Set<TypeZeitintervall> types);
 
 }

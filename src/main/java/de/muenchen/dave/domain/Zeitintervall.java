@@ -119,6 +119,7 @@ public class Zeitintervall extends BaseEntity {
     @Embedded
     @AttributeOverrides(
         {
+                @AttributeOverride(name = "knotenarm", column = @Column(name = "querungsverkehr_knotenarm")),
                 @AttributeOverride(name = "richtung", column = @Column(name = "querungsverkehr_richtung"))
         }
     )
@@ -127,6 +128,7 @@ public class Zeitintervall extends BaseEntity {
     @Embedded
     @AttributeOverrides(
         {
+                @AttributeOverride(name = "knotenarm", column = @Column(name = "laengsverkehr_knotenarm")),
                 @AttributeOverride(name = "richtung", column = @Column(name = "laengsverkehr_richtung")),
                 @AttributeOverride(name = "strassenseite", column = @Column(name = "laengsverkehr_strassenseite"))
         }
