@@ -318,8 +318,18 @@ public class LadeZaehldatenService {
         final List<Zeitintervall> zeitintervalle;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
+            /**
+             * @TODO
+             *
+             * Anpassungen in den Methoden zur Extraktion der Zeitintervalle erforderlich.
+             */
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getKreisverkehr(), options);
         } else {
+            /**
+             * @TODO
+             *
+             * Anpassungen in den Methoden zur Extraktion der Zeitintervalle erforderlich.
+             */
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getKreisverkehr(), options);
         }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
@@ -334,6 +344,15 @@ public class LadeZaehldatenService {
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
+        /**
+         * @TODO
+         *
+         * Holen aller betroffenen Zeitintervalle über die Verkehrsbeziehungen, Querverkehre oder Längsverkehre.
+         *
+         * Summieren über die einzelnen Verkehrsbeziehungen, ...
+         *
+         * Falls in der Methodenvariablen Type der Enum für eine Spitzenstunde vorhanden ist, so sind die entsprechenden Spitzenstunden zu ermitteln.
+         */
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
@@ -421,6 +440,17 @@ public class LadeZaehldatenService {
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
+        /**
+         * @TODO
+         *
+         * Holen aller betroffenen Zeitintervalle über die Verkehrsbeziehungen, Querverkehre oder Längsverkehre.
+         *
+         * Summieren über die einzelnen Verkehrsbeziehungen, ... und Ermittlung der Spitzenstunde für die Verkehrsbeziehung
+         *
+         * Mit der Angangs- und Endehruzeit der relevanten Spitzenstunde sind dann die Zeitintervalle zu filtern um die entsprechenden Zeitintervalle zu erhalten.
+         *
+         * Der bisherige Code zur Spitzenstundenermittlung und Summierung über die Verkehrsbeziehungen, ... kann zum Teil wiederverwendet werden.
+         */
         final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, isKreisverkehr, options);
         final List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
@@ -447,6 +477,20 @@ public class LadeZaehldatenService {
             extractedZeitintervalle = List.of();
         }
         return extractedZeitintervalle;
+    }
+
+    //Schnittstellen
+    private Map<Bewegungsbeziehung, List<Zeitintervall>> extraction() {
+            return null;
+    }
+
+
+    private List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input) {
+        return null;
+    }
+
+    private List<Zeitintervall> addSpitzenstundeToSummedAndExtractedZeitintervalle(final List<Zeitintervall> zeitinervalleSummed) {
+
     }
 
 }

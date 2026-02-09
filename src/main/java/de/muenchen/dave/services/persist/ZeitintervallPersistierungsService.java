@@ -85,6 +85,13 @@ public class ZeitintervallPersistierungsService {
             zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
         });
 
+        /**
+         * @TODO
+         *
+         * Entfernen der Funktionen zum summieren der Fahrbeziehungen.
+         *
+         * Auslagern in die Datenextraktion und Anpassung der Summation.
+         */
         /*
          * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
          * alle möglichen Fahrbeziehungspermutationen summiert.
@@ -96,6 +103,13 @@ public class ZeitintervallPersistierungsService {
         allPossibleFahrbeziehungen.addAll(zeitintervalle);
         allPossibleFahrbeziehungen.addAll(summierteFahrbeziehungen);
 
+        /**
+         * @TODO
+         *
+         * Entfernen der Funktionen zur Ermittlung der gleitenden Spitzenstunden
+         *
+         * Auslagern der Ermittlung der gleitenden Spitzenstunde in die Datenextraktion.
+         */
         /*
          * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
          * Zeitintervalle
@@ -103,6 +117,11 @@ public class ZeitintervallPersistierungsService {
          */
         final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleFahrbeziehungen);
 
+        /**
+         * @TODO
+         *
+         * Anpassung in der nachfolgende aufgerufenen Summierungsmethode sind erforderlich.
+         */
         /*
          * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
          * Zeitintervalle
@@ -110,6 +129,11 @@ public class ZeitintervallPersistierungsService {
          */
         final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleFahrbeziehungen);
 
+        /**
+         * @TODO
+         *
+         * Code bleibt bestehen.
+         */
         /*
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt, wenn der
          * boolean-Parameter true ist
