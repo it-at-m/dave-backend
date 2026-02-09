@@ -479,4 +479,18 @@ public class LadeZaehldatenService {
         return extractedZeitintervalle;
     }
 
+    //Schnittstellen
+    private Map<Bewegungsbeziehung, List<Zeitintervall>> extraction() {
+            return null;
+    }
+
+
+    private List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input) {
+        return null;
+    }
+
+    private List<Zeitintervall> addSpitzenstundeToSummedAndExtractedZeitintervalle(final List<Zeitintervall> zeitinervalleSummed) {
+
+    }
+
 }
