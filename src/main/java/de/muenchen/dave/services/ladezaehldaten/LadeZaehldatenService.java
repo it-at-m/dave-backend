@@ -266,18 +266,22 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Diese Methode erzeugt auf Basis der gewählten Fahrbeziehung sowie Bezeichners für Kreuzung und
+     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung
+     * und
      * Kreisverkehr die für die Datenextraktion relevante
      * {@link FahrbewegungKreisverkehr}.
      *
      * @param von als Startknotenarm.
      * @param nach als Zielknotenarm
      * @param isKreisverkehr bezeichner ob erzeugung für Kreuzung oder Kreisverkehr.
-     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit Fahrbeziehungsauswahl
+     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit
+     *         Verkehrsbeziehungsauswahl
      *         "alle nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Fahrbeziehungsauswahl mit
+     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Verkehrsbeziehungsauswahl
+     *         mit
      *         "X nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Fahrbeziehungsauswahl mit
+     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Verkehrsbeziehungsauswahl
+     *         mit
      *         "alle nach X" handelt.
      */
     public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
@@ -362,7 +366,7 @@ public class LadeZaehldatenService {
         final Integer nachKnotenarm;
         if (isKreisverkehr) {
             /*
-             * In {@link de.muenchen.dave.domain.Fahrbeziehung} definiert das Attribut "von"
+             * In {@link de.muenchen.dave.domain.Verkehrsbeziehung} definiert das Attribut "von"
              * den im Kreisverkehr jeweils betroffenen Knotenarm.
              * Das Attribut "nach" ist immer "null".
              */
@@ -399,7 +403,7 @@ public class LadeZaehldatenService {
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final Set<TypeZeitintervall> types) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         startUhrzeit,
                         endeUhrzeit,

@@ -94,7 +94,7 @@ public class GenerateCsvService {
         metaHeader.append(SEMIKOLON);
         metaHeader.append("Zähldatum");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("Fahrbeziehung");
+        metaHeader.append("Verkehrsbeziehung");
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaHeader.append(SEMIKOLON);
@@ -107,7 +107,7 @@ public class GenerateCsvService {
      *
      * @param metaObject enthält die Zählstelle und Zählung
      * @param header Zur Berechnung der Anzahl der Semikolons
-     * @param options Zur Anzeige der Fahrbeziehung
+     * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDTO options) {
@@ -123,20 +123,20 @@ public class GenerateCsvService {
             metaData.append(metaObject.getZaehlung().getDatum());
         }
         metaData.append(SEMIKOLON);
-        final StringBuilder fahrbeziehung = new StringBuilder("Von: ");
+        final StringBuilder verkehrsbeziehung = new StringBuilder("Von: ");
         if (options.getVonKnotenarm() != null) {
-            fahrbeziehung.append(options.getVonKnotenarm());
+            verkehrsbeziehung.append(options.getVonKnotenarm());
         } else {
-            fahrbeziehung.append("Alle");
+            verkehrsbeziehung.append("Alle");
         }
-        fahrbeziehung.append(" - Nach: ");
+        verkehrsbeziehung.append(" - Nach: ");
         if (options.getNachKnotenarm() != null) {
-            fahrbeziehung.append(options.getNachKnotenarm());
+            verkehrsbeziehung.append(options.getNachKnotenarm());
         } else {
-            fahrbeziehung.append("Alle");
+            verkehrsbeziehung.append("Alle");
         }
 
-        metaData.append(fahrbeziehung);
+        metaData.append(verkehrsbeziehung);
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaData.append(SEMIKOLON);
