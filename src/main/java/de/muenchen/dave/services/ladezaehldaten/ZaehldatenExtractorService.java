@@ -24,7 +24,7 @@ public class ZaehldatenExtractorService {
     final ZeitintervallRepository zeitintervallRepository;
 
     @Transactional
-    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZaehldaten(
+    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZaehldatenForZaehlungAccordingOptions(
             final UUID zaehlungId,
             final Zaehlung zaehlung,
             final OptionsDTO options) {
