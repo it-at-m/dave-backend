@@ -104,37 +104,4 @@ public class ZaehldatenExtractorService {
     }
 
 
-    /**
-     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung
-     * und Kreisverkehr die für die Datenextraktion relevante {@link FahrbewegungKreisverkehr}.
-     *
-     * @param von als Startknotenarm.
-     * @param nach als Zielknotenarm
-     * @param isKreisverkehr als Bezeichner ob erzeugung für Kreuzung oder Kreisverkehr.
-     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit
-     *         Verkehrsbeziehungsauswahl "alle nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Verkehrsbeziehungsauswahl
-     *         mit "X nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Verkehrsbeziehungsauswahl
-     *         mit "alle nach X" handelt.
-     */
-    protected static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
-                                                                             final Integer nach,
-                                                                             final Boolean isKreisverkehr) {
-        final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
-        if (isKreisverkehr) {
-            if (ObjectUtils.isNotEmpty(von) && ObjectUtils.isEmpty(nach)) {
-                fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HINEIN;
-            } else if (ObjectUtils.isEmpty(von) && ObjectUtils.isNotEmpty(nach)) {
-                fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HERAUS;
-            } else {
-                fahrbewegungKreisverkehr = null;
-            }
-        } else {
-            fahrbewegungKreisverkehr = null;
-        }
-        return fahrbewegungKreisverkehr;
-    }
-
-
 }
