@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ZaehldatenExtractorService {
+public class ZeitintervallExtractorService {
 
     final ZeitintervallRepository zeitintervallRepository;
 
     @Transactional
-    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZaehldatenForZaehlungAccordingOptions(
+    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZeitintervalleForZaehlungAccordingOptions(
             final UUID zaehlungId,
             final Zaehlung zaehlung,
             final OptionsDTO options) {
