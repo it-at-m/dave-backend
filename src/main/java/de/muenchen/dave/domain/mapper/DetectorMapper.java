@@ -18,7 +18,7 @@ public interface DetectorMapper {
     @Mapping(target = "type", constant = "STUNDE_VIERTEL")
     @Mapping(target = "fahrbeziehungId", ignore = true)
     @Mapping(target = "sortingIndex", ignore = true)
-    @Mapping(target = "zaehlungId", ignore = true)
+    @Mapping(target = "zaehlungId", source = "zaehlungId")
     @Mapping(target = "hochrechnung", ignore = true)
     Zeitintervall detectionDTO2Bean(DetectionDTO dto);
 
