@@ -102,6 +102,9 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
 
+
+    // ---------------------------------------
+
     // Querungsverkehr
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
@@ -111,4 +114,36 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             Himmelsrichtung richtung,
             final Set<TypeZeitintervall> types);
 
+    // Verkehrsbeziehung von X nach Y
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von X nach ALLE und für Kreisverkehr an bestimmten Knotenarm
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von ALLE nach Y
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer nach,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von ALLE nach ALLE und für kompletten Kreisverkehr
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Set<TypeZeitintervall> types);
 }
