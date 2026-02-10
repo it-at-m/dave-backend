@@ -100,7 +100,6 @@ public class ZaehldatenExtractorService {
                     // Über den Knotenarm Y in den Kreisverkehr ausfahrend
                     vonKnotenarm = options.getNachKnotenarm();
                     fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HERAUS;
-
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -114,7 +113,6 @@ public class ZaehldatenExtractorService {
                     // Der an allen Knotenarmen ein-, aus- und vorbeifahrende Verkehr
                     vonKnotenarm = null;
                     fahrbewegungKreisverkehr = null;
-
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -126,7 +124,6 @@ public class ZaehldatenExtractorService {
                 vonKnotenarm = options.getVonKnotenarm();
                 nachKnotenarm = options.getNachKnotenarm();
                 fahrbewegungKreisverkehr = null;
-
                 if (ObjectUtils.isNotEmpty(vonKnotenarm) && ObjectUtils.isEmpty(nachKnotenarm)) {
                     // Knotenarm X nach ALLE Knotenarme
                     extractedZeitintervalle = zeitintervallRepository
