@@ -14,8 +14,8 @@ import lombok.ToString;
  * Je nach Kreuzungstyp sind folgende Attribute gesetzt.
  * <p>
  * Kreuzung:
- *  - {@link Verkehrsbeziehung#von} als Startknotenarm der Verkehrsbeziehung
- *  - {@link Verkehrsbeziehung#nach} als Endknotenarm der Verkehrsbeziehung
+ * - {@link Verkehrsbeziehung#von} als Startknotenarm der Verkehrsbeziehung
+ * - {@link Verkehrsbeziehung#nach} als Endknotenarm der Verkehrsbeziehung
  * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist immer "null".
  * <p>
  * Kreisverkehr:

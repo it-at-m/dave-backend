@@ -1,6 +1,5 @@
 package de.muenchen.dave.repositories.relationaldb;
 
-import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -13,8 +12,6 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> {
 
@@ -106,7 +103,6 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
 
-
     // ---------------------------------------
 
     // Verkehrsbeziehung
@@ -127,8 +123,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final Integer knotenarm,
             final Bewegungsrichtung richtung,
             final Himmelsrichtung strassenseite,
-            final Set<TypeZeitintervall> types
-    );
+            final Set<TypeZeitintervall> types);
 
     // Querungsverkehr
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
