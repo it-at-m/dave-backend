@@ -1,6 +1,8 @@
 package de.muenchen.dave.repositories.relationaldb;
 
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -11,8 +13,10 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
+public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> {
 
     @Override
     Optional<Zeitintervall> findById(final UUID id);
@@ -105,13 +109,34 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
 
     // ---------------------------------------
 
-    // Querungsverkehr
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeOrderBySortingIndexAsc(
+    // Verkehrsbeziehung
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungStrassenseiteAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Himmelsrichtung strassenseite,
+            final Set<TypeZeitintervall> types);
+
+    // Laengsverkehr
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Integer knotenarm,
-            Himmelsrichtung richtung,
+            final Bewegungsrichtung richtung,
+            final Himmelsrichtung strassenseite,
+            final Set<TypeZeitintervall> types
+    );
+
+    // Querungsverkehr
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer knotenarm,
+            final Himmelsrichtung richtung,
             final Set<TypeZeitintervall> types);
 
     // Verkehrsbeziehung von X nach Y

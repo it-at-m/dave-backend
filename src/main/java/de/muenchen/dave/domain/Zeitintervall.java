@@ -140,7 +140,8 @@ public class Zeitintervall extends BaseEntity {
         {
                 @AttributeOverride(name = "von", column = @Column(name = "verkehrsbeziehung_von")),
                 @AttributeOverride(name = "nach", column = @Column(name = "verkehrsbeziehung_nach")),
-                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "verkehrsbeziehung_fahrbewegungkreisverkehr"))
+                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "verkehrsbeziehung_fahrbewegungkreisverkehr")),
+                @AttributeOverride(name = "strassenseite", column = @Column(name = "verkehrsbeziehung_strassenseite"))
         }
     )
     private Verkehrsbeziehung verkehrsbeziehung;

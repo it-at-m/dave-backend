@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -37,5 +38,9 @@ public class Verkehrsbeziehung extends Bewegungsbeziehung {
     @Column(name = "fahrbewegungkreisverkehr")
     @Enumerated(EnumType.STRING)
     private FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
+
+    @Column(name = "strassenseite")
+    @Enumerated(EnumType.STRING)
+    private Himmelsrichtung strassenseite;
 
 }
