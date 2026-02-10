@@ -48,44 +48,91 @@ public class ZaehldatenExtractorService {
             if (zaehlung.getKreisverkehr()) {
                 /*
                  * In {@link de.muenchen.dave.domain.Verkehrsbeziehung} definiert das Attribut "von"
-                 * den im Kreisverkehr jeweils betroffenen Knotenarm.
-                 * Das Attribut "nach" ist immer "null".
+                 * den im Kreisverkehr jeweils betroffenen Knotenarm. Das Attribut "nach" ist immer "null".
                  */
                 if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
                     // Hinein
                     vonKnotenarm = options.getVonKnotenarm();
                     fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HINEIN;
+                    zeitintervalle =  zeitintervallRepository
+                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                                    zaehlungId,
+                                    options.getZeitblock().getStart(),
+                                    options.getZeitblock().getEnd(),
+                                    vonKnotenarm,
+                                    fahrbewegungKreisverkehr,
+                                    LadeZaehldatenService.getTypesAccordingChosenOptions(options));
+
+
                 } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
                     // Heraus
                     vonKnotenarm = options.getNachKnotenarm();
                     fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HERAUS;
+
+                    zeitintervalle =  zeitintervallRepository
+                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                                    zaehlungId,
+                                    options.getZeitblock().getStart(),
+                                    options.getZeitblock().getEnd(),
+                                    vonKnotenarm,
+                                    fahrbewegungKreisverkehr,
+                                    LadeZaehldatenService.getTypesAccordingChosenOptions(options));
+
                 } else {
                     // Alles Hinein + Heraus + Vorbei
                     vonKnotenarm = null;
                     fahrbewegungKreisverkehr = null;
+
+                    zeitintervalle =  zeitintervallRepository
+                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                                    zaehlungId,
+                                    options.getZeitblock().getStart(),
+                                    options.getZeitblock().getEnd(),
+                                    LadeZaehldatenService.getTypesAccordingChosenOptions(options));
                 }
-                nachKnotenarm = null;
             } else {
                 vonKnotenarm = options.getVonKnotenarm();
                 nachKnotenarm = options.getNachKnotenarm();
                 fahrbewegungKreisverkehr = null;
-            }
 
-            // NICHT KORREKT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            zeitintervalle =  zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                if (ObjectUtils.isNotEmpty(vonKnotenarm) && ObjectUtils.isEmpty(nachKnotenarm)) {
+                    zeitintervalle = zeitintervallRepository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                            zaehlungId,
+                            options.getZeitblock().getStart(),
+                            options.getZeitblock().getEnd(),
+                            vonKnotenarm,
+                            fahrbewegungKreisverkehr,
+                            LadeZaehldatenService.getTypesAccordingChosenOptions(options)
+                    );
+                } else if (ObjectUtils.isEmpty(vonKnotenarm) && ObjectUtils.isNotEmpty(nachKnotenarm)) {
+                    zeitintervalle = zeitintervallRepository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+                            zaehlungId,
+                            options.getZeitblock().getStart(),
+                            options.getZeitblock().getEnd(),
+                            nachKnotenarm,
+                            LadeZaehldatenService.getTypesAccordingChosenOptions(options)
+                    );
+                } else if (ObjectUtils.isNotEmpty(vonKnotenarm) && ObjectUtils.isNotEmpty(nachKnotenarm)) {
+                    zeitintervalle = zeitintervallRepository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
                             zaehlungId,
                             options.getZeitblock().getStart(),
                             options.getZeitblock().getEnd(),
                             vonKnotenarm,
                             nachKnotenarm,
-                            fahrbewegungKreisverkehr,
-                            LadeZaehldatenService.getTypesAccordingChosenOptions(options));
+                            LadeZaehldatenService.getTypesAccordingChosenOptions(options)
+                    );
+                } else {
+                    // options.getVonKnotenarm() und options.getNachKnotenarm() sind Empty
+                    zeitintervalle =  zeitintervallRepository
+                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                                    zaehlungId,
+                                    options.getZeitblock().getStart(),
+                                    options.getZeitblock().getEnd(),
+                                    LadeZaehldatenService.getTypesAccordingChosenOptions(options));
+                }
 
-
-
+            }
         }
-
 
         return CollectionUtils.emptyIfNull(zeitintervalle)
                 .stream()
