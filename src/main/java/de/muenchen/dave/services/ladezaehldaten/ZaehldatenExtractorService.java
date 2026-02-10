@@ -84,7 +84,7 @@ public class ZaehldatenExtractorService {
                  * den im Kreisverkehr jeweils betroffenen Knotenarm. Das Attribut "nach" ist immer "null".
                  */
                 if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
-                    // Hinein
+                    // Über den Knotenarm X in den Kreisverkehr einfahrend
                     vonKnotenarm = options.getVonKnotenarm();
                     fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HINEIN;
                     extractedZeitintervalle = zeitintervallRepository
@@ -97,7 +97,7 @@ public class ZaehldatenExtractorService {
                                     types);
 
                 } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
-                    // Heraus
+                    // Über den Knotenarm Y in den Kreisverkehr ausfahrend
                     vonKnotenarm = options.getNachKnotenarm();
                     fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HERAUS;
 
@@ -111,7 +111,7 @@ public class ZaehldatenExtractorService {
                                     types);
 
                 } else {
-                    // Alles Hinein + Heraus + Vorbei
+                    // Der an allen Knotenarmen ein-, aus- und vorbeifahrende Verkehr
                     vonKnotenarm = null;
                     fahrbewegungKreisverkehr = null;
 
@@ -128,6 +128,7 @@ public class ZaehldatenExtractorService {
                 fahrbewegungKreisverkehr = null;
 
                 if (ObjectUtils.isNotEmpty(vonKnotenarm) && ObjectUtils.isEmpty(nachKnotenarm)) {
+                    // Knotenarm X nach ALLE Knotenarme
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -137,6 +138,7 @@ public class ZaehldatenExtractorService {
                                     fahrbewegungKreisverkehr,
                                     types);
                 } else if (ObjectUtils.isEmpty(vonKnotenarm) && ObjectUtils.isNotEmpty(nachKnotenarm)) {
+                    // ALLE Knotenarme nach Knotenarm Y
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -145,6 +147,7 @@ public class ZaehldatenExtractorService {
                                     nachKnotenarm,
                                     types);
                 } else if (ObjectUtils.isNotEmpty(vonKnotenarm) && ObjectUtils.isNotEmpty(nachKnotenarm)) {
+                    // Knotenarm X nach Knotenarm Y
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -154,7 +157,7 @@ public class ZaehldatenExtractorService {
                                     nachKnotenarm,
                                     types);
                 } else {
-                    // options.getVonKnotenarm() und options.getNachKnotenarm() sind Empty
+                    // ALLE Knotenarme nach ALLE Knotenarme
                     extractedZeitintervalle = zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -172,6 +175,11 @@ public class ZaehldatenExtractorService {
                         .groupingByConcurrent(zeitintervall -> this.getBewegungsbeziehungFromZeitintervallAccordingZaehlart(zeitintervall, zaehlart)));
     }
 
+    /**
+     * @param zeitintervall aus dem die Bewegungsbeziehung extrahiert werden soll.
+     * @param zaehlart zur Ermittlung der entsprechenden Bewegungsbeziehung.
+     * @return die zur Zählart passende Bewegungsbeziehung aus dem Zeitintervall.
+     */
     protected Bewegungsbeziehung getBewegungsbeziehungFromZeitintervallAccordingZaehlart(final Zeitintervall zeitintervall, final Zaehlart zaehlart) {
         if (Zaehlart.FJS.equals(zaehlart)) {
             return zeitintervall.getLaengsverkehr();
