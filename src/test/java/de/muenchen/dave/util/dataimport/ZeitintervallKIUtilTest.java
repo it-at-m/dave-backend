@@ -6,8 +6,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
@@ -22,20 +22,20 @@ import org.junit.jupiter.api.Test;
 class ZeitintervallKIUtilTest {
 
     @Test
-    void testGroupZeitintervalleByFahrbeziehung() {
+    void testGroupZeitintervalleByVerkehrsbeziehung() {
         // Arrange
         Zeitintervall zeitintervall1 = new Zeitintervall();
-        zeitintervall1.setFahrbeziehungId(UUID.randomUUID());
+        zeitintervall1.setBewegungsbeziehungId(UUID.randomUUID());
 
         Zeitintervall zeitintervall2 = new Zeitintervall();
-        zeitintervall2.setFahrbeziehungId(zeitintervall1.getFahrbeziehungId());
+        zeitintervall2.setBewegungsbeziehungId(zeitintervall1.getBewegungsbeziehungId());
 
         Zeitintervall zeitintervall3 = new Zeitintervall();
-        zeitintervall3.setFahrbeziehungId(UUID.randomUUID());
+        zeitintervall3.setBewegungsbeziehungId(UUID.randomUUID());
 
         // Act
         List<List<Zeitintervall>> result = ZeitintervallKIUtil
-                .groupZeitintervalleByFahrbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
+                .groupZeitintervalleByVerkehrsbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
         result.sort(Comparator.comparingInt(List::size));
 
         // Assert
@@ -68,21 +68,21 @@ class ZeitintervallKIUtilTest {
 
         List<KIPredictionResult> predictionResults = Arrays.asList(predictionResult1, predictionResult2);
 
-        Fahrbeziehung fahrbeziehung1 = new Fahrbeziehung();
-        fahrbeziehung1.setVon(1);
-        fahrbeziehung1.setVon(2);
-        Fahrbeziehung fahrbeziehung2 = new Fahrbeziehung();
-        fahrbeziehung2.setVon(2);
-        fahrbeziehung2.setVon(3);
+        Verkehrsbeziehung verkehrsbeziehung1 = new Verkehrsbeziehung();
+        verkehrsbeziehung1.setVon(1);
+        verkehrsbeziehung1.setVon(2);
+        Verkehrsbeziehung verkehrsbeziehung2 = new Verkehrsbeziehung();
+        verkehrsbeziehung2.setVon(2);
+        verkehrsbeziehung2.setVon(3);
 
         Zeitintervall zeitintervall1 = new Zeitintervall();
         zeitintervall1.setZaehlungId(UUID.randomUUID());
-        zeitintervall1.setFahrbeziehungId(UUID.randomUUID());
-        zeitintervall1.setFahrbeziehung(fahrbeziehung1);
+        zeitintervall1.setBewegungsbeziehungId(UUID.randomUUID());
+        zeitintervall1.setVerkehrsbeziehung(verkehrsbeziehung1);
         Zeitintervall zeitintervall2 = new Zeitintervall();
         zeitintervall2.setZaehlungId(zeitintervall1.getZaehlungId());
-        zeitintervall2.setFahrbeziehungId(UUID.randomUUID());
-        zeitintervall2.setFahrbeziehung(fahrbeziehung2);
+        zeitintervall2.setBewegungsbeziehungId(UUID.randomUUID());
+        zeitintervall2.setVerkehrsbeziehung(verkehrsbeziehung2);
 
         List<Zeitintervall> zeitintervalle = Arrays.asList(zeitintervall1, zeitintervall2);
 
@@ -106,11 +106,11 @@ class ZeitintervallKIUtilTest {
         });
 
         // Individuelle Eigenschaften
-        assertThat(kiZeitintervalle.get(0).getFahrbeziehungId(), equalTo(zeitintervall1.getFahrbeziehungId()));
-        assertThat(kiZeitintervalle.get(1).getFahrbeziehungId(), equalTo(zeitintervall2.getFahrbeziehungId()));
+        assertThat(kiZeitintervalle.get(0).getBewegungsbeziehungId(), equalTo(zeitintervall1.getBewegungsbeziehungId()));
+        assertThat(kiZeitintervalle.get(1).getBewegungsbeziehungId(), equalTo(zeitintervall2.getBewegungsbeziehungId()));
 
-        assertThat(kiZeitintervalle.get(0).getFahrbeziehung(), equalTo(zeitintervall1.getFahrbeziehung()));
-        assertThat(kiZeitintervalle.get(1).getFahrbeziehung(), equalTo(zeitintervall2.getFahrbeziehung()));
+        assertThat(kiZeitintervalle.get(0).getVerkehrsbeziehung(), equalTo(zeitintervall1.getVerkehrsbeziehung()));
+        assertThat(kiZeitintervalle.get(1).getVerkehrsbeziehung(), equalTo(zeitintervall2.getVerkehrsbeziehung()));
 
         assertThat(kiZeitintervalle.get(0).getFahrradfahrer(), equalTo(6));
         assertThat(kiZeitintervalle.get(1).getFahrradfahrer(), equalTo(1));

@@ -4,8 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -155,49 +155,49 @@ class ZeitintervallBaseUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(19));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(19));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(19));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(3);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(3);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(summed, is(expected));
     }
 
     @Test
-    public void getAllPossibleFahrbeziehungen() {
-        final Set<Fahrbeziehung> result = ZeitintervallBaseUtil.getAllPossibleFahrbeziehungen(zeitintervalle);
+    public void getAllPossibleVerkehrsbeziehungen() {
+        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleVerkehrsbeziehungen(zeitintervalle);
 
-        final Set<Fahrbeziehung> expected = new HashSet<>();
-        Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(1);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
-        fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(3);
-        fahrbeziehung.setNach(1);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(fahrbeziehung);
+        final Set<Verkehrsbeziehung> expected = new HashSet<>();
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(1);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(3);
+        verkehrsbeziehung.setNach(1);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
+        expected.add(verkehrsbeziehung);
 
         assertThat(result, is(expected));
     }
 
     @Test
-    public void getZeitintervalleForFahrbeziehung() {
+    public void getZeitintervalleForVerkehrsbeziehung() {
         Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
@@ -206,12 +206,12 @@ class ZeitintervallBaseUtilTest {
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
         zeitintervalleGroupedByIntervall.put(intervall, zeitintervalle.subList(5, 10));
 
-        Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(3);
-        fahrbeziehung.setFahrbewegungKreisverkehr(null);
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(3);
+        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
 
-        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForFahrbeziehung(fahrbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
         List<Zeitintervall> expected = Arrays.asList(
                 zeitintervalle.get(3),

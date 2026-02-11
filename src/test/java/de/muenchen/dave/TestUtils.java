@@ -1,7 +1,7 @@
 package de.muenchen.dave;
 
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -47,8 +47,8 @@ public final class TestUtils {
      *            Minuten erhöhten Startuhrzeit.
      * @param value Der Wert wird bei alle Fahrzeugklassen und den hochgerechneten Fahrzeugkategorien
      *            gesetzt.
-     * @param vonFahrbeziehung Die Nummer des Knotenarms
-     * @param nachFahrbeziehung Die Nummer des Knotenarms
+     * @param vonVerkehrsbeziehung Die Nummer des Knotenarms
+     * @param nachVerkehrsbeziehung Die Nummer des Knotenarms
      * @param fahrbewegungKreisverkehr Information ob {@link FahrbewegungKreisverkehr#HINEIN},
      *            {@link FahrbewegungKreisverkehr#HERAUS} und
      *            {@link FahrbewegungKreisverkehr#VORBEI}.
@@ -57,12 +57,12 @@ public final class TestUtils {
     public static Zeitintervall createZeitintervall(final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final Integer value,
-            final Integer vonFahrbeziehung,
-            final Integer nachFahrbeziehung,
+            final Integer vonVerkehrsbeziehung,
+            final Integer nachVerkehrsbeziehung,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr) {
         final Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setZaehlungId(zaehlungId);
-        zeitintervall.setFahrbeziehungId(UUID.randomUUID());
+        zeitintervall.setBewegungsbeziehungId(UUID.randomUUID());
         zeitintervall.setStartUhrzeit(startUhrzeit);
         zeitintervall.setEndeUhrzeit(
                 startUhrzeit.equals(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)))
@@ -80,10 +80,10 @@ public final class TestUtils {
         zeitintervall.getHochrechnung().setHochrechnungKfz(ObjectUtils.isNotEmpty(value) ? BigDecimal.valueOf(value) : null);
         zeitintervall.getHochrechnung().setHochrechnungGv(ObjectUtils.isNotEmpty(value) ? BigDecimal.valueOf(value) : null);
         zeitintervall.getHochrechnung().setHochrechnungSv(ObjectUtils.isNotEmpty(value) ? BigDecimal.valueOf(value) : null);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(vonFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setNach(nachFahrbeziehung);
-        zeitintervall.getFahrbeziehung().setFahrbewegungKreisverkehr(fahrbewegungKreisverkehr);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(vonVerkehrsbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setNach(nachVerkehrsbeziehung);
+        zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(fahrbewegungKreisverkehr);
         return zeitintervall;
     }
 
