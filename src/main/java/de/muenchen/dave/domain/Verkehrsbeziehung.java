@@ -21,7 +21,7 @@ import lombok.ToString;
  * Kreisverkehr:
  * - {@link Verkehrsbeziehung#von} ist immer gesetzt und repräsentiert den Knotenarm
  * - {@link Verkehrsbeziehung#nach} ist "null".
- * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist mit Wert gesetzt.
+ * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist immer mit Wert gesetzt und nicht null.
  */
 @Embeddable
 @Data
