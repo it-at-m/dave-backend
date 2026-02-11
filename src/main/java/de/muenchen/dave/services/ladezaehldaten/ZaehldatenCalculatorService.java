@@ -14,25 +14,22 @@ import java.util.Map;
 
 public class ZaehldatenCalculatorService {
     private List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input, final OptionsDTO options) {
-        //Ídee: SortingIndex als Key für die Zeitintervalle
 
-        //Die Map wird invertiert: neuer Schlüssl: Sortierungsindex
-        // Die Info welche Bewegungsbeziehung sie angehört geht verlohren
-        Map<Integer, List<Zeitintervall>> datesPerInterval = new HashMap<>();
+        //Die Map wird invertiert: neuer Schlüssl: Intervalle
+        // Die Datenstruktur wird zur Berechnung der SPitzenstunde gebraucht
+        //Die Info welche Bewegungsbeziehung es angehört geht verlohren
+        List<Zeitintervall> concatenatedZeitintervall = new ArrayList<>();
         for (Map.Entry<Bewegungsbeziehung, List<Zeitintervall>> entry : input.entrySet()) {
-            List<Zeitintervall> timeIntervals = entry.getValue();
-            for (Zeitintervall interval:timeIntervals){
-                List<Zeitintervall> datesForGivenInterval = datesPerInterval.get(interval.getSortingIndex());
-                datesForGivenInterval.add(interval);
-                datesPerInterval.put(interval.getSortingIndex(), datesForGivenInterval);
-            }
+            concatenatedZeitintervall.addAll(entry.getValue());
         }
+        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
+                .createByIntervallGroupedZeitintervalle(concatenatedZeitintervall);
 
         //Die Einträge der neuen Map werden summiert und in summedZeitintervals gespeichert
 
         List<Zeitintervall> summedZeitintervalls = new ArrayList<>();
 
-        for (Map.Entry<Integer, List<Zeitintervall>> entry : datesPerInterval.entrySet()) {
+        for (Map.Entry<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> entry : zeitintervalleGroupedByIntervall.entrySet()) {
             Zeitintervall addedZeitintervall= new Zeitintervall();
             for (Zeitintervall zeitintervall:entry.getValue()){
                addedZeitintervall = ZeitintervallBaseUtil.summation(addedZeitintervall, zeitintervall);
