@@ -84,6 +84,7 @@ public final class TestUtils {
         zeitintervall.getVerkehrsbeziehung().setVon(vonVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setNach(nachVerkehrsbeziehung);
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(fahrbewegungKreisverkehr);
+        zeitintervall.getVerkehrsbeziehung().setStrassenseite(null);
         return zeitintervall;
     }
 
