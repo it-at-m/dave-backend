@@ -10,7 +10,7 @@ ALTER TABLE zeitintervall
     ADD COLUMN laengsverkehr_knotenarm integer,
     ADD COLUMN querungsverkehr_knotenarm integer,
     ADD COLUMN verkehrsbeziehung_strassenseite character varying(255),
-    ADD CONSTRAINT zeitintervall_verkehrsbeziehung_strassenseite_check CHECK (((querungsverkehr_richtung)::text = ANY ((ARRAY['N'::character varying, 'NO'::character varying, 'O'::character varying, 'SO'::character varying, 'S'::character varying, 'SW'::character varying, 'W'::character varying, 'NW'::character varying])::text[])));
+    ADD CONSTRAINT zeitintervall_verkehrsbeziehung_strassenseite_check CHECK (((verkehrsbeziehung_strassenseite)::text = ANY ((ARRAY['N'::character varying, 'NO'::character varying, 'O'::character varying, 'SO'::character varying, 'S'::character varying, 'SW'::character varying, 'W'::character varying, 'NW'::character varying])::text[])));
 
 CREATE INDEX index_zeitintervall_combined_1 ON zeitintervall USING btree (zaehlung_id, startuhrzeit, endeuhrzeit, type, verkehrsbeziehung_nach, verkehrsbeziehung_von, verkehrsbeziehung_strassenseite);
 
