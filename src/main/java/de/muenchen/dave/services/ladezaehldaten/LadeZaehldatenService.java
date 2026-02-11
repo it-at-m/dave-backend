@@ -53,6 +53,7 @@ public class LadeZaehldatenService {
     public static final String SPITZENSTUNDE_BLOCK_RAD = SPITZENSTUNDE_BLOCK + " Rad";
     public static final String SPITZENSTUNDE_BLOCK_FUSS = SPITZENSTUNDE_BLOCK + " Fuß";
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
+
     private final ZeitintervallRepository zeitintervallRepository;
 
     private final ZaehlstelleIndexService indexService;
