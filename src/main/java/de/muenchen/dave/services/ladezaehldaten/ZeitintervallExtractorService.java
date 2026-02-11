@@ -63,14 +63,14 @@ public class ZeitintervallExtractorService {
             extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenVerkehrsbeziehungen())
                     .parallelStream()
                     .flatMap(chosenVerkehrsbeziehung -> zeitintervallRepository
-                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungStrassenseiteAndTypeInOrderBySortingIndexAsc(
+                            .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
                                     zaehlungId,
                                     options.getZeitblock().getStart(),
                                     options.getZeitblock().getEnd(),
                                     chosenVerkehrsbeziehung.getVon(),
                                     chosenVerkehrsbeziehung.getNach(),
-                                    chosenVerkehrsbeziehung.getStrassenseite(),
-                                    types)
+                                    types,
+                                    chosenVerkehrsbeziehung.getStrassenseite())
                             .stream())
                     .toList();
         } else {

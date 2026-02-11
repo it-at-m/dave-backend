@@ -38,14 +38,23 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @Table(
         indexes = {
-                @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
                 @Index(name = "index_zeitintervall_bewegungsbeziehung_id", columnList = "bewegungsbeziehung_id"),
-                @Index(name = "index_zeitintervall_combined_1", columnList = "zaehlung_id, type, verkehrsbeziehung_von, verkehrsbeziehung_nach"),
-                @Index(name = "index_zeitintervall_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, type"),
+                @Index(
+                        name = "index_zeitintervall_combined_1",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, verkehrsbeziehung_nach, verkehrsbeziehung_von, verkehrsbeziehung_strassenseite"
+                ),
+                @Index(
+                        name = "index_zeitintervall_combined_2",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, verkehrsbeziehung_von, verkehrsbeziehung_fahrbewegungkreisverkehr"
+                ),
                 @Index(
                         name = "index_zeitintervall_combined_3",
-                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, verkehrsbeziehung_nach, verkehrsbeziehung_fahrbewegungkreisverkehr, type"
-                )
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, laengsverkehr_knotenarm, laengsverkehr_richtung, laengsverkehr_strassenseite"
+                ),
+                @Index(
+                        name = "index_zeitintervall_combined_4",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, querungsverkehr_knotenarm, querungsverkehr_richtung"
+                ),
         }
 )
 public class Zeitintervall extends BaseEntity {
