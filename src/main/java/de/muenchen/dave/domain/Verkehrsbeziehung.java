@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain;
 
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -13,8 +14,8 @@ import lombok.ToString;
  * Je nach Kreuzungstyp sind folgende Attribute gesetzt.
  * <p>
  * Kreuzung:
- *  - {@link Verkehrsbeziehung#von} als Startknotenarm der Verkehrsbeziehung
- *  - {@link Verkehrsbeziehung#nach} als Endknotenarm der Verkehrsbeziehung
+ * - {@link Verkehrsbeziehung#von} als Startknotenarm der Verkehrsbeziehung
+ * - {@link Verkehrsbeziehung#nach} als Endknotenarm der Verkehrsbeziehung
  * - {@link Verkehrsbeziehung#fahrbewegungKreisverkehr} ist immer "null".
  * <p>
  * Kreisverkehr:
@@ -37,5 +38,9 @@ public class Verkehrsbeziehung extends Bewegungsbeziehung {
     @Column(name = "fahrbewegungkreisverkehr")
     @Enumerated(EnumType.STRING)
     private FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
+
+    @Column(name = "strassenseite")
+    @Enumerated(EnumType.STRING)
+    private Himmelsrichtung strassenseite;
 
 }

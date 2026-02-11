@@ -5,8 +5,6 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,19 +38,19 @@ public class ZaehldatenCalculatorService {
         //Berechnung der Spitzenstunde abhängig von Zeitervall und Art
         // Zeitblock auswahl fehlt noch
 
-        if(options.getSpitzenstunde()){
+        if (options.getSpitzenstunde()) {
 
         }
 
-        if(options.getSpitzenstundeRad()){
+        if (options.getSpitzenstundeRad()) {
 
         }
 
-        if(options.getSpitzenstundeFuss()){
+        if (options.getSpitzenstundeFuss()) {
 
         }
 
-        if(options.getSpitzenstundeKfz()){ //Standart
+        if (options.getSpitzenstundeKfz()) { //Standart
 
         }
 
