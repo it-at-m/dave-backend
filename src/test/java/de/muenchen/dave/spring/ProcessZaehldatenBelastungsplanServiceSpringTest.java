@@ -350,7 +350,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         List<Zeitintervall> spitzenstunden = new ArrayList<>();
         spitzenstunden.add(spitzenstunde);
 
-        when(ladeZaehldatenService.extractZeitintervalle(any(), any(), any(), any(), any(), nullable(FahrbewegungKreisverkehr.class), anySet()))
+        when(ladeZaehldatenService.extractZeitintervalleOld(any(), any(), any(), any(), any(), nullable(FahrbewegungKreisverkehr.class), anySet()))
                 .thenReturn(spitzenstunden);
 
         List<Zeitintervall> zeitintervalle = new ArrayList<>();
