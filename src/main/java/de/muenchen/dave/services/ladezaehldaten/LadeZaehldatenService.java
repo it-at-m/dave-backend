@@ -451,7 +451,7 @@ public class LadeZaehldatenService {
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
              */
-            final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
+            final Zeitintervall spitzenStunde = spitzenstunden.getLast();
             extractedZeitintervalle = extractZeitintervalle(
                     zaehlungId,
                     spitzenStunde.getStartUhrzeit(),
