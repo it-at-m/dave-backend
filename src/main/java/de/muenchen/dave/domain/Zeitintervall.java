@@ -125,6 +125,7 @@ public class Zeitintervall extends BaseEntity {
     )
     private Hochrechnung hochrechnung;
 
+    // QU
     @Embedded
     @AttributeOverrides(
         {
@@ -134,6 +135,7 @@ public class Zeitintervall extends BaseEntity {
     )
     private Querungsverkehr querungsverkehr;
 
+    // FJS
     @Embedded
     @AttributeOverrides(
         {
@@ -144,6 +146,7 @@ public class Zeitintervall extends BaseEntity {
     )
     private Laengsverkehr laengsverkehr;
 
+    // Alle anderen (... + QJS)
     @Embedded
     @AttributeOverrides(
         {
