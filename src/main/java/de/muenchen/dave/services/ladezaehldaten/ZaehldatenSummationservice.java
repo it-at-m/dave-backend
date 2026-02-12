@@ -1,7 +1,6 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
@@ -14,7 +13,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class SpitzenstundeCalculatorService {
+public class ZaehldatenSummationservice {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
