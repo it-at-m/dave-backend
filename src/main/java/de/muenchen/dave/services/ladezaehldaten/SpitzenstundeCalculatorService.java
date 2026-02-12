@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -19,15 +20,19 @@ public class SpitzenstundeCalculatorService {
 
     private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final OptionsDTO options) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
-        final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, options);
-        final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(forCalculationRelevantZeitintervalle);
+        final var types = LadeZaehldatenService.getTypesAccordingChosenOptions(options);
+        final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
+        final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil
+                .getGleitendeSpitzenstunden(forCalculationRelevantZeitintervalle)
+                .stream()
+                .filter(spitzenstunde -> types.contains(spitzenstunde.getType()))
+                .toList();
         copyOfZeitintervalle.addAll(gleitendeSpitzenstunden);
         copyOfZeitintervalle.sort(Comparator.comparing(Zeitintervall::getSortingIndex));
         return copyOfZeitintervalle;
     }
 
-    private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final OptionsDTO options) {
-        final var types = LadeZaehldatenService.getTypesAccordingChosenOptions(options);
+    private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final Set<TypeZeitintervall> types) {
         final TypeZeitintervall zeitintervallTypeForSpitzenstunde;
         if (types.contains(TypeZeitintervall.STUNDE_VIERTEL)) {
             zeitintervallTypeForSpitzenstunde = TypeZeitintervall.STUNDE_VIERTEL;

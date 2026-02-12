@@ -356,7 +356,8 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+    public List<Zeitintervall> extractZeitintervalle(
+            final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Integer von,
@@ -396,6 +397,19 @@ public class LadeZaehldatenService {
                 fahrbewegungKreisverkehr,
                 types);
     }
+
+    public List<Zeitintervall> extractZeitintervalleNg(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Boolean isKreisverkehr,
+            final Set<TypeZeitintervall> types) {
+
+        return null;
+    }
+
 
     public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
