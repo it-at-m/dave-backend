@@ -99,6 +99,7 @@ public class ZaehlstelleIndexImpl implements ZaehlstelleIndex {
     }
 
     public Page<Zaehlstelle> suggestSearch(String query, Pageable pageable) {
+        query = query.replaceAll("\\*", "");
         Page<de.muenchen.dave.domain.analytics.Zaehlstelle> zs = zaehlstelleRepository.suggestSearch(query, pageable);
         return zs.map(zaehlstelleMapper::analytics2elastic);
     }
