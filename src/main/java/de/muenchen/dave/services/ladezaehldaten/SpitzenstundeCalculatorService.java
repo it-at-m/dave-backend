@@ -17,8 +17,10 @@ public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
-    private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(final UUID zaehlungId,
-            final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final Set<TypeZeitintervall> types) {
+    private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(
+            final UUID zaehlungId,
+            final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
+            final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
         final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
         final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtilNg
@@ -31,7 +33,8 @@ public class SpitzenstundeCalculatorService {
         return copyOfZeitintervalle;
     }
 
-    private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
+    private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(
+            final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
             final Set<TypeZeitintervall> types) {
         final TypeZeitintervall zeitintervallTypeForSpitzenstunde;
         if (types.contains(TypeZeitintervall.STUNDE_VIERTEL)) {
