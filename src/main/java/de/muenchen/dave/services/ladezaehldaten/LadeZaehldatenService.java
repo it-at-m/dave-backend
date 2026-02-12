@@ -402,10 +402,10 @@ public class LadeZaehldatenService {
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
-            final Integer von,
-            final Integer nach,
+            final OptionsDTO options,
             final Boolean isKreisverkehr,
             final Set<TypeZeitintervall> types) {
+
 
         return null;
     }

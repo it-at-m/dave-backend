@@ -18,9 +18,8 @@ public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
-    private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final OptionsDTO options) {
+    private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde, final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
-        final var types = LadeZaehldatenService.getTypesAccordingChosenOptions(options);
         final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
         final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil
                 .getGleitendeSpitzenstunden(forCalculationRelevantZeitintervalle)
