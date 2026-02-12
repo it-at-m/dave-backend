@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -400,6 +401,7 @@ public class LadeZaehldatenService {
 
     public List<Zeitintervall> extractZeitintervalleNg(
             final UUID zaehlungId,
+            final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final OptionsDTO options,

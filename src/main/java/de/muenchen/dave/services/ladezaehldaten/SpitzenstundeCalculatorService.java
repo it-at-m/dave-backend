@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class ZaehldatenSummationservice {
+public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 

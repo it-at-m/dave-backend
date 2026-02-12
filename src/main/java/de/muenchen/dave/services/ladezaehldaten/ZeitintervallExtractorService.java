@@ -3,7 +3,6 @@ package de.muenchen.dave.services.ladezaehldaten;
 import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.poi.sl.draw.geom.GuideIf;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +27,7 @@ public class ZeitintervallExtractorService {
     final ZeitintervallRepository zeitintervallRepository;
 
     @Transactional
-    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZeitintervalleForZaehlungAccordingOptions(
+    public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZeitintervalle(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
