@@ -2,6 +2,7 @@ package de.muenchen.dave.services.ladezaehldaten;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
 import java.util.Comparator;
@@ -17,14 +18,15 @@ public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
-    private List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(
+    public List<Zeitintervall> calculateAndAddSpitzenstundeForGivenZeitintervalle(
             final UUID zaehlungId,
+            final Zeitblock zeitblock,
             final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
             final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
         final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
         final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtilNg
-                .getGleitendeSpitzenstunden(zaehlungId, forCalculationRelevantZeitintervalle, types)
+                .getGleitendeSpitzenstunden(zaehlungId, zeitblock, forCalculationRelevantZeitintervalle, types)
                 .stream()
                 .filter(spitzenstunde -> types.contains(spitzenstunde.getType()))
                 .toList();

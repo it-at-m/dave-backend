@@ -34,6 +34,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
      * - {@link Zeitblock#ZB_00_24}
      *
      * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
      * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
      *            sollen.
      * @param types als Zeitintervalltypen welche angefragt wurden.
@@ -42,22 +43,36 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
      */
     public static List<Zeitintervall> getGleitendeSpitzenstunden(
             final UUID zaehlungId,
+            final Zeitblock zeitblock,
             final List<Zeitintervall> zeitintervalle,
             final Set<TypeZeitintervall> types) {
         List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
         if (Objects.nonNull(zaehlungId)) {
-            var calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
-            gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            List<Zeitintervall> calculatedSpitzenstunden;
+            if (Zeitblock.ZB_00_06.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_06_10.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_10_15.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_15_19.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_19_24.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
         }
         return gleitendeSpitzenstunden;
     }
