@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.enums;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import java.util.Optional;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -11,13 +11,13 @@ public enum FahrbewegungKreisverkehr {
     HERAUS,
     VORBEI;
 
-    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
+    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteVerkehrsbeziehungDTO verkehrsbeziehung) {
         final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional;
-        if (BooleanUtils.isTrue(fahrbeziehungDto.getHinein())) {
+        if (BooleanUtils.isTrue(verkehrsbeziehung.getHinein())) {
             fahrbewegungKreisverkehrOptional = Optional.of(HINEIN);
-        } else if (BooleanUtils.isTrue(fahrbeziehungDto.getHeraus())) {
+        } else if (BooleanUtils.isTrue(verkehrsbeziehung.getHeraus())) {
             fahrbewegungKreisverkehrOptional = Optional.of(HERAUS);
-        } else if (BooleanUtils.isTrue(fahrbeziehungDto.getVorbei())) {
+        } else if (BooleanUtils.isTrue(verkehrsbeziehung.getVorbei())) {
             fahrbewegungKreisverkehrOptional = Optional.of(VORBEI);
         } else {
             fahrbewegungKreisverkehrOptional = Optional.empty();
@@ -25,13 +25,13 @@ public enum FahrbewegungKreisverkehr {
         return fahrbewegungKreisverkehrOptional;
     }
 
-    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final ExternalFahrbeziehungDTO fahrbeziehungDto) {
+    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final ExternalVerkehrsbeziehungDTO verkehrsbeziehung) {
         final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional;
-        if (BooleanUtils.isTrue(fahrbeziehungDto.getHinein())) {
+        if (BooleanUtils.isTrue(verkehrsbeziehung.getHinein())) {
             fahrbewegungKreisverkehrOptional = Optional.of(HINEIN);
-        } else if (BooleanUtils.isTrue(fahrbeziehungDto.getHeraus())) {
+        } else if (BooleanUtils.isTrue(verkehrsbeziehung.getHeraus())) {
             fahrbewegungKreisverkehrOptional = Optional.of(HERAUS);
-        } else if (BooleanUtils.isTrue(fahrbeziehungDto.getVorbei())) {
+        } else if (BooleanUtils.isTrue(verkehrsbeziehung.getVorbei())) {
             fahrbewegungKreisverkehrOptional = Optional.of(VORBEI);
         } else {
             fahrbewegungKreisverkehrOptional = Optional.empty();

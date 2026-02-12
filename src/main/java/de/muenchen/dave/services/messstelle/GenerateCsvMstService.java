@@ -102,7 +102,7 @@ public class GenerateCsvMstService {
      *
      * @param messstelle die Messstelle
      * @param header Zur Berechnung der Anzahl der Semikolons
-     * @param options Zur Anzeige der Fahrbeziehung
+     * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options, final boolean isSingleDay) {

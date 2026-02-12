@@ -1,14 +1,14 @@
 package de.muenchen.dave.domain.dtos;
 
 import com.github.javafaker.Faker;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BearbeiteFahrbeziehungKreuzungDTORandomFactory {
+public class BearbeiteVerkehrsbeziehungKreuzungDTORandomFactory {
 
-    public static BearbeiteFahrbeziehungDTO getOne() {
-        BearbeiteFahrbeziehungDTO dto = new BearbeiteFahrbeziehungDTO();
+    public static BearbeiteVerkehrsbeziehungDTO getOne() {
+        BearbeiteVerkehrsbeziehungDTO dto = new BearbeiteVerkehrsbeziehungDTO();
 
         dto.setIsKreuzung(true);
         dto.setNach(Faker.instance().number().numberBetween(1, 8));
@@ -17,8 +17,8 @@ public class BearbeiteFahrbeziehungKreuzungDTORandomFactory {
         return dto;
     }
 
-    public static List<BearbeiteFahrbeziehungDTO> getSome() {
-        List<BearbeiteFahrbeziehungDTO> l = new ArrayList<>();
+    public static List<BearbeiteVerkehrsbeziehungDTO> getSome() {
+        List<BearbeiteVerkehrsbeziehungDTO> l = new ArrayList<>();
 
         int x = Faker.instance().number().numberBetween(1, 8);
         for (int i = 0; i < x; i++) {

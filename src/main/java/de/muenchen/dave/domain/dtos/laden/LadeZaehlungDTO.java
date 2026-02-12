@@ -1,6 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,9 +49,11 @@ public class LadeZaehlungDTO {
 
     List<Fahrzeug> kategorien;
 
-    List<BearbeiteFahrbeziehungDTO> fahrbeziehungen;
+    List<BearbeiteLaengsverkehrDTO> laengsverkehr;
 
-    FahrbeziehungenDTO auswaehlbareFahrbeziehungen;
+    List<BearbeiteQuerungsverkehrDTO> querungsverkehr;
+
+    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
     ZeitauswahlDTO zeitauswahl;
 

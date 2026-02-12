@@ -9,7 +9,6 @@ import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
-import de.muenchen.dave.domain.pdf.assets.LogoAsset;
 import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
 import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
@@ -24,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,7 +39,6 @@ public class ReportService {
     private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_HEADING5_ASSET = "/pdf/templates/parts/report/heading5-asset.mustache";
     private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_PAGEBREAK_ASSET = "/pdf/templates/parts/report/pagebreak-asset.mustache";
     private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_NEWLINE_ASSET = "/pdf/templates/parts/report/newline-asset.mustache";
-    private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_LOGO_ASSET = "/pdf/templates/parts/report/logo-asset.mustache";
     private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_DATENTABELLE_TABLE = "/pdf/templates/parts/report/datatable-report-table.mustache";
     private static final String PDF_TEMPLATES_REPORT_PARTS_REPORT_ZAEHLUNGSKENNGROESSEN = "/pdf/templates/parts/report/zaehlungskenngroessen-asset.mustache";
     private static final String PDF_TEMPLATES_REPORT = "/pdf/templates/report.mustache";
@@ -62,7 +61,6 @@ public class ReportService {
     private Mustache heading5AssetMustache;
     private Mustache pagebreakAssetMustache;
     private Mustache newlineAssetMustache;
-    private Mustache logoAssetMustache;
     private Mustache dataTableMustache;
     private Mustache zaehlungskenngroessenMustache;
     private Mustache reportMustache;
@@ -96,13 +94,14 @@ public class ReportService {
     public String fillReportPdf(final ReportPdf reportPdf, final List<BaseAsset> assetList, final String department) {
         FillPdfBeanService.fillPdfBeanWithData(reportPdf, department);
         this.generatePdfService.fillPdfBeanMustacheParts(reportPdf);
-        final LogoAsset logoAsset = new LogoAsset();
-        logoAsset.setLogoIcon(reportLogoService.getLogoIconDataSource());
-        logoAsset.setLogoSubtitle(reportLogoService.getLogoSubtitle());
-        logoAsset.setType(AssetType.LOGO);
-        assetList.addFirst(logoAsset);
-        // logoAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
-        reportPdf.setCssFixed(this.generatePdfService.getHtml(this.dataTableCssMustacheFixed, logoAsset));
+        // BaseAsset hier nur als dummy benutzt, dataTableCssMustacheFixed ist nicht variabel und benötigt keine Bean zum funktionieren.
+        BaseAsset dummy;
+        if (CollectionUtils.isNotEmpty(assetList)) {
+            dummy = assetList.getFirst();
+        } else {
+            dummy = new BaseAsset();
+        }
+        reportPdf.setCssFixed(this.generatePdfService.getHtml(this.dataTableCssMustacheFixed, dummy));
 
         reportPdf.setBody(this.generateReportBody(assetList));
         // Muss nach generateReportBody ausgeführt werden damit die DatentabelleAssets gefüllt werden
@@ -150,8 +149,6 @@ public class ReportService {
                 sb.append(this.generatePdfService.getHtml(this.heading4AssetMustache, asset));
             } else if (asset.getType().equals(AssetType.HEADING5)) {
                 sb.append(this.generatePdfService.getHtml(this.heading5AssetMustache, asset));
-            } else if (asset.getType().equals(AssetType.LOGO)) {
-                sb.append(this.generatePdfService.getHtml(this.logoAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.DATATABLE)) {
                 final DatatableAsset datatableAsset = (DatatableAsset) asset;
                 try {
@@ -212,7 +209,6 @@ public class ReportService {
         this.heading5AssetMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_HEADING5_ASSET, mf);
         this.pagebreakAssetMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_PAGEBREAK_ASSET, mf);
         this.newlineAssetMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_NEWLINE_ASSET, mf);
-        this.logoAssetMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_LOGO_ASSET, mf);
         this.dataTableMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_DATENTABELLE_TABLE, mf);
         this.zaehlungskenngroessenMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT_PARTS_REPORT_ZAEHLUNGSKENNGROESSEN, mf);
         this.reportMustache = this.generatePdfService.compileMustache(PDF_TEMPLATES_REPORT, mf);
