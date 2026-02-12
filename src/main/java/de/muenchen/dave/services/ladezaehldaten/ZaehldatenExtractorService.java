@@ -24,7 +24,7 @@ public class ZaehldatenExtractorService {
 
     private final ZeitintervallExtractorService zeitintervallExtractorService;
 
-    private final ZaehldatenSummationService zaehldatenSummationService;
+    private final ZeitintervallSummationService zeitintervallSummationService;
 
     private final SpitzenstundeCalculatorService spitzenstundeCalculatorService;
 
@@ -48,7 +48,8 @@ public class ZaehldatenExtractorService {
                 types);
 
         // Summieren der Zeitintervalle über die Bewegungsbeziehung
-        final var overBewegungsbeziehungSummedZeitintervalle = zaehldatenSummationService.sumOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehung);
+        final var overBewegungsbeziehungSummedZeitintervalle = zeitintervallSummationService
+                .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehung);
 
         // Ermittlung der Spitzenstunden
         if (CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,

@@ -9,15 +9,15 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ZaehldatenSummationService {
+public class ZeitintervallSummationService {
 
-    public List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input) {
+    public List<Zeitintervall> sumZeitintervelleOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> zeitintervalleByBewegungsbeziehung) {
 
         //Die Map wird invertiert: neuer Schlüssl: Intervalle
         // Die Datenstruktur wird zur Berechnung der SPitzenstunde gebraucht
         //Die Info welche Bewegungsbeziehung es angehört geht verlohren
         List<Zeitintervall> concatenatedZeitintervall = new ArrayList<>();
-        for (Map.Entry<Bewegungsbeziehung, List<Zeitintervall>> entry : input.entrySet()) {
+        for (Map.Entry<Bewegungsbeziehung, List<Zeitintervall>> entry : zeitintervalleByBewegungsbeziehung.entrySet()) {
             concatenatedZeitintervall.addAll(entry.getValue());
         }
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
