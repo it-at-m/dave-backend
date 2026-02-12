@@ -2,9 +2,7 @@ package de.muenchen.dave.services.ladezaehldaten;
 
 import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZaehldatenSummationService {
 
-    public List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input, final OptionsDTO options) {
+    public List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input) {
 
         //Die Map wird invertiert: neuer Schlüssl: Intervalle
         // Die Datenstruktur wird zur Berechnung der SPitzenstunde gebraucht
@@ -37,30 +35,7 @@ public class ZaehldatenSummationService {
             summedZeitintervalls.add(addedZeitintervall);
         }
 
-        //Berechnung der Spitzenstunde abhängig von Zeitervall und Art
-        // Zeitblock auswahl fehlt noch
-
-        if (options.getSpitzenstunde()) {
-
-        }
-
-        if (options.getSpitzenstundeRad()) {
-
-        }
-
-        if (options.getSpitzenstundeFuss()) {
-
-        }
-
-        if (options.getSpitzenstundeKfz()) { //Standart
-
-        }
-
         return summedZeitintervalls;
     }
 
-    private List<Zeitintervall> addSpitzenstundeToSummedAndExtractedZeitintervalle(final List<Zeitintervall> zeitinervalleSummed) {
-        //TODO: individualisieren
-        return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitinervalleSummed);
-    }
 }
