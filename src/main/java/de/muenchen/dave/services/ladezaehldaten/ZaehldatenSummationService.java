@@ -5,15 +5,13 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ZaehldatenSummationService {
-
 
     public List<Zeitintervall> sumOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> input, final OptionsDTO options) {
 
@@ -32,9 +30,9 @@ public class ZaehldatenSummationService {
         List<Zeitintervall> summedZeitintervalls = new ArrayList<>();
 
         for (Map.Entry<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> entry : zeitintervalleGroupedByIntervall.entrySet()) {
-            Zeitintervall addedZeitintervall= new Zeitintervall();
-            for (Zeitintervall zeitintervall:entry.getValue()){
-               addedZeitintervall = ZeitintervallBaseUtil.summation(addedZeitintervall, zeitintervall);
+            Zeitintervall addedZeitintervall = new Zeitintervall();
+            for (Zeitintervall zeitintervall : entry.getValue()) {
+                addedZeitintervall = ZeitintervallBaseUtil.summation(addedZeitintervall, zeitintervall);
             }
             summedZeitintervalls.add(addedZeitintervall);
         }

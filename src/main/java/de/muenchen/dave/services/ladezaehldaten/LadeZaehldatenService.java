@@ -408,10 +408,8 @@ public class LadeZaehldatenService {
             final Boolean isKreisverkehr,
             final Set<TypeZeitintervall> types) {
 
-
         return null;
     }
-
 
     public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
