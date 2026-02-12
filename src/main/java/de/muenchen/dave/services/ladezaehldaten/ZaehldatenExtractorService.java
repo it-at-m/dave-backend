@@ -54,8 +54,11 @@ public class ZaehldatenExtractorService {
         // Ermittlung der Spitzenstunden
         if (CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
                 TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
-            final var spitzenstunden = spitzenstundeCalculatorService.calculateAndAddSpitzenstundeForGivenZeitintervalle(zaehlungId, options.getZeitblock(),
-                    overBewegungsbeziehungSummedZeitintervalle, types);
+            final var spitzenstunden = spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(
+                    zaehlungId,
+                    options.getZeitblock(),
+                    overBewegungsbeziehungSummedZeitintervalle,
+                    types);
             if (types.size() == 1) {
                 // Es wurde nur die Spitzenstunde gewählt.
                 overBewegungsbeziehungSummedZeitintervalle.clear();

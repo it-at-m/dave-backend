@@ -18,21 +18,18 @@ public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
-    public List<Zeitintervall> calculateAndAddSpitzenstundeForGivenZeitintervalle(
+    public List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
             final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
         final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
-        final var gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtilNg
+        return ZeitintervallGleitendeSpitzenstundeUtilNg
                 .getGleitendeSpitzenstunden(zaehlungId, zeitblock, forCalculationRelevantZeitintervalle, types)
                 .stream()
                 .filter(spitzenstunde -> types.contains(spitzenstunde.getType()))
                 .toList();
-        copyOfZeitintervalle.addAll(gleitendeSpitzenstunden);
-        copyOfZeitintervalle.sort(Comparator.comparing(Zeitintervall::getSortingIndex));
-        return copyOfZeitintervalle;
     }
 
     private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(

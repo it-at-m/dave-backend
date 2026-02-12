@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -24,18 +25,32 @@ public class ZeitintervallSummationService {
                 .stream()
                 .flatMap(zeitintervalleOfBewegungsbeziehung -> zeitintervalleOfBewegungsbeziehung.stream())
                 .toList();
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
-                .createByIntervallGroupedZeitintervalle(concatenatedZeitintervall);
+        //final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
+        //        .createByIntervallGroupedZeitintervalle(concatenatedZeitintervall);
+
+        final Map<Integer, List<Zeitintervall>> zeitintervalleGroupedBySortingIndex = concatenatedZeitintervall
+                .stream()
+                .collect(Collectors.groupingByConcurrent(Zeitintervall::getSortingIndex));
 
         //Die Einträge der neuen Map werden summiert und in summedZeitintervals gespeichert
 
         List<Zeitintervall> summedZeitintervalls = new ArrayList<>();
 
-        for (Map.Entry<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> entry : zeitintervalleGroupedByIntervall.entrySet()) {
+        for (Map.Entry<Integer, List<Zeitintervall>> entry : zeitintervalleGroupedBySortingIndex.entrySet()) {
             Zeitintervall addedZeitintervall = new Zeitintervall();
             for (Zeitintervall zeitintervall : entry.getValue()) {
+                if (Objects.isNull(addedZeitintervall.getType())){
+                    addedZeitintervall.setType(zeitintervall.getType());
+                }
+                if (Objects.isNull(addedZeitintervall.getStartUhrzeit())){
+                    addedZeitintervall.setStartUhrzeit(zeitintervall.getStartUhrzeit());
+                }
+                if (Objects.isNull(addedZeitintervall.getEndeUhrzeit())){
+                    addedZeitintervall.setEndeUhrzeit(zeitintervall.getEndeUhrzeit());
+                }
                 addedZeitintervall = nullSafeSummationForHochrechnung(addedZeitintervall, zeitintervall);
             }
+            addedZeitintervall.setSortingIndex(entry.getKey());
             summedZeitintervalls.add(addedZeitintervall);
         }
 
