@@ -1,18 +1,5 @@
 package de.muenchen.elasticimpl;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.stereotype.Service;
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.search.CompletionSuggestOption;
@@ -22,15 +9,26 @@ import co.elastic.clients.elasticsearch.core.search.Suggester;
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.services.suche.SearchFunctionsService;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SearchFunctionsServiceImpl implements SearchFunctionsService {
-    
+
     private static final Pattern DE_DATE = Pattern.compile("\\d{1,2}[.]\\d{0,2}[.]{0,1}\\d{0,4}");
 
     private final ElasticsearchClient elasticsearchClient;
@@ -133,7 +131,7 @@ public class SearchFunctionsServiceImpl implements SearchFunctionsService {
         }
         return false;
     }
-    
+
     /**
      * Wandelt einen String der Form dd.MM.YYYY in ein Localdate an
      *

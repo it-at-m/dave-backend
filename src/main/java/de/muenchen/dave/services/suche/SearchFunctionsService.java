@@ -1,8 +1,7 @@
 package de.muenchen.dave.services.suche;
 
-import java.util.List;
-
 import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
+import java.util.List;
 
 public interface SearchFunctionsService {
 

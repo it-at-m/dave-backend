@@ -36,20 +36,20 @@ public interface ZaehlstelleRepository extends JpaRepository<Zaehlstelle, UUID> 
     List<Zaehlstelle> findAll(final Sort sort);
 
     @Query(value = """
-        select z from Zaehlstelle z 
-        where z.nummer like %?1% 
-        or z.stadtbezirk like %?1% 
-        or z.kommentar like %?1%
-        or cast(z.suchwoerter as string) like %?1%
-        or cast(z.customSuchwoerter as string) like %?1%
-                """)
+            select z from Zaehlstelle z
+            where z.nummer like %?1%
+            or z.stadtbezirk like %?1%
+            or z.kommentar like %?1%
+            or cast(z.suchwoerter as string) like %?1%
+            or cast(z.customSuchwoerter as string) like %?1%
+                    """)
     Page<Zaehlstelle> suggestSearch(String query, Pageable pageable);
 
     @Query(value = """
-        select z from Zaehlstelle z 
-        join z.zaehlungen za 
-        where za.status in ('counting', 'correction', 'instructed')        
-                """)
+            select z from Zaehlstelle z
+            join z.zaehlungen za
+            where za.status in ('counting', 'correction', 'instructed')
+                    """)
     Page<Zaehlstelle> findAllByStatus(String query, Pageable pageable);
 
     List<Zaehlstelle> findAll();

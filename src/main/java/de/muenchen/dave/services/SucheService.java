@@ -1,6 +1,5 @@
 package de.muenchen.dave.services;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
