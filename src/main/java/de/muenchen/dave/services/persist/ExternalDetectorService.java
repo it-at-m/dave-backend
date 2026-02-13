@@ -50,8 +50,12 @@ public class ExternalDetectorService {
 
         Hochrechnungsfaktor hochrechnungsfaktor = hochrechnungsfaktorRepository.findByDefaultFaktorTrue();
         if (hochrechnungsfaktor == null) {
-            log.error("Kein Standard-Hochrechnungsfaktor in der Datenbank gefunden.");
-            throw new BrokenInfrastructureException();
+            final String errorMessage = String.format(
+                    "Kein Standard-Hochrechnungsfaktor in der Datenbank gefunden. " +
+                    "Aufruf: hochrechnungsfaktorRepository.findByDefaultFaktorTrue(), ZaehlungId: %s",
+                    detection != null ? detection.getZaehlungId() : "null");
+            log.error(errorMessage);
+            throw new BrokenInfrastructureException(errorMessage);
         }
         zi.setHochrechnung(createHochrechnung(hochrechnungsfaktor, zi));
         log.debug("Converted Zeitintervall: {}", zi);
