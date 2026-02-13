@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.external.DetectionDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.persist.ExternalDetectorService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class DetectorController {
 
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PostMapping(value = "/save-detection", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDTO> saveDetection(@RequestBody @NotNull final DetectionDTO detection) {
+    public ResponseEntity<BackendIdDTO> saveDetection(@RequestBody @NotNull @Valid final DetectionDTO detection) {
         log.debug("Detection received: {}", detection);
         try {
             final BackendIdDTO backendIdDto = this.externalDetectorService.saveDetection(detection);
@@ -48,7 +49,7 @@ public class DetectorController {
 
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PostMapping(value = "/save-latest-detections", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDTO> saveLatestDetections(@RequestBody @NotNull final List<DetectionDTO> detections) {
+    public ResponseEntity<BackendIdDTO> saveLatestDetections(@RequestBody @NotNull @Valid final List<DetectionDTO> detections) {
         log.debug("Detection received: {}", detections);
         try {
             final BackendIdDTO backendIdDto = this.externalDetectorService.saveLatestDetections(detections);
