@@ -83,7 +83,7 @@ public class ExternalDetectorService {
         return hochrechnung;
     }
 
-    public BackendIdDTO saveLastestDetections(List<DetectionDTO> detections) throws BrokenInfrastructureException, DataNotFoundException {
+    public BackendIdDTO saveLatestDetections(List<DetectionDTO> detections) throws BrokenInfrastructureException, DataNotFoundException {
         log.debug("saveLatestDetections");
         BackendIdDTO backendIdDto = new BackendIdDTO();
         for (DetectionDTO detection : detections) {

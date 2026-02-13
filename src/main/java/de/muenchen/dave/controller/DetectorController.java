@@ -51,7 +51,7 @@ public class DetectorController {
     public ResponseEntity<BackendIdDTO> saveLatestDetections(@RequestBody @NotNull final List<DetectionDTO> detections) {
         log.debug("Detection received: {}", detections);
         try {
-            final BackendIdDTO backendIdDto = this.externalDetectorService.saveLastestDetections(detections);
+            final BackendIdDTO backendIdDto = this.externalDetectorService.saveLatestDetections(detections);
             log.debug("Der Messpunkt wurde erfolgreich gespeichert.");
             return ResponseEntity.ok(backendIdDto);
         } catch (final DataNotFoundException dnfe) {
