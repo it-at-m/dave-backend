@@ -39,6 +39,9 @@ public class ZeitintervallSummationService {
                 if (Objects.isNull(addedZeitintervall.getEndeUhrzeit())){
                     addedZeitintervall.setEndeUhrzeit(zeitintervall.getEndeUhrzeit());
                 }
+                if (Objects.isNull(addedZeitintervall.getZaehlungId())){
+                    addedZeitintervall.setZaehlungId(zeitintervall.getZaehlungId());
+                }
                 addedZeitintervall = nullSafeSummationForHochrechnung(addedZeitintervall, zeitintervall);
             }
             addedZeitintervall.setSortingIndex(entry.getKey());
