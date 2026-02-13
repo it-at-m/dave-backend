@@ -25,16 +25,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Slf4j
 public class SucheServiceTests {
 
-    private final SucheService service = new SucheService(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+    private final SucheService service = new SucheService(null, null, null, null, null, null, null, null);
 
     @Test
     public void mapZaehlungenToZaehlartenKarte() {
