@@ -1,17 +1,16 @@
 package de.muenchen.dave.services;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import de.muenchen.dave.domain.ConfigurationEntity;
 import de.muenchen.dave.domain.enums.ConfigDataTypes;
 import de.muenchen.dave.repositories.relationaldb.ConfigurationRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class ConfigurationServiceTest {
@@ -45,7 +44,7 @@ class ConfigurationServiceTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> configurationService.saveOrUpdate(config));
-        assert(exception.getMessage().contains("is not a valid INTEGER"));
+        assert (exception.getMessage().contains("is not a valid INTEGER"));
     }
 
     @Test
@@ -71,7 +70,7 @@ class ConfigurationServiceTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> configurationService.saveOrUpdate(config));
-        assert(exception.getMessage().contains("is not a valid DOUBLE"));
+        assert (exception.getMessage().contains("is not a valid DOUBLE"));
     }
 
     @Test
@@ -121,7 +120,7 @@ class ConfigurationServiceTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> configurationService.saveOrUpdate(config));
-        assert(exception.getMessage().contains("is not a valid BOOLEAN"));
+        assert (exception.getMessage().contains("is not a valid BOOLEAN"));
     }
 
     @Test

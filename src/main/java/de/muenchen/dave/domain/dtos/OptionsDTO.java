@@ -3,12 +3,20 @@ package de.muenchen.dave.domain.dtos;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class OptionsDTO implements Serializable {
+
+    @NotEmpty
+    @Size(min = 2, max = 2)
+    private List<@NotNull LocalDate> zeitraum;
 
     @NotNull
     private Zaehldauer zaehldauer;
