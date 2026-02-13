@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -17,34 +18,37 @@ import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessZaehldatenZeitreiheService {
 
     private static final String VERKEHRSBEZIEHUNG_NICHT_VORHANDEN = "\n(Verkehrsbez. nicht vorh.)";
-    private final ZeitintervallRepository zeitintervallRepository;
-    private final ZaehlstelleIndexService indexService;
-    private final ZeitauswahlService zeitauswahlService;
 
-    public ProcessZaehldatenZeitreiheService(final ZaehlstelleIndexService indexService,
-            final ZeitintervallRepository zeitintervallRepository,
-            final ZeitauswahlService zeitauswahlService) {
-        this.zeitauswahlService = zeitauswahlService;
-        this.indexService = indexService;
-        this.zeitintervallRepository = zeitintervallRepository;
-    }
+    private final ZeitintervallRepository zeitintervallRepository;
+
+    private final ZaehldatenExtractorService zaehldatenExtractorService;
+
+    private final ZaehlstelleIndexService indexService;
+
+    private final ZeitauswahlService zeitauswahlService;
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
@@ -197,21 +201,27 @@ public class ProcessZaehldatenZeitreiheService {
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
                 .forEach(zaehlung -> {
+                    List<Zeitintervall> zeitintervalle = List.of();
                     if (checkVerkehrsbeziehungen(zaehlung, options)) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-                        final Zeitintervall zeitintervall = zeitintervallRepository
-                                .findByZaehlungIdAndTypeAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungFahrbewegungKreisverkehrIsNull(
-                                        UUID.fromString(zaehlung.getId()),
-                                        options.getZeitblock().getTypeZeitintervall(),
-                                        options.getVonKnotenarm(),
-                                        options.getNachKnotenarm(),
-                                        options.getZeitblock().getStart(),
-                                        options.getZeitblock().getEnd());
+                        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+                        //
+                        zeitintervalle = zaehldatenExtractorService.extractZeitintervalle(
+                                UUID.fromString(zaehlung.getId()),
+                                zaehlart,
+                                options.getZeitblock().getStart(),
+                                options.getZeitblock().getEnd(),
+                                zaehlung.getKreisverkehr(),
+                                options,
+                                Set.of(options.getZeitblock().getTypeZeitintervall())
+                        );
+                    }
 
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options);
+                    if (CollectionUtils.isNotEmpty(zeitintervalle)) {
+                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(), options);
                         ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
