@@ -87,7 +87,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(2);
         expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(0), is(expected));
+        assertThat(result.get(18), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -107,7 +107,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(2);
         expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(1), is(expected));
+        assertThat(result.get(19), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -127,7 +127,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(2);
         expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(2), is(expected));
+        assertThat(result.get(20), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -147,7 +147,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() / 2), is(expected));
+        assertThat(result.get(0), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -167,7 +167,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() / 2 + 1), is(expected));
+        assertThat(result.get(1), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -187,7 +187,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() / 2 + 2), is(expected));
+        assertThat(result.get(2), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -207,7 +207,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() - 6), is(expected));
+        assertThat(result.get(12), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -227,7 +227,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() - 5), is(expected));
+        assertThat(result.get(13), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -247,7 +247,7 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() - 4), is(expected));
+        assertThat(result.get(14), is(expected));
 
     }
 

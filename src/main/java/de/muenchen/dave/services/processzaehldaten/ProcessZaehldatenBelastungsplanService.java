@@ -10,9 +10,9 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -670,7 +670,8 @@ public class ProcessZaehldatenBelastungsplanService {
         return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
+    public List<Zeitintervall> extractZeitintervalle(
+            final String zaehlungId,
             final OptionsDTO options) {
         return zeitintervallRepository
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
@@ -693,7 +694,8 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(final Zaehlung zaehlung,
+    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+            final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
         if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
@@ -703,13 +705,14 @@ public class ProcessZaehldatenBelastungsplanService {
         } else {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
+                zaehlart,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
-                options.getVonKnotenarm(),
-                options.getNachKnotenarm(),
-                (FahrbewegungKreisverkehr) null,
+                options,
+                false,
                 SetUtils.hashSet(chosenSpitzenstunde));
         if (!spitzenstunden.isEmpty()) {
 
@@ -721,7 +724,7 @@ public class ProcessZaehldatenBelastungsplanService {
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
              */
-            final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
+            final Zeitintervall spitzenStunde = spitzenstunden.getLast();
             final List<Zeitintervall> zeitintervalle = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),

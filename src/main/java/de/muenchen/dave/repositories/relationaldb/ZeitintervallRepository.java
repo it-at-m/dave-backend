@@ -1,7 +1,9 @@
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
+public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> {
 
     @Override
     Optional<Zeitintervall> findById(final UUID id);
@@ -101,4 +103,74 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
 
+    // ---------------------------------------
+
+    // Verkehrsbeziehung
+    // index_zeitintervall_combined_1
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Set<TypeZeitintervall> types,
+            final Himmelsrichtung strassenseite);
+
+    // Laengsverkehr
+    // index_zeitintervall_combined_3
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer knotenarm,
+            final Bewegungsrichtung richtung,
+            final Himmelsrichtung strassenseite,
+            final Set<TypeZeitintervall> types);
+
+    // Querungsverkehr
+    // index_zeitintervall_combined_4
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer knotenarm,
+            final Himmelsrichtung richtung,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von X nach Y
+    // index_zeitintervall_combined_1
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final Integer nach,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von X nach ALLE und für Kreisverkehr an bestimmten Knotenarm
+    // index_zeitintervall_combined_2
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer von,
+            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von ALLE nach Y
+    // index_zeitintervall_combined_1
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Integer nach,
+            final Set<TypeZeitintervall> types);
+
+    // Verkehrsbeziehung von ALLE nach ALLE und für kompletten Kreisverkehr
+    // index_zeitintervall_combined_1
+    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+            final UUID zaehlungId,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Set<TypeZeitintervall> types);
 }
