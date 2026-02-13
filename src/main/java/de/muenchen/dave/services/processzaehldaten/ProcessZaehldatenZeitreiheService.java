@@ -70,7 +70,7 @@ public class ProcessZaehldatenZeitreiheService {
                     .filter(verkehrsbeziehung -> verkehrsbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
                     .collect(Collectors.toList());
         }
-        return verkehrsbeziehungList.size() > 0;
+        return !verkehrsbeziehungList.isEmpty();
     }
 
     /**
