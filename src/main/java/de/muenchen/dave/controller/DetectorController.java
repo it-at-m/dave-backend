@@ -32,7 +32,7 @@ public class DetectorController {
     }
 
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    @PostMapping(value = "/saveDetection", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/save-detection", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BackendIdDTO> saveDetection(@RequestBody @NotNull final DetectionDTO detection) {
         log.debug("Detection received: {}", detection);
         try {
@@ -47,7 +47,7 @@ public class DetectorController {
     }
 
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    @PostMapping(value = "/saveLatestDetections", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/save-latest-detections", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BackendIdDTO> saveLatestDetections(@RequestBody @NotNull final List<DetectionDTO> detections) {
         log.debug("Detection received: {}", detections);
         try {
