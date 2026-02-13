@@ -13,6 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -37,6 +39,20 @@ public class ZaehldatenExtractorService {
             final OptionsDTO options,
             final Set<TypeZeitintervall> types) {
 
+        final Set<TypeZeitintervall> typesForExtraction;
+        if (types.size() == 1 && CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
+                TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
+            if (options.getIntervall().equals(ZaehldatenIntervall.STUNDE_VIERTEL) || options.getIntervall().equals(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT)) {
+                typesForExtraction = Set.of(TypeZeitintervall.STUNDE_VIERTEL);
+            } else if (options.getIntervall().equals(ZaehldatenIntervall.STUNDE_HALB)) {
+                typesForExtraction = Set.of(TypeZeitintervall.STUNDE_HALB);
+            } else {
+                typesForExtraction = Set.of(TypeZeitintervall.STUNDE_KOMPLETT);
+            }
+        } else {
+            typesForExtraction = types;
+        }
+
         // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung
         final var zeitintervalleByBewegungsbeziehung = zeitintervallExtractorService.extractZeitintervalle(
                 zaehlungId,
@@ -45,7 +61,7 @@ public class ZaehldatenExtractorService {
                 endeUhrzeit,
                 isKreisverkehr,
                 options,
-                types);
+                typesForExtraction);
 
         // Summieren der Zeitintervalle über die Bewegungsbeziehung
         final var overBewegungsbeziehungSummedZeitintervalle = zeitintervallSummationService
