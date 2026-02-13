@@ -15,24 +15,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ZeitintervallSummationService {
 
+    /**
+     * Die Methode liefert die summierten Zeitintervalle über alle übergebenen Bewegungsbeziehungen
+     * z.B. um 1 nach alle zu erhalten werden die Zeitintervalllisten für 1 nach 2, 1 nach 3, 1 nach 4, ... übergeben
+     * @param zeitintervalleByBewegungsbeziehung Liste an Zeitintervallen pro Bewegungsbeziehung
+     * @return Liste mit addierten Zeitintervallen (z.B. entspricht 1 nach alle)
+     */
     public List<Zeitintervall> sumZeitintervelleOverBewegungsbeziehung(final Map<Bewegungsbeziehung, List<Zeitintervall>> zeitintervalleByBewegungsbeziehung) {
 
-        //Die Map wird invertiert: neuer Schlüssl: Intervalle
-        // Die Datenstruktur wird zur Berechnung der SPitzenstunde gebraucht
-        //Die Info welche Bewegungsbeziehung es angehört geht verlohren
-        List<Zeitintervall> concatenatedZeitintervall = zeitintervalleByBewegungsbeziehung
-                .values()
-                .stream()
-                .flatMap(zeitintervalleOfBewegungsbeziehung -> zeitintervalleOfBewegungsbeziehung.stream())
-                .toList();
-        //final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
-        //        .createByIntervallGroupedZeitintervalle(concatenatedZeitintervall);
-
-        final Map<Integer, List<Zeitintervall>> zeitintervalleGroupedBySortingIndex = concatenatedZeitintervall
-                .stream()
-                .collect(Collectors.groupingByConcurrent(Zeitintervall::getSortingIndex));
-
-        //Die Einträge der neuen Map werden summiert und in summedZeitintervals gespeichert
+        final Map<Integer, List<Zeitintervall>> zeitintervalleGroupedBySortingIndex = invertMap(zeitintervalleByBewegungsbeziehung);
 
         List<Zeitintervall> summedZeitintervalls = new ArrayList<>();
 
@@ -57,6 +48,12 @@ public class ZeitintervallSummationService {
         return summedZeitintervalls;
     }
 
+    /**
+     * Falls keine Hochrechnung in den Daten hinterlegt ist, wird eine leere angefügt
+     * @param zeitintervall1 zu addierender Zeitintervall
+     * @param zeitintervall2 zu addierender Zeitintervall
+     * @return Summe der Intervalle
+     */
     protected Zeitintervall nullSafeSummationForHochrechnung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
         if (Objects.isNull(zeitintervall1.getHochrechnung())) {
             zeitintervall1.setHochrechnung(new Hochrechnung());
@@ -65,6 +62,26 @@ public class ZeitintervallSummationService {
             zeitintervall2.setHochrechnung(new Hochrechnung());
         }
         return ZeitintervallBaseUtil.summation(zeitintervall1, zeitintervall2);
+    }
+
+    /**
+     * Invertiert die übergebene Map, um eine effektivere Weiterberechnung zu ermöglichen
+     * Der neue Schlüssel ist der Sortierungsindex,
+     * dieser identifiziert eine Viertelstunde/Blocksumme/Spitzenstunde eindeutig
+     * Die Bewegungsbeziehung geht dabei verlohren
+     * @param map Liste an Zeitintervallen je Bewegungsbeziehung
+     * @return Liste an Zeitintervallen je Viertelstunde/Blocksumme/Spitzenstunde
+     */
+    protected Map<Integer, List<Zeitintervall>> invertMap (Map<Bewegungsbeziehung, List<Zeitintervall>> map){
+        List<Zeitintervall> concatenatedZeitintervall = map
+                .values()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> zeitintervalleOfBewegungsbeziehung.stream())
+                .toList();
+
+        return concatenatedZeitintervall
+                .stream()
+                .collect(Collectors.groupingByConcurrent(Zeitintervall::getSortingIndex));
     }
 
 }
