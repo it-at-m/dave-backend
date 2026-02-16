@@ -146,7 +146,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
@@ -259,7 +259,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
@@ -400,7 +400,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         }
 
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15)),
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15)),

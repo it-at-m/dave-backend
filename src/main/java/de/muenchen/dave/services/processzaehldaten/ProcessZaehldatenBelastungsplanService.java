@@ -40,7 +40,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -674,7 +673,7 @@ public class ProcessZaehldatenBelastungsplanService {
             final String zaehlungId,
             final OptionsDTO options) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
                         options.getZeitblock().getEnd(),
@@ -706,14 +705,11 @@ public class ProcessZaehldatenBelastungsplanService {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
+        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalleSpitzenstunden(
                 UUID.fromString(zaehlung.getId()),
                 zaehlart,
-                options.getZeitblock().getStart(),
-                options.getZeitblock().getEnd(),
-                options,
                 false,
-                SetUtils.hashSet(chosenSpitzenstunde));
+                options);
         if (!spitzenstunden.isEmpty()) {
 
             /*
@@ -726,11 +722,11 @@ public class ProcessZaehldatenBelastungsplanService {
              */
             final Zeitintervall spitzenStunde = spitzenstunden.getLast();
             final List<Zeitintervall> zeitintervalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenStunde.getStartUhrzeit(),
                             spitzenStunde.getEndeUhrzeit(),
-                            TypeZeitintervall.STUNDE_VIERTEL);
+                            options.getIntervall().getTypeZeitintervall());
             return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitintervalle)
                     .stream()
                     .filter(zeitintervall -> zeitintervall.getType().equals(chosenSpitzenstunde))
