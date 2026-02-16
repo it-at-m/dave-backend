@@ -753,30 +753,6 @@ public class ProcessZaehldatenBelastungsplanService {
                         }
                     })
                     .toList();
-
-            /*
-             * return ZeitintervallGleitendeSpitzenstundeUtilNg
-             * .getGleitendeSpitzenstunden(
-             * UUID.fromString(zaehlung.getId()),
-             * options.getZeitblock(),
-             * zeitintervalle,
-             * Set.of(chosenSpitzenstunde))
-             * .stream()
-             * .filter(zeitintervall -> {
-             */
-            /*
-             * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
-             * alle Zeitblöcke eine Berechnung der Spitzenstunde durchgeführt wird.
-             */
-            /*
-             * if (options.getZeitblock().equals(Zeitblock.ZB_00_24)) {
-             * return containsSortingIndexForCompleteDay(zeitintervall);
-             * } else {
-             * return !containsSortingIndexForCompleteDay(zeitintervall);
-             * }
-             * })
-             * .collect(Collectors.toList());
-             */
         } else {
             return List.of();
         }
