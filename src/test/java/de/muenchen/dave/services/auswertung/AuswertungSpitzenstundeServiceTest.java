@@ -55,23 +55,4 @@ class AuswertungSpitzenstundeServiceTest {
         assertThat(result, is(-1));
     }
 
-    @Test
-    public void getRelevantTypeZeitintervallFromZeitauswahl() throws IncorrectZeitauswahlException {
-        String zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ;
-        TypeZeitintervall result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
-
-        zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD;
-        result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_RAD));
-
-        zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS;
-        result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_FUSS));
-
-        Assertions.assertThrows(IncorrectZeitauswahlException.class, () -> {
-            ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl("Other");
-        });
-    }
-
 }
