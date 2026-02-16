@@ -159,7 +159,7 @@ public class AuswertungSpitzenstundeService {
         final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
         final var options = new OptionsDTO();
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
-        options.setChosenLangsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
+        options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
         options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
         options.setZeitblock(zeitblock);
         options.setZeitauswahl(zeitauswahl);

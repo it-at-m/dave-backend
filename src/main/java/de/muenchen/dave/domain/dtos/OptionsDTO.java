@@ -120,7 +120,7 @@ public class OptionsDTO implements Serializable {
     private List<ExternalVerkehrsbeziehungDTO> chosenVerkehrsbeziehungen;
 
     // Für Zaehlart FjS
-    private List<ExternalLaengsverkehrDTO> chosenLangsverkehre;
+    private List<ExternalLaengsverkehrDTO> chosenLaengsverkehre;
 
     // Für Zaehlart Qu
     private List<ExternalQuerungsverkehrDTO> chosenQuerungsverkehre;

@@ -37,7 +37,7 @@ public class ZeitintervallExtractorService {
         final List<Zeitintervall> extractedZeitintervalle;
 
         if (Zaehlart.FJS.equals(zaehlart)) {
-            extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenLangsverkehre())
+            extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenLaengsverkehre())
                     .parallelStream()
                     .flatMap(chosenLangsverkehr -> zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(

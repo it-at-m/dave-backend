@@ -138,10 +138,10 @@ public class ZaehldatenExtractorService {
         /**
          * {@link Zaehlart.FJS}
          */
-        if (CollectionUtils.isNotEmpty(options.getChosenLangsverkehre())) {
+        if (CollectionUtils.isNotEmpty(options.getChosenLaengsverkehre())) {
             var langsverkehr = new Laengsverkehr();
-            if (options.getChosenLangsverkehre().size() == 1) {
-                var chosenLaengsverkehr = options.getChosenLangsverkehre().getFirst();
+            if (options.getChosenLaengsverkehre().size() == 1) {
+                var chosenLaengsverkehr = options.getChosenLaengsverkehre().getFirst();
                 langsverkehr.setKnotenarm(chosenLaengsverkehr.getKnotenarm());
                 langsverkehr.setRichtung(chosenLaengsverkehr.getRichtung());
                 langsverkehr.setStrassenseite(chosenLaengsverkehr.getStrassenseite());
