@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -57,19 +58,19 @@ class AuswertungSpitzenstundeServiceTest {
     @Test
     public void getRelevantTypeZeitintervallFromZeitauswahl() throws IncorrectZeitauswahlException {
         String zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ;
-        TypeZeitintervall result = auswertungSpitzenstundeService.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
+        TypeZeitintervall result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
 
         zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD;
-        result = auswertungSpitzenstundeService.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
+        result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_RAD));
 
         zeitauswahl = LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS;
-        result = auswertungSpitzenstundeService.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
+        result = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         assertThat(result, is(TypeZeitintervall.SPITZENSTUNDE_FUSS));
 
         Assertions.assertThrows(IncorrectZeitauswahlException.class, () -> {
-            auswertungSpitzenstundeService.getRelevantTypeZeitintervallFromZeitauswahl("Other");
+            ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl("Other");
         });
     }
 

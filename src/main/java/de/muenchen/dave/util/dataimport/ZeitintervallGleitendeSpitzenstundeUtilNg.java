@@ -10,8 +10,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -211,4 +215,29 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
         return sortingIndex;
     }
 
+    /**
+     * @param zeitauswahl welche die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
+     *            darf.
+     * @return den {@link TypeZeitintervall} welcher der Zeitauswahl entspricht.
+     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
+     */
+    public static TypeZeitintervall getRelevantTypeZeitintervallFromZeitauswahl(final String zeitauswahl) throws IncorrectZeitauswahlException {
+        final TypeZeitintervall typeSpitzenstunde;
+        if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
+        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
+        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
+        } else {
+            throw new IncorrectZeitauswahlException();
+        }
+        return typeSpitzenstunde;
+    }
 }
