@@ -68,65 +68,12 @@ public class ZaehldatenExtractorService {
         }
 
         // Anreichern der Zeitintervalle um die entsprechende Bewegungsbeziehung.
-        /**
-         * {@link Zaehlart.QU}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenQuerungsverkehre())) {
-            var querungsverkehr = new Querungsverkehr();
-            if (options.getChosenQuerungsverkehre().size() == 1) {
-                var chosenQuerungsverkehr = options.getChosenQuerungsverkehre().getFirst();
-                querungsverkehr.setKnotenarm(chosenQuerungsverkehr.getKnotenarm());
-                querungsverkehr.setRichtung(chosenQuerungsverkehr.getRichtung());
-            }
-            overBewegungsbeziehungSummedZeitintervalle.forEach(zeitintervall -> zeitintervall.setQuerungsverkehr(querungsverkehr));
-        }
+        final var zeitintervalleEnrichedByBewegungsbeziehung = enrichZeitintervalleByBewegungsbeziehung(
+                overBewegungsbeziehungSummedZeitintervalle,
+                options,
+                isKreisverkehr);
 
-        /**
-         * {@link Zaehlart.FJS}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenLangsverkehre())) {
-            var langsverkehr = new Laengsverkehr();
-            if (options.getChosenLangsverkehre().size() == 1) {
-                var chosenLaengsverkehr = options.getChosenLangsverkehre().getFirst();
-                langsverkehr.setKnotenarm(chosenLaengsverkehr.getKnotenarm());
-                langsverkehr.setRichtung(chosenLaengsverkehr.getRichtung());
-                langsverkehr.setStrassenseite(chosenLaengsverkehr.getStrassenseite());
-            }
-            overBewegungsbeziehungSummedZeitintervalle.forEach(zeitintervall -> zeitintervall.setLaengsverkehr(langsverkehr));
-        }
-
-        /**
-         * {@link Zaehlart.QJS}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenVerkehrsbeziehungen())) {
-            var verkehrsbeziehung = new Verkehrsbeziehung();
-            if (options.getChosenVerkehrsbeziehungen().size() == 1) {
-                var chosenVerkehrsbeziehung = options.getChosenVerkehrsbeziehungen().getFirst();
-                verkehrsbeziehung.setVon(chosenVerkehrsbeziehung.getVon());
-                verkehrsbeziehung.setNach(chosenVerkehrsbeziehung.getNach());
-                verkehrsbeziehung.setStrassenseite(chosenVerkehrsbeziehung.getStrassenseite());
-            }
-            overBewegungsbeziehungSummedZeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
-        }
-
-        /**
-         * Alle anderen Zaehlarten.
-         */
-        var verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(options.getVonKnotenarm());
-        verkehrsbeziehung.setNach(options.getNachKnotenarm());
-        if (isKreisverkehr) {
-            if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
-            } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
-            } else {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
-            }
-        }
-        overBewegungsbeziehungSummedZeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
-
-        return overBewegungsbeziehungSummedZeitintervalle.stream().sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
+        return zeitintervalleEnrichedByBewegungsbeziehung.stream().sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
     }
 
     /**
@@ -169,6 +116,71 @@ public class ZaehldatenExtractorService {
         final var typesSpitzenstunde = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.SPITZENSTUNDE_FUSS);
         return CollectionUtils.containsAny(typesSpitzenstunde, zeitintervall.getType());
 
+    }
+
+    protected List<Zeitintervall> enrichZeitintervalleByBewegungsbeziehung(
+            final List<Zeitintervall> zeitintervalle,
+            final OptionsDTO options,
+            final Boolean isKreisverkehr) {
+        /**
+         * {@link Zaehlart.QU}
+         */
+        if (CollectionUtils.isNotEmpty(options.getChosenQuerungsverkehre())) {
+            var querungsverkehr = new Querungsverkehr();
+            if (options.getChosenQuerungsverkehre().size() == 1) {
+                var chosenQuerungsverkehr = options.getChosenQuerungsverkehre().getFirst();
+                querungsverkehr.setKnotenarm(chosenQuerungsverkehr.getKnotenarm());
+                querungsverkehr.setRichtung(chosenQuerungsverkehr.getRichtung());
+            }
+            zeitintervalle.forEach(zeitintervall -> zeitintervall.setQuerungsverkehr(querungsverkehr));
+        }
+
+        /**
+         * {@link Zaehlart.FJS}
+         */
+        if (CollectionUtils.isNotEmpty(options.getChosenLangsverkehre())) {
+            var langsverkehr = new Laengsverkehr();
+            if (options.getChosenLangsverkehre().size() == 1) {
+                var chosenLaengsverkehr = options.getChosenLangsverkehre().getFirst();
+                langsverkehr.setKnotenarm(chosenLaengsverkehr.getKnotenarm());
+                langsverkehr.setRichtung(chosenLaengsverkehr.getRichtung());
+                langsverkehr.setStrassenseite(chosenLaengsverkehr.getStrassenseite());
+            }
+            zeitintervalle.forEach(zeitintervall -> zeitintervall.setLaengsverkehr(langsverkehr));
+        }
+
+        /**
+         * {@link Zaehlart.QJS}
+         */
+        if (CollectionUtils.isNotEmpty(options.getChosenVerkehrsbeziehungen())) {
+            var verkehrsbeziehung = new Verkehrsbeziehung();
+            if (options.getChosenVerkehrsbeziehungen().size() == 1) {
+                var chosenVerkehrsbeziehung = options.getChosenVerkehrsbeziehungen().getFirst();
+                verkehrsbeziehung.setVon(chosenVerkehrsbeziehung.getVon());
+                verkehrsbeziehung.setNach(chosenVerkehrsbeziehung.getNach());
+                verkehrsbeziehung.setStrassenseite(chosenVerkehrsbeziehung.getStrassenseite());
+            }
+            zeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
+        }
+
+        /**
+         * Alle anderen Zaehlarten.
+         */
+        var verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(options.getVonKnotenarm());
+        verkehrsbeziehung.setNach(options.getNachKnotenarm());
+        if (isKreisverkehr) {
+            if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+            } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
+            } else {
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
+            }
+        }
+        zeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
+
+        return zeitintervalle;
     }
 
 }
