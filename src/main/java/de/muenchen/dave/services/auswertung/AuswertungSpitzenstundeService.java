@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -177,7 +178,8 @@ public class AuswertungSpitzenstundeService {
                 .orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
         // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
         final List<Zeitintervall> spitzenstundeZeitintevalle;
-        if (kreisverkehr) {
+        final var isZaehlartQjsFjSOrQu = Set.of(Zaehlart.QJS, Zaehlart.FJS, Zaehlart.QU).contains(zaehlart);
+        if (kreisverkehr && !isZaehlartQjsFjSOrQu) {
             spitzenstundeZeitintevalle = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),

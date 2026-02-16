@@ -47,15 +47,6 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
     List<Zeitintervall> findByZaehlungId(final UUID zaehlungId, final Sort sort);
 
     /*
-     * Extrahiert das Zeitintervall entsprechend des SortingIndex über alle vorhandenen
-     * Verkehrsbeziehungen.
-     */
-    Optional<Zeitintervall> findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
-            final UUID zaehlungId,
-            final TypeZeitintervall type,
-            final Integer sortingIndex);
-
-    /*
      * Die Methode wird verwendet, um die Zeitintervalle, beginnend bei der Startuhrzeit und endend
      * bei der Endeuhrzeit, entsprechend des angegebenen {@link TypeZeitintervall} zu extrahieren.
      * Es werden nur konkrete Verkehrsbeziehungen einer KREUZUNG (von und nach nicht NULL)
