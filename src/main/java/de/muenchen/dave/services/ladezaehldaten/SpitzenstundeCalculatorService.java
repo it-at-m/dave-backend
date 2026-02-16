@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
+import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +24,7 @@ public class SpitzenstundeCalculatorService {
             final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
         final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
-        return ZeitintervallGleitendeSpitzenstundeUtilNg
+        return ZeitintervallGleitendeSpitzenstundeUtil
                 .getGleitendeSpitzenstunden(zaehlungId, zeitblock, forCalculationRelevantZeitintervalle, types)
                 .stream()
                 .filter(spitzenstunde -> types.contains(spitzenstunde.getType()))

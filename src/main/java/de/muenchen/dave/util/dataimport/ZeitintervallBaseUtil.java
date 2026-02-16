@@ -124,16 +124,6 @@ public final class ZeitintervallBaseUtil {
                 .collect(Collectors.toSet());
     }
 
-    /**
-     * @param zeitintervalle Die Zeitintervalle zur extraktion der Bewegungsbeziehungen.
-     * @return Die möglichen Bewegungsbeziehungen aller Zeitintervalle.
-     */
-    public static Set<Bewegungsbeziehung> getAllPossibleBewegungsbeziehungen(final List<Zeitintervall> zeitintervalle) {
-        return zeitintervalle.stream()
-                .map(ZeitintervallBaseUtil::getBewegungbeziehung)
-                .collect(Collectors.toSet());
-    }
-
     public static Bewegungsbeziehung getBewegungbeziehung(final Zeitintervall zeitinterval) {
         if (Objects.nonNull(zeitinterval.getVerkehrsbeziehung())) {
             return zeitinterval.getVerkehrsbeziehung();

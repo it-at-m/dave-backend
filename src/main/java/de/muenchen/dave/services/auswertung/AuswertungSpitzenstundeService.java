@@ -19,7 +19,7 @@ import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
+import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -154,7 +154,7 @@ public class AuswertungSpitzenstundeService {
             final boolean kreisverkehr) throws DataNotFoundException, IncorrectZeitauswahlException {
 
         // Setup data extraction
-        final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
+        final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
         final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
         final var options = new OptionsDTO();
@@ -196,7 +196,7 @@ public class AuswertungSpitzenstundeService {
                             zaehldatenIntervall.getTypeZeitintervall());
         }
 
-        return ZeitintervallGleitendeSpitzenstundeUtilNg
+        return ZeitintervallGleitendeSpitzenstundeUtil
                 .getGleitendeSpitzenstundenByBewegungsbeziehung(
                         UUID.fromString(zaehlung.getId()),
                         zeitblock,
@@ -251,11 +251,11 @@ public class AuswertungSpitzenstundeService {
         dummyZeitintervallForIndexCreation.setEndeUhrzeit(zeitblock.getStart().plusMinutes(30));
         final int sortingIndex;
         if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_KFZ)) {
-            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtilNg.getSortingIndexKfz(dummyZeitintervallForIndexCreation, zeitblock);
+            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtil.getSortingIndexKfz(dummyZeitintervallForIndexCreation, zeitblock);
         } else if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_RAD)) {
-            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtilNg.getSortingIndexRad(dummyZeitintervallForIndexCreation, zeitblock);
+            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtil.getSortingIndexRad(dummyZeitintervallForIndexCreation, zeitblock);
         } else if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
-            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtilNg.getSortingIndexFuss(dummyZeitintervallForIndexCreation, zeitblock);
+            sortingIndex = ZeitintervallGleitendeSpitzenstundeUtil.getSortingIndexFuss(dummyZeitintervallForIndexCreation, zeitblock);
         } else {
             sortingIndex = -1;
         }

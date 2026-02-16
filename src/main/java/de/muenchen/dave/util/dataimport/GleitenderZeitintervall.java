@@ -20,10 +20,10 @@ import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Hilfklasse zur Ermittlung der gleitenden Spitzenstunde in
- * {@link ZeitintervallGleitendeSpitzenstundeUtilNg}.
+ * {@link ZeitintervallGleitendeSpitzenstundeUtil}.
  * <p>
  * Das Ergebnis der Klasse wird zur Prüfung bezüglich der Spitzenstunde in
- * {@link ZeitintervallGleitendeSpitzenstundeUtilNg}.berechneGleitendeSpitzenstunde(UUID,
+ * {@link ZeitintervallGleitendeSpitzenstundeUtil}.berechneGleitendeSpitzenstunde(UUID,
  * Zeitblock, Verkehrsbeziehung, List) verwendet.
  */
 @Getter(AccessLevel.PUBLIC)
