@@ -1,5 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
@@ -12,6 +13,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -120,6 +122,26 @@ public final class ZeitintervallBaseUtil {
         return zeitintervalle.stream()
                 .map(Zeitintervall::getVerkehrsbeziehung)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * @param zeitintervalle Die Zeitintervalle zur extraktion der Bewegungsbeziehungen.
+     * @return Die möglichen Bewegungsbeziehungen aller Zeitintervalle.
+     */
+    public static Set<Bewegungsbeziehung> getAllPossibleBewegungsbeziehungen(final List<Zeitintervall> zeitintervalle) {
+        return zeitintervalle.stream()
+                .map(ZeitintervallBaseUtil::getBewegungbeziehung)
+                .collect(Collectors.toSet());
+    }
+
+    public static Bewegungsbeziehung getBewegungbeziehung(final Zeitintervall zeitinterval) {
+        if (Objects.nonNull(zeitinterval.getVerkehrsbeziehung())) {
+            return zeitinterval.getVerkehrsbeziehung();
+        } else if (Objects.nonNull(zeitinterval.getLaengsverkehr())) {
+            return zeitinterval.getLaengsverkehr();
+        } else {
+            return zeitinterval.getQuerungsverkehr();
+        }
     }
 
     /**

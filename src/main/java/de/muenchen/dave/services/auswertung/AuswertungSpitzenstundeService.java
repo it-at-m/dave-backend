@@ -1,5 +1,8 @@
 package de.muenchen.dave.services.auswertung;
 
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
@@ -19,7 +22,7 @@ import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
+import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -157,13 +160,14 @@ public class AuswertungSpitzenstundeService {
         // Setup data extraction
         final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtilNg.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
+        final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
         final var options = new OptionsDTO();
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
         options.setChosenLangsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
         options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
         options.setZeitblock(zeitblock);
         options.setZeitauswahl(zeitauswahl);
-        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        options.setIntervall(zaehldatenIntervall);
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
 
         // Extrahieren der Spitzenstunde der Zählung über alle Verkehrsbeziehungen.
@@ -177,35 +181,49 @@ public class AuswertungSpitzenstundeService {
         final Zeitintervall spitzenstunde = Optional.ofNullable(extractedSpitzenstunde.getLast())
                 .orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
         // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
-        final List<Zeitintervall> spitzenstundeZeitintevalle;
+        final List<Zeitintervall> spitzenstundeZeitintervalle;
         final var isZaehlartQjsFjSOrQu = Set.of(Zaehlart.QJS, Zaehlart.FJS, Zaehlart.QU).contains(zaehlart);
         if (kreisverkehr && !isZaehlartQjsFjSOrQu) {
-            spitzenstundeZeitintevalle = zeitintervallRepository
+            spitzenstundeZeitintervalle = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
                             FahrbewegungKreisverkehr.HINEIN,
-                            TypeZeitintervall.STUNDE_VIERTEL);
+                            zaehldatenIntervall.getTypeZeitintervall());
         } else {
-            spitzenstundeZeitintevalle = zeitintervallRepository
+            spitzenstundeZeitintervalle = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
-                            TypeZeitintervall.STUNDE_VIERTEL);
+                            zaehldatenIntervall.getTypeZeitintervall());
         }
-        // Erstellen der aggregierten Spitzenstunde je Verkehrsbeziehung
-        // aus den vorherigen vier Zeitintervallen je Verkehrsbeziehung.
-        return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(spitzenstundeZeitintevalle)
+
+        return spitzenstundeZeitintervalle
                 .stream()
-                .filter(zeitintervall -> zeitintervall.getType().equals(typeSpitzenstunde))
-                .filter(zeitintervall -> zeitintervall.getSortingIndex().equals(sortingIndex))
-                .peek(zeitintervall -> {
-                    zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
-                    zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
-                })
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
+                .entrySet()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtilNg
+                        .getGleitendeSpitzenstunden(
+                                UUID.fromString(zaehlung.getId()),
+                                zeitblock,
+                                zeitintervalleOfBewegungsbeziehung.getValue(),
+                                Set.of(zaehldatenIntervall.getTypeZeitintervall()))
+                        .stream()
+                        .peek(zeitintervall -> {
+                            if (Zaehlart.QU.equals(zaehlart)) {
+                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else if (Zaehlart.FJS.equals(zaehlart)) {
+                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else {
+                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
+                            }
+                            zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
+                            zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
+                        }))
+                .toList();
     }
 
     /**
