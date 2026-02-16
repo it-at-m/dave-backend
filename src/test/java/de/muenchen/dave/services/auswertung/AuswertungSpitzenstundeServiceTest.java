@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class AuswertungSpitzenstundeServiceTest {
 
-    private final AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null);
+    private final AuswertungSpitzenstundeService auswertungSpitzenstundeService = new AuswertungSpitzenstundeService(null, null, null, null, null);
 
     @Test
     void getSortingIndex() {

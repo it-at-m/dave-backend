@@ -200,29 +200,21 @@ public class AuswertungSpitzenstundeService {
                             zaehldatenIntervall.getTypeZeitintervall());
         }
 
-        return spitzenstundeZeitintervalle
+
+
+        return ZeitintervallGleitendeSpitzenstundeUtilNg
+                .getGleitendeSpitzenstundenByBewegungsbeziehung(
+                        UUID.fromString(zaehlung.getId()),
+                        zeitblock,
+                        zaehlart,
+                        spitzenstundeZeitintervalle,
+                        Set.of(zaehldatenIntervall.getTypeZeitintervall())
+                )
                 .stream()
-                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
-                .entrySet()
-                .stream()
-                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtilNg
-                        .getGleitendeSpitzenstunden(
-                                UUID.fromString(zaehlung.getId()),
-                                zeitblock,
-                                zeitintervalleOfBewegungsbeziehung.getValue(),
-                                Set.of(zaehldatenIntervall.getTypeZeitintervall()))
-                        .stream()
-                        .peek(zeitintervall -> {
-                            if (Zaehlart.QU.equals(zaehlart)) {
-                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else if (Zaehlart.FJS.equals(zaehlart)) {
-                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else {
-                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
-                            }
-                            zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
-                            zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
-                        }))
+                .peek(zeitintervall -> {
+                    zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
+                    zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
+                })
                 .toList();
     }
 

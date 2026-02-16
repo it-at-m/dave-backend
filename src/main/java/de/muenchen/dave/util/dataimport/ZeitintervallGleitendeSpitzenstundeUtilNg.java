@@ -1,8 +1,11 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -12,6 +15,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.StringUtils;
@@ -22,6 +27,38 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
+
+    public static List<Zeitintervall> getGleitendeSpitzenstundenByBewegungsbeziehung(
+            final UUID zaehlungId,
+            final Zeitblock zeitblock,
+            final Zaehlart zaehlart,
+            final List<Zeitintervall> zeitintervalle,
+            final Set<TypeZeitintervall> types
+    ) {
+        return zeitintervalle
+                .stream()
+                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
+                .entrySet()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtilNg
+                        .getGleitendeSpitzenstunden(
+                                zaehlungId,
+                                zeitblock,
+                                zeitintervalleOfBewegungsbeziehung.getValue(),
+                                types)
+                        .stream()
+                        .peek(zeitintervall -> {
+                            if (Zaehlart.QU.equals(zaehlart)) {
+                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else if (Zaehlart.FJS.equals(zaehlart)) {
+                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else {
+                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
+                            }
+                        }))
+                .toList();
+    }
+
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
@@ -40,7 +77,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
      * @param zeitblock für den die Auswertung vorgenommen werden soll.
      * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
      *            sollen.
-     * @param types als Zeitintervalltypen welche angefragt wurden.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
      * @return die gleitenden Spitzenstunde je {@link Zeitblock} als List von {@link Zeitintervall}en
      *         jeweils für KFZ-, Rad- oder Fussverkehr.
      */
