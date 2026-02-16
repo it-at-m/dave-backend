@@ -46,32 +46,18 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
 
     List<Zeitintervall> findByZaehlungId(final UUID zaehlungId, final Sort sort);
 
-    /*
-     * Die Methode wird verwendet, um die Zeitintervalle, beginnend bei der Startuhrzeit und endend
-     * bei der Endeuhrzeit, entsprechend des angegebenen {@link TypeZeitintervall} zu extrahieren.
-     * Es werden nur konkrete Verkehrsbeziehungen einer KREUZUNG (von und nach nicht NULL)
-     * berücksichtigt.
-     */
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final TypeZeitintervall type);
 
-    /*
-     * Die Methode wird verwendet, um die Zeitintervalle, beginnend bei der Startuhrzeit und endend
-     * bei der Endeuhrzeit, entsprechend des angegebenen {@link TypeZeitintervall} zu extrahieren.
-     * Es werden nur Verkehrsbeziehungen für einen KREISVERKEHR (von und nach nicht NULL)
-     * entsprechend der Ausprägung {@link FahrbewegungKreisverkehr} berücksichtigt.
-     */
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
-
-    // ---------------------------------------
 
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
             final UUID zaehlungId,
