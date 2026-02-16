@@ -400,24 +400,6 @@ public class LadeZaehldatenService {
                 types);
     }
 
-    public List<Zeitintervall> extractZeitintervalleOld(final UUID zaehlungId,
-            final LocalDateTime startUhrzeit,
-            final LocalDateTime endeUhrzeit,
-            final Integer von,
-            final Integer nach,
-            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
-            final Set<TypeZeitintervall> types) {
-        return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
-                        zaehlungId,
-                        startUhrzeit,
-                        endeUhrzeit,
-                        von,
-                        nach,
-                        fahrbewegungKreisverkehr,
-                        types);
-    }
-
     /**
      * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      *

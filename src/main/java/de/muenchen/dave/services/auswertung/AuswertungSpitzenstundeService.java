@@ -223,7 +223,8 @@ public class AuswertungSpitzenstundeService {
      * @param typeSpitzenstunde als {@link TypeZeitintervall}
      * @return der Sortierindex welcher auch im {@link Zeitintervall} der Spitzenstunde hinterlegt ist.
      */
-    public int getSortingIndex(final Zeitblock zeitblock,
+    public int getSortingIndex(
+            final Zeitblock zeitblock,
             final TypeZeitintervall typeSpitzenstunde) {
         // Erforderlich um mit Util-Methoden den SortingIndex zu ermitteln
         final Zeitintervall dummyZeitintervallForIndexCreation = new Zeitintervall();
