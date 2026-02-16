@@ -92,16 +92,6 @@ class LadeZaehldatenServiceSpringTest {
                     null));
             startTime = startTime.plusMinutes(15);
         }
-        when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        any(),
-                        anySet()))
-                .thenReturn(zeitintervalle);
 
     }
 
