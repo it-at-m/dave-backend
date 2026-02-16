@@ -14,7 +14,6 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.HochrechnungsfaktorRepository;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import jakarta.transaction.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos.external;
 
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
