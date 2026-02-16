@@ -56,17 +56,13 @@ public class LadeZaehldatenService {
     public static final String SPITZENSTUNDE_BLOCK_FUSS = SPITZENSTUNDE_BLOCK + " Fuß";
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
 
-    private final ZeitintervallRepository zeitintervallRepository;
-
     private final ZaehlstelleIndexService indexService;
 
     private final ZaehldatenExtractorService zaehldatenExtractorService;
 
     public LadeZaehldatenService(
-            final ZeitintervallRepository zeitintervallRepository,
             final ZaehlstelleIndexService indexService,
             final ZaehldatenExtractorService zaehldatenExtractorService) {
-        this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
         this.zaehldatenExtractorService = zaehldatenExtractorService;
         // Kfz
