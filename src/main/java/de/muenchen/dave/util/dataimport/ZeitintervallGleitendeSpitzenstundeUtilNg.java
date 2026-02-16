@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.StringUtils;
@@ -33,8 +32,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
             final Zeitblock zeitblock,
             final Zaehlart zaehlart,
             final List<Zeitintervall> zeitintervalle,
-            final Set<TypeZeitintervall> types
-    ) {
+            final Set<TypeZeitintervall> types) {
         return zeitintervalle
                 .stream()
                 .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
@@ -58,7 +56,6 @@ public final class ZeitintervallGleitendeSpitzenstundeUtilNg {
                         }))
                 .toList();
     }
-
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der

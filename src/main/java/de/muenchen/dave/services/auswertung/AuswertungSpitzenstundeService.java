@@ -1,8 +1,5 @@
 package de.muenchen.dave.services.auswertung;
 
-import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
-import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
@@ -22,7 +19,6 @@ import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -200,16 +196,13 @@ public class AuswertungSpitzenstundeService {
                             zaehldatenIntervall.getTypeZeitintervall());
         }
 
-
-
         return ZeitintervallGleitendeSpitzenstundeUtilNg
                 .getGleitendeSpitzenstundenByBewegungsbeziehung(
                         UUID.fromString(zaehlung.getId()),
                         zeitblock,
                         zaehlart,
                         spitzenstundeZeitintervalle,
-                        Set.of(zaehldatenIntervall.getTypeZeitintervall())
-                )
+                        Set.of(zaehldatenIntervall.getTypeZeitintervall()))
                 .stream()
                 .peek(zeitintervall -> {
                     zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());

@@ -1,8 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -676,11 +674,11 @@ public class ProcessZaehldatenBelastungsplanService {
             final String zaehlungId,
             final OptionsDTO options) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
                         options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall());
+                        Set.of(options.getZeitblock().getTypeZeitintervall()));
     }
 
     /**
@@ -725,11 +723,11 @@ public class ProcessZaehldatenBelastungsplanService {
              */
             final Zeitintervall spitzenstunde = spitzenstunden.getLast();
             final List<Zeitintervall> zeitintervalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
-                            options.getIntervall().getTypeZeitintervall());
+                            Set.of(options.getIntervall().getTypeZeitintervall()));
 
             return ZeitintervallGleitendeSpitzenstundeUtilNg
                     .getGleitendeSpitzenstundenByBewegungsbeziehung(
@@ -737,8 +735,7 @@ public class ProcessZaehldatenBelastungsplanService {
                             options.getZeitblock(),
                             zaehlart,
                             zeitintervalle,
-                            Set.of(chosenSpitzenstunde)
-                    )
+                            Set.of(chosenSpitzenstunde))
                     .stream()
                     .peek(zeitintervall -> {
                         zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
@@ -757,25 +754,29 @@ public class ProcessZaehldatenBelastungsplanService {
                     })
                     .toList();
 
-            /*return ZeitintervallGleitendeSpitzenstundeUtilNg
-                    .getGleitendeSpitzenstunden(
-                            UUID.fromString(zaehlung.getId()),
-                            options.getZeitblock(),
-                            zeitintervalle,
-                            Set.of(chosenSpitzenstunde))
-                    .stream()
-                    .filter(zeitintervall -> { */
-                        /*
-                         * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
-                         * alle Zeitblöcke eine Berechnung der Spitzenstunde durchgeführt wird.
-                         */
-                        /*if (options.getZeitblock().equals(Zeitblock.ZB_00_24)) {
-                            return containsSortingIndexForCompleteDay(zeitintervall);
-                        } else {
-                            return !containsSortingIndexForCompleteDay(zeitintervall);
-                        }
-                    })
-                    .collect(Collectors.toList());*/
+            /*
+             * return ZeitintervallGleitendeSpitzenstundeUtilNg
+             * .getGleitendeSpitzenstunden(
+             * UUID.fromString(zaehlung.getId()),
+             * options.getZeitblock(),
+             * zeitintervalle,
+             * Set.of(chosenSpitzenstunde))
+             * .stream()
+             * .filter(zeitintervall -> {
+             */
+            /*
+             * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
+             * alle Zeitblöcke eine Berechnung der Spitzenstunde durchgeführt wird.
+             */
+            /*
+             * if (options.getZeitblock().equals(Zeitblock.ZB_00_24)) {
+             * return containsSortingIndexForCompleteDay(zeitintervall);
+             * } else {
+             * return !containsSortingIndexForCompleteDay(zeitintervall);
+             * }
+             * })
+             * .collect(Collectors.toList());
+             */
         } else {
             return List.of();
         }

@@ -59,12 +59,6 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
             final TypeZeitintervall type);
 
-    List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeOrderBySortingIndexAsc(
-            final UUID zaehlungId,
-            final LocalDateTime startUhrzeit,
-            final LocalDateTime endeUhrzeit,
-            final TypeZeitintervall type);
-
     // Verkehrsbeziehung
     // index_zeitintervall_combined_1
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
