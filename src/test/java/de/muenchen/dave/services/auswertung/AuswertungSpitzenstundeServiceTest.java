@@ -5,11 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
-import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j

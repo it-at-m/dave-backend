@@ -4,15 +4,14 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
-import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
-import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.binary.StringUtils;

@@ -14,7 +14,6 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
