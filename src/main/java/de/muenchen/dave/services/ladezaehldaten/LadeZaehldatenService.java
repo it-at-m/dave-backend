@@ -365,6 +365,22 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
+    private List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
+            final Boolean isKreisverkehr,
+            final OptionsDTO options) {
+        final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
+        return zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(
+                zaehlungId,
+                zaehlart,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                isKreisverkehr,
+                options,
+                types);
+    }
+
     public List<Zeitintervall> extractZeitintervalle(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
@@ -415,7 +431,7 @@ public class LadeZaehldatenService {
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
-        final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, zaehlart, isKreisverkehr, options);
+        final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstunde(zaehlungId, zaehlart, isKreisverkehr, options);
         final List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
             /*

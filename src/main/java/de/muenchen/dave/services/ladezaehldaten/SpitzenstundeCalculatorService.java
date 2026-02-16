@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtilNg;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;

@@ -5,11 +5,11 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,9 @@ public class ZeitintervallSummationService {
 
     /**
      * Die Methode liefert die summierten Zeitintervalle über alle übergebenen Bewegungsbeziehungen
-     * z.B. um 1 nach alle zu erhalten werden die Zeitintervalllisten für 1 nach 2, 1 nach 3, 1 nach 4, ... übergeben
+     * z.B. um 1 nach alle zu erhalten werden die Zeitintervalllisten für 1 nach 2, 1 nach 3, 1 nach 4,
+     * ... übergeben
+     *
      * @param zeitintervalleByBewegungsbeziehung Liste an Zeitintervallen pro Bewegungsbeziehung
      * @return Liste mit addierten Zeitintervallen (z.B. entspricht 1 nach alle)
      */
@@ -30,16 +32,16 @@ public class ZeitintervallSummationService {
         for (Map.Entry<Integer, List<Zeitintervall>> entry : zeitintervalleGroupedBySortingIndex.entrySet()) {
             Zeitintervall addedZeitintervall = new Zeitintervall();
             for (Zeitintervall zeitintervall : entry.getValue()) {
-                if (Objects.isNull(addedZeitintervall.getType())){
+                if (Objects.isNull(addedZeitintervall.getType())) {
                     addedZeitintervall.setType(zeitintervall.getType());
                 }
-                if (Objects.isNull(addedZeitintervall.getStartUhrzeit())){
+                if (Objects.isNull(addedZeitintervall.getStartUhrzeit())) {
                     addedZeitintervall.setStartUhrzeit(zeitintervall.getStartUhrzeit());
                 }
-                if (Objects.isNull(addedZeitintervall.getEndeUhrzeit())){
+                if (Objects.isNull(addedZeitintervall.getEndeUhrzeit())) {
                     addedZeitintervall.setEndeUhrzeit(zeitintervall.getEndeUhrzeit());
                 }
-                if (Objects.isNull(addedZeitintervall.getZaehlungId())){
+                if (Objects.isNull(addedZeitintervall.getZaehlungId())) {
                     addedZeitintervall.setZaehlungId(zeitintervall.getZaehlungId());
                 }
                 addedZeitintervall = nullSafeSummationForHochrechnung(addedZeitintervall, zeitintervall);
@@ -48,11 +50,13 @@ public class ZeitintervallSummationService {
             summedZeitintervalls.add(addedZeitintervall);
         }
 
+        summedZeitintervalls.sort(Comparator.comparing(Zeitintervall::getSortingIndex));
         return summedZeitintervalls;
     }
 
     /**
      * Falls keine Hochrechnung in den Daten hinterlegt ist, wird eine leere angefügt
+     *
      * @param zeitintervall1 zu addierender Zeitintervall
      * @param zeitintervall2 zu addierender Zeitintervall
      * @return Summe der Intervalle
@@ -72,10 +76,11 @@ public class ZeitintervallSummationService {
      * Der neue Schlüssel ist der Sortierungsindex,
      * dieser identifiziert eine Viertelstunde/Blocksumme/Spitzenstunde eindeutig
      * Die Bewegungsbeziehung geht dabei verlohren
+     *
      * @param map Liste an Zeitintervallen je Bewegungsbeziehung
      * @return Liste an Zeitintervallen je Viertelstunde/Blocksumme/Spitzenstunde
      */
-    protected Map<Integer, List<Zeitintervall>> invertMap (Map<Bewegungsbeziehung, List<Zeitintervall>> map){
+    protected Map<Integer, List<Zeitintervall>> invertMap(Map<Bewegungsbeziehung, List<Zeitintervall>> map) {
         List<Zeitintervall> concatenatedZeitintervall = map
                 .values()
                 .stream()

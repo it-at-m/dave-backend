@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -216,12 +215,12 @@ public class ProcessZaehldatenZeitreiheService {
                                 options.getZeitblock().getEnd(),
                                 zaehlung.getKreisverkehr(),
                                 options,
-                                Set.of(options.getZeitblock().getTypeZeitintervall())
-                        );
+                                Set.of(options.getZeitblock().getTypeZeitintervall()));
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(), options);
+                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
+                                options);
                         ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
