@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -130,6 +129,18 @@ public class ZaehldatenExtractorService {
         return overBewegungsbeziehungSummedZeitintervalle.stream().sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
     }
 
+    /**
+     * Gibt die Spitzenstunden zurück
+     *
+     * @param zaehlungId
+     * @param zaehlart
+     * @param startUhrzeit
+     * @param endeUhrzeit
+     * @param isKreisverkehr
+     * @param options
+     * @param types
+     * @return
+     */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
@@ -141,25 +152,17 @@ public class ZaehldatenExtractorService {
         final var typesForExtraction = new HashSet<>(types);
         if (types.size() == 1 && CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
                 TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
-            if (options.getIntervall().equals(ZaehldatenIntervall.STUNDE_VIERTEL)
-                    || options.getIntervall().equals(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT)) {
-                typesForExtraction.add(TypeZeitintervall.STUNDE_VIERTEL);
-            } else if (options.getIntervall().equals(ZaehldatenIntervall.STUNDE_HALB)) {
-                typesForExtraction.add(TypeZeitintervall.STUNDE_HALB);
-            } else {
-                typesForExtraction.add(TypeZeitintervall.STUNDE_KOMPLETT);
-            }
+            typesForExtraction.add(options.getIntervall().getTypeZeitintervall());
         }
 
-        final var zeitintervalleWithSpitzenstunde = extractZeitintervalle(
+        return extractZeitintervalle(
                 zaehlungId,
                 zaehlart,
                 startUhrzeit,
                 endeUhrzeit,
                 isKreisverkehr,
                 options,
-                typesForExtraction);
-        return zeitintervalleWithSpitzenstunde.stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
+                typesForExtraction).stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
     }
 
     protected boolean isZeitintervallOfTypeSpitzenstunde(final Zeitintervall zeitintervall) {

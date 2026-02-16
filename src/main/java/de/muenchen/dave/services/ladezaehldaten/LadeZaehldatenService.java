@@ -21,6 +21,7 @@ import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -432,7 +433,7 @@ public class LadeZaehldatenService {
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
         final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstunde(zaehlungId, zaehlart, isKreisverkehr, options);
-        final List<Zeitintervall> extractedZeitintervalle;
+        List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
             /*
              * Bei Auswahl des Zeitblocks für den gesamten Tag werden alle Spitzenstunden zurückgegeben.
@@ -449,8 +450,10 @@ public class LadeZaehldatenService {
                     spitzenStunde.getEndeUhrzeit(),
                     options,
                     isKreisverkehr,
-                    SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL));
+                    // Entweder TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.STUNDE_HALB oder TypeZeitintervall.STUNDE_KOMPLETT
+                    SetUtils.hashSet(options.getIntervall().getTypeZeitintervall()));
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
+                extractedZeitintervalle = new ArrayList<>(extractedZeitintervalle);
                 extractedZeitintervalle.add(spitzenStunde);
             }
         } else {
