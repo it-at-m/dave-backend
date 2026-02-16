@@ -130,7 +130,8 @@ public class ZaehldatenExtractorService {
         return overBewegungsbeziehungSummedZeitintervalle.stream().sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
     }
 
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(final UUID zaehlungId,
+    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+            final UUID zaehlungId,
             final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
@@ -150,7 +151,13 @@ public class ZaehldatenExtractorService {
             }
         }
 
-        final var zeitintervalleWithSpitzenstunde = extractZeitintervalle(zaehlungId, zaehlart, startUhrzeit, endeUhrzeit, isKreisverkehr, options,
+        final var zeitintervalleWithSpitzenstunde = extractZeitintervalle(
+                zaehlungId,
+                zaehlart,
+                startUhrzeit,
+                endeUhrzeit,
+                isKreisverkehr,
+                options,
                 typesForExtraction);
         return zeitintervalleWithSpitzenstunde.stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
     }
