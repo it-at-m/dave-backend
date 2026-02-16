@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -72,8 +73,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                         options.getZeitblock().getEnd(),
                         options.getZeitblock().getTypeZeitintervall()))
                 .thenReturn(List.of(
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.KFZ),
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.RAD)));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.RAD))));
 
         LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
@@ -97,8 +97,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                         options.getZeitblock().getEnd(),
                         options.getZeitblock().getTypeZeitintervall()))
                 .thenReturn(List.of(
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.KFZ),
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.FUSS)));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.FUSS))));
 
         LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
@@ -122,8 +121,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                         options.getZeitblock().getEnd(),
                         options.getZeitblock().getTypeZeitintervall()))
                 .thenReturn(List.of(
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.RAD),
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.FUSS)));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
         LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
@@ -147,20 +145,20 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                         options.getZeitblock().getEnd(),
                         options.getZeitblock().getTypeZeitintervall()))
                 .thenReturn(List.of(
-                        createTestZeitintervall(zaehlung.getId(), Fahrzeug.FUSS)));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
         LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
         assertEquals("FUSS", dto.getValue1().getLabel());
     }
 
-    private Zeitintervall createTestZeitintervall(final String zaehlungId, final Fahrzeug fahrzeug) {
+    private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
         Zeitintervall zeitintervall = new Zeitintervall();
-        if (fahrzeug == Fahrzeug.PKW)
-            zeitintervall.setPkw(7);
-        if (fahrzeug == Fahrzeug.RAD)
+        if (fahrzeuge.contains(Fahrzeug.PKW))
+            zeitintervall.setPkw(random.nextInt());
+        if (fahrzeuge.contains(Fahrzeug.RAD))
             zeitintervall.setFahrradfahrer(random.nextInt());
-        if (fahrzeug == Fahrzeug.FUSS)
+        if (fahrzeuge.contains(Fahrzeug.FUSS))
             zeitintervall.setFussgaenger(random.nextInt());
 
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
@@ -169,6 +167,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlungId));
         Verkehrsbeziehung vb = new Verkehrsbeziehung();
         vb.setVon(1);
+        vb.setNach(3);
         zeitintervall.setVerkehrsbeziehung(vb);
         return zeitintervall;
     }
@@ -178,6 +177,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zaehlung.setKreisverkehr(false);
         zaehlung.setKategorien(fahrzeuge);
         zaehlung.setZaehlart(Zaehlart.N.name());
+        zaehlung.setPkwEinheit(new PkwEinheit());
         return zaehlung;
     }
 
