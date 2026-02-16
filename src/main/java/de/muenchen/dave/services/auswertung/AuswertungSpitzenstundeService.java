@@ -230,7 +230,7 @@ public class AuswertungSpitzenstundeService {
         final Zeitintervall dummyZeitintervallForIndexCreation = new Zeitintervall();
         dummyZeitintervallForIndexCreation.setStartUhrzeit(zeitblock.getStart().plusMinutes(15));
         dummyZeitintervallForIndexCreation.setEndeUhrzeit(zeitblock.getStart().plusMinutes(30));
-        final Integer sortingIndex;
+        final int sortingIndex;
         if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_KFZ)) {
             sortingIndex = ZeitintervallGleitendeSpitzenstundeUtil.getSortingIndexKfz(dummyZeitintervallForIndexCreation, zeitblock);
         } else if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_RAD)) {
