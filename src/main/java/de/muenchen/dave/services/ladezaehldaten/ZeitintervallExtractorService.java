@@ -78,14 +78,15 @@ public class ZeitintervallExtractorService {
                             .stream())
                     .toList();
         } else {
-            // alle nicht ausschließlichen Fuss und Radverkehrszählungen
+            // Alle Zaehlarten die nicht der Zaehlart QJS, FJS und Qu entsprechen
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
             final Integer vonKnotenarm;
             final Integer nachKnotenarm;
             if (isKreisverkehr) {
                 /*
                  * In {@link de.muenchen.dave.domain.Verkehrsbeziehung} definiert das Attribut "von"
-                 * den im Kreisverkehr jeweils betroffenen Knotenarm. Das Attribut "nach" ist immer "null".
+                 * den im Kreisverkehr jeweils betroffenen Knotenarm.
+                 * Das Attribut "nach" ist beim Kreisverkehr immer "null".
                  */
                 if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
                     // Über den Knotenarm X in den Kreisverkehr einfahrend
@@ -114,7 +115,7 @@ public class ZeitintervallExtractorService {
                                     types);
 
                 } else {
-                    // Der an allen Knotenarmen ein-, aus- und vorbeifahrende Verkehr
+                    // Der an allen Knotenarmen im Kreisverkehr ein-, aus- und vorbeifahrende Verkehr
                     vonKnotenarm = null;
                     fahrbewegungKreisverkehr = null;
                     extractedZeitintervalle = zeitintervallRepository
@@ -125,6 +126,7 @@ public class ZeitintervallExtractorService {
                                     types);
                 }
             } else {
+                // Kreuzung
                 vonKnotenarm = options.getVonKnotenarm();
                 nachKnotenarm = options.getNachKnotenarm();
                 fahrbewegungKreisverkehr = null;
