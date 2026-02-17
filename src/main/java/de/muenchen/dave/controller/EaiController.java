@@ -17,6 +17,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -36,6 +38,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @Slf4j
 @Validated
+@RequiredArgsConstructor
 public class EaiController {
 
     private static final String REQUEST_PARAMETER_ZAEHLSTELLE_NUMMER = "zaehlstelle_nummer";
@@ -57,14 +60,6 @@ public class EaiController {
     private final AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService;
 
     private final AuswertungVisumService auswertungVisumService;
-
-    public EaiController(final AuswertungSpitzenstundeService auswertungSpitzenstundeService,
-            final AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService,
-            final AuswertungVisumService auswertungVisumService) {
-        this.auswertungSpitzenstundeService = auswertungSpitzenstundeService;
-        this.auswertungZaehlstellenKoordinateService = auswertungZaehlstellenKoordinateService;
-        this.auswertungVisumService = auswertungVisumService;
-    }
 
     /**
      * Rest-Endpunkt zur Bereitstellung der Spitzenstundenauswertung.
