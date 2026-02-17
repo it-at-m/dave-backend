@@ -155,7 +155,6 @@ public class AuswertungSpitzenstundeService {
 
         // Setup data extraction
         final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
         final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
         final var options = new OptionsDTO();
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
