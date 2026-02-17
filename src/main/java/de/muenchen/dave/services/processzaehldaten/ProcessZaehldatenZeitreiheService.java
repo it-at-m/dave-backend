@@ -41,8 +41,6 @@ public class ProcessZaehldatenZeitreiheService {
 
     private static final String VERKEHRSBEZIEHUNG_NICHT_VORHANDEN = "\n(Verkehrsbez. nicht vorh.)";
 
-    private final ZeitintervallRepository zeitintervallRepository;
-
     private final ZaehldatenExtractorService zaehldatenExtractorService;
 
     private final ZaehlstelleIndexService indexService;
