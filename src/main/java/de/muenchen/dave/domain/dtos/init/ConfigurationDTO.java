@@ -11,4 +11,6 @@ public class ConfigurationDTO {
 
     private ZaehlstelleConfigurationDTO zaehlstelle;
 
+    private String city;
+
 }

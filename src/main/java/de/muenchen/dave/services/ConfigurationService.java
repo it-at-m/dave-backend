@@ -20,15 +20,19 @@ public class ConfigurationService {
 
     private final ConfigurationRepository repository;
 
+    private double latitude = 52.41988232741599;
+    private double longitude = 10.779998775029739;
+    private int zoom = 12;
+    private boolean zaehlstelleAutomaticNumberAssignment = true;
+    private String linkDocumentationCsvFileForUploadZaehlung = "https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md";
+    private String city = "München";
+
     public ConfigurationDTO getConfiguration() {
 
-        double latitude = 52.41988232741599;
-        double longitude = 10.779998775029739;
-        int zoom = 12;
-        boolean zaehlstelleAutomaticNumberAssignment = true;
-        String linkDocumentationCsvFileForUploadZaehlung = "https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md";
-
         for (ConfigurationEntity ce : repository.findAll()) {
+            if ("city".equals(ce.getKeyname())) {
+                city = ce.getValuefield();
+            }
             if ("location_lat".equals(ce.getKeyname())) {
                 latitude = Double.parseDouble(ce.getValuefield());
             }
@@ -49,8 +53,25 @@ public class ConfigurationService {
                 zaehlstelleAutomaticNumberAssignment,
                 linkDocumentationCsvFileForUploadZaehlung);
         MapConfigurationDTO mapConfiguration = new MapConfigurationDTO("" + latitude, "" + longitude, zoom);
-        ConfigurationDTO configuration = new ConfigurationDTO(mapConfiguration, zaehlstelleConfig);
+        ConfigurationDTO configuration = new ConfigurationDTO(mapConfiguration, zaehlstelleConfig, city);
         return configuration;
+    }
+
+    public List<ConfigurationEntity> findAll() {
+        return repository.findAll();
+    }
+
+    public ConfigurationEntity findByKeyname(String keyname) {
+        return repository.findByKeyname(keyname);
+    }
+
+    public String getConfiguredCity() {
+        ConfigurationEntity cityConfig = findByKeyname("city");
+        if (cityConfig == null || cityConfig.getValuefield().isEmpty()) {
+            log.warn("City not found in configuration, defaulting to 'München'");
+            return "München";
+        }
+        return cityConfig.getValuefield();
     }
 
     public List<ConfigurationEntity> saveOrUpdateList(List<ConfigurationEntity> configs) throws IllegalArgumentException {
@@ -72,8 +93,15 @@ public class ConfigurationService {
         }
     }
 
+    public void deleteAll() {
+        repository.deleteAll();
+    }
+
     private void testTypeCorrectness(ConfigurationEntity config) throws IllegalArgumentException {
         ConfigDataTypes type = config.getDatatype();
+        if (type == null) {
+            throw new IllegalArgumentException("No type information found for: " + config.toString());
+        }
         switch (type) {
         case INTEGER:
             try {

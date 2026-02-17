@@ -11,6 +11,9 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
+import de.muenchen.dave.repositories.relationaldb.CityDistrictRepository;
+import de.muenchen.dave.repositories.relationaldb.ConfigurationRepository;
+import de.muenchen.dave.services.ConfigurationService;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,13 +41,30 @@ class MessstelleServiceTest {
 
     private final MessstelleMapper messstelleMapper = new MessstelleMapperImpl();
 
-    private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+    @Mock
+    private CityDistrictRepository cityDistrictRepository;
+
+    @Mock
+    private ConfigurationService configurationService;
+
+    @Mock
+    private ConfigurationRepository configurationRepository;
+
+    private StadtbezirkMapper stadtbezirkMapper;
 
     private MessstelleService messstelleService;
 
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        Mockito.reset(messstelleIndexService, customSuggestIndexService);
+        //Mockito.reset(messstelleIndexService, customSuggestIndexService);
+
+        Mockito.when(configurationService.getRepository()).thenReturn(configurationRepository);
+        Mockito.when(configurationRepository.findAll()).thenReturn(java.util.List.of());
+
+        var configs = configurationService.getRepository().findAll();
+        System.out.println("Current configurations in repository: " + configs);
+
+        stadtbezirkMapper = new StadtbezirkMapper(cityDistrictRepository, configurationService);
         FieldUtils.writeField(stadtbezirkMapper, "stadtbezirkeMap", new HashMap<String, String>(), true);
         messstelleService = new MessstelleService(
                 messstelleIndexService,
