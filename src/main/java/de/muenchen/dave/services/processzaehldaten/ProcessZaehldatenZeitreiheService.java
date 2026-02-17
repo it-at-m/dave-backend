@@ -194,7 +194,7 @@ public class ProcessZaehldatenZeitreiheService {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDTO();
 
         final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
 
@@ -207,7 +207,6 @@ public class ProcessZaehldatenZeitreiheService {
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
                         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-                        //
                         zeitintervalle = zaehldatenExtractorService.extractZeitintervalle(
                                 UUID.fromString(zaehlung.getId()),
                                 zaehlart,
@@ -219,27 +218,27 @@ public class ProcessZaehldatenZeitreiheService {
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
+                        final var ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
-                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
+                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     } else {
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
-                        ladeZaehldatumDTO.setPkw(0);
-                        ladeZaehldatumDTO.setLkw(0);
-                        ladeZaehldatumDTO.setLastzuege(0);
-                        ladeZaehldatumDTO.setBusse(0);
-                        ladeZaehldatumDTO.setKraftraeder(0);
-                        ladeZaehldatumDTO.setFahrradfahrer(0);
-                        ladeZaehldatumDTO.setFussgaenger(0);
-                        ladeZaehldatumDTO.setPkwEinheiten(0);
+                        final var ladeZaehldatum = new LadeZaehldatumDTO();
+                        ladeZaehldatum.setPkw(0);
+                        ladeZaehldatum.setLkw(0);
+                        ladeZaehldatum.setLastzuege(0);
+                        ladeZaehldatum.setBusse(0);
+                        ladeZaehldatum.setKraftraeder(0);
+                        ladeZaehldatum.setFahrradfahrer(0);
+                        ladeZaehldatum.setFussgaenger(0);
+                        ladeZaehldatum.setPkwEinheiten(0);
 
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
-                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
+                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
+                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     }
                 });
-        return ladeZaehldatenZeitreiheDTO;
+        return ladeZaehldatenZeitreihe;
     }
 
     /**
