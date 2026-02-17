@@ -67,6 +67,7 @@ public class ZaehldatenExtractorService {
         final var zeitintervalleEnrichedByBewegungsbeziehung = enrichZeitintervalleByBewegungsbeziehung(
                 overBewegungsbeziehungSummedZeitintervalle,
                 options,
+                zaehlart,
                 isKreisverkehr);
 
         // Sortieren der Intervalle
