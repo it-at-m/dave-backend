@@ -202,7 +202,7 @@ public class AuswertungSpitzenstundeService {
                         zeitblock,
                         zaehlart,
                         spitzenstundeZeitintervalle,
-                        Set.of(zaehldatenIntervall.getTypeZeitintervall()))
+                        Set.of(typeSpitzenstunde))
                 .stream()
                 .peek(zeitintervall -> {
                     zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());

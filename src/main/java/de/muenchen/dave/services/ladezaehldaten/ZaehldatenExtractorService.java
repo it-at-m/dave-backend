@@ -60,10 +60,6 @@ public class ZaehldatenExtractorService {
                     options.getZeitblock(),
                     overBewegungsbeziehungSummedZeitintervalle,
                     types);
-            if (types.size() == 1) {
-                // Es wurde nur die Spitzenstunde gewählt.
-                overBewegungsbeziehungSummedZeitintervalle.clear();
-            }
             overBewegungsbeziehungSummedZeitintervalle.addAll(spitzenstunden);
         }
 
