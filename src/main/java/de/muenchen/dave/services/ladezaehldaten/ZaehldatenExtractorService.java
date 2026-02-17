@@ -116,24 +116,13 @@ public class ZaehldatenExtractorService {
 
     }
 
-    /**
-     * Fügt den {@link Zeitintervall}en die Informationen zum
-     * Querungsverkehr, zum Längsverkehr und zur Verkehrsbeziehungen basierend auf den
-     * gewählten Optionen in {@link OptionsDTO} an.
-     *
-     * @param zeitintervalle die Liste der {@link Zeitintervall}e
-     * @param options       die {@link OptionsDTO} mit den gewählten Verkehrsarten
-     * @param isKreisverkehr true, wenn es sich um einen Kreisverkehr handelt
-     * @return die Liste von {@link Zeitintervall}en mit angefügten Querungsverkehr, Längsverkehr und Verkehrsbeziehungen.
-     */
     protected List<Zeitintervall> enrichZeitintervalleByBewegungsbeziehung(
             final List<Zeitintervall> zeitintervalle,
             final OptionsDTO options,
+            final Zaehlart zaehlart,
             final Boolean isKreisverkehr) {
-        /**
-         * {@link Zaehlart.QU}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenQuerungsverkehre())) {
+
+        if (Zaehlart.QU.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenQuerungsverkehre())) {
             var querungsverkehr = new Querungsverkehr();
             if (options.getChosenQuerungsverkehre().size() == 1) {
                 var chosenQuerungsverkehr = options.getChosenQuerungsverkehre().getFirst();
@@ -141,12 +130,7 @@ public class ZaehldatenExtractorService {
                 querungsverkehr.setRichtung(chosenQuerungsverkehr.getRichtung());
             }
             zeitintervalle.forEach(zeitintervall -> zeitintervall.setQuerungsverkehr(querungsverkehr));
-        }
-
-        /**
-         * {@link Zaehlart.FJS}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenLaengsverkehre())) {
+        } else if (Zaehlart.FJS.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenLaengsverkehre())) {
             var langsverkehr = new Laengsverkehr();
             if (options.getChosenLaengsverkehre().size() == 1) {
                 var chosenLaengsverkehr = options.getChosenLaengsverkehre().getFirst();
@@ -155,12 +139,7 @@ public class ZaehldatenExtractorService {
                 langsverkehr.setStrassenseite(chosenLaengsverkehr.getStrassenseite());
             }
             zeitintervalle.forEach(zeitintervall -> zeitintervall.setLaengsverkehr(langsverkehr));
-        }
-
-        /**
-         * {@link Zaehlart.QJS}
-         */
-        if (CollectionUtils.isNotEmpty(options.getChosenVerkehrsbeziehungen())) {
+        } else if (Zaehlart.QJS.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenVerkehrsbeziehungen())) {
             var verkehrsbeziehung = new Verkehrsbeziehung();
             if (options.getChosenVerkehrsbeziehungen().size() == 1) {
                 var chosenVerkehrsbeziehung = options.getChosenVerkehrsbeziehungen().getFirst();
@@ -169,24 +148,24 @@ public class ZaehldatenExtractorService {
                 verkehrsbeziehung.setStrassenseite(chosenVerkehrsbeziehung.getStrassenseite());
             }
             zeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
-        }
-
-        /**
-         * Alle anderen Zaehlarten.
-         */
-        var verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(options.getVonKnotenarm());
-        verkehrsbeziehung.setNach(options.getNachKnotenarm());
-        if (isKreisverkehr) {
-            if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
-            } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
-            } else {
-                verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
+        } else {
+            /**
+             * Alle anderen Zaehlarten.
+             */
+            var verkehrsbeziehung = new Verkehrsbeziehung();
+            verkehrsbeziehung.setVon(options.getVonKnotenarm());
+            verkehrsbeziehung.setNach(options.getNachKnotenarm());
+            if (isKreisverkehr) {
+                if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+                } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
+                } else {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
+                }
             }
+            zeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
         }
-        zeitintervalle.forEach(zeitintervall -> zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung));
 
         return zeitintervalle;
     }
