@@ -116,6 +116,16 @@ public class ZaehldatenExtractorService {
 
     }
 
+    /**
+     * Fügt den {@link Zeitintervall}en die Informationen zum
+     * Querungsverkehr, zum Längsverkehr und zur Verkehrsbeziehungen basierend auf den
+     * gewählten Optionen in {@link OptionsDTO} an.
+     *
+     * @param zeitintervalle die Liste der {@link Zeitintervall}e
+     * @param options       die {@link OptionsDTO} mit den gewählten Verkehrsarten
+     * @param isKreisverkehr true, wenn es sich um einen Kreisverkehr handelt
+     * @return die Liste von {@link Zeitintervall}en mit angefügten Querungsverkehr, Längsverkehr und Verkehrsbeziehungen.
+     */
     protected List<Zeitintervall> enrichZeitintervalleByBewegungsbeziehung(
             final List<Zeitintervall> zeitintervalle,
             final OptionsDTO options,
