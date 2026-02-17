@@ -69,6 +69,7 @@ public class ZaehldatenExtractorService {
                 options,
                 isKreisverkehr);
 
+        // Sortieren der Intervalle
         return zeitintervalleEnrichedByBewegungsbeziehung.stream().sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
     }
 
@@ -98,6 +99,7 @@ public class ZaehldatenExtractorService {
             typesForExtraction.add(options.getIntervall().getTypeZeitintervall());
         }
 
+        // Extrahieren der Zeitintervalle und Filter nach Spitzenstunden.
         return extractZeitintervalle(
                 zaehlungId,
                 zaehlart,
