@@ -680,17 +680,17 @@ public class ProcessZaehldatenBelastungsplanService {
         List<Zeitintervall> zi = new ArrayList<>();
         if (options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
             zi = zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlungId),
-                        options.getZeitraum().get(0).atTime(0,0, 0),
-                        options.getZeitraum().get(1).atTime(23, 59, 59));
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+                            UUID.fromString(zaehlungId),
+                            options.getZeitraum().get(0).atTime(0, 0, 0),
+                            options.getZeitraum().get(1).atTime(23, 59, 59));
             zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false);
         } else {
             zi = zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlungId),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd());
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+                            UUID.fromString(zaehlungId),
+                            options.getZeitblock().getStart(),
+                            options.getZeitblock().getEnd());
             zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
         }
         zi = zi.stream()
@@ -726,7 +726,7 @@ public class ProcessZaehldatenBelastungsplanService {
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
                 zaehlung.getZaehldauer(),
-                options.getZeitraum().get(0).atTime(0,0, 0),
+                options.getZeitraum().get(0).atTime(0, 0, 0),
                 options.getZeitraum().get(1).atTime(23, 59, 59),
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),
@@ -769,14 +769,14 @@ public class ProcessZaehldatenBelastungsplanService {
         }
     }
 
-        public List<Zeitintervall> extractZeitintervalleZeitraum(final Zaehlung zaehlung,
+    public List<Zeitintervall> extractZeitintervalleZeitraum(final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde = TypeZeitintervall.STUNDE_VIERTEL;
 
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
                 zaehlung.getZaehldauer(),
-                options.getZeitraum().get(0).atTime(0,0, 0),
+                options.getZeitraum().get(0).atTime(0, 0, 0),
                 options.getZeitraum().get(1).atTime(23, 59, 59),
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),

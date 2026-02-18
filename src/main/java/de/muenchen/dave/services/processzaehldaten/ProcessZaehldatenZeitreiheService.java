@@ -28,7 +28,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -212,19 +211,19 @@ public class ProcessZaehldatenZeitreiheService {
                         List<Zeitintervall> zi = new ArrayList<>();
                         if (options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
                             zi = zeitintervallRepository
-                                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                                        UUID.fromString(zaehlung.getId()),
-                                        options.getZeitraum().get(0).atTime(0,0, 0),
-                                        options.getZeitraum().get(1).atTime(23, 59, 59));
+                                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+                                            UUID.fromString(zaehlung.getId()),
+                                            options.getZeitraum().get(0).atTime(0, 0, 0),
+                                            options.getZeitraum().get(1).atTime(23, 59, 59));
                             zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false).stream()
                                     .filter(z -> filterZeitreihe(z, options))
                                     .collect(Collectors.toList());
                         } else {
                             zi = zeitintervallRepository
-                                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
-                                        UUID.fromString(zaehlung.getId()),
-                                        options.getZeitblock().getStart(),
-                                        options.getZeitblock().getEnd());
+                                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
+                                            UUID.fromString(zaehlung.getId()),
+                                            options.getZeitblock().getStart(),
+                                            options.getZeitblock().getEnd());
                             zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false).stream()
                                     .filter(z -> filterZeitreihe(z, options))
                                     .collect(Collectors.toList());

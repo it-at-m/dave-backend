@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LadeZaehldatenService {
 
-     public static final String ZEITAUSWAHL_ZEITRAUM = "Zeitraum";
+    public static final String ZEITAUSWAHL_ZEITRAUM = "Zeitraum";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE = "Spitzenstunde";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_KFZ = ZEITAUSWAHL_SPITZENSTUNDE + " KFZ";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_RAD = ZEITAUSWAHL_SPITZENSTUNDE + " Rad";
@@ -360,7 +360,7 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
-        private List<Zeitintervall> extractZeitintervalleZeitraum(final UUID zaehlungId,
+    private List<Zeitintervall> extractZeitintervalleZeitraum(final UUID zaehlungId,
             final String zaehldauer,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
@@ -369,7 +369,7 @@ public class LadeZaehldatenService {
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
                 zaehlungId,
                 zaehldauer,
-                options.getZeitraum().get(0).atTime(0,0, 0),
+                options.getZeitraum().get(0).atTime(0, 0, 0),
                 options.getZeitraum().get(1).atTime(23, 59, 59),
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),

@@ -1,5 +1,9 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zeitblock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +13,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.ObjectUtils;
-
-import de.muenchen.dave.domain.Fahrbeziehung;
-import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.TypeZeitintervall;
-import de.muenchen.dave.domain.enums.Zeitblock;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Diese Klasse bildet die Summen je möglichen {@link Zeitblock} je {@link Fahrbeziehung}.
@@ -65,7 +63,8 @@ public final class ZeitintervallZeitblockSummationUtil {
                     .forEach(zeitblock -> getSumme(zaehlungId.get(), zeitblock, fahrbeziehung, zeitintervalleForFahrbeziehung)
                             .ifPresent(summen::add));
             if (summen.size() < 1) {
-                Optional<Zeitintervall> zeitintervallSummeOptional = getSummeZeitraum(zaehlungId.get(), startEndeUhrzeit.startUhrzeit, startEndeUhrzeit.endeUhrzeit, fahrbeziehung, zeitintervalleForFahrbeziehung);
+                Optional<Zeitintervall> zeitintervallSummeOptional = getSummeZeitraum(zaehlungId.get(), startEndeUhrzeit.startUhrzeit,
+                        startEndeUhrzeit.endeUhrzeit, fahrbeziehung, zeitintervalleForFahrbeziehung);
                 zeitintervallSummeOptional.ifPresent(summen::add);
             }
         }
@@ -73,7 +72,7 @@ public final class ZeitintervallZeitblockSummationUtil {
         return summen;
     }
 
-        /**
+    /**
      * Summierung der {@link Zeitintervall} einer Fahrbeziehung.
      *
      * @param zaehlungId Die ID der Zaehlung.
