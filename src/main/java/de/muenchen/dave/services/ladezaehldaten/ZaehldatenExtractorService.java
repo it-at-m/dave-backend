@@ -48,7 +48,7 @@ public class ZaehldatenExtractorService {
      * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
      * @param options         Optionen für die Zählung
      * @param types           Menge der gewünschten Zeitintervalltypen
-     * @return                nach dem {@link Zeitintervall#sortingIndex} sortierte Liste von verarbeiteten Zeitintervallen
+     * @return                nach dem {@link Zeitintervall#getSortingIndex()} sortierte Liste von verarbeiteten Zeitintervallen
      */
     public List<Zeitintervall> extractZeitintervalle(
             final UUID zaehlungId,
@@ -103,7 +103,7 @@ public class ZaehldatenExtractorService {
      * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
      * @param options         als die gewählten Optionen für die Zählung
      * @param types           Menge der gewünschten Zeitintervalltypen
-     * @return                nach dem {@link Zeitintervall#sortingIndex} sortierte Liste von verarbeiteten Spitzenstunden
+     * @return                nach dem {@link Zeitintervall#getSortingIndex} sortierte Liste von verarbeiteten Spitzenstunden
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
             final UUID zaehlungId,
