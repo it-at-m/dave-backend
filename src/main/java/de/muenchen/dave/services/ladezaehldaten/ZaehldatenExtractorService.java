@@ -19,6 +19,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service zum Extrahieren und Verarbeiten von Zeitintervallen.
+ */
 @Service
 @RequiredArgsConstructor
 public class ZaehldatenExtractorService {
@@ -29,6 +32,24 @@ public class ZaehldatenExtractorService {
 
     private final SpitzenstundeCalculatorService spitzenstundeCalculatorService;
 
+    /**
+     * Extrahiert und aggegregiert die Zeitintervalle basierend auf den übergebenen Parametern.
+     *
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene Bewegungsbeziehungen.
+     * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     *
+     * Befindet sich im Paramter "types" der Type für eine Spitzenstunde, so werden die aggregierten Zeitintervalle
+     * um die Spizenstunden ergänzt,
+     *
+     * @param zaehlungId      ID der Zählung
+     * @param zaehlart        Art der Zählung (QU, FJS, QJS)
+     * @param startUhrzeit    Startzeitpunkt
+     * @param endeUhrzeit     Endzeitpunkt
+     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
+     * @param options         Optionen für die Zählung
+     * @param types           Menge der gewünschten Zeitintervalltypen
+     * @return                nach dem {@link Zeitintervall#sortingIndex} sortierte Liste von verarbeiteten Zeitintervallen
+     */
     public List<Zeitintervall> extractZeitintervalle(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
@@ -70,16 +91,19 @@ public class ZaehldatenExtractorService {
     }
 
     /**
-     * Gibt die Spitzenstunden zurück
+     * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten Zeitintervallen.
      *
-     * @param zaehlungId
-     * @param zaehlart
-     * @param startUhrzeit
-     * @param endeUhrzeit
-     * @param isKreisverkehr
-     * @param options
-     * @param types
-     * @return
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene Bewegungsbeziehungen.
+     * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     *
+     * @param zaehlungId      ID der Zählung
+     * @param zaehlart        Art der Zählung
+     * @param startUhrzeit    Startzeitpunkt
+     * @param endeUhrzeit     Endzeitpunkt
+     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
+     * @param options         als die gewählten Optionen für die Zählung
+     * @param types           Menge der gewünschten Zeitintervalltypen
+     * @return                nach dem {@link Zeitintervall#sortingIndex} sortierte Liste von verarbeiteten Spitzenstunden
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
             final UUID zaehlungId,
@@ -106,12 +130,26 @@ public class ZaehldatenExtractorService {
                 typesForExtraction).stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
     }
 
+    /**
+     * Überprüft, ob ein Zeitinterval ein Spitzenstunden-Typ ist.
+     *
+     * @param zeitintervall   das Zeitintervall zu überprüfen
+     * @return                {@code true}, wenn das Zeitintervall ein Spitzenstunden-Typ ist, andernfalls {@code false}
+     */
     protected boolean isZeitintervallOfTypeSpitzenstunde(final Zeitintervall zeitintervall) {
         final var typesSpitzenstunde = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.SPITZENSTUNDE_FUSS);
         return CollectionUtils.containsAny(typesSpitzenstunde, zeitintervall.getType());
-
     }
 
+    /**
+     * Ergänzt ein Zeitinterval um die entsprechende Bewegungsbeziehung.
+     *
+     * @param zeitintervall   das Zeitintervall zu ergänzen
+     * @param options         Optionen für die Zählung
+     * @param zaehlart        Art der Zählung (QU, FJS, QJS)
+     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
+     * @return                das ergänzte Zeitintervall
+     */
     protected Zeitintervall enrichZeitintervalleByBewegungsbeziehung(
             final Zeitintervall zeitintervall,
             final OptionsDTO options,
@@ -165,5 +203,4 @@ public class ZaehldatenExtractorService {
 
         return zeitintervall;
     }
-
 }
