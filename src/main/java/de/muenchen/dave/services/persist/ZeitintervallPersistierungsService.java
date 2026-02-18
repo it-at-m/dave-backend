@@ -46,6 +46,72 @@ public class ZeitintervallPersistierungsService {
         return !zeitintervallRepository.existsByZaehlungId(zaehlungIdAsUUID);
     }
 
+    public List<Zeitintervall> aufbereitenForZeitraum(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
+
+        zeitintervalle.forEach(zeitintervall -> {
+            zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
+            zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
+        });
+
+        /*
+         * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
+         * alle möglichen Fahrbeziehungspermutationen summiert.
+         */
+        final List<Zeitintervall> summierteFahrbeziehungen = ZeitintervallFahrbeziehungsSummationUtil
+                .getUeberFahrbeziehungSummierteZeitintervalle(zeitintervalle);
+
+        List<Zeitintervall> allPossibleFahrbeziehungen = new ArrayList<>();
+        allPossibleFahrbeziehungen.addAll(zeitintervalle);
+        allPossibleFahrbeziehungen.addAll(summierteFahrbeziehungen);
+
+        /*
+         * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+         * Zeitintervalle
+         * werden die gleitenden Spitzenstunden ermittelt.
+         */
+        final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleFahrbeziehungen);
+
+        /*
+         * - Für die über Fahrbeziehungspermutationen summierten und auch im Parameter übergebene
+         * Zeitintervalle
+         * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
+         */
+        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleFahrbeziehungen);
+
+        /*
+         * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt, wenn der
+         * boolean-Parameter true ist
+         */
+        final List<Zeitintervall> kiZeitintervalle = new ArrayList<>();
+        if (kiAufbereitung) {
+            final List<List<Zeitintervall>> groupedZeitintervalleByFahrbeziehung = ZeitintervallKIUtil.groupZeitintervalleByFahrbeziehung(zeitintervalle);
+            try {
+                final KIPredictionResult[] predictionResults = kiService
+                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByFahrbeziehung);
+                final List<Zeitintervall> zeitintervallForEachFahrbeziehung = ZeitintervallKIUtil
+                        .extractZeitintervallForEachFahrbeziehung(groupedZeitintervalleByFahrbeziehung);
+                kiZeitintervalle.addAll(
+                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(Arrays.asList(predictionResults), zeitintervallForEachFahrbeziehung));
+                ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
+                ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+            } catch (PredictionFailedException exception) {
+                log.error("Error predicting Tagessummen with KIService\n" + exception);
+            }
+        }
+
+        List<Zeitintervall> allZeitintervalle = new ArrayList<>();
+        allZeitintervalle.addAll(allPossibleFahrbeziehungen);
+        allZeitintervalle.addAll(gleitendeSpitzenstunden);
+        allZeitintervalle.addAll(summierteZeitbloecke);
+        allZeitintervalle.addAll(kiZeitintervalle);
+
+        for (Zeitintervall zeitintervall : allZeitintervalle) {
+            System.out.println(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getPkw());  
+        }
+
+        return allZeitintervalle;
+    }
+
     /**
      * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank eine Datenaufbreitung
      * durch. D.h.:
@@ -137,6 +203,10 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
+        for (Zeitintervall zeitintervall : allZeitintervalle) {
+            System.out.println(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getPkw());  
+        }
+                
         return allZeitintervalle;
 
         //persistZeitintervalle(allZeitintervalle);
