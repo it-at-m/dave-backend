@@ -203,6 +203,7 @@ public class ZeitintervallExtractorService {
         } else if (Zaehlart.QU.equals(zaehlart)) {
             return zeitintervall.getQuerungsverkehr();
         } else {
+            // Alle anderen Zählarten
             return zeitintervall.getVerkehrsbeziehung();
         }
     }
