@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class ZeitintervallSummationService {
         List<Zeitintervall> concatenatedZeitintervall = map
                 .values()
                 .stream()
-                .flatMap(zeitintervalleOfBewegungsbeziehung -> zeitintervalleOfBewegungsbeziehung.stream())
+                .flatMap(Collection::stream)
                 .toList();
 
         return concatenatedZeitintervall
