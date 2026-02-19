@@ -79,7 +79,7 @@ Insert into city_district (id, created_time, version, name, number, city) values
 Insert into city_district (id, created_time, version, name, number, city) values (gen_random_uuid(), now(), 0, 'Wohltberg', 140, 'Wolfsburg');
 
 INSERT INTO "configuration" ("id", "created_time", "version", "keyname", "valuefield", "category", "datatype")
-VALUES (gen_random_uuid(), now(), 0, 'city', 'München', 'general', 'STRING')
+VALUES (gen_random_uuid(), now(), 0, 'city', 'Wolfsburg', 'general', 'STRING')
 ON CONFLICT (keyname) DO NOTHING;
 
 
