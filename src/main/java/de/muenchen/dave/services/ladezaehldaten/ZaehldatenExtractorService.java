@@ -35,20 +35,23 @@ public class ZaehldatenExtractorService {
     /**
      * Extrahiert und aggegregiert die Zeitintervalle basierend auf den übergebenen Parametern.
      *
-     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene Bewegungsbeziehungen.
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene
+     * Bewegungsbeziehungen.
      * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
      *
-     * Befindet sich im Paramter "types" der Type für eine Spitzenstunde, so werden die aggregierten Zeitintervalle
+     * Befindet sich im Paramter "types" der Type für eine Spitzenstunde, so werden die aggregierten
+     * Zeitintervalle
      * um die Spizenstunden ergänzt,
      *
-     * @param zaehlungId      ID der Zählung
-     * @param zaehlart        Art der Zählung (QU, FJS, QJS)
-     * @param startUhrzeit    Startzeitpunkt
-     * @param endeUhrzeit     Endzeitpunkt
-     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
-     * @param options         Optionen für die Zählung
-     * @param types           Menge der gewünschten Zeitintervalltypen
-     * @return                nach dem {@link Zeitintervall#getSortingIndex()} sortierte Liste von verarbeiteten Zeitintervallen
+     * @param zaehlungId ID der Zählung
+     * @param zaehlart Art der Zählung (QU, FJS, QJS)
+     * @param startUhrzeit Startzeitpunkt
+     * @param endeUhrzeit Endzeitpunkt
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @param options Optionen für die Zählung
+     * @param types Menge der gewünschten Zeitintervalltypen
+     * @return nach dem {@link Zeitintervall#getSortingIndex()} sortierte Liste von verarbeiteten
+     *         Zeitintervallen
      */
     public List<Zeitintervall> extractZeitintervalle(
             final UUID zaehlungId,
@@ -91,19 +94,22 @@ public class ZaehldatenExtractorService {
     }
 
     /**
-     * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten Zeitintervallen.
+     * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten
+     * Zeitintervallen.
      *
-     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene Bewegungsbeziehungen.
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene
+     * Bewegungsbeziehungen.
      * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
      *
-     * @param zaehlungId      ID der Zählung
-     * @param zaehlart        Art der Zählung
-     * @param startUhrzeit    Startzeitpunkt
-     * @param endeUhrzeit     Endzeitpunkt
-     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
-     * @param options         als die gewählten Optionen für die Zählung
-     * @param types           Menge der gewünschten Zeitintervalltypen
-     * @return                nach dem {@link Zeitintervall#getSortingIndex} sortierte Liste von verarbeiteten Spitzenstunden
+     * @param zaehlungId ID der Zählung
+     * @param zaehlart Art der Zählung
+     * @param startUhrzeit Startzeitpunkt
+     * @param endeUhrzeit Endzeitpunkt
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @param options als die gewählten Optionen für die Zählung
+     * @param types Menge der gewünschten Zeitintervalltypen
+     * @return nach dem {@link Zeitintervall#getSortingIndex} sortierte Liste von verarbeiteten
+     *         Spitzenstunden
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
             final UUID zaehlungId,
@@ -133,8 +139,9 @@ public class ZaehldatenExtractorService {
     /**
      * Überprüft, ob ein Zeitinterval ein Spitzenstunden-Typ ist.
      *
-     * @param zeitintervall   das Zeitintervall zu überprüfen
-     * @return                {@code true}, wenn das Zeitintervall ein Spitzenstunden-Typ ist, andernfalls {@code false}
+     * @param zeitintervall das Zeitintervall zu überprüfen
+     * @return {@code true}, wenn das Zeitintervall ein Spitzenstunden-Typ ist, andernfalls
+     *         {@code false}
      */
     protected boolean isZeitintervallOfTypeSpitzenstunde(final Zeitintervall zeitintervall) {
         final var typesSpitzenstunde = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.SPITZENSTUNDE_FUSS);
@@ -144,11 +151,11 @@ public class ZaehldatenExtractorService {
     /**
      * Ergänzt ein Zeitinterval um die entsprechende Bewegungsbeziehung.
      *
-     * @param zeitintervall   das Zeitintervall zu ergänzen
-     * @param options         Optionen für die Zählung
-     * @param zaehlart        Art der Zählung (QU, FJS, QJS)
-     * @param isKreisverkehr  Flag zur Angabe eines Kreisverkehrs
-     * @return                das ergänzte Zeitintervall
+     * @param zeitintervall das Zeitintervall zu ergänzen
+     * @param options Optionen für die Zählung
+     * @param zaehlart Art der Zählung (QU, FJS, QJS)
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @return das ergänzte Zeitintervall
      */
     protected Zeitintervall enrichZeitintervalleByBewegungsbeziehung(
             final Zeitintervall zeitintervall,

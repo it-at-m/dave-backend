@@ -17,13 +17,26 @@ public class SpitzenstundeCalculatorService {
 
     private final ZeitintervallMapper zeitintervallMapper;
 
+    /**
+     * Ermittelt für die übergebenen Zeitintervalle die Spitzenstunde aif Basis der relevanten
+     * {@link TypeZeitintervall}.
+     *
+     * Die Relevanz eines Intervalls ergibt sich aus den Typen dokumentiert in Methode
+     * {@link SpitzenstundeCalculatorService#getZeitintervalleRelevantForCalculationOfSpitzenstunde(List, Set)}
+     *
+     * @param zaehlungId
+     * @param zeitblock
+     * @param zeitintervalle
+     * @param types
+     * @return die Spitzenstunden aus den übergebenen Zeitintervallen.
+     */
     public List<Zeitintervall> calculateSpitzenstundeForGivenZeitintervalle(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
-            final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
+            final List<Zeitintervall> zeitintervalle,
             final Set<TypeZeitintervall> types) {
-        final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalleWithoutSpitzenstunde);
-        final var forCalculationRelevantZeitintervalle = getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
+        final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalle);
+        final var forCalculationRelevantZeitintervalle = getZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
         return ZeitintervallGleitendeSpitzenstundeUtil
                 .getGleitendeSpitzenstunden(zaehlungId, zeitblock, forCalculationRelevantZeitintervalle, types)
                 .stream()
@@ -31,19 +44,38 @@ public class SpitzenstundeCalculatorService {
                 .toList();
     }
 
-    private List<Zeitintervall> getCopyOfZeitintervalleRelevantForCalculationOfSpitzenstunde(
-            final List<Zeitintervall> zeitintervalleWithoutSpitzenstunde,
+    /**
+     * Extrahiert aus den gegebenen Zeitintervallen die für die Spitzenstundenermittlung relevanten
+     * Intervalle.
+     *
+     * - Befindet sich im Parameter "types" unter anderem der Typ
+     * {@link TypeZeitintervall#STUNDE_VIERTEL} so wird die Spitzenstunde auf Basis der
+     * Viertelstundenintervalle ermittelt.
+     * - Befindet sich im Parameter "types" unter anderem der Typ {@link TypeZeitintervall#STUNDE_HALB}
+     * jedoch kein Intervall des Typs {@link TypeZeitintervall#STUNDE_VIERTEL} so wird die Spitzenstunde
+     * auf Basis der Viertelstundenintervalle ermittelt.
+     * - Befindet sich im Parameter "types" unter anderem der Typ
+     * {@link TypeZeitintervall#STUNDE_KOMPLETT} jedoch kein Intervall des Typs
+     * {@link TypeZeitintervall#STUNDE_VIERTEL} und {@link TypeZeitintervall#STUNDE_HALB} so wird die
+     * Spitzenstunde auf Basis der Viertelstundenintervalle ermittelt.
+     *
+     * @param zeitintervalle
+     * @param types
+     * @return die relevanten Zeitintervalle zur Spitzenstundenermittlung.
+     */
+    protected List<Zeitintervall> getZeitintervalleRelevantForCalculationOfSpitzenstunde(
+            final List<Zeitintervall> zeitintervalle,
             final Set<TypeZeitintervall> types) {
-        final TypeZeitintervall zeitintervallTypeForSpitzenstunde;
+        final TypeZeitintervall relevantZeitintervalle;
         if (types.contains(TypeZeitintervall.STUNDE_VIERTEL)) {
-            zeitintervallTypeForSpitzenstunde = TypeZeitintervall.STUNDE_VIERTEL;
+            relevantZeitintervalle = TypeZeitintervall.STUNDE_VIERTEL;
         } else if (types.contains(TypeZeitintervall.STUNDE_HALB)) {
-            zeitintervallTypeForSpitzenstunde = TypeZeitintervall.STUNDE_HALB;
+            relevantZeitintervalle = TypeZeitintervall.STUNDE_HALB;
         } else {
-            zeitintervallTypeForSpitzenstunde = TypeZeitintervall.STUNDE_KOMPLETT;
+            relevantZeitintervalle = TypeZeitintervall.STUNDE_KOMPLETT;
         }
-        return zeitintervalleWithoutSpitzenstunde.stream()
-                .filter(zeitintervall -> zeitintervallTypeForSpitzenstunde.equals(zeitintervall.getType()))
+        return zeitintervalle.stream()
+                .filter(zeitintervall -> relevantZeitintervalle.equals(zeitintervall.getType()))
                 .toList();
     }
 
