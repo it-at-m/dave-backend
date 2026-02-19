@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LadeZaehldatenService {
 
+    public static final String ZEITAUSWAHL_ZEITRAUM = "Zeitraum";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE = "Spitzenstunde";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_KFZ = ZEITAUSWAHL_SPITZENSTUNDE + " KFZ";
     public static final String ZEITAUSWAHL_SPITZENSTUNDE_RAD = ZEITAUSWAHL_SPITZENSTUNDE + " Rad";
@@ -324,6 +325,8 @@ public class LadeZaehldatenService {
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
+        } else if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_ZEITRAUM)) {
+            zeitintervalle = extractZeitintervalleZeitraum(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         }
@@ -347,6 +350,27 @@ public class LadeZaehldatenService {
                 zaehldauer,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
+                options.getVonKnotenarm(),
+                options.getNachKnotenarm(),
+                isKreisverkehr,
+                types);
+        log.debug("Size of extracted Zeitintervalle: {}", extractedZeitintervalle.size());
+        return extractedZeitintervalle.stream()
+                .filter(zeitintervall -> shouldZeitintervallBeReturned(zeitintervall, options.getZeitblock()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Zeitintervall> extractZeitintervalleZeitraum(final UUID zaehlungId,
+            final String zaehldauer,
+            final Boolean isKreisverkehr,
+            final OptionsDTO options) {
+        final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
+        log.debug("Types according chosen options: {}", types);
+        final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
+                zaehlungId,
+                zaehldauer,
+                options.getZeitraum().get(0).atTime(0, 0, 0),
+                options.getZeitraum().get(1).atTime(23, 59, 59),
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),
                 isKreisverkehr,

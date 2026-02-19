@@ -62,8 +62,61 @@ public final class ZeitintervallZeitblockSummationUtil {
                     .filter(zeitblock -> shouldZeitblockBeCreated(zeitblock, startEndeUhrzeit))
                     .forEach(zeitblock -> getSumme(zaehlungId.get(), zeitblock, fahrbeziehung, zeitintervalleForFahrbeziehung)
                             .ifPresent(summen::add));
+            if (summen.size() < 1) {
+                Optional<Zeitintervall> zeitintervallSummeOptional = getSummeZeitraum(zaehlungId.get(), startEndeUhrzeit.startUhrzeit,
+                        startEndeUhrzeit.endeUhrzeit, fahrbeziehung, zeitintervalleForFahrbeziehung);
+                zeitintervallSummeOptional.ifPresent(summen::add);
+            }
         }
+
         return summen;
+    }
+
+    /**
+     * Summierung der {@link Zeitintervall} einer Fahrbeziehung.
+     *
+     * @param zaehlungId Die ID der Zaehlung.
+     * @param zeitblock Der {@link Zeitblock} für welchen die Summe ermittelt werden soll.
+     * @param fahrbeziehung Die im Rückgabewert der Methode gesetzte Fahrbeziehung.
+     * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
+     *            {@link Fahrbeziehung}.
+     * @return Die Summe für den {@link Zeitblock} als {@link Zeitintervall}.
+     */
+    private static Optional<Zeitintervall> getSummeZeitraum(final UUID zaehlungId,
+            final LocalDateTime startDateTime,
+            final LocalDateTime endDateTime,
+            final Fahrbeziehung fahrbeziehung,
+            final List<Zeitintervall> sortedZeitintervalle) {
+        final Optional<Zeitintervall> summeOptional;
+        Zeitintervall zeitintervallSumme = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
+                zaehlungId,
+                startDateTime,
+                endDateTime,
+                TypeZeitintervall.GESAMT,
+                fahrbeziehung);
+        // Holen der Zeitintervalle eines Zeitblocks
+        final List<Zeitintervall> zeitintervalleWithinBlock = sortedZeitintervalle.stream()
+                .filter(zeitintervall -> ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zeitintervall, startDateTime, endDateTime))
+                .collect(Collectors.toList());
+        // Erstellen der Summe des Zeitblocks
+        if (zeitintervalleWithinBlock.isEmpty()) {
+            summeOptional = Optional.empty();
+        } else {
+            // Summierung der Zeitintervalle
+            zeitintervallSumme = zeitintervalleWithinBlock.stream()
+                    .reduce(
+                            zeitintervallSumme, //
+                            ZeitintervallBaseUtil::summation);
+            // Setzen des Sortierindex
+            zeitintervallSumme.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexGesamtCompleteDay());
+
+            // Ermitteln der Start- und Endeuhrzeit aus Zeitintervallen des Zeitblocks
+            final StartEndeUhrzeit startEndeUhrzeit = getStartAndEndeuhrzeit(zeitintervalleWithinBlock);
+            zeitintervallSumme.setStartUhrzeit(startEndeUhrzeit.getStartUhrzeit());
+            zeitintervallSumme.setEndeUhrzeit(startEndeUhrzeit.getEndeUhrzeit());
+            summeOptional = Optional.of(zeitintervallSumme);
+        }
+        return summeOptional;
     }
 
     /**
