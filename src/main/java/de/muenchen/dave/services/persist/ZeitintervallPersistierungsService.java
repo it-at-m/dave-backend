@@ -106,8 +106,7 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(kiZeitintervalle);
 
         for (Zeitintervall zeitintervall : allZeitintervalle) {
-            System.out.println(
-                    zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getPkw());
+            log.debug(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
         }
 
         return allZeitintervalle;
@@ -205,8 +204,7 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(kiZeitintervalle);
 
         for (Zeitintervall zeitintervall : allZeitintervalle) {
-            System.out.println(
-                    zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getPkw());
+            log.debug(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " " + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
         }
 
         return allZeitintervalle;

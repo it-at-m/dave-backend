@@ -717,7 +717,7 @@ public class ProcessZaehldatenBelastungsplanService {
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
         if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
-            chosenSpitzenstunde = TypeZeitintervall.STUNDE_VIERTEL;
+            chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
         } else if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
         } else {
@@ -726,8 +726,8 @@ public class ProcessZaehldatenBelastungsplanService {
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
                 zaehlung.getZaehldauer(),
-                options.getZeitraum().get(0).atTime(0, 0, 0),
-                options.getZeitraum().get(1).atTime(23, 59, 59),
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),
                 (FahrbewegungKreisverkehr) null,
