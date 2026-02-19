@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.repositories.relationaldb.CityDistrictRepository;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
@@ -30,6 +31,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +45,11 @@ public class MessstelleReceiverTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
-    private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+    @MockitoBean
+    private CityDistrictRepository cityDistrictRepository;
+
+    @Autowired
+    private StadtbezirkMapper stadtbezirkMapper;
 
     @Mock
     private LageplanService lageplanService;
