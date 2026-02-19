@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class ZaehldatenSummationServeTest {
 
-    private final ZeitintervallSummationService test = new ZeitintervallSummationService();
+    private final ZeitintervallSummationService zeitintervallSummationService = new ZeitintervallSummationService();
 
     LocalDateTime time1 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0));
     LocalDateTime time2 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15));
@@ -48,7 +48,7 @@ public class ZaehldatenSummationServeTest {
         map.put(movement1, List.of(intervall11, intervall12));
         map.put(movement2, List.of(intervall21, intervall22));
 
-        List<Zeitintervall> testIntervals = test.sumZeitintervelleOverBewegungsbeziehung(map);
+        List<Zeitintervall> testIntervals = zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(map);
 
         Zeitintervall intervallCompare1 = TestUtils.createZeitintervall(id, time1, 50, 1, 2, null);
         Zeitintervall intervallCompare2 = TestUtils.createZeitintervall(id, time2, 120, 1, 3, null);
@@ -66,5 +66,41 @@ public class ZaehldatenSummationServeTest {
 
         //ZählungsID noch fehlerhaft in der zu testenden Klasse
         assertThat(testIntervals, is(compare));
+    }
+
+    @Test
+    void invertMap() {
+        final var intervall11 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        final var  intervall12 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+
+        final var  intervall21 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 30, 1, 2, null);
+        final var  intervall22 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 70, 1, 3, null);
+
+        final var laengsverkehr1 = new Laengsverkehr();
+        laengsverkehr1.setKnotenarm(1);
+        final var laengsverkehr2 = new Laengsverkehr();
+        laengsverkehr2.setKnotenarm(2);
+
+        intervall11.setSortingIndex(11008006);
+        intervall11.setLaengsverkehr(laengsverkehr1);
+        intervall21.setSortingIndex(11008006);
+        intervall21.setLaengsverkehr(laengsverkehr2);
+
+        intervall12.setSortingIndex(11008000);
+        intervall12.setLaengsverkehr(laengsverkehr1);;
+        intervall22.setSortingIndex(11008000);
+        intervall22.setLaengsverkehr(laengsverkehr2);
+
+        final var zeitintervalleByBewegungsbeziehung = new HashMap<Bewegungsbeziehung, List<Zeitintervall>>();
+        zeitintervalleByBewegungsbeziehung.put(laengsverkehr1, List.of(intervall11, intervall12));
+        zeitintervalleByBewegungsbeziehung.put(laengsverkehr2, List.of(intervall21, intervall22));
+
+        final var result = zeitintervallSummationService.invertMap(zeitintervalleByBewegungsbeziehung);
+
+        final var expected = new HashMap<Integer, List<Zeitintervall>>();
+        expected.put(11008000, List.of(intervall12, intervall22));
+        expected.put(11008006, List.of(intervall11, intervall21));
+
+        assertThat(result, is(expected));
     }
 }
