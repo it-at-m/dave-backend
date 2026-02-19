@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 public class ZaehldatenSummationServeTest {
 
-    ZeitintervallSummationService test = new ZeitintervallSummationService();
+    private final ZeitintervallSummationService test = new ZeitintervallSummationService();
 
     LocalDateTime time1 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0));
     LocalDateTime time2 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15));

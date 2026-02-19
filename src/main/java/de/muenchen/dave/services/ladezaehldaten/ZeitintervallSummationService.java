@@ -44,7 +44,7 @@ public class ZeitintervallSummationService {
                 if (Objects.isNull(addedZeitintervall.getZaehlungId())) {
                     addedZeitintervall.setZaehlungId(zeitintervall.getZaehlungId());
                 }
-                addedZeitintervall = nullSafeSummationForHochrechnung(addedZeitintervall, zeitintervall);
+                addedZeitintervall = nullSafeSummation(addedZeitintervall, zeitintervall);
             }
             addedZeitintervall.setSortingIndex(entry.getKey());
             summedZeitintervalls.add(addedZeitintervall);
@@ -61,7 +61,7 @@ public class ZeitintervallSummationService {
      * @param zeitintervall2 zu addierender Zeitintervall
      * @return Summe der Intervalle
      */
-    protected Zeitintervall nullSafeSummationForHochrechnung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
+    protected Zeitintervall nullSafeSummation(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
         if (Objects.isNull(zeitintervall1.getHochrechnung())) {
             zeitintervall1.setHochrechnung(new Hochrechnung());
         }
