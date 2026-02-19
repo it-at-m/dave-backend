@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.*;
 import de.muenchen.dave.util.DaveConstants;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -66,6 +68,73 @@ public class ZaehldatenSummationServeTest {
 
         //ZählungsID noch fehlerhaft in der zu testenden Klasse
         assertThat(testIntervals, is(compare));
+    }
+
+    @Test
+    void nullSafeSummationWithHochrechnung() {
+        final var intervall1 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        final var intervall2 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+
+        final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
+
+        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        expected.setBewegungsbeziehungId(null);
+
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void nullSafeSummationWithHochrechnungOnlyInFirstIntervall() {
+        final var intervall1 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        final var intervall2 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+        intervall2.setHochrechnung(null);
+
+        final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
+
+        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expectedHochrechnung = new Hochrechnung();
+        expectedHochrechnung.setHochrechnungKfz(BigDecimal.valueOf(20));
+        expectedHochrechnung.setHochrechnungSv(BigDecimal.valueOf(20));
+        expectedHochrechnung.setHochrechnungGv(BigDecimal.valueOf(20));
+        expected.setHochrechnung(expectedHochrechnung);
+        expected.setBewegungsbeziehungId(null);
+
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void nullSafeSummationWithHochrechnungOnlyInSecondIntervall() {
+        final var intervall1 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        intervall1.setHochrechnung(null);
+        final var intervall2 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+
+        final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
+
+        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expectedHochrechnung = new Hochrechnung();
+        expectedHochrechnung.setHochrechnungKfz(BigDecimal.valueOf(50));
+        expectedHochrechnung.setHochrechnungSv(BigDecimal.valueOf(50));
+        expectedHochrechnung.setHochrechnungGv(BigDecimal.valueOf(50));
+        expected.setHochrechnung(expectedHochrechnung);
+        expected.setBewegungsbeziehungId(null);
+
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    void nullSafeSummationWithoutHochrechnung() {
+        final var intervall1 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        intervall1.setHochrechnung(null);
+        final var intervall2 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+        intervall2.setHochrechnung(null);
+
+        final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
+
+        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.setBewegungsbeziehungId(null);
+
+        assertThat(result, is(expected));
     }
 
     @Test
