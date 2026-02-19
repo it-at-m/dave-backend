@@ -82,14 +82,10 @@ public class ZeitintervallSummationService {
      * @return Liste an Zeitintervallen je Viertelstunde/Blocksumme/Spitzenstunde
      */
     protected Map<Integer, List<Zeitintervall>> invertMap(Map<Bewegungsbeziehung, List<Zeitintervall>> map) {
-        List<Zeitintervall> concatenatedZeitintervall = map
+        return map
                 .values()
                 .stream()
                 .flatMap(Collection::stream)
-                .toList();
-
-        return concatenatedZeitintervall
-                .stream()
                 .collect(Collectors.groupingByConcurrent(Zeitintervall::getSortingIndex));
     }
 
