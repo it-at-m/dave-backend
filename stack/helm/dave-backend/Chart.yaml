@@ -9,8 +9,8 @@ maintainers:
     email: klml@muenchen.de
   - name: Starwit Technologies GmbH
     email: foss@starwit.de
-home: https://github.com/it-at-m/helm-charts/tree/main/charts/dave/charts/backend
+home: https://github.com/starwit/dave-backend/tree/sprint/stack/helm/dave-backend
 #icon: https://raw.githubusercontent.com/it-at-m/helm-charts/main/images/logo.png
 sources:
-  - "https://github.com/it-at-m/helm-charts"
-  - "https://github.com/it-at-m/dave-backend-postgres"
+  - "https://github.com/starwit/dave-backend/tree/sprint/stack/helm/dave-backend"
+  - "https://github.com/starwit/timescaledb-chart/tree/main/postgres"
