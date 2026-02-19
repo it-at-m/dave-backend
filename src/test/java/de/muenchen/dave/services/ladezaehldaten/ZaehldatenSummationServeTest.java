@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.*;
 import de.muenchen.dave.util.DaveConstants;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,57 +16,50 @@ public class ZaehldatenSummationServeTest {
 
     private final ZeitintervallSummationService zeitintervallSummationService = new ZeitintervallSummationService();
 
-    LocalDateTime time1 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0));
-    LocalDateTime time2 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15));
+    private final LocalDateTime time1 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0));
+    private final LocalDateTime time2 = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15));
 
     @Test
-    void twoIntervals() {
-        Verkehrsbeziehung movement1 = new Verkehrsbeziehung();
-        movement1.setVon(1);
-        movement1.setNach(2);
-        Verkehrsbeziehung movement2 = new Verkehrsbeziehung();
-        movement2.setVon(1);
-        movement2.setNach(3);
-        final UUID id = UUID.randomUUID();
-        Zeitintervall intervall11 = TestUtils.createZeitintervall(id, time1, 20, 1, 2, null);
-        Zeitintervall intervall12 = TestUtils.createZeitintervall(id, time2, 50, 1, 3, null);
+    void sumZeitintervelleOverBewegungsbeziehung() {
+        final var intervall11 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
+        final var intervall12 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
 
-        Zeitintervall intervall21 = TestUtils.createZeitintervall(id, time1, 30, 1, 2, null);
-        Zeitintervall intervall22 = TestUtils.createZeitintervall(id, time2, 70, 1, 3, null);
+        final var intervall21 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 30, 1, 2, null);
+        final var intervall22 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 70, 1, 3, null);
 
-        //nicht korrekt berechnet
+        final var laengsverkehr1 = new Laengsverkehr();
+        laengsverkehr1.setKnotenarm(1);
+        final var laengsverkehr2 = new Laengsverkehr();
+        laengsverkehr2.setKnotenarm(2);
+
         intervall11.setSortingIndex(11008006);
+        intervall11.setLaengsverkehr(laengsverkehr1);
         intervall21.setSortingIndex(11008006);
+        intervall21.setLaengsverkehr(laengsverkehr2);
 
         intervall12.setSortingIndex(11008000);
+        intervall12.setLaengsverkehr(laengsverkehr1);
+        ;
         intervall22.setSortingIndex(11008000);
+        intervall22.setLaengsverkehr(laengsverkehr2);
 
-        intervall11.setBewegungsbeziehungId(UUID.randomUUID());
-        intervall11.setLaengsverkehr(new Laengsverkehr());
-        intervall11.setQuerungsverkehr(new Querungsverkehr());
+        final var zeitintervalleByBewegungsbeziehung = new HashMap<Bewegungsbeziehung, List<Zeitintervall>>();
+        zeitintervalleByBewegungsbeziehung.put(laengsverkehr1, List.of(intervall11, intervall12));
+        zeitintervalleByBewegungsbeziehung.put(laengsverkehr2, List.of(intervall21, intervall22));
 
-        Map<Bewegungsbeziehung, List<Zeitintervall>> map = new HashMap<>();
-        map.put(movement1, List.of(intervall11, intervall12));
-        map.put(movement2, List.of(intervall21, intervall22));
+        final var result = zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehung);
 
-        List<Zeitintervall> testIntervals = zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(map);
+        final var expectedIntervall1 = TestUtils.createZeitintervall(intervall11.getZaehlungId(), time1, 50, 1, 2, null);
+        expectedIntervall1.setSortingIndex(11008006);
+        expectedIntervall1.setBewegungsbeziehungId(null);
+        expectedIntervall1.setVerkehrsbeziehung(null);
+        final var expectedIntervall2 = TestUtils.createZeitintervall(intervall12.getZaehlungId(), time2, 120, 1, 2, null);
+        expectedIntervall2.setSortingIndex(11008000);
+        expectedIntervall2.setBewegungsbeziehungId(null);
+        expectedIntervall2.setVerkehrsbeziehung(null);
+        final var expected = List.of(expectedIntervall2, expectedIntervall1);
 
-        Zeitintervall intervallCompare1 = TestUtils.createZeitintervall(id, time1, 50, 1, 2, null);
-        Zeitintervall intervallCompare2 = TestUtils.createZeitintervall(id, time2, 120, 1, 3, null);
-
-        intervallCompare1.setBewegungsbeziehungId(null);
-        intervallCompare1.setVerkehrsbeziehung(null);
-
-        intervallCompare2.setBewegungsbeziehungId(null);
-        intervallCompare2.setVerkehrsbeziehung(null);
-
-        intervallCompare1.setSortingIndex(11008006);
-        intervallCompare2.setSortingIndex(11008000);
-
-        List<Zeitintervall> compare = List.of(intervallCompare1, intervallCompare2);
-
-        //ZählungsID noch fehlerhaft in der zu testenden Klasse
-        assertThat(testIntervals, is(compare));
+        assertThat(result, is(expected));
     }
 
     @Test
@@ -77,7 +69,7 @@ public class ZaehldatenSummationServeTest {
 
         final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
 
-        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expected = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
         expected.setBewegungsbeziehungId(null);
 
         assertThat(result, is(expected));
@@ -91,7 +83,7 @@ public class ZaehldatenSummationServeTest {
 
         final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
 
-        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expected = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
         final var expectedHochrechnung = new Hochrechnung();
         expectedHochrechnung.setHochrechnungKfz(BigDecimal.valueOf(20));
         expectedHochrechnung.setHochrechnungSv(BigDecimal.valueOf(20));
@@ -110,7 +102,7 @@ public class ZaehldatenSummationServeTest {
 
         final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
 
-        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expected = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
         final var expectedHochrechnung = new Hochrechnung();
         expectedHochrechnung.setHochrechnungKfz(BigDecimal.valueOf(50));
         expectedHochrechnung.setHochrechnungSv(BigDecimal.valueOf(50));
@@ -130,7 +122,7 @@ public class ZaehldatenSummationServeTest {
 
         final var result = zeitintervallSummationService.nullSafeSummation(intervall1, intervall2);
 
-        final var expected  = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
+        final var expected = TestUtils.createZeitintervall(intervall1.getZaehlungId(), time1, 70, 1, 2, null);
         expected.setHochrechnung(new Hochrechnung());
         expected.setBewegungsbeziehungId(null);
 
@@ -140,10 +132,10 @@ public class ZaehldatenSummationServeTest {
     @Test
     void invertMap() {
         final var intervall11 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 20, 1, 2, null);
-        final var  intervall12 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
+        final var intervall12 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 50, 1, 3, null);
 
-        final var  intervall21 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 30, 1, 2, null);
-        final var  intervall22 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 70, 1, 3, null);
+        final var intervall21 = TestUtils.createZeitintervall(UUID.randomUUID(), time1, 30, 1, 2, null);
+        final var intervall22 = TestUtils.createZeitintervall(UUID.randomUUID(), time2, 70, 1, 3, null);
 
         final var laengsverkehr1 = new Laengsverkehr();
         laengsverkehr1.setKnotenarm(1);
@@ -156,7 +148,8 @@ public class ZaehldatenSummationServeTest {
         intervall21.setLaengsverkehr(laengsverkehr2);
 
         intervall12.setSortingIndex(11008000);
-        intervall12.setLaengsverkehr(laengsverkehr1);;
+        intervall12.setLaengsverkehr(laengsverkehr1);
+        ;
         intervall22.setSortingIndex(11008000);
         intervall22.setLaengsverkehr(laengsverkehr2);
 
