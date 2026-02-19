@@ -25,6 +25,20 @@ public class ZeitintervallExtractorService {
 
     final ZeitintervallRepository zeitintervallRepository;
 
+    /**
+     * Extrahiert die persisitierten Zeitintervalle auf Basis der im Parameter gegebenen Informationen.
+     *
+     *
+     *
+     * @param zaehlungId für die Id der Zählung.
+     * @param zaehlart
+     * @param startUhrzeit zur Einschänkung der zu extrahierenden Intervalle.
+     * @param endeUhrzeit zur Einschänkung der zu extrahierenden Intervalle.
+     * @param isKreisverkehr
+     * @param options zur korrekten Extration der Daten.
+     * @param types zur Identifizierung welcher Zeitintervalle benötigt werden.
+     * @return die nach der {@link Bewegungsbeziehung} gruppierten Zeitintervalle.
+     */
     @Transactional
     public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZeitintervalle(
             final UUID zaehlungId,
