@@ -3,7 +3,7 @@ app:
     packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.relationalimpl
 spring:
   profiles:
-    active: local, no-security
+    active: no-security
   application.name: @project.artifactId@
   banner.location: banner.txt
   jpa.properties:

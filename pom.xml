@@ -59,7 +59,7 @@
         <developerConnection>scm:git:https://github.com/it-at-m/dave-backend.git</developerConnection> -->
         <connection>scm:git:https://github.com/starwit/dave-backend.git</connection>
         <developerConnection>scm:git:https://github.com/starwit/dave-backend.git</developerConnection>
-        <tag>dave-backend-1.9.0</tag>
+        <tag>1.9.0</tag>
     </scm>
 
     <profiles>
@@ -545,8 +545,38 @@
                         <nonFilteredFileExtension>onnx</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
+                <executions>
+                    <!-- Generate Helm Chart -->
+                    <execution>
+                        <id>resources-helm-deployment</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/target/helm</outputDirectory>
+                            <delimiters>
+                                <delimiter>${*}</delimiter>
+                            </delimiters>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${project.basedir}/stack/helm
+                                    </directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*.txt</include>
+                                        <include>**/*.yaml</include>
+                                        <include>**/*.yml</include>
+                                        <include>**/*.tpl</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-
 
             <!-- Linting -->
             <plugin>
@@ -688,41 +718,6 @@
                                     ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
                                 </supportingFiles>
                             </globalProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Generate Helm Chart -->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>resources-helm-deployment</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/target/helm</outputDirectory>
-                            <delimiters>
-                                <delimiter>${*}</delimiter>
-                            </delimiters>
-                            <useDefaultDelimiters>false</useDefaultDelimiters>
-                            <resources>
-                                <resource>
-                                    <directory>
-                                        ${project.basedir}/stack/helm
-                                    </directory>
-                                    <filtering>true</filtering>
-                                    <includes>
-                                        <include>**/*.txt</include>
-                                        <include>**/*.yaml</include>
-                                        <include>**/*.yml</include>
-                                        <include>**/*.tpl</include>
-                                    </includes>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
