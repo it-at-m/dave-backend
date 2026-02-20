@@ -130,6 +130,11 @@ class ZaehldatenExtractorServiceTest {
         // Assert: Verkehrsbeziehung wurde im else-Branch ergänzt und FahrbewegungKreisverkehr gesetzt (beide Knotenarme vorhanden -> VORBEI)
         assertNotNull(result.get(0).getVerkehrsbeziehung());
         assertEquals(FahrbewegungKreisverkehr.VORBEI, result.get(0).getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
+
+        // Verify: Mocks wurden korrekt aufgerufen bzw. nicht aufgerufen
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -148,14 +153,33 @@ class ZaehldatenExtractorServiceTest {
 
         OptionsDTO options = createBaseOptions();
         options.setZeitblock(Zeitblock.ZB_06_10);
+        // Setze von/nach damit die Anreicherung mit Verkehrsbeziehung im else-Branch sichtbar wird
+        options.setVonKnotenarm(1);
+        options.setNachKnotenarm(2);
 
         // Act: types enthalten eine Spitzenstunde -> Service soll spitzenstunde an Ergebnis anhängen
-        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
-                Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
 
         // Assert: Ergebnis enthält sowohl die summierten Intervalle als auch die Spitzenstunde
         assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(z -> TypeZeitintervall.SPITZENSTUNDE_KFZ.equals(z.getType())));
+        assertTrue(result.stream().anyMatch(z -> TypeZeitintervall.STUNDE_KOMPLETT.equals(z.getType())));
+
+        // Die Intervalle sollten nach sortingIndex sortiert sein (10, 99)
+        assertEquals(10, result.get(0).getSortingIndex());
+        assertEquals(99, result.get(1).getSortingIndex());
+
+        // Beide Intervalle wurden angereichert mit Verkehrsbeziehung aus options
+        for (Zeitintervall zi : result) {
+            assertNotNull(zi.getVerkehrsbeziehung());
+            assertEquals(1, zi.getVerkehrsbeziehung().getVon());
+            assertEquals(2, zi.getVerkehrsbeziehung().getNach());
+        }
+
+        // Verify: Extraktor und Summation je einmal; Spitzenstunde-Calculator wurde aufgerufen
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(1)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -177,6 +201,13 @@ class ZaehldatenExtractorServiceTest {
         // Assert: nur die Spitzenstunde bleibt übrig
         assertEquals(1, result.size());
         assertEquals(TypeZeitintervall.SPITZENSTUNDE_RAD, result.get(0).getType());
+
+        // Verify: Da extractZeitintervalle auf dem Spy gestubbt wurde, dürfen die externen Services nicht aufgerufen worden sein
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(0)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallSummationService, Mockito.times(0)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
+        // Verify: Spy-Aufruf wurde ausgeführt
+        Mockito.verify(spy, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -186,6 +217,9 @@ class ZaehldatenExtractorServiceTest {
 
         assertTrue(service.isZeitintervallOfTypeSpitzenstunde(spitzen));
         assertTrue(!service.isZeitintervallOfTypeSpitzenstunde(normal));
+
+        // Verify: Keine Interaktion mit externen Services
+        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
     }
 
     @Test
@@ -204,6 +238,9 @@ class ZaehldatenExtractorServiceTest {
         assertNotNull(res.getQuerungsverkehr());
         assertEquals(5, res.getQuerungsverkehr().getKnotenarm());
         assertEquals(Himmelsrichtung.N, res.getQuerungsverkehr().getRichtung());
+
+        // Verify: Keine Interaktion mit externen Services
+        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
     }
 
     @Test
@@ -224,6 +261,9 @@ class ZaehldatenExtractorServiceTest {
         assertEquals(7, res.getLaengsverkehr().getKnotenarm());
         assertEquals(Bewegungsrichtung.EIN, res.getLaengsverkehr().getRichtung());
         assertEquals(Himmelsrichtung.O, res.getLaengsverkehr().getStrassenseite());
+
+        // Verify: Keine Interaktion mit externen Services
+        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
     }
 
     @Test
@@ -244,6 +284,9 @@ class ZaehldatenExtractorServiceTest {
         assertEquals(11, res.getVerkehrsbeziehung().getVon());
         assertEquals(12, res.getVerkehrsbeziehung().getNach());
         assertEquals(Himmelsrichtung.N, res.getVerkehrsbeziehung().getStrassenseite());
+
+        // Verify: Keine Interaktion mit externen Services
+        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
     }
 
     @Test
@@ -270,6 +313,9 @@ class ZaehldatenExtractorServiceTest {
         var zi3 = createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 3);
         var r3 = service.enrichZeitintervalleByBewegungsbeziehung(zi3, options, Zaehlart.N, true);
         assertEquals(FahrbewegungKreisverkehr.VORBEI, r3.getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
+
+        // Verify: Keine Interaktion mit externen Services
+        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
     }
 
 }
