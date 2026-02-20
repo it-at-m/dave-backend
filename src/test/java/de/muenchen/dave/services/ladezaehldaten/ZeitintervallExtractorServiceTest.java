@@ -272,6 +272,53 @@ class ZeitintervallExtractorServiceTest {
     }
 
     @Test
+    void testExtractZeitintervalle_Kreisverkehr_heraus() {
+        // Kreisverkehr-Fall: Optionen definieren nur `nachKnotenarm`. Es muss die Methode für
+        // Kreisverkehr HERAUS mit FahrbewegungKreisverkehr.HERAUS aufgerufen werden.
+        final var zaehlungId = UUID.randomUUID();
+        final var start = LocalDateTime.now().minusHours(4);
+        final var ende = LocalDateTime.now().minusHours(3);
+
+        final var options = new OptionsDTO();
+        options.setVonKnotenarm(null);
+        options.setNachKnotenarm(6);
+
+        final var vb = new Verkehrsbeziehung();
+        vb.setVon(6);
+        vb.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
+
+        final var zi = Zeitintervall.builder()
+                .zaehlungId(zaehlungId)
+                .startUhrzeit(start)
+                .endeUhrzeit(ende)
+                .type(TypeZeitintervall.BLOCK)
+                .verkehrsbeziehung(vb)
+                .build();
+
+        final var types = Set.of(TypeZeitintervall.BLOCK);
+
+        when(zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(6), eq(FahrbewegungKreisverkehr.HERAUS), eq(types)))
+                .thenReturn(List.of(zi));
+
+        final var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, start, ende, true, options, types);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        final var key = result.keySet().iterator().next();
+        assertTrue(key instanceof Verkehrsbeziehung);
+        final var list = result.get(key);
+        assertEquals(1, list.size());
+        assertEquals(zi, list.get(0));
+
+        verify(zeitintervallRepository, times(1))
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(6), eq(FahrbewegungKreisverkehr.HERAUS), eq(types));
+        verifyNoMoreInteractions(zeitintervallRepository);
+    }
+
+    @Test
     void testExtractZeitintervalle_Kreuzung_vonNach() {
         // Kreuzung-Fall: sowohl von als auch nach gesetzt -> spezifische Methode für von->nach
         final var zaehlungId = UUID.randomUUID();
