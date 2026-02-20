@@ -414,4 +414,141 @@ class ZeitintervallExtractorServiceTest {
         verifyNoMoreInteractions(zeitintervallRepository);
     }
 
+    @Test
+    void testExtractZeitintervalle_Kreuzung_vonAlle() {
+        // Kreuzung-Fall: Knotenarm X nach ALLE Knotenarme (von gesetzt, nach null)
+        final var zaehlungId = UUID.randomUUID();
+        final var start = LocalDateTime.now().minusHours(10);
+        final var ende = LocalDateTime.now().minusHours(9);
+
+        final var options = new OptionsDTO();
+        options.setVonKnotenarm(9);
+        options.setNachKnotenarm(null);
+
+        final var vb = new Verkehrsbeziehung();
+        vb.setVon(9);
+
+        final var zi = Zeitintervall.builder()
+                .zaehlungId(zaehlungId)
+                .startUhrzeit(start)
+                .endeUhrzeit(ende)
+                .type(TypeZeitintervall.STUNDE_HALB)
+                .verkehrsbeziehung(vb)
+                .build();
+
+        final var types = Set.of(TypeZeitintervall.STUNDE_HALB);
+
+        when(zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(9), eq((FahrbewegungKreisverkehr) null), eq(types)))
+                .thenReturn(List.of(zi));
+
+        final var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, start, ende, false, options, types);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        final var key = result.keySet().iterator().next();
+        assertTrue(key instanceof Verkehrsbeziehung);
+        final var list = result.get(key);
+        assertEquals(1, list.size());
+        assertEquals(zi, list.get(0));
+
+        verify(zeitintervallRepository, times(1))
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(9), eq((FahrbewegungKreisverkehr) null), eq(types));
+
+        verifyNoMoreInteractions(zeitintervallRepository);
+    }
+
+    @Test
+    void testExtractZeitintervalle_Kreuzung_alleNach() {
+        // Kreuzung-Fall: ALLE Knotenarme nach Knotenarm Y (von null, nach gesetzt)
+        final var zaehlungId = UUID.randomUUID();
+        final var start = LocalDateTime.now().minusHours(8);
+        final var ende = LocalDateTime.now().minusHours(7);
+
+        final var options = new OptionsDTO();
+        options.setVonKnotenarm(null);
+        options.setNachKnotenarm(10);
+
+        final var vb = new Verkehrsbeziehung();
+        vb.setNach(10);
+
+        final var zi = Zeitintervall.builder()
+                .zaehlungId(zaehlungId)
+                .startUhrzeit(start)
+                .endeUhrzeit(ende)
+                .type(TypeZeitintervall.STUNDE_VIERTEL)
+                .verkehrsbeziehung(vb)
+                .build();
+
+        final var types = Set.of(TypeZeitintervall.STUNDE_VIERTEL);
+
+        when(zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(10), eq(types)))
+                .thenReturn(List.of(zi));
+
+        final var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, start, ende, false, options, types);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        final var key = result.keySet().iterator().next();
+        assertTrue(key instanceof Verkehrsbeziehung);
+        final var list = result.get(key);
+        assertEquals(1, list.size());
+        assertEquals(zi, list.get(0));
+
+        verify(zeitintervallRepository, times(1))
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungNachAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(10), eq(types));
+        verifyNoMoreInteractions(zeitintervallRepository);
+    }
+
+    @Test
+    void testExtractZeitintervalle_Kreuzung_alleNachAlle() {
+        // Kreuzung-Fall: ALLE Knotenarme nach ALLE Knotenarme (von null, nach null)
+        final var zaehlungId = UUID.randomUUID();
+        final var start = LocalDateTime.now().minusHours(5);
+        final var ende = LocalDateTime.now().minusHours(4);
+
+        final var options = new OptionsDTO();
+        options.setVonKnotenarm(null);
+        options.setNachKnotenarm(null);
+
+        final var vb = new Verkehrsbeziehung();
+        vb.setVon(null);
+        vb.setNach(null);
+
+        final var zi = Zeitintervall.builder()
+                .zaehlungId(zaehlungId)
+                .startUhrzeit(start)
+                .endeUhrzeit(ende)
+                .type(TypeZeitintervall.GESAMT)
+                .verkehrsbeziehung(vb)
+                .build();
+
+        final var types = Set.of(TypeZeitintervall.GESAMT);
+
+        when(zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(types)))
+                .thenReturn(List.of(zi));
+
+        final var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, start, ende, false, options, types);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        final var key = result.keySet().iterator().next();
+        assertTrue(key instanceof Verkehrsbeziehung);
+        final var list = result.get(key);
+        assertEquals(1, list.size());
+        assertEquals(zi, list.get(0));
+
+        verify(zeitintervallRepository, times(1))
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                        eq(zaehlungId), eq(start), eq(ende), eq(types));
+        verifyNoMoreInteractions(zeitintervallRepository);
+    }
+
 }
