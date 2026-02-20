@@ -1,25 +1,25 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.domain.Hochrechnung;
-import de.muenchen.dave.domain.Bewegungsbeziehung;
-import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ZeitintervallSummationServiceTest {
@@ -77,10 +77,14 @@ class ZeitintervallSummationServiceTest {
         final var vb2 = new Verkehrsbeziehung();
         vb2.setVon(2);
 
-        final var zi1 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(1).pkw(1).type(TypeZeitintervall.GESAMT).build();
-        final var zi2 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(2).pkw(2).type(TypeZeitintervall.GESAMT).build();
-        final var zi3 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(1).pkw(10).type(TypeZeitintervall.GESAMT).build();
-        final var zi4 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(3).pkw(3).type(TypeZeitintervall.GESAMT).build();
+        final var zi1 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(1).pkw(1).type(TypeZeitintervall.GESAMT)
+                .build();
+        final var zi2 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(2).pkw(2).type(TypeZeitintervall.GESAMT)
+                .build();
+        final var zi3 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(1).pkw(10).type(TypeZeitintervall.GESAMT)
+                .build();
+        final var zi4 = Zeitintervall.builder().zaehlungId(zbId).startUhrzeit(start).endeUhrzeit(ende).sortingIndex(3).pkw(3).type(TypeZeitintervall.GESAMT)
+                .build();
 
         final var input = Map.of((Bewegungsbeziehung) vb1, List.of(zi1, zi2), (Bewegungsbeziehung) vb2, List.of(zi3, zi4));
 

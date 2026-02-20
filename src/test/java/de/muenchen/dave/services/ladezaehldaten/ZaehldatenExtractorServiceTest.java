@@ -132,9 +132,11 @@ class ZaehldatenExtractorServiceTest {
         assertEquals(FahrbewegungKreisverkehr.VORBEI, result.get(0).getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
 
         // Verify: Mocks wurden korrekt aufgerufen bzw. nicht aufgerufen
-        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
-        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -158,7 +160,8 @@ class ZaehldatenExtractorServiceTest {
         options.setNachKnotenarm(2);
 
         // Act: types enthalten eine Spitzenstunde -> Service soll spitzenstunde an Ergebnis anhängen
-        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
+                Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
 
         // Assert: Ergebnis enthält sowohl die summierten Intervalle als auch die Spitzenstunde
         assertEquals(2, result.size());
@@ -177,9 +180,11 @@ class ZaehldatenExtractorServiceTest {
         }
 
         // Verify: Extraktor und Summation je einmal; Spitzenstunde-Calculator wurde aufgerufen
-        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
-        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(1)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(1)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -203,11 +208,14 @@ class ZaehldatenExtractorServiceTest {
         assertEquals(TypeZeitintervall.SPITZENSTUNDE_RAD, result.get(0).getType());
 
         // Verify: Da extractZeitintervalle auf dem Spy gestubbt wurde, dürfen die externen Services nicht aufgerufen worden sein
-        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
-        Mockito.verify(zeitintervallExtractorService, Mockito.times(0)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(0)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.verify(zeitintervallSummationService, Mockito.times(0)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
         // Verify: Spy-Aufruf wurde ausgeführt
-        Mockito.verify(spy, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(spy, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any());
     }
 
     @Test

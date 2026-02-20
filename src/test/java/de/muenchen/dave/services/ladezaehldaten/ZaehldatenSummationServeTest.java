@@ -4,12 +4,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.*;
+import de.muenchen.dave.domain.Bewegungsbeziehung;
+import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 public class ZaehldatenSummationServeTest {
