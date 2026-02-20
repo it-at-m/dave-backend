@@ -1,16 +1,18 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
-import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
-import de.muenchen.dave.domain.Verkehrsbeziehung;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
-import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -29,11 +31,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ZaehldatenExtractorServiceTest {
@@ -108,7 +105,8 @@ class ZaehldatenExtractorServiceTest {
         var zi2 = createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 1);
         byBewegung.put(new Object(), List.of(zi1, zi2));
 
-        when(zeitintervallExtractorService.extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        when(zeitintervallExtractorService.extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any()))
                 .thenReturn((Map) byBewegung);
 
         // Summation liefert eine aggregierte Liste (unsortiert)
@@ -121,7 +119,8 @@ class ZaehldatenExtractorServiceTest {
         OptionsDTO options = createBaseOptions();
         options.setVonKnotenarm(1);
         options.setNachKnotenarm(2);
-        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), true, options, Set.of(TypeZeitintervall.STUNDE_KOMPLETT));
+        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), true, options,
+                Set.of(TypeZeitintervall.STUNDE_KOMPLETT));
 
         // Assert: Ergebnis ist sortiert nach sortingIndex
         assertEquals(2, result.size());
@@ -136,7 +135,8 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testExtractZeitintervalle_mitSpitzenstunde_wirdHinzugefuegt() {
         // Arrange
-        when(zeitintervallExtractorService.extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+        when(zeitintervallExtractorService.extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any()))
                 .thenReturn(new HashMap<>());
 
         var summed = new ArrayList<>(List.of(createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 10)));
@@ -150,7 +150,8 @@ class ZaehldatenExtractorServiceTest {
         options.setZeitblock(Zeitblock.ZB_06_10);
 
         // Act: types enthalten eine Spitzenstunde -> Service soll spitzenstunde an Ergebnis anhängen
-        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
+                Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
 
         // Assert: Ergebnis enthält sowohl die summierten Intervalle als auch die Spitzenstunde
         assertEquals(2, result.size());
@@ -164,12 +165,14 @@ class ZaehldatenExtractorServiceTest {
 
         var normal = createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 1);
         var spitzen = createZeitintervall(TypeZeitintervall.SPITZENSTUNDE_RAD, 2);
-        Mockito.doReturn(List.of(normal, spitzen)).when(spy).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.doReturn(List.of(normal, spitzen)).when(spy).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any());
 
         OptionsDTO options = createBaseOptions();
 
         // Act: types enthalten sowohl eine Spitzenstunde als auch ein Intervall-Typ
-        var result = spy.extractZeitintervalleSpitzenstunde(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options, Set.of(TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.STUNDE_KOMPLETT));
+        var result = spy.extractZeitintervalleSpitzenstunde(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
+                Set.of(TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.STUNDE_KOMPLETT));
 
         // Assert: nur die Spitzenstunde bleibt übrig
         assertEquals(1, result.size());

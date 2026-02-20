@@ -1,5 +1,9 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -18,10 +22,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class SpitzenstundeCalculatorServiceTest {
@@ -45,8 +45,8 @@ class SpitzenstundeCalculatorServiceTest {
         return Zeitintervall.builder()
                 .type(type)
                 .pkw(pkw)
-                .startUhrzeit(LocalDateTime.of(2020,1,1,6,0))
-                .endeUhrzeit(LocalDateTime.of(2020,1,1,6,15))
+                .startUhrzeit(LocalDateTime.of(2020, 1, 1, 6, 0))
+                .endeUhrzeit(LocalDateTime.of(2020, 1, 1, 6, 15))
                 .build();
     }
 
@@ -55,10 +55,10 @@ class SpitzenstundeCalculatorServiceTest {
         List<Zeitintervall> list = List.of(
                 createZeitintervall(TypeZeitintervall.STUNDE_VIERTEL, 1),
                 createZeitintervall(TypeZeitintervall.STUNDE_HALB, 2),
-                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 3)
-        );
+                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 3));
 
-        var relevant = service.getZeitintervalleRelevantForCalculationOfSpitzenstunde(list, Set.of(TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.STUNDE_HALB));
+        var relevant = service.getZeitintervalleRelevantForCalculationOfSpitzenstunde(list,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.STUNDE_HALB));
 
         assertEquals(1, relevant.size());
         assertEquals(TypeZeitintervall.STUNDE_VIERTEL, relevant.get(0).getType());
@@ -68,8 +68,7 @@ class SpitzenstundeCalculatorServiceTest {
     void testGetZeitintervalleRelevantForCalculation_chooseHalb_when_noViertelInTypes() {
         List<Zeitintervall> list = List.of(
                 createZeitintervall(TypeZeitintervall.STUNDE_VIERTEL, 1),
-                createZeitintervall(TypeZeitintervall.STUNDE_HALB, 2)
-        );
+                createZeitintervall(TypeZeitintervall.STUNDE_HALB, 2));
 
         var relevant = service.getZeitintervalleRelevantForCalculationOfSpitzenstunde(list, Set.of(TypeZeitintervall.STUNDE_HALB));
 
@@ -82,8 +81,7 @@ class SpitzenstundeCalculatorServiceTest {
     void testGetZeitintervalleRelevantForCalculation_chooseKomplett_when_onlyKomplett() {
         List<Zeitintervall> list = List.of(
                 createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 5),
-                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 6)
-        );
+                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 6));
 
         var relevant = service.getZeitintervalleRelevantForCalculationOfSpitzenstunde(list, Set.of(TypeZeitintervall.STUNDE_KOMPLETT));
 
@@ -94,8 +92,7 @@ class SpitzenstundeCalculatorServiceTest {
     @Test
     void testGetZeitintervalleRelevantForCalculation_returnsEmpty_when_noMatchingTypeInList() {
         List<Zeitintervall> list = List.of(
-                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 5)
-        );
+                createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 5));
 
         var relevant = service.getZeitintervalleRelevantForCalculationOfSpitzenstunde(list, Set.of(TypeZeitintervall.STUNDE_VIERTEL));
 
@@ -120,7 +117,8 @@ class SpitzenstundeCalculatorServiceTest {
         List<Zeitintervall> utilReturn = List.of(spitzenKfz, spitzenRad, spitzenFuss);
 
         // Wir fragen STUNDE_VIERTEL als Quellintervalle an und erwarten SPITZENSTUNDE_KFZ sowie SPITZENSTUNDE_FUSS als Ergebnis-Typen
-        Set<TypeZeitintervall> requestedTypes = Set.of(TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        Set<TypeZeitintervall> requestedTypes = Set.of(TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.SPITZENSTUNDE_KFZ,
+                TypeZeitintervall.SPITZENSTUNDE_FUSS);
 
         try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilities = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {
             // Stube die statische Util-Methode für beliebige passende Argumente
@@ -148,14 +146,17 @@ class SpitzenstundeCalculatorServiceTest {
         Set<TypeZeitintervall> requestedTypes = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ);
 
         try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilities = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {
-            utilities.when(() -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(Mockito.isNull(), Mockito.any(), Mockito.any(), Mockito.any()))
+            utilities.when(
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(Mockito.isNull(), Mockito.any(), Mockito.any(), Mockito.any()))
                     .thenReturn(List.of());
 
             var resultNullZaehlung = service.calculateSpitzenstundeForGivenZeitintervalle(null, zeitblock, input, requestedTypes);
             assertTrue(resultNullZaehlung.isEmpty());
 
             // auch wenn die Util für eine nicht-null ID eine leere Liste zurückgibt
-            utilities.when(() -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(Mockito.eq(zaehlungId), Mockito.any(), Mockito.any(), Mockito.any()))
+            utilities
+                    .when(() -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(Mockito.eq(zaehlungId), Mockito.any(), Mockito.any(),
+                            Mockito.any()))
                     .thenReturn(List.of());
 
             var resultEmpty = service.calculateSpitzenstundeForGivenZeitintervalle(zaehlungId, zeitblock, input, requestedTypes);
