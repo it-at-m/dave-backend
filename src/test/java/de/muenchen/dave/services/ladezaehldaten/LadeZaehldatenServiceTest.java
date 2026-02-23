@@ -51,7 +51,7 @@ class LadeZaehldatenServiceTest {
     }
 
     @Test
-    void testLadeZaehldaten_normalPath_mapsToLadeZaehldatumAndUsesMocksOnce() throws Exception {
+    void testLadeZaehldaten_normalPath_mapsToLadeZaehldatum() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.N.name());
@@ -145,7 +145,7 @@ class LadeZaehldatenServiceTest {
     }
 
     @Test
-    void testLadeZaehldaten_tageswertMapping_producesTageswertDtoAndVerifiesMocks() throws Exception {
+    void testLadeZaehldaten_tageswertMapping_producesTageswertDto() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.N.name());
@@ -194,7 +194,7 @@ class LadeZaehldatenServiceTest {
     }
 
     @Test
-    void testExtractZeitintervalleForSpitzenstunde_appendsSpitzenstundeWhenOptionTrueAndVerifiesMocks() throws Exception {
+    void testExtractZeitintervalleForSpitzenstunde_appendsSpitzenstundeWhenOptionTrue() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
         final OptionsDTO options = new OptionsDTO();
         options.setZeitblock(Zeitblock.ZB_06_10);
