@@ -182,7 +182,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             });
         }
 
-        if (types.contains(TypeZeitintervall.SPITZENSTUNDE_RAD)) {
+        if (types.contains(TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
             // Finalisierung Fuss
             gleitendeSpitzenstundeFuss.ifPresent(zeitintervall -> {
                 zeitintervall.setZaehlungId(zaehlungId);
