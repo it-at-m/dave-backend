@@ -1,29 +1,5 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
-import de.muenchen.dave.domain.Hochrechnung;
-import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.enums.TypeZeitintervall;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitblock;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.domain.enums.Zaehlart;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +9,30 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
+import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.enums.Zaehldauer;
+import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class LadeZaehldatenServiceTest {
@@ -75,8 +75,8 @@ class LadeZaehldatenServiceTest {
 
         final Zeitintervall zi = new Zeitintervall();
         zi.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        zi.setStartUhrzeit(LocalDateTime.of(2022,1,1,6,0));
-        zi.setEndeUhrzeit(LocalDateTime.of(2022,1,1,6,15));
+        zi.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 6, 0));
+        zi.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 6, 15));
         zi.setPkw(10);
         zi.setLkw(2);
         zi.setLastzuege(1);
@@ -86,7 +86,8 @@ class LadeZaehldatenServiceTest {
         zi.setFussgaenger(0);
         zi.setSortingIndex(1);
 
-        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
         final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
@@ -99,7 +100,8 @@ class LadeZaehldatenServiceTest {
         assertEquals(10 + 2 + 1 + 1 + 1 + 5, dto.getPkwEinheiten().intValue());
 
         verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
@@ -123,16 +125,18 @@ class LadeZaehldatenServiceTest {
 
         final Zeitintervall zi = new Zeitintervall();
         zi.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        zi.setStartUhrzeit(LocalDateTime.of(2022,1,1,7,0));
-        zi.setEndeUhrzeit(LocalDateTime.of(2022,1,1,7,15));
+        zi.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
+        zi.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 15));
         zi.setPkw(1);
         zi.setSortingIndex(10);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
         // Wenn für die Spitzenstunde die eigentlichen Intervalle angefragt werden, auch ein Ergebnis liefern
-        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(zi.getStartUhrzeit()), eq(zi.getEndeUhrzeit()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(zi.getStartUhrzeit()), eq(zi.getEndeUhrzeit()), eq(false),
+                eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
         final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
@@ -140,7 +144,8 @@ class LadeZaehldatenServiceTest {
         assertEquals(2, result.getZaehldaten().size());
 
         verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
@@ -171,10 +176,11 @@ class LadeZaehldatenServiceTest {
         hoch.setHochrechnungSv(new BigDecimal("20"));
         hoch.setHochrechnungRad(42);
         zi.setHochrechnung(hoch);
-        zi.setStartUhrzeit(LocalDateTime.of(2022,1,1,0,0));
-        zi.setEndeUhrzeit(LocalDateTime.of(2022,1,1,23,59));
+        zi.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 0, 0));
+        zi.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 23, 59));
 
-        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
         final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
@@ -189,7 +195,8 @@ class LadeZaehldatenServiceTest {
         assertEquals(42, tageswert.getFahrradfahrer().intValue());
 
         verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
@@ -202,38 +209,42 @@ class LadeZaehldatenServiceTest {
         options.setSpitzenstunde(true);
 
         final Zeitintervall sp1 = new Zeitintervall();
-        sp1.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        sp1.setStartUhrzeit(LocalDateTime.of(2022,1,1,6,0));
-        sp1.setEndeUhrzeit(LocalDateTime.of(2022,1,1,6,15));
+        sp1.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        sp1.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 6, 0));
+        sp1.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 6, 15));
 
-        final Zeitintervall spitzenStunde = new Zeitintervall();
-        spitzenStunde.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        spitzenStunde.setStartUhrzeit(LocalDateTime.of(2022,1,1,7,0));
-        spitzenStunde.setEndeUhrzeit(LocalDateTime.of(2022,1,1,8,0));
+        final Zeitintervall sp2 = new Zeitintervall();
+        sp2.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        sp2.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
+        sp2.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
 
         final java.util.LinkedList<Zeitintervall> spitzenList = new java.util.LinkedList<>();
         spitzenList.add(sp1);
-        spitzenList.add(spitzenStunde);
+        spitzenList.add(sp2);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(spitzenList);
 
         final Zeitintervall quarter = new Zeitintervall();
         quarter.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        quarter.setStartUhrzeit(spitzenStunde.getStartUhrzeit());
-        quarter.setEndeUhrzeit(spitzenStunde.getStartUhrzeit().plusMinutes(15));
+        quarter.setStartUhrzeit(sp2.getStartUhrzeit());
+        quarter.setEndeUhrzeit(sp2.getStartUhrzeit().plusMinutes(15));
 
-        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()), eq(false),
+                eq(options), anySet()))
                 .thenReturn(List.of(quarter));
 
         final List<Zeitintervall> result = service.extractZeitintervalleForSpitzenstunde(zaehlungId, Zaehlart.N, false, options);
 
         assertEquals(2, result.size());
         assertTrue(result.contains(quarter));
-        assertTrue(result.contains(spitzenStunde));
+        assertTrue(result.contains(sp2));
 
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()),
+                eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
@@ -246,38 +257,59 @@ class LadeZaehldatenServiceTest {
         options.setSpitzenstunde(false);
 
         final Zeitintervall sp1 = new Zeitintervall();
-        sp1.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        sp1.setStartUhrzeit(LocalDateTime.of(2022,1,1,6,0));
-        sp1.setEndeUhrzeit(LocalDateTime.of(2022,1,1,6,15));
+        sp1.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        sp1.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 6, 0));
+        sp1.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
 
-        final Zeitintervall spitzenStunde = new Zeitintervall();
-        spitzenStunde.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        spitzenStunde.setStartUhrzeit(LocalDateTime.of(2022,1,1,7,0));
-        spitzenStunde.setEndeUhrzeit(LocalDateTime.of(2022,1,1,8,0));
+        final Zeitintervall sp2 = new Zeitintervall();
+        sp2.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        sp2.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
+        sp2.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
 
         final java.util.LinkedList<Zeitintervall> spitzenList = new java.util.LinkedList<>();
         spitzenList.add(sp1);
-        spitzenList.add(spitzenStunde);
+        spitzenList.add(sp2);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(spitzenList);
 
         final Zeitintervall quarter = new Zeitintervall();
         quarter.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        quarter.setStartUhrzeit(spitzenStunde.getStartUhrzeit());
-        quarter.setEndeUhrzeit(spitzenStunde.getStartUhrzeit().plusMinutes(15));
+        quarter.setStartUhrzeit(sp2.getStartUhrzeit());
+        quarter.setEndeUhrzeit(sp2.getStartUhrzeit().plusMinutes(15));
 
-        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet()))
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()), eq(false),
+                eq(options), anySet()))
                 .thenReturn(List.of(quarter));
 
         final List<Zeitintervall> result = service.extractZeitintervalleForSpitzenstunde(zaehlungId, Zaehlart.N, false, options);
 
         assertEquals(1, result.size());
         assertTrue(result.contains(quarter));
-        assertFalse(result.contains(spitzenStunde));
+        assertFalse(result.contains(sp2));
 
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()),
+                eq(false), eq(options), anySet());
+        verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
+    }
+
+    @Test
+    void testExtractZeitintervalleForSpitzenstunde_noSpitzenstundeAvailable() throws Exception {
+        final UUID zaehlungId = UUID.randomUUID();
+        final OptionsDTO options = new OptionsDTO();
+        options.setZeitblock(Zeitblock.ZB_06_10);
+        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        options.setSpitzenstunde(true);
+
+        final List<Zeitintervall> result = service.extractZeitintervalleForSpitzenstunde(zaehlungId, Zaehlart.N, true, options);
+
+        assertEquals(0, result.size());
+
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+                eq(options.getZeitblock().getEnd()), eq(true), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
