@@ -17,7 +17,6 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
@@ -231,6 +231,50 @@ class LadeZaehldatenServiceTest {
         assertEquals(2, result.size());
         assertTrue(result.contains(quarter));
         assertTrue(result.contains(spitzenStunde));
+
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet());
+        verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
+    }
+
+    @Test
+    void testExtractZeitintervalleForSpitzenstunde_noAppendingOfSpitzenstundeWhenOptionFalse() throws Exception {
+        final UUID zaehlungId = UUID.randomUUID();
+        final OptionsDTO options = new OptionsDTO();
+        options.setZeitblock(Zeitblock.ZB_06_10);
+        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        options.setSpitzenstunde(false);
+
+        final Zeitintervall sp1 = new Zeitintervall();
+        sp1.setType(TypeZeitintervall.STUNDE_VIERTEL);
+        sp1.setStartUhrzeit(LocalDateTime.of(2022,1,1,6,0));
+        sp1.setEndeUhrzeit(LocalDateTime.of(2022,1,1,6,15));
+
+        final Zeitintervall spitzenStunde = new Zeitintervall();
+        spitzenStunde.setType(TypeZeitintervall.STUNDE_VIERTEL);
+        spitzenStunde.setStartUhrzeit(LocalDateTime.of(2022,1,1,7,0));
+        spitzenStunde.setEndeUhrzeit(LocalDateTime.of(2022,1,1,8,0));
+
+        final java.util.LinkedList<Zeitintervall> spitzenList = new java.util.LinkedList<>();
+        spitzenList.add(sp1);
+        spitzenList.add(spitzenStunde);
+
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
+                .thenReturn(spitzenList);
+
+        final Zeitintervall quarter = new Zeitintervall();
+        quarter.setType(TypeZeitintervall.STUNDE_VIERTEL);
+        quarter.setStartUhrzeit(spitzenStunde.getStartUhrzeit());
+        quarter.setEndeUhrzeit(spitzenStunde.getStartUhrzeit().plusMinutes(15));
+
+        when(zaehldatenExtractorService.extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet()))
+                .thenReturn(List.of(quarter));
+
+        final List<Zeitintervall> result = service.extractZeitintervalleForSpitzenstunde(zaehlungId, Zaehlart.N, false, options);
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains(quarter));
+        assertFalse(result.contains(spitzenStunde));
 
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstunde(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()), eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(spitzenStunde.getStartUhrzeit()), eq(spitzenStunde.getEndeUhrzeit()), eq(false), eq(options), anySet());
