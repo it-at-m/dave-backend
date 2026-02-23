@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
 
-public class VerkehrsbeziehungeKreuzungRandomFactory {
+public class VerkehrsbeziehungKreuzungRandomFactory {
 
     public static Verkehrsbeziehung getOne() {
         Verkehrsbeziehung bean = new Verkehrsbeziehung();
