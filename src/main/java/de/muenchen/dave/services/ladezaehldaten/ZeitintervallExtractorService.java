@@ -52,7 +52,7 @@ public class ZeitintervallExtractorService {
 
         if (Zaehlart.FJS.equals(zaehlart)) {
             extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenLaengsverkehre())
-                    .parallelStream()
+                    .stream()
                     .flatMap(chosenLangsverkehr -> zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -66,7 +66,7 @@ public class ZeitintervallExtractorService {
                     .toList();
         } else if (Zaehlart.QU.equals(zaehlart)) {
             extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenQuerungsverkehre())
-                    .parallelStream()
+                    .stream()
                     .flatMap(chosenQuerungsverkehr -> zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
                                     zaehlungId,
@@ -79,7 +79,7 @@ public class ZeitintervallExtractorService {
                     .toList();
         } else if (Zaehlart.QJS.equals(zaehlart)) {
             extractedZeitintervalle = CollectionUtils.emptyIfNull(options.getChosenVerkehrsbeziehungen())
-                    .parallelStream()
+                    .stream()
                     .flatMap(chosenVerkehrsbeziehung -> zeitintervallRepository
                             .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
                                     zaehlungId,
