@@ -404,7 +404,7 @@ public class LadeZaehldatenService {
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
-    private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(
+    protected List<Zeitintervall> extractZeitintervalleForSpitzenstunde(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
