@@ -112,7 +112,7 @@ public class AuswertungSpitzenstundeService {
      *            darf.
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
      *            Kreisverkehr extrahiert werden sollen, anderfalls false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
@@ -125,12 +125,12 @@ public class AuswertungSpitzenstundeService {
             final String zeitauswahl,
             final boolean kreisverkehr) throws IncorrectZeitauswahlException, DataNotFoundException {
         final TypeZeitintervall typeSpitzenstunde = getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        return extractSpitzenstundenAllFahrbeziehungen(
+        return extractSpitzenstundenAllVerkehrsbeziehungen(
                 zaehlung.getId(),
                 zeitblock,
                 typeSpitzenstunde,
                 kreisverkehr).stream()
-                .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
+                .map(spStdVerkehrsbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdVerkehrsbeziehung, zaehlung.getPkwEinheit()))
                 .collect(Collectors.toList());
     }
 
@@ -145,24 +145,27 @@ public class AuswertungSpitzenstundeService {
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
      *            Kreisverkehr extrahiert werden sollen, anderfalls
      *            false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws DataNotFoundException falls keine Spitzenstunde gefunden wurde.
      */
-    public List<Zeitintervall> extractSpitzenstundenAllFahrbeziehungen(final String zaehlungId,
+    public List<Zeitintervall> extractSpitzenstundenAllVerkehrsbeziehungen(
+            final String zaehlungId,
             final Zeitblock zeitblock,
             final TypeZeitintervall typeSpitzenstunde,
             final boolean kreisverkehr) throws DataNotFoundException {
         final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
-        // Extrahieren der Spitzenstunde der Zählung über alle Fahrbeziehungen.
-        final Zeitintervall spitzenstunde = zeitintervallRepository.findByZaehlungIdAndTypeAndFahrbeziehungVonNullAndFahrbeziehungNachNullAndSortingIndex(
-                UUID.fromString(zaehlungId),
-                typeSpitzenstunde,
-                sortingIndex).orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
-        // Extrahieren der Zeitintervalle je Fahrbeziehung welche die Spitzstunde ausmachen.
+        // Extrahieren der Spitzenstunde der Zählung über alle Verkehrsbeziehungen.
+        final Zeitintervall spitzenstunde = zeitintervallRepository
+                .findByZaehlungIdAndTypeAndVerkehrsbeziehungVonNullAndVerkehrsbeziehungNachNullAndSortingIndex(
+                        UUID.fromString(zaehlungId),
+                        typeSpitzenstunde,
+                        sortingIndex)
+                .orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
+        // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
         final List<Zeitintervall> spitzenstundeZeitintevalle;
         if (kreisverkehr) {
             spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlungId),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
@@ -170,14 +173,14 @@ public class AuswertungSpitzenstundeService {
                             TypeZeitintervall.STUNDE_VIERTEL);
         } else {
             spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
                             UUID.fromString(zaehlungId),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
                             TypeZeitintervall.STUNDE_VIERTEL);
         }
-        // Erstellen der aggregierten Spitzenstunde je Fahrbeziehung
-        // aus den vorherigen vier Zeitintervallen je Fahrbeziehung.
+        // Erstellen der aggregierten Spitzenstunde je Verkehrsbeziehung
+        // aus den vorherigen vier Zeitintervallen je Verkehrsbeziehung.
         return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(spitzenstundeZeitintevalle)
                 .stream()
                 .filter(zeitintervall -> zeitintervall.getType().equals(typeSpitzenstunde))
@@ -205,8 +208,8 @@ public class AuswertungSpitzenstundeService {
                 new OptionsDTO());
         final LadeAuswertungSpitzenstundeDTO ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
                 .ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(ladeZaehldatumDTO);
-        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getFahrbeziehung().getVon());
-        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getFahrbeziehung().getNach());
+        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getVerkehrsbeziehung().getVon());
+        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getVerkehrsbeziehung().getNach());
         return ladeZaehldatumWithDirectionDTO;
     }
 

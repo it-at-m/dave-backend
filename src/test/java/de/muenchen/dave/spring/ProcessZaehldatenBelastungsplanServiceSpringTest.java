@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
@@ -105,9 +105,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(5);
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(5);
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         zeitintervalle.add(zeitintervall);
 
         zeitintervall = new Zeitintervall();
@@ -122,9 +122,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(50);
         zeitintervall.setFahrradfahrer(60);
         zeitintervall.setFussgaenger(70);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
-        zeitintervall.getFahrbeziehung().setNach(5);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
+        zeitintervall.getVerkehrsbeziehung().setNach(5);
         zeitintervalle.add(zeitintervall);
 
         final Zaehlung zaehlung = new Zaehlung();
@@ -146,7 +146,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
@@ -218,9 +218,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(5);
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(5);
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         zeitintervalle.add(zeitintervall);
 
         zeitintervall = new Zeitintervall();
@@ -235,9 +235,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(50);
         zeitintervall.setFahrradfahrer(60);
         zeitintervall.setFussgaenger(70);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
-        zeitintervall.getFahrbeziehung().setNach(5);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
+        zeitintervall.getVerkehrsbeziehung().setNach(5);
         zeitintervalle.add(zeitintervall);
 
         final Zaehlung zaehlung = new Zaehlung();
@@ -259,7 +259,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
@@ -342,9 +342,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         spitzenstunde.setKraftraeder(1);
         spitzenstunde.setFahrradfahrer(1);
         spitzenstunde.setFussgaenger(1);
-        spitzenstunde.setFahrbeziehung(new Fahrbeziehung());
-        spitzenstunde.getFahrbeziehung().setVon(5);
-        spitzenstunde.getFahrbeziehung().setNach(2);
+        spitzenstunde.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        spitzenstunde.getVerkehrsbeziehung().setVon(5);
+        spitzenstunde.getVerkehrsbeziehung().setNach(2);
         spitzenstunde.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         spitzenstunde.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(spitzenstunde));
         List<Zeitintervall> spitzenstunden = new ArrayList<>();
@@ -400,7 +400,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         }
 
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
                         zaehlungId,
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15)),
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15)),
@@ -417,28 +417,28 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         assertThat(result.get(0).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(0).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(0).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(0).getFahrbeziehung().getVon(), is(1));
-        assertThat(result.get(0).getFahrbeziehung().getNach(), is(2));
+        assertThat(result.get(0).getVerkehrsbeziehung().getVon(), is(1));
+        assertThat(result.get(0).getVerkehrsbeziehung().getNach(), is(2));
 
         assertThat(result.get(1).getPkw(), is(8));
         assertThat(result.get(1).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(1).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(1).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(1).getFahrbeziehung().getVon(), is(2));
-        assertThat(result.get(1).getFahrbeziehung().getNach(), is(1));
+        assertThat(result.get(1).getVerkehrsbeziehung().getVon(), is(2));
+        assertThat(result.get(1).getVerkehrsbeziehung().getNach(), is(1));
 
         assertThat(result.get(2).getPkw(), is(12));
         assertThat(result.get(2).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(2).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(2).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(2).getFahrbeziehung().getVon(), is(1));
-        assertThat(result.get(2).getFahrbeziehung().getNach(), is(nullValue()));
+        assertThat(result.get(2).getVerkehrsbeziehung().getVon(), is(1));
+        assertThat(result.get(2).getVerkehrsbeziehung().getNach(), is(nullValue()));
 
         assertThat(result.get(3).getPkw(), is(16));
         assertThat(result.get(3).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(3).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(3).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(3).getFahrbeziehung().getVon(), is(2));
-        assertThat(result.get(3).getFahrbeziehung().getNach(), is(nullValue()));
+        assertThat(result.get(3).getVerkehrsbeziehung().getVon(), is(2));
+        assertThat(result.get(3).getVerkehrsbeziehung().getNach(), is(nullValue()));
     }
 }

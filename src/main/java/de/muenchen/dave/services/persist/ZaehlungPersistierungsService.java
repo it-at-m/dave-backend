@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -69,8 +70,7 @@ public abstract class ZaehlungPersistierungsService {
                     // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.checkZeitintervalleIfPlausible(zaehlung, this.getNumberOfNecessaryZeitintervalle(zaehlung));
                 } else if (zaehlung.getStatus().equalsIgnoreCase(Status.CORRECTION.name())) {
-                    // Wird eine Zaehlung korrigert, dann
-                    //      alle Zeitintervalle zu den Fahrbeziehungen löschen, die keine FahrbeziehungId enthalten
+                    // Wird eine Zaehlung korrigert, dann alle Zeitintervalle zu den Verkehrsbeziehungen löschen, die keine bewegungsbeziehungId enthalten
                     this.zeitintervallPersistierungsService.deleteZeitintervalleForCorrection(zaehlung.getId());
                     // Alle Filenames aus den Knotenarmen löschen
                     zaehlung.getKnotenarme().forEach(arm -> arm.setFilename(""));
@@ -88,7 +88,11 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     public int getNumberOfNecessaryZeitintervalle(final Zaehlung zaehlung) {
-        return Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle() * zaehlung.getFahrbeziehungen().size();
+        final int intervalCount = Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle();
+        final int totalRelationships = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()).size()
+                + CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()).size()
+                + CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()).size();
+        return intervalCount * totalRelationships;
     }
 
     /**

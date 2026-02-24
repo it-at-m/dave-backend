@@ -106,16 +106,16 @@ class FillPdfBeanServiceTest {
         final OptionsDTO optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
         final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
 
-        assertThat(FillPdfBeanService.createChartTitleFahrbeziehung(optionsDTO, zaehlung), is("Gesamte Zählstelle (Zulauf)"));
+        assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("Gesamte Zählstelle (Zulauf)"));
 
         optionsDTO.setVonKnotenarm(1);
-        assertThat(FillPdfBeanService.createChartTitleFahrbeziehung(optionsDTO, zaehlung), is("von Cosimastr. (1) "));
+        assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("von Cosimastr. (1) "));
 
         optionsDTO.setNachKnotenarm(4);
-        assertThat(FillPdfBeanService.createChartTitleFahrbeziehung(optionsDTO, zaehlung), is("von Cosimastr. (1) nach Wahnfriedallee (4)"));
+        assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("von Cosimastr. (1) nach Wahnfriedallee (4)"));
 
         optionsDTO.setVonKnotenarm(null);
-        assertThat(FillPdfBeanService.createChartTitleFahrbeziehung(optionsDTO, zaehlung), is("nach Wahnfriedallee (4)"));
+        assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("nach Wahnfriedallee (4)"));
 
     }
 

@@ -32,7 +32,7 @@ public class KIServiceTest {
     }
 
     @Test
-    void testPredictHochrechnungTageswerteForZeitIntervalleOfZaehlungNoFahrbeziehungen() {
+    void testPredictHochrechnungTageswerteForZeitIntervalleOfZaehlungNoVerkehrsbeziehungen() {
         // Arrange
         KIZeitintervall kiIntervall = KIZeitintervall.builder()
                 .rad(6)
@@ -52,7 +52,7 @@ public class KIServiceTest {
         List<List<Zeitintervall>> input = new ArrayList<>();
         Exception exception = assertThrows(PredictionFailedException.class, () -> kiService.predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(input));
 
-        String expectedMessage = PredictionFailedException.NO_FAHRBEZIEHUNGEN;
+        String expectedMessage = PredictionFailedException.NO_VERKEHRSBEZIEHUNGEN;
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage, equalTo(expectedMessage));
@@ -104,12 +104,12 @@ public class KIServiceTest {
         Mockito.when(mapper.zeitintervallToKIZeitintervall(any())).thenReturn(kiIntervall);
 
         // Act
-        List<Zeitintervall> fahrbeziehung = new ArrayList<>();
-        fahrbeziehung.addAll(Collections.nCopies(32,
+        List<Zeitintervall> verkehrsbeziehung = new ArrayList<>();
+        verkehrsbeziehung.addAll(Collections.nCopies(32,
                 Zeitintervall.builder().sortingIndex(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10).build()));
-        fahrbeziehung.addAll(Collections.nCopies(10,
+        verkehrsbeziehung.addAll(Collections.nCopies(10,
                 Zeitintervall.builder().sortingIndex(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06).build()));
-        List<List<Zeitintervall>> input = Collections.nCopies(5, fahrbeziehung);
+        List<List<Zeitintervall>> input = Collections.nCopies(5, verkehrsbeziehung);
         KIPredictionResult[] result = kiService.predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(input);
 
         // Assert

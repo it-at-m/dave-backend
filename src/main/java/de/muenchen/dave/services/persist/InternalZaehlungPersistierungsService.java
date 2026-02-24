@@ -6,9 +6,9 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -145,10 +145,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
         // Zeitintervalle persistieren
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        zaehlungDto.getFahrbeziehungen().forEach(fahrbeziehungDto -> {
-            fahrbeziehungDto.getZeitintervalle().stream()
+        zaehlungDto.getVerkehrsbeziehungen().forEach(verkehrsbeziehung -> {
+            verkehrsbeziehung.getZeitintervalle().stream()
                     .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
+                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, verkehrsbeziehung))
                     .forEach(zeitintervalleToPersist::add);
         });
 
@@ -170,69 +170,72 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode setzt zusätzliche Informationen in den {@link Zeitintervall}.
      * <p>
      * - Die UUID der {@link Zaehlung}
-     * - Die UUID der {@link Fahrbeziehung}
+     * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
-     * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
+     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
-     * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
+     * @param bearbeiteVerkehrsbeziehung zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
-    public Zeitintervall setAdditionalDataToZeitintervall(final Zeitintervall zeitintervall,
+    public Zeitintervall setAdditionalDataToZeitintervall(
+            final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
+            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
 
-        this.getFromBearbeiteFahrbeziehungDto(zaehlung, fahrbeziehungDto)
-                .ifPresent(fahrbeziehung -> zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehung.getId())));
+        this.getFromBearbeiteVerkehrsbeziehungDto(zaehlung, bearbeiteVerkehrsbeziehung)
+                .ifPresent(verkehrsbeziehung -> zeitintervall.setBewegungsbeziehungId(UUID.fromString(verkehrsbeziehung.getId())));
 
         zeitintervall.setHochrechnung(
                 this.createHochrechnung(
                         zeitintervall,
-                        fahrbeziehungDto.getHochrechnungsfaktor(),
+                        bearbeiteVerkehrsbeziehung.getHochrechnungsfaktor(),
                         zaehlung.getZaehldauer()));
 
-        zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
+        zeitintervall.setVerkehrsbeziehung(this.mapToVerkehrsbeziehungForZeitintervall(bearbeiteVerkehrsbeziehung));
         return zeitintervall;
     }
 
     /**
-     * Diese Methode gibt die {@link Fahrbeziehung} der {@link Zaehlung} zurück, welche durch die
-     * {@link BearbeiteFahrbeziehungDTO} repräsentiert wird.
+     * Diese Methode gibt die {@link Verkehrsbeziehung} der {@link Zaehlung} zurück, welche durch die
+     * {@link BearbeiteVerkehrsbeziehungDTO} repräsentiert wird.
      *
-     * @param zaehlung aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
-     * @param fahrbeziehungDto welche die Basis zum Suchen der {@link Fahrbeziehung} darstellt.
-     * @return die gefundene {@link Fahrbeziehung}.
+     * @param zaehlung aus der die {@link Verkehrsbeziehung} geholt und zurückgegeben werden soll.
+     * @param bearbeiteVerkehrsbeziehung welche die Basis zum Suchen der {@link Verkehrsbeziehung}
+     *            darstellt.
+     * @return die gefundene {@link Verkehrsbeziehung}.
      */
-    public Optional<Fahrbeziehung> getFromBearbeiteFahrbeziehungDto(final Zaehlung zaehlung,
-            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
-        return zaehlung.getFahrbeziehungen().stream()
-                .filter(fahrbeziehung -> this.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung))
+    public Optional<Verkehrsbeziehung> getFromBearbeiteVerkehrsbeziehungDto(
+            final Zaehlung zaehlung,
+            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
+        return zaehlung.getVerkehrsbeziehungen().stream()
+                .filter(verkehrsbeziehung -> this.isSameVerkehrsbeziehung(bearbeiteVerkehrsbeziehung, verkehrsbeziehung))
                 .findFirst();
     }
 
     /**
-     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe Fahrbeziehung
-     * einer Kreuzung oder eines Kreisverkehrs
-     * repräsentieren.
+     * Diese Methode prüft ob die beiden Verkehrsbeziehungsobjekte in den Parametern
+     * die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
      *
-     * @param fahrbeziehungDto zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @param fahrbeziehung zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @return true falls die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentiert
-     *         wird.
+     * @param bearbeiteVerkehrsbeziehungDTO zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
+     * @param verkehrsbeziehung zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
+     * @return true falls die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs
+     *         repräsentiert wird.
      */
-    public boolean isSameFahrbeziehung(final BearbeiteFahrbeziehungDTO fahrbeziehungDto,
-            final Fahrbeziehung fahrbeziehung) {
-        return Objects.equals(fahrbeziehungDto.getIsKreuzung(), fahrbeziehung.getIsKreuzung())
+    public boolean isSameVerkehrsbeziehung(
+            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehungDTO,
+            final Verkehrsbeziehung verkehrsbeziehung) {
+        return Objects.equals(bearbeiteVerkehrsbeziehungDTO.getIsKreuzung(), verkehrsbeziehung.getIsKreuzung())
                 // Kreuzung
-                && Objects.equals(fahrbeziehungDto.getVon(), fahrbeziehung.getVon())
-                && Objects.equals(fahrbeziehungDto.getNach(), fahrbeziehung.getNach())
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getVon(), verkehrsbeziehung.getVon())
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getNach(), verkehrsbeziehung.getNach())
                 // Kreisverkehr
-                && Objects.equals(fahrbeziehungDto.getKnotenarm(), fahrbeziehung.getKnotenarm())
-                && Objects.equals(fahrbeziehungDto.getHinein(), fahrbeziehung.getHinein())
-                && Objects.equals(fahrbeziehungDto.getHeraus(), fahrbeziehung.getHeraus())
-                && Objects.equals(fahrbeziehungDto.getVorbei(), fahrbeziehung.getVorbei());
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getKnotenarm(), verkehrsbeziehung.getKnotenarm())
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getHinein(), verkehrsbeziehung.getHinein())
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getHeraus(), verkehrsbeziehung.getHeraus())
+                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getVorbei(), verkehrsbeziehung.getVorbei());
     }
 
     /**
@@ -249,29 +252,31 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
+     * @param bearbeiteVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
+     *            zum Anfügen
+     *            an
      *            einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
-        final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
-        if (BooleanUtils.isTrue(fahrbeziehungDto.getIsKreuzung())) {
-            fahrbeziehung.setVon(fahrbeziehungDto.getVon());
-            fahrbeziehung.setNach(fahrbeziehungDto.getNach());
+    public de.muenchen.dave.domain.Verkehrsbeziehung mapToVerkehrsbeziehungForZeitintervall(final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
+        final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
+        if (BooleanUtils.isTrue(bearbeiteVerkehrsbeziehung.getIsKreuzung())) {
+            verkehrsbeziehung.setVon(bearbeiteVerkehrsbeziehung.getVon());
+            verkehrsbeziehung.setNach(bearbeiteVerkehrsbeziehung.getNach());
         } else {
-            fahrbeziehung.setVon(fahrbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
+            verkehrsbeziehung.setVon(bearbeiteVerkehrsbeziehung.getKnotenarm());
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(bearbeiteVerkehrsbeziehung);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
-                fahrbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {
-                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", fahrbeziehungDto);
+                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", bearbeiteVerkehrsbeziehung);
             }
         }
-        return fahrbeziehung;
+        return verkehrsbeziehung;
     }
 
     /**

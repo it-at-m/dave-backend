@@ -88,7 +88,11 @@ public class Zaehlung {
 
     List<Knotenarm> knotenarme;
 
-    List<Fahrbeziehung> fahrbeziehungen;
+    List<Laengsverkehr> laengsverkehr;
+
+    List<Querungsverkehr> querungsverkehr;
+
+    List<Verkehrsbeziehung> verkehrsbeziehungen;
 
     Boolean unreadMessagesMobilitaetsreferat;
 

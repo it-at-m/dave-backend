@@ -1,14 +1,14 @@
 package de.muenchen.dave.domain.dtos.external;
 
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
-import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
-import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class ExternalFahrbeziehungDTO {
-
-    String id;
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class ExternalVerkehrsbeziehungDTO extends ExternalBewegungsbeziehungDTO {
 
     Boolean isKreuzung;
 
@@ -27,7 +27,5 @@ public class ExternalFahrbeziehungDTO {
     Boolean vorbei;
 
     HochrechnungsfaktorDTO hochrechnungsfaktor;
-
-    List<ZeitintervallDTO> zeitintervalle;
 
 }

@@ -24,7 +24,7 @@ import org.apache.commons.lang3.ObjectUtils;
  * <p>
  * Das Ergebnis der Klasse wird zur Prüfung bezüglich der Spitzenstunde in
  * {@link ZeitintervallGleitendeSpitzenstundeUtil}.berechneGleitendeSpitzenstunde(UUID,
- * Zeitblock, Fahrbeziehung, List) verwendet.
+ * Zeitblock, Verkehrsbeziehung, List) verwendet.
  */
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PRIVATE)

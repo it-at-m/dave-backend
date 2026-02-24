@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class FahrbeziehungVisumDTO {
+public class VerkehrsbeziehungVisumDTO {
 
     private Integer von;
 

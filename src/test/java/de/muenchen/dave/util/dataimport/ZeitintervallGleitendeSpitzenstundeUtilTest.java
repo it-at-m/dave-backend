@@ -4,8 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -83,9 +83,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(8);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(0), is(expected));
 
@@ -103,9 +103,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(8);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(1), is(expected));
 
@@ -123,9 +123,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(8);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(2), is(expected));
 
@@ -143,9 +143,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() / 2), is(expected));
 
@@ -163,9 +163,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() / 2 + 1), is(expected));
 
@@ -183,9 +183,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() / 2 + 2), is(expected));
 
@@ -203,9 +203,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() - 6), is(expected));
 
@@ -223,9 +223,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() - 5), is(expected));
 
@@ -243,31 +243,31 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(result.size() - 4), is(expected));
 
     }
 
     @Test
-    public void getGleitendeSpitzenstundenForFahrbeziehung() {
+    public void getGleitendeSpitzenstundenForVerkehrsbeziehung() {
         zeitintervalle12.get(8).setPkw(2);
 
         zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
 
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
 
         List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getGleitendeSpitzenstundenForFahrbeziehung",
+                "getGleitendeSpitzenstundenForVerkehrsbeziehung",
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
-                ArrayUtils.toArray(Fahrbeziehung.class, Map.class),
-                ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
+                ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
+                ArrayUtils.toArray(verkehrsbeziehung, zeitintervalleGroupedByIntervall),
                 List.class);
 
         assertThat(result.size(), is(18));
@@ -286,9 +286,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(0), is(expected));
 
@@ -306,9 +306,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(1), is(expected));
 
@@ -326,9 +326,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(2), is(expected));
 
@@ -346,9 +346,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(12), is(expected));
 
@@ -366,9 +366,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(13), is(expected));
 
@@ -386,9 +386,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(14), is(expected));
 
@@ -410,15 +410,15 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         // Change Zeitintervall 04:00 - 04:15 to provoke Spitzenstunde from 03:15 - 04:15
         zeitintervalle12.get(16).setFussgaenger(4);
 
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
 
         ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss result = TestUtils.privateStaticMethodCall(
                 "berechneGleitendeSpitzenstunde",
                 ZeitintervallGleitendeSpitzenstundeUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
+                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
+                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12),
                 ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss.class);
 
         Zeitintervall expected = new Zeitintervall();
@@ -435,9 +435,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.getGleitendeSpitzenstundeKfz(), is(Optional.of(expected)));
 
@@ -455,9 +455,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(4);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.getGleitendeSpitzenstundeRad(), is(Optional.of(expected)));
 
@@ -475,9 +475,9 @@ class ZeitintervallGleitendeSpitzenstundeUtilTest {
         expected.setFussgaenger(7);
         expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         expected.setHochrechnung(new Hochrechnung());
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.getGleitendeSpitzenstundeFuss(), is(Optional.of(expected)));
     }

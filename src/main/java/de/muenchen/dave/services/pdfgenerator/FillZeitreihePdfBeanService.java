@@ -107,7 +107,7 @@ public class FillZeitreihePdfBeanService {
         FillPdfBeanService.fillPdfBeanWithData(zeitreihePdf, department);
         fillZusatzinformationenZeitreihe(zeitreihePdf, zaehlung, options, zaehlstelle);
         fillZaehlstelleninformationenZeitreihe(zeitreihePdf, zaehlung);
-        zeitreihePdf.setChartTitle(FillPdfBeanService.createChartTitleFahrbeziehung(options, zaehlung));
+        zeitreihePdf.setChartTitle(FillPdfBeanService.createChartTitleVerkehrsbeziehung(options, zaehlung));
 
         return zeitreihePdf;
     }

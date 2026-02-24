@@ -27,11 +27,13 @@ import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -175,12 +177,15 @@ public class ZaehlstelleIndexService {
         if (StringUtils.isEmpty(zaehlung.getId())) {
             zaehlung.setId(UUID.randomUUID().toString());
         }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+
+        // Set ID in Verkehrsbeziehung, Laengsverkehr and Querungsverkehr if it exists.
+        Stream.of(
+                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
+                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()),
+                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()))
+                .flatMap(Collection::stream)
+                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId()))
+                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID().toString()));
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
@@ -211,12 +216,15 @@ public class ZaehlstelleIndexService {
         if (StringUtils.isEmpty(zaehlung.getId())) {
             zaehlung.setId(UUID.randomUUID().toString());
         }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+
+        // Set ID in Verkehrsbeziehung, Laengsverkehr and Querungsverkehr if it exists.
+        Stream.of(
+                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
+                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()),
+                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()))
+                .flatMap(Collection::stream)
+                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId()))
+                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID().toString()));
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);

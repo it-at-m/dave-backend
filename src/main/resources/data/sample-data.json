@@ -115,7 +115,7 @@
           "strassenname": "Maria-Ward-Str."
         }
       ],
-      "fahrbeziehungen": [
+      "verkehrsbeziehungen": [
         {
           "id": "21ec9b5f-d3fc-4050-ad30-f751610bd421",
           "isKreuzung": true,
