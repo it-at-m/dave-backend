@@ -409,13 +409,10 @@ public class ProcessZaehldatenBelastungsplanService {
             if (options.getKraftfahrzeugverkehr() && belastungsplanData.containsKey(Fahrzeug.KFZ)) {
                 putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.KFZ);
             }
-        } else {
-            if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
-                putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
-            }
-            if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
-                putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.RAD);
-            }
+        } else if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
+            putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.RAD);
+        } else if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
+            putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
 
         var ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(ladeBelastungsplan, belastungsplanData.get(Fahrzeug.KFZ),
