@@ -33,15 +33,14 @@ public class ZaehldatenExtractorService {
     private final SpitzenstundeCalculatorService spitzenstundeCalculatorService;
 
     /**
-     * Extrahiert und aggegregiert die Zeitintervalle basierend auf den übergebenen Parametern.
+     * Extrahiert und aggregiert die Zeitintervalle basierend auf den übergebenen Parametern.
      *
-     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
      * Bewegungsbeziehungen.
-     * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
      *
-     * Befindet sich im Paramter "types" der Type für eine Spitzenstunde, so werden die aggregierten
-     * Zeitintervalle
-     * um die Spizenstunden ergänzt,
+     * Befindet sich im Parameter "types" der Type für eine Spitzenstunde, so werden die aggregierten
+     * Zeitintervalle um die Spitzenstunden ergänzt,
      *
      * @param zaehlungId ID der Zählung
      * @param zaehlart Art der Zählung (QU, FJS, QJS)
@@ -97,9 +96,9 @@ public class ZaehldatenExtractorService {
      * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten
      * Zeitintervallen.
      *
-     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnene
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
      * Bewegungsbeziehungen.
-     * D.h. es wird die Summe über die selben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
      *
      * @param zaehlungId ID der Zählung
      * @param zaehlart Art der Zählung
