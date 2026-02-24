@@ -287,7 +287,8 @@ public class LadeZaehldatenService {
      *         mit
      *         "alle nach X" handelt.
      */
-    public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
+    public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(
+            final Integer von,
             final Integer nach,
             final Boolean isKreisverkehr) {
         final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
