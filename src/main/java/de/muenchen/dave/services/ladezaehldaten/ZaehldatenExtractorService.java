@@ -95,7 +95,6 @@ public class ZaehldatenExtractorService {
     /**
      * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten
      * Zeitintervallen.
-     *
      * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
      * Bewegungsbeziehungen.
      * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
