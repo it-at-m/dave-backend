@@ -29,6 +29,8 @@ public class LadeZaehlungDTO {
 
     Boolean sonderzaehlung;
 
+    Boolean dauerzaehlung;
+
     Boolean kreisverkehr;
 
     String zaehlsituation;

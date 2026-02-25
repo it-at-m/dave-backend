@@ -54,6 +54,8 @@ public class Zaehlung {
 
     Boolean sonderzaehlung;
 
+    Boolean dauerzaehlung = false;
+
     Boolean kreisverkehr;
 
     List<Fahrzeug> kategorien;

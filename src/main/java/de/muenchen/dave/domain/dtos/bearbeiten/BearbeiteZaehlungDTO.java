@@ -38,6 +38,8 @@ public class BearbeiteZaehlungDTO {
 
     boolean sonderzaehlung;
 
+    boolean dauerzaehlung;
+
     boolean kreisverkehr;
 
     List<Fahrzeug> kategorien;

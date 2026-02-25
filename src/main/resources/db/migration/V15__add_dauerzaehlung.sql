@@ -1,0 +1,1 @@
+ALTER TABLE zaehlung ADD COLUMN dauerzaehlung boolean NOT NULL DEFAULT false;
