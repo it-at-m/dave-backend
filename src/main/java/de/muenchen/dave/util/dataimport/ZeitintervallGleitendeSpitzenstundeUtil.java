@@ -3,6 +3,7 @@ package de.muenchen.dave.util.dataimport;
 import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,9 +118,12 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         Optional<Zeitintervall> gleitendeSpitzenstundeRad = Optional.empty();
         Optional<Zeitintervall> gleitendeSpitzenstundeFuss = Optional.empty();
         GleitenderZeitintervall gleitenderZeitintervall;
+
         for (int index = 0; index < sortedZeitintervalle.size(); index++) {
-            if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(sortedZeitintervalle.get(index), zeitblock)) {
-                gleitenderZeitintervall = GleitenderZeitintervall.createInstanceWithIndexParameterAsNewestIndex(sortedZeitintervalle, index, zeitblock);
+            LocalDateTime start = sortedZeitintervalle.get(index).getStartUhrzeit().with(zeitblock.getStart().toLocalTime());
+            LocalDateTime end = sortedZeitintervalle.get(index).getStartUhrzeit().with(zeitblock.getEnd().toLocalTime());
+            if (ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(sortedZeitintervalle.get(index), start, end)) {
+                gleitenderZeitintervall = GleitenderZeitintervall.createInstanceWithIndexParameterAsNewestIndex(sortedZeitintervalle, index, start, end);
                 // Ermittlung Kfz
                 Integer sum = ObjectUtils.defaultIfNull(gleitenderZeitintervall.getSumKfz(), 0);
                 if (valueGleitendeSpitzenstundeKfz < sum) {
