@@ -23,7 +23,7 @@ import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -172,8 +172,13 @@ public class AuswertungSpitzenstundeService {
                 options);
 
         // Spitzenstunde alle nach alle
-        final Zeitintervall spitzenstunde = Optional.ofNullable(extractedSpitzenstunde.getLast())
-                .orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
+        final Zeitintervall spitzenstunde;
+        try {
+            spitzenstunde = extractedSpitzenstunde.getLast();
+        } catch (final NoSuchElementException exception) {
+            throw new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE);
+        }
+
         // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
         final List<Zeitintervall> spitzenstundeZeitintervalle;
         final var isZaehlartQjsFjSOrQu = Set.of(Zaehlart.QJS, Zaehlart.FJS, Zaehlart.QU).contains(zaehlart);
