@@ -91,33 +91,34 @@ public class ZeitintervallPersistierungsService {
         /*
          * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
-        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
+        final var summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
                 .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
         /*
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
          * wenn der boolean-Parameter true ist
          */
-        final List<Zeitintervall> kiZeitintervalle = new ArrayList<>();
+        final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
-            final List<List<Zeitintervall>> groupedZeitintervalleByVerkehrsbeziehung = ZeitintervallKIUtil
+            final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
                     .groupZeitintervalleByVerkehrsbeziehung(zeitintervalle);
             try {
                 final KIPredictionResult[] predictionResults = kiService
-                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByVerkehrsbeziehung);
-                final List<Zeitintervall> zeitintervallForEachVerkehrsbeziehung = ZeitintervallKIUtil
-                        .extractZeitintervallForEachVerkehrsbeziehung(groupedZeitintervalleByVerkehrsbeziehung);
+                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
+                final List<Zeitintervall> zeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                        .extractZeitintervallForEachVerkehrsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
                 kiZeitintervalle.addAll(
-                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(Arrays.asList(predictionResults),
-                                zeitintervallForEachVerkehrsbeziehung));
+                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(
+                                Arrays.asList(predictionResults),
+                                zeitintervallForEachBewegungsbeziehung));
                 ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
                 ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
-            } catch (PredictionFailedException exception) {
+            } catch (final PredictionFailedException exception) {
                 log.error("Error predicting Tagessummen with KIService\n" + exception);
             }
         }
 
-        List<Zeitintervall> allZeitintervalle = new ArrayList<>();
+        final var allZeitintervalle = new ArrayList<Zeitintervall>();
         allZeitintervalle.addAll(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
