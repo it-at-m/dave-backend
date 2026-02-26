@@ -73,15 +73,15 @@ public class ZeitintervallSummationService {
     }
 
     /**
-     * Invertiert die übergebene Map, um eine effektivere Weiterberechnung zu ermöglichen
+     * Invertiert die übergebene Map, um eine effektivere Weiterberechnung zu ermöglichen.
      * Der neue Schlüssel ist der Sortierungsindex,
-     * dieser identifiziert eine Viertelstunde/Blocksumme/Spitzenstunde eindeutig
-     * Die Bewegungsbeziehung geht dabei verlohren
+     * dieser identifiziert eine Viertelstunde/Blocksumme/Spitzenstunde eindeutig.
+     * Die Bewegungsbeziehung geht dabei verloren.
      *
      * @param map Liste an Zeitintervallen je Bewegungsbeziehung
      * @return Liste an Zeitintervallen je Viertelstunde/Blocksumme/Spitzenstunde
      */
-    protected Map<Integer, List<Zeitintervall>> invertMap(Map<Bewegungsbeziehung, List<Zeitintervall>> map) {
+    private Map<Integer, List<Zeitintervall>> invertMap(Map<Bewegungsbeziehung, List<Zeitintervall>> map) {
         return map
                 .values()
                 .stream()
