@@ -7,9 +7,13 @@ import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -244,9 +248,16 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung,
             final Bewegungsbeziehung bewegungsbeziehung) {
         if (Zaehlart.QU.equals(zaehlart)) {
-
+            final var bearbeiteQuerungsverkehr = (BearbeiteQuerungsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final var verkehrsbeziehung = (Querungsverkehr) bewegungsbeziehung;
+            return Objects.equals(bearbeiteQuerungsverkehr.getRichtung() , verkehrsbeziehung.getRichtung())
+                    && Objects.equals(bearbeiteQuerungsverkehr.getKnotenarm() , verkehrsbeziehung.getKnotenarm());
         } else if (Zaehlart.FJS.equals(zaehlart)) {
-
+            final var bearbeiteLaengsverkehr = (BearbeiteLaengsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final var laengsverkehr = (Laengsverkehr) bewegungsbeziehung;
+            return Objects.equals(bearbeiteLaengsverkehr.getRichtung() , laengsverkehr.getRichtung())
+                    && Objects.equals(bearbeiteLaengsverkehr.getStrassenseite() , laengsverkehr.getStrassenseite())
+                    && Objects.equals(bearbeiteLaengsverkehr.getKnotenarm() , laengsverkehr.getKnotenarm());
         } else {
             // alle anderen Zählarten
             final var bearbeiteVerkehrsbeziehung = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
