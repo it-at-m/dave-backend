@@ -94,6 +94,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
         }
 
+        if (zaehlungDto.isDauerzaehlung()) {
+            zaehlungDto.setStatus("ACTIVE");
+        }
+
         final Zaehlung zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {
             // createZaehlung
