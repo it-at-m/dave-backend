@@ -213,7 +213,7 @@ public class LadeZaehldatenService {
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.
      */
-    public static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
+    private static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
         final Set<TypeZeitintervall> types = new HashSet<>();
         if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_KFZ);
