@@ -139,11 +139,10 @@ public class AuswertungSpitzenstundeService {
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
      *
      * @param zaehlung die Zaehlung
-     * @param zeitblock für welchen die Spitzentundeauswertung gemacht werden soll.
-     * @param zeitauswahl tbd
+     * @param zeitblock für welchen die Spitzenstundenauswertung gemacht werden soll.
+     * @param zeitauswahl für welchen die Spitzenstundenauswertung gemacht werden soll
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
-     *            Kreisverkehr extrahiert werden sollen, anderfalls
-     *            false.
+     *            Kreisverkehr extrahiert werden sollen, anderfalls false.
      * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws DataNotFoundException falls keine Spitzenstunde gefunden wurde.
      */
