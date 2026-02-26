@@ -53,11 +53,11 @@ public class SpitzenstundeCalculatorService {
      * Viertelstundenintervalle ermittelt.
      * - Befindet sich im Parameter "types" unter anderem der Typ {@link TypeZeitintervall#STUNDE_HALB}
      * jedoch kein Intervall des Typs {@link TypeZeitintervall#STUNDE_VIERTEL} so wird die Spitzenstunde
-     * auf Basis der Viertelstundenintervalle ermittelt.
+     * auf Basis der Halbstundenintervalle ermittelt.
      * - Befindet sich im Parameter "types" unter anderem der Typ
      * {@link TypeZeitintervall#STUNDE_KOMPLETT} jedoch kein Intervall des Typs
      * {@link TypeZeitintervall#STUNDE_VIERTEL} und {@link TypeZeitintervall#STUNDE_HALB} so wird die
-     * Spitzenstunde auf Basis der Viertelstundenintervalle ermittelt.
+     * Spitzenstunde auf Basis der Stundenintervalle ermittelt.
      *
      * @param zeitintervalle
      * @param types
