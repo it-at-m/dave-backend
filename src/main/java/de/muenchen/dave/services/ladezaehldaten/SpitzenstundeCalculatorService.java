@@ -36,7 +36,7 @@ public class SpitzenstundeCalculatorService {
             final List<Zeitintervall> zeitintervalle,
             final Set<TypeZeitintervall> types) {
         final var copyOfZeitintervalle = zeitintervallMapper.deepCopy(zeitintervalle);
-        final var forCalculationRelevantZeitintervalle = getZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
+        final List<Zeitintervall> forCalculationRelevantZeitintervalle = getZeitintervalleRelevantForCalculationOfSpitzenstunde(copyOfZeitintervalle, types);
         return ZeitintervallGleitendeSpitzenstundeUtil
                 .getGleitendeSpitzenstunden(zaehlungId, zeitblock, forCalculationRelevantZeitintervalle, types)
                 .stream()
