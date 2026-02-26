@@ -140,7 +140,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 zaehlstelleId);
 
         // Koordinate prüfen.
-        final var coordinate = this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(this.radiusDistanceCheck, zaehlstelle, zaehlung)
+        final var coordinate = this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(this.radiusDistanceCheck, zaehlstelle, zaehlung);
         zaehlung.setPunkt(coordinate);
 
         // Zeitintervalle persistieren
