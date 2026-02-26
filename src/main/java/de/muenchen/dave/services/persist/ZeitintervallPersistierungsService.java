@@ -11,10 +11,8 @@ import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.KIService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallVerkehrsbeziehungsSummationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,12 +136,15 @@ public class ZeitintervallPersistierungsService {
 
     @Transactional
     public void checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
-        final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(UUID.fromString(zaehlung.getId()),
+        final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
+                UUID.fromString(zaehlung.getId()),
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
         // überprüfen, ob alle Zeitintervalle vorhanden sind
         if (numberOfIntervalle == 0 || numberOfIntervalle == zeitintervalle.size()) {
-            aufbereitenUndPersistieren(zeitintervalle, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                    .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
+            final var kiAufbereitungNecessary = List
+                    .of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                    .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
+            aufbereitenUndPersistieren(zeitintervalle, kiAufbereitungNecessary);
         } else {
             throw new PlausibilityException("Die Anzahl der übermittelten Zeitintervalle stimmt nicht mit den erwarteten überein");
         }
