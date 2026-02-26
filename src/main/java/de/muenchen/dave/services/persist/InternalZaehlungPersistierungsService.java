@@ -223,9 +223,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final Zaehlung zaehlung,
             final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung) {
 
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         return getAllBewegungsbeziehungenFromZaehlung(zaehlung)
                 .stream()
-                .filter(bewegungsbeziehung -> this.isSameVerkehrsbeziehung(bearbeiteVerkehrsbeziehung, bewegungsbeziehung))
+                .filter(bewegungsbeziehung -> this.isSameVerkehrsbeziehung(zaehlart, bearbeiteBewegungsbeziehung, bewegungsbeziehung))
                 .findFirst();
     }
 
@@ -233,24 +234,35 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode prüft ob die beiden Bewegungsbeziehungsobjekte in den Parametern
      * die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
      *
-     * @param bearbeiteVerkehrsbeziehungDTO zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
+     * @param bearbeiteBewegungsbeziehung zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
      * @param bewegungsbeziehung zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
      * @return true falls die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs
      *         repräsentiert wird.
      */
     public boolean isSameVerkehrsbeziehung(
             final Zaehlart zaehlart,
-            final BearbeiteBewegungsbeziehungDTO bearbeiteVerkehrsbeziehungDTO,
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung,
             final Bewegungsbeziehung bewegungsbeziehung) {
-        return Objects.equals(bearbeiteVerkehrsbeziehungDTO.getIsKreuzung(), verkehrsbeziehung.getIsKreuzung())
-                // Kreuzung
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getVon(), verkehrsbeziehung.getVon())
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getNach(), verkehrsbeziehung.getNach())
-                // Kreisverkehr
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getKnotenarm(), verkehrsbeziehung.getKnotenarm())
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getHinein(), verkehrsbeziehung.getHinein())
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getHeraus(), verkehrsbeziehung.getHeraus())
-                && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getVorbei(), verkehrsbeziehung.getVorbei());
+        if (Zaehlart.QU.equals(zaehlart)) {
+
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+
+        } else {
+            // alle anderen Zählarten
+            final var bearbeiteVerkehrsbeziehung = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
+            final var verkehrsbeziehung = (Verkehrsbeziehung) bewegungsbeziehung;
+            return Objects.equals(bearbeiteVerkehrsbeziehung.getIsKreuzung(), verkehrsbeziehung.getIsKreuzung())
+                    // Kreuzung
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getVon(), verkehrsbeziehung.getVon())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getNach(), verkehrsbeziehung.getNach())
+                    // Kreisverkehr
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getKnotenarm(), verkehrsbeziehung.getKnotenarm())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getHinein(), verkehrsbeziehung.getHinein())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getHeraus(), verkehrsbeziehung.getHeraus())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getVorbei(), verkehrsbeziehung.getVorbei())
+                    // Strassenseite für Zählart QJS
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getStrassenseite(), verkehrsbeziehung.getStrassenseite());
+        }
     }
 
     /**
