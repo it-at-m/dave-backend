@@ -95,7 +95,7 @@ class AuswertungSpitzenstundeServiceTest {
             intervalle.add(ti);
             when(zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
-                            eq(zaehlungId), any(), any(), any(TypeZeitintervall.class)))
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), any(TypeZeitintervall.class)))
                     .thenReturn(intervalle);
 
             final List<Zeitintervall> gleitende = new ArrayList<>();
@@ -122,7 +122,7 @@ class AuswertungSpitzenstundeServiceTest {
             verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstunden(eq(zaehlungId), any(), eq(Boolean.FALSE), any(OptionsDTO.class));
             verify(zeitintervallRepository, times(1))
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
-                            eq(zaehlungId), any(), any(), any(TypeZeitintervall.class));
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), any(TypeZeitintervall.class));
             utilMock.verify(
                     () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()),
                     times(1));
