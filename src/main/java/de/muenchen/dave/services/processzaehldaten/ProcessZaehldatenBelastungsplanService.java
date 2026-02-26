@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
 import de.muenchen.dave.util.CalculationUtil;
@@ -26,6 +27,7 @@ import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -63,14 +65,18 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private final ZaehlstelleIndex zaehlstelleIndex;
 
+    private final ZaehlstelleIndexService zaehlstelleIndexService;
+
     private final LadeZaehldatenService ladeZaehldatenService;
 
     public ProcessZaehldatenBelastungsplanService(final ZeitintervallRepository zeitintervallRepository,
             final ZaehlstelleIndex zaehlstelleIndex,
+            final ZaehlstelleIndexService zaehlstelleIndexService,
             final LadeZaehldatenService ladeZaehldatenService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.zaehlstelleIndex = zaehlstelleIndex;
+        this.zaehlstelleIndexService = zaehlstelleIndexService;
         this.ladeZaehldatenService = ladeZaehldatenService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
     }
@@ -676,23 +682,25 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
-            final OptionsDTO options) {
+            final OptionsDTO options) throws DataNotFoundException {
+        final Zaehlung zaehlung = zaehlstelleIndexService.getZaehlung(zaehlungId);
         List<Zeitintervall> zi = new ArrayList<>();
-        if (options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
-            zi = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                            UUID.fromString(zaehlungId),
-                            options.getZeitraum().get(0).atTime(0, 0, 0),
-                            options.getZeitraum().get(1).atTime(23, 59, 59));
-            zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false);
-        } else {
-            zi = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                            UUID.fromString(zaehlungId),
-                            options.getZeitblock().getStart(),
-                            options.getZeitblock().getEnd());
-            zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
+        LocalDateTime start = options.getZeitblock().getStart();
+        LocalDateTime end = options.getZeitblock().getEnd();
+        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+            start = options.getZeitraum().get(0).atTime(0, 0, 0);
+            end = options.getZeitraum().get(1).atTime(23, 59, 59);
+        } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
+            start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
+            end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
         }
+        zi = zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+                        UUID.fromString(zaehlungId),
+                        start,
+                        end);
+        zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false);
         zi = zi.stream()
                 .filter(zeitintervall -> options.getZeitblock().getTypeZeitintervall() == zeitintervall.getType()
                         && zeitintervall.getFahrbeziehung().getVon() != null)
@@ -723,11 +731,22 @@ public class ProcessZaehldatenBelastungsplanService {
         } else {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
+
+        LocalDateTime start = options.getZeitblock().getStart();
+        LocalDateTime end = options.getZeitblock().getEnd();
+        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+            start = options.getZeitraum().get(0).atTime(0, 0, 0);
+            end = options.getZeitraum().get(1).atTime(23, 59, 59);
+        } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
+            start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
+            end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
+        }
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
                 UUID.fromString(zaehlung.getId()),
                 zaehlung.getZaehldauer(),
-                options.getZeitblock().getStart(),
-                options.getZeitblock().getEnd(),
+                start,
+                end,
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),
                 (FahrbewegungKreisverkehr) null,

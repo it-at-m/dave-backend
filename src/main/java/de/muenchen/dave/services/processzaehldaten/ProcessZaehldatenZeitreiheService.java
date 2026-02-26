@@ -21,6 +21,7 @@ import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -209,25 +210,25 @@ public class ProcessZaehldatenZeitreiheService {
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
                         List<Zeitintervall> zi = new ArrayList<>();
-                        if (options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
-                            zi = zeitintervallRepository
-                                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
-                                            UUID.fromString(zaehlung.getId()),
-                                            options.getZeitraum().get(0).atTime(0, 0, 0),
-                                            options.getZeitraum().get(1).atTime(23, 59, 59));
-                            zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false).stream()
-                                    .filter(z -> filterZeitreihe(z, options))
-                                    .collect(Collectors.toList());
-                        } else {
-                            zi = zeitintervallRepository
-                                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
-                                            UUID.fromString(zaehlung.getId()),
-                                            options.getZeitblock().getStart(),
-                                            options.getZeitblock().getEnd());
-                            zi = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false).stream()
-                                    .filter(z -> filterZeitreihe(z, options))
-                                    .collect(Collectors.toList());
+                        UUID zaehlungId = UUID.fromString(zaehlung.getId());
+                        LocalDateTime start = options.getZeitblock().getStart();
+                        LocalDateTime end = options.getZeitblock().getEnd();
+                        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+                            start = options.getZeitraum().get(0).atTime(0, 0, 0);
+                            end = options.getZeitraum().get(1).atTime(23, 59, 59);
+                        } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
+                            start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
+                            end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
                         }
+                        zi = zeitintervallRepository
+                                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
+                                        zaehlungId,
+                                        start,
+                                        end);
+                        zi = zeitintervallPersistierungsService.aufbereitenForZeitraum(zi, false).stream()
+                                .filter(z -> filterZeitreihe(z, options))
+                                .collect(Collectors.toList());
                         LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
 
                         if (zi.isEmpty()) {

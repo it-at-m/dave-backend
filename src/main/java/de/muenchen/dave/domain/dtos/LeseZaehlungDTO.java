@@ -42,6 +42,8 @@ public class LeseZaehlungDTO implements Serializable {
 
     Boolean sonderzaehlung;
 
+    Boolean dauerzaehlung;
+
     Boolean kreisverkehr;
 
     String status;

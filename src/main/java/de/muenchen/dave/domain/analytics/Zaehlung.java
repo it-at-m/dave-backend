@@ -84,6 +84,9 @@ public class Zaehlung extends BaseEntity {
     @Column(name = "kreisverkehr")
     private Boolean kreisverkehr;
 
+    @Column(name = "dauerzaehlung")
+    private Boolean dauerzaehlung = false;
+
     @Convert(converter = FahrzeugListConverter.class)
     @Column(name = "kategorien")
     private List<Fahrzeug> kategorien;

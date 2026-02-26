@@ -138,6 +138,9 @@ public class LadeZaehldatenService {
             final PkwEinheit pkwEinheit,
             final OptionsDTO options) {
         final LadeZaehldatumDTO ladeZaehldatum;
+        log.debug("LadeZaehldatenService.mapToZaehldatum" + zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " "
+                + zeitintervall.getStartUhrzeit() + " "
+                + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumTageswert.setKfz(
@@ -325,8 +328,6 @@ public class LadeZaehldatenService {
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
-        } else if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_ZEITRAUM)) {
-            zeitintervalle = extractZeitintervalleZeitraum(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
         }
@@ -342,35 +343,25 @@ public class LadeZaehldatenService {
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
             final String zaehldauer,
             final Boolean isKreisverkehr,
-            final OptionsDTO options) {
+            final OptionsDTO options) throws DataNotFoundException {
+        Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
+        LocalDateTime start = options.getZeitblock().getStart();
+        LocalDateTime end = options.getZeitblock().getEnd();
+        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+            start = options.getZeitraum().get(0).atTime(0, 0, 0);
+            end = options.getZeitraum().get(1).atTime(23, 59, 59);
+        } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
+            start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
+            end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
+        }
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
                 zaehlungId,
                 zaehldauer,
-                options.getZeitblock().getStart(),
-                options.getZeitblock().getEnd(),
-                options.getVonKnotenarm(),
-                options.getNachKnotenarm(),
-                isKreisverkehr,
-                types);
-        log.debug("Size of extracted Zeitintervalle: {}", extractedZeitintervalle.size());
-        return extractedZeitintervalle.stream()
-                .filter(zeitintervall -> shouldZeitintervallBeReturned(zeitintervall, options.getZeitblock()))
-                .collect(Collectors.toList());
-    }
-
-    private List<Zeitintervall> extractZeitintervalleZeitraum(final UUID zaehlungId,
-            final String zaehldauer,
-            final Boolean isKreisverkehr,
-            final OptionsDTO options) {
-        final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
-        log.debug("Types according chosen options: {}", types);
-        final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
-                zaehlungId,
-                zaehldauer,
-                options.getZeitraum().get(0).atTime(0, 0, 0),
-                options.getZeitraum().get(1).atTime(23, 59, 59),
+                start,
+                end,
                 options.getVonKnotenarm(),
                 options.getNachKnotenarm(),
                 isKreisverkehr,
@@ -458,11 +449,12 @@ public class LadeZaehldatenService {
      *            {@link LadeZaehldatumDTO}.
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
+     * @throws DataNotFoundException
      */
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
             final String zaehldauer,
             final Boolean isKreisverkehr,
-            final OptionsDTO options) {
+            final OptionsDTO options) throws DataNotFoundException {
         final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, zaehldauer, isKreisverkehr, options);
         final List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {

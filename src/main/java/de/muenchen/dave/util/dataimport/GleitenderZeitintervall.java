@@ -69,6 +69,13 @@ public class GleitenderZeitintervall {
     public static GleitenderZeitintervall createInstanceWithIndexParameterAsNewestIndex(final List<Zeitintervall> sortedZeitintervalle,
             final int index,
             final Zeitblock zeitblock) {
+        return createInstanceWithIndexParameterAsNewestIndex(sortedZeitintervalle, index, zeitblock.getStart(), zeitblock.getEnd());
+    }
+
+    public static GleitenderZeitintervall createInstanceWithIndexParameterAsNewestIndex(final List<Zeitintervall> sortedZeitintervalle,
+            final int index,
+            final LocalDateTime start,
+            final LocalDateTime end) {
         final var zeitintervallePerHour = calcNumberOfZeitintervallePerHour(sortedZeitintervalle);
         final GleitenderZeitintervall gleitenderZeitintervall = GleitenderZeitintervall.createEmptyInstance(zeitintervallePerHour);
         /*
@@ -81,7 +88,7 @@ public class GleitenderZeitintervall {
         for (int hourIndex = zeitintervallePerHour - 1; hourIndex >= 0; hourIndex--) {
             final int positionZeitintervall = index - hourIndex;
             if (positionZeitintervall >= 0
-                    && ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(sortedZeitintervalle.get(positionZeitintervall), zeitblock)) {
+                    && ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(sortedZeitintervalle.get(positionZeitintervall), start, end)) {
                 // Ist ein Zeitintervall gefunden, welcher innerhalb der einen Stunde und im Zeitblock liegt,
                 // so wird dieser in die Liste aufgenommen.
                 gleitenderZeitintervall.add(sortedZeitintervalle.get(positionZeitintervall));

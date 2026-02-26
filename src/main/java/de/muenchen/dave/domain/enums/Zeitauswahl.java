@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum Zeitauswahl {
+    ZEITRAUM("Zeitraum"),
 
     TAGESWERT("Tageswert"),
 
