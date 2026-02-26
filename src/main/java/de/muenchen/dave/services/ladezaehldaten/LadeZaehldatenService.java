@@ -347,7 +347,8 @@ public class LadeZaehldatenService {
         Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         LocalDateTime start = options.getZeitblock().getStart();
         LocalDateTime end = options.getZeitblock().getEnd();
-        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
             start = options.getZeitraum().get(0).atTime(0, 0, 0);
             end = options.getZeitraum().get(1).atTime(23, 59, 59);
         } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
@@ -448,7 +449,7 @@ public class LadeZaehldatenService {
      *            {@link LadeZaehldatumDTO}.
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
-     * @throws DataNotFoundException 
+     * @throws DataNotFoundException
      */
     private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
             final String zaehldauer,

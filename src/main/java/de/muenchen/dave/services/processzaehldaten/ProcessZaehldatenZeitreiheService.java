@@ -213,12 +213,13 @@ public class ProcessZaehldatenZeitreiheService {
                         UUID zaehlungId = UUID.fromString(zaehlung.getId());
                         LocalDateTime start = options.getZeitblock().getStart();
                         LocalDateTime end = options.getZeitblock().getEnd();
-                        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+                        if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
                             start = options.getZeitraum().get(0).atTime(0, 0, 0);
                             end = options.getZeitraum().get(1).atTime(23, 59, 59);
                         } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() >= 1) {
-                                start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
-                                end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
+                            start = options.getZeitraum().get(0).atTime(options.getZeitblock().getStart().toLocalTime());
+                            end = options.getZeitraum().get(0).atTime(options.getZeitblock().getEnd().toLocalTime());
                         }
                         zi = zeitintervallRepository
                                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullOrderBySortingIndexAsc(
