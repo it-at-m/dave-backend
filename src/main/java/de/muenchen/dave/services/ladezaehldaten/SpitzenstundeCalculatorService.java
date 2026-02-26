@@ -18,7 +18,7 @@ public class SpitzenstundeCalculatorService {
     private final ZeitintervallMapper zeitintervallMapper;
 
     /**
-     * Ermittelt für die übergebenen Zeitintervalle die Spitzenstunde aif Basis der relevanten
+     * Ermittelt für die übergebenen Zeitintervalle die Spitzenstunde auf Basis der relevanten
      * {@link TypeZeitintervall}.
      *
      * Die Relevanz eines Intervalls ergibt sich aus den Typen dokumentiert in Methode
