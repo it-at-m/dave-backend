@@ -97,7 +97,7 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final Integer nach,
             final Set<TypeZeitintervall> types);
 
-    // Verkehrsbeziehung von X nach ALLE und für Kreisverkehr an bestimmten Knotenarm
+    // Verkehrsbeziehung von X nach ALLE und für Kreisverkehr an bestimmtem Knotenarm
     List<Zeitintervall> findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
             final UUID zaehlungId,
             final LocalDateTime startUhrzeit,
