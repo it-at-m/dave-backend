@@ -6,12 +6,15 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
@@ -22,11 +25,13 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -148,7 +153,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
         // Zeitintervalle persistieren
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        zaehlungDto.getVerkehrsbeziehungen().forEach(verkehrsbeziehung -> {
+        final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
+
+        bewegungsbeziehungen.forEach(verkehrsbeziehung -> {
             verkehrsbeziehung.getZeitintervalle().stream()
                     .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
                     .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, verkehrsbeziehung))
@@ -175,61 +182,66 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die UUID der {@link Zaehlung}
      * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
-     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
+     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}, den {@link de.muenchen.dave.domain.Laengsverkehr}
+     * oder den {@link de.muenchen.dave.domain.Querungsverkehr}
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
-     * @param bearbeiteVerkehrsbeziehung zum Setzen der zusätzlichen Daten.
+     * @param bearbeiteBewegungsbeziehung zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
     public Zeitintervall setAdditionalDataToZeitintervall(
             final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
 
-        this.getFromBearbeiteVerkehrsbeziehungDto(zaehlung, bearbeiteVerkehrsbeziehung)
+        this.getFromBearbeiteVerkehrsbeziehungDto(zaehlung, bearbeiteBewegungsbeziehung)
                 .ifPresent(verkehrsbeziehung -> zeitintervall.setBewegungsbeziehungId(UUID.fromString(verkehrsbeziehung.getId())));
 
-        zeitintervall.setHochrechnung(
-                this.createHochrechnung(
-                        zeitintervall,
-                        bearbeiteVerkehrsbeziehung.getHochrechnungsfaktor(),
-                        zaehlung.getZaehldauer()));
+        // TODO: Hochrechnungfaktor an BearbeiteLaengsverkehrDTO und BearbeiteQuerungsverkehrDTO sowie an alle anderen Betroffen Model- und Entitätsklassen anhängen.
+        final var hochrechnung = this.createHochrechnung(
+                zeitintervall,
+                bearbeiteBewegungsbeziehung.getHochrechnungsfaktor(),
+                zaehlung.getZaehldauer());
+        zeitintervall.setHochrechnung(hochrechnung);
 
-        zeitintervall.setVerkehrsbeziehung(this.mapToVerkehrsbeziehungForZeitintervall(bearbeiteVerkehrsbeziehung));
+        zeitintervall.setVerkehrsbeziehung(this.mapToVerkehrsbeziehungForZeitintervall(bearbeiteBewegungsbeziehung));
         return zeitintervall;
     }
 
     /**
-     * Diese Methode gibt die {@link Verkehrsbeziehung} der {@link Zaehlung} zurück, welche durch die
+     * Diese Methode gibt die {@link Bewegungsbeziehung} der {@link Zaehlung} zurück, welche durch die
      * {@link BearbeiteVerkehrsbeziehungDTO} repräsentiert wird.
      *
-     * @param zaehlung aus der die {@link Verkehrsbeziehung} geholt und zurückgegeben werden soll.
-     * @param bearbeiteVerkehrsbeziehung welche die Basis zum Suchen der {@link Verkehrsbeziehung}
+     * @param zaehlung aus der die {@link Bewegungsbeziehung} geholt und zurückgegeben werden soll.
+     * @param bearbeiteBewegungsbeziehung welche die Basis zum Suchen der {@link Bewegungsbeziehung}
      *            darstellt.
-     * @return die gefundene {@link Verkehrsbeziehung}.
+     * @return die gefundene {@link Bewegungsbeziehung}.
      */
-    public Optional<Verkehrsbeziehung> getFromBearbeiteVerkehrsbeziehungDto(
+    public Optional<Bewegungsbeziehung> getFromBearbeiteVerkehrsbeziehungDto(
             final Zaehlung zaehlung,
-            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
-        return zaehlung.getVerkehrsbeziehungen().stream()
-                .filter(verkehrsbeziehung -> this.isSameVerkehrsbeziehung(bearbeiteVerkehrsbeziehung, verkehrsbeziehung))
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung) {
+
+        return getAllBewegungsbeziehungenFromZaehlung(zaehlung)
+                .stream()
+                .filter(bewegungsbeziehung -> this.isSameVerkehrsbeziehung(bearbeiteVerkehrsbeziehung, bewegungsbeziehung))
                 .findFirst();
     }
 
     /**
-     * Diese Methode prüft ob die beiden Verkehrsbeziehungsobjekte in den Parametern
-     * die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
+     * Diese Methode prüft ob die beiden Bewegungsbeziehungsobjekte in den Parametern
+     * die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
      *
-     * @param bearbeiteVerkehrsbeziehungDTO zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
-     * @param verkehrsbeziehung zur Prüfung auf repräsentation der selben Verkehrsbeziehung.
-     * @return true falls die selbe Verkehrsbeziehung einer Kreuzung oder eines Kreisverkehrs
+     * @param bearbeiteVerkehrsbeziehungDTO zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
+     * @param bewegungsbeziehung zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
+     * @return true falls die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs
      *         repräsentiert wird.
      */
     public boolean isSameVerkehrsbeziehung(
-            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehungDTO,
-            final Verkehrsbeziehung verkehrsbeziehung) {
+            final Zaehlart zaehlart,
+            final BearbeiteBewegungsbeziehungDTO bearbeiteVerkehrsbeziehungDTO,
+            final Bewegungsbeziehung bewegungsbeziehung) {
         return Objects.equals(bearbeiteVerkehrsbeziehungDTO.getIsKreuzung(), verkehrsbeziehung.getIsKreuzung())
                 // Kreuzung
                 && Objects.equals(bearbeiteVerkehrsbeziehungDTO.getVon(), verkehrsbeziehung.getVon())
@@ -350,5 +362,27 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // Rückgabe der ZaehlungsId
         backendIdDto.setId(zaehlungId);
         return backendIdDto;
+    }
+
+    protected List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
+        final var bewegungsbeziehungen = new LinkedList<BearbeiteBewegungsbeziehungDTO>();
+        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
+        bewegungsbeziehungen.addAll(laengsverkehr);
+        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
+        bewegungsbeziehungen.addAll(querungsverkehr);
+        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
+        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
+        return bewegungsbeziehungen;
+    }
+
+    protected List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
+        final var bewegungsbeziehungen = new LinkedList<Bewegungsbeziehung>();
+        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
+        bewegungsbeziehungen.addAll(laengsverkehr);
+        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
+        bewegungsbeziehungen.addAll(querungsverkehr);
+        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
+        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
+        return bewegungsbeziehungen;
     }
 }

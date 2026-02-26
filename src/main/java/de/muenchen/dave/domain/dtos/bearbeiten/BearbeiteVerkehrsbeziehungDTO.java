@@ -42,6 +42,4 @@ public class BearbeiteVerkehrsbeziehungDTO extends BearbeiteBewegungsbeziehungDT
 
     String nach_strnr;
 
-    HochrechnungsfaktorDTO hochrechnungsfaktor;
-
 }
