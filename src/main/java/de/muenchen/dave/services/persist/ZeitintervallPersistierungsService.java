@@ -79,40 +79,24 @@ public class ZeitintervallPersistierungsService {
          * - Die im Parameter übergebenen Zeitintervalle werden mit
          * dem Merkmal {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
          */
-        zeitintervalle.forEach(zeitintervall -> {
-            ZeitintervallBaseUtil.checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(zeitintervall);
-            zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
-            zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
-        });
+        final var byTimeAndTypeAndSortingIndexAdaptedZeitintervalle = zeitintervalle
+                .stream()
+                .peek(zeitintervall -> {
+                    ZeitintervallBaseUtil.checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(zeitintervall);
+                    zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
+                    zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
+                })
+                .toList();
 
         /*
-         * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
-         * alle möglichen Verkehrsbeziehungspermutationen summiert.
+         * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
-        final List<Zeitintervall> summierteVerkehrsbeziehungen = ZeitintervallVerkehrsbeziehungsSummationUtil
-                .getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
-
-        List<Zeitintervall> allPossibleVerkehrsbeziehungen = new ArrayList<>();
-        allPossibleVerkehrsbeziehungen.addAll(zeitintervalle);
-        allPossibleVerkehrsbeziehungen.addAll(summierteVerkehrsbeziehungen);
+        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
+                .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
         /*
-         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-         * Zeitintervalle
-         * werden die gleitenden Spitzenstunden ermittelt.
-         */
-        final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleVerkehrsbeziehungen);
-
-        /*
-         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-         * Zeitintervalle
-         * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
-         */
-        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleVerkehrsbeziehungen);
-
-        /*
-         * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt, wenn der
-         * boolean-Parameter true ist
+         * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
+         * wenn der boolean-Parameter true ist
          */
         final List<Zeitintervall> kiZeitintervalle = new ArrayList<>();
         if (kiAufbereitung) {
@@ -134,8 +118,7 @@ public class ZeitintervallPersistierungsService {
         }
 
         List<Zeitintervall> allZeitintervalle = new ArrayList<>();
-        allZeitintervalle.addAll(allPossibleVerkehrsbeziehungen);
-        allZeitintervalle.addAll(gleitendeSpitzenstunden);
+        allZeitintervalle.addAll(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
