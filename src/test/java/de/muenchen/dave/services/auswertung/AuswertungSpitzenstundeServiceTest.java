@@ -151,7 +151,8 @@ class AuswertungSpitzenstundeServiceTest {
 
             when(zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
-                            eq(zaehlungId), any(), any(), eq(FahrbewegungKreisverkehr.HINEIN), any(TypeZeitintervall.class)))
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), eq(FahrbewegungKreisverkehr.HINEIN),
+                            any(TypeZeitintervall.class)))
                     .thenReturn(new ArrayList<>());
 
             when(zaehlungMapper.mapVerkehrsbeziehungen(any())).thenReturn(new ArrayList<>());
@@ -167,7 +168,8 @@ class AuswertungSpitzenstundeServiceTest {
             assertNotNull(result);
             verify(zeitintervallRepository, times(1))
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
-                            eq(zaehlungId), any(), any(), eq(FahrbewegungKreisverkehr.HINEIN), any(TypeZeitintervall.class));
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), eq(FahrbewegungKreisverkehr.HINEIN),
+                            any(TypeZeitintervall.class));
         }
     }
 
