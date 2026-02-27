@@ -7,7 +7,7 @@ import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import jakarta.transaction.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,7 @@ public class ZeitintervallExtractorService {
      * @param types zur Identifizierung welcher Zeitintervalle benötigt werden.
      * @return die nach der {@link Bewegungsbeziehung} gruppierten Zeitintervalle.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Map<Bewegungsbeziehung, List<Zeitintervall>> extractZeitintervalle(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
