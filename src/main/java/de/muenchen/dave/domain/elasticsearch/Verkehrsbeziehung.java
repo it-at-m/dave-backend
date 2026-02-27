@@ -42,6 +42,4 @@ public class Verkehrsbeziehung extends Bewegungsbeziehung {
 
     private String nach_strnr;
 
-    private Hochrechnungsfaktor hochrechnungsfaktor;
-
 }
