@@ -159,10 +159,10 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
         final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
-        bewegungsbeziehungen.forEach(verkehrsbeziehung -> {
-            verkehrsbeziehung.getZeitintervalle().stream()
+        bewegungsbeziehungen.forEach(bewegungsbeziehung -> {
+            bewegungsbeziehung.getZeitintervalle().stream()
                     .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, verkehrsbeziehung))
+                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
                     .forEach(zeitintervalleToPersist::add);
         });
 
