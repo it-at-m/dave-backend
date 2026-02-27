@@ -29,7 +29,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
     private final KnotenarmMapper knotenarmMapper;
 
-    public ExternalZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
+    public ExternalZaehlungPersistierungsService(
+            final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
             final KnotenarmMapper knotenarmMapper) {

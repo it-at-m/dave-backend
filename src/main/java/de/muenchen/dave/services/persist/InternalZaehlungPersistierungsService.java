@@ -186,7 +186,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * - Die UUID der {@link Zaehlung}
      * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
-     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}, den {@link de.muenchen.dave.domain.Laengsverkehr}
+     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}, den
+     * {@link de.muenchen.dave.domain.Laengsverkehr}
      * oder den {@link de.muenchen.dave.domain.Querungsverkehr}
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
@@ -268,14 +269,14 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         if (Zaehlart.QU.equals(zaehlart)) {
             final var bearbeiteQuerungsverkehr = (BearbeiteQuerungsverkehrDTO) bearbeiteBewegungsbeziehung;
             final var verkehrsbeziehung = (Querungsverkehr) bewegungsbeziehung;
-            return Objects.equals(bearbeiteQuerungsverkehr.getRichtung() , verkehrsbeziehung.getRichtung())
-                    && Objects.equals(bearbeiteQuerungsverkehr.getKnotenarm() , verkehrsbeziehung.getKnotenarm());
+            return Objects.equals(bearbeiteQuerungsverkehr.getRichtung(), verkehrsbeziehung.getRichtung())
+                    && Objects.equals(bearbeiteQuerungsverkehr.getKnotenarm(), verkehrsbeziehung.getKnotenarm());
         } else if (Zaehlart.FJS.equals(zaehlart)) {
             final var bearbeiteLaengsverkehr = (BearbeiteLaengsverkehrDTO) bearbeiteBewegungsbeziehung;
             final var laengsverkehr = (Laengsverkehr) bewegungsbeziehung;
-            return Objects.equals(bearbeiteLaengsverkehr.getRichtung() , laengsverkehr.getRichtung())
-                    && Objects.equals(bearbeiteLaengsverkehr.getStrassenseite() , laengsverkehr.getStrassenseite())
-                    && Objects.equals(bearbeiteLaengsverkehr.getKnotenarm() , laengsverkehr.getKnotenarm());
+            return Objects.equals(bearbeiteLaengsverkehr.getRichtung(), laengsverkehr.getRichtung())
+                    && Objects.equals(bearbeiteLaengsverkehr.getStrassenseite(), laengsverkehr.getStrassenseite())
+                    && Objects.equals(bearbeiteLaengsverkehr.getKnotenarm(), laengsverkehr.getKnotenarm());
         } else {
             // alle anderen Zählarten
             final var bearbeiteVerkehrsbeziehung = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
@@ -284,12 +285,12 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                     // Kreuzung
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getVon(), verkehrsbeziehung.getVon())
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getNach(), verkehrsbeziehung.getNach())
-                    // Kreisverkehr
+            // Kreisverkehr
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getKnotenarm(), verkehrsbeziehung.getKnotenarm())
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getHinein(), verkehrsbeziehung.getHinein())
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getHeraus(), verkehrsbeziehung.getHeraus())
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getVorbei(), verkehrsbeziehung.getVorbei())
-                    // Strassenseite für Zählart QJS
+            // Strassenseite für Zählart QJS
                     && Objects.equals(bearbeiteVerkehrsbeziehung.getStrassenseite(), verkehrsbeziehung.getStrassenseite());
         }
     }
@@ -311,7 +312,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für Verkehrsbeziehungen.
+     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für
+     *            Verkehrsbeziehungen.
      * @param bearbeiteVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
      *            zum Anfügen
      *            an
@@ -348,7 +350,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param bearbeiteQuerungsverkehr aus dem die {@link de.muenchen.dave.domain.Querungsverkehr}
      *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen an einen {@link Zeitintervall}
+     * @return die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final BearbeiteQuerungsverkehrDTO bearbeiteQuerungsverkehr) {
         final var querungsverkehr = new de.muenchen.dave.domain.Querungsverkehr();
@@ -363,7 +366,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param bearbeiteLaengsverkehr aus dem die {@link de.muenchen.dave.domain.Laengsverkehr}
      *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen an einen {@link Zeitintervall}
+     * @return die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
      */
     public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final BearbeiteLaengsverkehrDTO bearbeiteLaengsverkehr) {
         final var laengsverkehr = new de.muenchen.dave.domain.Laengsverkehr();
@@ -372,7 +376,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         laengsverkehr.setStrassenseite(bearbeiteLaengsverkehr.getStrassenseite());
         return laengsverkehr;
     }
-
 
     /**
      * Die Methode ermittelt die Koordinate für die Zaehlung auf Basis der im ersten Parameter

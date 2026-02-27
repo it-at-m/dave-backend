@@ -164,9 +164,10 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
 
-        Optional<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> result = internalZaehlungPersistierungsService.getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(
-                zaehlung,
-                verkehrsbeziehungDto);
+        Optional<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> result = internalZaehlungPersistierungsService
+                .getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(
+                        zaehlung,
+                        verkehrsbeziehungDto);
         verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
