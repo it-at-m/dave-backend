@@ -18,7 +18,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -87,27 +86,27 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         if (Objects.nonNull(zaehlungId)) {
             List<Zeitintervall> calculatedSpitzenstunden;
             if (Zeitblock.ZB_00_06.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_06_10.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_10_15.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_15_19.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_19_24.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = berechneGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
         }
@@ -126,7 +125,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr
      *         falls diese im Parameter types vorhanden sind.
      */
-    private static List<Zeitintervall> berechneGleitendeSpitzenstunden(
+    private static List<Zeitintervall> calculateGleitendeSpitzenstunden(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final List<Zeitintervall> sortedZeitintervalle,
