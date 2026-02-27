@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;

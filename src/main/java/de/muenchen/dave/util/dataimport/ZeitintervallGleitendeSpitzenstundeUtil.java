@@ -26,6 +26,29 @@ import org.apache.commons.lang3.ObjectUtils;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
+    /**
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
+     * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
+     * Spitzenstunde für folgende {@link Zeitblock}e ermittelt:
+     * - {@link Zeitblock#ZB_00_06}
+     * - {@link Zeitblock#ZB_06_10}
+     * - {@link Zeitblock#ZB_10_15}
+     * - {@link Zeitblock#ZB_15_19}
+     * - {@link Zeitblock#ZB_19_24}
+     * - {@link Zeitblock#ZB_00_24}
+     *
+     * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
+     * @param zaehlart die Zählart der Zählung.
+     * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
+     *            sollen.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
+     * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
+     *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
+     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
+     *         die angefragten Spitzenstundentypen.
+     */
     public static List<Zeitintervall> getGleitendeSpitzenstundenByBewegungsbeziehung(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
