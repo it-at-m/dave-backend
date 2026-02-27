@@ -89,6 +89,7 @@ public class ZeitintervallPersistierungsService {
         /*
          * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
+        // TODO: Anpassen zu Bewegungsbeziehungen in Methode.
         final var summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
                 .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
@@ -96,6 +97,7 @@ public class ZeitintervallPersistierungsService {
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
          * wenn der boolean-Parameter true ist
          */
+        // TODO: Anpassen zu Bewegungsbeziehungen in Methode.
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
