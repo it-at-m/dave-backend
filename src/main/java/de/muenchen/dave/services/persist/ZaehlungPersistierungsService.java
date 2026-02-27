@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -99,12 +100,13 @@ public abstract class ZaehlungPersistierungsService {
      * Diese Methode erstellt die {@link Hochrechnung} für den {@link Zeitintervall}.
      *
      * @param zeitintervall für dem die Hochrechnung erstellt werden soll.
-     * @param hochrechnungsfaktorDto zur Ermittlung der hochgerechneten Werte.
+     * @param hochrechnungsfaktor zur Ermittlung der hochgerechneten Werte.
      * @param zaehldauer Zaehldauer als String
      * @return die {@link Hochrechnung}.
      */
-    public Hochrechnung createHochrechnung(final Zeitintervall zeitintervall,
-            final HochrechnungsfaktorDTO hochrechnungsfaktorDto,
+    public Hochrechnung createHochrechnung(
+            final Zeitintervall zeitintervall,
+            final HochrechnungsfaktorDTO hochrechnungsfaktor,
             final String zaehldauer) {
         final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setPkw(zeitintervall.getPkw());
@@ -122,10 +124,15 @@ public abstract class ZaehlungPersistierungsService {
             hochrechnung.setFaktorKfz(BigDecimal.ZERO);
             hochrechnung.setFaktorSv(BigDecimal.ZERO);
             hochrechnung.setFaktorGv(BigDecimal.ZERO);
+        } else if (Objects.nonNull(hochrechnungsfaktor)) {
+            hochrechnung.setFaktorKfz(BigDecimal.valueOf(hochrechnungsfaktor.getKfz()));
+            hochrechnung.setFaktorSv(BigDecimal.valueOf(hochrechnungsfaktor.getSv()));
+            hochrechnung.setFaktorGv(BigDecimal.valueOf(hochrechnungsfaktor.getGv()));
         } else {
-            hochrechnung.setFaktorKfz(BigDecimal.valueOf(hochrechnungsfaktorDto.getKfz()));
-            hochrechnung.setFaktorSv(BigDecimal.valueOf(hochrechnungsfaktorDto.getSv()));
-            hochrechnung.setFaktorGv(BigDecimal.valueOf(hochrechnungsfaktorDto.getGv()));
+            // Kein Hochrechnungsfaktor in Parameter gegeben.
+            hochrechnung.setFaktorKfz(BigDecimal.ONE);
+            hochrechnung.setFaktorSv(BigDecimal.ONE);
+            hochrechnung.setFaktorGv(BigDecimal.ONE);
         }
         hochrechnung.setHochrechnungKfz(ladeZaehldatumDTO.getKfz().multiply(hochrechnung.getFaktorKfz()));
         hochrechnung.setHochrechnungGv(ladeZaehldatumDTO.getGueterverkehr().multiply(hochrechnung.getFaktorGv()));

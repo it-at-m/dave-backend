@@ -164,7 +164,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
 
-        Optional<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> result = internalZaehlungPersistierungsService.getFromBearbeiteVerkehrsbeziehungDto(
+        Optional<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> result = internalZaehlungPersistierungsService.getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(
                 zaehlung,
                 verkehrsbeziehungDto);
         verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
@@ -220,7 +220,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
 
-        Verkehrsbeziehung result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        Verkehrsbeziehung result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         Verkehrsbeziehung expected = new Verkehrsbeziehung();
         expected.setVon(1);
         expected.setNach(2);
@@ -229,7 +229,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(true);
         verkehrsbeziehungDto.setHinein(true);
         verkehrsbeziehungDto.setVorbei(true);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         expected.setVon(1);
         expected.setNach(2);
@@ -242,7 +242,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(true);
         verkehrsbeziehungDto.setHinein(false);
         verkehrsbeziehungDto.setVorbei(false);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         expected.setVon(5);
         expected.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
@@ -255,7 +255,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(false);
         verkehrsbeziehungDto.setHinein(true);
         verkehrsbeziehungDto.setVorbei(false);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         expected.setVon(5);
         expected.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
@@ -268,7 +268,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(false);
         verkehrsbeziehungDto.setHinein(false);
         verkehrsbeziehungDto.setVorbei(true);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         expected.setVon(5);
         expected.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
@@ -281,7 +281,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(false);
         verkehrsbeziehungDto.setHinein(false);
         verkehrsbeziehungDto.setVorbei(true);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         expected.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
         assertThat(result, is(expected));
@@ -293,7 +293,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setHeraus(false);
         verkehrsbeziehungDto.setHinein(false);
         verkehrsbeziehungDto.setVorbei(false);
-        result = internalZaehlungPersistierungsService.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
+        result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         assertThat(result, is(expected));
     }
