@@ -57,7 +57,8 @@ public class LadeZaehldatenService {
 
     private final ZaehlstelleIndexService indexService;
 
-    public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
+    public LadeZaehldatenService(
+            final ZeitintervallRepository zeitintervallRepository,
             final ZaehlstelleIndexService indexService) {
         this.zeitintervallRepository = zeitintervallRepository;
         this.indexService = indexService;
