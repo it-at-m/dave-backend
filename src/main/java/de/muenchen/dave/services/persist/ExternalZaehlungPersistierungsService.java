@@ -87,7 +87,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
                     // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
                     this.zeitintervallPersistierungsService
-                            .deleteZeitintervalleByIdOfVerkehrsbeziehungQuerverkehrOrLaengsverkehr(bewegungsbeziehungIdsForZeitintervalleToDelete);
+                            .deleteZeitintervalleByIdOfBewegungsbeziehung(bewegungsbeziehungIdsForZeitintervalleToDelete);
 
                     // Zeitintervall nur speichern, ohne was zu berechnen
                     if (CollectionUtils.isNotEmpty(zeitintervalleToPersist)) {

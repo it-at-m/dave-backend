@@ -151,9 +151,9 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    public void deleteZeitintervalleByIdOfVerkehrsbeziehungQuerverkehrOrLaengsverkehr(final List<String> verkehrsbeziehungIds) {
+    public void deleteZeitintervalleByIdOfBewegungsbeziehung(final List<String> bewegungsbeziehungsIds) {
         final var uuidsOfVerkehrsbeziehungen = CollectionUtils
-                .emptyIfNull(verkehrsbeziehungIds)
+                .emptyIfNull(bewegungsbeziehungsIds)
                 .stream()
                 .map(UUID::fromString)
                 .toList();
