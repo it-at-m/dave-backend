@@ -41,8 +41,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-// Testklasse für AuswertungSpitzenstundeService
-// Enthält Unit-Tests für unterschiedliche Pfade der Spitzenstundenauswertung.
+
 @ExtendWith(MockitoExtension.class)
 class AuswertungSpitzenstundeServiceTest {
 
@@ -69,7 +68,9 @@ class AuswertungSpitzenstundeServiceTest {
     }
 
     @Test
-    // Deutsch: Prüft erfolgreiche Extraktion der Spitzenstunden für eine Zählung ohne Kreisverkehr.
+    /**
+     * Prüft erfolgreiche Extraktion der Spitzenstunden für eine Zählung ohne Kreisverkehr.
+     */
     void extractSpitzenstundenAllVerkehrsbeziehungen_nonKreisverkehr_success() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
         when(zaehlungMock.getId()).thenReturn(zaehlungId.toString());
@@ -130,7 +131,9 @@ class AuswertungSpitzenstundeServiceTest {
     }
 
     @Test
-    // Deutsch: Prüft, dass bei Kreisverkehr die spezielle Repository-Methode mit HINEIN aufgerufen wird.
+    /**
+     * Prüft, dass bei Kreisverkehr die spezielle Repository-Methode mit HINEIN aufgerufen wird.
+     */
     void extractSpitzenstundenAllVerkehrsbeziehungen_kreisverkehr_uses_HINEIN() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
         when(zaehlungMock.getId()).thenReturn(zaehlungId.toString());
@@ -174,7 +177,9 @@ class AuswertungSpitzenstundeServiceTest {
     }
 
     @Test
-    // Deutsch: Prüft, dass bei fehlender Spitzenstunde eine DataNotFoundException geworfen wird.
+    /**
+     * Prüft, dass bei fehlender Spitzenstunde eine DataNotFoundException geworfen wird.
+     */
     void extractSpitzenstundenAllVerkehrsbeziehungen_noSpitzenstunde_throws() throws Exception {
         when(zaehlungMock.getId()).thenReturn(UUID.randomUUID().toString());
         when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N.name());
@@ -199,7 +204,9 @@ class AuswertungSpitzenstundeServiceTest {
     }
 
     @Test
-    // Deutsch: Prüft das Mapping eines Zeitintervalls auf das DTO und das Setzen von von/nach.
+    /**
+     * Prüft das Mapping eines Zeitintervalls auf das DTO und das Setzen von von/nach.
+     */
     void mapToAuswertungSpitzenstundeDTO_maps_and_sets_von_nach() {
         final Zeitintervall zi = new Zeitintervall();
         final Verkehrsbeziehung vb = new Verkehrsbeziehung();
