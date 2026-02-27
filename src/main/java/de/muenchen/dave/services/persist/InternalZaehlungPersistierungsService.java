@@ -29,13 +29,11 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -249,7 +247,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         return getAllBewegungsbeziehungenFromZaehlung(zaehlung)
                 .stream()
-                .filter(bewegungsbeziehung -> this.isSameVerkehrsbeziehung(zaehlart, bearbeiteBewegungsbeziehung, bewegungsbeziehung))
+                .filter(bewegungsbeziehung -> this.isSameBewegungsbeziehung(zaehlart, bearbeiteBewegungsbeziehung, bewegungsbeziehung))
                 .findFirst();
     }
 
@@ -262,7 +260,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return true falls die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs
      *         repräsentiert wird.
      */
-    public boolean isSameVerkehrsbeziehung(
+    public boolean isSameBewegungsbeziehung(
             final Zaehlart zaehlart,
             final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung,
             final Bewegungsbeziehung bewegungsbeziehung) {
@@ -315,9 +313,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für
      *            Verkehrsbeziehungen.
      * @param bearbeiteVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
-     *            zum Anfügen
-     *            an
-     *            einen {@link Zeitintervall} erstellt werden soll.
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
      * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
@@ -447,25 +443,4 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         return backendIdDto;
     }
 
-    protected List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
-        final var bewegungsbeziehungen = new LinkedList<BearbeiteBewegungsbeziehungDTO>();
-        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
-        bewegungsbeziehungen.addAll(laengsverkehr);
-        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
-        bewegungsbeziehungen.addAll(querungsverkehr);
-        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
-        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
-        return bewegungsbeziehungen;
-    }
-
-    protected List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
-        final var bewegungsbeziehungen = new LinkedList<Bewegungsbeziehung>();
-        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
-        bewegungsbeziehungen.addAll(laengsverkehr);
-        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
-        bewegungsbeziehungen.addAll(querungsverkehr);
-        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
-        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
-        return bewegungsbeziehungen;
-    }
 }

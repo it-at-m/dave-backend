@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.dtos.external;
 
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,7 +24,5 @@ public class ExternalVerkehrsbeziehungDTO extends ExternalBewegungsbeziehungDTO 
     Boolean heraus;
 
     Boolean vorbei;
-
-    HochrechnungsfaktorDTO hochrechnungsfaktor;
 
 }

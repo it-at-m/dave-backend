@@ -4,8 +4,13 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -22,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -207,5 +213,38 @@ public abstract class ZaehlungPersistierungsService {
         if (zaehlung.getDatum().isBefore(LocalDate.now()) || zaehlung.getDatum().isEqual(LocalDate.now())) {
             this.indexService.updateStatusOfZaehlung(updateStatusDto.getZaehlungId(), newStatus);
         }
+    }
+
+    public List<ExternalBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final ExternalZaehlungDTO zaehlung) {
+        final var bewegungsbeziehungen = new LinkedList<ExternalBewegungsbeziehungDTO>();
+        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
+        bewegungsbeziehungen.addAll(laengsverkehr);
+        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
+        bewegungsbeziehungen.addAll(querungsverkehr);
+        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
+        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
+        return bewegungsbeziehungen;
+    }
+
+    public List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
+        final var bewegungsbeziehungen = new LinkedList<BearbeiteBewegungsbeziehungDTO>();
+        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
+        bewegungsbeziehungen.addAll(laengsverkehr);
+        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
+        bewegungsbeziehungen.addAll(querungsverkehr);
+        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
+        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
+        return bewegungsbeziehungen;
+    }
+
+    public List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
+        final var bewegungsbeziehungen = new LinkedList<Bewegungsbeziehung>();
+        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
+        bewegungsbeziehungen.addAll(laengsverkehr);
+        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
+        bewegungsbeziehungen.addAll(querungsverkehr);
+        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
+        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
+        return bewegungsbeziehungen;
     }
 }

@@ -3,12 +3,16 @@ package de.muenchen.dave.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -65,9 +69,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 if (CollectionUtils.isNotEmpty(zaehlungDto.getVerkehrsbeziehungen())) {
                     // Zeitintervalle persistieren
                     final var zeitintervalleToPersist = new ArrayList<Zeitintervall>();
+                    final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
-                    final var bewegungsbeziehungIdsForZeitintervalleToDelete = zaehlungDto
-                            .getVerkehrsbeziehungen()
+                    final var bewegungsbeziehungIdsForZeitintervalleToDelete = bewegungsbeziehungen
                             .stream()
                             .peek(bewegungsbeziehung -> {
                                 if (CollectionUtils.isNotEmpty(bewegungsbeziehung.getZeitintervalle())) {
@@ -78,7 +82,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                                             .forEach(zeitintervalleToPersist::add);
                                 }
                             })
-                            .map(ExternalVerkehrsbeziehungDTO::getId)
+                            .map(ExternalBewegungsbeziehungDTO::getId)
                             .toList();
 
                     // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
@@ -119,22 +123,39 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
-     * @param verkehrsbeziehung zum Setzen der zusätzlichen Daten.
+     * @param externalBewegungsbeziehung zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
     public Zeitintervall setAdditionalDataToZeitintervall(
             final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final ExternalVerkehrsbeziehungDTO verkehrsbeziehung) {
+            final ExternalBewegungsbeziehungDTO externalBewegungsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
-        zeitintervall.setBewegungsbeziehungId(UUID.fromString(verkehrsbeziehung.getId()));
-        zeitintervall.setVerkehrsbeziehung(this.mapToVerkehrsbeziehungForZeitintervall(verkehrsbeziehung));
+        zeitintervall.setBewegungsbeziehungId(UUID.fromString(externalBewegungsbeziehung.getId()));
 
         zeitintervall.setHochrechnung(
                 this.createHochrechnung(
                         zeitintervall,
-                        verkehrsbeziehung.getHochrechnungsfaktor(),
+                        externalBewegungsbeziehung.getHochrechnungsfaktor(),
                         zaehlung.getZaehldauer()));
+
+        // Setzen der Bewegungsbeziehung im Zeitintervall
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.FJS.equals(zaehlart)) {
+            final var bearbeiteLaengsverkehrToMap = (ExternalLaengsverkehrDTO) externalBewegungsbeziehung;
+            final var laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(bearbeiteLaengsverkehrToMap);
+            zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
+        } else if (Zaehlart.QU.equals(zaehlart)) {
+            final var bearbeiteQuerungsverkehrToMap = (ExternalQuerungsverkehrDTO) externalBewegungsbeziehung;
+            final var querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(bearbeiteQuerungsverkehrToMap);
+            zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
+        } else {
+            // alle anderen Zählarten
+            final var bearbeiteVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDTO) externalBewegungsbeziehung;
+            final var verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(zaehlart, bearbeiteVerkehrsbeziehungToMap);
+            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehungForZeitintervall);
+        }
+
         return zeitintervall;
     }
 
@@ -142,27 +163,66 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param verkehrsbeziehungDto aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum
-     *            Anfügen
-     *            an
-     *            einen {@link Zeitintervall} erstellt werden soll.
+     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für
+     *            Verkehrsbeziehungen.
+     * @param externalVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
      * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Verkehrsbeziehung mapToVerkehrsbeziehungForZeitintervall(final ExternalVerkehrsbeziehungDTO verkehrsbeziehungDto) {
-        final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
-        if (BooleanUtils.isTrue(verkehrsbeziehungDto.getIsKreuzung())) {
-            verkehrsbeziehung.setVon(verkehrsbeziehungDto.getVon());
-            verkehrsbeziehung.setNach(verkehrsbeziehungDto.getNach());
+    public de.muenchen.dave.domain.Verkehrsbeziehung createVerkehrsbeziehungForZeitintervall(
+            final Zaehlart zaehlart,
+            final ExternalVerkehrsbeziehungDTO externalVerkehrsbeziehung) {
+        final var verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
+        if (Zaehlart.QU.equals(zaehlart)) {
+            verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
+            verkehrsbeziehung.setNach(externalVerkehrsbeziehung.getNach());
+            // TODO: Straßenseite einfügen.
+        } else if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung())) {
+            verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
+            verkehrsbeziehung.setNach(externalVerkehrsbeziehung.getNach());
         } else {
-            verkehrsbeziehung.setVon(verkehrsbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(verkehrsbeziehungDto);
+            verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getKnotenarm());
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(externalVerkehrsbeziehung);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
                 verkehrsbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {
-                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", verkehrsbeziehungDto);
+                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", externalVerkehrsbeziehung);
             }
         }
         return verkehrsbeziehung;
+    }
+
+    /**
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen
+     * an einen {@link Zeitintervall}.
+     *
+     * @param externalQuerungsverkehr aus dem die {@link de.muenchen.dave.domain.Querungsverkehr}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
+     */
+    public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final ExternalQuerungsverkehrDTO externalQuerungsverkehr) {
+        final var querungsverkehr = new de.muenchen.dave.domain.Querungsverkehr();
+        // TODO: Setzen des Knotenarms
+        querungsverkehr.setRichtung(externalQuerungsverkehr.getRichtung());
+        return querungsverkehr;
+    }
+
+    /**
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen
+     * an einen {@link Zeitintervall}.
+     *
+     * @param externalLaengsverkehr aus dem die {@link de.muenchen.dave.domain.Laengsverkehr}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
+     */
+    public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final ExternalLaengsverkehrDTO externalLaengsverkehr) {
+        final var laengsverkehr = new de.muenchen.dave.domain.Laengsverkehr();
+        // TODO: Setzen des Knotenarms
+        laengsverkehr.setRichtung(externalLaengsverkehr.getRichtung());
+        laengsverkehr.setStrassenseite(externalLaengsverkehr.getStrassenseite());
+        return laengsverkehr;
     }
 }
