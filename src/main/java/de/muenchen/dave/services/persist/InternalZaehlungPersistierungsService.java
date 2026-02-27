@@ -52,7 +52,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     @Value(value = "${dave.radius.distance-check-meter}")
     private int radiusDistanceCheck;
 
-    public InternalZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
+    public InternalZaehlungPersistierungsService(
+            final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,
