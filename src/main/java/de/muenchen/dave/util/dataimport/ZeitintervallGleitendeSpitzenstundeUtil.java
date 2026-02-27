@@ -262,11 +262,11 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      */
     public static TypeZeitintervall getRelevantTypeZeitintervallFromZeitauswahl(final String zeitauswahl) throws IncorrectZeitauswahlException {
         final TypeZeitintervall typeSpitzenstunde;
-        if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
+        if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(zeitauswahl)) {
             typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
-        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
+        } else if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD.equals(zeitauswahl)) {
             typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
-        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS)) {
+        } else if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS.equals(zeitauswahl)) {
             typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         } else {
             throw new IncorrectZeitauswahlException();
