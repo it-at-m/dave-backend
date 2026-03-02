@@ -36,4 +36,7 @@ public class PkwEinheit extends BaseEntity {
     @Column(name = "fahrradfahrer")
     private BigDecimal fahrradfahrer;
 
+    @Column(name = "fussgaenger")
+    private BigDecimal fussgaenger;
+
 }
