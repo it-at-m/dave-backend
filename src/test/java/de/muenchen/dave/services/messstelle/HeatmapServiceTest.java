@@ -102,7 +102,7 @@ class HeatmapServiceTest {
         final var result = heatmapService.ladeHeatmap(intervals, options);
 
         final var expected = new LadeZaehldatenHeatmapDTO();
-        expected.setLegend(List.of("Güterverkehr", "Schwerverkehr", "Kraftfahrzeuge", "Fahrräder", "Krafträder", "Busse", "Lastzüge",
+        expected.setLegend(List.of("Güterverkehr", "Schwerverkehr", "Kraftfahrzeugverkehr", "Radverkehr", "Krafträder", "Busse", "Lastzüge",
                 "Lastkraftwagen", "Lieferwagen", "Personenkraftwagen"));
         expected.setRangeMin(0);
         expected.setRangeMax(12);

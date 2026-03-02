@@ -38,6 +38,7 @@ class PkwEinheitServiceTest {
         pkwEinheitDTO.setBusse(BigDecimal.valueOf(4));
         pkwEinheitDTO.setKraftraeder(BigDecimal.valueOf(5));
         pkwEinheitDTO.setFahrradfahrer(BigDecimal.valueOf(6));
+        pkwEinheitDTO.setFussgaenger(BigDecimal.valueOf(7));
 
         final PkwEinheit pkwEinheit = new PkwEinheitMapperImpl().bearbeiteDto2entity(pkwEinheitDTO);
         Mockito.when(pkwEinheitRepository.saveAndFlush(any())).thenReturn(pkwEinheit);
@@ -54,6 +55,7 @@ class PkwEinheitServiceTest {
         pkwEinheit.setBusse(BigDecimal.valueOf(4));
         pkwEinheit.setKraftraeder(BigDecimal.valueOf(5));
         pkwEinheit.setFahrradfahrer(BigDecimal.valueOf(6));
+        pkwEinheit.setFussgaenger(BigDecimal.valueOf(7));
 
         Mockito.when(pkwEinheitRepository.findTopByOrderByCreatedTimeDesc()).thenReturn(Optional.of(pkwEinheit));
 
@@ -64,6 +66,7 @@ class PkwEinheitServiceTest {
         expected.setBusse(BigDecimal.valueOf(4));
         expected.setKraftraeder(BigDecimal.valueOf(5));
         expected.setFahrradfahrer(BigDecimal.valueOf(6));
+        expected.setFussgaenger(BigDecimal.valueOf(7));
 
         PkwEinheitDTO result = pkwEinheitService.getLatestPkwEinheiten();
         assertThat(result, is(expected));
