@@ -107,7 +107,7 @@ public class ZeitintervallPersistierungsService {
                         .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
                 final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
                         .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                final List<Zeitintervall> kiZeitintervalleForTagessumme =ZeitintervallKIUtil
+                final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
                         .createKIZeitintervalleForTagessummeFromKIPredictionResults(
                                 Arrays.asList(predictionResults),
                                 firstZeitintervallForEachBewegungsbeziehung);

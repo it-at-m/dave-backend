@@ -13,12 +13,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
+// TODO: Anpassung zu Bewegungsbeziehung
 /**
  * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung entsprechend den
  * Verkehrsbeziehungen.
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ZeitintervallVerkehrsbeziehungsSummationUtil {
+public final class ZeitintervallBewegungsbeziehungsSummationUtil {
 
     /**
      * Diese Methode erstellt die Grundlegende Datenstruktur um Summierung über Zeitintervalle zu
@@ -29,7 +30,7 @@ public final class ZeitintervallVerkehrsbeziehungsSummationUtil {
      */
     private static Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> createDataStructureForSummation(final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> filteredZeitintervalle = zeitintervalle.stream()
-                .filter(ZeitintervallVerkehrsbeziehungsSummationUtil::filterValidVerkehrsbeziehung)
+                .filter(ZeitintervallBewegungsbeziehungsSummationUtil::filterValidVerkehrsbeziehung)
                 .collect(Collectors.toList());
         return ZeitintervallBaseUtil.createByIntervallGroupedZeitintervalle(filteredZeitintervalle);
     }
@@ -37,7 +38,7 @@ public final class ZeitintervallVerkehrsbeziehungsSummationUtil {
     /**
      * Methode prüft auf Basis der im {@link Zeitintervall} hinterlegten Verkehrsbeziehung, ob in
      * Methode
-     * {@link ZeitintervallVerkehrsbeziehungsSummationUtil#createDataStructureForSummation(List)} eine
+     * {@link ZeitintervallBewegungsbeziehungsSummationUtil#createDataStructureForSummation(List)} eine
      * Filterung durchgeführt werden soll.
      *
      * @param zeitintervall Ein {@link Zeitintervall} der geprüft werden soll.

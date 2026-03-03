@@ -25,7 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
+public class ZeitintervallBewegungsbeziehungsSummationUtilTest {
 
     private List<Zeitintervall> zeitintervalle;
 
@@ -109,7 +109,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
     public void createDataStructureForSummation() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> result = TestUtils.privateStaticMethodCall(
                 "createDataStructureForSummation",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Map.class);
@@ -139,7 +139,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         boolean result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -151,7 +151,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -163,7 +163,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -175,7 +175,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -187,7 +187,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(null);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -199,7 +199,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -211,7 +211,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
         zeitintervall.getVerkehrsbeziehung().setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
         result = TestUtils.privateStaticMethodCall(
                 "filterValidVerkehrsbeziehung",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Zeitintervall.class),
                 ArrayUtils.toArray(zeitintervall),
                 Boolean.class);
@@ -220,7 +220,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
     @Test
     public void getUeberVerkehrsbeziehungSummierteZeitintervalleList() {
-        final List<Zeitintervall> result = ZeitintervallVerkehrsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
+        final List<Zeitintervall> result = ZeitintervallBewegungsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
 
         final List<Zeitintervall> expected = new ArrayList<>();
 
@@ -551,7 +551,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         final List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
                 "getUeberVerkehrsbeziehungSummierteZeitintervalle",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Map.class),
                 ArrayUtils.toArray(zeitintervalleGroupedByIntervall),
                 List.class);
@@ -878,7 +878,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForAllVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -909,7 +909,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForAllVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -943,7 +943,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainVonVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -975,7 +975,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainVonVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(2, intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1010,7 +1010,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainNachVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -1042,7 +1042,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallForCertainNachVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(Integer.class, ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(3, intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1077,7 +1077,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         Zeitintervall result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(0, 5)),
                 Zeitintervall.class);
@@ -1108,7 +1108,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         result = TestUtils.privateStaticMethodCall(
                 "getSummedZeitintervallOverAllGivenZeitintervalle",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(ZeitintervallBaseUtil.Intervall.class, List.class),
                 ArrayUtils.toArray(intervall, zeitintervalle.subList(5, 10)),
                 Zeitintervall.class);
@@ -1138,7 +1138,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
     public void getAllVonVerkehrsbeziehungen() {
         Set<Integer> vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
                 "getAllVonVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Set.class);
@@ -1152,7 +1152,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
     public void getAllNachVerkehrsbeziehungen() {
         Set<Integer> vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
                 "getAllNachVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervalle),
                 Set.class);
@@ -1187,7 +1187,7 @@ public class ZeitintervallVerkehrsbeziehungsSummationUtilTest {
 
         vonVerkehrsbeziehungen = TestUtils.privateStaticMethodCall(
                 "getAllNachVerkehrsbeziehungen",
-                ZeitintervallVerkehrsbeziehungsSummationUtil.class,
+                ZeitintervallBewegungsbeziehungsSummationUtil.class,
                 ArrayUtils.toArray(List.class),
                 ArrayUtils.toArray(zeitintervallKreisverkehr),
                 Set.class);

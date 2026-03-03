@@ -49,7 +49,8 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Bewegungsbeziehungen und gibt diese als
+     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Bewegungsbeziehungen und gibt diese
+     * als
      * zweidimensionale Liste von Zeitintervallen zurück.
      *
      * @param zeitintervalle Zu gruppierende Liste von Zeitintervallen
@@ -141,7 +142,7 @@ public final class ZeitintervallKIUtil {
      * @param kiIntervalle Zeitintervalle mit den A nach B Verkehrsbeziehungen
      */
     public static void expandKiHochrechnungen(List<Zeitintervall> kiIntervalle) {
-        var neueIntervalle = ZeitintervallVerkehrsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(kiIntervalle);
+        var neueIntervalle = ZeitintervallBewegungsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(kiIntervalle);
         neueIntervalle.forEach(intervall -> intervall.setType(TypeZeitintervall.GESAMT_KI));
         kiIntervalle.addAll(neueIntervalle);
     }

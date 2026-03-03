@@ -87,7 +87,8 @@ class ZeitintervallKIUtilTest {
         List<Zeitintervall> zeitintervalle = Arrays.asList(zeitintervall1, zeitintervall2);
 
         // Act
-        List<Zeitintervall> kiZeitintervalle = ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults, zeitintervalle);
+        List<Zeitintervall> kiZeitintervalle = ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults,
+                zeitintervalle);
 
         // Assert
         assertThat(kiZeitintervalle.size(), equalTo(2));
