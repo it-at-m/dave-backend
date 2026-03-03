@@ -112,7 +112,6 @@ public class ZeitintervallPersistierungsService {
                                 Arrays.asList(predictionResults),
                                 firstZeitintervallForEachBewegungsbeziehung);
                 kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
-                ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
                 ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
             } catch (final PredictionFailedException exception) {
                 log.error("Error predicting Tagessummen with KIService\n" + exception);

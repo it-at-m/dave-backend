@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+// TODO: Anpassung nach Bewegungsbeziehung.
 /**
  * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage entsprechend den
  * Verkehrsbeziehungen.
@@ -132,19 +133,6 @@ public final class ZeitintervallKIUtil {
                         .filter(prediction -> prediction.getVerkehrsbeziehung().equals(intervall.getVerkehrsbeziehung()))
                         .findFirst()
                         .ifPresent(prediction -> intervall.getHochrechnung().setHochrechnungRad(prediction.getFahrradfahrer())));
-    }
-
-    /**
-     * Die KI-berechnet nur A nach B Verkehrsbeziehungen. Anreicherung um die Verkehrsbeziehungen A nach
-     * alle
-     * und alle nach B
-     *
-     * @param kiIntervalle Zeitintervalle mit den A nach B Verkehrsbeziehungen
-     */
-    public static void expandKiHochrechnungen(List<Zeitintervall> kiIntervalle) {
-        var neueIntervalle = ZeitintervallBewegungsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(kiIntervalle);
-        neueIntervalle.forEach(intervall -> intervall.setType(TypeZeitintervall.GESAMT_KI));
-        kiIntervalle.addAll(neueIntervalle);
     }
 
 }
