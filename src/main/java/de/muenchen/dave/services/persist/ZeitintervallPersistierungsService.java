@@ -105,12 +105,13 @@ public class ZeitintervallPersistierungsService {
             try {
                 final KIPredictionResult[] predictionResults = kiService
                         .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
-                final List<Zeitintervall> zeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
                         .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                kiZeitintervalle.addAll(
-                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(
+                final List<Zeitintervall> kiZeitintervalleForTagessumme =ZeitintervallKIUtil
+                        .createKIZeitintervalleForTagessummeFromKIPredictionResults(
                                 Arrays.asList(predictionResults),
-                                zeitintervallForEachBewegungsbeziehung));
+                                firstZeitintervallForEachBewegungsbeziehung);
+                kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
                 ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
                 ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
             } catch (final PredictionFailedException exception) {

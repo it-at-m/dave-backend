@@ -27,24 +27,24 @@ public final class ZeitintervallKIUtil {
     public static final String LIST_LENGTH_MISMATCH = "Mismatch in list size of predictionResults and firstZeitintervalleOfVerkehrsbeziehungen";
 
     /**
-     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Verkehrsbeziehung) für die
+     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Bewegungsbeziehung) für die
      * KI-Tagessummen.
      *
-     * @param predictionResults Liste von KIPredictionResults, wobei für jede Verkehrsbeziehung ein
+     * @param predictionResults Liste von KIPredictionResults, wobei für jede Bewegungsbeziehung ein
      *            KIPredictionResult enthalten ist.
-     * @param firstZeitintervalleOfVerkehrsbeziehungen List mit je einem importierten Zeitintervall pro
-     *            Verkehrsbeziehung
+     * @param firstZeitintervalleOfBewegungsbeziehungen List mit je einem importierten Zeitintervall pro
+     *            Bewegungsbeziehung
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
-    public static List<Zeitintervall> createKIZeitintervalleFromKIPredictionResults(
+    public static List<Zeitintervall> createKIZeitintervalleForTagessummeFromKIPredictionResults(
             final List<KIPredictionResult> predictionResults,
-            final List<Zeitintervall> firstZeitintervalleOfVerkehrsbeziehungen) {
-        if (predictionResults.size() != firstZeitintervalleOfVerkehrsbeziehungen.size())
+            final List<Zeitintervall> firstZeitintervalleOfBewegungsbeziehungen) {
+        if (predictionResults.size() != firstZeitintervalleOfBewegungsbeziehungen.size())
             throw new IllegalArgumentException(LIST_LENGTH_MISMATCH);
 
         return Streams.zip(
                 predictionResults.stream(),
-                firstZeitintervalleOfVerkehrsbeziehungen.stream(),
+                firstZeitintervalleOfBewegungsbeziehungen.stream(),
                 ZeitintervallKIUtil::createKIZeitintervallFromKIPredictionResult).collect(Collectors.toList());
     }
 

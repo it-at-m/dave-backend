@@ -52,7 +52,7 @@ class ZeitintervallKIUtilTest {
 
         // Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(predictionResults, zeitintervalle));
+                () -> ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults, zeitintervalle));
 
         String expectedMessage = ZeitintervallKIUtil.LIST_LENGTH_MISMATCH;
         String actualMessage = exception.getMessage();
@@ -87,7 +87,7 @@ class ZeitintervallKIUtilTest {
         List<Zeitintervall> zeitintervalle = Arrays.asList(zeitintervall1, zeitintervall2);
 
         // Act
-        List<Zeitintervall> kiZeitintervalle = ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(predictionResults, zeitintervalle);
+        List<Zeitintervall> kiZeitintervalle = ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults, zeitintervalle);
 
         // Assert
         assertThat(kiZeitintervalle.size(), equalTo(2));
