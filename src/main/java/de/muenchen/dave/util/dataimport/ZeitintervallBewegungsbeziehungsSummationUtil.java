@@ -13,7 +13,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
-// TODO: Anpassung zu Bewegungsbeziehung
+// TODO: Die Klasse wird nur noch in "ZeitintervallKIUtil" verwendet. Anpassen der ZeitintervallKIUtil und löschen dieser Klasse.
+
 /**
  * Diese Klasse summiert die {@link Zeitintervall}e einer Zählung entsprechend den
  * Verkehrsbeziehungen.
