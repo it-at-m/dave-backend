@@ -49,14 +49,15 @@ public final class ZeitintervallKIUtil {
     }
 
     /**
-     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Verkehrsbeziehung und gibt diese als
+     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Bewegungsbeziehungen und gibt diese als
      * zweidimensionale Liste von Zeitintervallen zurück.
      *
      * @param zeitintervalle Zu gruppierende Liste von Zeitintervallen
      * @return Über bewegungsbeziehungId-gruppierte Listen als zweidimensionale Liste
      */
-    public static List<List<Zeitintervall>> groupZeitintervalleByVerkehrsbeziehung(List<Zeitintervall> zeitintervalle) {
-        final Map<UUID, List<Zeitintervall>> groupedByBewegungsbeziehungId = zeitintervalle.stream()
+    public static List<List<Zeitintervall>> groupZeitintervalleByBewegungsbeziehung(List<Zeitintervall> zeitintervalle) {
+        final Map<UUID, List<Zeitintervall>> groupedByBewegungsbeziehungId = zeitintervalle
+                .stream()
                 .collect(Collectors.groupingBy(Zeitintervall::getBewegungsbeziehungId));
         return new ArrayList<>(groupedByBewegungsbeziehungId.values());
     }
@@ -66,10 +67,10 @@ public final class ZeitintervallKIUtil {
      * Liste
      *
      * @param zeitintervalle nach bewegungsbeziehungId-gruppierte Listen als zweidimensionale Liste
-     * @return Liste von je dem ersten Zeitintervall pro Verkehrsbeziehung
+     * @return Liste von je dem ersten Zeitintervall pro Bewegungsbeziehung
      */
-    public static List<Zeitintervall> extractZeitintervallForEachVerkehrsbeziehung(List<List<Zeitintervall>> zeitintervalle) {
-        return zeitintervalle.stream().map(list -> list.get(0)).collect(Collectors.toList());
+    public static List<Zeitintervall> extractFirstZeitintervallForEachBewegungsbeziehung(List<List<Zeitintervall>> zeitintervalle) {
+        return zeitintervalle.stream().map(List::getFirst).collect(Collectors.toList());
     }
 
     /**

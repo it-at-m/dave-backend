@@ -101,12 +101,12 @@ public class ZeitintervallPersistierungsService {
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
-                    .groupZeitintervalleByVerkehrsbeziehung(zeitintervalle);
+                    .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
             try {
                 final KIPredictionResult[] predictionResults = kiService
                         .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
                 final List<Zeitintervall> zeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
-                        .extractZeitintervallForEachVerkehrsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
+                        .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
                 kiZeitintervalle.addAll(
                         ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(
                                 Arrays.asList(predictionResults),
