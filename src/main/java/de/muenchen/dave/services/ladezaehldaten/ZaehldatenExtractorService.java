@@ -86,33 +86,14 @@ public class ZaehldatenExtractorService {
             /**
              * Spitzenstunden sind grundsätzlich immer auf Basis der 15-Minuten-Intervalle zu ermitteln.
              */
-            final var optionsForSpitzenstunden = optionsMapper.deepCopy(options);
-            optionsForSpitzenstunden.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
-            final var typesForSpitzenstunde = new HashSet<>(types);
-            // Ausschließliche Entfernung der halbstündigen Intervalle, da Stundenintervalle ggf. für die Darstellung der Stundensumme benötigt werden.
-            typesForSpitzenstunde.removeAll(Set.of(TypeZeitintervall.STUNDE_HALB));
-            typesForSpitzenstunde.add(optionsForSpitzenstunden.getIntervall().getTypeZeitintervall());
-
-            // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung für die Spitzenstunden
-            final var zeitintervalleByBewegungsbeziehungForSpitzenstunden = zeitintervallExtractorService.extractZeitintervalle(
+            final var spitzenstunden = extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                     zaehlungId,
                     zaehlart,
                     startUhrzeit,
                     endeUhrzeit,
                     isKreisverkehr,
                     options,
-                    typesForSpitzenstunde);
-
-            // Summieren der Zeitintervalle über die Bewegungsbeziehung für die Spitzenstunden
-            final var overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden = zeitintervallSummationService
-                    .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehungForSpitzenstunden);
-
-            // Ermittlung der Spitzenstunden
-            final var spitzenstunden = spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(
-                    zaehlungId,
-                    options.getZeitblock(),
-                    overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden,
-                    typesForSpitzenstunde);
+                    types);
             overBewegungsbeziehungSummedZeitintervalle.addAll(spitzenstunden);
         }
 
@@ -142,7 +123,7 @@ public class ZaehldatenExtractorService {
      * @return nach dem {@link Zeitintervall#getSortingIndex} sortierte Liste von verarbeiteten
      *         Spitzenstunden
      */
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
@@ -150,15 +131,34 @@ public class ZaehldatenExtractorService {
             final Boolean isKreisverkehr,
             final OptionsDTO options,
             final Set<TypeZeitintervall> types) {
-        // Extrahieren der Zeitintervalle und Filter nach Spitzenstunden.
-        return extractZeitintervalle(
+
+        final var optionsForSpitzenstunden = optionsMapper.deepCopy(options);
+        optionsForSpitzenstunden.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        final var typesForSpitzenstunde = new HashSet<>(types);
+        // Ausschließliche Entfernung der halbstündigen Intervalle, da Stundenintervalle ggf. für die Darstellung der Stundensumme benötigt werden.
+        typesForSpitzenstunde.removeAll(Set.of(TypeZeitintervall.STUNDE_HALB));
+        typesForSpitzenstunde.add(optionsForSpitzenstunden.getIntervall().getTypeZeitintervall());
+
+        // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung für die Spitzenstunden
+        final var zeitintervalleByBewegungsbeziehungForSpitzenstunden = zeitintervallExtractorService.extractZeitintervalle(
                 zaehlungId,
                 zaehlart,
                 startUhrzeit,
                 endeUhrzeit,
                 isKreisverkehr,
                 options,
-                types).stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
+                typesForSpitzenstunde);
+
+        // Summieren der Zeitintervalle über die Bewegungsbeziehung für die Spitzenstunden
+        final var overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden = zeitintervallSummationService
+                .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehungForSpitzenstunden);
+
+        // Ermittlung der Spitzenstunden
+        return spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(
+                zaehlungId,
+                options.getZeitblock(),
+                overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden,
+                typesForSpitzenstunde);
     }
 
     /**

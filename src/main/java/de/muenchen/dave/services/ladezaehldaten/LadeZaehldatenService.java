@@ -368,7 +368,7 @@ public class LadeZaehldatenService {
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
-        return zaehldatenExtractorService.extractZeitintervalleSpitzenstunde(
+        return zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 zaehlungId,
                 zaehlart,
                 options.getZeitblock().getStart(),
@@ -428,8 +428,8 @@ public class LadeZaehldatenService {
                     spitzenStunde.getEndeUhrzeit(),
                     options,
                     isKreisverkehr,
-                    // Entweder TypeZeitintervall.STUNDE_VIERTEL, TypeZeitintervall.STUNDE_HALB oder TypeZeitintervall.STUNDE_KOMPLETT
-                    SetUtils.hashSet(options.getIntervall().getTypeZeitintervall()));
+                    // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
+                    Set.of(TypeZeitintervall.STUNDE_VIERTEL));
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
                 extractedZeitintervalle = new ArrayList<>(extractedZeitintervalle);
                 extractedZeitintervalle.add(spitzenStunde);

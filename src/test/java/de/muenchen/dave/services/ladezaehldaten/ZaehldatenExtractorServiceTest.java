@@ -188,7 +188,7 @@ class ZaehldatenExtractorServiceTest {
     }
 
     @Test
-    void testExtractZeitintervalleSpitzenstunde_filtertNurSpitzenstunden() {
+    void testExtractZeitintervalleSpitzenstunde_For15MinuteIntervals_filtertNurSpitzenstunden() {
         // Arrange: wir erstellen eine Spy-Instanz um extractZeitintervalle zu mocken
         var spy = Mockito.spy(service);
 
@@ -200,7 +200,7 @@ class ZaehldatenExtractorServiceTest {
         OptionsDTO options = createBaseOptions();
 
         // Act: types enthalten sowohl eine Spitzenstunde als auch ein Intervall-Typ
-        var result = spy.extractZeitintervalleSpitzenstunde(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
+        var result = spy.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
                 Set.of(TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.STUNDE_KOMPLETT));
 
         // Assert: nur die Spitzenstunde bleibt übrig
