@@ -85,7 +85,7 @@ class AuswertungSpitzenstundeServiceTest {
             overall.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
             overall.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
             extractedSpitzenstunden.add(overall);
-            when(ladeZaehldatenService.extractZeitintervalleSpitzenstunden(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
+            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
                     .thenReturn(extractedSpitzenstunden);
 
             final List<Zeitintervall> intervalle = new ArrayList<>();
@@ -119,7 +119,8 @@ class AuswertungSpitzenstundeServiceTest {
             assertEquals(1, result.size());
 
             utilMock.verify(() -> ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl("Spitzenstunde KFZ"), times(1));
-            verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstunden(eq(zaehlungId), any(), eq(Boolean.FALSE), any(OptionsDTO.class));
+            verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), eq(Boolean.FALSE),
+                    any(OptionsDTO.class));
             verify(zeitintervallRepository, times(1))
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
                             eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), any(TypeZeitintervall.class));
@@ -148,7 +149,7 @@ class AuswertungSpitzenstundeServiceTest {
             overall.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
             overall.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
             extractedSpitzenstunden.add(overall);
-            when(ladeZaehldatenService.extractZeitintervalleSpitzenstunden(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
+            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
                     .thenReturn(extractedSpitzenstunden);
 
             when(zeitintervallRepository
@@ -188,7 +189,7 @@ class AuswertungSpitzenstundeServiceTest {
             utilMock.when(() -> ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl("Spitzenstunde KFZ"))
                     .thenReturn(TypeZeitintervall.SPITZENSTUNDE_KFZ);
 
-            when(ladeZaehldatenService.extractZeitintervalleSpitzenstunden(any(), any(), any(), any(OptionsDTO.class)))
+            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(any(), any(), any(), any(OptionsDTO.class)))
                     .thenReturn(new LinkedList<>());
 
             assertThrows(DataNotFoundException.class, () -> service.extractSpitzenstundenAllVerkehrsbeziehungen(
@@ -198,7 +199,7 @@ class AuswertungSpitzenstundeServiceTest {
                     false));
 
             utilMock.verify(() -> ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl("Spitzenstunde KFZ"), times(1));
-            verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstunden(any(), any(), any(), any(OptionsDTO.class));
+            verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(any(), any(), any(), any(OptionsDTO.class));
         }
     }
 

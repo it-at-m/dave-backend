@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -362,7 +361,7 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunden(
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
@@ -410,7 +409,7 @@ public class LadeZaehldatenService {
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
-        final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstunden(zaehlungId, zaehlart, isKreisverkehr, options);
+        final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, zaehlart, isKreisverkehr, options);
         List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
             /*

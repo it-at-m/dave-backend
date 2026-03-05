@@ -319,7 +319,8 @@ public class ProcessZaehldatenBelastungsplanService {
      *             * nicht aus den DBs extrahiert werden kann.
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
-    public LadeBelastungsplanDTO getBelastungsplanDTO(final String zaehlungId,
+    public LadeBelastungsplanDTO getBelastungsplanDTO(
+            final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
         // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
@@ -703,10 +704,10 @@ public class ProcessZaehldatenBelastungsplanService {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalleSpitzenstunden(
+        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 UUID.fromString(zaehlung.getId()),
                 zaehlart,
-                false,
+                zaehlung.getKreisverkehr(),
                 options);
         if (!spitzenstunden.isEmpty()) {
 
@@ -724,7 +725,8 @@ public class ProcessZaehldatenBelastungsplanService {
                             UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
-                            Set.of(options.getIntervall().getTypeZeitintervall()));
+                            // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
+                            Set.of(TypeZeitintervall.STUNDE_VIERTEL));
 
             return ZeitintervallGleitendeSpitzenstundeUtil
                     .getGleitendeSpitzenstundenByBewegungsbeziehung(

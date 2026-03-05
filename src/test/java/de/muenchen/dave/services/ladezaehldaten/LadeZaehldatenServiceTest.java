@@ -130,7 +130,8 @@ class LadeZaehldatenServiceTest {
         zi.setPkw(1);
         zi.setSortingIndex(10);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
@@ -144,7 +145,8 @@ class LadeZaehldatenServiceTest {
         assertEquals(2, result.getZaehldaten().size());
 
         verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
@@ -222,7 +224,8 @@ class LadeZaehldatenServiceTest {
         spitzenList.add(sp1);
         spitzenList.add(sp2);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(spitzenList);
 
@@ -241,7 +244,8 @@ class LadeZaehldatenServiceTest {
         assertTrue(result.contains(quarter));
         assertTrue(result.contains(sp2));
 
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()),
                 eq(false), eq(options), anySet());
@@ -270,7 +274,8 @@ class LadeZaehldatenServiceTest {
         spitzenList.add(sp1);
         spitzenList.add(sp2);
 
-        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        when(zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(spitzenList);
 
@@ -289,7 +294,8 @@ class LadeZaehldatenServiceTest {
         assertTrue(result.contains(quarter));
         assertFalse(result.contains(sp2));
 
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(sp2.getStartUhrzeit()), eq(sp2.getEndeUhrzeit()),
                 eq(false), eq(options), anySet());
@@ -308,7 +314,8 @@ class LadeZaehldatenServiceTest {
 
         assertEquals(0, result.size());
 
-        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
+        verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
+                eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(true), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }

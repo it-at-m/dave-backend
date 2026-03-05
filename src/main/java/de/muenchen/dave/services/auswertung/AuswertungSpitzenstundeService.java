@@ -165,7 +165,7 @@ public class AuswertungSpitzenstundeService {
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
 
         // Extrahieren der Spitzenstunde der Zählung über alle Verkehrsbeziehungen.
-        final var extractedSpitzenstunde = ladeZaehldatenService.extractZeitintervalleSpitzenstunden(
+        final var extractedSpitzenstunde = ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 UUID.fromString(zaehlung.getId()),
                 zaehlart,
                 zaehlung.getKreisverkehr(),
