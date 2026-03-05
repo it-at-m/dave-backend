@@ -163,11 +163,11 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
         final int minLength = Math.min(basis.length, vergleich.length);
-        final BigDecimal[] fff = new BigDecimal[minLength];
+        final BigDecimal[] differences = new BigDecimal[minLength];
         for (int i = 0; i < minLength; i++) {
-            fff[i] = basis[i].subtract(vergleich[i]);
+            differences[i] = basis[i].subtract(vergleich[i]);
         }
-        return fff;
+        return differences;
     }
 
     private static boolean isKreisverkehr(final Verkehrsbeziehung verkehrsbeziehung) {
