@@ -182,9 +182,9 @@ public class ReportService {
                     zaehlungskenngroessenAsset.setPrintRad(zaehlung.getKategorien().contains(Fahrzeug.RAD));
                     zaehlungskenngroessenAsset.setPrintKfz(zaehlung.getKategorien().contains(Fahrzeug.KFZ));
 
-                    final LadeZaehldatenTableDTO ladeZaehldatenTable = this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung);
+                    final LadeZaehldatenTableDTO zaehldatenForZaehlungskenngroessen = this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung);
                     final List<ZaehlungskenngroessenData> data = this.ladeZaehldatumMapper
-                            .ladeZaehldatumDtoListToZaehlungskenngroessenDataList(ladeZaehldatenTable.getZaehldaten());
+                            .ladeZaehldatumDtoListToZaehlungskenngroessenDataList(zaehldatenForZaehlungskenngroessen.getZaehldaten());
 
                     // Sortiert anhand Type durch den in ZaehlungskenngroessenData definierten compareTo
                     Collections.sort(data);
