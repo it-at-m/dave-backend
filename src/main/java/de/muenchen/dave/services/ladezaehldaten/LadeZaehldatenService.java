@@ -327,7 +327,7 @@ public class LadeZaehldatenService {
         final List<Zeitintervall> zeitintervalle;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-        if (ZEITAUSWAHL_SPITZENSTUNDE.equals(options.getZeitauswahl())) {
+        if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);

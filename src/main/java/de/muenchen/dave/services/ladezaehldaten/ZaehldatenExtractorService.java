@@ -8,6 +8,8 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.mapper.OptionsMapper;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -31,6 +33,8 @@ public class ZaehldatenExtractorService {
     private final ZeitintervallSummationService zeitintervallSummationService;
 
     private final SpitzenstundeCalculatorService spitzenstundeCalculatorService;
+
+    private final OptionsMapper optionsMapper;
 
     /**
      * Extrahiert und aggregiert die Zeitintervalle basierend auf den übergebenen Parametern.
@@ -78,11 +82,37 @@ public class ZaehldatenExtractorService {
         // Ermittlung der Spitzenstunden
         if (CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
                 TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
+
+            /**
+             * Spitzenstunden sind grundsätzlich immer auf Basis der 15-Minuten-Intervalle zu ermitteln.
+             */
+            final var optionsForSpitzenstunden = optionsMapper.deepCopy(options);
+            optionsForSpitzenstunden.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+            final var typesForSpitzenstunde = new HashSet<>(types);
+            // Ausschließliche Entfernung der halbstündigen Intervalle, da Stundenintervalle ggf. für die Darstellung der Stundensumme benötigt werden.
+            typesForSpitzenstunde.removeAll(Set.of(TypeZeitintervall.STUNDE_HALB));
+            typesForSpitzenstunde.add(optionsForSpitzenstunden.getIntervall().getTypeZeitintervall());
+
+            // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung für die Spitzenstunden
+            final var zeitintervalleByBewegungsbeziehungForSpitzenstunden = zeitintervallExtractorService.extractZeitintervalle(
+                    zaehlungId,
+                    zaehlart,
+                    startUhrzeit,
+                    endeUhrzeit,
+                    isKreisverkehr,
+                    options,
+                    typesForSpitzenstunde);
+
+            // Summieren der Zeitintervalle über die Bewegungsbeziehung für die Spitzenstunden
+            final var overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden = zeitintervallSummationService
+                    .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehungForSpitzenstunden);
+
+            // Ermittlung der Spitzenstunden
             final var spitzenstunden = spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(
                     zaehlungId,
                     options.getZeitblock(),
-                    overBewegungsbeziehungSummedZeitintervalle,
-                    types);
+                    overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden,
+                    typesForSpitzenstunde);
             overBewegungsbeziehungSummedZeitintervalle.addAll(spitzenstunden);
         }
 
@@ -98,6 +128,9 @@ public class ZaehldatenExtractorService {
      * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
      * Bewegungsbeziehungen.
      * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     *
+     * Unabhängig von den in den Parameter gewählten "types" werden die Spitzenstunden
+     * grundsätzlich immer auf Basis der 15-Minuten-Intervalle ermittelt!
      *
      * @param zaehlungId ID der Zählung
      * @param zaehlart Art der Zählung
@@ -117,12 +150,6 @@ public class ZaehldatenExtractorService {
             final Boolean isKreisverkehr,
             final OptionsDTO options,
             final Set<TypeZeitintervall> types) {
-        final var typesForExtraction = new HashSet<>(types);
-        if (types.size() == 1 && CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
-                TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
-            typesForExtraction.add(options.getIntervall().getTypeZeitintervall());
-        }
-
         // Extrahieren der Zeitintervalle und Filter nach Spitzenstunden.
         return extractZeitintervalle(
                 zaehlungId,
@@ -131,7 +158,7 @@ public class ZaehldatenExtractorService {
                 endeUhrzeit,
                 isKreisverkehr,
                 options,
-                typesForExtraction).stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
+                types).stream().filter(this::isZeitintervallOfTypeSpitzenstunde).toList();
     }
 
     /**
