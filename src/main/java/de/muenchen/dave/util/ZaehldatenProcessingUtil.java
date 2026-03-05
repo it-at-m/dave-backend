@@ -101,8 +101,8 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu
-     * erstellen.
+     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO
+     * zur Datenextraktion zu erstellen.
      *
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.
