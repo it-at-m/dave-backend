@@ -21,7 +21,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -75,12 +74,12 @@ public final class ZeitintervallBaseUtil {
     }
 
     public static Zeitintervall createZeitintervallWithoutCountingValues(final UUID zaehlungId,
-                                                                         final LocalDateTime startUhrzeit,
-                                                                         final LocalDateTime endeUhrzeit,
-                                                                         final TypeZeitintervall type,
-                                                                         final Verkehrsbeziehung verkehrsbeziehung,
-                                                                         final Laengsverkehr laengsverkehr,
-                                                                         final Querungsverkehr querungsverkehr) {
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final TypeZeitintervall type,
+            final Verkehrsbeziehung verkehrsbeziehung,
+            final Laengsverkehr laengsverkehr,
+            final Querungsverkehr querungsverkehr) {
         final Zeitintervall zeitintervall = createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
         zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
         zeitintervall.setLaengsverkehr(laengsverkehr);
@@ -198,11 +197,12 @@ public final class ZeitintervallBaseUtil {
         return zeitintervall;
     }
 
-    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(final Zeitintervall zeitintervall1, final Bewegungsbeziehung bewegungsbeziehung) {
+    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(final Zeitintervall zeitintervall1,
+            final Bewegungsbeziehung bewegungsbeziehung) {
         return Objects.nonNull(bewegungsbeziehung)
                 && (isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), bewegungsbeziehung)
-                || isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), bewegungsbeziehung)
-                || isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
+                        || isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), bewegungsbeziehung)
+                        || isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
     }
 
     public static boolean areZeitintervallWithSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
@@ -213,15 +213,13 @@ public final class ZeitintervallBaseUtil {
 
     public static boolean isSameBewegungsbeziehungOrBothNull(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
         return ObjectUtils.allNull(bewegungsbeziehung1, bewegungsbeziehung2)
-                 || isSameBewegungsbeziehung(bewegungsbeziehung1, bewegungsbeziehung2);
+                || isSameBewegungsbeziehung(bewegungsbeziehung1, bewegungsbeziehung2);
     }
 
     public static boolean isSameBewegungsbeziehung(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
         return ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
                 && bewegungsbeziehung1.equals(bewegungsbeziehung2);
     }
-
-
 
     @AllArgsConstructor
     @Getter

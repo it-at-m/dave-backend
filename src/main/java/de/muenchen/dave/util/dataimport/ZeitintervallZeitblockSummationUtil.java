@@ -45,7 +45,8 @@ public final class ZeitintervallZeitblockSummationUtil {
     }
 
     /**
-     * Summierung der {@link Zeitintervall}e der {@link Bewegungsbeziehung} über alle {@link Zeitblock}e.
+     * Summierung der {@link Zeitintervall}e der {@link Bewegungsbeziehung} über alle
+     * {@link Zeitblock}e.
      *
      * @param bewegungsbeziehung Die für die Summierung relevante {@link Bewegungsbeziehung}.
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
