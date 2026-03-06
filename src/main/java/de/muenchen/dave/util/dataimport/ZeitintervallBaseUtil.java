@@ -2,6 +2,8 @@ package de.muenchen.dave.util.dataimport;
 
 import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -13,10 +15,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -65,29 +70,35 @@ public final class ZeitintervallBaseUtil {
         zeitintervall.setStartUhrzeit(startUhrzeit);
         zeitintervall.setEndeUhrzeit(endeUhrzeit);
         zeitintervall.setHochrechnung(new Hochrechnung());
-        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
         zeitintervall.setType(type);
         return zeitintervall;
     }
 
     public static Zeitintervall createZeitintervallWithoutCountingValues(final UUID zaehlungId,
-            final LocalDateTime startUhrzeit,
-            final LocalDateTime endeUhrzeit,
-            final TypeZeitintervall type,
-            final Verkehrsbeziehung verkehrsbeziehung) {
+                                                                         final LocalDateTime startUhrzeit,
+                                                                         final LocalDateTime endeUhrzeit,
+                                                                         final TypeZeitintervall type,
+                                                                         final Verkehrsbeziehung verkehrsbeziehung,
+                                                                         final Laengsverkehr laengsverkehr,
+                                                                         final Querungsverkehr querungsverkehr) {
         final Zeitintervall zeitintervall = createZeitintervallWithoutCountingValues(zaehlungId, startUhrzeit, endeUhrzeit, type);
         zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
+        zeitintervall.setLaengsverkehr(laengsverkehr);
+        zeitintervall.setQuerungsverkehr(querungsverkehr);
         return zeitintervall;
     }
 
-    public static Zeitintervall summation(final Zeitintervall zeitintervall1,
+    public static Zeitintervall summation(
+            final Zeitintervall zeitintervall1,
             final Zeitintervall zeitintervall2) {
         final Zeitintervall summedZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervall1.getZaehlungId(),
                 zeitintervall1.getStartUhrzeit(),
                 zeitintervall1.getEndeUhrzeit(),
                 zeitintervall1.getType(),
-                zeitintervall1.getVerkehrsbeziehung());
+                zeitintervall1.getVerkehrsbeziehung(),
+                zeitintervall1.getLaengsverkehr(),
+                zeitintervall1.getQuerungsverkehr());
         summedZeitintervall.setPkw(CalculationUtil.nullSafeSummation(zeitintervall1.getPkw(), zeitintervall2.getPkw()));
         summedZeitintervall.setLkw(CalculationUtil.nullSafeSummation(zeitintervall1.getLkw(), zeitintervall2.getLkw()));
         summedZeitintervall.setLastzuege(CalculationUtil.nullSafeSummation(zeitintervall1.getLastzuege(), zeitintervall2.getLastzuege()));
@@ -125,22 +136,30 @@ public final class ZeitintervallBaseUtil {
     }
 
     /**
-     * @param verkehrsbeziehung Die {@link Verkehrsbeziehung} der betroffenen Zeitintervalle.
+     * @param zeitintervalle Die Zeitintervalle zur extraktion der Bewegungsbeziehungen.
+     * @return Die möglichen Bewegungsbeziehungen aller Zeitintervalle.
+     */
+    public static Set<Bewegungsbeziehung> getAllPossibleBewegungsbeziehungen(List<Zeitintervall> zeitintervalle) {
+        return zeitintervalle.stream()
+                .flatMap(zeitintervall -> Stream.of(zeitintervall.getVerkehrsbeziehung(), zeitintervall.getLaengsverkehr(), zeitintervall.getQuerungsverkehr()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * @param bewegungsbeziehung Die {@link Bewegungsbeziehung} der betroffenen Zeitintervalle.
      * @param zeitintervalleGroupedByIntervall Die nach {@link ZeitintervallBaseUtil.Intervall}
      *            gruppierten {@link Zeitintervall}e.
-     * @return Alle {@link Zeitintervall}e welche die {@link Verkehrsbeziehung} besitzen.
+     * @return Alle {@link Zeitintervall}e welche die {@link Bewegungsbeziehung} besitzen.
      */
-    public static List<Zeitintervall> getZeitintervalleForVerkehrsbeziehung(
-            final Verkehrsbeziehung verkehrsbeziehung,
+    public static List<Zeitintervall> getZeitintervalleForBewegungsbeziehung(
+            final Bewegungsbeziehung bewegungsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
-        final List<Zeitintervall> zeitintervalleForVerkehrsbeziehung = new ArrayList<>();
-        zeitintervalleGroupedByIntervall.keySet().forEach(intervall -> {
-            zeitintervalleGroupedByIntervall.get(intervall).stream()
-                    .filter(zeitintervall -> zeitintervall.getVerkehrsbeziehung().equals(verkehrsbeziehung))
-                    .findFirst()
-                    .ifPresent(zeitintervalleForVerkehrsbeziehung::add);
-        });
-        return zeitintervalleForVerkehrsbeziehung;
+        return zeitintervalleGroupedByIntervall.values()
+                .stream()
+                .flatMap(List::stream)
+                .filter(zeitintervall -> containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zeitintervall, bewegungsbeziehung))
+                .toList();
     }
 
     public static boolean isZeitintervallWithinZeitblock(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {
@@ -169,17 +188,30 @@ public final class ZeitintervallBaseUtil {
         return zeitintervall;
     }
 
+    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(final Zeitintervall zeitintervall1, final Bewegungsbeziehung bewegungsbeziehung) {
+        return Objects.nonNull(bewegungsbeziehung)
+                && (isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), bewegungsbeziehung)
+                || isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), bewegungsbeziehung)
+                || isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
+    }
+
     public static boolean areZeitintervallWithSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
-        return isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), zeitintervall2.getVerkehrsbeziehung())
-                && isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), zeitintervall2.getLaengsverkehr())
-                && isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), zeitintervall2.getQuerungsverkehr());
+        return isSameBewegungsbeziehungOrBothNull(zeitintervall1.getVerkehrsbeziehung(), zeitintervall2.getVerkehrsbeziehung())
+                && isSameBewegungsbeziehungOrBothNull(zeitintervall1.getLaengsverkehr(), zeitintervall2.getLaengsverkehr())
+                && isSameBewegungsbeziehungOrBothNull(zeitintervall1.getQuerungsverkehr(), zeitintervall2.getQuerungsverkehr());
+    }
+
+    public static boolean isSameBewegungsbeziehungOrBothNull(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
+        return ObjectUtils.allNull(bewegungsbeziehung1, bewegungsbeziehung2)
+                 || isSameBewegungsbeziehung(bewegungsbeziehung1, bewegungsbeziehung2);
     }
 
     public static boolean isSameBewegungsbeziehung(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
-        return ObjectUtils.allNull(bewegungsbeziehung1, bewegungsbeziehung2)
-                 || (ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
-                && bewegungsbeziehung1.equals(bewegungsbeziehung2));
+        return ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
+                && bewegungsbeziehung1.equals(bewegungsbeziehung2);
     }
+
+
 
     @AllArgsConstructor
     @Getter

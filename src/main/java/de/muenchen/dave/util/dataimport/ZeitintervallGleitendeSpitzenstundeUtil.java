@@ -76,7 +76,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     private static List<Zeitintervall> getGleitendeSpitzenstundenForVerkehrsbeziehung(
             final Verkehrsbeziehung verkehrsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
-        final List<Zeitintervall> zeitintervalleForVerkehrsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForVerkehrsbeziehung(verkehrsbeziehung,
+        final List<Zeitintervall> zeitintervalleForVerkehrsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(verkehrsbeziehung,
                 zeitintervalleGroupedByIntervall);
         final Optional<UUID> zaehlungId = zeitintervalleForVerkehrsbeziehung.stream()
                 .map(Zeitintervall::getZaehlungId)

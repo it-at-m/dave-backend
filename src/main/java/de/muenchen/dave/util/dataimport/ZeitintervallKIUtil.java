@@ -86,13 +86,17 @@ public final class ZeitintervallKIUtil {
      *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der
      *         Hochrechnung) enthält.
      */
-    private static Zeitintervall createKIZeitintervallFromKIPredictionResult(final KIPredictionResult predictionResult, final Zeitintervall zeitintervall) {
+    private static Zeitintervall createKIZeitintervallFromKIPredictionResult(
+            final KIPredictionResult predictionResult,
+            final Zeitintervall zeitintervall) {
         final Zeitintervall kiZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervall.getZaehlungId(),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MIDNIGHT),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX),
                 TypeZeitintervall.GESAMT_KI,
-                zeitintervall.getVerkehrsbeziehung());
+                zeitintervall.getVerkehrsbeziehung(),
+                zeitintervall.getLaengsverkehr(),
+                zeitintervall.getQuerungsverkehr());
         kiZeitintervall.setBewegungsbeziehungId(zeitintervall.getBewegungsbeziehungId());
 
         // Setze KI-Ergebnisse für einzelne Fahrzeugtypen
