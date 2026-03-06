@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,12 +67,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
-        when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlung.getId()),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall()))
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.N,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.RAD))));
 
@@ -90,12 +93,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
-        when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlung.getId()),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall()))
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.N,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.FUSS))));
 
@@ -114,12 +119,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
-        when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlung.getId()),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall()))
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.N,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
@@ -138,12 +145,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
-        when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlung.getId()),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall()))
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.N,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 

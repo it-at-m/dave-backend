@@ -54,7 +54,7 @@ public class ZaehlungRandomFactory {
         z.setDienstleisterkennung("dienstleisterkennung");
 
         z.setKnotenarme(Arrays.asList(KnotenarmRandomFactory.getOne(), KnotenarmRandomFactory.getOne()));
-        z.setVerkehrsbeziehungen(Arrays.asList(VerkehrsbeziehungeKreuzungRandomFactory.getOne(), VerkehrsbeziehungeKreuzungRandomFactory.getOne()));
+        z.setVerkehrsbeziehungen(Arrays.asList(VerkehrsbeziehungKreuzungRandomFactory.getOne(), VerkehrsbeziehungKreuzungRandomFactory.getOne()));
         return z;
     }
 

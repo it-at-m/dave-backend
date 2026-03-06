@@ -1,21 +1,23 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
 /**
@@ -25,11 +27,10 @@ import org.apache.commons.lang3.ObjectUtils;
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
-     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
-     * Verkehrsbeziehung
-     * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
-     * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
-     * ermittelt:
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
+     * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
+     * Spitzenstunde für folgende {@link Zeitblock}e ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
      * - {@link Zeitblock#ZB_10_15}
@@ -37,28 +38,53 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_19_24}
      * - {@link Zeitblock#ZB_00_24}
      *
+     * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
+     * @param zaehlart die Zählart der Zählung.
+     * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
+     *            sollen.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
      * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
      *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
-     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für KFZ-, Rad-
-     *         und Fussverkehr.
+     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
+     *         die angefragten Spitzenstundentypen.
      */
-    public static List<Zeitintervall> getGleitendeSpitzenstunden(final List<Zeitintervall> zeitintervalle) {
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
-                .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Set<Verkehrsbeziehung> possibleVerkehrsbeziehungen = ZeitintervallBaseUtil.getAllPossibleVerkehrsbeziehungen(zeitintervalle);
-        final List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
-        possibleVerkehrsbeziehungen.forEach(
-                verkehrsbeziehung -> gleitendeSpitzenstunden
-                        .addAll(getGleitendeSpitzenstundenForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall)));
-        return gleitendeSpitzenstunden;
+    public static List<Zeitintervall> getGleitendeSpitzenstundenByBewegungsbeziehung(
+            final UUID zaehlungId,
+            final Zeitblock zeitblock,
+            final Zaehlart zaehlart,
+            final List<Zeitintervall> zeitintervalle,
+            final Set<TypeZeitintervall> types) {
+        return zeitintervalle
+                .stream()
+                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
+                .entrySet()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtil
+                        .getGleitendeSpitzenstunden(
+                                zaehlungId,
+                                zeitblock,
+                                zeitintervalleOfBewegungsbeziehung.getValue(),
+                                types)
+                        .stream()
+                        .peek(zeitintervall -> {
+                            if (Zaehlart.QU.equals(zaehlart)) {
+                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else if (Zaehlart.FJS.equals(zaehlart)) {
+                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else {
+                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
+                            }
+                        }))
+                .toList();
     }
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
-     * Verkehrsbeziehung
-     * jeweils für KFZ-, Rad- und Fussverkehr. Je möglicher
-     * Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende {@link Zeitblock}e
-     * ermittelt:
+     * Verkehrsbeziehung jeweils für KFZ-, Rad- oder auch Fussverkehr.
+     *
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende
+     * {@link Zeitblock}e ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
      * - {@link Zeitblock#ZB_10_15}
@@ -66,55 +92,67 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * - {@link Zeitblock#ZB_19_24}
      * - {@link Zeitblock#ZB_00_24}
      *
-     * @param verkehrsbeziehung Die {@link Verkehrsbeziehung} für welche die gleitende Spitzenstunde je
-     *            {@link Zeitblock} ermittelt werden soll.
-     * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
-     *            Intervallen.
+     * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
+     * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
+     *            sollen.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
      * @return die gleitenden Spitzenstunde je {@link Zeitblock} als List von {@link Zeitintervall}en
-     *         jeweils für KFZ-, Rad- und Fussverkehr.
+     *         jeweils für KFZ-, Rad- oder Fussverkehr.
      */
-    private static List<Zeitintervall> getGleitendeSpitzenstundenForVerkehrsbeziehung(
-            final Verkehrsbeziehung verkehrsbeziehung,
-            final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
-        final List<Zeitintervall> zeitintervalleForVerkehrsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(verkehrsbeziehung,
-                zeitintervalleGroupedByIntervall);
-        final Optional<UUID> zaehlungId = zeitintervalleForVerkehrsbeziehung.stream()
-                .map(Zeitintervall::getZaehlungId)
-                .findFirst();
+    public static List<Zeitintervall> getGleitendeSpitzenstunden(
+            final UUID zaehlungId,
+            final Zeitblock zeitblock,
+            final List<Zeitintervall> zeitintervalle,
+            final Set<TypeZeitintervall> types) {
         List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
-        if (zaehlungId.isPresent()) {
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_00_06, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_06_10, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_10_15, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_15_19, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_19_24, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
-            berechneGleitendeSpitzenstunde(zaehlungId.get(), Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalleForVerkehrsbeziehung)
-                    .setGleitendeSpstdKfzRadFussToSpitzenstundeList(gleitendeSpitzenstunden);
+        if (Objects.nonNull(zaehlungId)) {
+            List<Zeitintervall> calculatedSpitzenstunden;
+            if (Zeitblock.ZB_00_06.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_06_10.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_10_15.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_15_19.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_19_24.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_00_24.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
         }
         return gleitendeSpitzenstunden;
     }
 
     /**
-     * Diese Methode ermittelt die gleitend Spitzenstunde.
+     * Diese Methode ermittelt die gleitende Spitzenstunde für den gegebenen {@link Zeitblock}.
      *
      * @param zaehlungId Die ID der Zaehlung.
      * @param zeitblock Der {@link Zeitblock} für welchen die gleitende Spitzenstunde ermittelt werden
      *            soll.
-     * @param verkehrsbeziehung Die im Rückgabewert der Methode gesetzte Verkehrsbeziehung.
      * @param sortedZeitintervalle Die aufsteigend sortierten {@link Zeitintervall}e einer
      *            {@link Verkehrsbeziehung}.
-     * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr.
+     * @param types als Zeitintervalltypen welche angefragt wurden.
+     * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr
+     *         falls diese im Parameter types vorhanden sind.
      */
-    private static GleitendeSpstdZeitintervallKfzRadFuss berechneGleitendeSpitzenstunde(
+    private static List<Zeitintervall> calculateGleitendeSpitzenstunden(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
-            final Verkehrsbeziehung verkehrsbeziehung,
-            final List<Zeitintervall> sortedZeitintervalle) {
+            final List<Zeitintervall> sortedZeitintervalle,
+            final Set<TypeZeitintervall> types) {
         Integer valueGleitendeSpitzenstundeKfz = 0;
         Integer valueGleitendeSpitzenstundeRad = 0;
         Integer valueGleitendeSpitzenstundeFuss = 0;
@@ -126,47 +164,56 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(sortedZeitintervalle.get(index), zeitblock)) {
                 gleitenderZeitintervall = GleitenderZeitintervall.createInstanceWithIndexParameterAsNewestIndex(sortedZeitintervalle, index, zeitblock);
                 // Ermittlung Kfz
-                Integer sum = ObjectUtils.defaultIfNull(gleitenderZeitintervall.getSumKfz(), 0);
+                Integer sum = ObjectUtils.getIfNull(gleitenderZeitintervall.getSumKfz(), 0);
                 if (valueGleitendeSpitzenstundeKfz < sum) {
                     valueGleitendeSpitzenstundeKfz = sum;
                     gleitendeSpitzenstundeKfz = Optional.of(gleitenderZeitintervall.getSummedZeitintervallKfz());
                 }
                 // Ermittlung Rad
-                sum = ObjectUtils.defaultIfNull(gleitenderZeitintervall.getSumFahrradfahrer(), 0);
+                sum = ObjectUtils.getIfNull(gleitenderZeitintervall.getSumFahrradfahrer(), 0);
                 if (valueGleitendeSpitzenstundeRad < sum) {
                     valueGleitendeSpitzenstundeRad = sum;
                     gleitendeSpitzenstundeRad = Optional.of(gleitenderZeitintervall.getSummedZeitintervallRad());
                 }
                 // Ermittlung Fuss
-                sum = ObjectUtils.defaultIfNull(gleitenderZeitintervall.getSumFussgaenger(), 0);
+                sum = ObjectUtils.getIfNull(gleitenderZeitintervall.getSumFussgaenger(), 0);
                 if (valueGleitendeSpitzenstundeFuss < sum) {
                     valueGleitendeSpitzenstundeFuss = sum;
                     gleitendeSpitzenstundeFuss = Optional.of(gleitenderZeitintervall.getSummedZeitintervallFuss());
                 }
             }
         }
-        // Finalisierung Kfz
-        gleitendeSpitzenstundeKfz.ifPresent(zeitintervall -> {
-            zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
-            zeitintervall.setSortingIndex(getSortingIndexKfz(zeitintervall, zeitblock));
-        });
-        // Finalisierung Rad
-        gleitendeSpitzenstundeRad.ifPresent(zeitintervall -> {
-            zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
-            zeitintervall.setSortingIndex(getSortingIndexRad(zeitintervall, zeitblock));
-        });
-        // Finalisierung Fuss
-        gleitendeSpitzenstundeFuss.ifPresent(zeitintervall -> {
-            zeitintervall.setZaehlungId(zaehlungId);
-            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
-            zeitintervall.setSortingIndex(getSortingIndexFuss(zeitintervall, zeitblock));
-        });
-        return new GleitendeSpstdZeitintervallKfzRadFuss(
-                gleitendeSpitzenstundeKfz,
-                gleitendeSpitzenstundeRad,
-                gleitendeSpitzenstundeFuss);
+
+        final var calculatedSpitzenstunden = new ArrayList<Zeitintervall>();
+
+        if (types.contains(TypeZeitintervall.SPITZENSTUNDE_KFZ)) {
+            // Finalisierung Kfz
+            gleitendeSpitzenstundeKfz.ifPresent(zeitintervall -> {
+                zeitintervall.setZaehlungId(zaehlungId);
+                zeitintervall.setSortingIndex(getSortingIndexKfz(zeitintervall, zeitblock));
+                calculatedSpitzenstunden.add(zeitintervall);
+            });
+        }
+
+        if (types.contains(TypeZeitintervall.SPITZENSTUNDE_RAD)) {
+            // Finalisierung Rad
+            gleitendeSpitzenstundeRad.ifPresent(zeitintervall -> {
+                zeitintervall.setZaehlungId(zaehlungId);
+                zeitintervall.setSortingIndex(getSortingIndexRad(zeitintervall, zeitblock));
+                calculatedSpitzenstunden.add(zeitintervall);
+            });
+        }
+
+        if (types.contains(TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
+            // Finalisierung Fuss
+            gleitendeSpitzenstundeFuss.ifPresent(zeitintervall -> {
+                zeitintervall.setZaehlungId(zaehlungId);
+                zeitintervall.setSortingIndex(getSortingIndexFuss(zeitintervall, zeitblock));
+                calculatedSpitzenstunden.add(zeitintervall);
+            });
+        }
+
+        return calculatedSpitzenstunden;
     }
 
     /**
@@ -223,25 +270,29 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         return sortingIndex;
     }
 
-    @AllArgsConstructor
-    @Getter
-    @Setter
-    @EqualsAndHashCode
-    @ToString
-    public static class GleitendeSpstdZeitintervallKfzRadFuss {
-
-        private final Optional<Zeitintervall> gleitendeSpitzenstundeKfz;
-
-        private final Optional<Zeitintervall> gleitendeSpitzenstundeRad;
-
-        private final Optional<Zeitintervall> gleitendeSpitzenstundeFuss;
-
-        public void setGleitendeSpstdKfzRadFussToSpitzenstundeList(final List<Zeitintervall> gleitendeSpitzenstunden) {
-            gleitendeSpitzenstundeKfz.ifPresent(gleitendeSpitzenstunden::add);
-            gleitendeSpitzenstundeRad.ifPresent(gleitendeSpitzenstunden::add);
-            gleitendeSpitzenstundeFuss.ifPresent(gleitendeSpitzenstunden::add);
+    /**
+     * @param zeitauswahl welche die Ausprägung
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
+     *            darf.
+     * @return den {@link TypeZeitintervall} welcher der Zeitauswahl entspricht.
+     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
+     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
+     */
+    public static TypeZeitintervall getRelevantTypeZeitintervallFromZeitauswahl(final String zeitauswahl) throws IncorrectZeitauswahlException {
+        final TypeZeitintervall typeSpitzenstunde;
+        if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(zeitauswahl)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
+        } else if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD.equals(zeitauswahl)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
+        } else if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS.equals(zeitauswahl)) {
+            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
+        } else {
+            throw new IncorrectZeitauswahlException();
         }
-
+        return typeSpitzenstunde;
     }
-
 }
