@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import de.muenchen.dave.domain.mapper.OptionsMapper;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,6 +44,9 @@ class ZaehldatenExtractorServiceTest {
 
     @Mock
     private SpitzenstundeCalculatorService spitzenstundeCalculatorService;
+
+    @Mock
+    private OptionsMapper optionsMapper;
 
     @InjectMocks
     private ZaehldatenExtractorService service;
@@ -150,8 +154,10 @@ class ZaehldatenExtractorServiceTest {
         when(zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(Mockito.any())).thenReturn(summed);
 
         var spitzen = List.of(createZeitintervall(TypeZeitintervall.SPITZENSTUNDE_KFZ, 99));
-        when(spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
-                .thenReturn(spitzen);
+        // Use a spy to avoid invoking optionsMapper.deepCopy and the full internal 15-minute extraction logic
+        var spy = Mockito.spy(service);
+        Mockito.doReturn(spitzen).when(spy).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any());
 
         OptionsDTO options = createBaseOptions();
         options.setZeitblock(Zeitblock.ZB_06_10);
@@ -160,7 +166,7 @@ class ZaehldatenExtractorServiceTest {
         options.setNachKnotenarm(2);
 
         // Act: types enthalten eine Spitzenstunde -> Service soll spitzenstunde an Ergebnis anhängen
-        var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
+        var result = spy.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false, options,
                 Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
 
         // Assert: Ergebnis enthält sowohl die summierten Intervalle als auch die Spitzenstunde
@@ -179,28 +185,39 @@ class ZaehldatenExtractorServiceTest {
             assertEquals(2, zi.getVerkehrsbeziehung().getNach());
         }
 
-        // Verify: Extraktor und Summation je einmal; Spitzenstunde-Calculator wurde aufgerufen
+        // Verify: Extraktor und Summation je einmal; Spy-Methode für Spitzenstunden wurde aufgerufen, der Calculator nicht direkt
         Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any());
         Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
-        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(1)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
+        Mockito.verify(spy, Mockito.times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any());
     }
 
     @Test
-    void testExtractZeitintervalleSpitzenstunde_For15MinuteIntervals_filtertNurSpitzenstunden() {
-        // Arrange: wir erstellen eine Spy-Instanz um extractZeitintervalle zu mocken
-        var spy = Mockito.spy(service);
-
+    void testExtractZeitintervalleSpitzenstundeFor15MinuteIntervals_filtertNurSpitzenstunden() {
+        // Arrange
         var normal = createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 1);
         var spitzen = createZeitintervall(TypeZeitintervall.SPITZENSTUNDE_RAD, 2);
-        Mockito.doReturn(List.of(normal, spitzen)).when(spy).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any());
 
+        // Mock OptionsMapper.deepCopy to return a copy (we can reuse base options)
         OptionsDTO options = createBaseOptions();
+        when(optionsMapper.deepCopy(Mockito.any())).thenReturn(options);
+
+        // The extractor returns some map (content is irrelevant for this test)
+        when(zeitintervallExtractorService.extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any())).thenReturn(new HashMap<>());
+
+        // The summation returns both a normal and a spitzen interval
+        when(zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(Mockito.any())).thenReturn(List.of(normal, spitzen));
+
+        // The calculator should compute and return only the Spitzenstunde
+        when(spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(List.of(spitzen));
 
         // Act: types enthalten sowohl eine Spitzenstunde als auch ein Intervall-Typ
-        var result = spy.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false,
+        var result = service.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), false,
                 options,
                 Set.of(TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.STUNDE_KOMPLETT));
 
@@ -208,15 +225,11 @@ class ZaehldatenExtractorServiceTest {
         assertEquals(1, result.size());
         assertEquals(TypeZeitintervall.SPITZENSTUNDE_RAD, result.get(0).getType());
 
-        // Verify: Da extractZeitintervalle auf dem Spy gestubbt wurde, dürfen die externen Services nicht aufgerufen worden sein
-        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(0)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any());
-        Mockito.verify(zeitintervallExtractorService, Mockito.times(0)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any(), Mockito.any(), Mockito.any());
-        Mockito.verify(zeitintervallSummationService, Mockito.times(0)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
-        // Verify: Spy-Aufruf wurde ausgeführt
-        Mockito.verify(spy, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
-                Mockito.any());
+        // Verify interactions with dependencies
+        Mockito.verify(optionsMapper, Mockito.times(1)).deepCopy(Mockito.any());
+        Mockito.verify(zeitintervallExtractorService, Mockito.times(1)).extractZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(zeitintervallSummationService, Mockito.times(1)).sumZeitintervelleOverBewegungsbeziehung(Mockito.any());
+        Mockito.verify(spitzenstundeCalculatorService, Mockito.times(1)).calculateSpitzenstundeForGivenZeitintervalle(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
     }
 
     @Test
