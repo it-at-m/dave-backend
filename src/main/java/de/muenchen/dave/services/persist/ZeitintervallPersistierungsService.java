@@ -11,7 +11,6 @@ import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.KIService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallVerkehrsbeziehungsSummationUtil;
@@ -99,13 +98,6 @@ public class ZeitintervallPersistierungsService {
         /*
          * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
          * Zeitintervalle
-         * werden die gleitenden Spitzenstunden ermittelt.
-         */
-        final List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(allPossibleVerkehrsbeziehungen);
-
-        /*
-         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-         * Zeitintervalle
          * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
          */
         final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleVerkehrsbeziehungen);
@@ -135,7 +127,6 @@ public class ZeitintervallPersistierungsService {
 
         List<Zeitintervall> allZeitintervalle = new ArrayList<>();
         allZeitintervalle.addAll(allPossibleVerkehrsbeziehungen);
-        allZeitintervalle.addAll(gleitendeSpitzenstunden);
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 

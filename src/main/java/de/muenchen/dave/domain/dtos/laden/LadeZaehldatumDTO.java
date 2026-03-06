@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.CalculationUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,6 +16,13 @@ import lombok.Data;
 @Data
 public class LadeZaehldatumDTO implements Serializable {
 
+    /**
+     * Der Typ leitet sich aus der Typsetzung in der Methode
+     * {@link LadeZaehldatenService#mapToZaehldatum} ab.
+     * Das Attribut nimmt den Wert "null" ein, sobald es sich um einen 15-Minütigen-, 30-Minütigen-
+     * 60-Minütigen-Intervall handelt.
+     *
+     */
     private String type;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)

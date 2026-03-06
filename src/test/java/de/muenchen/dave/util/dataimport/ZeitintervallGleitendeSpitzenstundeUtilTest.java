@@ -3,483 +3,747 @@ package de.muenchen.dave.util.dataimport;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.util.DaveConstants;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ZeitintervallGleitendeSpitzenstundeUtilTest {
+public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
-    private List<Zeitintervall> zeitintervalle;
-
-    private List<Zeitintervall> zeitintervalle12;
-
-    private List<Zeitintervall> zeitintervalle21;
-
-    private UUID zaehlungId;
-
-    @BeforeEach
-    public void beforeEach() {
-        zaehlungId = UUID.randomUUID();
-        zeitintervalle12 = new ArrayList<>();
-        zeitintervalle21 = new ArrayList<>();
-        LocalDateTime startTime = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0));
-        for (int index = 0; index < 96; index++) {
-            zeitintervalle12.add(TestUtils.createZeitintervall(
-                    zaehlungId,
-                    startTime,
-                    1,
-                    1,
-                    2,
-                    null));
-            zeitintervalle21.add(TestUtils.createZeitintervall(
-                    zaehlungId,
-                    startTime,
-                    2,
-                    2,
-                    1,
-                    null));
-            startTime = startTime.plusMinutes(15);
+    @Test
+    public void getGleitendeSpitzenstundenByBewegungsbeziehung_AllTypeZeitintervall() {
+        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
+        List<Zeitintervall> intervals = new ArrayList<>();
+        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
+        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        for (int i = 0; i < 96; i++) {
+            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
+            LocalTime end = start.plusMinutes(15);
+            Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(day, start));
+            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
+            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
+            // Basiszählung: 1 PKW pro Intervall
+            zi.setPkw(1);
+            // Basiszählung: 1 Fahrradfahrer pro Intervall
+            zi.setFahrradfahrer(1);
+            // Basiszählung: 1 Fussgänger pro Intervall
+            zi.setFussgaenger(1);
+            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
+            zi.setVerkehrsbeziehung(verkehrsbeziehung);
+            intervals.add(zi);
         }
-        zeitintervalle = new ArrayList<>();
-        zeitintervalle.addAll(zeitintervalle12);
-        zeitintervalle.addAll(zeitintervalle21);
+
+        // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
+        intervals.get(27).setPkw(20);
+        intervals.get(28).setPkw(25);
+        intervals.get(29).setPkw(30);
+        intervals.get(30).setPkw(25);
+
+        // Definiere Rad-Peak: Indizes 50..53
+        intervals.get(50).setFahrradfahrer(50);
+        intervals.get(51).setFahrradfahrer(60);
+        intervals.get(52).setFahrradfahrer(70);
+        intervals.get(53).setFahrradfahrer(60);
+
+        // Definiere Fuss-Peak: Indizes 80..83
+        intervals.get(80).setFussgaenger(15);
+        intervals.get(81).setFussgaenger(20);
+        intervals.get(82).setFussgaenger(25);
+        intervals.get(83).setFussgaenger(20);
+
+        UUID zaehlungId = UUID.randomUUID();
+
+        Set<TypeZeitintervall> types = Set.of(
+                TypeZeitintervall.SPITZENSTUNDE_KFZ,
+                TypeZeitintervall.SPITZENSTUNDE_RAD,
+                TypeZeitintervall.SPITZENSTUNDE_FUSS);
+
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+                zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
+
+        List<Zeitintervall> expected = new ArrayList<>();
+
+        var zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(12000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(13000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(14000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 45, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 45, 0));
+        zeitintervall.setSortingIndex(22000000);
+        zeitintervall.setPkw(100);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 0, 0));
+        zeitintervall.setSortingIndex(23000000);
+        zeitintervall.setPkw(23);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 0, 0));
+        zeitintervall.setSortingIndex(24000000);
+        zeitintervall.setPkw(23);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 10, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 11, 0, 0));
+        zeitintervall.setSortingIndex(32000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 12, 30, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 13, 30, 0));
+        zeitintervall.setSortingIndex(33000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(240);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 10, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 11, 0, 0));
+        zeitintervall.setSortingIndex(34000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(42000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(43000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(44000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setSortingIndex(52000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setSortingIndex(53000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0, 0));
+        zeitintervall.setSortingIndex(54000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(80);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 45, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 45, 0));
+        zeitintervall.setSortingIndex(60000000);
+        zeitintervall.setPkw(100);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 12, 30, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 13, 30, 0));
+        zeitintervall.setSortingIndex(70000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(240);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0, 0));
+        zeitintervall.setSortingIndex(80000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(80);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        assertThat(result.get(0), is(expected.get(0)));
+        assertThat(result.get(1), is(expected.get(1)));
+        assertThat(result.get(2), is(expected.get(2)));
+        assertThat(result.get(3), is(expected.get(3)));
+        assertThat(result.get(4), is(expected.get(4)));
+        assertThat(result.get(5), is(expected.get(5)));
+        assertThat(result.get(6), is(expected.get(6)));
+        assertThat(result.get(7), is(expected.get(7)));
+        assertThat(result.get(8), is(expected.get(8)));
+        assertThat(result.get(9), is(expected.get(9)));
+        assertThat(result.get(10), is(expected.get(10)));
+        assertThat(result.get(11), is(expected.get(11)));
+        assertThat(result.get(12), is(expected.get(12)));
+        assertThat(result.get(13), is(expected.get(13)));
+        assertThat(result.get(14), is(expected.get(14)));
+        assertThat(result.get(15), is(expected.get(15)));
+        assertThat(result.get(16), is(expected.get(16)));
+        assertThat(result.get(17), is(expected.get(17)));
     }
 
     @Test
-    public void getGleitendeSpitzenstunden() {
-        zeitintervalle12.get(8).setPkw(2);
+    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallKfz() {
+        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
+        List<Zeitintervall> intervals = new ArrayList<>();
+        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
+        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        for (int i = 0; i < 96; i++) {
+            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
+            LocalTime end = start.plusMinutes(15);
+            Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(day, start));
+            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
+            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
+            // Basiszählung: 1 PKW pro Intervall
+            zi.setPkw(1);
+            // Basiszählung: 1 Fahrradfahrer pro Intervall
+            zi.setFahrradfahrer(1);
+            // Basiszählung: 1 Fussgänger pro Intervall
+            zi.setFussgaenger(1);
+            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
+            zi.setVerkehrsbeziehung(verkehrsbeziehung);
+            intervals.add(zi);
+        }
 
-        zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
+        // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
+        intervals.get(27).setPkw(20);
+        intervals.get(28).setPkw(25);
+        intervals.get(29).setPkw(30);
+        intervals.get(30).setPkw(25);
 
-        final List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitintervalle);
+        // Definiere Rad-Peak: Indizes 50..53
+        intervals.get(50).setFahrradfahrer(50);
+        intervals.get(51).setFahrradfahrer(60);
+        intervals.get(52).setFahrradfahrer(70);
+        intervals.get(53).setFahrradfahrer(60);
 
-        assertThat(result.size(), is(36));
+        // Definiere Fuss-Peak: Indizes 80..83
+        intervals.get(80).setFussgaenger(15);
+        intervals.get(81).setFussgaenger(20);
+        intervals.get(82).setFussgaenger(25);
+        intervals.get(83).setFussgaenger(20);
 
-        Zeitintervall expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(12000000);
-        expected.setPkw(8);
-        expected.setLkw(8);
-        expected.setLastzuege(8);
-        expected.setBusse(8);
-        expected.setKraftraeder(8);
-        expected.setFahrradfahrer(8);
-        expected.setFussgaenger(8);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(2);
-        expected.getVerkehrsbeziehung().setNach(1);
+        UUID zaehlungId = UUID.randomUUID();
 
-        assertThat(result.get(0), is(expected));
+        Set<TypeZeitintervall> types = Set.of(
+                TypeZeitintervall.SPITZENSTUNDE_KFZ);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(13000000);
-        expected.setPkw(8);
-        expected.setLkw(8);
-        expected.setLastzuege(8);
-        expected.setBusse(8);
-        expected.setKraftraeder(8);
-        expected.setFahrradfahrer(8);
-        expected.setFussgaenger(8);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(2);
-        expected.getVerkehrsbeziehung().setNach(1);
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+                zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
-        assertThat(result.get(1), is(expected));
+        List<Zeitintervall> expected = new ArrayList<>();
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(14000000);
-        expected.setPkw(8);
-        expected.setLkw(8);
-        expected.setLastzuege(8);
-        expected.setBusse(8);
-        expected.setKraftraeder(8);
-        expected.setFahrradfahrer(8);
-        expected.setFussgaenger(8);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(2);
-        expected.getVerkehrsbeziehung().setNach(1);
+        var zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(12000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(2), is(expected));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 45, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 45, 0));
+        zeitintervall.setSortingIndex(22000000);
+        zeitintervall.setPkw(100);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 15)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(2, 15)));
-        expected.setSortingIndex(12000000);
-        expected.setPkw(5);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 10, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 11, 0, 0));
+        zeitintervall.setSortingIndex(32000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(result.size() / 2), is(expected));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(42000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(13000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setSortingIndex(52000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(result.size() / 2 + 1), is(expected));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 45, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 45, 0));
+        zeitintervall.setSortingIndex(60000000);
+        zeitintervall.setPkw(100);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(14000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
-
-        assertThat(result.get(result.size() / 2 + 2), is(expected));
-
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(22, 45)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
-        expected.setSortingIndex(52000000);
-        expected.setPkw(8);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
-
-        assertThat(result.get(result.size() - 6), is(expected));
-
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(20, 0)));
-        expected.setSortingIndex(53000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
-
-        assertThat(result.get(result.size() - 5), is(expected));
-
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(20, 0)));
-        expected.setSortingIndex(54000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
-
-        assertThat(result.get(result.size() - 4), is(expected));
-
+        assertThat(result.get(0), is(expected.get(0)));
+        assertThat(result.get(1), is(expected.get(1)));
+        assertThat(result.get(2), is(expected.get(2)));
+        assertThat(result.get(3), is(expected.get(3)));
+        assertThat(result.get(4), is(expected.get(4)));
+        assertThat(result.get(5), is(expected.get(5)));
     }
 
     @Test
-    public void getGleitendeSpitzenstundenForVerkehrsbeziehung() {
-        zeitintervalle12.get(8).setPkw(2);
+    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallRad() {
+        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
+        List<Zeitintervall> intervals = new ArrayList<>();
+        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
+        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        for (int i = 0; i < 96; i++) {
+            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
+            LocalTime end = start.plusMinutes(15);
+            Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(day, start));
+            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
+            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
+            // Basiszählung: 1 PKW pro Intervall
+            zi.setPkw(1);
+            // Basiszählung: 1 Fahrradfahrer pro Intervall
+            zi.setFahrradfahrer(1);
+            // Basiszählung: 1 Fussgänger pro Intervall
+            zi.setFussgaenger(1);
+            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
+            zi.setVerkehrsbeziehung(verkehrsbeziehung);
+            intervals.add(zi);
+        }
 
-        zeitintervalle12.get(zeitintervalle12.size() - 2).setPkw(5);
+        // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
+        intervals.get(27).setPkw(20);
+        intervals.get(28).setPkw(25);
+        intervals.get(29).setPkw(30);
+        intervals.get(30).setPkw(25);
 
-        final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
-                .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
+        // Definiere Rad-Peak: Indizes 50..53
+        intervals.get(50).setFahrradfahrer(50);
+        intervals.get(51).setFahrradfahrer(60);
+        intervals.get(52).setFahrradfahrer(70);
+        intervals.get(53).setFahrradfahrer(60);
 
-        List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getGleitendeSpitzenstundenForVerkehrsbeziehung",
-                ZeitintervallGleitendeSpitzenstundeUtil.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
-                ArrayUtils.toArray(verkehrsbeziehung, zeitintervalleGroupedByIntervall),
-                List.class);
+        // Definiere Fuss-Peak: Indizes 80..83
+        intervals.get(80).setFussgaenger(15);
+        intervals.get(81).setFussgaenger(20);
+        intervals.get(82).setFussgaenger(25);
+        intervals.get(83).setFussgaenger(20);
 
-        assertThat(result.size(), is(18));
+        UUID zaehlungId = UUID.randomUUID();
 
-        Zeitintervall expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 15)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(2, 15)));
-        expected.setSortingIndex(12000000);
-        expected.setPkw(5);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        Set<TypeZeitintervall> types = Set.of(
+                TypeZeitintervall.SPITZENSTUNDE_RAD);
 
-        assertThat(result.get(0), is(expected));
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+                zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(13000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        List<Zeitintervall> expected = new ArrayList<>();
 
-        assertThat(result.get(1), is(expected));
+        var zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(13000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(0, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 0)));
-        expected.setSortingIndex(14000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 0, 0));
+        zeitintervall.setSortingIndex(23000000);
+        zeitintervall.setPkw(23);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(2), is(expected));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 12, 30, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 13, 30, 0));
+        zeitintervall.setSortingIndex(33000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(240);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(22, 45)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
-        expected.setSortingIndex(52000000);
-        expected.setPkw(8);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(43000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(12), is(expected));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setSortingIndex(53000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(20, 0)));
-        expected.setSortingIndex(53000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 12, 30, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 13, 30, 0));
+        zeitintervall.setSortingIndex(70000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(240);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.get(13), is(expected));
-
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(20, 0)));
-        expected.setSortingIndex(54000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
-
-        assertThat(result.get(14), is(expected));
-
+        assertThat(result.get(0), is(expected.get(0)));
+        assertThat(result.get(1), is(expected.get(1)));
+        assertThat(result.get(2), is(expected.get(2)));
+        assertThat(result.get(3), is(expected.get(3)));
+        assertThat(result.get(4), is(expected.get(4)));
+        assertThat(result.get(5), is(expected.get(5)));
     }
 
     @Test
-    public void berechneGleitendeSpitzenstunde() {
-        zeitintervalle12.sort((zeitintervall1, zeitintervall2) -> {
-            return zeitintervall1.getStartUhrzeit().compareTo(zeitintervall1.getStartUhrzeit())
-                    + zeitintervall2.getEndeUhrzeit().compareTo(zeitintervall2.getEndeUhrzeit());
-        });
+    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallFuss() {
+        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
+        List<Zeitintervall> intervals = new ArrayList<>();
+        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
+        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        for (int i = 0; i < 96; i++) {
+            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
+            LocalTime end = start.plusMinutes(15);
+            Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(day, start));
+            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
+            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
+            // Basiszählung: 1 PKW pro Intervall
+            zi.setPkw(1);
+            // Basiszählung: 1 Fahrradfahrer pro Intervall
+            zi.setFahrradfahrer(1);
+            // Basiszählung: 1 Fussgänger pro Intervall
+            zi.setFussgaenger(1);
+            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
+            zi.setVerkehrsbeziehung(verkehrsbeziehung);
+            intervals.add(zi);
+        }
 
-        // Change Zeitintervall 02:00 - 02:15 to provoke Spitzenstunde from 01:15 - 02:15
-        zeitintervalle12.get(8).setPkw(2);
+        // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
+        intervals.get(27).setPkw(20);
+        intervals.get(28).setPkw(25);
+        intervals.get(29).setPkw(30);
+        intervals.get(30).setPkw(25);
 
-        // Change Zeitintervall 03:00 - 03:15 to provoke Spitzenstunde from 02:15 - 03:15
-        zeitintervalle12.get(12).setFahrradfahrer(3);
+        // Definiere Rad-Peak: Indizes 50..53
+        intervals.get(50).setFahrradfahrer(50);
+        intervals.get(51).setFahrradfahrer(60);
+        intervals.get(52).setFahrradfahrer(70);
+        intervals.get(53).setFahrradfahrer(60);
 
-        // Change Zeitintervall 04:00 - 04:15 to provoke Spitzenstunde from 03:15 - 04:15
-        zeitintervalle12.get(16).setFussgaenger(4);
+        // Definiere Fuss-Peak: Indizes 80..83
+        intervals.get(80).setFussgaenger(15);
+        intervals.get(81).setFussgaenger(20);
+        intervals.get(82).setFussgaenger(25);
+        intervals.get(83).setFussgaenger(20);
 
-        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
+        UUID zaehlungId = UUID.randomUUID();
 
-        ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss result = TestUtils.privateStaticMethodCall(
-                "berechneGleitendeSpitzenstunde",
-                ZeitintervallGleitendeSpitzenstundeUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12),
-                ZeitintervallGleitendeSpitzenstundeUtil.GleitendeSpstdZeitintervallKfzRadFuss.class);
+        Set<TypeZeitintervall> types = Set.of(
+                TypeZeitintervall.SPITZENSTUNDE_FUSS);
 
-        Zeitintervall expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 15)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(2, 15)));
-        expected.setSortingIndex(60000000);
-        expected.setPkw(5);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+                zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
-        assertThat(result.getGleitendeSpitzenstundeKfz(), is(Optional.of(expected)));
+        List<Zeitintervall> expected = new ArrayList<>();
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(2, 15)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(3, 15)));
-        expected.setSortingIndex(70000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(6);
-        expected.setFussgaenger(4);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        var zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 0, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 1, 0, 0));
+        zeitintervall.setSortingIndex(14000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.getGleitendeSpitzenstundeRad(), is(Optional.of(expected)));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 7, 0, 0));
+        zeitintervall.setSortingIndex(24000000);
+        zeitintervall.setPkw(23);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        expected = new Zeitintervall();
-        expected.setZaehlungId(zaehlungId);
-        expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(3, 15)));
-        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(4, 15)));
-        expected.setSortingIndex(80000000);
-        expected.setPkw(4);
-        expected.setLkw(4);
-        expected.setLastzuege(4);
-        expected.setBusse(4);
-        expected.setKraftraeder(4);
-        expected.setFahrradfahrer(4);
-        expected.setFussgaenger(7);
-        expected.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        expected.setHochrechnung(new Hochrechnung());
-        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
-        expected.getVerkehrsbeziehung().setVon(1);
-        expected.getVerkehrsbeziehung().setNach(2);
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 10, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 11, 0, 0));
+        zeitintervall.setSortingIndex(34000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
 
-        assertThat(result.getGleitendeSpitzenstundeFuss(), is(Optional.of(expected)));
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 15, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 16, 0, 0));
+        zeitintervall.setSortingIndex(44000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(4);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0, 0));
+        zeitintervall.setSortingIndex(54000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(80);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        zeitintervall = new Zeitintervall();
+        zeitintervall.setZaehlungId(zaehlungId);
+        zeitintervall.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0, 0));
+        zeitintervall.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0, 0));
+        zeitintervall.setSortingIndex(80000000);
+        zeitintervall.setPkw(4);
+        zeitintervall.setFahrradfahrer(4);
+        zeitintervall.setFussgaenger(80);
+        zeitintervall.setType(TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        zeitintervall.setHochrechnung(new Hochrechnung());
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.add(zeitintervall);
+
+        assertThat(result.get(0), is(expected.get(0)));
+        assertThat(result.get(1), is(expected.get(1)));
+        assertThat(result.get(2), is(expected.get(2)));
+        assertThat(result.get(3), is(expected.get(3)));
+        assertThat(result.get(4), is(expected.get(4)));
+        assertThat(result.get(5), is(expected.get(5)));
     }
-
 }

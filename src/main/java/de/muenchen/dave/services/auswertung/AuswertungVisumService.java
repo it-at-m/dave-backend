@@ -8,7 +8,6 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -105,7 +104,6 @@ public class AuswertungVisumService {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setVonKnotenarm(verkehrsbeziehungVisum.getVon());
         options.setNachKnotenarm(verkehrsbeziehungVisum.getNach());
-        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         return options;
     }
 

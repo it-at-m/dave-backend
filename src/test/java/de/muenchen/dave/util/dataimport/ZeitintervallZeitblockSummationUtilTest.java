@@ -90,7 +90,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getVerkehrsbeziehung().setVon(2);
         expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(2), is(expected));
+        assertThat(result.get(80), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -113,7 +113,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getVerkehrsbeziehung().setVon(2);
         expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(result.size() / 2 - 2), is(expected));
+        assertThat(result.get(154), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -136,7 +136,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() / 2 + 2), is(expected));
+        assertThat(result.get(2), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -159,7 +159,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getVerkehrsbeziehung().setVon(1);
         expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() - 2), is(expected));
+        assertThat(result.get(76), is(expected));
     }
 
     @Test

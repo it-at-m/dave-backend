@@ -2,9 +2,15 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
+import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.IndexServiceUtils;
@@ -13,6 +19,7 @@ import de.muenchen.dave.util.SuchwortUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -169,5 +176,11 @@ public interface ZaehlungMapper {
         dto.setText(bean.getDatum().format(DATE_TIME_FORMATTER) + StringUtils.SPACE + bean.getProjektName());
     }
 
-    OpenZaehlungDTO bean2OpenZaehlungDto(Zaehlung bean);
+    OpenZaehlungDTO bean2OpenZaehlungDto(final Zaehlung bean);
+
+    List<ExternalVerkehrsbeziehungDTO> mapVerkehrsbeziehungen(final List<Verkehrsbeziehung> verkehrsbeziehungen);
+
+    List<ExternalQuerungsverkehrDTO> mapQuerungsverkehre(final List<Querungsverkehr> querungsverkehre);
+
+    List<ExternalLaengsverkehrDTO> mapLaengsverkehre(final List<Laengsverkehr> laengsverkehre);
 }
