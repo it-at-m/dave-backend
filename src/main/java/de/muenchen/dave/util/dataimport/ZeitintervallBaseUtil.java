@@ -1,5 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
@@ -23,6 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.ObjectUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallBaseUtil {
@@ -165,6 +167,18 @@ public final class ZeitintervallBaseUtil {
             zeitintervall.setEndeUhrzeit(TIME_VALUE_FOUND_END_OF_DAY);
         }
         return zeitintervall;
+    }
+
+    public static boolean areZeitintervallWithSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
+        return isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), zeitintervall2.getVerkehrsbeziehung())
+                && isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), zeitintervall2.getLaengsverkehr())
+                && isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), zeitintervall2.getQuerungsverkehr());
+    }
+
+    public static boolean isSameBewegungsbeziehung(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
+        return ObjectUtils.allNull(bewegungsbeziehung1, bewegungsbeziehung2)
+                 || (ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
+                && bewegungsbeziehung1.equals(bewegungsbeziehung2));
     }
 
     @AllArgsConstructor

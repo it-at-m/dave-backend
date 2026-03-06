@@ -130,7 +130,7 @@ public final class ZeitintervallKIUtil {
         allZeitintervalle.stream()
                 .filter(intervall -> TypeZeitintervall.GESAMT.equals(intervall.getType()))
                 .forEach(intervall -> kiIntervalle.stream()
-                        .filter(prediction -> prediction.getVerkehrsbeziehung().equals(intervall.getVerkehrsbeziehung()))
+                        .filter(prediction -> ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(prediction, intervall))
                         .findFirst()
                         .ifPresent(prediction -> intervall.getHochrechnung().setHochrechnungRad(prediction.getFahrradfahrer())));
     }

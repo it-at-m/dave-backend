@@ -7,6 +7,11 @@ import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.Bewegungsbeziehung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.util.DaveConstants;
@@ -315,6 +320,127 @@ class ZeitintervallBaseUtilTest {
         expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
         expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
         assertThat(result, is(expected));
+    }
+
+    @Test
+    public void isSameBewegungsbeziehung_variousCases() {
+        // beide null -> true
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(null, null), is(true));
+
+        // ein Argument ist null -> false
+        final Laengsverkehr l1 = new Laengsverkehr();
+        l1.setRichtung(Bewegungsrichtung.EIN);
+        l1.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(l1, null), is(false));
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(null, l1), is(false));
+
+        // gleiche Referenz -> true
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(l1, l1), is(true));
+
+        // unterschiedliche Instanzen mit gleichen Werten -> true
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        l2.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(l1, l2), is(true));
+
+        // unterschiedliche konkrete Typen -> false
+        final Querungsverkehr q1 = new Querungsverkehr();
+        q1.setRichtung(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(l1, q1), is(false));
+
+        // unterschiedliche Feldwerte -> false
+        final Laengsverkehr l3 = new Laengsverkehr();
+        l3.setRichtung(Bewegungsrichtung.AUS);
+        l3.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehung(l1, l3), is(false));
+    }
+
+    @Test
+    public void areZeitintervallWithSameBewegungsbeziehung_variousCases() {
+        // gleiche Bewegungsbeziehungen vorbereiten
+        final Verkehrsbeziehung v1 = new Verkehrsbeziehung();
+        v1.setVon(1);
+        v1.setNach(2);
+        v1.setFahrbewegungKreisverkehr(null);
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(1);
+        v2.setNach(2);
+        v2.setFahrbewegungKreisverkehr(null);
+
+        final Laengsverkehr l1 = new Laengsverkehr();
+        l1.setRichtung(Bewegungsrichtung.EIN);
+        l1.setStrassenseite(Himmelsrichtung.N);
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        l2.setStrassenseite(Himmelsrichtung.N);
+
+        final Querungsverkehr q1 = new Querungsverkehr();
+        q1.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr q2 = new Querungsverkehr();
+        q2.setRichtung(Himmelsrichtung.N);
+
+        final Zeitintervall z1 = new Zeitintervall();
+        z1.setVerkehrsbeziehung(v1);
+        z1.setLaengsverkehr(l1);
+        z1.setQuerungsverkehr(q1);
+
+        final Zeitintervall z2 = new Zeitintervall();
+        z2.setVerkehrsbeziehung(v2);
+        z2.setLaengsverkehr(l2);
+        z2.setQuerungsverkehr(q2);
+
+        // alle drei gleich -> true
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+
+        // laengsverkehr unterscheidet sich -> false (alle drei müssen gleich sein)
+        l2.setRichtung(Bewegungsrichtung.AUS);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
+
+        // Szenario: in einem Zeitintervall ist immer nur entweder Laengsverkehr, Querungsverkehr oder Verkehrsbeziehung gesetzt.
+        // Nur Laengsverkehr in beiden gesetzt und gleich -> true
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        z1.setLaengsverkehr(l1);
+        z2.setLaengsverkehr(l2);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Nur Verkehrsbeziehung in beiden gesetzt und gleich -> true
+        z1.setLaengsverkehr(null);
+        z2.setLaengsverkehr(null);
+        z1.setVerkehrsbeziehung(v1);
+        z2.setVerkehrsbeziehung(v2);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Nur Querungsverkehr in beiden gesetzt und gleich -> true
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(q1);
+        z2.setQuerungsverkehr(q2);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Alle drei null in beiden -> true (Nulls werden als gleich betrachtet)
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Unterschiedliche Typen über die beiden Intervalle (z1 hat Laengsverkehr, z2 hat Verkehrsbeziehung) -> false
+        z1.setLaengsverkehr(l1);
+        z1.setVerkehrsbeziehung(null);
+        z2.setLaengsverkehr(null);
+        z2.setVerkehrsbeziehung(v1);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
+
+        // Ein Bewegungsbeziehung gleich, eine andere null vs non-null -> false
+        z1.setLaengsverkehr(l1);
+        z2.setLaengsverkehr(null);
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
     }
 
 }

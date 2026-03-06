@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Embeddable
 @Data
-public class Querungsverkehr {
+public class Querungsverkehr implements Bewegungsbeziehung {
 
     @Column(name = "richtung")
     @Enumerated(EnumType.STRING)

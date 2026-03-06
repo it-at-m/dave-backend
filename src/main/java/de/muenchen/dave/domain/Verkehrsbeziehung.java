@@ -34,7 +34,7 @@ import lombok.Data;
  */
 @Embeddable
 @Data
-public class Verkehrsbeziehung {
+public class Verkehrsbeziehung implements Bewegungsbeziehung {
 
     @Column(name = "von")
     private Integer von;
