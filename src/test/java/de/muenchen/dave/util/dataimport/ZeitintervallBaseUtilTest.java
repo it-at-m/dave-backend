@@ -168,40 +168,6 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void getAllPossibleVerkehrsbeziehungen() {
-        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleVerkehrsbeziehungen(zeitintervalle);
-
-        final Set<Verkehrsbeziehung> expected = new HashSet<>();
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(3);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(1);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(3);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(3);
-        verkehrsbeziehung.setNach(1);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-
-        assertThat(result, is(expected));
-    }
-
-    @Test
     public void getZeitintervalleForBewegungsbeziehung() {
         Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),

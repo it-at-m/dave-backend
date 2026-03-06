@@ -124,16 +124,6 @@ public final class ZeitintervallBaseUtil {
         return summedZeitintervall;
     }
 
-    /**
-     * @param zeitintervalle Die Zeitintervalle zur extraktion der Verkehrsbeziehungen.
-     * @return Die möglichen Verkehrsbeziehungen aller Zeitintervalle.
-     */
-    public static Set<Verkehrsbeziehung> getAllPossibleVerkehrsbeziehungen(List<Zeitintervall> zeitintervalle) {
-        return zeitintervalle.stream()
-                .map(Zeitintervall::getVerkehrsbeziehung)
-                .collect(Collectors.toSet());
-    }
-
     public static Bewegungsbeziehung getBewegungbeziehung(final Zeitintervall zeitinterval) {
         if (Objects.nonNull(zeitinterval.getVerkehrsbeziehung())) {
             return zeitinterval.getVerkehrsbeziehung();
