@@ -101,7 +101,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         this.indexService.erneuereZaehlstelle(zaehlstelleByZaehlungId);
 
         // Rückgabe der ZaehlungsId
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
+        final var backendIdDto = new BackendIdDTO();
         backendIdDto.setId(zaehlungDto.getId());
         return backendIdDto;
     }

@@ -95,7 +95,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     @Transactional
     public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
 
         // Setzen der PKW-Einheiten
         if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
@@ -116,6 +115,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         }
 
         // Rückgabe der ZaehlungsId
+        final var backendIdDto = new BackendIdDTO();
         backendIdDto.setId(zaehlung.getId());
         return backendIdDto;
     }
