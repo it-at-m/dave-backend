@@ -207,7 +207,8 @@ public final class ZeitintervallBaseUtil {
                 || isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(bewegungsbeziehung1, bewegungsbeziehung2);
     }
 
-    public static boolean isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
+    public static boolean isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(final Bewegungsbeziehung bewegungsbeziehung1,
+            final Bewegungsbeziehung bewegungsbeziehung2) {
         return ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
                 && bewegungsbeziehung1.equals(bewegungsbeziehung2);
     }
