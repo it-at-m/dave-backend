@@ -174,13 +174,10 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final Zaehlart zaehlart,
             final ExternalVerkehrsbeziehungDTO externalVerkehrsbeziehung) {
         final var verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
-        if (Zaehlart.QU.equals(zaehlart)) {
+        if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung()) || Zaehlart.QU.equals(zaehlart)) {
             verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
             verkehrsbeziehung.setNach(externalVerkehrsbeziehung.getNach());
-            // TODO: Straßenseite einfügen.
-        } else if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung())) {
-            verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
-            verkehrsbeziehung.setNach(externalVerkehrsbeziehung.getNach());
+            verkehrsbeziehung.setStrassenseite(externalVerkehrsbeziehung.getStrassenseite());
         } else {
             verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getKnotenarm());
             final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(externalVerkehrsbeziehung);
@@ -204,8 +201,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      */
     public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final ExternalQuerungsverkehrDTO externalQuerungsverkehr) {
         final var querungsverkehr = new de.muenchen.dave.domain.Querungsverkehr();
-        // TODO: Setzen des Knotenarms
         querungsverkehr.setRichtung(externalQuerungsverkehr.getRichtung());
+        querungsverkehr.setKnotenarm(externalQuerungsverkehr.getKnotenarm());
         return querungsverkehr;
     }
 
@@ -220,9 +217,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      */
     public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final ExternalLaengsverkehrDTO externalLaengsverkehr) {
         final var laengsverkehr = new de.muenchen.dave.domain.Laengsverkehr();
-        // TODO: Setzen des Knotenarms
         laengsverkehr.setRichtung(externalLaengsverkehr.getRichtung());
         laengsverkehr.setStrassenseite(externalLaengsverkehr.getStrassenseite());
+        laengsverkehr.setKnotenarm(externalLaengsverkehr.getKnotenarm());
         return laengsverkehr;
     }
 }
