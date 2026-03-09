@@ -89,7 +89,7 @@ public class ZeitintervallPersistierungsService {
         /*
          * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
-        // TODO: Anpassen zu Bewegungsbeziehungen in Methode.
+        // TODO: Anpassen zu Bewegungsbeziehungen in Methode. -> DONE
         final var summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
                 .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
