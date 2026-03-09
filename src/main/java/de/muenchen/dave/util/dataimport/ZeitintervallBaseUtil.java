@@ -187,7 +187,8 @@ public final class ZeitintervallBaseUtil {
         return zeitintervall;
     }
 
-    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(final Zeitintervall zeitintervall1,
+    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(
+            final Zeitintervall zeitintervall1,
             final Bewegungsbeziehung bewegungsbeziehung) {
         return Objects.nonNull(bewegungsbeziehung)
                 && (isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), bewegungsbeziehung)

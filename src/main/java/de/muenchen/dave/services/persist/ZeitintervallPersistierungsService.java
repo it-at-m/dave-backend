@@ -97,7 +97,7 @@ public class ZeitintervallPersistierungsService {
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
          * wenn der boolean-Parameter true ist
          */
-        // TODO: Anpassen zu Bewegungsbeziehungen in Methode.
+        // TODO: Anpassen zu Bewegungsbeziehungen in Methode. -> DONE
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
