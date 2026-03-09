@@ -205,7 +205,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 .ifPresent(bewegungsbeziehung -> zeitintervall.setBewegungsbeziehungId(UUID.fromString(bewegungsbeziehung.getId())));
 
         // Setzen der Hochrechnug in Zeitintervall
-        // TODO: Hochrechnungfaktor an BearbeiteLaengsverkehrDTO und BearbeiteQuerungsverkehrDTO sowie an alle anderen Betroffen Model- und Entitätsklassen anhängen.
         final var hochrechnung = this.createHochrechnung(
                 zeitintervall,
                 bearbeiteBewegungsbeziehung.getHochrechnungsfaktor(),
