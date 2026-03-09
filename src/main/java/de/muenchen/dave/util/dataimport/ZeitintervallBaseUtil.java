@@ -191,9 +191,9 @@ public final class ZeitintervallBaseUtil {
             final Zeitintervall zeitintervall1,
             final Bewegungsbeziehung bewegungsbeziehung) {
         return Objects.nonNull(bewegungsbeziehung)
-                && (isSameBewegungsbeziehung(zeitintervall1.getVerkehrsbeziehung(), bewegungsbeziehung)
-                        || isSameBewegungsbeziehung(zeitintervall1.getLaengsverkehr(), bewegungsbeziehung)
-                        || isSameBewegungsbeziehung(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
+                && (isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(zeitintervall1.getVerkehrsbeziehung(), bewegungsbeziehung)
+                        || isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(zeitintervall1.getLaengsverkehr(), bewegungsbeziehung)
+                        || isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
     }
 
     public static boolean areZeitintervallWithSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
@@ -204,10 +204,10 @@ public final class ZeitintervallBaseUtil {
 
     public static boolean isSameBewegungsbeziehungOrBothNull(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
         return ObjectUtils.allNull(bewegungsbeziehung1, bewegungsbeziehung2)
-                || isSameBewegungsbeziehung(bewegungsbeziehung1, bewegungsbeziehung2);
+                || isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(bewegungsbeziehung1, bewegungsbeziehung2);
     }
 
-    public static boolean isSameBewegungsbeziehung(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
+    public static boolean isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(final Bewegungsbeziehung bewegungsbeziehung1, final Bewegungsbeziehung bewegungsbeziehung2) {
         return ObjectUtils.allNotNull(bewegungsbeziehung1, bewegungsbeziehung2)
                 && bewegungsbeziehung1.equals(bewegungsbeziehung2);
     }

@@ -276,7 +276,7 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void isSameBewegungsbeziehung_OrBothNull_variousCases() {
+    public void isSameBewegungsbeziehungAndBothBewegungsbeziehung_AreNotNull_OrBothNull_variousCases() {
         // beide null -> true
         assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(null, null), is(true));
 
