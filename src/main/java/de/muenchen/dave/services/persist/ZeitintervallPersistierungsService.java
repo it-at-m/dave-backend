@@ -152,12 +152,12 @@ public class ZeitintervallPersistierungsService {
 
     @Transactional
     public void deleteZeitintervalleByIdOfBewegungsbeziehung(final List<String> bewegungsbeziehungsIds) {
-        final var uuidsOfVerkehrsbeziehungen = CollectionUtils
+        final var uuidsOfBewegungsbeziehungen = CollectionUtils
                 .emptyIfNull(bewegungsbeziehungsIds)
                 .stream()
                 .map(UUID::fromString)
                 .toList();
-        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfVerkehrsbeziehungen);
+        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfBewegungsbeziehungen);
     }
 
     @Transactional
