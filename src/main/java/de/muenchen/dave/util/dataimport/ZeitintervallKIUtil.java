@@ -33,19 +33,19 @@ public final class ZeitintervallKIUtil {
      *
      * @param predictionResults Liste von KIPredictionResults, wobei für jede Bewegungsbeziehung ein
      *            KIPredictionResult enthalten ist.
-     * @param firstZeitintervalleOfBewegungsbeziehungen List mit je einem importierten Zeitintervall pro
+     * @param firstZeitintervallOfBewegungsbeziehungen List mit je einem importierten Zeitintervall pro
      *            Bewegungsbeziehung
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
     public static List<Zeitintervall> createKIZeitintervalleForTagessummeFromKIPredictionResults(
             final List<KIPredictionResult> predictionResults,
-            final List<Zeitintervall> firstZeitintervalleOfBewegungsbeziehungen) {
-        if (predictionResults.size() != firstZeitintervalleOfBewegungsbeziehungen.size())
+            final List<Zeitintervall> firstZeitintervallOfBewegungsbeziehungen) {
+        if (predictionResults.size() != firstZeitintervallOfBewegungsbeziehungen.size())
             throw new IllegalArgumentException(LIST_LENGTH_MISMATCH);
 
         return Streams.zip(
                 predictionResults.stream(),
-                firstZeitintervalleOfBewegungsbeziehungen.stream(),
+                firstZeitintervallOfBewegungsbeziehungen.stream(),
                 ZeitintervallKIUtil::createKIZeitintervallFromKIPredictionResult).collect(Collectors.toList());
     }
 
