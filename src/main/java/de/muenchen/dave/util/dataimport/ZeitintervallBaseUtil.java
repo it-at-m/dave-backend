@@ -196,7 +196,7 @@ public final class ZeitintervallBaseUtil {
                         || isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(zeitintervall1.getQuerungsverkehr(), bewegungsbeziehung));
     }
 
-    public static boolean areZeitintervallWithSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
+    public static boolean haveBothZeitintervallSameBewegungsbeziehung(final Zeitintervall zeitintervall1, final Zeitintervall zeitintervall2) {
         return isSameBewegungsbeziehungOrBothNull(zeitintervall1.getVerkehrsbeziehung(), zeitintervall2.getVerkehrsbeziehung())
                 && isSameBewegungsbeziehungOrBothNull(zeitintervall1.getLaengsverkehr(), zeitintervall2.getLaengsverkehr())
                 && isSameBewegungsbeziehungOrBothNull(zeitintervall1.getQuerungsverkehr(), zeitintervall2.getQuerungsverkehr());

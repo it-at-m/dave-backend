@@ -309,7 +309,7 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void areZeitintervallWithSameBewegungsbeziehung_variousCases() {
+    public void haveBothZeitintervallSameBewegungsbeziehung_variousCases() {
         // gleiche Bewegungsbeziehungen vorbereiten
         final Verkehrsbeziehung v1 = new Verkehrsbeziehung();
         v1.setVon(1);
@@ -343,11 +343,11 @@ class ZeitintervallBaseUtilTest {
         z2.setQuerungsverkehr(q2);
 
         // alle drei gleich -> true
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
 
         // laengsverkehr unterscheidet sich -> false (alle drei müssen gleich sein)
         l2.setRichtung(Bewegungsrichtung.AUS);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
 
         // Szenario: in einem Zeitintervall ist immer nur entweder Laengsverkehr, Querungsverkehr oder Verkehrsbeziehung gesetzt.
         // Nur Laengsverkehr in beiden gesetzt und gleich -> true
@@ -358,33 +358,33 @@ class ZeitintervallBaseUtilTest {
         l2.setRichtung(Bewegungsrichtung.EIN);
         z1.setLaengsverkehr(l1);
         z2.setLaengsverkehr(l2);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
 
         // Nur Verkehrsbeziehung in beiden gesetzt und gleich -> true
         z1.setLaengsverkehr(null);
         z2.setLaengsverkehr(null);
         z1.setVerkehrsbeziehung(v1);
         z2.setVerkehrsbeziehung(v2);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
 
         // Nur Querungsverkehr in beiden gesetzt und gleich -> true
         z1.setVerkehrsbeziehung(null);
         z2.setVerkehrsbeziehung(null);
         z1.setQuerungsverkehr(q1);
         z2.setQuerungsverkehr(q2);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
 
         // Alle drei null in beiden -> true (Nulls werden als gleich betrachtet)
         z1.setQuerungsverkehr(null);
         z2.setQuerungsverkehr(null);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(true));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
 
         // Unterschiedliche Typen über die beiden Intervalle (z1 hat Laengsverkehr, z2 hat Verkehrsbeziehung) -> false
         z1.setLaengsverkehr(l1);
         z1.setVerkehrsbeziehung(null);
         z2.setLaengsverkehr(null);
         z2.setVerkehrsbeziehung(v1);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
 
         // Ein Bewegungsbeziehung gleich, eine andere null vs non-null -> false
         z1.setLaengsverkehr(l1);
@@ -393,7 +393,7 @@ class ZeitintervallBaseUtilTest {
         z2.setVerkehrsbeziehung(null);
         z1.setQuerungsverkehr(null);
         z2.setQuerungsverkehr(null);
-        assertThat(ZeitintervallBaseUtil.areZeitintervallWithSameBewegungsbeziehung(z1, z2), is(false));
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
     }
 
     @Test
