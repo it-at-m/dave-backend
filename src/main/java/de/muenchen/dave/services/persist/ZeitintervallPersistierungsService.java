@@ -45,8 +45,7 @@ public class ZeitintervallPersistierungsService {
     }
 
     /**
-     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank eine Datenaufbreitung
-     * durch. D.h.:
+     * Die Methode führt vor der Persistierung der Zeitintervalle eine Datenaufbereitung durch. D.h.:
      * <p>
      * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft, ob der letzte
      * Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59
@@ -55,12 +54,7 @@ public class ZeitintervallPersistierungsService {
      * Datenextraktion versehen.
      * - Die im Parameter übergebenen Zeitintervalle werden mit dem Merkmal
      * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über alle möglichen
-     * Verkehrsbeziehungspermutationen summiert.
-     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle werden die gleitenden Spitzenstunden ermittelt.
-     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle werden die Summen für die einzelnen
+     * - Für die Zeitintervalle einer Bewegungsbeziehung werden die Summen für die einzelnen
      * {@link Zeitblock}e gebildet.
      *
      * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
