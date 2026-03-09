@@ -47,7 +47,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      *
      * @param zaehlungDto enthält die Id und die neuen Metadaten
      * @return Id der aktualiserten Zaehlung
-     * @throws BrokenInfrastructureException Beim erneuern der Zaehlstelle im Index
+     * @throws BrokenInfrastructureException Beim Erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      */
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
