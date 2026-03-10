@@ -11,11 +11,11 @@ import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -709,8 +709,8 @@ class ZaehlungPersistierungsServiceTest {
         externalZaehlungDTO.setQuerungsverkehr(null);
         externalZaehlungDTO.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> result =
-                externalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(externalZaehlungDTO);
+        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> result = externalZaehlungPersistierungsService
+                .getAllBewegungsbeziehungenFromZaehlung(externalZaehlungDTO);
         List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
@@ -736,8 +736,8 @@ class ZaehlungPersistierungsServiceTest {
         bearbeiteZaehlungDTO.setQuerungsverkehr(null);
         bearbeiteZaehlungDTO.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> result =
-                internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(bearbeiteZaehlungDTO);
+        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> result = internalZaehlungPersistierungsService
+                .getAllBewegungsbeziehungenFromZaehlung(bearbeiteZaehlungDTO);
         List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
@@ -763,8 +763,8 @@ class ZaehlungPersistierungsServiceTest {
         zaehlung.setQuerungsverkehr(null);
         zaehlung.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> result =
-                internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(zaehlung);
+        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> result = internalZaehlungPersistierungsService
+                .getAllBewegungsbeziehungenFromZaehlung(zaehlung);
         List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
@@ -786,4 +786,3 @@ class ZaehlungPersistierungsServiceTest {
         assertThat(result, is(expected));
     }
 }
-
