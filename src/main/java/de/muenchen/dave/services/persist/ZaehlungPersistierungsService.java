@@ -26,11 +26,13 @@ import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -216,35 +218,26 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     public List<ExternalBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final ExternalZaehlungDTO zaehlung) {
-        final var bewegungsbeziehungen = new LinkedList<ExternalBewegungsbeziehungDTO>();
-        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
-        bewegungsbeziehungen.addAll(laengsverkehr);
-        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
-        bewegungsbeziehungen.addAll(querungsverkehr);
-        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
-        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
-        return bewegungsbeziehungen;
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
-        final var bewegungsbeziehungen = new LinkedList<BearbeiteBewegungsbeziehungDTO>();
-        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
-        bewegungsbeziehungen.addAll(laengsverkehr);
-        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
-        bewegungsbeziehungen.addAll(querungsverkehr);
-        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
-        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
-        return bewegungsbeziehungen;
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
-        final var bewegungsbeziehungen = new LinkedList<Bewegungsbeziehung>();
-        final var laengsverkehr = CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr());
-        bewegungsbeziehungen.addAll(laengsverkehr);
-        final var querungsverkehr = CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr());
-        bewegungsbeziehungen.addAll(querungsverkehr);
-        final var verkehrsbeziehungen = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen());
-        bewegungsbeziehungen.addAll(verkehrsbeziehungen);
-        return bewegungsbeziehungen;
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }
