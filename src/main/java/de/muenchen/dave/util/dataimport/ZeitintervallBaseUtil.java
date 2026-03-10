@@ -165,14 +165,14 @@ public final class ZeitintervallBaseUtil {
         return isZeitintervallWithinTimeParameters(zeitintervall, zeitblock.getStart(), zeitblock.getEnd());
     }
 
-    private static boolean isZeitintervallWithinTimeParameters(final Zeitintervall zeitintervall,
+    protected static boolean isZeitintervallWithinTimeParameters(final Zeitintervall zeitintervall,
             final LocalDateTime startTime,
             final LocalDateTime endTime) {
         return (zeitintervall.getStartUhrzeit().equals(startTime) || zeitintervall.getStartUhrzeit().isAfter(startTime))
                 && isZeitintervallBeforeTimeParameters(zeitintervall, endTime);
     }
 
-    private static boolean isZeitintervallBeforeTimeParameters(final Zeitintervall zeitintervall,
+    protected static boolean isZeitintervallBeforeTimeParameters(final Zeitintervall zeitintervall,
             final LocalDateTime endTime) {
         return (zeitintervall.getEndeUhrzeit().equals(endTime) || zeitintervall.getEndeUhrzeit().isBefore(endTime))
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));

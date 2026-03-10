@@ -639,6 +639,92 @@ class ZeitintervallBaseUtilTest {
 
         // Gesucht ist null -> false (redundant assert)
         assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zQ, null), is(false));
+
+    }
+
+    @Test
+    public void isZeitintervallBeforeTimeParameters_variousCases() {
+        // zeitintervall endet genau zur Endzeit -> true (Start vor Endzeit)
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        Boolean result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // zeitintervall endet vor Endzeit -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // start ist gleich Endzeit -> false (Start darf nicht gleich oder nach Endzeit sein)
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // ende nach Endzeit -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void isZeitintervallWithinTimeParameters_variousCases() {
+        // Start exakt am StartTime und Ende vor EndTime -> true
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(7, 0)));
+        Boolean result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // Start nach StartTime und Ende genau EndTime -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 30)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // Start vor StartTime -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 30)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // Ende nach EndTime -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 45)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // Edge-Case: Start == StartTime == EndTime -> false (start equals endTime makes it invalid)
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void isZeitintervallWithinZeitblock_additionalEdgeCases() {
+        // Zeitblock mit Endzeit == LocalTime.MAX (ZB_19_24) und Zeitintervall, das bis 23:59 geht -> true
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
+        boolean result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_19_24);
+        assertThat(result, is(true));
+
+        // Zeitblock ZB_00_24 (ganzer Tag) und Zeitintervall exakt ganzer Tag -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MIDNIGHT));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_00_24);
+        assertThat(result, is(true));
+
+        // Zeitintervall startet genau an Endzeit des Blocks -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_06_10);
+        assertThat(result, is(false));
     }
 
 }
+
