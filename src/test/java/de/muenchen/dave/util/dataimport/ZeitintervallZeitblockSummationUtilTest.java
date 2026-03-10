@@ -170,12 +170,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
         verkehrsbeziehung.setVon(2);
         verkehrsbeziehung.setNach(1);
 
-        List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getSummenForVerkehrsbeziehung",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class, Map.class),
-                ArrayUtils.toArray(verkehrsbeziehung, zeitintervalleGroupedByIntervall),
-                List.class);
+        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
         // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
         assertThat(result.size(), is(Zeitblock.values().length - 2));
