@@ -8,8 +8,16 @@ import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -692,4 +700,90 @@ class ZaehlungPersistierungsServiceTest {
                 Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
     }
+
+    @Test
+    public void getAllBewegungsbeziehungenFromExternalZaehlung() {
+        // Fall: Alle Listen sind null -> Ergebnis ist leer
+        final ExternalZaehlungDTO externalZaehlungDTO = new ExternalZaehlungDTO();
+        externalZaehlungDTO.setLaengsverkehr(null);
+        externalZaehlungDTO.setQuerungsverkehr(null);
+        externalZaehlungDTO.setVerkehrsbeziehungen(null);
+
+        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> result =
+                externalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(externalZaehlungDTO);
+        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> expected = new ArrayList<>();
+        assertThat(result, is(expected));
+
+        // Fall: Gemischte Listen, eine Liste enthält ein null-Element -> nulls werden gefiltert
+        final ExternalLaengsverkehrDTO l1 = new ExternalLaengsverkehrDTO();
+        l1.setId("v1");
+        final ExternalQuerungsverkehrDTO q2 = new ExternalQuerungsverkehrDTO();
+        q2.setId("v2");
+        externalZaehlungDTO.setLaengsverkehr(Arrays.asList(l1, null));
+        externalZaehlungDTO.setQuerungsverkehr(Collections.singletonList(q2));
+        externalZaehlungDTO.setVerkehrsbeziehungen(Collections.emptyList());
+
+        result = externalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(externalZaehlungDTO);
+        expected = Arrays.asList(l1, q2);
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    public void getAllBewegungsbeziehungenFromBearbeiteZaehlung() {
+        // Fall: Alle Listen sind null -> Ergebnis ist leer
+        final BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
+        bearbeiteZaehlungDTO.setLaengsverkehr(null);
+        bearbeiteZaehlungDTO.setQuerungsverkehr(null);
+        bearbeiteZaehlungDTO.setVerkehrsbeziehungen(null);
+
+        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> result =
+                internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(bearbeiteZaehlungDTO);
+        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> expected = new ArrayList<>();
+        assertThat(result, is(expected));
+
+        // Fall: Gemischte Listen mit unterschiedlichen Elementen und null -> nur nicht-null Elemente zurückgeben
+        final BearbeiteLaengsverkehrDTO l1 = new BearbeiteLaengsverkehrDTO();
+        l1.setId("bv1");
+        final BearbeiteQuerungsverkehrDTO q2 = new BearbeiteQuerungsverkehrDTO();
+        q2.setId("bv2");
+        bearbeiteZaehlungDTO.setLaengsverkehr(Arrays.asList(l1, null));
+        bearbeiteZaehlungDTO.setQuerungsverkehr(Collections.singletonList(q2));
+        bearbeiteZaehlungDTO.setVerkehrsbeziehungen(Collections.emptyList());
+
+        result = internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(bearbeiteZaehlungDTO);
+        expected = Arrays.asList(l1, q2);
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    public void getAllBewegungsbeziehungenFromZaehlung() {
+        // Fall: Alle Listen sind null -> Ergebnis ist leer
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setLaengsverkehr(null);
+        zaehlung.setQuerungsverkehr(null);
+        zaehlung.setVerkehrsbeziehungen(null);
+
+        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> result =
+                internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(zaehlung);
+        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> expected = new ArrayList<>();
+        assertThat(result, is(expected));
+
+        // Fall: Gemischte Listen mit konkreten Bewegungsbeziehungen (Laengsverkehr, Querungsverkehr, Verkehrsbeziehung)
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setKnotenarm(1);
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setKnotenarm(2);
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        vb.setVon(3);
+        vb.setNach(4);
+
+        zaehlung.setLaengsverkehr(Arrays.asList(l, null));
+        zaehlung.setQuerungsverkehr(Collections.singletonList(q));
+        zaehlung.setVerkehrsbeziehungen(Collections.singletonList(vb));
+
+        result = internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(zaehlung);
+        expected = Arrays.asList(l, q, vb);
+        assertThat(result, is(expected));
+    }
 }
+
