@@ -62,6 +62,7 @@ class ZaehlungPersistierungsServiceTest {
     public void setAdditionalDataToZeitintervallInternal() {
         final UUID uuidZaehlung = UUID.randomUUID();
         final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.N.name());
         zaehlung.setId(uuidZaehlung.toString());
         final List<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> verkehrsbeziehungen = new ArrayList<>();
         final UUID uuidVerkehrsbeziehung1 = UUID.randomUUID();
@@ -145,6 +146,7 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getFromBearbeiteVerkehrsbeziehungDto() {
         final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.N.name());
         final List<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> verkehrsbeziehungen = new ArrayList<>();
         de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
         verkehrsbeziehung.setIsKreuzung(true);
@@ -329,6 +331,7 @@ class ZaehlungPersistierungsServiceTest {
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setId(uuidZaehlung.toString());
         zaehlung.setPkwEinheit(new de.muenchen.dave.domain.elasticsearch.PkwEinheit());
+        zaehlung.setZaehlart(Zaehlart.N.name());
         final List<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> verkehrsbeziehungen = new ArrayList<>();
         final UUID uuidVerkehrsbeziehung1 = UUID.randomUUID();
         de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
