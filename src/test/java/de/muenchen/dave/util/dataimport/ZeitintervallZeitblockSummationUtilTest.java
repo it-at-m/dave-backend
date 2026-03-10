@@ -234,12 +234,8 @@ public class ZeitintervallZeitblockSummationUtilTest {
         final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(2);
-        Optional<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12),
-                Optional.class);
+
+        Optional<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -264,12 +260,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, verkehrsbeziehung, zeitintervalle12),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_06_10, verkehrsbeziehung, zeitintervalle12);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -294,12 +285,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, verkehrsbeziehung, zeitintervalle12),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_0500_0530, verkehrsbeziehung, zeitintervalle12);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -324,12 +310,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, verkehrsbeziehung, zeitintervalle12.subList(0, 7)),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_01_02, verkehrsbeziehung, zeitintervalle12.subList(0, 7));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -354,12 +335,7 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Verkehrsbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, verkehrsbeziehung, zeitintervalle12.subList(0, 16)),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_10_15, verkehrsbeziehung, zeitintervalle12.subList(0, 16));
 
         assertThat(result.isPresent(), is(false));
 

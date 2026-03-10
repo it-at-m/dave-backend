@@ -84,7 +84,7 @@ public final class ZeitintervallZeitblockSummationUtil {
      *            {@link Verkehrsbeziehung}.
      * @return Die Summe für den {@link Zeitblock} als {@link Zeitintervall}.
      */
-    private static Optional<Zeitintervall> getSumme(
+    protected static Optional<Zeitintervall> getSumme(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final Bewegungsbeziehung bewegungsbeziehung,
