@@ -726,5 +726,63 @@ class ZeitintervallBaseUtilTest {
         assertThat(result, is(false));
     }
 
+    @Test
+    public void getBewegungbeziehung_variousCases() {
+        // Falls Verkehrsbeziehung gesetzt ist, wird diese zurückgegeben
+        final Zeitintervall zV = new Zeitintervall();
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(1);
+        v.setNach(2);
+        zV.setVerkehrsbeziehung(v);
+        Bewegungsbeziehung result = ZeitintervallBaseUtil.getBewegungbeziehung(zV);
+        assertThat(result, is(v));
+
+        // Falls nur Laengsverkehr gesetzt ist, wird Laengsverkehr zurückgegeben
+        final Zeitintervall zL = new Zeitintervall();
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.EIN);
+        l.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.N);
+        zL.setLaengsverkehr(l);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zL);
+        assertThat(result, is(l));
+
+        // Falls nur Querungsverkehr gesetzt ist, wird Querungsverkehr zurückgegeben
+        final Zeitintervall zQ = new Zeitintervall();
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.N);
+        zQ.setQuerungsverkehr(q);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zQ);
+        assertThat(result, is(q));
+
+        // Falls mehrere Bewegungsbeziehungen gesetzt sind, hat die Reihenfolge Vorrang: Verkehrsbeziehung > Laengsverkehr > Querungsverkehr
+        final Zeitintervall zMulti = new Zeitintervall();
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(3);
+        v2.setNach(4);
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.AUS);
+        l2.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.O);
+        final Querungsverkehr q2 = new Querungsverkehr();
+        q2.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.S);
+        zMulti.setVerkehrsbeziehung(v2);
+        zMulti.setLaengsverkehr(l2);
+        zMulti.setQuerungsverkehr(q2);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zMulti);
+        assertThat(result, is(v2));
+
+        // Wenn Verkehrsbeziehung null ist, aber Laengsverkehr und Querungsverkehr gesetzt sind, wird Laengsverkehr bevorzugt
+        final Zeitintervall zMulti2 = new Zeitintervall();
+        zMulti2.setVerkehrsbeziehung(null);
+        zMulti2.setLaengsverkehr(l2);
+        zMulti2.setQuerungsverkehr(q2);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zMulti2);
+        assertThat(result, is(l2));
+
+        // Wenn alle null sind, wird null zurückgegeben
+        final Zeitintervall zNone = new Zeitintervall();
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zNone);
+        assertThat(result, is((Bewegungsbeziehung) null));
+    }
+
 }
 
