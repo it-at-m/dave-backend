@@ -676,31 +676,36 @@ class ZeitintervallBaseUtilTest {
         Zeitintervall zi = new Zeitintervall();
         zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
         zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(7, 0)));
-        Boolean result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        Boolean result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         assertThat(result, is(true));
 
         // Start nach StartTime und Ende genau EndTime -> true
         zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 30)));
         zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
-        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         assertThat(result, is(true));
 
         // Start vor StartTime -> false
         zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 30)));
         zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 30)));
-        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         assertThat(result, is(false));
 
         // Ende nach EndTime -> false
         zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 45)));
         zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
-        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         assertThat(result, is(false));
 
         // Edge-Case: Start == StartTime == EndTime -> false (start equals endTime makes it invalid)
         zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
-        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)), LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
         assertThat(result, is(false));
     }
 
@@ -784,5 +789,66 @@ class ZeitintervallBaseUtilTest {
         assertThat(result, is((Bewegungsbeziehung) null));
     }
 
-}
+    @Test
+    public void createZeitintervallWithoutCountingValues_basicCase() {
+        // Erzeugung eines Zeitintervalls ohne Bewegungsbeziehungen
+        final UUID zaehlungId = UUID.randomUUID();
+        final LocalDateTime start = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 0));
+        final LocalDateTime ende = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15));
+        final Zeitintervall result = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(zaehlungId, start, ende, TypeZeitintervall.STUNDE_VIERTEL);
 
+        final Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(start);
+        expected.setEndeUhrzeit(ende);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.setType(TypeZeitintervall.STUNDE_VIERTEL);
+
+        assertThat(result, is(expected));
+
+        // Hochrechnung muss initialisiert sein (nicht null)
+        assertThat(result.getHochrechnung() != null, is(true));
+    }
+
+    @Test
+    public void createZeitintervallWithoutCountingValues_withBewegungsbeziehungen() {
+        // Erzeugung eines Zeitintervalls mit Verkehrsbeziehung, Laengsverkehr und Querungsverkehr
+        final UUID zaehlungId = UUID.randomUUID();
+        final LocalDateTime start = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(12, 0));
+        final LocalDateTime ende = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(12, 30));
+
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(10);
+        v.setNach(11);
+
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setKnotenarm(5);
+        l.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.EIN);
+        l.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.O);
+
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setKnotenarm(7);
+        q.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.S);
+
+        final Zeitintervall result = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
+                zaehlungId, start, ende, TypeZeitintervall.BLOCK, v, l, q);
+
+        final Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(start);
+        expected.setEndeUhrzeit(ende);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.setType(TypeZeitintervall.BLOCK);
+        expected.setVerkehrsbeziehung(v);
+        expected.setLaengsverkehr(l);
+        expected.setQuerungsverkehr(q);
+
+        assertThat(result, is(expected));
+
+        // Prüfe, dass die eingebauten Beziehungen genau referenziert sind (==) bzw. gleich
+        assertThat(result.getVerkehrsbeziehung(), is(v));
+        assertThat(result.getLaengsverkehr(), is(l));
+        assertThat(result.getQuerungsverkehr(), is(q));
+    }
+
+}
