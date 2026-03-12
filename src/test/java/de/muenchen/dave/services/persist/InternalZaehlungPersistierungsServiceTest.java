@@ -5,24 +5,21 @@ import static org.mockito.Mockito.doReturn;
 
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
-import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
+import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,7 +63,8 @@ class InternalZaehlungPersistierungsServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = Mockito.spy(new InternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, pkwEinheitRepository, zeitintervallMapper, pkwEinheitMapper));
+        service = Mockito.spy(new InternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, pkwEinheitRepository,
+                zeitintervallMapper, pkwEinheitMapper));
     }
 
     @Test
