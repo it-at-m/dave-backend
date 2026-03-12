@@ -200,8 +200,9 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
-        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
-                || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
+        return  ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung())
+                && (ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
+                || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()));
     }
 
     /**
