@@ -12,9 +12,10 @@ import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
-import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -312,6 +313,74 @@ class ExternalZaehlungPersistierungsServiceTest {
         assertEquals(external.getKnotenarm(), result.getVon());
         // Keine Fahrbewegung gesetzt -> null
         assertNull(result.getFahrbewegungKreisverkehr());
+    }
+
+    @Test
+    void testCreateLaengsverkehrForZeitintervall_AllFields() {
+        // Arrange: Alle Felder gesetzt
+        final var external = new ExternalLaengsverkehrDTO();
+        external.setKnotenarm(3);
+        external.setRichtung(Bewegungsrichtung.EIN);
+        external.setStrassenseite(Himmelsrichtung.NO);
+
+        // Act
+        final var result = service.createLaengsverkehrForZeitintervall(external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getKnotenarm(), result.getKnotenarm());
+        assertEquals(external.getRichtung(), result.getRichtung());
+        assertEquals(external.getStrassenseite(), result.getStrassenseite());
+    }
+
+    @Test
+    void testCreateLaengsverkehrForZeitintervall_NullFields() {
+        // Arrange: Alle Felder null
+        final var external = new ExternalLaengsverkehrDTO();
+        external.setKnotenarm(null);
+        external.setRichtung(null);
+        external.setStrassenseite(null);
+
+        // Act
+        final var result = service.createLaengsverkehrForZeitintervall(external);
+
+        // Assert
+        assertNotNull(result);
+        assertNull(result.getKnotenarm());
+        assertNull(result.getRichtung());
+        assertNull(result.getStrassenseite());
+    }
+
+    @Test
+    void testCreateQuerungsverkehrForZeitintervall_AllFields() {
+        // Arrange: Alle Felder gesetzt
+        final var external = new ExternalQuerungsverkehrDTO();
+        external.setKnotenarm(8);
+        external.setRichtung(Himmelsrichtung.S);
+
+        // Act
+        final var result = service.createQuerungsverkehrForZeitintervall(external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getKnotenarm(), result.getKnotenarm());
+        assertEquals(external.getRichtung(), result.getRichtung());
+    }
+
+    @Test
+    void testCreateQuerungsverkehrForZeitintervall_NullFields() {
+        // Arrange: Alle Felder null
+        final var external = new ExternalQuerungsverkehrDTO();
+        external.setKnotenarm(null);
+        external.setRichtung(null);
+
+        // Act
+        final var result = service.createQuerungsverkehrForZeitintervall(external);
+
+        // Assert
+        assertNotNull(result);
+        assertNull(result.getKnotenarm());
+        assertNull(result.getRichtung());
     }
 
 }
