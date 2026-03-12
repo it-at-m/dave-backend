@@ -1,6 +1,9 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
@@ -178,9 +181,9 @@ public interface ZaehlungMapper {
 
     OpenZaehlungDTO bean2OpenZaehlungDto(final Zaehlung bean);
 
-    List<ExternalVerkehrsbeziehungDTO> mapVerkehrsbeziehungen(final List<Verkehrsbeziehung> verkehrsbeziehungen);
+    List<OptionsVerkehrsbeziehungDTO> mapVerkehrsbeziehungen(final List<Verkehrsbeziehung> verkehrsbeziehungen);
 
-    List<ExternalQuerungsverkehrDTO> mapQuerungsverkehre(final List<Querungsverkehr> querungsverkehre);
+    List<OptionsQuerungsverkehrDTO> mapQuerungsverkehre(final List<Querungsverkehr> querungsverkehre);
 
-    List<ExternalLaengsverkehrDTO> mapLaengsverkehre(final List<Laengsverkehr> laengsverkehre);
+    List<OptionsLaengsverkehrDTO> mapLaengsverkehre(final List<Laengsverkehr> laengsverkehre);
 }

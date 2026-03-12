@@ -15,6 +15,9 @@ import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
@@ -58,7 +61,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.of(2022, 1, 1, 0, 0);
         final var ende = LocalDateTime.of(2022, 1, 1, 23, 59);
 
-        final var chosen = new ExternalLaengsverkehrDTO();
+        final var chosen = new OptionsLaengsverkehrDTO();
         chosen.setKnotenarm(1);
         chosen.setRichtung(Bewegungsrichtung.EIN);
         chosen.setStrassenseite(Himmelsrichtung.N);
@@ -136,7 +139,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusDays(1);
         final var ende = LocalDateTime.now();
 
-        final var chosen = new ExternalQuerungsverkehrDTO();
+        final var chosen = new OptionsQuerungsverkehrDTO();
         chosen.setKnotenarm(2);
         chosen.setRichtung(Himmelsrichtung.O);
 
@@ -186,7 +189,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(2);
         final var ende = LocalDateTime.now();
 
-        final var chosen = new ExternalVerkehrsbeziehungDTO();
+        final var chosen = new OptionsVerkehrsbeziehungDTO();
         chosen.setVon(3);
         chosen.setNach(4);
         chosen.setStrassenseite(Himmelsrichtung.S);

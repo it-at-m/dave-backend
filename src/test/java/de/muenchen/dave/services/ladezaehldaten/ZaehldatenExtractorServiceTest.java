@@ -7,6 +7,9 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
@@ -249,10 +252,10 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_QU_singleChosenSetsQuerungsverkehr() {
         OptionsDTO options = createBaseOptions();
-        var ext = new ExternalQuerungsverkehrDTO();
+        var ext = new OptionsQuerungsverkehrDTO();
         ext.setKnotenarm(5);
         ext.setRichtung(Himmelsrichtung.N);
-        LinkedList<ExternalQuerungsverkehrDTO> list = new LinkedList<>();
+        LinkedList<OptionsQuerungsverkehrDTO> list = new LinkedList<>();
         list.add(ext);
         options.setChosenQuerungsverkehre(list);
 
@@ -270,11 +273,11 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_FJS_singleChosenSetsLaengsverkehr() {
         OptionsDTO options = createBaseOptions();
-        var ext = new ExternalLaengsverkehrDTO();
+        var ext = new OptionsLaengsverkehrDTO();
         ext.setKnotenarm(7);
         ext.setRichtung(Bewegungsrichtung.EIN);
         ext.setStrassenseite(Himmelsrichtung.O);
-        LinkedList<ExternalLaengsverkehrDTO> list = new LinkedList<>();
+        LinkedList<OptionsLaengsverkehrDTO> list = new LinkedList<>();
         list.add(ext);
         options.setChosenLaengsverkehre(list);
 
@@ -293,11 +296,11 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_QJS_singleChosenSetsVerkehrsbeziehung() {
         OptionsDTO options = createBaseOptions();
-        var ext = new ExternalVerkehrsbeziehungDTO();
+        var ext = new OptionsVerkehrsbeziehungDTO();
         ext.setVon(11);
         ext.setNach(12);
         ext.setStrassenseite(Himmelsrichtung.N);
-        LinkedList<ExternalVerkehrsbeziehungDTO> list = new LinkedList<>();
+        LinkedList<OptionsVerkehrsbeziehungDTO> list = new LinkedList<>();
         list.add(ext);
         options.setChosenVerkehrsbeziehungen(list);
 

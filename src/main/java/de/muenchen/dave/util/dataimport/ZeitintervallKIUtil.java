@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-// TODO: Anpassung nach Bewegungsbeziehung.
 /**
  * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage entsprechend den
  * Verkehrsbeziehungen.
