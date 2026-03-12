@@ -12,6 +12,9 @@ import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -227,6 +230,88 @@ class ExternalZaehlungPersistierungsServiceTest {
         assertEquals(external.getKnotenarm(), v.getVon());
         // Da keine Fahrbewegung gesetzt wurde, sollte das Attribut fahrbewegungKreisverkehr null sein
         assertNull(v.getFahrbewegungKreisverkehr(), "Keine Fahrbewegung gesetzt -> FahrbewegungKreisverkehr sollte null sein");
+    }
+
+    @Test
+    void testCreateVerkehrsbeziehungForZeitintervall_KreuzungTrue() {
+        // Arrange: Kreuzungspfad (isKreuzung = true)
+        final var external = new ExternalVerkehrsbeziehungDTO();
+        external.setIsKreuzung(Boolean.TRUE);
+        external.setVon(10);
+        external.setNach(11);
+        external.setStrassenseite(Himmelsrichtung.N);
+
+        // Act
+        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.N, external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getVon(), result.getVon());
+        assertEquals(external.getNach(), result.getNach());
+        assertEquals(external.getStrassenseite(), result.getStrassenseite());
+        // Bei Kreuzung darf kein Fahrbewegungswert gesetzt sein
+        assertNull(result.getFahrbewegungKreisverkehr());
+    }
+
+    @Test
+    void testCreateVerkehrsbeziehungForZeitintervall_ZaehlartQU_TreatedAsKreuzung() {
+        // Arrange: Zaehlart QU sollte ebenfalls den Kreuzungspfad verwenden
+        final var external = new ExternalVerkehrsbeziehungDTO();
+        // isKreuzung bleibt null/false
+        external.setVon(20);
+        external.setNach(21);
+        external.setStrassenseite(Himmelsrichtung.SW);
+
+        // Act
+        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.QU, external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getVon(), result.getVon());
+        assertEquals(external.getNach(), result.getNach());
+        assertEquals(external.getStrassenseite(), result.getStrassenseite());
+        assertNull(result.getFahrbewegungKreisverkehr());
+    }
+
+    @Test
+    void testCreateVerkehrsbeziehungForZeitintervall_Kreisverkehr_Hinein() {
+        // Arrange: Kreisverkehrspfad mit HINEIN gesetzt
+        final var external = new ExternalVerkehrsbeziehungDTO();
+        external.setIsKreuzung(Boolean.FALSE);
+        external.setKnotenarm(99);
+        external.setHinein(Boolean.TRUE);
+        external.setHeraus(Boolean.FALSE);
+        external.setVorbei(Boolean.FALSE);
+
+        // Act
+        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.N, external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getKnotenarm(), result.getVon());
+        assertEquals(FahrbewegungKreisverkehr.HINEIN, result.getFahrbewegungKreisverkehr());
+        // Bei Kreisverkehr ist 'nach' nicht gesetzt
+        assertNull(result.getNach());
+    }
+
+    @Test
+    void testCreateVerkehrsbeziehungForZeitintervall_Kreisverkehr_NoFlags_NullFahrbewegung() {
+        // Arrange: Kreisverkehrspfad ohne gesetzte Fahrbewegung
+        final var external = new ExternalVerkehrsbeziehungDTO();
+        external.setIsKreuzung(Boolean.FALSE);
+        external.setKnotenarm(123);
+        external.setHinein(Boolean.FALSE);
+        external.setHeraus(Boolean.FALSE);
+        external.setVorbei(Boolean.FALSE);
+
+        // Act
+        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.N, external);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(external.getKnotenarm(), result.getVon());
+        // Keine Fahrbewegung gesetzt -> null
+        assertNull(result.getFahrbewegungKreisverkehr());
     }
 
 }
