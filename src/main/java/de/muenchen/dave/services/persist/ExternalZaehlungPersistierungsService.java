@@ -64,12 +64,12 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
+                final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
                 // Verkehrsbeziehungen werden nach Zeitintervallen durchsucht
-                if (CollectionUtils.isNotEmpty(zaehlungDto.getVerkehrsbeziehungen())) {
+                if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
                     // Zeitintervalle persistieren
                     final var zeitintervalleToPersist = new ArrayList<Zeitintervall>();
-                    final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
                     final var bewegungsbeziehungIdsForZeitintervalleToDelete = bewegungsbeziehungen
                             .stream()
