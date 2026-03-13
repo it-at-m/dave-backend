@@ -140,17 +140,17 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // Setzen der Bewegungsbeziehung im Zeitintervall
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.FJS.equals(zaehlart)) {
-            final var bearbeiteLaengsverkehrToMap = (ExternalLaengsverkehrDTO) externalBewegungsbeziehung;
-            final var laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(bearbeiteLaengsverkehrToMap);
+            final var externalLaengsverkehrToMap = (ExternalLaengsverkehrDTO) externalBewegungsbeziehung;
+            final var laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(externalLaengsverkehrToMap);
             zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
         } else if (Zaehlart.QU.equals(zaehlart)) {
-            final var bearbeiteQuerungsverkehrToMap = (ExternalQuerungsverkehrDTO) externalBewegungsbeziehung;
-            final var querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(bearbeiteQuerungsverkehrToMap);
+            final var externalQuerungsverkehrToMap = (ExternalQuerungsverkehrDTO) externalBewegungsbeziehung;
+            final var querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(externalQuerungsverkehrToMap);
             zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
         } else {
             // alle anderen Zählarten
-            final var bearbeiteVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDTO) externalBewegungsbeziehung;
-            final var verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(zaehlart, bearbeiteVerkehrsbeziehungToMap);
+            final var externalVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDTO) externalBewegungsbeziehung;
+            final var verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(zaehlart, externalVerkehrsbeziehungToMap);
             zeitintervall.setVerkehrsbeziehung(verkehrsbeziehungForZeitintervall);
         }
 
@@ -172,7 +172,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final Zaehlart zaehlart,
             final ExternalVerkehrsbeziehungDTO externalVerkehrsbeziehung) {
         final var verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
-        if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung()) || Zaehlart.QU.equals(zaehlart)) {
+        if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung()) || Zaehlart.QJS.equals(zaehlart)) {
             verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
             verkehrsbeziehung.setNach(externalVerkehrsbeziehung.getNach());
             verkehrsbeziehung.setStrassenseite(externalVerkehrsbeziehung.getStrassenseite());
