@@ -255,7 +255,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     }
 
     @Test
-    void testCreateVerkehrsbeziehungForZeitintervall_ZaehlartQU_TreatedAsKreuzung() {
+    void testCreateVerkehrsbeziehungForZeitintervall_ZaehlartQJS_TreatedAsKreuzung() {
         // Arrange: Zaehlart QU sollte ebenfalls den Kreuzungspfad verwenden
         final var external = new ExternalVerkehrsbeziehungDTO();
         // isKreuzung bleibt null/false
@@ -264,7 +264,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         external.setStrassenseite(Himmelsrichtung.SW);
 
         // Act
-        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.QU, external);
+        final var result = service.createVerkehrsbeziehungForZeitintervall(Zaehlart.QJS, external);
 
         // Assert
         assertNotNull(result);
