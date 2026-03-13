@@ -161,7 +161,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für
+     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QJS} oder eine andere Zählart für
      *            Verkehrsbeziehungen.
      * @param externalVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
      *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
