@@ -151,10 +151,9 @@ public final class ZeitintervallZeitblockSummationUtil {
      */
     private static boolean shouldZeitblockBeCreated(final Zeitblock zeitblock,
             final StartEndeUhrzeit startEndeUhrzeit) {
-        boolean shouldCreated = !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
+        return !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
                 || (startEndeUhrzeit.getStartUhrzeit().equals(zeitblock.getStart())
                         && startEndeUhrzeit.getEndeUhrzeit().equals(zeitblock.getEnd()));
-        return shouldCreated;
     }
 
     /**
