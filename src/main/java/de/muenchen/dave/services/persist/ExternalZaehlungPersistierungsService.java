@@ -73,13 +73,11 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
                     final var bewegungsbeziehungIdsForZeitintervalleToDelete = bewegungsbeziehungen
                             .stream()
-                            .peek(bewegungsbeziehung ->
-                                CollectionUtils.emptyIfNull(bewegungsbeziehung.getZeitintervalle())
-                                        .stream()
-                                        .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                                        .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
-                                        .forEach(zeitintervalleToPersist::add)
-                            )
+                            .peek(bewegungsbeziehung -> CollectionUtils.emptyIfNull(bewegungsbeziehung.getZeitintervalle())
+                                    .stream()
+                                    .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
+                                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
+                                    .forEach(zeitintervalleToPersist::add))
                             .map(ExternalBewegungsbeziehungDTO::getId)
                             .toList();
 
