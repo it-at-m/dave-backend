@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
@@ -22,9 +23,11 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -92,6 +95,25 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // Setzen der PKW-Einheiten
         if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
             this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
+        }
+
+        var categories = zaehlungDto.getKategorien();
+        if (categories != null) {
+            Set<Fahrzeug> categoriesToAdd = EnumSet.noneOf(Fahrzeug.class);
+            for (Fahrzeug fahrzeug : categories) {
+                if (Fahrzeug.PKW.equals(fahrzeug)) {
+                    categoriesToAdd.add(Fahrzeug.PKW_EINHEIT);
+                    categoriesToAdd.add(Fahrzeug.KFZ);
+                }
+                if (Fahrzeug.BUS.equals(fahrzeug) || Fahrzeug.LKW.equals(fahrzeug) || Fahrzeug.LZ.equals(fahrzeug)) {
+                    categoriesToAdd.add(Fahrzeug.SV);
+                    categoriesToAdd.add(Fahrzeug.SV_P);
+                    categoriesToAdd.add(Fahrzeug.GV);
+                    categoriesToAdd.add(Fahrzeug.GV_P);
+                }
+            }
+            categories.addAll(categoriesToAdd);
+            categoriesToAdd.forEach(c -> log.debug(c.getName()));
         }
 
         if (zaehlungDto.isDauerzaehlung()) {
