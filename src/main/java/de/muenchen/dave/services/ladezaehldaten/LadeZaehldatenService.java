@@ -324,20 +324,44 @@ public class LadeZaehldatenService {
             final OptionsDTO options) throws DataNotFoundException {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
-        final List<Zeitintervall> zeitintervalle;
+        List<LadeZaehldatumDTO> ladeZaehldaten;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
-        if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
-            zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
-        } else {
-            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
-        }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
-        List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
+        if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
+            List<Zeitintervall> zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
+            ladeZaehldaten = zeitintervalle.stream()
                 .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
                 .collect(Collectors.toList());
+        } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
+                && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
+            ladeZaehldaten = extractZeitintervalleWochentagsdurchschnitt(zaehlungId, options, pkwEinheit);
+        } else {
+            List<Zeitintervall> zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
+            ladeZaehldaten = zeitintervalle.stream()
+                .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
+                .collect(Collectors.toList());
+        }
+
         ladeZaehldatenTable.setZaehldaten(ladeZaehldaten);
         log.debug("Anzahl der Zaehldaten: {}", ladeZaehldatenTable.getZaehldaten().size());
         return ladeZaehldatenTable;
+    }
+
+    private List<LadeZaehldatumDTO> extractZeitintervalleWochentagsdurchschnitt(final UUID zaehlungId,
+            final OptionsDTO options, PkwEinheit pkwEinheit) throws DataNotFoundException {
+            LocalDateTime start = options.getZeitraum().get(0).atTime(0, 0, 0);
+            LocalDateTime end = options.getZeitraum().get(1).atTime(23, 59, 59);
+        final List<LadeZaehldatumDTO> zaehldatumDTOs = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
+                zaehlungId.toString(),
+               start,
+               end);
+        log.debug("Size of extracted Zeitintervalle for Wochentagsdurchschnitt: {}", zaehldatumDTOs.size());
+        zaehldatumDTOs.forEach(zaehldatum -> {
+                zaehldatum.setPkwEinheiten(
+                    CalculationUtil.calculatePkwEinheiten(zaehldatum, pkwEinheit));
+                zaehldatum.setType(null);
+        });
+        return zaehldatumDTOs;
     }
 
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,

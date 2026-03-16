@@ -1,6 +1,7 @@
 package de.muenchen.dave.repositories.relationaldb;
 
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
 
@@ -69,6 +71,19 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr);
+
+   @Query(nativeQuery = true)
+    List<Zeitintervall> findWeekdayAverageByZaehlungIdZIAsc(
+            final String zaehlungId,
+            final LocalDateTime start,
+            final LocalDateTime ende);
+
+    @Query(nativeQuery = true)
+    List<LadeZaehldatumDTO> findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
+            final String zaehlungId,
+            final LocalDateTime start,
+            final LocalDateTime ende);
+            
 
     Zeitintervall findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
             final UUID zaehlungId,
