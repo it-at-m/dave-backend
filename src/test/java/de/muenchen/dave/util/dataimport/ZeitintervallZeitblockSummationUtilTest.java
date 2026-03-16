@@ -167,14 +167,14 @@ public class ZeitintervallZeitblockSummationUtilTest {
     }
 
     @Test
-    public void getSummenForVerkehrsbeziehung() {
+    public void getSummenForBewegungsbeziehung() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
         final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(2);
         verkehrsbeziehung.setNach(1);
 
-        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForBewegungsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
         // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
         assertThat(result.size(), is(Zeitblock.values().length - 2));

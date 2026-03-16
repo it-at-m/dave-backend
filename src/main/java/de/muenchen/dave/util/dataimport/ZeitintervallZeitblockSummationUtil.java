@@ -40,7 +40,7 @@ public final class ZeitintervallZeitblockSummationUtil {
         final Set<Bewegungsbeziehung> possibleBewegungsbeziehungen = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(zeitintervalle);
         final List<Zeitintervall> blockSummen = new ArrayList<>();
         possibleBewegungsbeziehungen
-                .forEach(bewegungsbeziehung -> blockSummen.addAll(getSummenForVerkehrsbeziehung(bewegungsbeziehung, zeitintervalleGroupedByIntervall)));
+                .forEach(bewegungsbeziehung -> blockSummen.addAll(getSummenForBewegungsbeziehung(bewegungsbeziehung, zeitintervalleGroupedByIntervall)));
         return blockSummen;
     }
 
@@ -54,7 +54,7 @@ public final class ZeitintervallZeitblockSummationUtil {
      * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene
      *         {@link Verkehrsbeziehung}.
      */
-    protected static List<Zeitintervall> getSummenForVerkehrsbeziehung(
+    protected static List<Zeitintervall> getSummenForBewegungsbeziehung(
             final Bewegungsbeziehung bewegungsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForBewegungsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(
