@@ -52,7 +52,7 @@ public final class ZeitintervallZeitblockSummationUtil {
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
      *            Intervallen.
      * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene
-     *         {@link Verkehrsbeziehung}.
+     *         {@link Bewegungsbeziehung}.
      */
     protected static List<Zeitintervall> getSummenForBewegungsbeziehung(
             final Bewegungsbeziehung bewegungsbeziehung,
