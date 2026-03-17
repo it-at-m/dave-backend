@@ -36,8 +36,7 @@ public final class SecurityContextInformationExtractor {
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())
                 .stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name()) .
-                        );
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_" + AuthoritiesEnum.FACHADMIN.name()));
     }
 
     public static String getUserName() {
