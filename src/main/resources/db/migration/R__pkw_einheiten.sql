@@ -8,7 +8,8 @@ insert into pkweinheit (id,
                         kraftraeder,
                         lastzuege,
                         lkw,
-                        pkw)
+                        pkw,
+                        fussgaenger)
 values
     (
      gen_random_uuid(),
@@ -19,6 +20,7 @@ values
      0.50,
      4.00,
      2.00,
-     1.00
+     1.00,
+     null
     );
 

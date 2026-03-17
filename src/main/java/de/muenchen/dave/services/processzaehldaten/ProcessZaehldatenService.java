@@ -7,10 +7,13 @@ import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,8 +104,19 @@ public class ProcessZaehldatenService {
     public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
         log.debug("Lade Zaehlungskenngroessen");
 
-        return ladeZaehldatenService.ladeZaehldaten(
+        final LadeZaehldatenTableDTO zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlung.getId()),
                 ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung));
+
+        // Entfernen der Intervalle aus den Zähldaten
+        final List<LadeZaehldatumDTO> zaehldatenWithoutIntervals = zaehldatenFuerZaehlungskenngroessen
+                .getZaehldaten()
+                .stream()
+                .filter(ladeZaehldatum -> Objects.nonNull(ladeZaehldatum.getType()))
+                .toList();
+        zaehldatenFuerZaehlungskenngroessen.setZaehldaten(zaehldatenWithoutIntervals);
+
+        return zaehldatenFuerZaehlungskenngroessen;
+
     }
 }

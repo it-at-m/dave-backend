@@ -38,14 +38,23 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @Table(
         indexes = {
-                @Index(name = "index_zaehlung", columnList = "zaehlung_id"),
                 @Index(name = "index_zeitintervall_bewegungsbeziehung_id", columnList = "bewegungsbeziehung_id"),
-                @Index(name = "index_zeitintervall_combined_1", columnList = "zaehlung_id, type, verkehrsbeziehung_von, verkehrsbeziehung_nach"),
-                @Index(name = "index_zeitintervall_combined_2", columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, type"),
+                @Index(
+                        name = "index_zeitintervall_combined_1",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, verkehrsbeziehung_nach, verkehrsbeziehung_von, verkehrsbeziehung_strassenseite"
+                ),
+                @Index(
+                        name = "index_zeitintervall_combined_2",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, verkehrsbeziehung_von, verkehrsbeziehung_fahrbewegungkreisverkehr"
+                ),
                 @Index(
                         name = "index_zeitintervall_combined_3",
-                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, verkehrsbeziehung_von, verkehrsbeziehung_nach, verkehrsbeziehung_fahrbewegungkreisverkehr, type"
-                )
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, laengsverkehr_knotenarm, laengsverkehr_richtung, laengsverkehr_strassenseite"
+                ),
+                @Index(
+                        name = "index_zeitintervall_combined_4",
+                        columnList = "zaehlung_id, startuhrzeit, endeuhrzeit, type, querungsverkehr_knotenarm, querungsverkehr_richtung"
+                ),
         }
 )
 public class Zeitintervall extends BaseEntity {
@@ -116,29 +125,35 @@ public class Zeitintervall extends BaseEntity {
     )
     private Hochrechnung hochrechnung;
 
+    // QU
     @Embedded
     @AttributeOverrides(
         {
+                @AttributeOverride(name = "knotenarm", column = @Column(name = "querungsverkehr_knotenarm")),
                 @AttributeOverride(name = "richtung", column = @Column(name = "querungsverkehr_richtung"))
         }
     )
     private Querungsverkehr querungsverkehr;
 
+    // FJS
     @Embedded
     @AttributeOverrides(
         {
+                @AttributeOverride(name = "knotenarm", column = @Column(name = "laengsverkehr_knotenarm")),
                 @AttributeOverride(name = "richtung", column = @Column(name = "laengsverkehr_richtung")),
                 @AttributeOverride(name = "strassenseite", column = @Column(name = "laengsverkehr_strassenseite"))
         }
     )
     private Laengsverkehr laengsverkehr;
 
+    // Alle anderen (... + QJS)
     @Embedded
     @AttributeOverrides(
         {
                 @AttributeOverride(name = "von", column = @Column(name = "verkehrsbeziehung_von")),
                 @AttributeOverride(name = "nach", column = @Column(name = "verkehrsbeziehung_nach")),
-                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "verkehrsbeziehung_fahrbewegungkreisverkehr"))
+                @AttributeOverride(name = "fahrbewegungKreisverkehr", column = @Column(name = "verkehrsbeziehung_fahrbewegungkreisverkehr")),
+                @AttributeOverride(name = "strassenseite", column = @Column(name = "verkehrsbeziehung_strassenseite"))
         }
     )
     private Verkehrsbeziehung verkehrsbeziehung;

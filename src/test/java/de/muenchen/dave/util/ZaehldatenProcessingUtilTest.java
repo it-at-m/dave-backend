@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -97,7 +98,7 @@ class ZaehldatenProcessingUtilTest {
 
         final OptionsDTO expected = new OptionsDTO();
         expected.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
-        expected.setIntervall(null);
+        expected.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         expected.setZeitblock(Zeitblock.ZB_00_24);
         expected.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
         expected.setKraftfahrzeugverkehr(true);

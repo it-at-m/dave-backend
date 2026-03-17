@@ -10,9 +10,9 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,7 +41,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -163,11 +163,11 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
         final int minLength = Math.min(basis.length, vergleich.length);
-        final BigDecimal[] fff = new BigDecimal[minLength];
+        final BigDecimal[] differences = new BigDecimal[minLength];
         for (int i = 0; i < minLength; i++) {
-            fff[i] = basis[i].subtract(vergleich[i]);
+            differences[i] = basis[i].subtract(vergleich[i]);
         }
-        return fff;
+        return differences;
     }
 
     private static boolean isKreisverkehr(final Verkehrsbeziehung verkehrsbeziehung) {
@@ -319,7 +319,8 @@ public class ProcessZaehldatenBelastungsplanService {
      *             * nicht aus den DBs extrahiert werden kann.
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
-    public LadeBelastungsplanDTO getBelastungsplanDTO(final String zaehlungId,
+    public LadeBelastungsplanDTO getBelastungsplanDTO(
+            final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
         // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
@@ -667,14 +668,15 @@ public class ProcessZaehldatenBelastungsplanService {
         return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final String zaehlungId,
+    public List<Zeitintervall> extractZeitintervalle(
+            final String zaehlungId,
             final OptionsDTO options) {
         return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
                         options.getZeitblock().getStart(),
                         options.getZeitblock().getEnd(),
-                        options.getZeitblock().getTypeZeitintervall());
+                        Set.of(options.getZeitblock().getTypeZeitintervall()));
     }
 
     /**
@@ -690,7 +692,8 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(final Zaehlung zaehlung,
+    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+            final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
         if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
@@ -700,14 +703,12 @@ public class ProcessZaehldatenBelastungsplanService {
         } else {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
-        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalle(
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 UUID.fromString(zaehlung.getId()),
-                options.getZeitblock().getStart(),
-                options.getZeitblock().getEnd(),
-                options.getVonKnotenarm(),
-                options.getNachKnotenarm(),
-                (FahrbewegungKreisverkehr) null,
-                SetUtils.hashSet(chosenSpitzenstunde));
+                zaehlart,
+                zaehlung.getKreisverkehr(),
+                options);
         if (!spitzenstunden.isEmpty()) {
 
             /*
@@ -718,16 +719,27 @@ public class ProcessZaehldatenBelastungsplanService {
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
              */
-            final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
+            final Zeitintervall spitzenstunde = spitzenstunden.getLast();
             final List<Zeitintervall> zeitintervalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
-                            spitzenStunde.getStartUhrzeit(),
-                            spitzenStunde.getEndeUhrzeit(),
-                            TypeZeitintervall.STUNDE_VIERTEL);
-            return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zeitintervalle)
+                            spitzenstunde.getStartUhrzeit(),
+                            spitzenstunde.getEndeUhrzeit(),
+                            // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
+                            Set.of(TypeZeitintervall.STUNDE_VIERTEL));
+
+            return ZeitintervallGleitendeSpitzenstundeUtil
+                    .getGleitendeSpitzenstundenByBewegungsbeziehung(
+                            UUID.fromString(zaehlung.getId()),
+                            options.getZeitblock(),
+                            zaehlart,
+                            zeitintervalle,
+                            Set.of(chosenSpitzenstunde))
                     .stream()
-                    .filter(zeitintervall -> zeitintervall.getType().equals(chosenSpitzenstunde))
+                    .peek(zeitintervall -> {
+                        zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
+                        zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
+                    })
                     .filter(zeitintervall -> {
                         /*
                          * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
@@ -739,7 +751,7 @@ public class ProcessZaehldatenBelastungsplanService {
                             return !containsSortingIndexForCompleteDay(zeitintervall);
                         }
                     })
-                    .collect(Collectors.toList());
+                    .toList();
         } else {
             return List.of();
         }

@@ -21,4 +21,6 @@ public class PkwEinheit implements Serializable {
 
     BigDecimal fahrradfahrer;
 
+    BigDecimal fussgaenger;
+
 }

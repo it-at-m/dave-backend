@@ -9,24 +9,24 @@ import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,14 +53,16 @@ public class LadeZaehldatenService {
     public static final String SPITZENSTUNDE_BLOCK_RAD = SPITZENSTUNDE_BLOCK + " Rad";
     public static final String SPITZENSTUNDE_BLOCK_FUSS = SPITZENSTUNDE_BLOCK + " Fuß";
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
-    private final ZeitintervallRepository zeitintervallRepository;
 
     private final ZaehlstelleIndexService indexService;
 
-    public LadeZaehldatenService(final ZeitintervallRepository zeitintervallRepository,
-            final ZaehlstelleIndexService indexService) {
-        this.zeitintervallRepository = zeitintervallRepository;
+    private final ZaehldatenExtractorService zaehldatenExtractorService;
+
+    public LadeZaehldatenService(
+            final ZaehlstelleIndexService indexService,
+            final ZaehldatenExtractorService zaehldatenExtractorService) {
         this.indexService = indexService;
+        this.zaehldatenExtractorService = zaehldatenExtractorService;
         // Kfz
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
@@ -284,7 +286,8 @@ public class LadeZaehldatenService {
      *         mit
      *         "alle nach X" handelt.
      */
-    public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(final Integer von,
+    public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(
+            final Integer von,
             final Integer nach,
             final Boolean isKreisverkehr) {
         final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
@@ -315,16 +318,18 @@ public class LadeZaehldatenService {
      * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
      * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
      */
-    public LadeZaehldatenTableDTO ladeZaehldaten(final UUID zaehlungId,
+    public LadeZaehldatenTableDTO ladeZaehldaten(
+            final UUID zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
         final List<Zeitintervall> zeitintervalle;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
-            zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getKreisverkehr(), options);
+            zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         } else {
-            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getKreisverkehr(), options);
+            zeitintervalle = extractZeitintervalle(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
         List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
@@ -335,17 +340,19 @@ public class LadeZaehldatenService {
         return ladeZaehldatenTable;
     }
 
-    private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+    private List<Zeitintervall> extractZeitintervalle(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
                 zaehlungId,
+                zaehlart,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
-                options.getVonKnotenarm(),
-                options.getNachKnotenarm(),
+                options,
                 isKreisverkehr,
                 types);
         log.debug("Size of extracted Zeitintervalle: {}", extractedZeitintervalle.size());
@@ -354,63 +361,38 @@ public class LadeZaehldatenService {
                 .collect(Collectors.toList());
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
-            final LocalDateTime startUhrzeit,
-            final LocalDateTime endeUhrzeit,
-            final Integer von,
-            final Integer nach,
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
-            final Set<TypeZeitintervall> types) {
-        final FahrbewegungKreisverkehr fahrbewegungKreisverkehr = createFahrbewegungKreisverkehr(von, nach, isKreisverkehr);
-        final Integer vonKnotenarm;
-        final Integer nachKnotenarm;
-        if (isKreisverkehr) {
-            /*
-             * In {@link de.muenchen.dave.domain.Verkehrsbeziehung} definiert das Attribut "von"
-             * den im Kreisverkehr jeweils betroffenen Knotenarm.
-             * Das Attribut "nach" ist immer "null".
-             */
-            if (ObjectUtils.isNotEmpty(von) && ObjectUtils.isEmpty(nach)) {
-                // Hinein
-                vonKnotenarm = von;
-            } else if (ObjectUtils.isEmpty(von) && ObjectUtils.isNotEmpty(nach)) {
-                // Heraus
-                vonKnotenarm = nach;
-            } else {
-                // Alles Hinein + Heraus + Vorbei
-                vonKnotenarm = null;
-            }
-            nachKnotenarm = null;
-        } else {
-            vonKnotenarm = von;
-            nachKnotenarm = nach;
-        }
-        return extractZeitintervalle(
+            final OptionsDTO options) {
+        final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
+        return zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 zaehlungId,
-                startUhrzeit,
-                endeUhrzeit,
-                vonKnotenarm,
-                nachKnotenarm,
-                fahrbewegungKreisverkehr,
+                zaehlart,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                isKreisverkehr,
+                options,
                 types);
     }
 
-    public List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,
+    public List<Zeitintervall> extractZeitintervalle(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
-            final Integer von,
-            final Integer nach,
-            final FahrbewegungKreisverkehr fahrbewegungKreisverkehr,
+            final OptionsDTO options,
+            final Boolean isKreisverkehr,
             final Set<TypeZeitintervall> types) {
-        return zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
-                        zaehlungId,
-                        startUhrzeit,
-                        endeUhrzeit,
-                        von,
-                        nach,
-                        fahrbewegungKreisverkehr,
-                        types);
+        return zaehldatenExtractorService.extractZeitintervalle(
+                zaehlungId,
+                zaehlart,
+                startUhrzeit,
+                endeUhrzeit,
+                isKreisverkehr,
+                options,
+                types);
     }
 
     /**
@@ -422,11 +404,13 @@ public class LadeZaehldatenService {
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */
-    private List<Zeitintervall> extractZeitintervalleForSpitzenstunde(final UUID zaehlungId,
+    protected List<Zeitintervall> extractZeitintervalleForSpitzenstunde(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
             final OptionsDTO options) {
-        final List<Zeitintervall> spitzenstunden = extractZeitintervalle(zaehlungId, isKreisverkehr, options);
-        final List<Zeitintervall> extractedZeitintervalle;
+        final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, zaehlart, isKreisverkehr, options);
+        List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {
             /*
              * Bei Auswahl des Zeitblocks für den gesamten Tag werden alle Spitzenstunden zurückgegeben.
@@ -435,16 +419,18 @@ public class LadeZaehldatenService {
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
              */
-            final Zeitintervall spitzenStunde = spitzenstunden.get(spitzenstunden.size() - 1);
+            final Zeitintervall spitzenStunde = spitzenstunden.getLast();
             extractedZeitintervalle = extractZeitintervalle(
                     zaehlungId,
+                    zaehlart,
                     spitzenStunde.getStartUhrzeit(),
                     spitzenStunde.getEndeUhrzeit(),
-                    options.getVonKnotenarm(),
-                    options.getNachKnotenarm(),
+                    options,
                     isKreisverkehr,
-                    SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL));
+                    // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
+                    Set.of(TypeZeitintervall.STUNDE_VIERTEL));
             if (BooleanUtils.isTrue(options.getSpitzenstunde())) {
+                extractedZeitintervalle = new ArrayList<>(extractedZeitintervalle);
                 extractedZeitintervalle.add(spitzenStunde);
             }
         } else {

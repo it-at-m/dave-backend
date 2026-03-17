@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain.dtos.external;
 
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -25,6 +26,9 @@ public class ExternalVerkehrsbeziehungDTO extends ExternalBewegungsbeziehungDTO 
     Boolean heraus;
 
     Boolean vorbei;
+
+    // Definiert den neben der Straße fließenden Verkehr (z.B. Radverkehr auf Radweg am nördlich gelegenen Straßenrand)
+    Himmelsrichtung strassenseite;
 
     HochrechnungsfaktorDTO hochrechnungsfaktor;
 

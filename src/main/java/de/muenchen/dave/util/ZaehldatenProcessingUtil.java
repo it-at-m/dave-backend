@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -101,8 +102,8 @@ public final class ZaehldatenProcessingUtil {
     }
 
     /**
-     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO zur Datenextraktion zu
-     * erstellen.
+     * Die Methode ist erforderlich um im Backend ein Standard-OptionsDTO
+     * zur Datenextraktion zu erstellen.
      *
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.
@@ -114,7 +115,7 @@ public final class ZaehldatenProcessingUtil {
 
         final var options = new OptionsDTO();
         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
-        options.setIntervall(null);
+        options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
         options.setKraftfahrzeugverkehr(getKfz);

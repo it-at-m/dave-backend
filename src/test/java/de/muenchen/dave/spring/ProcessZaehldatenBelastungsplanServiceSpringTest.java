@@ -5,9 +5,6 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
@@ -20,7 +17,6 @@ import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -44,6 +40,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,11 +143,11 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
-                        Zeitblock.ZB_00_24.getTypeZeitintervall()))
+                        Set.of(Zeitblock.ZB_00_24.getTypeZeitintervall())))
                 .thenReturn(zeitintervalle);
 
         LadeBelastungsplanDTO ladeBelastungsplan = processZaehldatenBelastungsplanService
@@ -259,11 +256,11 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
-                        Zeitblock.ZB_00_24.getTypeZeitintervall()))
+                        Set.of(Zeitblock.ZB_00_24.getTypeZeitintervall())))
                 .thenReturn(zeitintervalle);
 
         LadeBelastungsplanDTO ladeBelastungsplan = processZaehldatenBelastungsplanService
@@ -350,9 +347,6 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         List<Zeitintervall> spitzenstunden = new ArrayList<>();
         spitzenstunden.add(spitzenstunde);
 
-        when(ladeZaehldatenService.extractZeitintervalle(any(), any(), any(), any(), any(), nullable(FahrbewegungKreisverkehr.class), anySet()))
-                .thenReturn(spitzenstunden);
-
         List<Zeitintervall> zeitintervalle = new ArrayList<>();
         LocalDateTime startTime = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15));
         for (int index = 0; index < 4; index++) {
@@ -400,11 +394,11 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         }
 
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15)),
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15)),
-                        TypeZeitintervall.STUNDE_VIERTEL))
+                        Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(zeitintervalle);
 
         final List<Zeitintervall> result = processZaehldatenBelastungsplanService.extractZeitintervalleSpitzenstunde(zaehlung, options);
