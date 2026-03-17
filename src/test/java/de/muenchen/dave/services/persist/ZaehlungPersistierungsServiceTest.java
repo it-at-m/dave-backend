@@ -910,4 +910,154 @@ class ZaehlungPersistierungsServiceTest {
         verifyNoInteractions(mockZeitService);
     }
 
+    // Tests für getNumberOfNecessaryZeitintervalle
+    @Test
+    public void getNumberOfNecessaryZeitintervalle_allListsNull_returnsZero() {
+        // Arrange: Zaehlung mit Zaehldauer 24h, aber alle Bewegungsbeziehungslisten null
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        zaehlung.setVerkehrsbeziehungen(null);
+        zaehlung.setLaengsverkehr(null);
+        zaehlung.setQuerungsverkehr(null);
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        // Act
+        final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
+
+        // Assert
+        // Keine Verkehrsbeziehungen -> Ergebnis 0
+        assertThat(result, is(0));
+        verifyNoInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
+    @Test
+    public void getNumberOfNecessaryZeitintervalle_multipleRelationshipTypes() {
+        // Arrange: Zaehlung 24h, mit 2 Verkehrsbeziehungen, 1 Laengsverkehr, querungsverkehr null => totalRelationships = 3
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb2 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        zaehlung.setVerkehrsbeziehungen(Arrays.asList(vb1, vb2));
+
+        final Laengsverkehr l = new Laengsverkehr();
+        zaehlung.setLaengsverkehr(Collections.singletonList(l));
+        zaehlung.setQuerungsverkehr(null);
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        // Act
+        final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
+
+        // Assert
+        // DAUER_24_STUNDEN -> 96 intervals per relationship * 3 relationships = 288
+        assertThat(result, is(96 * 3));
+        verifyNoInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
+    @Test
+    public void getNumberOfNecessaryZeitintervalle_allTypesNonEmpty_2x4h() {
+        // Arrange: DAUER_2_X_4_STUNDEN (32 intervals) and three lists each with 2 elements => totalRelationships = 6
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN.name());
+
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb2 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        zaehlung.setVerkehrsbeziehungen(Arrays.asList(vb1, vb2));
+
+        final Laengsverkehr l1 = new Laengsverkehr();
+        final Laengsverkehr l2 = new Laengsverkehr();
+        zaehlung.setLaengsverkehr(Arrays.asList(l1, l2));
+
+        final Querungsverkehr q1 = new Querungsverkehr();
+        final Querungsverkehr q2 = new Querungsverkehr();
+        zaehlung.setQuerungsverkehr(Arrays.asList(q1, q2));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        // Act
+        final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
+
+        // Assert: 32 * 6 = 192
+        assertThat(result, is(32 * 6));
+        verifyNoInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
+    @Test
+    public void getNumberOfNecessaryZeitintervalle_sonstigeReturnsZeroEvenWithRelationships() {
+        // Arrange: SONSTIGE has 0 intervals regardless of relationships
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehldauer(Zaehldauer.SONSTIGE.name());
+        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        zaehlung.setVerkehrsbeziehungen(Collections.singletonList(vb));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        // Act
+        final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
+
+        // Assert: SONSTIGE -> 0
+        assertThat(result, is(0));
+        verifyNoInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
+    @Test
+    public void getNumberOfNecessaryZeitintervalle_nullZaehldauer_throwsException() {
+        // Arrange: null zaeldauer should cause NullPointerException when calling valueOf
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehldauer(null);
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        // Act / Assert
+        assertThrows(NullPointerException.class, () -> svc.getNumberOfNecessaryZeitintervalle(zaehlung));
+        verifyNoInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
 }
