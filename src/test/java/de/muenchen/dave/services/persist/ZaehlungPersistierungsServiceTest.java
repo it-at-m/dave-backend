@@ -49,6 +49,7 @@ import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -715,7 +716,6 @@ class ZaehlungPersistierungsServiceTest {
         assertThat(result, is(expected));
     }
 
-    // Tests für die Methode updateStatus
     @Test
     public void updateStatus_setToInstructed() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
         // Arrange: Mock Zaehlstelle und Zaehlung mit passender ID
@@ -910,7 +910,6 @@ class ZaehlungPersistierungsServiceTest {
         verifyNoInteractions(mockZeitService);
     }
 
-    // Tests für getNumberOfNecessaryZeitintervalle
     @Test
     public void getNumberOfNecessaryZeitintervalle_allListsNull_returnsZero() {
         // Arrange: Zaehlung mit Zaehldauer 24h, aber alle Bewegungsbeziehungslisten null
@@ -1058,6 +1057,99 @@ class ZaehlungPersistierungsServiceTest {
         assertThrows(NullPointerException.class, () -> svc.getNumberOfNecessaryZeitintervalle(zaehlung));
         verifyNoInteractions(mockIndexService);
         verifyNoInteractions(mockZeitService);
+    }
+
+    @Test
+    public void updateStatusIfDateIsInThePast_dateInPast_callsUpdate() throws BrokenInfrastructureException, DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zp1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().minusDays(1));
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId(id);
+
+        // Act
+        svc.updateStatusIfDateIsInThePast(dto, Status.COUNTING);
+
+        // Assert
+        verify(mockIndexService, times(1)).getZaehlung(id);
+        verify(mockIndexService, times(1)).updateStatusOfZaehlung(eq(id), eq(Status.COUNTING));
+    }
+
+    @Test
+    public void updateStatusIfDateIsInThePast_dateIsToday_callsUpdate() throws BrokenInfrastructureException, DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zt1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now());
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId(id);
+
+        // Act
+        svc.updateStatusIfDateIsInThePast(dto, Status.COUNTING);
+
+        // Assert
+        verify(mockIndexService, times(1)).getZaehlung(id);
+        verify(mockIndexService, times(1)).updateStatusOfZaehlung(eq(id), eq(Status.COUNTING));
+    }
+
+    @Test
+    public void updateStatusIfDateIsInThePast_dateInFuture_noUpdate() throws BrokenInfrastructureException, DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zf1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().plusDays(2));
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId(id);
+
+        // Act
+        svc.updateStatusIfDateIsInThePast(dto, Status.COUNTING);
+
+        // Assert
+        verify(mockIndexService, times(1)).getZaehlung(id);
+        verify(mockIndexService, never()).updateStatusOfZaehlung(eq(id), eq(Status.COUNTING));
     }
 
 }
