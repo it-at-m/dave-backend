@@ -56,6 +56,9 @@ public class ZeitintervallPersistierungsService {
      * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
      * - Für die Zeitintervalle einer Bewegungsbeziehung werden die Summen für die einzelnen
      * {@link Zeitblock}e gebildet.
+     * - Ist der Methodenparameter "kiAufbereitung" auf true gesetzt, wird mittels KI ein
+     * {@link Zeitintervall} als {@link TypeZeitintervall#GESAMT_KI} ermittelt
+     * und zusätzlich mit den anderen Zeitintervallen persistiert.
      *
      * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
      *            Persistierung.
