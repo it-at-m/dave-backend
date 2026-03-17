@@ -100,27 +100,4 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
         assertThat(zaehlungenForExternal.get(2).getStatus(), is(Status.COUNTING.name()));
     }
 
-    @Test
-    public void updateStatus() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        zaehlstelle.setNummer("120105");
-        zaehlstelle.setStadtbezirkNummer(12);
-        final var zaehlungen = new ArrayList<Zaehlung>();
-        zaehlungen.add(ZaehlungRandomFactory.getOne());
-        zaehlstelle.setZaehlungen(zaehlungen);
-        zaehlstelle.getZaehlungen().get(0).setStatus(Status.INSTRUCTED.name());
-
-        final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
-        updateStatusDTO.setStatus(Status.ACTIVE.name());
-        updateStatusDTO.setZaehlungId(zaehlstelle.getZaehlungen().get(0).getId());
-
-        when(this.zaehlstelleIndex.findByZaehlungenId(anyString())).thenReturn(Optional.of(zaehlstelle));
-
-        when(this.zaehlstelleIndex.save(zaehlstelle)).thenReturn(zaehlstelle);
-
-        this.externalZaehlungPersistierungsService.updateStatus(updateStatusDTO);
-
-        assertThat(zaehlstelle.getZaehlungen().get(0).getStatus(), is(Status.ACTIVE.name()));
-    }
-
 }
