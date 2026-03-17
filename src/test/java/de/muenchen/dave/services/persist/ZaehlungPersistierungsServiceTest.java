@@ -2,30 +2,49 @@ package de.muenchen.dave.services.persist;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
+import de.muenchen.dave.exceptions.BrokenInfrastructureException;
+import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -695,4 +714,200 @@ class ZaehlungPersistierungsServiceTest {
         expected = Arrays.asList(l, q, vb);
         assertThat(result, is(expected));
     }
+
+    // Tests für die Methode updateStatus
+    @Test
+    public void updateStatus_setToInstructed() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        // Arrange: Mock Zaehlstelle und Zaehlung mit passender ID
+        final Zaehlstelle zaehlstelle = new Zaehlstelle();
+        zaehlstelle.setId("zs1");
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId("z1");
+        zaehlung.setStatus(Status.CREATED.name());
+        zaehlung.setDienstleisterkennung("");
+        zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        when(mockIndexService.getZaehlstelleByZaehlungId("z1")).thenReturn(zaehlstelle);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId("z1");
+        dto.setStatus(Status.INSTRUCTED.name());
+        dto.setDienstleisterkennung("DLK");
+
+        // Act
+        final BackendIdDTO result = svc.updateStatus(dto);
+
+        // Assert
+        assertThat(result.getId(), is("z1"));
+        assertThat(zaehlung.getStatus(), is(Status.INSTRUCTED.name()));
+        assertThat(zaehlung.getDienstleisterkennung(), is("DLK"));
+
+        // Verifikation der Mockaufrufe
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z1");
+        verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
+        verify(mockZeitService, never()).checkZeitintervalleIfPlausible(any(), anyInt());
+        verify(mockZeitService, never()).deleteZeitintervalleForCorrection(anyString());
+    }
+
+    @Test
+    public void updateStatus_setToAccomplished() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        // Arrange: Zaehlung mit Zaehldauer und ohne Verkehrsbeziehungen
+        final Zaehlstelle zaehlstelle = new Zaehlstelle();
+        zaehlstelle.setId("zs2");
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId("z2");
+        zaehlung.setStatus(Status.CREATED.name());
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        when(mockIndexService.getZaehlstelleByZaehlungId("z2")).thenReturn(zaehlstelle);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId("z2");
+        dto.setStatus(Status.ACCOMPLISHED.name());
+
+        // Act
+        final BackendIdDTO result = svc.updateStatus(dto);
+
+        // Assert
+        assertThat(result.getId(), is("z2"));
+        assertThat(zaehlung.getStatus(), is(Status.ACCOMPLISHED.name()));
+
+        // checkZeitintervalleIfPlausible muss aufgerufen werden
+        verify(mockZeitService, times(1)).checkZeitintervalleIfPlausible(eq(zaehlung), anyInt());
+        verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z2");
+    }
+
+    @Test
+    public void updateStatus_setToCorrection() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        // Arrange: Zaehlung mit Knotenarmen die Filenames besitzen
+        final Zaehlstelle zaehlstelle = new Zaehlstelle();
+        zaehlstelle.setId("zs3");
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId("z3");
+        zaehlung.setStatus(Status.CREATED.name());
+        final Knotenarm arm1 = new Knotenarm();
+        arm1.setFilename("file1.jpg");
+        final Knotenarm arm2 = new Knotenarm();
+        arm2.setFilename("file2.jpg");
+        zaehlung.setKnotenarme(java.util.Arrays.asList(arm1, arm2));
+        zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        when(mockIndexService.getZaehlstelleByZaehlungId("z3")).thenReturn(zaehlstelle);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId("z3");
+        dto.setStatus(Status.CORRECTION.name());
+
+        // Act
+        final BackendIdDTO result = svc.updateStatus(dto);
+
+        // Assert
+        assertThat(result.getId(), is("z3"));
+        assertThat(zaehlung.getStatus(), is(Status.CORRECTION.name()));
+        // Filenames wurden geleert
+        zaehlung.getKnotenarme().forEach(a -> assertThat(a.getFilename(), is("")));
+
+        verify(mockZeitService, times(1)).deleteZeitintervalleForCorrection("z3");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z3");
+        verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
+
+        // Weiterer Testfall: Keine passende Zaehlung vorhanden -> es wird nichts verändert
+    }
+
+    @Test
+    public void updateStatus_noMatchingZaehlung() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        // Arrange: Zaehlstelle ohne passende Zaehlung
+        final Zaehlstelle zaehlstelle = new Zaehlstelle();
+        zaehlstelle.setId("zs4");
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId("z4");
+        zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
+
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        when(mockIndexService.getZaehlstelleByZaehlungId("not-existing")).thenReturn(zaehlstelle);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId("not-existing");
+        dto.setStatus(Status.ACTIVE.name());
+
+        // Act
+        final BackendIdDTO result = svc.updateStatus(dto);
+
+        // Assert: Keine Änderung an vorhandener Zaehlung
+        assertThat(result.getId(), is("not-existing"));
+        assertThat(zaehlung.getStatus(), is((String) null));
+
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("not-existing");
+        verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
+        verifyNoMoreInteractions(mockZeitService);
+    }
+
+    @Test
+    public void updateStatus_indexServiceThrows() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        // Arrange: IndexService wirft DataNotFoundException
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        when(mockIndexService.getZaehlstelleByZaehlungId("missing")).thenThrow(new DataNotFoundException("not found"));
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        dto.setZaehlungId("missing");
+        dto.setStatus(Status.ACTIVE.name());
+
+        // Act / Assert: Exception wird durchgereicht
+        assertThrows(DataNotFoundException.class, () -> svc.updateStatus(dto));
+
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("missing");
+        verifyNoMoreInteractions(mockIndexService);
+        verifyNoInteractions(mockZeitService);
+    }
+
 }
