@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UUID> { //NOSONAR
 
@@ -69,6 +70,15 @@ public interface ZeitintervallRepository extends JpaRepository<Zeitintervall, UU
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final FahrbewegungKreisverkehr fahrbewegungKreisverkehr);
+
+    @Query(nativeQuery = true)
+    List<Zeitintervall> findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
+            final String zaehlungId,
+            final LocalDateTime start,
+            final LocalDateTime ende,
+            final List<Integer> vonKnotenarm,
+            final List<Integer> nachKnotenarm,
+            final List<Integer> tagestyp);
 
     Zeitintervall findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
             final UUID zaehlungId,

@@ -13,7 +13,10 @@ import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.CityDistrictRepository;
 import de.muenchen.dave.repositories.relationaldb.ZaehlstelleRepository;
+import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ConfigurationService;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.persist.ExternalDetectorService;
 import de.muenchen.elasticimpl.CustomSuggestIndexElasticRepository;
 import de.muenchen.elasticimpl.MessstelleIndexElasticRepository;
 import de.muenchen.elasticimpl.ZaehlstelleIndexElasticRepository;
@@ -62,6 +65,12 @@ public class StadtbezirkMapperTest {
     private ZaehlstelleRepository zaehlstelleRepository;
 
     @MockitoBean
+    private ZaehlstelleIndexService zaehlstelleIndexService;
+
+    @MockitoBean
+    private ExternalDetectorService externalDetectorService;
+
+    @MockitoBean
     private MessstelleRepository messstelleRepository;
 
     @MockitoBean
@@ -71,6 +80,9 @@ public class StadtbezirkMapperTest {
     private MessstelleIndex messstelleIndex;
     @MockitoBean
     private CustomSuggestIndex customSuggestIndex;
+
+    @MockitoBean
+    private ZeitintervallRepository zeitintervallRepository;
 
     @BeforeEach
     private void beforeEach() {

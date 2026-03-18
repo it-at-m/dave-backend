@@ -9,13 +9,18 @@ import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.ColumnResult;
+import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Index;
+import jakarta.persistence.NamedNativeQuery;
+import jakarta.persistence.SqlResultSetMapping;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -28,6 +33,68 @@ import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+@NamedNativeQuery(
+        name = "Zeitintervall.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc",
+        query = "select \n" + //
+                "\tzaehlung_id, \n" + //
+                "\tround(sum(pkw)/count(startuhrzeit::time)) as pkw, \n" + //
+                "\tround(sum(lkw)/count(startuhrzeit::time)) as lkw,\n" + //
+                "\tround(sum (lastzuege)/count(startuhrzeit::time)) as lastzuege,\n" + //
+                "\tround(sum(busse)/count(startuhrzeit::time)) as busse,\n" + //
+                "\tround(sum(kraftraeder)/count(startuhrzeit::time)) as kraftraeder,\n" + //
+                "\tround(sum(fahrradfahrer)/count(startuhrzeit::time)) as fahrradfahrer,\n" + //
+                "\tround(sum(fussgaenger)/count(startuhrzeit::time)) as fussgaenger, \n" + //
+                "\tround(sum(hochrechnung_hochrechnungkfz)/count(startuhrzeit::time),2) as hochrechnungkfz,\n" + //
+                "\tround(sum(hochrechnung_hochrechnunggv)/count(startuhrzeit::time),2) as hochrechnunggv,\n" + //
+                "\tround(sum(hochrechnung_hochrechnungsv)/count(startuhrzeit::time),2) as hochrechnungsv,\n" + //
+                "\tround(sum(hochrechnungrad)/count(startuhrzeit::time)) as hochrechnungrad,\n" + //
+                "\tCURRENT_DATE + startuhrzeit::time as startUhrzeit, \n" + //
+                "\tCURRENT_DATE + endeuhrzeit::time as endeUhrzeit \n" + //
+                "from (\n" + //
+                "select \n" + //
+                "\tzaehlung_id, \n" + //
+                "\tsum(pkw) as pkw, \n" + //
+                "\tsum(lkw) as lkw,\n" + //
+                "\tsum (lastzuege) as lastzuege,\n" + //
+                "\tsum(busse) as busse,\n" + //
+                "\tsum(kraftraeder) as kraftraeder,\n" + //
+                "\tsum(fahrradfahrer) as fahrradfahrer,\n" + //
+                "\tsum(fussgaenger) as fussgaenger, \n" + //
+                "\tsum(hochrechnung_hochrechnungkfz) as hochrechnung_hochrechnungkfz,\n" + //
+                "\tsum(hochrechnung_hochrechnunggv) as hochrechnung_hochrechnunggv,\n" + //
+                "\tsum(hochrechnung_hochrechnungsv) as hochrechnung_hochrechnungsv,\n" + //
+                "\tsum(hochrechnungrad) as hochrechnungrad,\n" + //
+                "\tstartuhrzeit, \n" + //
+                "\tendeuhrzeit\n" + //
+                "FROM public.zeitintervall \n" + //
+                "where startuhrzeit between :start and :ende and EXTRACT(DOW FROM startuhrzeit) IN (:tagestyp) \n" + //
+                "\tand zaehlung_id = :zaehlungId \n" + //
+                "\tand fahrbeziehung_von IN (:vonKnotenarm) and fahrbeziehung_nach IN (:nachKnotenarm) group by startuhrzeit, endeuhrzeit, zaehlung_id) \n" + //
+                "\tgroup by startuhrzeit::time, endeuhrzeit::time, zaehlung_id order by startUhrzeit ASC",
+        resultSetMapping = "Mapping.Zeitintervall"
+)
+@SqlResultSetMapping(
+        name = "Mapping.Zeitintervall",
+        classes = @ConstructorResult(
+                targetClass = Zeitintervall.class,
+                columns = {
+                        @ColumnResult(name = "zaehlung_id", type = String.class),
+                        @ColumnResult(name = "pkw", type = Integer.class),
+                        @ColumnResult(name = "lkw", type = Integer.class),
+                        @ColumnResult(name = "lastzuege", type = Integer.class),
+                        @ColumnResult(name = "busse", type = Integer.class),
+                        @ColumnResult(name = "kraftraeder", type = Integer.class),
+                        @ColumnResult(name = "fahrradfahrer", type = Integer.class),
+                        @ColumnResult(name = "fussgaenger", type = Integer.class),
+                        @ColumnResult(name = "hochrechnungkfz", type = BigDecimal.class),
+                        @ColumnResult(name = "hochrechnunggv", type = BigDecimal.class),
+                        @ColumnResult(name = "hochrechnungsv", type = BigDecimal.class),
+                        @ColumnResult(name = "hochrechnungrad", type = Integer.class),
+                        @ColumnResult(name = "startUhrzeit", type = LocalDateTime.class),
+                        @ColumnResult(name = "endeUhrzeit", type = LocalDateTime.class)
+                }
+        )
+)
 @Entity
 // Definition of getter, setter, ...
 @Getter
@@ -50,6 +117,27 @@ import org.hibernate.type.SqlTypes;
         }
 )
 public class Zeitintervall extends BaseEntity {
+
+    public Zeitintervall(String zaehlung_id, Integer pkw, Integer lkw, Integer lastzuege, Integer busse, Integer kraftraeder,
+            Integer fahrradfahrer, Integer fussgaenger, BigDecimal hochrechnungkfz, BigDecimal hochrechnunggv, BigDecimal hochrechnungsv,
+            Integer hochrechnungrad, LocalDateTime startUhrzeit, LocalDateTime endeUhrzeit) {
+        this.zaehlungId = UUID.fromString(zaehlung_id);
+        this.pkw = pkw;
+        this.lkw = lkw;
+        this.lastzuege = lastzuege;
+        this.busse = busse;
+        this.kraftraeder = kraftraeder;
+        this.fahrradfahrer = fahrradfahrer;
+        this.fussgaenger = fussgaenger;
+        this.startUhrzeit = startUhrzeit;
+        this.endeUhrzeit = endeUhrzeit;
+        this.fahrbeziehung = new Fahrbeziehung();
+        this.hochrechnung = new Hochrechnung();
+        this.hochrechnung.setHochrechnungKfz(hochrechnungkfz);
+        this.hochrechnung.setHochrechnungGv(hochrechnunggv);
+        this.hochrechnung.setHochrechnungSv(hochrechnungsv);
+        this.hochrechnung.setHochrechnungRad(hochrechnungrad);
+    }
 
     @Column(name = "zaehlung_id", nullable = false)
     @JdbcTypeCode(SqlTypes.VARCHAR)
