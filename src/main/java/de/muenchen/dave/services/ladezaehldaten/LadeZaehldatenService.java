@@ -365,12 +365,12 @@ public class LadeZaehldatenService {
             nachKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm());
         } else if (options.getVonKnotenarm() != null) {
             vonKnotenarm = List.of(options.getVonKnotenarm());
-            if( options.getBeideRichtungen() != null && options.getNachKnotenarm() != null) {
+            if (options.getBeideRichtungen() != null && options.getNachKnotenarm() != null) {
                 vonKnotenarm.add(options.getNachKnotenarm());
             }
         } else if (options.getNachKnotenarm() != null) {
             nachKnotenarm = List.of(options.getNachKnotenarm());
-            if( options.getBeideRichtungen() != null && options.getVonKnotenarm() != null) {
+            if (options.getBeideRichtungen() != null && options.getVonKnotenarm() != null) {
                 vonKnotenarm.add(options.getVonKnotenarm());
             }
         }
