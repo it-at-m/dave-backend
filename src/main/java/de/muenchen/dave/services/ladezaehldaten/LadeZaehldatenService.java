@@ -360,13 +360,19 @@ public class LadeZaehldatenService {
         List<Integer> vonKnotenarm = IntStream.rangeClosed(1, 8).boxed().toList();
         List<Integer> nachKnotenarm = IntStream.rangeClosed(1, 8).boxed().toList();
 
-        if (options.getBeideRichtungen()) {
-            vonKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm());
+        if (options.getBeideRichtungen() && options.getVonKnotenarm() != null && options.getNachKnotenarm() != null) {
+            vonKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm()).stream().filter(val -> val != null).collect(Collectors.toList());
             nachKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm());
         } else if (options.getVonKnotenarm() != null) {
             vonKnotenarm = List.of(options.getVonKnotenarm());
+            if( options.getBeideRichtungen() != null && options.getNachKnotenarm() != null) {
+                vonKnotenarm.add(options.getNachKnotenarm());
+            }
         } else if (options.getNachKnotenarm() != null) {
             nachKnotenarm = List.of(options.getNachKnotenarm());
+            if( options.getBeideRichtungen() != null && options.getVonKnotenarm() != null) {
+                vonKnotenarm.add(options.getVonKnotenarm());
+            }
         }
         List<Integer> tagestyp = List.of(1, 2, 3, 4, 5);
         List<Zeitintervall> zi = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
