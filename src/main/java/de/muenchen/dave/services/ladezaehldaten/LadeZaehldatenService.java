@@ -139,9 +139,9 @@ public class LadeZaehldatenService {
             final PkwEinheit pkwEinheit,
             final OptionsDTO options) {
         final LadeZaehldatumDTO ladeZaehldatum;
-        log.debug("LadeZaehldatenService.mapToZaehldatum" + zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " "
-                + zeitintervall.getStartUhrzeit() + " "
-                + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
+        //log.debug("LadeZaehldatenService.mapToZaehldatum" + zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " "
+        //        + zeitintervall.getStartUhrzeit() + " "
+        //        + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumTageswert.setKfz(
