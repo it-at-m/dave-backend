@@ -340,7 +340,6 @@ public class LadeZaehldatenService {
                     ladeZaehldaten = zeitintervalle.stream()
                             .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
                             .collect(Collectors.toList());
-                    //ladeZaehldaten = extractZeitintervalleWochentagsdurchschnitt(zaehlungId, options, pkwEinheit);
                 } else {
                     List<Zeitintervall> zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
                     ladeZaehldaten = zeitintervalle.stream()
