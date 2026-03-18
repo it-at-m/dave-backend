@@ -34,7 +34,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @NamedNativeQuery(
-        name = "Zeitintervall.findWeekdayAverageByZaehlungIdZIAsc",
+        name = "Zeitintervall.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc",
         query = "select \n" + //
                 "\tzaehlung_id, \n" + //
                 "\tround(sum(pkw)/count(startuhrzeit::time)) as pkw, \n" + //
