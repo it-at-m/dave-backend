@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -328,40 +329,56 @@ public class LadeZaehldatenService {
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
-            List<Zeitintervall> zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
+            List<Zeitintervall> zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(),
+                    options);
             ladeZaehldaten = zeitintervalle.stream()
-                .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
-                .collect(Collectors.toList());
+                    .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
+                    .collect(Collectors.toList());
         } else if (zaehlung.getDauerzaehlung() && options.getZeitraum().size() == 2
                 && StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_ZEITRAUM)) {
-            ladeZaehldaten = extractZeitintervalleWochentagsdurchschnitt(zaehlungId, options, pkwEinheit);
-        } else {
-            List<Zeitintervall> zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
-            ladeZaehldaten = zeitintervalle.stream()
-                .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
-                .collect(Collectors.toList());
-        }
+                    List<Zeitintervall> zeitintervalle = extractZeitintervalleWochentagsdurchschnitt(zaehlungId, options);
+                    ladeZaehldaten = zeitintervalle.stream()
+                            .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
+                            .collect(Collectors.toList());
+                    //ladeZaehldaten = extractZeitintervalleWochentagsdurchschnitt(zaehlungId, options, pkwEinheit);
+                } else {
+                    List<Zeitintervall> zeitintervalle = extractZeitintervalle(zaehlungId, zaehlung.getZaehldauer(), zaehlung.getKreisverkehr(), options);
+                    ladeZaehldaten = zeitintervalle.stream()
+                            .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
+                            .collect(Collectors.toList());
+                }
 
         ladeZaehldatenTable.setZaehldaten(ladeZaehldaten);
         log.debug("Anzahl der Zaehldaten: {}", ladeZaehldatenTable.getZaehldaten().size());
         return ladeZaehldatenTable;
     }
 
-    private List<LadeZaehldatumDTO> extractZeitintervalleWochentagsdurchschnitt(final UUID zaehlungId,
-            final OptionsDTO options, PkwEinheit pkwEinheit) throws DataNotFoundException {
-            LocalDateTime start = options.getZeitraum().get(0).atTime(0, 0, 0);
-            LocalDateTime end = options.getZeitraum().get(1).atTime(23, 59, 59);
-        final List<LadeZaehldatumDTO> zaehldatumDTOs = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
+    private List<Zeitintervall> extractZeitintervalleWochentagsdurchschnitt(final UUID zaehlungId,
+            final OptionsDTO options) throws DataNotFoundException {
+        LocalDateTime start = options.getZeitraum().get(0).atTime(0, 0, 0);
+        LocalDateTime end = options.getZeitraum().get(1).atTime(23, 59, 59);
+        List<Integer> vonKnotenarm = IntStream.rangeClosed(1, 8).boxed().toList();
+        List<Integer> nachKnotenarm = IntStream.rangeClosed(1, 8).boxed().toList();
+
+        if (options.getBeideRichtungen()) {
+            vonKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm());
+            nachKnotenarm = List.of(options.getVonKnotenarm(), options.getNachKnotenarm());
+        } else if (options.getVonKnotenarm() != null) {
+            vonKnotenarm = List.of(options.getVonKnotenarm());
+        } else if (options.getNachKnotenarm() != null) {
+            nachKnotenarm = List.of(options.getNachKnotenarm());
+        }
+        List<Integer> tagestyp = List.of(1, 2, 3, 4, 5);
+        List<Zeitintervall> zi = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
                 zaehlungId.toString(),
-               start,
-               end);
-        log.debug("Size of extracted Zeitintervalle for Wochentagsdurchschnitt: {}", zaehldatumDTOs.size());
-        zaehldatumDTOs.forEach(zaehldatum -> {
-                zaehldatum.setPkwEinheiten(
-                    CalculationUtil.calculatePkwEinheiten(zaehldatum, pkwEinheit));
-                zaehldatum.setType(null);
-        });
-        return zaehldatumDTOs;
+                start,
+                end,
+                vonKnotenarm,
+                nachKnotenarm,
+                tagestyp);
+        log.debug("Size of extracted Zeitintervalle for Wochentagsdurchschnitt: {}", zi.size());
+        List<Zeitintervall> allZeitintervalle = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
+        return allZeitintervalle;
     }
 
     private List<Zeitintervall> extractZeitintervalle(final UUID zaehlungId,

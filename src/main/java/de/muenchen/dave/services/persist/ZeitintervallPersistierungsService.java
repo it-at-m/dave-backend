@@ -105,10 +105,10 @@ public class ZeitintervallPersistierungsService {
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
-        for (Zeitintervall zeitintervall : allZeitintervalle) {
-            log.debug(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " "
-                    + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
-        }
+        //for (Zeitintervall zeitintervall : allZeitintervalle) {
+        //    log.debug(zeitintervall.getFahrbeziehung() + " " + zeitintervall.getType() + " " + zeitintervall.getStartUhrzeit() + " "
+        //            + zeitintervall.getEndeUhrzeit() + " " + zeitintervall.getPkw());
+        //}
 
         return allZeitintervalle;
     }

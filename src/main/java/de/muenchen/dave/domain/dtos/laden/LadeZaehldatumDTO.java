@@ -15,23 +15,6 @@ import lombok.Data;
 @Data
 public class LadeZaehldatumDTO implements Serializable {
 
-    public LadeZaehldatumDTO() {
-        // Default-Konstruktor für die Deserialisierung
-    }
-
-    public LadeZaehldatumDTO(Integer pkw, Integer lkw, Integer lastzuege, Integer busse, Integer kraftraeder, Integer fahrradfahrer,
-            Integer fussgaenger, LocalTime startUhrzeit, LocalTime endeUhrzeit) {
-        this.pkw = pkw;
-        this.lkw = lkw;
-        this.lastzuege = lastzuege;
-        this.busse = busse;
-        this.kraftraeder = kraftraeder;
-        this.fahrradfahrer = fahrradfahrer;
-        this.fussgaenger = fussgaenger;
-        this.startUhrzeit = startUhrzeit;
-        this.endeUhrzeit = endeUhrzeit;
-    }
-
     private String type;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)

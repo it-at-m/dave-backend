@@ -53,7 +53,6 @@ public class LadeZaehldatenController {
                     zaehlungId,
                     options);
             log.info("laden der Daten abgeschlossen.");
-            log.debug("Zähldaten: {}", processedZaehldaten.toString());
             return ResponseEntity.ok(processedZaehldaten);
         } catch (final DataNotFoundException exception) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, exception.getMessage());
