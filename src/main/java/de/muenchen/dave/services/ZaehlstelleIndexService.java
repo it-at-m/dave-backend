@@ -10,7 +10,6 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -415,14 +414,6 @@ public class ZaehlstelleIndexService {
             final Zaehlart zaehlart,
             final LocalDate zaehldatum) throws DataNotFoundException {
         return this.ladeZaehlung(zaehlstellenNummer, zaehlart, zaehldatum);
-    }
-
-    public LadeZaehlungDTO getLadeZaehlung(final String zaehlungId) throws DataNotFoundException {
-        final LadeZaehlungDTO ladeZaehlungDTO = this.zaehlungMapper.bean2LadeDto(this.ladeZaehlung(zaehlungId));
-        // Ermittlung möglicher Zeitauswahl
-        ladeZaehlungDTO.setZeitauswahl(
-                this.zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlungDTO.getZaehldauer(), ladeZaehlungDTO.getId()));
-        return ladeZaehlungDTO;
     }
 
     @Cacheable(value = CachingConfiguration.READ_ZAEHLSTELLE_DTO, key = "{#p0, #p1}")

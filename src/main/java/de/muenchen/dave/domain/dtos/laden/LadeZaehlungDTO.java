@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 
@@ -49,11 +50,11 @@ public class LadeZaehlungDTO {
 
     List<Fahrzeug> kategorien;
 
-    List<BearbeiteLaengsverkehrDTO> laengsverkehr;
+    List<BearbeiteLaengsverkehrDTO> laengsverkehr = new ArrayList<>();
 
-    List<BearbeiteQuerungsverkehrDTO> querungsverkehr;
+    List<BearbeiteQuerungsverkehrDTO> querungsverkehr = new ArrayList<>();
 
-    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
+    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen = new ArrayList<>();
 
     ZeitauswahlDTO zeitauswahl;
 
