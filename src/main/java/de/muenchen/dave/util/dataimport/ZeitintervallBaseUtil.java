@@ -157,7 +157,7 @@ public final class ZeitintervallBaseUtil {
         return zeitintervalleGroupedByIntervall.values()
                 .stream()
                 .flatMap(List::stream)
-                .filter(zeitintervall -> containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zeitintervall, bewegungsbeziehung))
+                .filter(zeitintervall -> containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zeitintervall, bewegungsbeziehung))
                 .toList();
     }
 
@@ -165,14 +165,14 @@ public final class ZeitintervallBaseUtil {
         return isZeitintervallWithinTimeParameters(zeitintervall, zeitblock.getStart(), zeitblock.getEnd());
     }
 
-    protected static boolean isZeitintervallWithinTimeParameters(final Zeitintervall zeitintervall,
+    static boolean isZeitintervallWithinTimeParameters(final Zeitintervall zeitintervall,
             final LocalDateTime startTime,
             final LocalDateTime endTime) {
         return (zeitintervall.getStartUhrzeit().equals(startTime) || zeitintervall.getStartUhrzeit().isAfter(startTime))
                 && isZeitintervallBeforeTimeParameters(zeitintervall, endTime);
     }
 
-    protected static boolean isZeitintervallBeforeTimeParameters(final Zeitintervall zeitintervall,
+    static boolean isZeitintervallBeforeTimeParameters(final Zeitintervall zeitintervall,
             final LocalDateTime endTime) {
         return (zeitintervall.getEndeUhrzeit().equals(endTime) || zeitintervall.getEndeUhrzeit().isBefore(endTime))
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));
@@ -187,7 +187,7 @@ public final class ZeitintervallBaseUtil {
         return zeitintervall;
     }
 
-    public static boolean containsZeitintervallSameBewegungsbeziehungWichIsNonNull(
+    public static boolean containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(
             final Zeitintervall zeitintervall1,
             final Bewegungsbeziehung bewegungsbeziehung) {
         return Objects.nonNull(bewegungsbeziehung)

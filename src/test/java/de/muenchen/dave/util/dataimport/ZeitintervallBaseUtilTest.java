@@ -492,7 +492,7 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void containsZeitintervallSameBewegungsbeziehungWichIsNonNull_variousCases() {
+    public void containsZeitintervallSameBewegungsbeziehungWhichIsNonNull_variousCases() {
         // Setup: Verkehrsbeziehung in Intervall
         final Verkehrsbeziehung v = new Verkehrsbeziehung();
         v.setVon(1);
@@ -502,24 +502,24 @@ class ZeitintervallBaseUtilTest {
         z.setVerkehrsbeziehung(v);
 
         // Gleiche Referenz -> true
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(z, v), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, v), is(true));
 
         // Verschiedene Instanzen, gleiche Werte -> true (equals sollte das abdecken)
         final Verkehrsbeziehung vSameValues = new Verkehrsbeziehung();
         vSameValues.setVon(1);
         vSameValues.setNach(2);
         vSameValues.setFahrbewegungKreisverkehr(null);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(z, vSameValues), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, vSameValues), is(true));
 
         // Unterschiedliche Werte -> false
         final Verkehrsbeziehung vDifferent = new Verkehrsbeziehung();
         vDifferent.setVon(2);
         vDifferent.setNach(1);
         vDifferent.setFahrbewegungKreisverkehr(null);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(z, vDifferent), is(false));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, vDifferent), is(false));
 
         // Übergabe einer null-Bewegungsbeziehung -> false
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(z, null), is(false));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, null), is(false));
 
         // Laengsverkehr prüfen (gleiches Werte-Objekt) -> true
         final Laengsverkehr l = new Laengsverkehr();
@@ -530,17 +530,17 @@ class ZeitintervallBaseUtilTest {
         final Laengsverkehr lSame = new Laengsverkehr();
         lSame.setRichtung(Bewegungsrichtung.EIN);
         lSame.setStrassenseite(Himmelsrichtung.N);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zL, lSame), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zL, lSame), is(true));
 
         // Unterschiedliche Typen -> false (zL hat Laengsverkehr, gesucht wird Verkehrsbeziehung)
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zL, v), is(false));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zL, v), is(false));
 
         // Mehrere Bewegungsbeziehungen in einem Zeitintervall: mindestens eine Übereinstimmung reicht
         final Zeitintervall zMulti = new Zeitintervall();
         zMulti.setVerkehrsbeziehung(v);
         zMulti.setLaengsverkehr(l);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zMulti, lSame), is(true));
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zMulti, vSameValues), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zMulti, lSame), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zMulti, vSameValues), is(true));
     }
 
     @Test
@@ -620,13 +620,13 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void containsZeitintervallSameBewegungsbeziehungWichIsNonNull_additionalCases() {
+    public void containsZeitintervallSameBewegungsbeziehungWhichIsNonNull_additionalCases() {
         // Zeitintervall ohne Bewegungsbeziehungen -> false
         final Zeitintervall zEmpty = new Zeitintervall();
         final Verkehrsbeziehung v = new Verkehrsbeziehung();
         v.setVon(1);
         v.setNach(2);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zEmpty, v), is(false));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zEmpty, v), is(false));
 
         // Querungsverkehr match -> true
         final Querungsverkehr q = new Querungsverkehr();
@@ -635,10 +635,10 @@ class ZeitintervallBaseUtilTest {
         zQ.setQuerungsverkehr(q);
         final Querungsverkehr qSame = new Querungsverkehr();
         qSame.setRichtung(Himmelsrichtung.N);
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zQ, qSame), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zQ, qSame), is(true));
 
         // Gesucht ist null -> false (redundant assert)
-        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWichIsNonNull(zQ, null), is(false));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zQ, null), is(false));
 
     }
 
