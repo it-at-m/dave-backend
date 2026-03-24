@@ -50,11 +50,11 @@ public class LadeZaehlungDTO {
 
     List<Fahrzeug> kategorien;
 
-    List<BearbeiteLaengsverkehrDTO> laengsverkehr = new ArrayList<>();
+    List<BearbeiteLaengsverkehrDTO> laengsverkehr;
 
-    List<BearbeiteQuerungsverkehrDTO> querungsverkehr = new ArrayList<>();
+    List<BearbeiteQuerungsverkehrDTO> querungsverkehr;
 
-    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen = new ArrayList<>();
+    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
     ZeitauswahlDTO zeitauswahl;
 

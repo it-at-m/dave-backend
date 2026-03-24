@@ -48,11 +48,11 @@ public class ExternalZaehlungDTO {
 
     List<ExternalKnotenarmDTO> knotenarme;
 
-    List<ExternalLaengsverkehrDTO> laengsverkehr = new ArrayList<>();
+    List<ExternalLaengsverkehrDTO> laengsverkehr;
 
-    List<ExternalQuerungsverkehrDTO> querungsverkehr = new ArrayList<>();
+    List<ExternalQuerungsverkehrDTO> querungsverkehr;
 
-    List<ExternalVerkehrsbeziehungDTO> verkehrsbeziehungen = new ArrayList<>();
+    List<ExternalVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
     // Zählstelle
     String zaehlstelleNummer;
