@@ -1,8 +1,9 @@
 package de.muenchen.dave.domain.dtos.external;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.muenchen.dave.config.EmptyListSerializer;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
@@ -48,10 +49,13 @@ public class ExternalZaehlungDTO {
 
     List<ExternalKnotenarmDTO> knotenarme;
 
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
     List<ExternalLaengsverkehrDTO> laengsverkehr;
 
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
     List<ExternalQuerungsverkehrDTO> querungsverkehr;
 
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
     List<ExternalVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
     // Zählstelle
