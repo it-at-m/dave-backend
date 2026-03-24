@@ -1,6 +1,8 @@
 package de.muenchen.dave.services.persist;
 
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
@@ -139,16 +141,18 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.FJS.equals(zaehlart)) {
             final var externalLaengsverkehrToMap = (ExternalLaengsverkehrDTO) externalBewegungsbeziehung;
-            final var laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(externalLaengsverkehrToMap);
+            final Laengsverkehr laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(externalLaengsverkehrToMap);
             zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
         } else if (Zaehlart.QU.equals(zaehlart)) {
             final var externalQuerungsverkehrToMap = (ExternalQuerungsverkehrDTO) externalBewegungsbeziehung;
-            final var querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(externalQuerungsverkehrToMap);
+            final Querungsverkehr querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(externalQuerungsverkehrToMap);
             zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
         } else {
             // alle anderen Zählarten
             final var externalVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDTO) externalBewegungsbeziehung;
-            final var verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(zaehlart, externalVerkehrsbeziehungToMap);
+            final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(
+                    zaehlart,
+                    externalVerkehrsbeziehungToMap);
             zeitintervall.setVerkehrsbeziehung(verkehrsbeziehungForZeitintervall);
         }
 
