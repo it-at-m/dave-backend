@@ -20,7 +20,8 @@ public class EmptyListSerializer extends JsonSerializer<Object> {
      * @throws IOException n/a
      */
     @Override
-    public void serialize(final Object value,
+    public void serialize(
+            final Object value,
             final JsonGenerator gen,
             final SerializerProvider serializers) throws IOException {
         if (Objects.isNull(value)) {
