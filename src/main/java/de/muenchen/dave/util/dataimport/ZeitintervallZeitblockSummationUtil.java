@@ -54,7 +54,7 @@ public final class ZeitintervallZeitblockSummationUtil {
      * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene
      *         {@link Bewegungsbeziehung}.
      */
-    protected static List<Zeitintervall> getSummenForBewegungsbeziehung(
+    static List<Zeitintervall> getSummenForBewegungsbeziehung(
             final Bewegungsbeziehung bewegungsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForBewegungsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(
@@ -84,7 +84,7 @@ public final class ZeitintervallZeitblockSummationUtil {
      *            {@link Verkehrsbeziehung}.
      * @return Die Summe für den {@link Zeitblock} als {@link Zeitintervall}.
      */
-    protected static Optional<Zeitintervall> getSumme(
+    static Optional<Zeitintervall> getSumme(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final Bewegungsbeziehung bewegungsbeziehung,
