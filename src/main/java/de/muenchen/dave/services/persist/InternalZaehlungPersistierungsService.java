@@ -155,7 +155,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
         // Zeitintervalle persistieren
         final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
+        final List<BearbeiteBewegungsbeziehungDTO> bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
         bewegungsbeziehungen.forEach(bewegungsbeziehung -> {
             bewegungsbeziehung.getZeitintervalle().stream()
@@ -205,7 +205,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 .ifPresent(bewegungsbeziehung -> zeitintervall.setBewegungsbeziehungId(UUID.fromString(bewegungsbeziehung.getId())));
 
         // Setzen der Hochrechnug in Zeitintervall
-        final var hochrechnung = this.createHochrechnung(
+        final Hochrechnung hochrechnung = this.createHochrechnung(
                 zeitintervall,
                 bearbeiteBewegungsbeziehung.getHochrechnungsfaktor(),
                 zaehlung.getZaehldauer());
@@ -215,16 +215,19 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.FJS.equals(zaehlart)) {
             final var bearbeiteLaengsverkehrToMap = (BearbeiteLaengsverkehrDTO) bearbeiteBewegungsbeziehung;
-            final var laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(bearbeiteLaengsverkehrToMap);
+            final de.muenchen.dave.domain.Laengsverkehr laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(bearbeiteLaengsverkehrToMap);
             zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
         } else if (Zaehlart.QU.equals(zaehlart)) {
             final var bearbeiteQuerungsverkehrToMap = (BearbeiteQuerungsverkehrDTO) bearbeiteBewegungsbeziehung;
-            final var querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(bearbeiteQuerungsverkehrToMap);
+            final de.muenchen.dave.domain.Querungsverkehr querungsverkehrForZeitintervall = this
+                    .createQuerungsverkehrForZeitintervall(bearbeiteQuerungsverkehrToMap);
             zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
         } else {
             // alle anderen Zählarten
             final var bearbeiteVerkehrsbeziehungToMap = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
-            final var verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(zaehlart, bearbeiteVerkehrsbeziehungToMap);
+            final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(
+                    zaehlart,
+                    bearbeiteVerkehrsbeziehungToMap);
             zeitintervall.setVerkehrsbeziehung(verkehrsbeziehungForZeitintervall);
         }
 

@@ -66,7 +66,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
-                final var bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
+                final List<ExternalBewegungsbeziehungDTO> bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
                 // Verkehrsbeziehungen werden nach Zeitintervallen durchsucht
                 if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
