@@ -129,7 +129,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
         zeitintervall.setBewegungsbeziehungId(UUID.fromString(externalBewegungsbeziehung.getId()));
 
-        final var hochrechnung = this.createHochrechnung(
+        final Hochrechnung hochrechnung = this.createHochrechnung(
                 zeitintervall,
                 externalBewegungsbeziehung.getHochrechnungsfaktor(),
                 zaehlung.getZaehldauer());
