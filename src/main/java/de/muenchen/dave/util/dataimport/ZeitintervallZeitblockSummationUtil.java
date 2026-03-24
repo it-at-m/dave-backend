@@ -93,9 +93,9 @@ public final class ZeitintervallZeitblockSummationUtil {
         Verkehrsbeziehung verkehrsbeziehung = null;
         Laengsverkehr laengsverkehr = null;
         Querungsverkehr querungsverkehr = null;
-        if (Verkehrsbeziehung.class.equals(bewegungsbeziehung.getClass())) {
+        if (bewegungsbeziehung instanceof Verkehrsbeziehung) {
             verkehrsbeziehung = (Verkehrsbeziehung) bewegungsbeziehung;
-        } else if (Laengsverkehr.class.equals(bewegungsbeziehung.getClass())) {
+        } else if (bewegungsbeziehung instanceof Laengsverkehr) {
             laengsverkehr = (Laengsverkehr) bewegungsbeziehung;
         } else {
             querungsverkehr = (Querungsverkehr) bewegungsbeziehung;
