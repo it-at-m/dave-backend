@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import de.muenchen.dave.config.EmptyListSerializer;
+import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;

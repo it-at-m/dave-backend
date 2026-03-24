@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.dtos.external;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import de.muenchen.dave.config.EmptyListSerializer;
+import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
 import java.util.List;

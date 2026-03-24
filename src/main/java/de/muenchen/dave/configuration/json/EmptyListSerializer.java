@@ -1,4 +1,4 @@
-package de.muenchen.dave.config;
+package de.muenchen.dave.configuration.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
