@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -373,14 +374,38 @@ public class LadeZaehldatenService {
                 vonKnotenarm.add(options.getVonKnotenarm());
             }
         }
-        List<Integer> tagestyp = List.of(1, 2, 3, 4, 5);
+
+        List<Integer> tagesTypNumbers;
+        TagesTyp tagesTyp = options.getTagesTyp();
+        switch (tagesTyp) {
+            case WERKTAG_DI_MI_DO:
+                tagesTypNumbers = List.of(1, 2, 3);
+                break;
+            case WERKTAG_MO_FR:
+                tagesTypNumbers = List.of(1, 2, 3, 4, 5);
+                break;
+            case SAMSTAG:
+                tagesTypNumbers = List.of(6);
+                break;
+            case SONNTAG_FEIERTAG:
+                tagesTypNumbers = List.of(7);
+                break;
+            case MO_SO:
+                tagesTypNumbers = List.of(1, 2, 3, 4, 5, 6, 7);
+                break;
+            default:
+                tagesTypNumbers = List.of(1, 2, 3, 4, 5);
+                break;
+        }
+
+        
         List<Zeitintervall> zi = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
                 zaehlungId.toString(),
                 start,
                 end,
                 vonKnotenarm,
                 nachKnotenarm,
-                tagestyp);
+                tagesTypNumbers);
         log.debug("Size of extracted Zeitintervalle for Wochentagsdurchschnitt: {}", zi.size());
         List<Zeitintervall> allZeitintervalle = zeitintervallPersistierungsService.aufbereitenUndPersistieren(zi, false);
         return allZeitintervalle;

@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos;
 
+import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -17,6 +18,8 @@ public class OptionsDTO implements Serializable {
     @NotEmpty
     @Size(min = 2, max = 2)
     private List<@NotNull LocalDate> zeitraum;
+
+    private TagesTyp tagesTyp = TagesTyp.UNSPECIFIED;
 
     @NotNull
     private Zaehldauer zaehldauer;
