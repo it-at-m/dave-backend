@@ -66,12 +66,11 @@ public class KIService {
 
     /**
      * Diese Methode berechnet für eine zweidimensionale Liste von Zeitintervallen einer Zählung (d.h.
-     * für jede Verkehrsbeziehung der Zählung eine Liste von
-     * Zeitintervallen) die resultierenden Tagessummen der einzelnen Fahrzeugklassen.
+     * für jede Bewegungsbeziehung der Zählung eine Liste von Zeitintervallen) die resultierenden
+     * Tagessummen der einzelnen Fahrzeugklassen.
      *
-     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Verkehrsbeziehungen in Form
-     *            einer
-     *            zweidimensionalen Liste
+     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Bewegungsbeziehungen in Form
+     *            einer zweidimensionalen Liste
      * @return Ergebnisse als Array von KIPredictionResult
      * @throws PredictionFailedException wenn Eingabedaten falsche Dimension aufweisen
      */
@@ -84,7 +83,7 @@ public class KIService {
 
         // Ueberfluessige Intervall entfernen
         zeitintervalle = zeitintervalle.stream()
-                .map(zeitintervalleOfVerkehrsbeziehung -> zeitintervalleOfVerkehrsbeziehung.stream()
+                .map(zeitintervalleOfBewegungsbeziehungen -> zeitintervalleOfBewegungsbeziehungen.stream()
                         .filter(interval -> (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 &&
                                 interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15) ||
                                 (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 &&

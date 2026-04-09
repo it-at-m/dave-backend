@@ -1,8 +1,5 @@
 package de.muenchen.dave.domain.dtos;
 
-import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -117,13 +114,13 @@ public class OptionsDTO implements Serializable {
     private Integer nachKnotenarm;
 
     // Für Zaehlart QjS (Querschnitt je Straßenseite für Fuss- und Radverkehr)
-    private List<ExternalVerkehrsbeziehungDTO> chosenVerkehrsbeziehungen;
+    private List<OptionsVerkehrsbeziehungDTO> chosenVerkehrsbeziehungen;
 
     // Für Zaehlart FjS
-    private List<ExternalLaengsverkehrDTO> chosenLaengsverkehre;
+    private List<OptionsLaengsverkehrDTO> chosenLaengsverkehre;
 
     // Für Zaehlart Qu
-    private List<ExternalQuerungsverkehrDTO> chosenQuerungsverkehre;
+    private List<OptionsQuerungsverkehrDTO> chosenQuerungsverkehre;
 
     private String idVergleichszaehlungZeitreihe;
 }

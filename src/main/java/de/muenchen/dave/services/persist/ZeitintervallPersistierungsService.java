@@ -13,7 +13,6 @@ import de.muenchen.dave.services.KIService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallVerkehrsbeziehungsSummationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,8 +45,7 @@ public class ZeitintervallPersistierungsService {
     }
 
     /**
-     * Die Methode führt vor der Persistierung der Zeitintervalle in der Datenbank eine Datenaufbreitung
-     * durch. D.h.:
+     * Die Methode führt vor der Persistierung der Zeitintervalle eine Datenaufbereitung durch. D.h.:
      * <p>
      * - Die im Parameter übergebenen Zeitintervalle werden daraufhin überprüft, ob der letzte
      * Zeitintervall des Tages die korrekte Endeuhrzeit von 23:59
@@ -56,13 +54,11 @@ public class ZeitintervallPersistierungsService {
      * Datenextraktion versehen.
      * - Die im Parameter übergebenen Zeitintervalle werden mit dem Merkmal
      * {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
-     * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über alle möglichen
-     * Verkehrsbeziehungspermutationen summiert.
-     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle werden die gleitenden Spitzenstunden ermittelt.
-     * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-     * Zeitintervalle werden die Summen für die einzelnen
+     * - Für die Zeitintervalle einer Bewegungsbeziehung werden die Summen für die einzelnen
      * {@link Zeitblock}e gebildet.
+     * - Ist der Methodenparameter "kiAufbereitung" auf true gesetzt, wird mittels KI ein
+     * {@link Zeitintervall} als {@link TypeZeitintervall#GESAMT_KI} ermittelt
+     * und zusätzlich mit den anderen Zeitintervallen persistiert.
      *
      * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
      *            Persistierung.
@@ -78,55 +74,49 @@ public class ZeitintervallPersistierungsService {
          * - Die im Parameter übergebenen Zeitintervalle werden mit
          * dem Merkmal {@link TypeZeitintervall#STUNDE_VIERTEL} versehen.
          */
-        zeitintervalle.forEach(zeitintervall -> {
-            ZeitintervallBaseUtil.checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(zeitintervall);
-            zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
-            zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
-        });
+        final var byTimeAndTypeAndSortingIndexAdaptedZeitintervalle = zeitintervalle
+                .stream()
+                .peek(zeitintervall -> {
+                    ZeitintervallBaseUtil.checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary(zeitintervall);
+                    zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
+                    zeitintervall.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervall));
+                })
+                .toList();
 
         /*
-         * - Die im Parameter übergebenen Zeitintervalle werden je Intervall über
-         * alle möglichen Verkehrsbeziehungspermutationen summiert.
+         * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
-        final List<Zeitintervall> summierteVerkehrsbeziehungen = ZeitintervallVerkehrsbeziehungsSummationUtil
-                .getUeberVerkehrsbeziehungSummierteZeitintervalle(zeitintervalle);
-
-        List<Zeitintervall> allPossibleVerkehrsbeziehungen = new ArrayList<>();
-        allPossibleVerkehrsbeziehungen.addAll(zeitintervalle);
-        allPossibleVerkehrsbeziehungen.addAll(summierteVerkehrsbeziehungen);
+        final var summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
+                .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
         /*
-         * - Für die über Verkehrsbeziehungspermutationen summierten und auch im Parameter übergebene
-         * Zeitintervalle
-         * werden die Summen für die einzelnen {@link Zeitblock}e gebildet.
+         * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
+         * wenn der boolean-Parameter true ist
          */
-        final List<Zeitintervall> summierteZeitbloecke = ZeitintervallZeitblockSummationUtil.getSummen(allPossibleVerkehrsbeziehungen);
-
-        /*
-         * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt, wenn der
-         * boolean-Parameter true ist
-         */
-        final List<Zeitintervall> kiZeitintervalle = new ArrayList<>();
+        final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
-            final List<List<Zeitintervall>> groupedZeitintervalleByVerkehrsbeziehung = ZeitintervallKIUtil
-                    .groupZeitintervalleByVerkehrsbeziehung(zeitintervalle);
+            final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
+                    .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
             try {
                 final KIPredictionResult[] predictionResults = kiService
-                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByVerkehrsbeziehung);
-                final List<Zeitintervall> zeitintervallForEachVerkehrsbeziehung = ZeitintervallKIUtil
-                        .extractZeitintervallForEachVerkehrsbeziehung(groupedZeitintervalleByVerkehrsbeziehung);
-                kiZeitintervalle.addAll(
-                        ZeitintervallKIUtil.createKIZeitintervalleFromKIPredictionResults(Arrays.asList(predictionResults),
-                                zeitintervallForEachVerkehrsbeziehung));
-                ZeitintervallKIUtil.expandKiHochrechnungen(kiZeitintervalle);
+                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
+                final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                        .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
+                final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
+                        .createKIZeitintervalleForTagessummeFromKIPredictionResults(
+                                Arrays.asList(predictionResults),
+                                firstZeitintervallForEachBewegungsbeziehung);
+                kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
                 ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
-            } catch (PredictionFailedException exception) {
-                log.error("Error predicting Tagessummen with KIService\n" + exception);
+            } catch (final PredictionFailedException exception) {
+                final var message = "Error predicting Tagessummen with KIService:\n"
+                        + exception.getMessage();
+                log.error(message, exception);
             }
         }
 
-        List<Zeitintervall> allZeitintervalle = new ArrayList<>();
-        allZeitintervalle.addAll(allPossibleVerkehrsbeziehungen);
+        final var allZeitintervalle = new ArrayList<Zeitintervall>();
+        allZeitintervalle.addAll(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
         allZeitintervalle.addAll(summierteZeitbloecke);
         allZeitintervalle.addAll(kiZeitintervalle);
 
@@ -145,25 +135,28 @@ public class ZeitintervallPersistierungsService {
 
     @Transactional
     public void checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
-        final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(UUID.fromString(zaehlung.getId()),
+        final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
+                UUID.fromString(zaehlung.getId()),
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
         // überprüfen, ob alle Zeitintervalle vorhanden sind
         if (numberOfIntervalle == 0 || numberOfIntervalle == zeitintervalle.size()) {
-            aufbereitenUndPersistieren(zeitintervalle, List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                    .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
+            final var kiAufbereitungNecessary = List
+                    .of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                    .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
+            aufbereitenUndPersistieren(zeitintervalle, kiAufbereitungNecessary);
         } else {
             throw new PlausibilityException("Die Anzahl der übermittelten Zeitintervalle stimmt nicht mit den erwarteten überein");
         }
     }
 
     @Transactional
-    public void deleteZeitintervalleByIdOfVerkehrsbeziehungQuerverkehrOrLaengsverkehr(final List<String> verkehrsbeziehungIds) {
-        final var uuidsOfVerkehrsbeziehungen = CollectionUtils
-                .emptyIfNull(verkehrsbeziehungIds)
+    public void deleteZeitintervalleByIdOfBewegungsbeziehung(final List<String> bewegungsbeziehungsIds) {
+        final var uuidsOfBewegungsbeziehungen = CollectionUtils
+                .emptyIfNull(bewegungsbeziehungsIds)
                 .stream()
                 .map(UUID::fromString)
                 .toList();
-        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfVerkehrsbeziehungen);
+        zeitintervallRepository.deleteByBewegungsbeziehungIdIn(uuidsOfBewegungsbeziehungen);
     }
 
     @Transactional

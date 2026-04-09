@@ -9,16 +9,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
@@ -26,7 +22,6 @@ import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,29 +93,6 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
         assertThat(zaehlungenForExternal.get(0).getStatus(), is(Status.INSTRUCTED.name()));
         assertThat(zaehlungenForExternal.get(1).getStatus(), is(Status.CORRECTION.name()));
         assertThat(zaehlungenForExternal.get(2).getStatus(), is(Status.COUNTING.name()));
-    }
-
-    @Test
-    public void updateStatus() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        zaehlstelle.setNummer("120105");
-        zaehlstelle.setStadtbezirkNummer(12);
-        final var zaehlungen = new ArrayList<Zaehlung>();
-        zaehlungen.add(ZaehlungRandomFactory.getOne());
-        zaehlstelle.setZaehlungen(zaehlungen);
-        zaehlstelle.getZaehlungen().get(0).setStatus(Status.INSTRUCTED.name());
-
-        final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
-        updateStatusDTO.setStatus(Status.ACTIVE.name());
-        updateStatusDTO.setZaehlungId(zaehlstelle.getZaehlungen().get(0).getId());
-
-        when(this.zaehlstelleIndex.findByZaehlungenId(anyString())).thenReturn(Optional.of(zaehlstelle));
-
-        when(this.zaehlstelleIndex.save(zaehlstelle)).thenReturn(zaehlstelle);
-
-        this.externalZaehlungPersistierungsService.updateStatus(updateStatusDTO);
-
-        assertThat(zaehlstelle.getZaehlungen().get(0).getStatus(), is(Status.ACTIVE.name()));
     }
 
 }

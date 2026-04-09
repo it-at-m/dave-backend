@@ -4,9 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.util.DaveConstants;
@@ -163,41 +168,7 @@ class ZeitintervallBaseUtilTest {
     }
 
     @Test
-    public void getAllPossibleVerkehrsbeziehungen() {
-        final Set<Verkehrsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleVerkehrsbeziehungen(zeitintervalle);
-
-        final Set<Verkehrsbeziehung> expected = new HashSet<>();
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(3);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(1);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(3);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(3);
-        verkehrsbeziehung.setNach(1);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        expected.add(verkehrsbeziehung);
-
-        assertThat(result, is(expected));
-    }
-
-    @Test
-    public void getZeitintervalleForVerkehrsbeziehung() {
+    public void getZeitintervalleForBewegungsbeziehung() {
         Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = new TreeMap<>();
         ZeitintervallBaseUtil.Intervall intervall = new ZeitintervallBaseUtil.Intervall(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
@@ -211,7 +182,7 @@ class ZeitintervallBaseUtilTest {
         verkehrsbeziehung.setNach(3);
         verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
 
-        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForVerkehrsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
         List<Zeitintervall> expected = Arrays.asList(
                 zeitintervalle.get(3),
@@ -268,19 +239,6 @@ class ZeitintervallBaseUtilTest {
         assertThat(result, is(false));
     }
 
-    //    @Test
-    //    public void getPkwEinheit() {
-    //        List<Zeitintervall> input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
-    //        PkwEinheit result = ZeitintervallBaseUtil.getPkwEinheit(input);
-    //        assertThat(result, IsNull.nullValue());
-    //
-    //        final PkwEinheit expected = new PkwEinheit();
-    //        expected.setFahrradfahrer(BigDecimal.TEN);
-    //        input = Arrays.asList(new Zeitintervall(), new Zeitintervall(), new Zeitintervall());
-    //        result = ZeitintervallBaseUtil.getPkwEinheit(input);
-    //        assertThat(result, is(result));
-    //    }
-
     @Test
     public void checkAndCorrectEndeuhrzeitForLastZeitintervallOfDayIfNecessary() {
         final Zeitintervall input = new Zeitintervall();
@@ -315,6 +273,582 @@ class ZeitintervallBaseUtilTest {
         expected.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
         expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
         assertThat(result, is(expected));
+    }
+
+    @Test
+    public void isSameBewegungsbeziehungAndBothBewegungsbeziehung_AreNotNull_OrBothNull_variousCases() {
+        // beide null -> true
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(null, null), is(true));
+
+        // ein Argument ist null -> false
+        final Laengsverkehr l1 = new Laengsverkehr();
+        l1.setRichtung(Bewegungsrichtung.EIN);
+        l1.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(l1, null), is(false));
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(null, l1), is(false));
+
+        // gleiche Referenz -> true
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(l1, l1), is(true));
+
+        // unterschiedliche Instanzen mit gleichen Werten -> true
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        l2.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(l1, l2), is(true));
+
+        // unterschiedliche konkrete Typen -> false
+        final Querungsverkehr q1 = new Querungsverkehr();
+        q1.setRichtung(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(l1, q1), is(false));
+
+        // unterschiedliche Feldwerte -> false
+        final Laengsverkehr l3 = new Laengsverkehr();
+        l3.setRichtung(Bewegungsrichtung.AUS);
+        l3.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(l1, l3), is(false));
+    }
+
+    @Test
+    public void haveBothZeitintervallSameBewegungsbeziehung_variousCases() {
+        // gleiche Bewegungsbeziehungen vorbereiten
+        final Verkehrsbeziehung v1 = new Verkehrsbeziehung();
+        v1.setVon(1);
+        v1.setNach(2);
+        v1.setFahrbewegungKreisverkehr(null);
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(1);
+        v2.setNach(2);
+        v2.setFahrbewegungKreisverkehr(null);
+
+        final Laengsverkehr l1 = new Laengsverkehr();
+        l1.setRichtung(Bewegungsrichtung.EIN);
+        l1.setStrassenseite(Himmelsrichtung.N);
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        l2.setStrassenseite(Himmelsrichtung.N);
+
+        final Querungsverkehr q1 = new Querungsverkehr();
+        q1.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr q2 = new Querungsverkehr();
+        q2.setRichtung(Himmelsrichtung.N);
+
+        final Zeitintervall z1 = new Zeitintervall();
+        z1.setVerkehrsbeziehung(v1);
+        z1.setLaengsverkehr(l1);
+        z1.setQuerungsverkehr(q1);
+
+        final Zeitintervall z2 = new Zeitintervall();
+        z2.setVerkehrsbeziehung(v2);
+        z2.setLaengsverkehr(l2);
+        z2.setQuerungsverkehr(q2);
+
+        // alle drei gleich -> true
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
+
+        // laengsverkehr unterscheidet sich -> false (alle drei müssen gleich sein)
+        l2.setRichtung(Bewegungsrichtung.AUS);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
+
+        // Szenario: in einem Zeitintervall ist immer nur entweder Laengsverkehr, Querungsverkehr oder Verkehrsbeziehung gesetzt.
+        // Nur Laengsverkehr in beiden gesetzt und gleich -> true
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        z1.setLaengsverkehr(l1);
+        z2.setLaengsverkehr(l2);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Nur Verkehrsbeziehung in beiden gesetzt und gleich -> true
+        z1.setLaengsverkehr(null);
+        z2.setLaengsverkehr(null);
+        z1.setVerkehrsbeziehung(v1);
+        z2.setVerkehrsbeziehung(v2);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Nur Querungsverkehr in beiden gesetzt und gleich -> true
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(q1);
+        z2.setQuerungsverkehr(q2);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Alle drei null in beiden -> true (Nulls werden als gleich betrachtet)
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(true));
+
+        // Unterschiedliche Typen über die beiden Intervalle (z1 hat Laengsverkehr, z2 hat Verkehrsbeziehung) -> false
+        z1.setLaengsverkehr(l1);
+        z1.setVerkehrsbeziehung(null);
+        z2.setLaengsverkehr(null);
+        z2.setVerkehrsbeziehung(v1);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
+
+        // Ein Bewegungsbeziehung gleich, eine andere null vs non-null -> false
+        z1.setLaengsverkehr(l1);
+        z2.setLaengsverkehr(null);
+        z1.setVerkehrsbeziehung(null);
+        z2.setVerkehrsbeziehung(null);
+        z1.setQuerungsverkehr(null);
+        z2.setQuerungsverkehr(null);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(z1, z2), is(false));
+    }
+
+    @Test
+    public void getAllPossibleBewegungsbeziehungen_variousCases() {
+        // Leere Liste -> leeres Set
+        assertThat(ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(List.of()), is(Set.of()));
+
+        // Zeitintervalle mit jeweils genau einer Bewegungsbeziehung
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(1);
+        v.setNach(2);
+        v.setFahrbewegungKreisverkehr(null);
+
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setRichtung(Bewegungsrichtung.EIN);
+        l.setStrassenseite(Himmelsrichtung.N);
+
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setRichtung(Himmelsrichtung.N);
+
+        final Zeitintervall zV = new Zeitintervall();
+        zV.setVerkehrsbeziehung(v);
+
+        final Zeitintervall zL = new Zeitintervall();
+        zL.setLaengsverkehr(l);
+
+        final Zeitintervall zQ = new Zeitintervall();
+        zQ.setQuerungsverkehr(q);
+
+        final Set<Bewegungsbeziehung> result = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(List.of(zV, zL, zQ));
+        final Set<Bewegungsbeziehung> expected = new HashSet<>();
+        expected.add(v);
+        expected.add(l);
+        expected.add(q);
+        assertThat(result, is(expected));
+
+        // Duplikate werden entfernt (zwei gleiche Verkehrsbeziehungen)
+        final Verkehrsbeziehung vDup = new Verkehrsbeziehung();
+        vDup.setVon(1);
+        vDup.setNach(2);
+        vDup.setFahrbewegungKreisverkehr(null);
+        final Zeitintervall zVDup = new Zeitintervall();
+        zVDup.setVerkehrsbeziehung(vDup);
+
+        final Set<Bewegungsbeziehung> resultWithDup = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(List.of(zV, zVDup));
+        final Set<Bewegungsbeziehung> expectedWithDup = new HashSet<>();
+        expectedWithDup.add(v);
+        assertThat(resultWithDup, is(expectedWithDup));
+
+        // Intervalle ohne Bewegungsbeziehung werden ignoriert
+        final Zeitintervall zEmpty = new Zeitintervall();
+        final Set<Bewegungsbeziehung> resultIgnore = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(List.of(zEmpty, zV));
+        assertThat(resultIgnore, is(expectedWithDup));
+
+        // Falls ein Zeitintervall mehrere Bewegungsbeziehungen gesetzt hat, werden alle nicht-null gesammelt
+        final Zeitintervall zAll = new Zeitintervall();
+        zAll.setVerkehrsbeziehung(v);
+        zAll.setLaengsverkehr(l);
+        zAll.setQuerungsverkehr(q);
+        final Set<Bewegungsbeziehung> resultAll = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(List.of(zAll));
+        final Set<Bewegungsbeziehung> expectedAll = new HashSet<>();
+        expectedAll.add(v);
+        expectedAll.add(l);
+        expectedAll.add(q);
+        assertThat(resultAll, is(expectedAll));
+    }
+
+    @Test
+    public void isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull_variousCases() {
+        // Zwei gleiche Verkehrsbeziehungen (verschiedene Instanzen, gleiche Werte) -> true
+        final Verkehrsbeziehung v1 = new Verkehrsbeziehung();
+        v1.setVon(1);
+        v1.setNach(2);
+        v1.setFahrbewegungKreisverkehr(null);
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(1);
+        v2.setNach(2);
+        v2.setFahrbewegungKreisverkehr(null);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(v1, v2), is(true));
+
+        // Werte unterscheiden sich -> false
+        v2.setNach(3);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(v1, v2), is(false));
+
+        // Ein Argument ist null -> false (Methode erwartet beide nicht-null)
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(v1, null), is(false));
+
+        // Unterschiedliche konkrete Typen mit gleichen Feldwerten -> false
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setRichtung(Bewegungsrichtung.EIN);
+        l.setStrassenseite(Himmelsrichtung.N);
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setRichtung(Himmelsrichtung.N);
+        // Obwohl Felder ggf. ähnliche Semantik haben, sind die Klassen unterschiedlich -> false
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(l, q), is(false));
+    }
+
+    @Test
+    public void containsZeitintervallSameBewegungsbeziehungWhichIsNonNull_variousCases() {
+        // Setup: Verkehrsbeziehung in Intervall
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(1);
+        v.setNach(2);
+        v.setFahrbewegungKreisverkehr(null);
+        final Zeitintervall z = new Zeitintervall();
+        z.setVerkehrsbeziehung(v);
+
+        // Gleiche Referenz -> true
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, v), is(true));
+
+        // Verschiedene Instanzen, gleiche Werte -> true (equals sollte das abdecken)
+        final Verkehrsbeziehung vSameValues = new Verkehrsbeziehung();
+        vSameValues.setVon(1);
+        vSameValues.setNach(2);
+        vSameValues.setFahrbewegungKreisverkehr(null);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, vSameValues), is(true));
+
+        // Unterschiedliche Werte -> false
+        final Verkehrsbeziehung vDifferent = new Verkehrsbeziehung();
+        vDifferent.setVon(2);
+        vDifferent.setNach(1);
+        vDifferent.setFahrbewegungKreisverkehr(null);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, vDifferent), is(false));
+
+        // Übergabe einer null-Bewegungsbeziehung -> false
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(z, null), is(false));
+
+        // Laengsverkehr prüfen (gleiches Werte-Objekt) -> true
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setRichtung(Bewegungsrichtung.EIN);
+        l.setStrassenseite(Himmelsrichtung.N);
+        final Zeitintervall zL = new Zeitintervall();
+        zL.setLaengsverkehr(l);
+        final Laengsverkehr lSame = new Laengsverkehr();
+        lSame.setRichtung(Bewegungsrichtung.EIN);
+        lSame.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zL, lSame), is(true));
+
+        // Unterschiedliche Typen -> false (zL hat Laengsverkehr, gesucht wird Verkehrsbeziehung)
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zL, v), is(false));
+
+        // Mehrere Bewegungsbeziehungen in einem Zeitintervall: mindestens eine Übereinstimmung reicht
+        final Zeitintervall zMulti = new Zeitintervall();
+        zMulti.setVerkehrsbeziehung(v);
+        zMulti.setLaengsverkehr(l);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zMulti, lSame), is(true));
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zMulti, vSameValues), is(true));
+    }
+
+    @Test
+    public void isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull_additionalCases() {
+        // gleiche Referenz -> true
+        final Verkehrsbeziehung vRef = new Verkehrsbeziehung();
+        vRef.setVon(5);
+        vRef.setNach(6);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(vRef, vRef), is(true));
+
+        // Laengsverkehr mit null-Feldern -> beide null-Felder -> true
+        final Laengsverkehr lA = new Laengsverkehr();
+        lA.setRichtung(Bewegungsrichtung.EIN);
+        lA.setStrassenseite(null);
+        final Laengsverkehr lB = new Laengsverkehr();
+        lB.setRichtung(Bewegungsrichtung.EIN);
+        lB.setStrassenseite(null);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(lA, lB), is(true));
+
+        // Laengsverkehr: ein Feld null vs non-null -> false
+        lB.setStrassenseite(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungAndBothBewegungsbeziehungAreNotNull(lA, lB), is(false));
+    }
+
+    @Test
+    public void isSameBewegungsbeziehungOrBothNull_additionalCases() {
+        // beide non-null und equals -> true
+        final Querungsverkehr q1 = new Querungsverkehr();
+        q1.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr q2 = new Querungsverkehr();
+        q2.setRichtung(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(q1, q2), is(true));
+
+        // beide non-null und nicht equals -> false
+        q2.setRichtung(Himmelsrichtung.S);
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(q1, q2), is(false));
+
+        // Beide null (redundant, aber explizit) -> true
+        assertThat(ZeitintervallBaseUtil.isSameBewegungsbeziehungOrBothNull(null, null), is(true));
+    }
+
+    @Test
+    public void haveBothZeitintervallSameBewegungsbeziehung_additionalCases() {
+        // Beide Intervalle haben zwei identische Bewegungsbeziehungen gesetzt -> true
+        final Verkehrsbeziehung v1 = new Verkehrsbeziehung();
+        v1.setVon(1);
+        v1.setNach(2);
+        final Laengsverkehr l1 = new Laengsverkehr();
+        l1.setRichtung(Bewegungsrichtung.EIN);
+        l1.setStrassenseite(Himmelsrichtung.N);
+
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(1);
+        v2.setNach(2);
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(Bewegungsrichtung.EIN);
+        l2.setStrassenseite(Himmelsrichtung.N);
+
+        final Zeitintervall za = new Zeitintervall();
+        za.setVerkehrsbeziehung(v1);
+        za.setLaengsverkehr(l1);
+
+        final Zeitintervall zb = new Zeitintervall();
+        zb.setVerkehrsbeziehung(v2);
+        zb.setLaengsverkehr(l2);
+
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(za, zb), is(true));
+
+        // Beide Intervalle haben zwar gleiche Laengsverkehr, aber unterschiedliche Querungsverkehr -> false
+        final Querungsverkehr qA = new Querungsverkehr();
+        qA.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr qB = new Querungsverkehr();
+        qB.setRichtung(Himmelsrichtung.S);
+        za.setQuerungsverkehr(qA);
+        zb.setQuerungsverkehr(qB);
+        assertThat(ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(za, zb), is(false));
+    }
+
+    @Test
+    public void containsZeitintervallSameBewegungsbeziehungWhichIsNonNull_additionalCases() {
+        // Zeitintervall ohne Bewegungsbeziehungen -> false
+        final Zeitintervall zEmpty = new Zeitintervall();
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(1);
+        v.setNach(2);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zEmpty, v), is(false));
+
+        // Querungsverkehr match -> true
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setRichtung(Himmelsrichtung.N);
+        final Zeitintervall zQ = new Zeitintervall();
+        zQ.setQuerungsverkehr(q);
+        final Querungsverkehr qSame = new Querungsverkehr();
+        qSame.setRichtung(Himmelsrichtung.N);
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zQ, qSame), is(true));
+
+        // Gesucht ist null -> false (redundant assert)
+        assertThat(ZeitintervallBaseUtil.containsZeitintervallSameBewegungsbeziehungWhichIsNonNull(zQ, null), is(false));
+
+    }
+
+    @Test
+    public void isZeitintervallBeforeTimeParameters_variousCases() {
+        // zeitintervall endet genau zur Endzeit -> true (Start vor Endzeit)
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        Boolean result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // zeitintervall endet vor Endzeit -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // start ist gleich Endzeit -> false (Start darf nicht gleich oder nach Endzeit sein)
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // ende nach Endzeit -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallBeforeTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void isZeitintervallWithinTimeParameters_variousCases() {
+        // Start exakt am StartTime und Ende vor EndTime -> true
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(7, 0)));
+        Boolean result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // Start nach StartTime und Ende genau EndTime -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 30)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(true));
+
+        // Start vor StartTime -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 30)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // Ende nach EndTime -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 45)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 15)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+
+        // Edge-Case: Start == StartTime == EndTime -> false (start equals endTime makes it invalid)
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinTimeParameters(zi, LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)),
+                LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void isZeitintervallWithinZeitblock_additionalEdgeCases() {
+        // Zeitblock mit Endzeit == LocalTime.MAX (ZB_19_24) und Zeitintervall, das bis 23:59 geht -> true
+        Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 45)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
+        boolean result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_19_24);
+        assertThat(result, is(true));
+
+        // Zeitblock ZB_00_24 (ganzer Tag) und Zeitintervall exakt ganzer Tag -> true
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MIDNIGHT));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_00_24);
+        assertThat(result, is(true));
+
+        // Zeitintervall startet genau an Endzeit des Blocks -> false
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(10, 30)));
+        result = ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zi, de.muenchen.dave.domain.enums.Zeitblock.ZB_06_10);
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void getBewegungbeziehung_variousCases() {
+        // Falls Verkehrsbeziehung gesetzt ist, wird diese zurückgegeben
+        final Zeitintervall zV = new Zeitintervall();
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(1);
+        v.setNach(2);
+        zV.setVerkehrsbeziehung(v);
+        Bewegungsbeziehung result = ZeitintervallBaseUtil.getBewegungbeziehung(zV);
+        assertThat(result, is(v));
+
+        // Falls nur Laengsverkehr gesetzt ist, wird Laengsverkehr zurückgegeben
+        final Zeitintervall zL = new Zeitintervall();
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.EIN);
+        l.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.N);
+        zL.setLaengsverkehr(l);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zL);
+        assertThat(result, is(l));
+
+        // Falls nur Querungsverkehr gesetzt ist, wird Querungsverkehr zurückgegeben
+        final Zeitintervall zQ = new Zeitintervall();
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.N);
+        zQ.setQuerungsverkehr(q);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zQ);
+        assertThat(result, is(q));
+
+        // Falls mehrere Bewegungsbeziehungen gesetzt sind, hat die Reihenfolge Vorrang: Verkehrsbeziehung > Laengsverkehr > Querungsverkehr
+        final Zeitintervall zMulti = new Zeitintervall();
+        final Verkehrsbeziehung v2 = new Verkehrsbeziehung();
+        v2.setVon(3);
+        v2.setNach(4);
+        final Laengsverkehr l2 = new Laengsverkehr();
+        l2.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.AUS);
+        l2.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.O);
+        final Querungsverkehr q2 = new Querungsverkehr();
+        q2.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.S);
+        zMulti.setVerkehrsbeziehung(v2);
+        zMulti.setLaengsverkehr(l2);
+        zMulti.setQuerungsverkehr(q2);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zMulti);
+        assertThat(result, is(v2));
+
+        // Wenn Verkehrsbeziehung null ist, aber Laengsverkehr und Querungsverkehr gesetzt sind, wird Laengsverkehr bevorzugt
+        final Zeitintervall zMulti2 = new Zeitintervall();
+        zMulti2.setVerkehrsbeziehung(null);
+        zMulti2.setLaengsverkehr(l2);
+        zMulti2.setQuerungsverkehr(q2);
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zMulti2);
+        assertThat(result, is(l2));
+
+        // Wenn alle null sind, wird null zurückgegeben
+        final Zeitintervall zNone = new Zeitintervall();
+        result = ZeitintervallBaseUtil.getBewegungbeziehung(zNone);
+        assertThat(result, is((Bewegungsbeziehung) null));
+    }
+
+    @Test
+    public void createZeitintervallWithoutCountingValues_basicCase() {
+        // Erzeugung eines Zeitintervalls ohne Bewegungsbeziehungen
+        final UUID zaehlungId = UUID.randomUUID();
+        final LocalDateTime start = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 0));
+        final LocalDateTime ende = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15));
+        final Zeitintervall result = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(zaehlungId, start, ende, TypeZeitintervall.STUNDE_VIERTEL);
+
+        final Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(start);
+        expected.setEndeUhrzeit(ende);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.setType(TypeZeitintervall.STUNDE_VIERTEL);
+
+        assertThat(result, is(expected));
+
+        // Hochrechnung muss initialisiert sein (nicht null)
+        assertThat(result.getHochrechnung() != null, is(true));
+    }
+
+    @Test
+    public void createZeitintervallWithoutCountingValues_withBewegungsbeziehungen() {
+        // Erzeugung eines Zeitintervalls mit Verkehrsbeziehung, Laengsverkehr und Querungsverkehr
+        final UUID zaehlungId = UUID.randomUUID();
+        final LocalDateTime start = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(12, 0));
+        final LocalDateTime ende = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(12, 30));
+
+        final Verkehrsbeziehung v = new Verkehrsbeziehung();
+        v.setVon(10);
+        v.setNach(11);
+
+        final Laengsverkehr l = new Laengsverkehr();
+        l.setKnotenarm(5);
+        l.setRichtung(de.muenchen.dave.domain.enums.Bewegungsrichtung.EIN);
+        l.setStrassenseite(de.muenchen.dave.domain.enums.Himmelsrichtung.O);
+
+        final Querungsverkehr q = new Querungsverkehr();
+        q.setKnotenarm(7);
+        q.setRichtung(de.muenchen.dave.domain.enums.Himmelsrichtung.S);
+
+        final Zeitintervall result = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
+                zaehlungId, start, ende, TypeZeitintervall.BLOCK, v, l, q);
+
+        final Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(start);
+        expected.setEndeUhrzeit(ende);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.setType(TypeZeitintervall.BLOCK);
+        expected.setVerkehrsbeziehung(v);
+        expected.setLaengsverkehr(l);
+        expected.setQuerungsverkehr(q);
+
+        assertThat(result, is(expected));
+
+        // Prüfe, dass die eingebauten Beziehungen genau referenziert sind (==) bzw. gleich
+        assertThat(result.getVerkehrsbeziehung(), is(v));
+        assertThat(result.getLaengsverkehr(), is(l));
+        assertThat(result.getQuerungsverkehr(), is(q));
     }
 
 }
