@@ -2,7 +2,7 @@ app:
   scan:
     packages: org.springframework.data.jpa.convert.threeten, de.muenchen.dave, de.muenchen.relationalimpl
 
-db.schema: dave
+db.schema: public
 spring:
   flyway:
     enabled: true

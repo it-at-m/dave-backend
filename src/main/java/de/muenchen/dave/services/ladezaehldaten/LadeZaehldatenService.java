@@ -378,27 +378,26 @@ public class LadeZaehldatenService {
         List<Integer> tagesTypNumbers;
         TagesTyp tagesTyp = options.getTagesTyp();
         switch (tagesTyp) {
-            case WERKTAG_DI_MI_DO:
-                tagesTypNumbers = List.of(2, 4, 6);
-                break;
-            case WERKTAG_MO_FR:
-                tagesTypNumbers = List.of(1, 2, 3, 4, 5);
-                break;
-            case SAMSTAG:
-                tagesTypNumbers = List.of(6);
-                break;
-            case SONNTAG_FEIERTAG:
-                tagesTypNumbers = List.of(0);
-                break;
-            case MO_SO:
-                tagesTypNumbers = List.of(0, 1, 2, 3, 4, 5, 6);
-                break;
-            default:
-                tagesTypNumbers = List.of(1, 2, 3, 4, 5);
-                break;
+        case WERKTAG_DI_MI_DO:
+            tagesTypNumbers = List.of(2, 4, 6);
+            break;
+        case WERKTAG_MO_FR:
+            tagesTypNumbers = List.of(1, 2, 3, 4, 5);
+            break;
+        case SAMSTAG:
+            tagesTypNumbers = List.of(6);
+            break;
+        case SONNTAG_FEIERTAG:
+            tagesTypNumbers = List.of(0);
+            break;
+        case MO_SO:
+            tagesTypNumbers = List.of(0, 1, 2, 3, 4, 5, 6);
+            break;
+        default:
+            tagesTypNumbers = List.of(1, 2, 3, 4, 5);
+            break;
         }
 
-        
         List<Zeitintervall> zi = zeitintervallRepository.findWeekdayAverageByZaehlungIdOrderBySortingIndexAsc(
                 zaehlungId.toString(),
                 start,
