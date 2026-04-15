@@ -1,6 +1,5 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
@@ -40,7 +39,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.PageRequest;
@@ -425,7 +423,7 @@ public class ZaehlstelleIndexService {
         return ladeZaehlungDTO;
     }
 
-    @Cacheable(value = CachingConfiguration.READ_ZAEHLSTELLE_DTO, key = "{#p0, #p1}")
+    // @Cacheable(value = CachingConfiguration.READ_ZAEHLSTELLE_DTO, key = "{#p0, #p1}")
     public LeseZaehlstelleDTO readZaehlstelleDTO(final String zaehlstelleId, final boolean isFachadmin) throws DataNotFoundException {
         log.debug("Zugriff auf #readZaehlstelleDTO");
         final LeseZaehlstelleDTO leseZaehlstelleDTO = this.zaehlstelleMapper.bean2LeseZaehlstelleDto(this.getZaehlstelle(zaehlstelleId));

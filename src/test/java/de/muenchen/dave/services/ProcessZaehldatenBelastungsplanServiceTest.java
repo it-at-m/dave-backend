@@ -6,19 +6,23 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQJSDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
@@ -114,22 +118,73 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zaehlung.setZaehlart(Zaehlart.N.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, BelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
                 .getBelastungsplanData(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        assertThat(belastungsplanData.get(Fahrzeug.KFZ).getValues()[1][2], is(BigDecimal.valueOf(15)));
-        assertThat(belastungsplanData.get(Fahrzeug.SV).getValues()[1][2], is(BigDecimal.valueOf(9)));
-        assertThat(belastungsplanData.get(Fahrzeug.GV).getValues()[1][2], is(BigDecimal.valueOf(5)));
-        assertThat(belastungsplanData.get(Fahrzeug.RAD).getValues()[1][2], is(BigDecimal.valueOf(6)));
-        assertThat(belastungsplanData.get(Fahrzeug.FUSS).getValues()[1][2], is(BigDecimal.valueOf(7)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.KFZ)).getValues()[1][2], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.SV)).getValues()[1][2], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.GV)).getValues()[1][2], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.RAD)).getValues()[1][2], is(BigDecimal.valueOf(6)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.FUSS)).getValues()[1][2], is(BigDecimal.valueOf(7)));
 
-        assertThat(belastungsplanData.get(Fahrzeug.KFZ).getValues()[4][1], is(BigDecimal.valueOf(150)));
-        assertThat(belastungsplanData.get(Fahrzeug.SV).getValues()[4][1], is(BigDecimal.valueOf(90)));
-        assertThat(belastungsplanData.get(Fahrzeug.GV).getValues()[4][1], is(BigDecimal.valueOf(50)));
-        assertThat(belastungsplanData.get(Fahrzeug.RAD).getValues()[4][1], is(BigDecimal.valueOf(60)));
-        assertThat(belastungsplanData.get(Fahrzeug.FUSS).getValues()[4][1], is(BigDecimal.valueOf(70)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.KFZ)).getValues()[4][1], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.SV)).getValues()[4][1], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.GV)).getValues()[4][1], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.RAD)).getValues()[4][1], is(BigDecimal.valueOf(60)));
+        assertThat(((BelastungsplanDataDTO)belastungsplanData.get(Fahrzeug.FUSS)).getValues()[4][1], is(BigDecimal.valueOf(70)));
 
     }
+
+    @Test
+    public void getBelastunsplanQJSData() {
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
+
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(4);
+        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
+
+        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setFahrradfahrer(6);
+        ladeZaehldatum.setFussgaenger(7);
+
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(4);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
+
+        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setFahrradfahrer(60);
+        ladeZaehldatum.setFussgaenger(70);
+
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setKategorien(Arrays.asList(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QJS.toString());
+        zaehlung.setKreisverkehr(false);
+
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
+                .getBelastungsplanQJSData(zaehldatenJeVerkehrsbeziehung, zaehlung);
+
+        List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQJSDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValuesVerkehrsbeziehungen();
+        assertVerkehrsbeziehung(valuesFuss,2, 4, Himmelsrichtung.N, 7);
+        assertVerkehrsbeziehung(valuesFuss,4, 2, Himmelsrichtung.N, 70);
+        List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQJSDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValuesVerkehrsbeziehungen();
+        assertVerkehrsbeziehung(valuesRad,2, 4, Himmelsrichtung.N, 6);
+        assertVerkehrsbeziehung(valuesRad,4, 2, Himmelsrichtung.N, 60);
+    }
+
+    private void assertVerkehrsbeziehung(List<BelastungsplanQJSDataDTO. VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite, int expectedValue) {
+        assertThat(values
+                        .stream()
+                        .filter(vb -> vb.getVon()==von && vb.getNach()==nach && vb.getStrassenseite().equals(strassenseite))
+                        .map(BelastungsplanQJSDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                is(BigDecimal.valueOf(expectedValue)));
+    }
+
 
     @Test
     void calculateDifferenzdatenDTO() {
@@ -175,18 +230,18 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         final LadeBelastungsplanDTO calculated = ProcessZaehldatenBelastungsplanService.calculateDifferenzdatenDTO(dto1, dto2);
 
-        assertThat(calculated.getValue1().getValues(), is(getDifferenzwert()));
-        assertThat(calculated.getValue2().getValues(), is(getDifferenzwert()));
-        assertThat(calculated.getValue3().getValues(), is(getDifferenzwert()));
+        assertThat(((BelastungsplanDataDTO)calculated.getValue1()).getValues(), is(getDifferenzwert()));
+        assertThat(((BelastungsplanDataDTO)calculated.getValue2()).getValues(), is(getDifferenzwert()));
+        assertThat(((BelastungsplanDataDTO)calculated.getValue3()).getValues(), is(getDifferenzwert()));
         assertThat(calculated.getStreets(),
                 is(new String[] { "Arnulfstraße", "Joseph-Spital-Straße", "Sonnenstraße", null, "Abengauerweg", null, "Joseph-Spital-Straße", null }));
 
         // value1 === value2 === value3
-        assertThat(calculated.getValue1().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(10), BigDecimal.valueOf(20), BigDecimal.valueOf(30),
+        assertThat(((BelastungsplanDataDTO)calculated.getValue1()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(10), BigDecimal.valueOf(20), BigDecimal.valueOf(30),
                 BigDecimal.valueOf(40), BigDecimal.valueOf(50), BigDecimal.valueOf(60), BigDecimal.valueOf(70), BigDecimal.valueOf(80) }));
-        assertThat(calculated.getValue1().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(-2), BigDecimal.valueOf(-14), BigDecimal.valueOf(-26),
+        assertThat(((BelastungsplanDataDTO)calculated.getValue1()).getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(-2), BigDecimal.valueOf(-14), BigDecimal.valueOf(-26),
                 BigDecimal.valueOf(-38), BigDecimal.valueOf(-50), BigDecimal.valueOf(-62), BigDecimal.valueOf(-74), BigDecimal.valueOf(-86) }));
-        assertThat(calculated.getValue1().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(-8), BigDecimal.valueOf(-6), BigDecimal.valueOf(-4),
+        assertThat(((BelastungsplanDataDTO)calculated.getValue1()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(-8), BigDecimal.valueOf(-6), BigDecimal.valueOf(-4),
                 BigDecimal.valueOf(-2), BigDecimal.valueOf(0), BigDecimal.valueOf(2), BigDecimal.valueOf(4), BigDecimal.valueOf(6) }));
     }
 

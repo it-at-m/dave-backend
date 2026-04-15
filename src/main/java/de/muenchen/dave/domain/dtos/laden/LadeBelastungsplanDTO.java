@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class LadeBelastungsplanDTO implements Serializable {
 
-    private BelastungsplanDataDTO value1;
-    private BelastungsplanDataDTO value2;
-    private BelastungsplanDataDTO value3;
+    private AbstractBelastungsplanDataDTO value1;
+    private AbstractBelastungsplanDataDTO value2;
+    private AbstractBelastungsplanDataDTO value3;
     private String[] streets;
     private boolean kreisverkehr;
 }

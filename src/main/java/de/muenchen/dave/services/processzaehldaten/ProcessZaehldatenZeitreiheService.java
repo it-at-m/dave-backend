@@ -1,6 +1,5 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
@@ -30,7 +29,6 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -184,7 +182,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @return Zeitreihendaten als LadeZaehldatenZeitreiheDTO
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
-    @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
+    // @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
     public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDTO options)
             throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));

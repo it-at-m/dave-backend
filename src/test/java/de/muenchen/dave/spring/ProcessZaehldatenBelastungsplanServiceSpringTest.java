@@ -12,6 +12,7 @@ import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
@@ -153,33 +154,33 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         LadeBelastungsplanDTO ladeBelastungsplan = processZaehldatenBelastungsplanService
                 .ladeProcessedZaehldatenBelastungsplan(zaehlungId.toString(), options);
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[4][1], is(BigDecimal.valueOf(15)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[4][1], is(BigDecimal.valueOf(9)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[4][1], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getValues()[4][1], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getValues()[4][1], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getValues()[4][1], is(BigDecimal.valueOf(5)));
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[1][4], is(BigDecimal.valueOf(150)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[1][4], is(BigDecimal.valueOf(90)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[1][4], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getValues()[1][4], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getValues()[1][4], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getValues()[1][4], is(BigDecimal.valueOf(50)));
 
-        assertThat(ladeBelastungsplan.getValue1().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue2().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue3().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
         final String[] strassen = { null, "knotenarm_2", null, null, "knotenarm_5", null, null, null };
@@ -268,30 +269,30 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         System.err.println(ladeBelastungsplan);
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[4][1], is(BigDecimal.valueOf(15)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[4][1], is(BigDecimal.valueOf(9)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[4][1], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getValues()[4][1], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getValues()[4][1], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getValues()[4][1], is(BigDecimal.valueOf(5)));
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[1][4], is(BigDecimal.valueOf(150)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[1][4], is(BigDecimal.valueOf(90)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[1][4], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getValues()[1][4], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getValues()[1][4], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getValues()[1][4], is(BigDecimal.valueOf(50)));
 
-        assertThat(ladeBelastungsplan.getValue1().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue1().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue1()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue2().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue2().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue2()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue3().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue3().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO)ladeBelastungsplan.getValue3()).getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
                 BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
         final String[] strassen = { null, "knotenarm_2", null, null, "knotenarm_5", null, null, null };

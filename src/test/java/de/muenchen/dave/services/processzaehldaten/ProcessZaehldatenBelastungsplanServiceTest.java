@@ -161,6 +161,31 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         assertEquals("FUSS", dto.getValue1().getLabel());
     }
 
+    /**
+     * Testet, TODO
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussData() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.QJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervalle1(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
+
+        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("FUSS", dto.getValue1().getLabel());
+    }
     private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
         Zeitintervall zeitintervall = new Zeitintervall();
         if (fahrzeuge.contains(Fahrzeug.PKW))
@@ -178,6 +203,24 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         vb.setVon(1);
         vb.setNach(3);
         zeitintervall.setVerkehrsbeziehung(vb);
+        return zeitintervall;
+    }
+
+    private Zeitintervall createTestZeitintervalle1(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
+        Zeitintervall zeitintervall = new Zeitintervall();
+        if (fahrzeuge.contains(Fahrzeug.RAD))
+            zeitintervall.setFahrradfahrer(random.nextInt());
+        if (fahrzeuge.contains(Fahrzeug.FUSS))
+            zeitintervall.setFussgaenger(random.nextInt());
+
+        zeitintervall.setStartUhrzeit(LocalDateTime.now());
+        zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusMinutes(15));
+        zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
+        zeitintervall.setZaehlungId(UUID.fromString(zaehlungId));
+        Verkehrsbeziehung vb13N = new Verkehrsbeziehung();
+        vb13N.setVon(1);
+        vb13N.setNach(3);
+        zeitintervall.setVerkehrsbeziehung(vb13N);
         return zeitintervall;
     }
 
