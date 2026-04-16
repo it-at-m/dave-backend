@@ -379,7 +379,7 @@ public class ProcessZaehldatenBelastungsplanService {
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleSpitzenstunde(zaehlung, options);
         } else {
-            zeitintervalle = extractZeitintervalle(zaehlungId, options);
+            zeitintervalle = extractZeitintervalle(zaehlungId, options.getZeitblock());
         }
         // Zeitintervalle filtern und eine Map mit Verkehrsbeziehung als Schlüssel und einem Tupel (TupelTageswertZaehldatum) als Wert bauen
         final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
@@ -711,13 +711,13 @@ public class ProcessZaehldatenBelastungsplanService {
 
     public List<Zeitintervall> extractZeitintervalle(
             final String zaehlungId,
-            final OptionsDTO options) {
+            final Zeitblock zeitblock) {
         return zeitintervallRepository
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         UUID.fromString(zaehlungId),
-                        options.getZeitblock().getStart(),
-                        options.getZeitblock().getEnd(),
-                        Set.of(options.getZeitblock().getTypeZeitintervall()));
+                        zeitblock.getStart(),
+                        zeitblock.getEnd(),
+                        Set.of(zeitblock.getTypeZeitintervall()));
     }
 
     /**

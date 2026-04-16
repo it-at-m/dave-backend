@@ -52,10 +52,11 @@ public class ProcessZaehldatenService {
 
         log.debug("Lade Zaehldaten for Table");
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
-        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
-                UUID.fromString(zaehlungId),
-                options);
-        processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
+//        TODO
+//        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
+//                UUID.fromString(zaehlungId),
+//                options);
+//        processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
 
         //        log.debug("Process Zaehldaten Stepline");
         //        processedZaehldaten.setZaehldatenStepline(
@@ -75,11 +76,11 @@ public class ProcessZaehldatenService {
                 options);
         processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
 
-        log.debug("Process Zaehldaten Zeitreihe");
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
-                zaehlungId,
-                options);
-        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
+//        log.debug("Process Zaehldaten Zeitreihe"); TODO
+//        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
+//                zaehlungId,
+//                options);
+//        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
 
         return processedZaehldaten;
     }
