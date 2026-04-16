@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,41 @@ public class ProcessZaehldatenZeitreiheService {
      * @return
      */
     private static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
+
+        // Bei QU: Prüfe auf Knotenarm und Richtung
+        if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
+            return options.getChosenQuerungsverkehre().stream()
+                    .allMatch(opt -> zaehlung.getQuerungsverkehr().stream()
+                            .anyMatch(qv ->
+                                    Objects.equals(qv.getKnotenarm(), opt.getKnotenarm()) &&
+                                            Objects.equals(qv.getRichtung(), opt.getRichtung())
+                            )
+                    );
+        }
+        // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+            return options.getChosenLaengsverkehre().stream()
+                    .allMatch(opt -> zaehlung.getLaengsverkehr().stream()
+                            .anyMatch(lv ->
+                                    Objects.equals(lv.getKnotenarm(), opt.getKnotenarm()) &&
+                                    Objects.equals(lv.getRichtung(), opt.getRichtung()) &&
+                                    Objects.equals(lv.getStrassenseite(), opt.getStrassenseite())
+                            )
+                    );
+        }
+
+        // Bei QJS: Prüfe auf Von, Nach und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
+            return options.getChosenVerkehrsbeziehungen().stream()
+                    .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
+                            .anyMatch(vb ->
+                                    Objects.equals(vb.getVon(), opt.getVon()) &&
+                                    Objects.equals(vb.getNach(), opt.getNach()) &&
+                                    Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())
+                            )
+                    );
+        }
+
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
