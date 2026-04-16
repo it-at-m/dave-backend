@@ -222,7 +222,7 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen
      * @return passende Zaehl-/Messstellen
      */
-    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
+    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}") TODO
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
@@ -244,7 +244,7 @@ public class SucheService {
      * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
-    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
+    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}") TODO
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,

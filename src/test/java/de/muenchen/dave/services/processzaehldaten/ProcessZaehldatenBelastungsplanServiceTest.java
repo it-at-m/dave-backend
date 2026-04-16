@@ -6,7 +6,8 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQJSDataDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
@@ -78,9 +79,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.RAD))));
 
-        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", dto.getValue1().getLabel());
+        assertEquals("KFZ", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
     }
 
     /**
@@ -104,9 +105,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.FUSS))));
 
-        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", dto.getValue1().getLabel());
+        assertEquals("KFZ", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
     }
 
     /**
@@ -130,9 +131,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
-        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", dto.getValue1().getLabel());
+        assertEquals("RAD", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
     }
 
     /**
@@ -156,9 +157,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", dto.getValue1().getLabel());
+        assertEquals("FUSS", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
     }
 
     /**
@@ -182,10 +183,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervalle1(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        LadeBelastungsplanDTO dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", dto.getValue1().getLabel());
+        assertEquals("FUSS", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
     }
+
     private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
         Zeitintervall zeitintervall = new Zeitintervall();
         if (fahrzeuge.contains(Fahrzeug.PKW))

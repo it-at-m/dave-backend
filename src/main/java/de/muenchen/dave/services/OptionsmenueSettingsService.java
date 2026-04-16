@@ -17,7 +17,7 @@ public class OptionsmenueSettingsService {
 
     private final OptionsmenueSettingsMapper optionsmenueSettingsMapper;
 
-    // @Cacheable(value = CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN)
+    // @Cacheable(value = CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN) TODO
     public List<OptionsmenueSettingsDTO> getAllOptionsmenueSettingsForMessstellen() {
         log.debug("#getAllOptionsmenueSettingsForMessstellen");
         return optionsmenueSettingsRepository
