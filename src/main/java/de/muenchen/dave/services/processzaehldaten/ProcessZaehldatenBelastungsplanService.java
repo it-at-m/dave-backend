@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -579,9 +580,9 @@ public class ProcessZaehldatenBelastungsplanService {
             final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
-        if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
+        if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
-        } else if (StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
+        } else if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD.equals(options.getZeitauswahl())) {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
         } else {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
@@ -702,19 +703,11 @@ public class ProcessZaehldatenBelastungsplanService {
                 // Von-Knotennummer - 1
                 index1 = verkehrsbeziehung.getVon() - 1;
                 // HINEIN = 0, VORBEI = 1, HERAUS = 2
-                switch (verkehrsbeziehung.getFahrbewegungKreisverkehr()) {
-                case HINEIN:
-                    index2 = 0;
-                    break;
-                case VORBEI:
-                    index2 = 1;
-                    break;
-                case HERAUS:
-                    index2 = 2;
-                    break;
-                default:
-                    index2 = -1;
-                }
+                index2 = switch (verkehrsbeziehung.getFahrbewegungKreisverkehr()) {
+                    case HINEIN -> 0;
+                    case VORBEI -> 1;
+                    case HERAUS -> 2;
+                };
             } else {
                 index1 = verkehrsbeziehung.getVon() - 1;
                 index2 = verkehrsbeziehung.getNach() - 1;
@@ -734,13 +727,13 @@ public class ProcessZaehldatenBelastungsplanService {
             }
 
             belastungsplanDataRad.getValues()[index1][index2] = BigDecimal.valueOf(
-                    ObjectUtils.defaultIfNull(
+                    Objects.requireNonNullElse(
                             tupelTageswertZaehldatum.getLadeZaehldatum().getFahrradfahrer(),
                             0));
 
             if (!tupelTageswertZaehldatum.getIsTageswert()) {
                 belastungsplanDataFuss.getValues()[index1][index2] = BigDecimal.valueOf(
-                        ObjectUtils.defaultIfNull(
+                        Objects.requireNonNullElse(
                                 tupelTageswertZaehldatum.getLadeZaehldatum().getFussgaenger(),
                                 0));
             }
