@@ -54,9 +54,6 @@ import org.springframework.stereotype.Service;
 public class ProcessZaehldatenBelastungsplanService {
 
     private static final Integer VALUE_TO_ROUND = 100;
-    private static final String SUM = "sum";
-    private static final String SUM_IN = "sumIn";
-    private static final String SUM_OUT = "sumOut";
 
     private final ZeitintervallRepository zeitintervallRepository;
 
@@ -124,27 +121,6 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Subtrahiert eine BigDecimal[][]-Matrize von einer anderen.
-     *
-     * @param basis Minuend-Matrize
-     * @param vergleich Subtrahend-Matrize
-     * @return Differenzwert-Matrize
-     */
-    public static BigDecimal[][] subtractMatrice(final BigDecimal[][] basis, final BigDecimal[][] vergleich) {
-        final int rows = basis.length;
-        final int cols = basis[0].length;
-
-        final BigDecimal[][] diff = new BigDecimal[rows][cols];
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                diff[i][j] = basis[i][j].subtract(vergleich[i][j]);
-            }
-        }
-        return diff;
-    }
-
-    /**
      * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
      * Belastungsplandata-Objekt
      *
@@ -157,7 +133,7 @@ public class ProcessZaehldatenBelastungsplanService {
         belastungsplanData.setLabel(basis.getLabel());
         belastungsplanData.setFilled(basis.isFilled());
         belastungsplanData.setPercent(basis.isPercent());
-        belastungsplanData.setValues(subtractMatrice(basis.getValues(), vergleich.getValues()));
+        belastungsplanData.setValues(BelastungsplanCalculator.subtractMatrice(basis.getValues(), vergleich.getValues()));
 
         belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
         belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
@@ -501,189 +477,45 @@ public class ProcessZaehldatenBelastungsplanService {
 
         if (dataKfz != null && dataKfz.isFilled()) {
             if (ladeBelastungsplan.isKreisverkehr()) {
-                sumsKfz = this.calcSumsKreisverkehr(dataKfz.getValues());
+                sumsKfz = BelastungsplanCalculator.calcSumsKreisverkehr(dataKfz.getValues());
             } else {
-                sumsKfz = this.calcSumsKreuzung(dataKfz.getValues());
+                sumsKfz = BelastungsplanCalculator.calcSumsKreuzung(dataKfz.getValues());
             }
         }
         if (dataSv != null && dataSv.isFilled()) {
             if (ladeBelastungsplan.isKreisverkehr()) {
-                sumsSv = this.calcSumsKreisverkehr(dataSv.getValues());
+                sumsSv = BelastungsplanCalculator.calcSumsKreisverkehr(dataSv.getValues());
             } else {
-                sumsSv = this.calcSumsKreuzung(dataSv.getValues());
+                sumsSv = BelastungsplanCalculator.calcSumsKreuzung(dataSv.getValues());
             }
         }
         if (dataGv != null && dataGv.isFilled()) {
             if (ladeBelastungsplan.isKreisverkehr()) {
-                sumsGv = this.calcSumsKreisverkehr(dataGv.getValues());
+                sumsGv = BelastungsplanCalculator.calcSumsKreisverkehr(dataGv.getValues());
             } else {
-                sumsGv = this.calcSumsKreuzung(dataGv.getValues());
+                sumsGv = BelastungsplanCalculator.calcSumsKreuzung(dataGv.getValues());
             }
         }
 
         if (ladeBelastungsplan.getValue1().isFilled()) {
             ladeBelastungsplan.setValue1(
-                    this.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue1(), sumsKfz, sumsSv, sumsGv,
+                    BelastungsplanCalculator.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue1(), sumsKfz, sumsSv, sumsGv,
                             ladeBelastungsplan.isKreisverkehr()));
         }
 
         if (ladeBelastungsplan.getValue2().isFilled()) {
             ladeBelastungsplan.setValue2(
-                    this.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue2(), sumsKfz, sumsSv, sumsGv,
+                    BelastungsplanCalculator.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue2(), sumsKfz, sumsSv, sumsGv,
                             ladeBelastungsplan.isKreisverkehr()));
         }
 
         if (ladeBelastungsplan.getValue3().isFilled()) {
             ladeBelastungsplan.setValue3(
-                    this.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue3(), sumsKfz, sumsSv, sumsGv,
+                    BelastungsplanCalculator.calculateSumsForBelastungsplanDataDto(ladeBelastungsplan.getValue3(), sumsKfz, sumsSv, sumsGv,
                             ladeBelastungsplan.isKreisverkehr()));
         }
 
         return ladeBelastungsplan;
-    }
-
-    /**
-     * Reichert das übergebene BelastungsplanDataDTO-Objekt um die Summen der einzelnen Knotenarme an.
-     *
-     * @param data BelastungsplanDataDTO-Objekt, welches um die Summen angereichert werden soll
-     * @param sumsKfz Datengrundlage von KFZ zur Berechnung der %-Anteile
-     * @param sumsSv Datengrundlage von SV zur Berechnung der SV%-Anteile
-     * @param sumsGv Datengrundlage von GV zur Berechnung der GV%-Anteile
-     * @return gibt das um die Summen erweiterte BelastungsplanDataDTO-Objekt zurück
-     */
-    private BelastungsplanDataDTO calculateSumsForBelastungsplanDataDto(final BelastungsplanDataDTO data, final Map<String, BigDecimal[]> sumsKfz,
-            final Map<String, BigDecimal[]> sumsSv, final Map<String, BigDecimal[]> sumsGv, final boolean isKreisverkehr) {
-
-        if (data.getLabel().equalsIgnoreCase(Fahrzeug.SV_P.getName()) && sumsKfz != null && sumsSv != null) {
-            final Map<String, BigDecimal[]> sumSvp = this.calculateSumsSvpOrGvpKreuzung(sumsKfz, sumsSv);
-            data.setSum(sumSvp.get(SUM));
-            data.setSumIn(sumSvp.get(SUM_IN));
-            data.setSumOut(sumSvp.get(SUM_OUT));
-        } else if (data.getLabel().equalsIgnoreCase(Fahrzeug.GV_P.getName()) && sumsKfz != null && sumsGv != null) {
-            final Map<String, BigDecimal[]> sumGvp = this.calculateSumsSvpOrGvpKreuzung(sumsKfz, sumsGv);
-            data.setSum(sumGvp.get(SUM));
-            data.setSumIn(sumGvp.get(SUM_IN));
-            data.setSumOut(sumGvp.get(SUM_OUT));
-        } else {
-            final Map<String, BigDecimal[]> sums;
-            if (isKreisverkehr) {
-                sums = this.calcSumsKreisverkehr(data.getValues());
-            } else {
-                sums = this.calcSumsKreuzung(data.getValues());
-            }
-            data.setSum(sums.get(SUM));
-            data.setSumIn(sums.get(SUM_IN));
-            data.setSumOut(sums.get(SUM_OUT));
-        }
-        return data;
-    }
-
-    private Map<String, BigDecimal[]> calcSumsKreuzung(final BigDecimal[][] values) {
-        final Map<Integer, List<BigDecimal>> listOut = new HashMap<>();
-        final Map<Integer, List<BigDecimal>> listIn = new HashMap<>();
-        final Map<Integer, List<BigDecimal>> listBoth = new HashMap<>();
-        for (int outerIndex = 0; outerIndex < values.length; outerIndex++) { // von
-            final ArrayList<BigDecimal> out = new ArrayList<>();
-            final ArrayList<BigDecimal> in = new ArrayList<>();
-            final ArrayList<BigDecimal> both = new ArrayList<>();
-            for (int innerIndex = 0; innerIndex < values[outerIndex].length; innerIndex++) { // nach
-                in.add(values[outerIndex][innerIndex]);
-                out.add(values[innerIndex][outerIndex]);
-                both.add(values[outerIndex][innerIndex]);
-                both.add(values[innerIndex][outerIndex]);
-            }
-            listOut.put(outerIndex, out);
-            listIn.put(outerIndex, in);
-            listBoth.put(outerIndex, both);
-        }
-
-        final Map<String, BigDecimal[]> sums = new HashMap<>();
-        sums.put(SUM_IN, this.sumValuesOfList(listIn));
-        sums.put(SUM_OUT, this.sumValuesOfList(listOut));
-        sums.put(SUM, this.sumValuesOfList(listBoth));
-        return sums;
-    }
-
-    /**
-     * Berechnet pro Summe den Prozentwert
-     *
-     * @param sumsKfz Summen von KFZ
-     * @param sumsSvOrGv Summen von SV oder GV
-     * @return Summen von SV% oder GV%
-     */
-    private Map<String, BigDecimal[]> calculateSumsSvpOrGvpKreuzung(final Map<String, BigDecimal[]> sumsKfz, final Map<String, BigDecimal[]> sumsSvOrGv) {
-        final Map<String, BigDecimal[]> sumsSvpOrGvp = new HashMap<>();
-        sumsSvpOrGvp.put(SUM_IN, this.calculateAnteilProzent(sumsKfz.get(SUM_IN), sumsSvOrGv.get(SUM_IN)));
-        sumsSvpOrGvp.put(SUM_OUT, this.calculateAnteilProzent(sumsKfz.get(SUM_OUT), sumsSvOrGv.get(SUM_OUT)));
-        sumsSvpOrGvp.put(SUM, this.calculateAnteilProzent(sumsKfz.get(SUM), sumsSvOrGv.get(SUM)));
-        return sumsSvpOrGvp;
-    }
-
-    /**
-     * Berechnet den Prozentwert pro ArrayElement
-     *
-     * @param kfz kfz
-     * @param svOrGv sv oder gv
-     * @return Array
-     */
-    private BigDecimal[] calculateAnteilProzent(final BigDecimal[] kfz, final BigDecimal[] svOrGv) {
-        if (kfz != null && svOrGv != null) {
-            final BigDecimal[] sumInSvpOrGvp = new BigDecimal[svOrGv.length];
-            for (int index = 0; index < svOrGv.length; index++) {
-                sumInSvpOrGvp[index] = CalculationUtil.calculateAnteilProzent(svOrGv[index], kfz[index]);
-            }
-            return sumInSvpOrGvp;
-        } else {
-            return new BigDecimal[0];
-        }
-    }
-
-    /**
-     * Berechnet aus eine zweidimensionalen Array die einzelnen Summen (Einfahrend, Ausfahren, Beide
-     * zusammen) pro Knotenarm für Kreisverkehre.
-     *
-     * @param values Werte des Kreisverkehrs pro Knotenarm
-     * @return Map mit den einzelnen Summen pro Knotenarm
-     */
-    private Map<String, BigDecimal[]> calcSumsKreisverkehr(final BigDecimal[][] values) {
-
-        final Map<Integer, List<BigDecimal>> listIn = new HashMap<>();
-        final Map<Integer, List<BigDecimal>> listBoth = new HashMap<>();
-        for (int outerIndex = 0; outerIndex < values.length; outerIndex++) { // von
-            final ArrayList<BigDecimal> in = new ArrayList<>();
-            final ArrayList<BigDecimal> both = new ArrayList<>();
-            both.add(values[outerIndex][0]); // in den Kreis
-            both.add(values[outerIndex][2]); // aus dem Kreis
-
-            in.add(values[outerIndex][0]); // in den Kreis
-            in.add(values[outerIndex][1]); // vorbei am Arm
-            listIn.put(outerIndex, in);
-            listBoth.put(outerIndex, both);
-        }
-
-        final Map<String, BigDecimal[]> sums = new HashMap<>();
-        sums.put(SUM_IN, this.sumValuesOfList(listIn));
-        //        sums.put(SUM_OUT, this.sumValuesOfList(listOut));
-        sums.put(SUM, this.sumValuesOfList(listBoth));
-        return sums;
-    }
-
-    /**
-     * Summiert die einzelnen Werte in der List auf und packt sie an die entsprechende Stelle im Array
-     *
-     * @param listToSum Map mit allen zu addierenden Werten pro Knotenarm
-     * @return Array mit allen Summen pro Knotenarm
-     */
-    private BigDecimal[] sumValuesOfList(final Map<Integer, List<BigDecimal>> listToSum) {
-        final BigDecimal[] sumPerNode = new BigDecimal[listToSum.size()];
-        listToSum.forEach((key, value) -> {
-            BigDecimal sum = new BigDecimal(0);
-            for (BigDecimal bd : value) {
-                sum = sum.add(bd);
-            }
-            sumPerNode[key] = sum;
-        });
-        return sumPerNode;
     }
 
     /**
@@ -1021,14 +853,14 @@ public class ProcessZaehldatenBelastungsplanService {
      */
     public Zaehlung findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
         final Optional<Zaehlstelle> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(zaehlungId);
-        if (!zaehlstelleOptional.isPresent()) {
-            throw new DataNotFoundException("Zaehlstelle not found");
+        if (zaehlstelleOptional.isEmpty()) {
+            throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
         }
         final Optional<Zaehlung> zaehlungOptional = zaehlstelleOptional.get().getZaehlungen().stream()
                 .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(zaehlungId))
                 .findFirst();
-        if (!zaehlungOptional.isPresent()) {
-            throw new DataNotFoundException("Zaehlung not found");
+        if (zaehlungOptional.isEmpty()) {
+            throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
         }
         return zaehlungOptional.get();
     }
