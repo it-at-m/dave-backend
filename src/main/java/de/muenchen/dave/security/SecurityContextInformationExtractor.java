@@ -32,7 +32,6 @@ public final class SecurityContextInformationExtractor {
 
     public static boolean isFachadmin() {
         log.debug("get isFachadmin");
-        if (0 == 0) return true;
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())
