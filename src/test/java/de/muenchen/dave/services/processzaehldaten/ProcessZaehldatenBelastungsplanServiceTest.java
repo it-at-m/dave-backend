@@ -81,7 +81,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
+        assertEquals("KFZ", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -107,7 +107,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
+        assertEquals("KFZ", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -133,7 +133,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
+        assertEquals("RAD", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -159,7 +159,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -185,7 +185,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanQJSDataDTO)dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
     }
 
     private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {

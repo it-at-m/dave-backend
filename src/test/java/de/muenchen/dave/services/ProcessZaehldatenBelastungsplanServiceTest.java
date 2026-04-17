@@ -17,6 +17,7 @@ import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.services.processzaehldaten.BelastungsplanCalculator;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -260,7 +261,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         vergleich[2] = new BigDecimal[] { BigDecimal.valueOf(8), BigDecimal.valueOf(7), BigDecimal.valueOf(6), BigDecimal.valueOf(5) };
         vergleich[3] = new BigDecimal[] { BigDecimal.valueOf(4), BigDecimal.valueOf(3), BigDecimal.valueOf(2), BigDecimal.valueOf(1) };
 
-        final BigDecimal[][] differenz = ProcessZaehldatenBelastungsplanService.subtractMatrice(basis, vergleich);
+        final BigDecimal[][] differenz = BelastungsplanCalculator.subtractMatrice(basis, vergleich);
         assertThat(differenz,
                 is(getDifferenzwert()));
     }
