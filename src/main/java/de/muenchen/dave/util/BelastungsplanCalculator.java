@@ -1,8 +1,8 @@
-package de.muenchen.dave.services.processzaehldaten;
+package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import de.muenchen.dave.util.CalculationUtil;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

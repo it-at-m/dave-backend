@@ -23,6 +23,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
@@ -173,8 +174,7 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BelastungsplanDataDTO getEmptyBelastungsplanData() {
         final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
-        data.setLabel("");
-        data.setFilled(false);
+        fillEmptyBelastungsplanQJSData(data);
         data.setPercent(false);
         data.setValues(getEmptyDatastructure());
         return data;
@@ -182,12 +182,16 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BelastungsplanQJSDataDTO getEmptyBelastungsplanQJSData() {
         final BelastungsplanQJSDataDTO data = new BelastungsplanQJSDataDTO();
-        data.setLabel("");
-        data.setFilled(false);
+        fillEmptyBelastungsplanQJSData(data);
         data.setSumAll(BigDecimal.ZERO);
         data.setValuesStrassenseite(new ArrayList<>());
         data.setValuesVerkehrsbeziehungen(new ArrayList<>());
         return data;
+    }
+
+    private static void fillEmptyBelastungsplanQJSData(AbstractBelastungsplanDataDTO data){
+        data.setLabel("");
+        data.setFilled(false);
     }
 
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {

@@ -17,7 +17,7 @@ import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.services.processzaehldaten.BelastungsplanCalculator;
+import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import java.math.BigDecimal;
 import java.time.LocalTime;
