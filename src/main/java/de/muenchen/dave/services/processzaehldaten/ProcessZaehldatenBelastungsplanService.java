@@ -189,7 +189,7 @@ public class ProcessZaehldatenBelastungsplanService {
         return data;
     }
 
-    private static void fillEmptyBelastungsplanQJSData(AbstractBelastungsplanDataDTO data){
+    private static void fillEmptyBelastungsplanQJSData(AbstractBelastungsplanDataDTO data) {
         data.setLabel("");
         data.setFilled(false);
     }

@@ -1,28 +1,27 @@
 package de.muenchen.dave.util;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 public class BelastungsplanCalculatorTest {
 
     @Test
     public void testSubtractMatrice() {
         BigDecimal[][] basis = {
-                {BigDecimal.valueOf(5), BigDecimal.valueOf(3)},
-                {BigDecimal.valueOf(2), BigDecimal.valueOf(1)}
+                { BigDecimal.valueOf(5), BigDecimal.valueOf(3) },
+                { BigDecimal.valueOf(2), BigDecimal.valueOf(1) }
         };
         BigDecimal[][] vergleich = {
-                {BigDecimal.valueOf(1), BigDecimal.valueOf(1)},
-                {BigDecimal.valueOf(1), BigDecimal.valueOf(1)}
+                { BigDecimal.valueOf(1), BigDecimal.valueOf(1) },
+                { BigDecimal.valueOf(1), BigDecimal.valueOf(1) }
         };
 
         BigDecimal[][] diff = BelastungsplanCalculator.subtractMatrice(basis, vergleich);
@@ -46,8 +45,8 @@ public class BelastungsplanCalculatorTest {
         BigDecimal d = BigDecimal.valueOf(4);
 
         BigDecimal[][] values = {
-                {a, b},
-                {c, d}
+                { a, b },
+                { c, d }
         };
 
         Map<String, BigDecimal[]> sums = BelastungsplanCalculator.calcSumsKreuzung(values);
@@ -71,8 +70,8 @@ public class BelastungsplanCalculatorTest {
     public void testCalcSumsKreisverkehr_simple2x3() {
         // each row: [inToCircle, passByArm, outFromCircle]
         BigDecimal[][] values = {
-                {BigDecimal.valueOf(1), BigDecimal.valueOf(2), BigDecimal.valueOf(3)},
-                {BigDecimal.valueOf(4), BigDecimal.valueOf(5), BigDecimal.valueOf(6)}
+                { BigDecimal.valueOf(1), BigDecimal.valueOf(2), BigDecimal.valueOf(3) },
+                { BigDecimal.valueOf(4), BigDecimal.valueOf(5), BigDecimal.valueOf(6) }
         };
 
         Map<String, BigDecimal[]> sums = BelastungsplanCalculator.calcSumsKreisverkehr(values);
@@ -91,8 +90,8 @@ public class BelastungsplanCalculatorTest {
 
     @Test
     public void testCalculateAnteilProzent() {
-        BigDecimal[] kfz = {BigDecimal.valueOf(10), BigDecimal.valueOf(20)};
-        BigDecimal[] sv = {BigDecimal.valueOf(1), BigDecimal.valueOf(2)};
+        BigDecimal[] kfz = { BigDecimal.valueOf(10), BigDecimal.valueOf(20) };
+        BigDecimal[] sv = { BigDecimal.valueOf(1), BigDecimal.valueOf(2) };
 
         try (MockedStatic<CalculationUtil> mocked = Mockito.mockStatic(CalculationUtil.class)) {
             // stub the static method for the two expected calls
@@ -117,16 +116,16 @@ public class BelastungsplanCalculatorTest {
         // Prepare sumsKfz and sumsSv (arrays of length 2)
         Map<String, BigDecimal[]> sumsKfz = new HashMap<>();
         Map<String, BigDecimal[]> sumsSv = new HashMap<>();
-        BigDecimal[] kfzIn = {BigDecimal.valueOf(10), BigDecimal.valueOf(20)};
-        BigDecimal[] kfzOut = {BigDecimal.valueOf(30), BigDecimal.valueOf(40)};
-        BigDecimal[] kfzSum = {BigDecimal.valueOf(40), BigDecimal.valueOf(60)};
+        BigDecimal[] kfzIn = { BigDecimal.valueOf(10), BigDecimal.valueOf(20) };
+        BigDecimal[] kfzOut = { BigDecimal.valueOf(30), BigDecimal.valueOf(40) };
+        BigDecimal[] kfzSum = { BigDecimal.valueOf(40), BigDecimal.valueOf(60) };
         sumsKfz.put(BelastungsplanCalculator.SUM_IN, kfzIn);
         sumsKfz.put(BelastungsplanCalculator.SUM_OUT, kfzOut);
         sumsKfz.put(BelastungsplanCalculator.SUM, kfzSum);
 
-        BigDecimal[] svIn = {BigDecimal.valueOf(1), BigDecimal.valueOf(2)};
-        BigDecimal[] svOut = {BigDecimal.valueOf(3), BigDecimal.valueOf(4)};
-        BigDecimal[] svSum = {BigDecimal.valueOf(4), BigDecimal.valueOf(6)};
+        BigDecimal[] svIn = { BigDecimal.valueOf(1), BigDecimal.valueOf(2) };
+        BigDecimal[] svOut = { BigDecimal.valueOf(3), BigDecimal.valueOf(4) };
+        BigDecimal[] svSum = { BigDecimal.valueOf(4), BigDecimal.valueOf(6) };
         sumsSv.put(BelastungsplanCalculator.SUM_IN, svIn);
         sumsSv.put(BelastungsplanCalculator.SUM_OUT, svOut);
         sumsSv.put(BelastungsplanCalculator.SUM, svSum);
@@ -163,8 +162,8 @@ public class BelastungsplanCalculatorTest {
         BelastungsplanDataDTO dto = new BelastungsplanDataDTO();
         dto.setLabel("KFZ"); // not SV_P or GV_P, so will use calcSumsKreuzung
         BigDecimal[][] values = {
-                {BigDecimal.valueOf(1), BigDecimal.valueOf(2)},
-                {BigDecimal.valueOf(3), BigDecimal.valueOf(4)}
+                { BigDecimal.valueOf(1), BigDecimal.valueOf(2) },
+                { BigDecimal.valueOf(3), BigDecimal.valueOf(4) }
         };
         dto.setValues(values);
 
