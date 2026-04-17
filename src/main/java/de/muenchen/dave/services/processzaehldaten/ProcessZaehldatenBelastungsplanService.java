@@ -391,6 +391,8 @@ public class ProcessZaehldatenBelastungsplanService {
             final Zaehlung zaehlung,
             final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
         ladeBelastungsplan.setValue1(getEmptyBelastungsplanQJSData());
+        ladeBelastungsplan.setValue2(getEmptyBelastungsplanQJSData());
+        ladeBelastungsplan.setValue3(getEmptyBelastungsplanQJSData());
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = getBelastungsplanQJSData(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
@@ -398,6 +400,7 @@ public class ProcessZaehldatenBelastungsplanService {
         } else if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
+        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplan);
         return ladeBelastungsplan;
     }
 
@@ -438,20 +441,26 @@ public class ProcessZaehldatenBelastungsplanService {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
 
-        var ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(ladeBelastungsplan, (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
+        LadeBelastungsplanDTO ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(ladeBelastungsplan,
+                (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV));
 
+        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplanSum);
+
+        return ladeBelastungsplanSum;
+    }
+
+    private void markKIHochrechnung(final String zaehldauer, final String zeitauswahl,
+            final AbstractLadeBelastungsplanDTO<? extends AbstractBelastungsplanDataDTO> ladeBelastungsplanSum) {
         // KI-Hochgerechnete Werte sollen im Belastungsplan entsprechend gekennzeichnet werden
-        if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(options.getZeitauswahl()) && List.of(Zaehldauer.DAUER_2_X_4_STUNDEN.toString(),
-                Zaehldauer.DAUER_13_STUNDEN.toString(), Zaehldauer.DAUER_16_STUNDEN.toString()).contains(zaehlung.getZaehldauer())) {
+        if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(zeitauswahl) && List.of(Zaehldauer.DAUER_2_X_4_STUNDEN.toString(),
+                Zaehldauer.DAUER_13_STUNDEN.toString(), Zaehldauer.DAUER_16_STUNDEN.toString()).contains(zaehldauer)) {
             Stream.of(
                     ladeBelastungsplanSum.getValue1(),
                     ladeBelastungsplanSum.getValue2(),
                     ladeBelastungsplanSum.getValue3()).filter(v -> "RAD".equals(v.getLabel()))
                     .forEach(v -> v.setLabel("RAD (KI-Hochrechnung)"));
         }
-
-        return ladeBelastungsplanSum;
     }
 
     @SuppressWarnings("unchecked")
@@ -704,9 +713,9 @@ public class ProcessZaehldatenBelastungsplanService {
                 index1 = verkehrsbeziehung.getVon() - 1;
                 // HINEIN = 0, VORBEI = 1, HERAUS = 2
                 index2 = switch (verkehrsbeziehung.getFahrbewegungKreisverkehr()) {
-                    case HINEIN -> 0;
-                    case VORBEI -> 1;
-                    case HERAUS -> 2;
+                case HINEIN -> 0;
+                case VORBEI -> 1;
+                case HERAUS -> 2;
                 };
             } else {
                 index1 = verkehrsbeziehung.getVon() - 1;

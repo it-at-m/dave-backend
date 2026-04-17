@@ -1,13 +1,24 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQJSDataDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
@@ -107,7 +118,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
+        assertEquals("KFZ", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -133,7 +144,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
+        assertEquals("RAD", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
@@ -163,13 +174,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
-     * Testet, TODO
+     * Testet, ob die FUSS-Zähldaten allein bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
-    public void testLadeProcessedZaehldatenBelastungsplanWithFussData() throws DataNotFoundException {
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQJS() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QJS.name());
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
@@ -186,6 +198,75 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
         assertEquals("FUSS", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
+    }
+
+    /**
+     * Testet, ob die RAD- und FUSS-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQJS() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QJS.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.QJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervalle1(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("RAD", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanQJSDataDTO) dto.getValue2()).getLabel()).isEmpty());
+    }
+
+    /**
+     * Testet die Abzweigung für den Differenzdatenvergleich.
+     */
+    @Test
+    void testGetBelastungsplanDTOWhenDifferenzFalse() throws Exception {
+        ProcessZaehldatenBelastungsplanService serviceSpy = Mockito.spy(service);
+        final OptionsDTO options = new OptionsDTO();
+        options.setDifferenzdatenDarstellen(false);
+
+        final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
+
+        doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
+
+        final var result = serviceSpy.getBelastungsplanDTO("zaehlung-1", options);
+
+        assertSame(expected, result);
+        verify(serviceSpy, times(1)).ladeProcessedZaehldatenBelastungsplan(eq("zaehlung-1"), eq(options));
+        verify(serviceSpy, never()).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
+    }
+
+    /**
+     * Testet die Abzweigung für Einzelzähldaten.
+     */
+    @Test
+    void testGetBelastungsplanDTOWhenDifferenzTrue() throws Exception {
+        ProcessZaehldatenBelastungsplanService serviceSpy = Mockito.spy(service);
+        final OptionsDTO options = new OptionsDTO();
+        options.setDifferenzdatenDarstellen(true);
+        options.setVergleichszaehlungsId("vergleich-1");
+
+        final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
+
+        doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
+
+        final var result = serviceSpy.getBelastungsplanDTO("zaehlung-1", options);
+
+        assertSame(expected, result);
+        verify(serviceSpy, times(1)).getDifferenzdatenBelastungsplanDTO(eq("zaehlung-1"), eq(options));
+        verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
     }
 
     private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {

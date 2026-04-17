@@ -10,8 +10,6 @@ public class BelastungsplanDataDTO extends AbstractBelastungsplanDataDTO {
 
     private BigDecimal[][] values;
 
-    private String label;
-
     private boolean percent;
 
     private BigDecimal[] sumIn;
