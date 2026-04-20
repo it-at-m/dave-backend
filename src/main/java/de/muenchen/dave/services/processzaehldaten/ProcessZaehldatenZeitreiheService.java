@@ -23,9 +23,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -61,34 +61,25 @@ public class ProcessZaehldatenZeitreiheService {
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
             return options.getChosenQuerungsverkehre().stream()
                     .allMatch(opt -> zaehlung.getQuerungsverkehr().stream()
-                            .anyMatch(qv ->
-                                    Objects.equals(qv.getKnotenarm(), opt.getKnotenarm()) &&
-                                            Objects.equals(qv.getRichtung(), opt.getRichtung())
-                            )
-                    );
+                            .anyMatch(qv -> Objects.equals(qv.getKnotenarm(), opt.getKnotenarm()) &&
+                                    Objects.equals(qv.getRichtung(), opt.getRichtung())));
         }
         // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
             return options.getChosenLaengsverkehre().stream()
                     .allMatch(opt -> zaehlung.getLaengsverkehr().stream()
-                            .anyMatch(lv ->
-                                    Objects.equals(lv.getKnotenarm(), opt.getKnotenarm()) &&
+                            .anyMatch(lv -> Objects.equals(lv.getKnotenarm(), opt.getKnotenarm()) &&
                                     Objects.equals(lv.getRichtung(), opt.getRichtung()) &&
-                                    Objects.equals(lv.getStrassenseite(), opt.getStrassenseite())
-                            )
-                    );
+                                    Objects.equals(lv.getStrassenseite(), opt.getStrassenseite())));
         }
 
         // Bei QJS: Prüfe auf Von, Nach und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
             return options.getChosenVerkehrsbeziehungen().stream()
                     .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
-                            .anyMatch(vb ->
-                                    Objects.equals(vb.getVon(), opt.getVon()) &&
+                            .anyMatch(vb -> Objects.equals(vb.getVon(), opt.getVon()) &&
                                     Objects.equals(vb.getNach(), opt.getNach()) &&
-                                    Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())
-                            )
-                    );
+                                    Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())));
         }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
@@ -258,8 +249,7 @@ public class ProcessZaehldatenZeitreiheService {
                         ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
-                    }
-                    else {
+                    } else {
                         if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
                             final var ladeZaehldatum = new LadeZaehldatumDTO();
                             ladeZaehldatum.setPkw(0);
