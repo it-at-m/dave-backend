@@ -57,7 +57,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param options Optionen aus dem Frontend
      * @return true, wenn Check erfolgreich, sonst false
      */
-    private static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
+    static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
 
         // Bei QU: Prüfe auf Knotenarm und Richtung
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
