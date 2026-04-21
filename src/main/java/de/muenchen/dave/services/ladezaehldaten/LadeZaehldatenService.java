@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -137,20 +138,20 @@ public class LadeZaehldatenService {
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumTageswert.setKfz(
-                    ObjectUtils.defaultIfNull(
+                    Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungKfz(),
                             BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
             ladeZaehldatumTageswert.setGueterverkehr(
-                    ObjectUtils.defaultIfNull(
+                    Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungGv(),
                             BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
             ladeZaehldatumTageswert.setSchwerverkehr(
-                    ObjectUtils.defaultIfNull(
+                    Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungSv(),
                             BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
 
             ladeZaehldatumTageswert.setFahrradfahrer(
-                    ObjectUtils.defaultIfNull(
+                    Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungRad(),
                             0));
             ladeZaehldatumTageswert.setFussgaenger(
@@ -216,11 +217,11 @@ public class LadeZaehldatenService {
      */
     private static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
         final Set<TypeZeitintervall> types = new HashSet<>();
-        if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
+        if (ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_KFZ);
-        } else if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
+        } else if (ZEITAUSWAHL_SPITZENSTUNDE_RAD.equals(options.getZeitauswahl())) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_RAD);
-        } else if (StringUtils.equals(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE_FUSS)) {
+        } else if (ZEITAUSWAHL_SPITZENSTUNDE_FUSS.equals(options.getZeitauswahl())) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_FUSS);
         } else {
             if (ZaehldatenIntervall.STUNDE_VIERTEL.equals(options.getIntervall())) {
