@@ -1,9 +1,12 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -14,6 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -44,30 +48,29 @@ public class ProcessZaehldatenService {
      *         Stepline-Diagramm.
      * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
      */
-    //    // @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}") TODO
+    @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
     public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
 
         log.debug("Lade Zaehldaten for Table");
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
-        //        TODO
-        //        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
-        //                UUID.fromString(zaehlungId),
-        //                options);
-        //        processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
+        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
+                UUID.fromString(zaehlungId),
+                options);
+        processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
 
-        //        log.debug("Process Zaehldaten Stepline");
-        //        processedZaehldaten.setZaehldatenStepline(
-        //                processZaehldatenSteplineService.ladeProcessedZaehldatenStepline(
-        //                        ladeZaehldatenTable,
-        //                        options));
-        //
-        //        log.debug("Process Zaehldaten Heatmap");
-        //        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
-        //                ladeZaehldatenTable,
-        //                options);
-        //        processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
+        log.debug("Process Zaehldaten Stepline");
+        processedZaehldaten.setZaehldatenStepline(
+                processZaehldatenSteplineService.ladeProcessedZaehldatenStepline(
+                        ladeZaehldatenTable,
+                        options));
+
+        log.debug("Process Zaehldaten Heatmap");
+        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
+                ladeZaehldatenTable,
+                options);
+        processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
 
         log.debug("Process Zaehldaten Belastungsplan");
         final AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
@@ -75,11 +78,11 @@ public class ProcessZaehldatenService {
                 options);
         processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
 
-        //        log.debug("Process Zaehldaten Zeitreihe"); TODO
-        //        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
-        //                zaehlungId,
-        //                options);
-        //        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
+        log.debug("Process Zaehldaten Zeitreihe");
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
+                zaehlungId,
+                options);
+        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
 
         return processedZaehldaten;
     }

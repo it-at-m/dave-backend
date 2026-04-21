@@ -600,7 +600,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
-     * Testet die Extraktion der für die ausgewählte "Spitzenstunde" relevanten Zeitintervalle einer Zählung.
+     * Testet die Extraktion der für die ausgewählte "Spitzenstunde" relevanten Zeitintervalle einer
+     * Zählung.
      */
     @Test
     void testExtractZeitintervalleSpitzenstunde() {

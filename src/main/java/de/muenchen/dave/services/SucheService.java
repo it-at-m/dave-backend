@@ -7,6 +7,7 @@ import co.elastic.clients.elasticsearch.core.search.CompletionSuggester;
 import co.elastic.clients.elasticsearch.core.search.FieldSuggester;
 import co.elastic.clients.elasticsearch.core.search.Suggester;
 import com.google.common.collect.Lists;
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
@@ -53,6 +54,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -222,7 +224,7 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen
      * @return passende Zaehl-/Messstellen
      */
-    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}") TODO
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
@@ -244,7 +246,7 @@ public class SucheService {
      * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
      * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
      */
-    // @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}") TODO
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
