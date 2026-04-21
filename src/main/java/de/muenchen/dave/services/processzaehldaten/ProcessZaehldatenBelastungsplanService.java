@@ -779,10 +779,12 @@ public class ProcessZaehldatenBelastungsplanService {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
-            returnValue.put(Fahrzeug.RAD, buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
+            returnValue.put(Fahrzeug.RAD,
+                    buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
         }
         if (zaehlung.getKategorien().contains(Fahrzeug.FUSS)) {
-            returnValue.put(Fahrzeug.FUSS, buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
+            returnValue.put(Fahrzeug.FUSS,
+                    buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
         }
         return returnValue;
     }
@@ -810,7 +812,7 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     private BelastungsplanQJSDataDTO buildBelastungsplanQJSDataForFahrzeug(final Fahrzeug fz, final Function<LadeZaehldatumDTO, Integer> reader,
-                                Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung){
+            Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung) {
         final BelastungsplanQJSDataDTO belastungsplanData = getEmptyBelastungsplanQJSData();
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());

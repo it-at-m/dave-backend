@@ -3,6 +3,7 @@ package de.muenchen.dave.services.processzaehldaten;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,25 +42,27 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-
+import de.muenchen.dave.util.BelastungsplanCalculator;
+import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-
-import de.muenchen.dave.util.BelastungsplanCalculator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -301,7 +304,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void isKreisverkehr() {
+    public void testIsKreisverkehr() {
         final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
 
         verkehrsbeziehung.setVon(1);
@@ -350,7 +353,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void getBelastunsplanData() {
+    public void testGetBelastunsplanData() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(2);
@@ -407,7 +410,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void getBelastunsplanQJSData() {
+    public void testGetBelastunsplanQJSData() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
 
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
@@ -450,17 +453,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
     }
 
-    private void assertVerkehrsbeziehung(List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
-                                         int expectedValue) {
-        assertThat(values
-                        .stream()
-                        .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
-                        .map(BelastungsplanQJSDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
-                is(BigDecimal.valueOf(expectedValue)));
-    }
-
     @Test
-    void calculateDifferenzdatenDTO() {
+    void testCalculateDifferenzdatenDTO() {
         final LadeBelastungsplanDTO dto1 = new LadeBelastungsplanDTO();
         BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
         belastungsplanData.setValues(getBigDecimalTwoDimArrayAsc());
@@ -522,7 +516,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    void subtractMatrice() {
+    void testSubtractMatrice() {
         final BigDecimal[][] basis = getBigDecimalTwoDimArrayAsc();
 
         final BigDecimal[][] vergleich = new BigDecimal[4][4];
@@ -537,7 +531,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void roundToNearestIfRoundingIsChoosen() {
+    public void testRoundToNearestIfRoundingIsChoosen() {
         final Integer nearestValueToRound = 100;
         final OptionsDTO options = new OptionsDTO();
         options.setWerteHundertRunden(false);
@@ -570,7 +564,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void roundIfNotNullOrZero() {
+    public void testRoundIfNotNullOrZero() {
         final Integer nearestValueToRound = 100;
         Integer valueToRoundInt = 49;
         Integer resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
@@ -603,6 +597,62 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         valueToRoundBd = BigDecimal.valueOf(150);
         resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(200)));
+    }
+
+    /**
+     * Testet die Extraktion der für die ausgewählte "Spitzenstunde" relevanten Zeitintervalle einer Zählung.
+     */
+    @Test
+    void testExtractZeitintervalleSpitzenstunde() {
+        final UUID zaehlungId = UUID.randomUUID();
+        final Zaehlung zaehlung = Mockito.mock(Zaehlung.class);
+        when(zaehlung.getId()).thenReturn(zaehlungId.toString());
+        when(zaehlung.getZaehlart()).thenReturn(Zaehlart.N.name());
+        when(zaehlung.getKreisverkehr()).thenReturn(Boolean.FALSE);
+
+        final OptionsDTO options = new OptionsDTO();
+        options.setZeitauswahl(LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ);
+        options.setZeitblock(Zeitblock.ZB_06_10);
+
+        try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilMock = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {
+            final LinkedList<Zeitintervall> spitzenstunden = new LinkedList<>();
+            final Zeitintervall overall = new Zeitintervall();
+            overall.setStartUhrzeit(LocalDateTime.of(2022, 1, 1, 7, 0));
+            overall.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
+            spitzenstunden.add(overall);
+
+            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
+                    .thenReturn(spitzenstunden);
+
+            final List<Zeitintervall> zeitintervalle = List.of(new Zeitintervall());
+            when(zeitintervallRepository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), eq(Set.of(TypeZeitintervall.STUNDE_VIERTEL))))
+                    .thenReturn(zeitintervalle);
+
+            final List<Zeitintervall> gleitende = new ArrayList<>();
+            final Zeitintervall g = new Zeitintervall();
+            g.setSortingIndex(1);
+            gleitende.add(g);
+
+            utilMock.when(
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()))
+                    .thenReturn(gleitende);
+
+            final List<Zeitintervall> result = service.extractZeitintervalleSpitzenstunde(zaehlung, options);
+
+            assertNotNull(result);
+            assertEquals(1, result.size());
+
+            utilMock.verify(
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()),
+                    times(1));
+            verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), eq(Boolean.FALSE),
+                    any(OptionsDTO.class));
+            verify(zeitintervallRepository, times(1))
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                            eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), eq(Set.of(TypeZeitintervall.STUNDE_VIERTEL)));
+        }
     }
 
     private BigDecimal[][] getBigDecimalTwoDimArrayAsc() {
@@ -701,6 +751,15 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         if (fahrzeuge.contains(Fahrzeug.FUSS))
             options.setFussverkehr(true);
         return options;
+    }
+
+    private void assertVerkehrsbeziehung(List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
+            int expectedValue) {
+        assertThat(values
+                .stream()
+                .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
+                .map(BelastungsplanQJSDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                is(BigDecimal.valueOf(expectedValue)));
     }
 
 }
