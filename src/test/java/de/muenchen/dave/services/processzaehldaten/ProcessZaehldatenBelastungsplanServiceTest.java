@@ -221,7 +221,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
-     * Testet, ob die RAD- und FUSS-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
+     * Testet, ob die RAD-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQJS() throws DataNotFoundException {
@@ -353,7 +353,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void testGetBelastunsplanData() {
+    public void testGetBelastungsplanData() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(2);
@@ -410,7 +410,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void testGetBelastunsplanQJSData() {
+    public void testGetBelastungsplanQJSData() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
 
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
@@ -633,6 +633,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
             final List<Zeitintervall> gleitende = new ArrayList<>();
             final Zeitintervall g = new Zeitintervall();
+            g.setPkw(99);
             g.setSortingIndex(1);
             gleitende.add(g);
 
@@ -644,6 +645,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
             assertNotNull(result);
             assertEquals(1, result.size());
+            assertEquals(LocalDateTime.of(2022, 1, 1, 7, 0), result.getFirst().getStartUhrzeit());
+            assertEquals(99, result.getFirst().getPkw());
 
             utilMock.verify(
                     () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()),

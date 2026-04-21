@@ -178,7 +178,7 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BelastungsplanDataDTO getEmptyBelastungsplanData() {
         final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
-        fillEmptyBelastungsplanQJSData(data);
+        fillEmptyBelastungsplanData(data);
         data.setPercent(false);
         data.setValues(getEmptyDatastructure());
         return data;
@@ -186,14 +186,14 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private static BelastungsplanQJSDataDTO getEmptyBelastungsplanQJSData() {
         final BelastungsplanQJSDataDTO data = new BelastungsplanQJSDataDTO();
-        fillEmptyBelastungsplanQJSData(data);
+        fillEmptyBelastungsplanData(data);
         data.setSumAll(BigDecimal.ZERO);
         data.setValuesStrassenseite(new ArrayList<>());
         data.setValuesVerkehrsbeziehungen(new ArrayList<>());
         return data;
     }
 
-    private static void fillEmptyBelastungsplanQJSData(AbstractBelastungsplanDataDTO data) {
+    private static void fillEmptyBelastungsplanData(AbstractBelastungsplanDataDTO data) {
         data.setLabel("");
         data.setFilled(false);
     }
@@ -815,7 +815,7 @@ public class ProcessZaehldatenBelastungsplanService {
                 .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(zaehlungId))
                 .findFirst();
         if (zaehlungOptional.isEmpty()) {
-            throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
+            throw new DataNotFoundException("Die Zählung " + zaehlungId + " wurde nicht gefunden");
         }
         return zaehlungOptional.get();
     }
@@ -835,23 +835,26 @@ public class ProcessZaehldatenBelastungsplanService {
                 throw new IllegalStateException("Fehler beim Berechnen der Daten");
             }
             var value = new BelastungsplanQJSDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
-                    verkehrsbeziehung.getStrassenseite(), BigDecimal.valueOf(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum())));
+                    verkehrsbeziehung.getStrassenseite(),
+                    BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
             belastungsplanData.getValuesVerkehrsbeziehungen().add(value);
 
             Optional<BelastungsplanQJSDataDTO.StrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
                     .filter(bez -> bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()).findFirst();
             if (valueStrassenseite.isPresent()) {
                 BigDecimal oldValue = valueStrassenseite.get().getValue();
-                BigDecimal newValue = oldValue.add(BigDecimal.valueOf(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum())));
+                BigDecimal newValue = oldValue
+                        .add(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
                 valueStrassenseite.get().setValue(newValue);
             } else {
                 BelastungsplanQJSDataDTO.StrassenseiteValue valueStrassenseite2 = new BelastungsplanQJSDataDTO.StrassenseiteValue(
                         verkehrsbeziehung.getStrassenseite());
-                valueStrassenseite2.setValue(BigDecimal.valueOf(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum())));
+                valueStrassenseite2.setValue(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
                 belastungsplanData.getValuesStrassenseite().add(valueStrassenseite2);
             }
             belastungsplanData
-                    .setSumAll(belastungsplanData.getSumAll().add(BigDecimal.valueOf(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()))));
+                    .setSumAll(belastungsplanData.getSumAll()
+                            .add(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0))));
         });
         return belastungsplanData;
     }

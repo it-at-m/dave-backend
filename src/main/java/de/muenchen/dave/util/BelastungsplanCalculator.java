@@ -180,7 +180,7 @@ public class BelastungsplanCalculator {
     private static BigDecimal[] sumValuesOfList(final Map<Integer, List<BigDecimal>> listToSum) {
         final BigDecimal[] sumPerNode = new BigDecimal[listToSum.size()];
         listToSum.forEach((key, value) -> {
-            BigDecimal sum = new BigDecimal(0);
+            BigDecimal sum = BigDecimal.ZERO;
             for (BigDecimal bd : value) {
                 sum = sum.add(bd);
             }
