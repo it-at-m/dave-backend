@@ -213,7 +213,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 false,
                 Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
-                        createTestZeitintervalle1(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
@@ -240,7 +240,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 false,
                 Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(List.of(
-                        createTestZeitintervalle1(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
@@ -700,24 +700,6 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         vb.setVon(1);
         vb.setNach(3);
         zeitintervall.setVerkehrsbeziehung(vb);
-        return zeitintervall;
-    }
-
-    private Zeitintervall createTestZeitintervalle1(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
-        Zeitintervall zeitintervall = new Zeitintervall();
-        if (fahrzeuge.contains(Fahrzeug.RAD))
-            zeitintervall.setFahrradfahrer(random.nextInt());
-        if (fahrzeuge.contains(Fahrzeug.FUSS))
-            zeitintervall.setFussgaenger(random.nextInt());
-
-        zeitintervall.setStartUhrzeit(LocalDateTime.now());
-        zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusMinutes(15));
-        zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        zeitintervall.setZaehlungId(UUID.fromString(zaehlungId));
-        Verkehrsbeziehung vb13N = new Verkehrsbeziehung();
-        vb13N.setVon(1);
-        vb13N.setNach(3);
-        zeitintervall.setVerkehrsbeziehung(vb13N);
         return zeitintervall;
     }
 
