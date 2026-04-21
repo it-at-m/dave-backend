@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -50,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -315,7 +317,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung}
      *             * nicht aus den DBs extrahiert werden kann.
      */
-    // @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}") TODO
+    @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
     public AbstractLadeBelastungsplanDTO<?> getBelastungsplanDTO(
             final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
@@ -545,7 +547,7 @@ public class ProcessZaehldatenBelastungsplanService {
      */
     public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
-        final LadeBelastungsplanDTO basisBelastungsplan = (LadeBelastungsplanDTO) ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+        final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
 
         // Fuer die zweite Zaehlung muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
         // der Vergleich auch klappt. Dies ist noetig, wenn zwei Zaehlungen mit unterschiedlicher Dauer verglichen
@@ -556,10 +558,17 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-        final LadeBelastungsplanDTO vergleichsBelastungsplan = (LadeBelastungsplanDTO) ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(),
-                options);
+        final LadeBelastungsplanDTO vergleichsBelastungsplan = castLadeBelastungsplanDTO(
+                ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(),
+                        options));
 
         return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
+    }
+
+    private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
+        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
+            throw new IllegalStateException("Fehler beim Erstellen der Belastungsplandaten");
+        return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
     }
 
     public List<Zeitintervall> extractZeitintervalle(
@@ -823,7 +832,7 @@ public class ProcessZaehldatenBelastungsplanService {
             if (belastungsplanData.getValuesVerkehrsbeziehungen().stream().anyMatch(bez -> (bez.getVon() == verkehrsbeziehung.getVon())
                     && (bez.getNach() == verkehrsbeziehung.getNach()) && (bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()))) {
                 log.error("Fehler beim Berechnen der Daten: doppelte Verkehrsbeziehungen");
-                throw new RuntimeException("Fehler beim Berechnen der Daten");
+                throw new IllegalStateException("Fehler beim Berechnen der Daten");
             }
             var value = new BelastungsplanQJSDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
                     verkehrsbeziehung.getStrassenseite(), BigDecimal.valueOf(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum())));
