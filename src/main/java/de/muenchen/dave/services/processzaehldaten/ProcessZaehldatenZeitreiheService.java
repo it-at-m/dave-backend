@@ -49,11 +49,13 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
-     * Verkehrsbeziehung besitzt
+     * Verkehrsbeziehung besitzt.
+     * Für die Zählarten QU, FJS, QJS gilt: alle Verkehrsbeziehungen und Pfeile, die in den Optionen
+     * gewählt sind, müssen in der Zaehlung vorhanden sein.
      *
      * @param zaehlung Zählung die überprüft werden soll
-     * @param options
-     * @return
+     * @param options Optionen aus dem Frontend
+     * @return true, wenn Check erfolgreich, sonst false
      */
     private static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
 
