@@ -207,6 +207,14 @@ public class ProcessZaehldatenZeitreiheTest {
             }
         }));
         assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
+
+        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
+            {
+                setKnotenarm(1);
+                setRichtung(Himmelsrichtung.W);
+            }
+        }));
+        assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
     }
 
     @Test
@@ -221,7 +229,7 @@ public class ProcessZaehldatenZeitreiheTest {
         Laengsverkehr l2 = new Laengsverkehr();
         l2.setKnotenarm(1);
         l2.setRichtung(Bewegungsrichtung.AUS);
-        l2.setStrassenseite(Himmelsrichtung.N);
+        l2.setStrassenseite(Himmelsrichtung.S);
         zaehlung.setLaengsverkehr(List.of(l1, l2));
 
         // positive cases
@@ -245,7 +253,7 @@ public class ProcessZaehldatenZeitreiheTest {
             {
                 setKnotenarm(1);
                 setRichtung(Bewegungsrichtung.AUS);
-                setStrassenseite(Himmelsrichtung.N);
+                setStrassenseite(Himmelsrichtung.S);
             }
         }));
         assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(true));
@@ -264,7 +272,7 @@ public class ProcessZaehldatenZeitreiheTest {
             {
                 setKnotenarm(1);
                 setRichtung(Bewegungsrichtung.AUS);
-                setStrassenseite(Himmelsrichtung.S);
+                setStrassenseite(Himmelsrichtung.N);
             }
         }));
         assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
@@ -277,6 +285,7 @@ public class ProcessZaehldatenZeitreiheTest {
             }
         }));
         assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
+
     }
 
     @Test
@@ -326,6 +335,24 @@ public class ProcessZaehldatenZeitreiheTest {
                 setVon(1);
                 setNach(3);
                 setStrassenseite(Himmelsrichtung.S);
+            }
+        }));
+        assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
+
+        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
+            {
+                setVon(3);
+                setNach(3);
+                setStrassenseite(Himmelsrichtung.N);
+            }
+        }));
+        assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
+
+        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
+            {
+                setVon(1);
+                setNach(1);
+                setStrassenseite(Himmelsrichtung.N);
             }
         }));
         assertThat(ProcessZaehldatenZeitreiheService.checkVerkehrsbeziehungen(zaehlung, options), is(false));
