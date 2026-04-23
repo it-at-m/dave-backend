@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -50,7 +49,8 @@ public class ProcessZaehldatenZeitreiheService {
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
      * Bewegungsbeziehung besitzt.
-     * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven Zaehlung übereinstimmen.
+     * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
+     * Zaehlung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
@@ -63,28 +63,28 @@ public class ProcessZaehldatenZeitreiheService {
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
             return currentZaehlung.getQuerungsverkehr().size() == zaehlung.getQuerungsverkehr().size() &&
                     currentZaehlung.getQuerungsverkehr().stream()
-                    .allMatch(current -> zaehlung.getQuerungsverkehr().stream()
-                            .anyMatch(qv -> Objects.equals(qv.getKnotenarm(), current.getKnotenarm()) &&
-                                    Objects.equals(qv.getRichtung(), current.getRichtung())));
+                            .allMatch(current -> zaehlung.getQuerungsverkehr().stream()
+                                    .anyMatch(qv -> Objects.equals(qv.getKnotenarm(), current.getKnotenarm()) &&
+                                            Objects.equals(qv.getRichtung(), current.getRichtung())));
         }
         // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
             return currentZaehlung.getLaengsverkehr().size() == zaehlung.getLaengsverkehr().size() &&
                     currentZaehlung.getLaengsverkehr().stream()
-                    .allMatch(current -> zaehlung.getLaengsverkehr().stream()
-                            .anyMatch(lv -> Objects.equals(lv.getKnotenarm(), current.getKnotenarm()) &&
-                                    Objects.equals(lv.getRichtung(), current.getRichtung()) &&
-                                    Objects.equals(lv.getStrassenseite(), current.getStrassenseite())));
+                            .allMatch(current -> zaehlung.getLaengsverkehr().stream()
+                                    .anyMatch(lv -> Objects.equals(lv.getKnotenarm(), current.getKnotenarm()) &&
+                                            Objects.equals(lv.getRichtung(), current.getRichtung()) &&
+                                            Objects.equals(lv.getStrassenseite(), current.getStrassenseite())));
         }
 
         // Bei QJS: Prüfe auf Von, Nach und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
             return currentZaehlung.getVerkehrsbeziehungen().size() == zaehlung.getVerkehrsbeziehungen().size() &&
                     currentZaehlung.getVerkehrsbeziehungen().stream()
-                    .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
-                            .anyMatch(vb -> Objects.equals(vb.getVon(), opt.getVon()) &&
-                                    Objects.equals(vb.getNach(), opt.getNach()) &&
-                                    Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())));
+                            .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
+                                    .anyMatch(vb -> Objects.equals(vb.getVon(), opt.getVon()) &&
+                                            Objects.equals(vb.getNach(), opt.getNach()) &&
+                                            Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())));
         }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
