@@ -150,7 +150,7 @@ public class ProcessZaehldatenZeitreiheTest {
     }
 
     @Test
-    public void checkVerkehrsbeziehungenQU() {
+    public void checkBewegungsbeziehungenQU() {
         // setup
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.QU.name());
@@ -162,63 +162,43 @@ public class ProcessZaehldatenZeitreiheTest {
         qv2.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
 
-        // positive cases
-        OptionsDTO options = new OptionsDTO();
-        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
-
-        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Himmelsrichtung.N);
-            }
-        }, new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Himmelsrichtung.S);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
+        // positive case
+        Zaehlung matchingZaehlung = new Zaehlung();
+        matchingZaehlung.setZaehlart(Zaehlart.QU.name());
+        matchingZaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), matchingZaehlung), is(true));
 
         // negative cases
-        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(2);
-                setRichtung(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung1 = new Zaehlung();
+        nonMatchingZaehlung1.setZaehlart(Zaehlart.QU.name());
+        nonMatchingZaehlung1.setQuerungsverkehr(List.of(qv1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung1), is(false));
 
-        // negative cases
-        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Himmelsrichtung.N);
-            }
-        }, new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(2);
-                setRichtung(Himmelsrichtung.S);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung2 = new Zaehlung();
+        nonMatchingZaehlung2.setZaehlart(Zaehlart.QU.name());
+        Querungsverkehr qv3 = new Querungsverkehr();
+        qv3.setKnotenarm(2);
+        qv3.setRichtung(Himmelsrichtung.S);
+        nonMatchingZaehlung2.setQuerungsverkehr(List.of(qv3, qv2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung2), is(false));
 
-        options.setChosenQuerungsverkehre(List.of(new OptionsQuerungsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Himmelsrichtung.W);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung3 = new Zaehlung();
+        nonMatchingZaehlung3.setZaehlart(Zaehlart.QU.name());
+        nonMatchingZaehlung3.setQuerungsverkehr(List.of(qv1, qv3));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung3), is(false));
+
+        Zaehlung nonMatchingZaehlung4 = new Zaehlung();
+        nonMatchingZaehlung4.setZaehlart(Zaehlart.QU.name());
+        Querungsverkehr qv4 = new Querungsverkehr();
+        qv4.setKnotenarm(1);
+        qv4.setRichtung(Himmelsrichtung.W);
+        nonMatchingZaehlung4.setQuerungsverkehr(List.of(qv2, qv4));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung4), is(false));
+
     }
 
     @Test
-    public void checkVerkehrsbeziehungenFJS() {
+    public void checkBewegungsbeziehungenFJS() {
         // setup
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.FJS.name());
@@ -233,63 +213,48 @@ public class ProcessZaehldatenZeitreiheTest {
         zaehlung.setLaengsverkehr(List.of(l1, l2));
 
         // positive cases
-        OptionsDTO options = new OptionsDTO();
-        options.setChosenLaengsverkehre(List.of(new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Bewegungsrichtung.EIN);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
-
-        options.setChosenLaengsverkehre(List.of(new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Bewegungsrichtung.EIN);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }, new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Bewegungsrichtung.AUS);
-                setStrassenseite(Himmelsrichtung.S);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
+        Zaehlung matchingZaehlung = new Zaehlung();
+        matchingZaehlung.setZaehlart(Zaehlart.FJS.name());
+        matchingZaehlung.setLaengsverkehr(List.of(l1, l2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), matchingZaehlung), is(true));
 
         // negative cases
-        options.setChosenLaengsverkehre(List.of(new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(2);
-                setRichtung(Bewegungsrichtung.EIN);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung1 = new Zaehlung();
+        nonMatchingZaehlung1.setZaehlart(Zaehlart.FJS.name());
+        nonMatchingZaehlung1.setLaengsverkehr(List.of(l1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung1), is(false));
 
-        options.setChosenLaengsverkehre(List.of(new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Bewegungsrichtung.AUS);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung2 = new Zaehlung();
+        nonMatchingZaehlung2.setZaehlart(Zaehlart.FJS.name());
+        Laengsverkehr l3 = new Laengsverkehr();
+        l3.setKnotenarm(2);
+        l3.setRichtung(Bewegungsrichtung.AUS);
+        l3.setStrassenseite(Himmelsrichtung.S);
+        nonMatchingZaehlung2.setLaengsverkehr(List.of(l1, l3));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung2), is(false));
 
-        options.setChosenLaengsverkehre(List.of(new OptionsLaengsverkehrDTO() {
-            {
-                setKnotenarm(1);
-                setRichtung(Bewegungsrichtung.EIN);
-                setStrassenseite(Himmelsrichtung.S);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung3 = new Zaehlung();
+        nonMatchingZaehlung3.setZaehlart(Zaehlart.FJS.name());
+        Laengsverkehr l4 = new Laengsverkehr();
+        l4.setKnotenarm(1);
+        l4.setRichtung(Bewegungsrichtung.EIN);
+        l4.setStrassenseite(Himmelsrichtung.S);
+        nonMatchingZaehlung3.setLaengsverkehr(List.of(l2, l4));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung3), is(false));
+
+        Zaehlung nonMatchingZaehlung4 = new Zaehlung();
+        nonMatchingZaehlung4.setZaehlart(Zaehlart.FJS.name());
+        Laengsverkehr l5 = new Laengsverkehr();
+        l5.setKnotenarm(1);
+        l5.setRichtung(Bewegungsrichtung.EIN);
+        l5.setStrassenseite(Himmelsrichtung.W);
+        nonMatchingZaehlung4.setLaengsverkehr(List.of(l1, l5));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung4), is(false));
 
     }
 
     @Test
-    public void checkVerkehrsbeziehungenQJS() {
+    public void checkBewegungsbeziehungenQJS() {
         // setup
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.QJS.name());
@@ -303,58 +268,44 @@ public class ProcessZaehldatenZeitreiheTest {
         vb2.setStrassenseite(Himmelsrichtung.N);
         zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
 
-        // positive cases
-        OptionsDTO options = new OptionsDTO();
-        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(1);
-                setNach(3);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
-
-        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(1);
-                setNach(3);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }, new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(3);
-                setNach(1);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(true));
+        // positive case
+        Zaehlung matchingZaehlung = new Zaehlung();
+        matchingZaehlung.setZaehlart(Zaehlart.QJS.name());
+        matchingZaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), matchingZaehlung), is(true));
 
         // negative cases
-        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(1);
-                setNach(3);
-                setStrassenseite(Himmelsrichtung.S);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung1 = new Zaehlung();
+        nonMatchingZaehlung1.setZaehlart(Zaehlart.QJS.name());
+        nonMatchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung1), is(false));
 
-        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(3);
-                setNach(3);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung2 = new Zaehlung();
+        nonMatchingZaehlung2.setZaehlart(Zaehlart.QJS.name());
+        Verkehrsbeziehung vb3 = new Verkehrsbeziehung();
+        vb3.setVon(1);
+        vb3.setNach(1);
+        vb3.setStrassenseite(Himmelsrichtung.N);
+        nonMatchingZaehlung2.setVerkehrsbeziehungen(List.of(vb1, vb3));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung2), is(false));
 
-        options.setChosenVerkehrsbeziehungen(List.of(new OptionsVerkehrsbeziehungDTO() {
-            {
-                setVon(1);
-                setNach(1);
-                setStrassenseite(Himmelsrichtung.N);
-            }
-        }));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, options), is(false));
+        Zaehlung nonMatchingZaehlung3 = new Zaehlung();
+        nonMatchingZaehlung3.setZaehlart(Zaehlart.QJS.name());
+        Verkehrsbeziehung vb4 = new Verkehrsbeziehung();
+        vb4.setVon(3);
+        vb4.setNach(2);
+        vb4.setStrassenseite(Himmelsrichtung.N);
+        nonMatchingZaehlung3.setVerkehrsbeziehungen(List.of(vb2, vb4));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung3), is(false));
+
+        Zaehlung nonMatchingZaehlung4 = new Zaehlung();
+        nonMatchingZaehlung4.setZaehlart(Zaehlart.QJS.name());
+        Verkehrsbeziehung vb5 = new Verkehrsbeziehung();
+        vb5.setVon(3);
+        vb5.setNach(1);
+        vb5.setStrassenseite(Himmelsrichtung.S);
+        nonMatchingZaehlung4.setVerkehrsbeziehungen(List.of(vb1, vb5));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung4), is(false));
+
     }
 }
