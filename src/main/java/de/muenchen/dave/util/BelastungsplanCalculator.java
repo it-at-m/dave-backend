@@ -125,8 +125,12 @@ public class BelastungsplanCalculator {
      * @param sumsGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um die Summen erweiterte BelastungsplanDataDTO-Objekt zurück
      */
-    public static BelastungsplanDataDTO calculateSumsForBelastungsplanDataDto(final BelastungsplanDataDTO data, final Map<String, BigDecimal[]> sumsKfz,
-            final Map<String, BigDecimal[]> sumsSv, final Map<String, BigDecimal[]> sumsGv, final boolean isKreisverkehr) {
+    public static BelastungsplanDataDTO calculateSumsForBelastungsplanDataDto(
+            final BelastungsplanDataDTO data,
+            final Map<String, BigDecimal[]> sumsKfz,
+            final Map<String, BigDecimal[]> sumsSv,
+            final Map<String, BigDecimal[]> sumsGv,
+            final boolean isKreisverkehr) {
 
         if (data.getLabel().equalsIgnoreCase(Fahrzeug.SV_P.getName()) && sumsKfz != null && sumsSv != null) {
             final Map<String, BigDecimal[]> sumSvp = calculateSumsSvpOrGvpKreuzung(sumsKfz, sumsSv);

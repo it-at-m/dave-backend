@@ -740,7 +740,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
-                                         int expectedValue) {
+            int expectedValue) {
         assertThat(values
                 .stream()
                 .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
