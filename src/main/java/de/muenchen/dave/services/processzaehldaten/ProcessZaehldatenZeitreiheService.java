@@ -49,15 +49,15 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
-     * Verkehrsbeziehung besitzt.
-     * Für die Zählarten QU, FJS, QJS gilt: alle Verkehrsbeziehungen und Pfeile, die in den Optionen
+     * Bewegungsbeziehung besitzt.
+     * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile, die in den Optionen
      * gewählt sind, müssen in der Zaehlung vorhanden sein.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
      * @return true, wenn Check erfolgreich, sonst false
      */
-    static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
+    static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options) {
 
         // Bei QU: Prüfe auf Knotenarm und Richtung
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
@@ -224,12 +224,12 @@ public class ProcessZaehldatenZeitreiheService {
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDTO();
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
+        //final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
 
-        getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
+        getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
                     List<Zeitintervall> zeitintervalle = List.of();
-                    if (checkVerkehrsbeziehungen(zaehlung, options)) {
+                    if (checkBewegungsbeziehung(zaehlung, options)) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
@@ -285,13 +285,11 @@ public class ProcessZaehldatenZeitreiheService {
      * @param zaehlstelle Zählstelle mit allen Zählungen
      * @param currentZaehlung Im Frontend ausgewählten Zählung
      * @param options Optionen aus dem Frontend
-     * @param zeitauswahlDTO ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
      * @return Stream der gefilterten Zählungen
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,
             final Zaehlung currentZaehlung,
-            final OptionsDTO options,
-            final ZeitauswahlDTO zeitauswahlDTO) {
+            final OptionsDTO options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
 
