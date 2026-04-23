@@ -27,36 +27,38 @@ public final class ZeitintervallKIUtil {
     public static final String LIST_LENGTH_MISMATCH = "Mismatch in list size of predictionResults and firstZeitintervalleOfVerkehrsbeziehungen";
 
     /**
-     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Verkehrsbeziehung) für die
+     * Diese Methode erzeugt die zu persistierenden Zeitintervalle (je Bewegungsbeziehung) für die
      * KI-Tagessummen.
      *
-     * @param predictionResults Liste von KIPredictionResults, wobei für jede Verkehrsbeziehung ein
+     * @param predictionResults Liste von KIPredictionResults, wobei für jede Bewegungsbeziehung ein
      *            KIPredictionResult enthalten ist.
-     * @param firstZeitintervalleOfVerkehrsbeziehungen List mit je einem importierten Zeitintervall pro
-     *            Verkehrsbeziehung
+     * @param firstZeitintervallOfBewegungsbeziehungen List mit je einem importierten Zeitintervall pro
+     *            Bewegungsbeziehung
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
-    public static List<Zeitintervall> createKIZeitintervalleFromKIPredictionResults(
+    public static List<Zeitintervall> createKIZeitintervalleForTagessummeFromKIPredictionResults(
             final List<KIPredictionResult> predictionResults,
-            final List<Zeitintervall> firstZeitintervalleOfVerkehrsbeziehungen) {
-        if (predictionResults.size() != firstZeitintervalleOfVerkehrsbeziehungen.size())
+            final List<Zeitintervall> firstZeitintervallOfBewegungsbeziehungen) {
+        if (predictionResults.size() != firstZeitintervallOfBewegungsbeziehungen.size())
             throw new IllegalArgumentException(LIST_LENGTH_MISMATCH);
 
         return Streams.zip(
                 predictionResults.stream(),
-                firstZeitintervalleOfVerkehrsbeziehungen.stream(),
+                firstZeitintervallOfBewegungsbeziehungen.stream(),
                 ZeitintervallKIUtil::createKIZeitintervallFromKIPredictionResult).collect(Collectors.toList());
     }
 
     /**
-     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Verkehrsbeziehung und gibt diese als
+     * Diese Methode gruppiert eine Liste von Zeitintervallen nach Bewegungsbeziehungen und gibt diese
+     * als
      * zweidimensionale Liste von Zeitintervallen zurück.
      *
      * @param zeitintervalle Zu gruppierende Liste von Zeitintervallen
      * @return Über bewegungsbeziehungId-gruppierte Listen als zweidimensionale Liste
      */
-    public static List<List<Zeitintervall>> groupZeitintervalleByVerkehrsbeziehung(List<Zeitintervall> zeitintervalle) {
-        final Map<UUID, List<Zeitintervall>> groupedByBewegungsbeziehungId = zeitintervalle.stream()
+    public static List<List<Zeitintervall>> groupZeitintervalleByBewegungsbeziehung(List<Zeitintervall> zeitintervalle) {
+        final Map<UUID, List<Zeitintervall>> groupedByBewegungsbeziehungId = zeitintervalle
+                .stream()
                 .collect(Collectors.groupingBy(Zeitintervall::getBewegungsbeziehungId));
         return new ArrayList<>(groupedByBewegungsbeziehungId.values());
     }
@@ -66,10 +68,10 @@ public final class ZeitintervallKIUtil {
      * Liste
      *
      * @param zeitintervalle nach bewegungsbeziehungId-gruppierte Listen als zweidimensionale Liste
-     * @return Liste von je dem ersten Zeitintervall pro Verkehrsbeziehung
+     * @return Liste von je dem ersten Zeitintervall pro Bewegungsbeziehung
      */
-    public static List<Zeitintervall> extractZeitintervallForEachVerkehrsbeziehung(List<List<Zeitintervall>> zeitintervalle) {
-        return zeitintervalle.stream().map(list -> list.get(0)).collect(Collectors.toList());
+    public static List<Zeitintervall> extractFirstZeitintervallForEachBewegungsbeziehung(List<List<Zeitintervall>> zeitintervalle) {
+        return zeitintervalle.stream().map(List::getFirst).collect(Collectors.toList());
     }
 
     /**
@@ -83,13 +85,17 @@ public final class ZeitintervallKIUtil {
      *         einzelne Fahrzeugtypen sowie -klassen (innerhalb der
      *         Hochrechnung) enthält.
      */
-    private static Zeitintervall createKIZeitintervallFromKIPredictionResult(final KIPredictionResult predictionResult, final Zeitintervall zeitintervall) {
+    private static Zeitintervall createKIZeitintervallFromKIPredictionResult(
+            final KIPredictionResult predictionResult,
+            final Zeitintervall zeitintervall) {
         final Zeitintervall kiZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervall.getZaehlungId(),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MIDNIGHT),
                 LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.MAX),
                 TypeZeitintervall.GESAMT_KI,
-                zeitintervall.getVerkehrsbeziehung());
+                zeitintervall.getVerkehrsbeziehung(),
+                zeitintervall.getLaengsverkehr(),
+                zeitintervall.getQuerungsverkehr());
         kiZeitintervall.setBewegungsbeziehungId(zeitintervall.getBewegungsbeziehungId());
 
         // Setze KI-Ergebnisse für einzelne Fahrzeugtypen
@@ -127,22 +133,9 @@ public final class ZeitintervallKIUtil {
         allZeitintervalle.stream()
                 .filter(intervall -> TypeZeitintervall.GESAMT.equals(intervall.getType()))
                 .forEach(intervall -> kiIntervalle.stream()
-                        .filter(prediction -> prediction.getVerkehrsbeziehung().equals(intervall.getVerkehrsbeziehung()))
+                        .filter(prediction -> ZeitintervallBaseUtil.haveBothZeitintervallSameBewegungsbeziehung(prediction, intervall))
                         .findFirst()
                         .ifPresent(prediction -> intervall.getHochrechnung().setHochrechnungRad(prediction.getFahrradfahrer())));
-    }
-
-    /**
-     * Die KI-berechnet nur A nach B Verkehrsbeziehungen. Anreicherung um die Verkehrsbeziehungen A nach
-     * alle
-     * und alle nach B
-     *
-     * @param kiIntervalle Zeitintervalle mit den A nach B Verkehrsbeziehungen
-     */
-    public static void expandKiHochrechnungen(List<Zeitintervall> kiIntervalle) {
-        var neueIntervalle = ZeitintervallVerkehrsbeziehungsSummationUtil.getUeberVerkehrsbeziehungSummierteZeitintervalle(kiIntervalle);
-        neueIntervalle.forEach(intervall -> intervall.setType(TypeZeitintervall.GESAMT_KI));
-        kiIntervalle.addAll(neueIntervalle);
     }
 
 }

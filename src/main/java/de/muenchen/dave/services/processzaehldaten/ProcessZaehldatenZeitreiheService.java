@@ -80,7 +80,9 @@ public class ProcessZaehldatenZeitreiheService {
      * @param ladeZaehldatenZeitreiheDTO Objekt, das befüllt werden soll
      * @param ladeZaehldatumDTO Objekt mit den Werten
      */
-    static void fillLadeZaehldatenZeitreiheDTO(final OptionsDTO options, final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
+    static void fillLadeZaehldatenZeitreiheDTO(
+            final OptionsDTO options,
+            final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
             final LadeZaehldatumDTO ladeZaehldatumDTO) {
         if (options.getKraftfahrzeugverkehr()) {
             ladeZaehldatenZeitreiheDTO.getKfz().add(ladeZaehldatumDTO.getKfz());

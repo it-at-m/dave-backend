@@ -209,8 +209,7 @@ public class LadeZaehldatenService {
 
     /**
      * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die {@link TypeZeitintervall}e
-     * ermittelt, um die korrekten {@link Zeitintervall}e aus der
-     * Datenbank extrahieren zu können.
+     * ermittelt, um die korrekten {@link Zeitintervall}e aus der Datenbank extrahieren zu können.
      *
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.

@@ -4,8 +4,13 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -21,9 +26,13 @@ import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -99,12 +108,13 @@ public abstract class ZaehlungPersistierungsService {
      * Diese Methode erstellt die {@link Hochrechnung} für den {@link Zeitintervall}.
      *
      * @param zeitintervall für dem die Hochrechnung erstellt werden soll.
-     * @param hochrechnungsfaktorDto zur Ermittlung der hochgerechneten Werte.
+     * @param hochrechnungsfaktor zur Ermittlung der hochgerechneten Werte.
      * @param zaehldauer Zaehldauer als String
      * @return die {@link Hochrechnung}.
      */
-    public Hochrechnung createHochrechnung(final Zeitintervall zeitintervall,
-            final HochrechnungsfaktorDTO hochrechnungsfaktorDto,
+    public Hochrechnung createHochrechnung(
+            final Zeitintervall zeitintervall,
+            final HochrechnungsfaktorDTO hochrechnungsfaktor,
             final String zaehldauer) {
         final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setPkw(zeitintervall.getPkw());
@@ -122,10 +132,15 @@ public abstract class ZaehlungPersistierungsService {
             hochrechnung.setFaktorKfz(BigDecimal.ZERO);
             hochrechnung.setFaktorSv(BigDecimal.ZERO);
             hochrechnung.setFaktorGv(BigDecimal.ZERO);
+        } else if (Objects.nonNull(hochrechnungsfaktor)) {
+            hochrechnung.setFaktorKfz(BigDecimal.valueOf(hochrechnungsfaktor.getKfz()));
+            hochrechnung.setFaktorSv(BigDecimal.valueOf(hochrechnungsfaktor.getSv()));
+            hochrechnung.setFaktorGv(BigDecimal.valueOf(hochrechnungsfaktor.getGv()));
         } else {
-            hochrechnung.setFaktorKfz(BigDecimal.valueOf(hochrechnungsfaktorDto.getKfz()));
-            hochrechnung.setFaktorSv(BigDecimal.valueOf(hochrechnungsfaktorDto.getSv()));
-            hochrechnung.setFaktorGv(BigDecimal.valueOf(hochrechnungsfaktorDto.getGv()));
+            // Kein Hochrechnungsfaktor in Parameter gegeben.
+            hochrechnung.setFaktorKfz(BigDecimal.ONE);
+            hochrechnung.setFaktorSv(BigDecimal.ONE);
+            hochrechnung.setFaktorGv(BigDecimal.ONE);
         }
         hochrechnung.setHochrechnungKfz(ladeZaehldatumDTO.getKfz().multiply(hochrechnung.getFaktorKfz()));
         hochrechnung.setHochrechnungGv(ladeZaehldatumDTO.getGueterverkehr().multiply(hochrechnung.getFaktorGv()));
@@ -200,5 +215,29 @@ public abstract class ZaehlungPersistierungsService {
         if (zaehlung.getDatum().isBefore(LocalDate.now()) || zaehlung.getDatum().isEqual(LocalDate.now())) {
             this.indexService.updateStatusOfZaehlung(updateStatusDto.getZaehlungId(), newStatus);
         }
+    }
+
+    public List<ExternalBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final ExternalZaehlungDTO zaehlung) {
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
+        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }
