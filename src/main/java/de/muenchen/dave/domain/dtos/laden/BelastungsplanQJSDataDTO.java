@@ -1,6 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.Data;
@@ -17,7 +19,7 @@ public class BelastungsplanQJSDataDTO extends AbstractBelastungsplanDataDTO {
 
     @Data
     @RequiredArgsConstructor
-    public static class VerkehrsbeziehungValue {
+    public static class VerkehrsbeziehungValue implements Serializable{
         private final int von;
         private final int nach;
         private final Himmelsrichtung strassenseite;
@@ -26,7 +28,7 @@ public class BelastungsplanQJSDataDTO extends AbstractBelastungsplanDataDTO {
 
     @Data
     @RequiredArgsConstructor
-    public static class StrassenseiteValue {
+    public static class StrassenseiteValue implements Serializable {
         private final Himmelsrichtung strassenseite;
         private BigDecimal value;
     }
