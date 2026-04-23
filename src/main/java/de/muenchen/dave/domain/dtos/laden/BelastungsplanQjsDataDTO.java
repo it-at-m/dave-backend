@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BelastungsplanQJSDataDTO extends AbstractBelastungsplanDataDTO {
+public class BelastungsplanQjsDataDTO extends AbstractBelastungsplanDataDTO {
 
     private BigDecimal sumAll;
     private List<StrassenseiteValue> valuesStrassenseite;

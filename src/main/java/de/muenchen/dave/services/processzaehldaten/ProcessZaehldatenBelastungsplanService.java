@@ -7,9 +7,9 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQJSDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQJSDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -184,8 +184,8 @@ public class ProcessZaehldatenBelastungsplanService {
         return data;
     }
 
-    private static BelastungsplanQJSDataDTO getEmptyBelastungsplanQJSData() {
-        final BelastungsplanQJSDataDTO data = new BelastungsplanQJSDataDTO();
+    private static BelastungsplanQjsDataDTO getEmptyBelastungsplanQjsData() {
+        final BelastungsplanQjsDataDTO data = new BelastungsplanQjsDataDTO();
         fillEmptyBelastungsplanData(data);
         data.setSumAll(BigDecimal.ZERO);
         data.setValuesStrassenseite(new ArrayList<>());
@@ -380,9 +380,9 @@ public class ProcessZaehldatenBelastungsplanService {
                                         options))));
 
         if (zaehlung.getZaehlart().equals(Zaehlart.QJS.name())) {
-            final LadeBelastungsplanQJSDTO ladeBelastungsplan = new LadeBelastungsplanQJSDTO();
+            final LadeBelastungsplanQjsDTO ladeBelastungsplan = new LadeBelastungsplanQjsDTO();
             ladeBelastungsplan.setStreets(new String[8]);
-            return buildBelastungsplanQJSData(ladeBelastungsplan, options, zaehlung, ladeZaehldatumBelastungsplan);
+            return buildBelastungsplanQjsData(ladeBelastungsplan, options, zaehlung, ladeZaehldatumBelastungsplan);
         } else {
             final LadeBelastungsplanDTO ladeBelastungsplan = new LadeBelastungsplanDTO();
             ladeBelastungsplan.setStreets(new String[8]);
@@ -390,13 +390,13 @@ public class ProcessZaehldatenBelastungsplanService {
         }
     }
 
-    private LadeBelastungsplanQJSDTO buildBelastungsplanQJSData(final LadeBelastungsplanQJSDTO ladeBelastungsplan, final OptionsDTO options,
-            final Zaehlung zaehlung,
-            final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
-        ladeBelastungsplan.setValue1(getEmptyBelastungsplanQJSData());
-        ladeBelastungsplan.setValue2(getEmptyBelastungsplanQJSData());
-        ladeBelastungsplan.setValue3(getEmptyBelastungsplanQJSData());
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = getBelastungsplanQJSData(ladeZaehldatumBelastungsplan, zaehlung);
+    private LadeBelastungsplanQjsDTO buildBelastungsplanQjsData(final LadeBelastungsplanQjsDTO ladeBelastungsplan, final OptionsDTO options,
+                                                                final Zaehlung zaehlung,
+                                                                final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
+        ladeBelastungsplan.setValue1(getEmptyBelastungsplanQjsData());
+        ladeBelastungsplan.setValue2(getEmptyBelastungsplanQjsData());
+        ladeBelastungsplan.setValue3(getEmptyBelastungsplanQjsData());
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = getBelastungsplanQjsData(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.RAD);
@@ -782,18 +782,18 @@ public class ProcessZaehldatenBelastungsplanService {
         return returnValue;
     }
 
-    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> getBelastungsplanQJSData(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> getBelastungsplanQjsData(
             final Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
             returnValue.put(Fahrzeug.RAD,
-                    buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
+                    buildBelastungsplanQjsDataForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
         }
         if (zaehlung.getKategorien().contains(Fahrzeug.FUSS)) {
             returnValue.put(Fahrzeug.FUSS,
-                    buildBelastungsplanQJSDataForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
+                    buildBelastungsplanQjsDataForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
         }
         return returnValue;
     }
@@ -820,9 +820,9 @@ public class ProcessZaehldatenBelastungsplanService {
         return zaehlungOptional.get();
     }
 
-    private BelastungsplanQJSDataDTO buildBelastungsplanQJSDataForFahrzeug(final Fahrzeug fz, final Function<LadeZaehldatumDTO, Integer> reader,
-            Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung) {
-        final BelastungsplanQJSDataDTO belastungsplanData = getEmptyBelastungsplanQJSData();
+    private BelastungsplanQjsDataDTO buildBelastungsplanQjsDataForFahrzeug(final Fahrzeug fz, final Function<LadeZaehldatumDTO, Integer> reader,
+                                                                           Map<Verkehrsbeziehung, TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung) {
+        final BelastungsplanQjsDataDTO belastungsplanData = getEmptyBelastungsplanQjsData();
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());
         belastungsplanData.setSumAll(BigDecimal.ZERO);
@@ -834,12 +834,12 @@ public class ProcessZaehldatenBelastungsplanService {
                 log.error("Fehler beim Berechnen der Daten: doppelte Verkehrsbeziehungen");
                 throw new IllegalStateException("Fehler beim Berechnen der Daten");
             }
-            var value = new BelastungsplanQJSDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
+            var value = new BelastungsplanQjsDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
                     verkehrsbeziehung.getStrassenseite(),
                     BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
             belastungsplanData.getValuesVerkehrsbeziehungen().add(value);
 
-            Optional<BelastungsplanQJSDataDTO.StrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
+            Optional<BelastungsplanQjsDataDTO.StrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
                     .filter(bez -> bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()).findFirst();
             if (valueStrassenseite.isPresent()) {
                 BigDecimal oldValue = valueStrassenseite.get().getValue();
@@ -847,7 +847,7 @@ public class ProcessZaehldatenBelastungsplanService {
                         .add(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
                 valueStrassenseite.get().setValue(newValue);
             } else {
-                BelastungsplanQJSDataDTO.StrassenseiteValue valueStrassenseite2 = new BelastungsplanQJSDataDTO.StrassenseiteValue(
+                BelastungsplanQjsDataDTO.StrassenseiteValue valueStrassenseite2 = new BelastungsplanQjsDataDTO.StrassenseiteValue(
                         verkehrsbeziehung.getStrassenseite());
                 valueStrassenseite2.setValue(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
                 belastungsplanData.getValuesStrassenseite().add(valueStrassenseite2);

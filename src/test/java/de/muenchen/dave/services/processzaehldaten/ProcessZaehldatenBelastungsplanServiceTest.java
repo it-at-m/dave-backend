@@ -22,7 +22,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQJSDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
@@ -197,7 +197,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      * Testet, ob die FUSS-Zähldaten allein bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
-    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQJS() throws DataNotFoundException {
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
@@ -217,14 +217,14 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
     }
 
     /**
      * Testet, ob die RAD-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
-    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQJS() throws DataNotFoundException {
+    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
@@ -244,8 +244,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanQJSDataDTO) dto.getValue1()).getLabel());
-        assertTrue((((BelastungsplanQJSDataDTO) dto.getValue2()).getLabel()).isEmpty());
+        assertEquals("RAD", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanQjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -410,7 +410,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void testGetBelastungsplanQJSData() {
+    public void testGetBelastungsplanQjsData() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
 
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
@@ -441,13 +441,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zaehlung.setKreisverkehr(false);
 
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
-                .getBelastungsplanQJSData(zaehldatenJeVerkehrsbeziehung, zaehlung);
+                .getBelastungsplanQjsData(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQJSDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
                 .getValuesVerkehrsbeziehungen();
         assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
         assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
-        List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQJSDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
                 .getValuesVerkehrsbeziehungen();
         assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
         assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
@@ -739,12 +739,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         return options;
     }
 
-    private void assertVerkehrsbeziehung(List<BelastungsplanQJSDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
-            int expectedValue) {
+    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
+                                         int expectedValue) {
         assertThat(values
                 .stream()
                 .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
-                .map(BelastungsplanQJSDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                .map(BelastungsplanQjsDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
                 is(BigDecimal.valueOf(expectedValue)));
     }
 

@@ -5,6 +5,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LadeBelastungsplanQJSDTO extends AbstractLadeBelastungsplanDTO<BelastungsplanQJSDataDTO> {
+public class LadeBelastungsplanQjsDTO extends AbstractLadeBelastungsplanDTO<BelastungsplanQjsDataDTO> {
 
 }
