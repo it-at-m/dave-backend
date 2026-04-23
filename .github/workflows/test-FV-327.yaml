@@ -1,0 +1,15 @@
+name: test-FV-327
+
+on:
+  repository_dispatch:
+    types: [custom_event]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Empfangene Parameter anzeigen
+        env:
+          PARAM1: ${{ github.event.client_payload.param1 }}
+        run: |
+          echo "Parameter 1: $PARAM1"
