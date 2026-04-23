@@ -15,10 +15,10 @@ import lombok.Data;
 )
 public abstract class AbstractLadeBelastungsplanDTO<T> implements Serializable {
 
-    protected String[] streets;
-    protected boolean kreisverkehr;
+    private String[] streets;
+    private boolean kreisverkehr;
 
-    protected T value1;
-    protected T value2;
-    protected T value3;
+    private T value1;
+    private T value2;
+    private T value3;
 }
