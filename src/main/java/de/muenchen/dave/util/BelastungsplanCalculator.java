@@ -163,7 +163,8 @@ public class BelastungsplanCalculator {
      * @param sumsSvOrGv Summen von SV oder GV
      * @return Summen von SV% oder GV%
      */
-    private static Map<String, BigDecimal[]> calculateSumsSvpOrGvpKreuzung(final Map<String, BigDecimal[]> sumsKfz,
+    private static Map<String, BigDecimal[]> calculateSumsSvpOrGvpKreuzung(
+            final Map<String, BigDecimal[]> sumsKfz,
             final Map<String, BigDecimal[]> sumsSvOrGv) {
         final Map<String, BigDecimal[]> sumsSvpOrGvp = new HashMap<>();
         sumsSvpOrGvp.put(BelastungsplanCalculator.SUM_IN,
