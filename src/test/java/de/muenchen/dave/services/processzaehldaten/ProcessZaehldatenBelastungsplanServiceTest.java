@@ -263,6 +263,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         Zaehlung zaehlung1 = new Zaehlung();
         zaehlung1.setId("zaehlung-1");
+        zaehlung1.setZaehlart(Zaehlart.N.name());
         zaehlstelle.getZaehlungen().add(zaehlung1);
         when(zaehlstelleIndex.findByZaehlungenId("zaehlung-1")).thenReturn(Optional.of((zaehlstelle)));
 
@@ -289,6 +290,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         Zaehlung zaehlung1 = new Zaehlung();
         zaehlung1.setId("zaehlung-1");
+        zaehlung1.setZaehlart(Zaehlart.N.name());
         zaehlstelle.getZaehlungen().add(zaehlung1);
         Zaehlung zaehlung2 = new Zaehlung();
         zaehlung2.setId("vergleich-1");
