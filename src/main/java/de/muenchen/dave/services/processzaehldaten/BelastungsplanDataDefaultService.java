@@ -6,12 +6,12 @@ import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.CalculationUtil;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@Service
 public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService{
 
     public BelastungsplanDataDTO getEmptyBelastungsplanData() {
