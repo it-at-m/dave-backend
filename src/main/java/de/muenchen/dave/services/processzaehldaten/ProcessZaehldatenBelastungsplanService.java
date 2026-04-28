@@ -334,8 +334,6 @@ public class ProcessZaehldatenBelastungsplanService {
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.FJS.equals(zaehlart)) {
             return new LadeBelastungsplanDTO();
-        } else if (Zaehlart.QJS.equals(zaehlart)) {
-            return new LadeBelastungsplanDTO();
         } else if (Zaehlart.QU.equals(zaehlart)) {
             return new LadeBelastungsplanDTO();
         } else {
