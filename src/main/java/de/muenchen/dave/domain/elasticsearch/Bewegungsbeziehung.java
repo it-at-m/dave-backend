@@ -8,4 +8,6 @@ public abstract class Bewegungsbeziehung implements Serializable {
 
     private String id;
 
+    private Hochrechnungsfaktor hochrechnungsfaktor;
+
 }

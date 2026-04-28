@@ -97,6 +97,7 @@ public class Zaehlung {
     Boolean unreadMessagesMobilitaetsreferat;
 
     Boolean unreadMessagesDienstleister;
+
     String dienstleisterkennung;
 
     public CoordinateUtil.PositionUTM getPunktUtm() {

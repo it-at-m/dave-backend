@@ -200,8 +200,9 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
-        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
-                || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr());
+        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung())
+                && (ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
+                        || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()));
     }
 
     /**
@@ -324,15 +325,24 @@ public class ProcessZaehldatenBelastungsplanService {
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
         // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
-        findByZaehlungenId(zaehlungId);
-        if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
-                && options.getVergleichszaehlungsId() != null) {
-            // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
-            findByZaehlungenId(options.getVergleichszaehlungsId());
-            log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
-            return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
+        final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.FJS.equals(zaehlart)) {
+            return new LadeBelastungsplanDTO();
+        } else if (Zaehlart.QJS.equals(zaehlart)) {
+            return new LadeBelastungsplanDTO();
+        } else if (Zaehlart.QU.equals(zaehlart)) {
+            return new LadeBelastungsplanDTO();
         } else {
-            return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+            if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
+                    && options.getVergleichszaehlungsId() != null) {
+                // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
+                findByZaehlungenId(options.getVergleichszaehlungsId());
+                log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
+                return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
+            } else {
+                return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+            }
         }
     }
 
