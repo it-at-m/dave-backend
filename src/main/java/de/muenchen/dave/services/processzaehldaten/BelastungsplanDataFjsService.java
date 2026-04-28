@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanFjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;

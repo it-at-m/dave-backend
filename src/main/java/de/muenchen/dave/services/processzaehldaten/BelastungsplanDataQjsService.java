@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanFjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,9 +76,6 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
         final BelastungsplanQjsDataDTO belastungsplanData = (BelastungsplanQjsDataDTO) getEmptyBelastungsplanData();
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());
-        belastungsplanData.setSumAll(BigDecimal.ZERO);
-        belastungsplanData.setValuesStrassenseite(new ArrayList<>());
-        belastungsplanData.setValuesVerkehrsbeziehungen(new ArrayList<>());
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
             checkForDuplicates(belastungsplanData, verkehrsbeziehung);
             var value = new BelastungsplanQjsDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
