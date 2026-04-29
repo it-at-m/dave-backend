@@ -10,35 +10,27 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.CalculationUtil;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
 
 @Service
-public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService{
+public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService {
 
-    public BelastungsplanDataDTO getEmptyBelastungsplanData() {
-        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
-        fillEmptyBelastungsplanData(data);
-        data.setPercent(false);
-        data.setValues(getEmptyDatastructure());
-        return data;
-    }
-
-    public AbstractLadeBelastungsplanDTO<?> buildBelastungsplanData(final OptionsDTO options,
-                                                                    final Zaehlung zaehlung, final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
+    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
+            final Zaehlung zaehlung,
+            final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
         var ladeBelastungsplan = new LadeBelastungsplanDTO();
         ladeBelastungsplan.setStreets(new String[8]);
         (ladeBelastungsplan).setValue1(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue2(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue3(getEmptyBelastungsplanData());
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = getBelastungsplanData(ladeZaehldatumBelastungsplan, zaehlung);
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         ladeBelastungsplan.setKreisverkehr(zaehlung.getKreisverkehr());
 
@@ -79,14 +71,14 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
     }
 
     /**
-     * Liefert eine {@link BelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den
+     * Liefert eine {@link AbstractBelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den
      * Belastungsplan
      *
      * @param zaehldatenJeVerkehrsbeziehung aus der DB ermittelten Werte
      * @param zaehlung wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
-     * @return eine Map mit Key: Fahrzeug und Value:BelastungsplanDataDTO.
+     * @return eine Map mit Key: Fahrzeug und Value:AbstractBelastungsplanDataDTO.
      */
-    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> getBelastungsplanData(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
@@ -141,9 +133,9 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
                 index1 = verkehrsbeziehung.getVon() - 1;
                 // HINEIN = 0, VORBEI = 1, HERAUS = 2
                 index2 = switch (verkehrsbeziehung.getFahrbewegungKreisverkehr()) {
-                    case HINEIN -> 0;
-                    case VORBEI -> 1;
-                    case HERAUS -> 2;
+                case HINEIN -> 0;
+                case VORBEI -> 1;
+                case HERAUS -> 2;
                 };
             } else {
                 index1 = verkehrsbeziehung.getVon() - 1;
@@ -200,6 +192,14 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         return returnValue;
     }
 
+    private BelastungsplanDataDTO getEmptyBelastungsplanData() {
+        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
+        fillEmptyBelastungsplanData(data);
+        data.setPercent(false);
+        data.setValues(getEmptyDatastructure());
+        return data;
+    }
+
     /**
      * Reichert das übergebene LadeBelastungsplanDTO-Objekt um die Summen der einzelnen Knotenarme an.
      *
@@ -211,7 +211,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      * @return gibt das um alle Summen erweiterte LadeBelastungsplanDTO-Objekt zurück
      */
     private LadeBelastungsplanDTO calculateSumsForLadeBelastungsplanDto(final LadeBelastungsplanDTO ladeBelastungsplan, final BelastungsplanDataDTO dataKfz,
-                                                                        final BelastungsplanDataDTO dataSv, final BelastungsplanDataDTO dataGv) {
+            final BelastungsplanDataDTO dataSv, final BelastungsplanDataDTO dataGv) {
 
         Map<String, BigDecimal[]> sumsKfz = null;
         Map<String, BigDecimal[]> sumsSv = null;
@@ -279,6 +279,5 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         return ObjectUtils.isNotEmpty(verkehrsbeziehung.getFahrbewegungKreisverkehr())
                 && ObjectUtils.isEmpty(verkehrsbeziehung.getNach());
     }
-
 
 }

@@ -13,10 +13,10 @@ public class BelastungsplanDataServiceFactory {
     final BelastungsplanDataQjsService belastungsplanDataQjsService;
     final BelastungsplanDataFjsService belastungsplanDataFjsService;
 
-    public IBelastungsplanDataService getBelastungsplanDataService(Zaehlung zaehlung){
-        if (Zaehlart.QJS.name().equals(zaehlung.getZaehlart())){
+    public IBelastungsplanDataService getBelastungsplanDataService(Zaehlung zaehlung) {
+        if (Zaehlart.QJS.name().equals(zaehlung.getZaehlart())) {
             return belastungsplanDataQjsService;
-        } else if (Zaehlart.FJS.name().equals(zaehlung.getZaehlart())){
+        } else if (Zaehlart.FJS.name().equals(zaehlung.getZaehlart())) {
             return belastungsplanDataFjsService;
         }
         return belastungsplanDataDefaultService;

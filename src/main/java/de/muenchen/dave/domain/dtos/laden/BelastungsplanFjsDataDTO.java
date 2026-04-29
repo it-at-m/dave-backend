@@ -1,13 +1,12 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data

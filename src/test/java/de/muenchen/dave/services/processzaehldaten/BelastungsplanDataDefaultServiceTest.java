@@ -1,5 +1,8 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
@@ -9,6 +12,10 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,20 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class BelastungsplanDataDefaultServiceTest {
 
     @Test
-    public void testGetBelastungsplanData() {
+    public void testBuildBelastungsplanDataMap() {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
         Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(2);
@@ -69,7 +68,7 @@ public class BelastungsplanDataDefaultServiceTest {
         zaehlung.setKreisverkehr(false);
 
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataDefaultService()
-                .getBelastungsplanData(zaehldatenJeVerkehrsbeziehung, zaehlung);
+                .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
         assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[1][2], is(BigDecimal.valueOf(15)));
         assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV)).getValues()[1][2], is(BigDecimal.valueOf(9)));

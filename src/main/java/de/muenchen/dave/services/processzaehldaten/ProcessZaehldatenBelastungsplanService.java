@@ -4,46 +4,32 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanFjsDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
-import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -351,7 +337,8 @@ public class ProcessZaehldatenBelastungsplanService {
                                         VALUE_TO_ROUND,
                                         options))));
 
-        return belastungsplanDataServiceFactory.getBelastungsplanDataService(zaehlung).buildBelastungsplanData(options, zaehlung, ladeZaehldatumBelastungsplan);
+        return belastungsplanDataServiceFactory.getBelastungsplanDataService(zaehlung).buildLadeBelastungsplanDTO(options, zaehlung,
+                ladeZaehldatumBelastungsplan);
     }
 
     /**

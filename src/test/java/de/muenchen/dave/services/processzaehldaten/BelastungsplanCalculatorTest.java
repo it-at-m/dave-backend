@@ -1,12 +1,11 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.util.BelastungsplanCalculator;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import de.muenchen.dave.util.BelastungsplanCalculator;
+import java.math.BigDecimal;
+import org.junit.jupiter.api.Test;
 
 public class BelastungsplanCalculatorTest {
 
@@ -41,7 +40,5 @@ public class BelastungsplanCalculatorTest {
                 { BigDecimal.valueOf(1), BigDecimal.valueOf(3), BigDecimal.valueOf(5), BigDecimal.valueOf(7) },
                 { BigDecimal.valueOf(9), BigDecimal.valueOf(11), BigDecimal.valueOf(13), BigDecimal.valueOf(15) } };
     }
-
-
 
 }

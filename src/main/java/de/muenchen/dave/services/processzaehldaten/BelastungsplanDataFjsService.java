@@ -9,9 +9,6 @@ import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanFjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,10 +16,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataService{
+public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataService {
 
     public AbstractBelastungsplanDataDTO getEmptyBelastungsplanData() {
         final BelastungsplanFjsDataDTO data = new BelastungsplanFjsDataDTO();
@@ -33,16 +32,16 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         return data;
     }
 
-    public AbstractLadeBelastungsplanDTO<?> buildBelastungsplanData(final OptionsDTO options,
-                                                                       final Zaehlung zaehlung,
-                                                                       final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
+    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
+            final Zaehlung zaehlung,
+            final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
         var ladeBelastungsplan = new LadeBelastungsplanFjsDTO();
         ladeBelastungsplan.setStreets(new String[8]);
 
         (ladeBelastungsplan).setValue1((BelastungsplanFjsDataDTO) getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue2((BelastungsplanFjsDataDTO) getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue3((BelastungsplanFjsDataDTO) getEmptyBelastungsplanData());
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = getBelastungsplanData(ladeZaehldatumBelastungsplan, zaehlung);
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.RAD);
@@ -53,23 +52,23 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         return ladeBelastungsplan;
     }
 
-    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> getBelastungsplanData(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
             returnValue.put(Fahrzeug.RAD,
-                    buildBelastungsplanDataForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
+                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeVerkehrsbeziehung));
         }
         if (zaehlung.getKategorien().contains(Fahrzeug.FUSS)) {
             returnValue.put(Fahrzeug.FUSS,
-                    buildBelastungsplanDataForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
+                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeVerkehrsbeziehung));
         }
         return returnValue;
     }
 
-    public BelastungsplanFjsDataDTO buildBelastungsplanDataForFahrzeug(
+    private BelastungsplanFjsDataDTO buildBelastungsplanDataDTOForFahrzeug(
             final Fahrzeug fz,
             final Function<LadeZaehldatumDTO, Integer> reader,
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung) {
@@ -106,15 +105,14 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         return belastungsplanData;
     }
 
-    public void checkForDuplicates(
+    private void checkForDuplicates(
             AbstractBelastungsplanDataDTO data,
             Verkehrsbeziehung verkehrsbeziehung) {
-        if (((BelastungsplanFjsDataDTO)data).getValuesLaengsverkehr().stream().anyMatch(bez -> (bez.getVon() == verkehrsbeziehung.getVon())
+        if (((BelastungsplanFjsDataDTO) data).getValuesLaengsverkehr().stream().anyMatch(bez -> (bez.getVon() == verkehrsbeziehung.getVon())
                 && (bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()))) {
             log.error("Fehler beim Berechnen der Daten: doppelter Laengsverkehr");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         }
     }
-
 
 }

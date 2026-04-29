@@ -1,36 +1,37 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class BelastungsplanDataQjsServiceTest {
+public class BelastungsplanDataFjsServiceTest {
 
     @Test
     public void testBuildBelastungsplanDataMap() {
@@ -60,20 +61,20 @@ public class BelastungsplanDataQjsServiceTest {
 
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setKategorien(Arrays.asList(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QJS.toString());
+        zaehlung.setZaehlart(Zaehlart.FJS.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQjsService()
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataFjsService()
                 .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
-                .getValuesVerkehrsbeziehungen();
-        assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
-        assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
-                .getValuesVerkehrsbeziehungen();
-        assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
-        assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
+        List<BelastungsplanFjsDataDTO.LaengsverkehrValue> valuesFuss = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+                .getValuesLaengsverkehr();
+        assertLaengsverkehr(valuesFuss, 2, Himmelsrichtung.N, 7);
+        assertLaengsverkehr(valuesFuss, 4, Himmelsrichtung.N, 70);
+        List<BelastungsplanFjsDataDTO.LaengsverkehrValue> valuesRad = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+                .getValuesLaengsverkehr();
+        assertLaengsverkehr(valuesRad, 2, Himmelsrichtung.N, 6);
+        assertLaengsverkehr(valuesRad, 4, Himmelsrichtung.N, 60);
     }
 
     @Test
@@ -101,24 +102,24 @@ public class BelastungsplanDataQjsServiceTest {
         ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum tupel = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(isTageswert,
                 ladeZaehldatum);
         ladeZaehldatumBelastungsplan.put(vb, tupel);
-        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung, ladeZaehldatumBelastungsplan);
+        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataFjsService().buildLadeBelastungsplanDTO(options, zaehlung, ladeZaehldatumBelastungsplan);
         assertNotNull(data);
         assertEquals("Eins", data.getStreets()[0]);
         assertNull(data.getStreets()[1]);
         assertEquals("Drei", data.getStreets()[2]);
         assertNotNull(data.getValue1());
-        BelastungsplanQjsDataDTO value1 = (BelastungsplanQjsDataDTO) data.getValue1();
+        BelastungsplanFjsDataDTO value1 = (BelastungsplanFjsDataDTO) data.getValue1();
         assertEquals(BigDecimal.valueOf(99), value1.getSumAll());
         assertEquals(BigDecimal.valueOf(99), value1.getValuesStrassenseite().getFirst().getValue());
-        assertEquals(BigDecimal.valueOf(99), value1.getValuesVerkehrsbeziehungen().getFirst().getValue());
+        assertEquals(BigDecimal.valueOf(99), value1.getValuesLaengsverkehr().getFirst().getValue());
     }
 
-    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
-            int expectedValue) {
+    private void assertLaengsverkehr(List<BelastungsplanFjsDataDTO.LaengsverkehrValue> values, int von, Himmelsrichtung strassenseite,
+                                     int expectedValue) {
         assertThat(values
                 .stream()
-                .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
-                .map(BelastungsplanQjsDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                .filter(vb -> vb.getVon() == von && vb.getStrassenseite().equals(strassenseite))
+                .map(BelastungsplanFjsDataDTO.LaengsverkehrValue::getValue).findFirst().orElse(BigDecimal.ZERO),
                 is(BigDecimal.valueOf(expectedValue)));
     }
 

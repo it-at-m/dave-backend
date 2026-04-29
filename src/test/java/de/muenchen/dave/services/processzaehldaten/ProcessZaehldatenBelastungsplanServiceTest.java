@@ -77,7 +77,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService, new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(), new BelastungsplanDataFjsService()));
+        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService,
+                new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(),
+                        new BelastungsplanDataFjsService()));
         Mockito.reset(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService);
     }
 
