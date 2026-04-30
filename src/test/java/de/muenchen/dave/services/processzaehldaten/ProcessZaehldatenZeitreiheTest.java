@@ -146,7 +146,6 @@ public class ProcessZaehldatenZeitreiheTest {
         assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fussgaenger, fahrradfahrer), is(new BigDecimal(1000)));
     }
 
-
     @Test
     public void checkBewegungsbeziehungenQU() {
         // setup
