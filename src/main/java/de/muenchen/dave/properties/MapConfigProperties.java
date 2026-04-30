@@ -1,6 +1,6 @@
 package de.muenchen.dave.properties;
 
-import de.muenchen.dave.domain.dtos.init.OverlayLayerDTO;
+import de.muenchen.dave.domain.dtos.init.LayerDTO;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,5 +15,6 @@ public class MapConfigProperties {
     private String centerLat = "48.137227";
     private String centerLng = "11.575517";
     private Integer centerZoom = 12;
-    private List<OverlayLayerDTO> overlayLayers;
+    private List<LayerDTO> baseLayers;
+    private List<LayerDTO> overlayLayers;
 }

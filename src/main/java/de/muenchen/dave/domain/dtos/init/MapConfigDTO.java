@@ -12,5 +12,6 @@ public class MapConfigDTO {
     private String lng;
     private Integer zoom;
 
-    private List<OverlayLayerDTO> overlayLayers;
+    private List<LayerDTO> baseLayers;
+    private List<LayerDTO> overlayLayers;
 }

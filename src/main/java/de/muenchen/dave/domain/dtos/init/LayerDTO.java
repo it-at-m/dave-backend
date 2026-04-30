@@ -5,10 +5,11 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OverlayLayerDTO {
+public class LayerDTO {
 
     private String baseUrl;
     private String layerName;
     private String layerNameToDisplay;
+    private String attribution;
 
 }

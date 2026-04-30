@@ -18,6 +18,7 @@ public class MapConfigService {
                 props.getCenterLat(),
                 props.getCenterLng(),
                 props.getCenterZoom(),
+                props.getBaseLayers(),
                 props.getOverlayLayers());
     }
 
