@@ -4,47 +4,36 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
-import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +44,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class ProcessZaehldatenBelastungsplanService {
 
@@ -66,13 +56,7 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private final LadeZaehldatenService ladeZaehldatenService;
 
-    public ProcessZaehldatenBelastungsplanService(final ZeitintervallRepository zeitintervallRepository,
-            final ZaehlstelleIndex zaehlstelleIndex,
-            final LadeZaehldatenService ladeZaehldatenService) {
-        this.zeitintervallRepository = zeitintervallRepository;
-        this.zaehlstelleIndex = zaehlstelleIndex;
-        this.ladeZaehldatenService = ladeZaehldatenService;
-    }
+    private final BelastungsplanDataServiceFactory belastungsplanDataServiceFactory;
 
     /**
      * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
@@ -129,85 +113,6 @@ public class ProcessZaehldatenBelastungsplanService {
         differenzBelastungsplanDTO.setStreets(streets);
 
         return differenzBelastungsplanDTO;
-    }
-
-    /**
-     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
-     * Belastungsplandata-Objekt
-     *
-     * @param basis Basis BelastungsplanDataDTO
-     * @param vergleich Vergleich BelastungsplanDataDTO
-     * @return Differenz BelastungsplanDataDTO
-     */
-    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
-        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
-        belastungsplanData.setLabel(basis.getLabel());
-        belastungsplanData.setFilled(basis.isFilled());
-        belastungsplanData.setPercent(basis.isPercent());
-        belastungsplanData.setValues(BelastungsplanCalculator.subtractMatrice(basis.getValues(), vergleich.getValues()));
-
-        belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
-        belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
-        belastungsplanData.setSumOut(subtractSums(basis.getSumOut(), vergleich.getSumOut()));
-
-        return belastungsplanData;
-    }
-
-    private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
-        final int minLength = Math.min(basis.length, vergleich.length);
-        final BigDecimal[] differences = new BigDecimal[minLength];
-        for (int i = 0; i < minLength; i++) {
-            differences[i] = basis[i].subtract(vergleich[i]);
-        }
-        return differences;
-    }
-
-    private static boolean isKreisverkehr(final Verkehrsbeziehung verkehrsbeziehung) {
-        return ObjectUtils.isNotEmpty(verkehrsbeziehung.getFahrbewegungKreisverkehr())
-                && ObjectUtils.isEmpty(verkehrsbeziehung.getNach());
-    }
-
-    /**
-     * Die Grafiken im Frontend erwarten pro Verkehrsbeziehung einen einzelnen Wert. Um an alle Werte
-     * mittels Index zugreifen zu können ist ein 2-Stufiges Array
-     * erforderlich. Ebene 1: Enthält alle Werte für die Von-Spuren Ebene 2: Enthält die Werte für die
-     * Nach-Spur pro Von-Spur Bsp.: [ [Nach_1, Nach_2, ...,
-     * Nach_8] // Von_1 ... [Nach_1, Nach_2, ..., Nach_8] // Von_8 ]
-     *
-     * @return mit BigDecimal.ZERO initialisierte Datenstruktur
-     */
-    private static BigDecimal[][] getEmptyDatastructure() {
-        final BigDecimal[][] datastructure = new BigDecimal[8][8];
-        Arrays.stream(datastructure).forEach(data -> Arrays.fill(data, BigDecimal.ZERO));
-        return datastructure;
-    }
-
-    private static BelastungsplanDataDTO getEmptyBelastungsplanData() {
-        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
-        fillEmptyBelastungsplanData(data);
-        data.setPercent(false);
-        data.setValues(getEmptyDatastructure());
-        return data;
-    }
-
-    private static BelastungsplanQjsDataDTO getEmptyBelastungsplanQjsData() {
-        final BelastungsplanQjsDataDTO data = new BelastungsplanQjsDataDTO();
-        fillEmptyBelastungsplanData(data);
-        data.setSumAll(BigDecimal.ZERO);
-        data.setValuesStrassenseite(new ArrayList<>());
-        data.setValuesVerkehrsbeziehungen(new ArrayList<>());
-        return data;
-    }
-
-    private static void fillEmptyBelastungsplanData(AbstractBelastungsplanDataDTO data) {
-        data.setLabel("");
-        data.setFilled(false);
-    }
-
-    private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
-        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung())
-                && (ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
-                        || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()));
     }
 
     /**
@@ -427,12 +332,6 @@ public class ProcessZaehldatenBelastungsplanService {
         return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
     }
 
-    private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
-        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
-            throw new IllegalStateException("Fehler beim Erstellen der Belastungsplandaten");
-        return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
-    }
-
     public List<Zeitintervall> extractZeitintervalle(
             final String zaehlungId,
             final Zeitblock zeitblock) {
@@ -542,6 +441,49 @@ public class ProcessZaehldatenBelastungsplanService {
             throw new DataNotFoundException("Die Zählung " + zaehlungId + " wurde nicht gefunden");
         }
         return zaehlungOptional.get();
+    }
+
+    /**
+     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
+     * Belastungsplandata-Objekt
+     *
+     * @param basis Basis BelastungsplanDataDTO
+     * @param vergleich Vergleich BelastungsplanDataDTO
+     * @return Differenz BelastungsplanDataDTO
+     */
+    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
+        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        belastungsplanData.setLabel(basis.getLabel());
+        belastungsplanData.setFilled(basis.isFilled());
+        belastungsplanData.setPercent(basis.isPercent());
+        belastungsplanData.setValues(BelastungsplanCalculator.subtractMatrice(basis.getValues(), vergleich.getValues()));
+
+        belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
+        belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
+        belastungsplanData.setSumOut(subtractSums(basis.getSumOut(), vergleich.getSumOut()));
+
+        return belastungsplanData;
+    }
+
+    private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
+        final int minLength = Math.min(basis.length, vergleich.length);
+        final BigDecimal[] differences = new BigDecimal[minLength];
+        for (int i = 0; i < minLength; i++) {
+            differences[i] = basis[i].subtract(vergleich[i]);
+        }
+        return differences;
+    }
+
+    private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
+        return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung())
+                && (ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
+                        || ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getFahrbewegungKreisverkehr()));
+    }
+
+    private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
+        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
+            throw new IllegalStateException("Fehler beim Erstellen der Belastungsplandaten");
+        return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
     }
 
     @AllArgsConstructor
