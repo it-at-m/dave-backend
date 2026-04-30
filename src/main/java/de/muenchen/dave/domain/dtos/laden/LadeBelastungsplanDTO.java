@@ -1,14 +1,10 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import java.io.Serializable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class LadeBelastungsplanDTO implements Serializable {
+public class LadeBelastungsplanDTO extends AbstractLadeBelastungsplanDTO<BelastungsplanDataDTO> {
 
-    private BelastungsplanDataDTO value1;
-    private BelastungsplanDataDTO value2;
-    private BelastungsplanDataDTO value3;
-    private String[] streets;
-    private boolean kreisverkehr;
 }

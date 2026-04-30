@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
@@ -73,7 +73,7 @@ public class ProcessZaehldatenService {
         processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
 
         log.debug("Process Zaehldaten Belastungsplan");
-        final LadeBelastungsplanDTO ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
+        final AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
                 zaehlungId,
                 options);
         processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);

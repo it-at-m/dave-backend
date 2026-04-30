@@ -41,6 +41,13 @@
             <appender-ref ref="STDOUT" />
         </logger>
 
+
+        <logger name="com.hazelcast.internal.diagnostics"
+                level="warn"
+                additivity="false">
+            <appender-ref ref="STDOUT" />
+        </logger>
+
         <!-- Logger usage -->
         <root level="info">
             <appender-ref ref="STDOUT" />
