@@ -21,10 +21,7 @@ import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -48,13 +45,45 @@ public class ProcessZaehldatenZeitreiheService {
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
-     * Verkehrsbeziehung besitzt
+     * Bewegungsbeziehung besitzt.
+     * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
+     * Zaehlung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
-     * @param options
-     * @return
+     * @param options Optionen aus dem Frontend
+     * @param currentZaehlung die aktuelle Zählung
+     * @return true, wenn Check erfolgreich, sonst false
      */
-    private static boolean checkVerkehrsbeziehungen(final Zaehlung zaehlung, final OptionsDTO options) {
+    static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
+
+        // Bei QU: Prüfe auf Knotenarm und Richtung
+        if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
+            return currentZaehlung.getQuerungsverkehr().size() == zaehlung.getQuerungsverkehr().size() &&
+                    currentZaehlung.getQuerungsverkehr().stream()
+                            .allMatch(current -> zaehlung.getQuerungsverkehr().stream()
+                                    .anyMatch(qv -> Objects.equals(qv.getKnotenarm(), current.getKnotenarm()) &&
+                                            Objects.equals(qv.getRichtung(), current.getRichtung())));
+        }
+        // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+            return currentZaehlung.getLaengsverkehr().size() == zaehlung.getLaengsverkehr().size() &&
+                    currentZaehlung.getLaengsverkehr().stream()
+                            .allMatch(current -> zaehlung.getLaengsverkehr().stream()
+                                    .anyMatch(lv -> Objects.equals(lv.getKnotenarm(), current.getKnotenarm()) &&
+                                            Objects.equals(lv.getRichtung(), current.getRichtung()) &&
+                                            Objects.equals(lv.getStrassenseite(), current.getStrassenseite())));
+        }
+
+        // Bei QJS: Prüfe auf Von, Nach und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
+            return currentZaehlung.getVerkehrsbeziehungen().size() == zaehlung.getVerkehrsbeziehungen().size() &&
+                    currentZaehlung.getVerkehrsbeziehungen().stream()
+                            .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
+                                    .anyMatch(vb -> Objects.equals(vb.getVon(), opt.getVon()) &&
+                                            Objects.equals(vb.getNach(), opt.getNach()) &&
+                                            Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())));
+        }
+
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
@@ -200,7 +229,7 @@ public class ProcessZaehldatenZeitreiheService {
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
                 .forEach(zaehlung -> {
                     List<Zeitintervall> zeitintervalle = List.of();
-                    if (checkVerkehrsbeziehungen(zaehlung, options)) {
+                    if (checkBewegungsbeziehung(zaehlung, options, currentZaehlung)) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
