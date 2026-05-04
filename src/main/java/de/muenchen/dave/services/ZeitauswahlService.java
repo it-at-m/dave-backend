@@ -39,7 +39,7 @@ public class ZeitauswahlService {
             optionsZeitauswahl = getZeitauswahlFor13h();
             break;
         case DAUER_16_STUNDEN:
-            optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId);
+            optionsZeitauswahl = getZeitauswahlFor16h();
             break;
         case SONSTIGE:
             optionsZeitauswahl = getZeitauswahlForSonstige(zaehlungId);
@@ -71,7 +71,7 @@ public class ZeitauswahlService {
     }
 
     /**
-     * Kurzzeiterhebung (6 bis 19Uhr)
+     * Kurzzeiterhebung (6 bis 19 Uhr)
      *
      * @return
      */
@@ -92,11 +92,24 @@ public class ZeitauswahlService {
     }
 
     /**
+     * Kurzzeiterhebung (6 bis 22 Uhr)
+     *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
-        final ZeitauswahlDTO zeitauswahlDTO = getZeitauswahlDtoByZeitintervalle(id);
-        zeitauswahlDTO.getBlocks().add(Zeitblock.ZB_06_22);
+    private ZeitauswahlDTO getZeitauswahlFor16h() {
+        final ZeitauswahlDTO zeitauswahlDTO = new ZeitauswahlDTO();
+        final Set<Zeitblock> blocks = new TreeSet<>();
+        blocks.add(Zeitblock.ZB_06_10);
+        blocks.add(Zeitblock.ZB_10_15);
+        blocks.add(Zeitblock.ZB_15_19);
+        blocks.add(Zeitblock.ZB_19_22);
+        blocks.add(Zeitblock.ZB_06_22);
+
+        final Set<Zeitblock> hours = new TreeSet<>();
+        blocks.forEach(block -> hours.addAll(getAllHoursOfBlock(block)));
+
+        zeitauswahlDTO.setBlocks(blocks);
+        zeitauswahlDTO.setHours(hours);
         return zeitauswahlDTO;
     }
 
@@ -140,6 +153,9 @@ public class ZeitauswahlService {
             break;
         case ZB_15_19:
             hours.addAll(getHoursOf15Bis19());
+            break;
+        case ZB_19_22:
+            hours.addAll(getHoursOf19Bis22());
             break;
         case ZB_19_24:
             hours.addAll(getHoursOf19Bis24());
@@ -190,11 +206,16 @@ public class ZeitauswahlService {
         return hours;
     }
 
-    private Set<Zeitblock> getHoursOf19Bis24() {
+    private Set<Zeitblock> getHoursOf19Bis22() {
         final Set<Zeitblock> hours = new TreeSet<>();
         hours.add(Zeitblock.ZB_19_20);
         hours.add(Zeitblock.ZB_20_21);
         hours.add(Zeitblock.ZB_21_22);
+        return hours;
+    }
+
+    private Set<Zeitblock> getHoursOf19Bis24() {
+        final Set<Zeitblock> hours = getHoursOf19Bis22();
         hours.add(Zeitblock.ZB_22_23);
         hours.add(Zeitblock.ZB_23_24);
         return hours;

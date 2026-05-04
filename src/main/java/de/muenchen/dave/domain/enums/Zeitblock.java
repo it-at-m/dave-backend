@@ -51,6 +51,14 @@ public enum Zeitblock implements Serializable {
             TypeZeitintervall.BLOCK),
 
     /**
+     * 19:00 bis 22:00 Uhr
+     */
+    ZB_19_22(
+            LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)),
+            LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(22, 0)),
+            TypeZeitintervall.BLOCK_SPEZIAL),
+
+    /**
      * 19:00 bis 24:00 Uhr
      */
     ZB_19_24(
