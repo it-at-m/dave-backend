@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
+import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
@@ -13,6 +14,7 @@ import de.muenchen.dave.util.CalculationUtil;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,7 +25,10 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
             final Zaehlung zaehlung,
-            final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan) {
+            final List<Zeitintervall> zeitintervalle) {
+        Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
+                .mapVerkehrsbeziehungen(options, zaehlung, zeitintervalle);
+
         var ladeBelastungsplan = new LadeBelastungsplanDTO();
         ladeBelastungsplan.setStreets(new String[8]);
         (ladeBelastungsplan).setValue1(getEmptyBelastungsplanData());
