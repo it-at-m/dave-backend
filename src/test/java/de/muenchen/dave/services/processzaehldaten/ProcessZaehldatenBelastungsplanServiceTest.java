@@ -15,7 +15,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -30,7 +29,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -40,6 +38,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.messstelle.RoundingService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.math.BigDecimal;
@@ -52,7 +51,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -303,55 +301,6 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     @Test
-    public void testIsKreisverkehr() {
-        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
-        boolean result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(true));
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        verkehrsbeziehung.setVon(null);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-    }
-
-    @Test
     void testCalculateDifferenzdatenDTO() {
         final LadeBelastungsplanDTO dto1 = new LadeBelastungsplanDTO();
         BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
@@ -442,11 +391,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatumDTO.setFahrradfahrer(49);
         ladeZaehldatumDTO.setFussgaenger(51);
 
-        LadeZaehldatumDTO result = ProcessZaehldatenBelastungsplanService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
         assertThat(result, is(ladeZaehldatumDTO));
 
         options.setWerteHundertRunden(true);
-        result = ProcessZaehldatenBelastungsplanService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        result = RoundingService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
@@ -465,35 +414,35 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     public void testRoundIfNotNullOrZero() {
         final int nearestValueToRound = 100;
         int valueToRoundInt = 49;
-        Integer resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        Integer resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(0));
 
         valueToRoundInt = 50;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(100));
 
         valueToRoundInt = 149;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(100));
 
         valueToRoundInt = 150;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(200));
 
         BigDecimal valueToRoundBd = BigDecimal.valueOf(49);
-        BigDecimal resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        BigDecimal resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.ZERO));
 
         valueToRoundBd = BigDecimal.valueOf(50);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(100)));
 
         valueToRoundBd = BigDecimal.valueOf(149);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(100)));
 
         valueToRoundBd = BigDecimal.valueOf(150);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(200)));
     }
 

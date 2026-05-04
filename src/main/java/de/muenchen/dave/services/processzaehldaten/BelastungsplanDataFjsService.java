@@ -79,7 +79,8 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         final BelastungsplanFjsDataDTO belastungsplanData = getEmptyBelastungsplanData();
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());
-        zaehldatenJeLaengsverkehr.forEach((laengsverkehr, tupelTageswertZaehldatum) -> addValueAndSum(laengsverkehr, BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)),
+        zaehldatenJeLaengsverkehr.forEach((laengsverkehr, tupelTageswertZaehldatum) -> addValueAndSum(laengsverkehr,
+                BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)),
                 belastungsplanData));
         return belastungsplanData;
     }
