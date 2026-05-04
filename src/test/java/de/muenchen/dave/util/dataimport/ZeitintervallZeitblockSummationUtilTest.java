@@ -176,8 +176,8 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
         List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForBewegungsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
-        // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
-        assertThat(result.size(), is(Zeitblock.values().length - 2));
+        // Anzahl der Zeitblöcke abzüglich der ZB_06_19, ZB_19_22 und ZB_06_22
+        assertThat(result.size(), is(Zeitblock.values().length - 3));
 
         // List in result has same sorting as Zeitblock-Enum entries
 
