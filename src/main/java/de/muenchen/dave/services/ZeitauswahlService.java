@@ -104,7 +104,7 @@ public class ZeitauswahlService {
         blocks.add(Zeitblock.ZB_15_19);
         /**
          * Verwenden des Zeitblocks ZB_19_24, da die Berechnung der Blocksumme und Spitzenstunde
-         * des Zeitraums von 19 - 22 Uhr mit genau diesem Zeitblock durchgeführt wird.
+         * des Zeitraums von 19 - 22 Uhr mit genau dem Zeitblock ZB_19_24 durchgeführt wird.
          */
         blocks.add(Zeitblock.ZB_19_24);
         blocks.add(Zeitblock.ZB_06_22);
