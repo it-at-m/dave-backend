@@ -105,7 +105,7 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         Optional<BelastungsplanFjsDataDTO.LaengsverkehrValue> laengsverkehrValue = seiteValue.get().getValuesLaengsverkehre().stream()
                 .filter(lv -> lv.getRichtung() == laengsverkehr.getRichtung()).findFirst();
         if (laengsverkehrValue.isPresent()) {
-            log.error("Fehler beim Berechnen der Daten: doppelter Laengsverkehr");
+            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         } else {
             seiteValue.get().getValuesLaengsverkehre().add(new BelastungsplanFjsDataDTO.LaengsverkehrValue(laengsverkehr.getRichtung(), value));

@@ -112,7 +112,7 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
             Verkehrsbeziehung verkehrsbeziehung) {
         if (((BelastungsplanQjsDataDTO) data).getValuesVerkehrsbeziehungen().stream().anyMatch(bez -> (bez.getVon() == verkehrsbeziehung.getVon())
                 && (bez.getNach() == verkehrsbeziehung.getNach()) && (bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()))) {
-            log.error("Fehler beim Berechnen der Daten: doppelte Verkehrsbeziehungen");
+            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         }
     }
