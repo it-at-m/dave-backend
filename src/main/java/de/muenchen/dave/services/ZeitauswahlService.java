@@ -71,7 +71,7 @@ public class ZeitauswahlService {
     }
 
     /**
-     * Kurzzeiterhebung (6 bis 19Uhr)
+     * Kurzzeiterhebung (6 bis 19 Uhr)
      *
      * @return
      */
@@ -92,6 +92,8 @@ public class ZeitauswahlService {
     }
 
     /**
+     * Kurzzeiterhebung (6 bis 22 Uhr)
+     *
      * @return
      */
     private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
@@ -100,6 +102,10 @@ public class ZeitauswahlService {
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_10_15);
         blocks.add(Zeitblock.ZB_15_19);
+        /**
+         * Verwenden des Zeitblocks ZB_19_24, da die Berechnung der Blocksumme und Spitzenstunde
+         * des Zeitraums von 19 - 22 Uhr mit genau diesem Zeitblock durchgeführt wird.
+         */
         blocks.add(Zeitblock.ZB_19_24);
         blocks.add(Zeitblock.ZB_06_22);
 
