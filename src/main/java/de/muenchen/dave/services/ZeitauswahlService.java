@@ -95,8 +95,19 @@ public class ZeitauswahlService {
      * @return
      */
     private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
-        final ZeitauswahlDTO zeitauswahlDTO = getZeitauswahlDtoByZeitintervalle(id);
-        zeitauswahlDTO.getBlocks().add(Zeitblock.ZB_06_22);
+        final ZeitauswahlDTO zeitauswahlDTO = new ZeitauswahlDTO();
+        final Set<Zeitblock> blocks = new TreeSet<>();
+        blocks.add(Zeitblock.ZB_06_10);
+        blocks.add(Zeitblock.ZB_10_15);
+        blocks.add(Zeitblock.ZB_15_19);
+        blocks.add(Zeitblock.ZB_19_24);
+        blocks.add(Zeitblock.ZB_06_22);
+
+        final Set<Zeitblock> hours = new TreeSet<>();
+        blocks.forEach(block -> hours.addAll(getAllHoursOfBlock(block)));
+
+        zeitauswahlDTO.setBlocks(blocks);
+        zeitauswahlDTO.setHours(hours);
         return zeitauswahlDTO;
     }
 
