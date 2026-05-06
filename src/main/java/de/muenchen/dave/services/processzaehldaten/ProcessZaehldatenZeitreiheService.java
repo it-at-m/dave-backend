@@ -252,21 +252,30 @@ public class ProcessZaehldatenZeitreiheService {
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     } else {
-                        final var ladeZaehldatum = new LadeZaehldatumDTO();
-                        ladeZaehldatum.setPkw(0);
-                        ladeZaehldatum.setLkw(0);
-                        ladeZaehldatum.setLastzuege(0);
-                        ladeZaehldatum.setBusse(0);
-                        ladeZaehldatum.setKraftraeder(0);
-                        ladeZaehldatum.setFahrradfahrer(0);
-                        ladeZaehldatum.setFussgaenger(0);
-                        ladeZaehldatum.setPkwEinheiten(0);
+                        // Wenn Zeitintervalle nicht vorhanden, bei QU, FJS und QU kein leeres Objekt erzeugen
+                        if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
+                            final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
-                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
-                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
+                            fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
+                        }
                     }
                 });
         return ladeZaehldatenZeitreihe;
+    }
+
+    // Erstellt ein leeres LadeZaehldatumDTO
+    private static LadeZaehldatumDTO getEmptyLadeZaehldatumDTO() {
+        final var ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setPkw(0);
+        ladeZaehldatum.setLkw(0);
+        ladeZaehldatum.setLastzuege(0);
+        ladeZaehldatum.setBusse(0);
+        ladeZaehldatum.setKraftraeder(0);
+        ladeZaehldatum.setFahrradfahrer(0);
+        ladeZaehldatum.setFussgaenger(0);
+        ladeZaehldatum.setPkwEinheiten(0);
+        return ladeZaehldatum;
     }
 
     /**
