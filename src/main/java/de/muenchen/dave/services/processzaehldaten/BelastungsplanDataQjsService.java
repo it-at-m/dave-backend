@@ -42,9 +42,9 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
 
         var ladeBelastungsplan = new LadeBelastungsplanQjsDTO();
         ladeBelastungsplan.setStreets(new String[8]);
-        (ladeBelastungsplan).setValue1((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
-        (ladeBelastungsplan).setValue2((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
-        (ladeBelastungsplan).setValue3((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
+        ladeBelastungsplan.setValue1((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
+        ladeBelastungsplan.setValue2((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
+        ladeBelastungsplan.setValue3((BelastungsplanQjsDataDTO) getEmptyBelastungsplanData());
 
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
@@ -81,40 +81,25 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
-            checkForDuplicates(belastungsplanData, verkehrsbeziehung);
+            final BigDecimal currentValue = BigDecimal
+                    .valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0));
             var value = new BelastungsplanQjsDataDTO.VerkehrsbeziehungValue(verkehrsbeziehung.getVon(), verkehrsbeziehung.getNach(),
-                    verkehrsbeziehung.getStrassenseite(),
-                    BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
+                    verkehrsbeziehung.getStrassenseite(), currentValue);
             belastungsplanData.getValuesVerkehrsbeziehungen().add(value);
 
             Optional<BelastungsplanQjsDataDTO.StrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
                     .filter(bez -> bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()).findFirst();
             if (valueStrassenseite.isPresent()) {
-                BigDecimal oldValue = valueStrassenseite.get().getValue();
-                BigDecimal newValue = oldValue
-                        .add(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
-                valueStrassenseite.get().setValue(newValue);
+                valueStrassenseite.get().setValue(valueStrassenseite.get().getValue().add(currentValue));
             } else {
                 BelastungsplanQjsDataDTO.StrassenseiteValue valueStrassenseite2 = new BelastungsplanQjsDataDTO.StrassenseiteValue(
                         verkehrsbeziehung.getStrassenseite());
-                valueStrassenseite2.setValue(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0)));
+                valueStrassenseite2.setValue(currentValue);
                 belastungsplanData.getValuesStrassenseite().add(valueStrassenseite2);
             }
-            belastungsplanData
-                    .setSumAll(belastungsplanData.getSumAll()
-                            .add(BigDecimal.valueOf(Objects.requireNonNullElse(reader.apply(tupelTageswertZaehldatum.getLadeZaehldatum()), 0))));
+            belastungsplanData.setSumAll(belastungsplanData.getSumAll().add(currentValue));
         });
         return belastungsplanData;
-    }
-
-    private void checkForDuplicates(
-            AbstractBelastungsplanDataDTO data,
-            Verkehrsbeziehung verkehrsbeziehung) {
-        if (((BelastungsplanQjsDataDTO) data).getValuesVerkehrsbeziehungen().stream().anyMatch(bez -> (bez.getVon() == verkehrsbeziehung.getVon())
-                && (bez.getNach() == verkehrsbeziehung.getNach()) && (bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()))) {
-            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
-            throw new IllegalStateException("Fehler beim Berechnen der Daten");
-        }
     }
 
 }

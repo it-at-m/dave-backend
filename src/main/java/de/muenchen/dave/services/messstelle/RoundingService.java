@@ -49,7 +49,7 @@ public class RoundingService {
      *         {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
      *         {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
      */
-    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChoosen(final LadeZaehldatumDTO toRound,
+    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(final LadeZaehldatumDTO toRound,
             final int nearestValueToRound,
             final OptionsDTO optionsDto) {
         if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {

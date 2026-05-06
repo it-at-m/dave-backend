@@ -16,9 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
 @Slf4j
-public class MappingUtil {
+public final class MappingUtil {
 
     private static final Integer VALUE_TO_ROUND = 100;
+
+    /**
+     * Prevent accidental instantiation/subclassing
+     */
+    private MappingUtil() {
+    }
 
     /**
      * Baut aus einer Liste von {@link Zeitintervall} eine Zuordnung (Map) von
@@ -44,7 +50,7 @@ public class MappingUtil {
                         // Wert-Mapper
                         zeitintervall -> new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
                                 LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options),
-                                RoundingService.roundToNearestIfRoundingIsChoosen(
+                                RoundingService.roundToNearestIfRoundingIsChosen(
                                         LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options),
                                         VALUE_TO_ROUND,
                                         options))));
@@ -64,22 +70,20 @@ public class MappingUtil {
      * @return Eine Map von {@link Laengsverkehr} auf
      *         {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}. Nur
      *         Zeitintervalle,
-     *         die die Bedingung für Verkehrsbeziehungen erfüllen, werden berücksichtigt.
+     *         die die Bedingung für Längsverkehre erfüllen, werden berücksichtigt.
      */
     public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapLaengsverkehre(final OptionsDTO options,
             final Zaehlung zaehlung, final List<Zeitintervall> zeitintervalle) {
         final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
                 .filter(MappingUtil::isLaengsverkehrKnotenarm)
-                .sorted(Comparator.comparing(
-                        (Zeitintervall z) -> z.getLaengsverkehr().getKnotenarm(),
-                        Comparator.nullsLast(Integer::compareTo)))
+                .sorted(Comparator.comparingInt(z -> z.getLaengsverkehr().getKnotenarm()))
                 .collect(Collectors.toMap(
                         // Schlüssel-Mapper
                         Zeitintervall::getLaengsverkehr,
                         // Wert-Mapper
                         zeitintervall -> new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
                                 LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options),
-                                RoundingService.roundToNearestIfRoundingIsChoosen(
+                                RoundingService.roundToNearestIfRoundingIsChosen(
                                         LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options),
                                         VALUE_TO_ROUND,
                                         options)),

@@ -132,9 +132,10 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.QU.equals(zaehlart)) {
-            return new LadeBelastungsplanDTO();
+            return new LadeBelastungsplanDTO(); // TODO
         } else {
-            if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
+            if (!(Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart))
+                    && BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
                     && options.getVergleichszaehlungsId() != null) {
                 // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
                 findByZaehlungenId(options.getVergleichszaehlungsId());
@@ -356,7 +357,7 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
         if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
-            throw new IllegalStateException("Fehler beim Erstellen der Belastungsplandaten");
+            throw new IllegalStateException("Fehlhafter Datentyp der Belastungsplandaten: " + ladeBelastungsplanDTO.getClass());
         return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
     }
 

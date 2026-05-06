@@ -27,13 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class BelastungsplanDataQjsServiceTest {
 
     @Test
@@ -70,14 +64,22 @@ public class BelastungsplanDataQjsServiceTest {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQjsService()
                 .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
-                .getValuesVerkehrsbeziehungen();
+        BelastungsplanQjsDataDTO dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS));
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = dto.getValuesVerkehrsbeziehungen();
+
         assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
         assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
-                .getValuesVerkehrsbeziehungen();
+        assertThat(dto.getSumAll(), is(BigDecimal.valueOf(77)));
+        assertThat(dto.getValuesStrassenseite().stream().filter(v -> v.getStrassenseite().equals(Himmelsrichtung.N)).findFirst().orElseThrow().getValue(),
+                is(BigDecimal.valueOf(77)));
+
+        dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD));
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = dto.getValuesVerkehrsbeziehungen();
         assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
         assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
+        assertThat(dto.getSumAll(), is(BigDecimal.valueOf(66)));
+        assertThat(dto.getValuesStrassenseite().stream().filter(v -> v.getStrassenseite().equals(Himmelsrichtung.N)).findFirst().orElseThrow().getValue(),
+                is(BigDecimal.valueOf(66)));
     }
 
     @Test

@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-@Service
 @Slf4j
 public abstract class AbstractBelastungsplanDataService implements IBelastungsplanDataService {
 
@@ -32,7 +30,9 @@ public abstract class AbstractBelastungsplanDataService implements IBelastungspl
             Stream.of(
                     ladeBelastungsplanSum.getValue1(),
                     ladeBelastungsplanSum.getValue2(),
-                    ladeBelastungsplanSum.getValue3()).filter(v -> "RAD".equals(v.getLabel()))
+                    ladeBelastungsplanSum.getValue3())
+                    .filter(java.util.Objects::nonNull)
+                    .filter(v -> "RAD".equals(v.getLabel()))
                     .forEach(v -> v.setLabel("RAD (KI-Hochrechnung)"));
         }
     }

@@ -20,6 +20,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -51,6 +52,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,11 +78,17 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     private ProcessZaehldatenBelastungsplanService service;
 
+    private static BelastungsplanDataServiceFactory factory;
+
+    @BeforeAll
+    public static void beforeAll() {
+        factory = new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(),
+                new BelastungsplanDataFjsService());
+    }
+
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService,
-                new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(),
-                        new BelastungsplanDataFjsService()));
+        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService, factory);
         Mockito.reset(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService);
     }
 
@@ -216,6 +224,33 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
+     * Testet, ob die FUSS-Zähldaten allein bei FJS hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataFjs() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.FJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("FUSS", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
+    }
+
+    /**
      * Testet, ob die RAD-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
@@ -241,6 +276,34 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         assertEquals("RAD", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
         assertTrue((((BelastungsplanQjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
+    }
+
+    /**
+     * Testet, ob die RAD-Zähldaten bei FJS hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataFjs() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.FJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("RAD", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanFjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -391,11 +454,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatumDTO.setFahrradfahrer(49);
         ladeZaehldatumDTO.setFussgaenger(51);
 
-        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
         assertThat(result, is(ladeZaehldatumDTO));
 
         options.setWerteHundertRunden(true);
-        result = RoundingService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));

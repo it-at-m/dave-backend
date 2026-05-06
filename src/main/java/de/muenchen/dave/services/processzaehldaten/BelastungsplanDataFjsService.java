@@ -49,7 +49,7 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         return ladeBelastungsplan;
     }
 
-    Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeLaengsverkehr,
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
@@ -87,39 +87,39 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
 
     private void addValueAndSum(final Laengsverkehr laengsverkehr, final BigDecimal value,
             final BelastungsplanFjsDataDTO belastungsplanData) {
-        Optional<BelastungsplanFjsDataDTO.KnotenarmValue> knotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
-                .filter(kn -> kn.getKnotenarm() == laengsverkehr.getKnotenarm()).findFirst();
-        if (knotenarmValue.isEmpty()) {
-            BelastungsplanFjsDataDTO.KnotenarmValue knValue = new BelastungsplanFjsDataDTO.KnotenarmValue(laengsverkehr.getKnotenarm(), new ArrayList<>());
-            belastungsplanData.getValuesKnotenarme().add(knValue);
-            knotenarmValue = Optional.of(knValue);
-        }
-        Optional<BelastungsplanFjsDataDTO.StrassenseiteValue> seiteValue = knotenarmValue.get().getValuesStrassenseiten().stream()
-                .filter(seite -> seite.getStrassenseite() == laengsverkehr.getStrassenseite()).findFirst();
-        if (seiteValue.isEmpty()) {
-            BelastungsplanFjsDataDTO.StrassenseiteValue sValue = new BelastungsplanFjsDataDTO.StrassenseiteValue(laengsverkehr.getStrassenseite(),
-                    new ArrayList<>());
-            knotenarmValue.get().getValuesStrassenseiten().add(sValue);
-            seiteValue = Optional.of(sValue);
-        }
-        Optional<BelastungsplanFjsDataDTO.LaengsverkehrValue> laengsverkehrValue = seiteValue.get().getValuesLaengsverkehre().stream()
+        final BelastungsplanFjsDataDTO.KnotenarmValue knotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
+                .filter(kn -> Objects.equals(kn.getKnotenarm(), laengsverkehr.getKnotenarm())).findFirst()
+                .orElseGet(() -> {
+                    final var kv = new BelastungsplanFjsDataDTO.KnotenarmValue(laengsverkehr.getKnotenarm(), new ArrayList<>());
+                    belastungsplanData.getValuesKnotenarme().add(kv);
+                    return kv;
+                });
+        final BelastungsplanFjsDataDTO.StrassenseiteValue seiteValue = knotenarmValue.getValuesStrassenseiten().stream()
+                .filter(seite -> seite.getStrassenseite() == laengsverkehr.getStrassenseite()).findFirst()
+                .orElseGet(() -> {
+                    final var sv = new BelastungsplanFjsDataDTO.StrassenseiteValue(laengsverkehr.getStrassenseite(), new ArrayList<>());
+                    knotenarmValue.getValuesStrassenseiten().add(sv);
+                    return sv;
+                });
+        Optional<BelastungsplanFjsDataDTO.LaengsverkehrValue> laengsverkehrValue = seiteValue.getValuesLaengsverkehre().stream()
                 .filter(lv -> lv.getRichtung() == laengsverkehr.getRichtung()).findFirst();
         if (laengsverkehrValue.isPresent()) {
             log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         } else {
-            seiteValue.get().getValuesLaengsverkehre().add(new BelastungsplanFjsDataDTO.LaengsverkehrValue(laengsverkehr.getRichtung(), value));
+            seiteValue.getValuesLaengsverkehre().add(new BelastungsplanFjsDataDTO.LaengsverkehrValue(laengsverkehr.getRichtung(), value));
             // Summiere Strassenseite
-            if (seiteValue.get().getSumStrassenseite() == null) {
-                seiteValue.get().setSumStrassenseite(value);
+            if (seiteValue.getSumStrassenseite() == null) {
+                seiteValue.setSumStrassenseite(value);
             } else {
-                seiteValue.get().setSumStrassenseite(seiteValue.get().getSumStrassenseite().add(value));
+                seiteValue.setSumStrassenseite(seiteValue.getSumStrassenseite().add(value));
             }
             // Summiere Knotenarm
-            if (knotenarmValue.get().getSumKnotenarm() == null)
-                knotenarmValue.get().setSumKnotenarm(value);
-            else
-                knotenarmValue.get().setSumKnotenarm(knotenarmValue.get().getSumKnotenarm().add(value));
+            if (knotenarmValue.getSumKnotenarm() == null) {
+                knotenarmValue.setSumKnotenarm(value);
+            } else {
+                knotenarmValue.setSumKnotenarm(knotenarmValue.getSumKnotenarm().add(value));
+            }
         }
     }
 }

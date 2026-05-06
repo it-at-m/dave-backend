@@ -88,47 +88,13 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
             final Zaehlung zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
-        final BelastungsplanDataDTO belastungsplanDataKfz = new BelastungsplanDataDTO();
-        belastungsplanDataKfz.setFilled(zaehlung.getKategorien().contains(Fahrzeug.KFZ));
-        belastungsplanDataKfz.setPercent(false);
-        belastungsplanDataKfz.setLabel(Fahrzeug.KFZ.getName());
-        belastungsplanDataKfz.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataSv = new BelastungsplanDataDTO();
-        belastungsplanDataSv.setFilled(zaehlung.getKategorien().contains(Fahrzeug.SV));
-        belastungsplanDataSv.setPercent(false);
-        belastungsplanDataSv.setLabel(Fahrzeug.SV.getName());
-        belastungsplanDataSv.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataGv = new BelastungsplanDataDTO();
-        belastungsplanDataGv.setFilled(zaehlung.getKategorien().contains(Fahrzeug.GV));
-        belastungsplanDataGv.setPercent(false);
-        belastungsplanDataGv.setLabel(Fahrzeug.GV.getName());
-        belastungsplanDataGv.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataRad = new BelastungsplanDataDTO();
-        belastungsplanDataRad.setFilled(zaehlung.getKategorien().contains(Fahrzeug.RAD));
-        belastungsplanDataRad.setPercent(false);
-        belastungsplanDataRad.setLabel(Fahrzeug.RAD.getName());
-        belastungsplanDataRad.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataFuss = new BelastungsplanDataDTO();
-        belastungsplanDataFuss.setFilled(zaehlung.getKategorien().contains(Fahrzeug.FUSS));
-        belastungsplanDataFuss.setPercent(false);
-        belastungsplanDataFuss.setLabel(Fahrzeug.FUSS.getName());
-        belastungsplanDataFuss.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataSvProzent = new BelastungsplanDataDTO();
-        belastungsplanDataSvProzent.setFilled(belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled());
-        belastungsplanDataSvProzent.setPercent(true);
-        belastungsplanDataSvProzent.setLabel(Fahrzeug.SV_P.getName());
-        belastungsplanDataSvProzent.setValues(getEmptyDatastructure());
-
-        final BelastungsplanDataDTO belastungsplanDataGvProzent = new BelastungsplanDataDTO();
-        belastungsplanDataGvProzent.setFilled(belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled());
-        belastungsplanDataGvProzent.setPercent(true);
-        belastungsplanDataGvProzent.setLabel(Fahrzeug.GV_P.getName());
-        belastungsplanDataGvProzent.setValues(getEmptyDatastructure());
+        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);
+        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV), false);
+        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
+        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
+        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
+        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.FUSS, belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
+        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.FUSS, belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled(), true);
 
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
             final int index1;
@@ -195,6 +161,15 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
             returnValue.put(Fahrzeug.GV_P, belastungsplanDataGvProzent);
         }
         return returnValue;
+    }
+
+    private BelastungsplanDataDTO createBelastungsplanData(Fahrzeug fahrzeug, boolean filled, boolean percent){
+        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        belastungsplanData.setFilled(filled);
+        belastungsplanData.setPercent(percent);
+        belastungsplanData.setLabel(fahrzeug.getName());
+        belastungsplanData.setValues(getEmptyDatastructure());
+        return belastungsplanData;
     }
 
     private BelastungsplanDataDTO getEmptyBelastungsplanData() {

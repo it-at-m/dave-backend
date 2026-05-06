@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BelastungsplanDataServiceFactory {
 
-    final BelastungsplanDataDefaultService belastungsplanDataDefaultService;
-    final BelastungsplanDataQjsService belastungsplanDataQjsService;
-    final BelastungsplanDataFjsService belastungsplanDataFjsService;
+    private final BelastungsplanDataDefaultService belastungsplanDataDefaultService;
+    private final BelastungsplanDataQjsService belastungsplanDataQjsService;
+    private final BelastungsplanDataFjsService belastungsplanDataFjsService;
 
     public IBelastungsplanDataService getBelastungsplanDataService(Zaehlung zaehlung) {
         if (Zaehlart.QJS.name().equals(zaehlung.getZaehlart())) {
