@@ -93,8 +93,10 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
         final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
         final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
-        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.FUSS, belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
-        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.FUSS, belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled(), true);
+        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.FUSS,
+                belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
+        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.FUSS,
+                belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled(), true);
 
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
             final int index1;
@@ -163,7 +165,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         return returnValue;
     }
 
-    private BelastungsplanDataDTO createBelastungsplanData(Fahrzeug fahrzeug, boolean filled, boolean percent){
+    private BelastungsplanDataDTO createBelastungsplanData(Fahrzeug fahrzeug, boolean filled, boolean percent) {
         final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
         belastungsplanData.setFilled(filled);
         belastungsplanData.setPercent(percent);
