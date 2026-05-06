@@ -78,3 +78,9 @@ dave:
     cron: "-"
     shedlock: 1m
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
+  map:
+    baseLayers:
+      - base-url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        layer-name: ""
+        layer-name-to-display: "OpenStreetMap"
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
