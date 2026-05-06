@@ -93,9 +93,9 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
         final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
         final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
-        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.FUSS,
+        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.SV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
-        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.FUSS,
+        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.GV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled(), true);
 
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
