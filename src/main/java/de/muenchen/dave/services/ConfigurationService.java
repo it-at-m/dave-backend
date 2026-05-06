@@ -27,7 +27,7 @@ public class ConfigurationService {
                 linkDocumentationCsvFileForUploadZaehlung);
         final var mapConfiguration = new MapConfigurationDTO(
                 mapProperties.getCenterLat(),
-                mapProperties.getCenterLng  (),
+                mapProperties.getCenterLng(),
                 mapProperties.getCenterZoom(),
                 mapProperties.getBaseLayers(),
                 mapProperties.getOverlayLayers());
