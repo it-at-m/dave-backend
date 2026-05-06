@@ -134,9 +134,11 @@ public class ProcessZaehldatenBelastungsplanService {
         if (Zaehlart.QU.equals(zaehlart)) {
             return new LadeBelastungsplanDTO(); // TODO
         } else {
-            if (!(Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart))
-                    && BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
+            if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
                     && options.getVergleichszaehlungsId() != null) {
+                if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+                    throw new UnsupportedOperationException("Differenzdatenvergleich nicht implementiert für Zählarten QJS, FJS und QU");
+                }
                 // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
                 findByZaehlungenId(options.getVergleichszaehlungsId());
                 log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());

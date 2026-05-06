@@ -53,7 +53,15 @@ public final class MappingUtil {
                                 RoundingService.roundToNearestIfRoundingIsChosen(
                                         LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options),
                                         VALUE_TO_ROUND,
-                                        options))));
+                                        options)),
+                        // Konflikt-Löser
+                        (existing, replacement) -> {
+                            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
+                            throw new IllegalStateException("Fehler beim Berechnen der Daten");
+                        },
+                        // Map-Typ
+                        LinkedHashMap::new));
+
         return ladeZaehldatumBelastungsplan;
     }
 

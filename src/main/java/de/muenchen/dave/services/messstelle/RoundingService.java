@@ -119,7 +119,7 @@ public class RoundingService {
      */
     public static BigDecimal roundIfNotNullOrZero(final BigDecimal toRound, final int nearestValueToRound) {
         final BigDecimal roundedValue;
-        if (ObjectUtils.isNotEmpty(toRound) && !toRound.equals(BigDecimal.ZERO)) {
+        if (ObjectUtils.isNotEmpty(toRound) && toRound.compareTo(BigDecimal.ZERO) != 0) {
             roundedValue = toRound
                     .divide(BigDecimal.valueOf(nearestValueToRound))
                     .setScale(0, RoundingMode.HALF_UP)
