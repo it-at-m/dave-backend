@@ -87,7 +87,8 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
     }
 
     /**
-     * Setzt den Zählwert anhand des {@link Laengsverkehr} an die richtige Stelle des {@link BelastungsplanFjsDataDTO}
+     * Setzt den Zählwert anhand des {@link Laengsverkehr} an die richtige Stelle des
+     * {@link BelastungsplanFjsDataDTO}
      * und addiert ihn zur Summe von entsprechender Strassenseite und Knotenarm.
      */
     private void addValueAndSum(
