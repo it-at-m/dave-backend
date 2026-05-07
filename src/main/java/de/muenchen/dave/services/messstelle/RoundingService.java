@@ -35,6 +35,7 @@ public class RoundingService {
      * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound"
      * auf den nächsten Wert welcher im Parameter
      * "nearestValueToRound" angegeben ist.
+     * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
      * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden() den Wert true
      * besitzt.
@@ -43,13 +44,14 @@ public class RoundingService {
      * Andernfalls wird aufgerundet.
      *
      * @param toRound Auf welchem die Rundung durchgeführt werden soll.
-     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll.
+     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll (nur Zehner-Potenzen).
      * @param optionsDto Um auf Durchführung der Rundung zu prüfen
      * @return den gerundeten {@link LadeZaehldatumDTO}, falls
      *         {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
      *         {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
      */
-    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(final LadeZaehldatumDTO toRound,
+    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(
+            final LadeZaehldatumDTO toRound,
             final int nearestValueToRound,
             final OptionsDTO optionsDto) {
         if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {
@@ -88,12 +90,13 @@ public class RoundingService {
     /**
      * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
      * Andernfalls wird der übergebene Wert zurückgegeben.
+     * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
      * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
      * Andernfalls wird aufgerundet.
      *
      * @param toRound Der Wert welcher gerundet werden soll
-     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
+     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll (nur Zehner-Potenzen).
      * @return den gerundeten Wert oder der übergebene Wert falls keine Rundung durchgeführt wurde.
      */
     public static Integer roundIfNotNullOrZero(final Integer toRound, final int nearestValueToRound) {
@@ -109,12 +112,13 @@ public class RoundingService {
     /**
      * Führt eine Rundung durch sobald der Wert im Parameter "toRound" nicht NULL oder 0 ist.
      * Andernfalls wird der übergebene Wert zurückgegeben.
+     * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
      * Sobald der Wert im Zehnerbereich kleiner 50 ist, wird auf den nächsten 100er-Wert abgerundet.
      * Andernfalls wird aufgerundet.
      *
      * @param toRound Der Wert welcher gerundet werden soll
-     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll.
+     * @param nearestValueToRound Der nächste Wert auf den gerundet werden soll (nur Zehner-Potenzen).
      * @return den gerundeten Wert.
      */
     public static BigDecimal roundIfNotNullOrZero(final BigDecimal toRound, final int nearestValueToRound) {

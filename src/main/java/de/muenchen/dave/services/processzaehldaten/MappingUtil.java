@@ -40,8 +40,10 @@ public final class MappingUtil {
      *         Zeitintervalle,
      *         die die Bedingung für Verkehrsbeziehungen erfüllen, werden berücksichtigt.
      */
-    public static Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapVerkehrsbeziehungen(final OptionsDTO options,
-            final Zaehlung zaehlung, final List<Zeitintervall> zeitintervalle) {
+    public static Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapVerkehrsbeziehungen(
+            final OptionsDTO options,
+            final Zaehlung zaehlung,
+            final List<Zeitintervall> zeitintervalle) {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
                 .filter(MappingUtil::isVerkehrsbeziehungNachOrKreisverkehrSet)
                 .collect(Collectors.toMap(
@@ -80,8 +82,10 @@ public final class MappingUtil {
      *         Zeitintervalle,
      *         die die Bedingung für Längsverkehre erfüllen, werden berücksichtigt.
      */
-    public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapLaengsverkehre(final OptionsDTO options,
-            final Zaehlung zaehlung, final List<Zeitintervall> zeitintervalle) {
+    public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapLaengsverkehre(
+            final OptionsDTO options,
+            final Zaehlung zaehlung,
+            final List<Zeitintervall> zeitintervalle) {
         final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
                 .filter(MappingUtil::isLaengsverkehrKnotenarm)
                 .sorted(Comparator.comparingInt(z -> z.getLaengsverkehr().getKnotenarm()))

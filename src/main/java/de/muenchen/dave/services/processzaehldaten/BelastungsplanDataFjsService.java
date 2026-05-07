@@ -25,7 +25,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataService {
 
-    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
+    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
+            final OptionsDTO options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil.mapLaengsverkehre(
@@ -85,7 +86,13 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         return belastungsplanData;
     }
 
-    private void addValueAndSum(final Laengsverkehr laengsverkehr, final BigDecimal value,
+    /**
+     * Setzt den Zählwert anhand des {@link Laengsverkehr} an die richtige Stelle des {@link BelastungsplanFjsDataDTO}
+     * und addiert ihn zur Summe von entsprechender Strassenseite und Knotenarm.
+     */
+    private void addValueAndSum(
+            final Laengsverkehr laengsverkehr,
+            final BigDecimal value,
             final BelastungsplanFjsDataDTO belastungsplanData) {
         final BelastungsplanFjsDataDTO.KnotenarmValue knotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
                 .filter(kn -> Objects.equals(kn.getKnotenarm(), laengsverkehr.getKnotenarm())).findFirst()

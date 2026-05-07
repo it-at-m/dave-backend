@@ -34,7 +34,8 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
         return data;
     }
 
-    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
+    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
+            final OptionsDTO options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil

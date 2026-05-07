@@ -23,7 +23,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService {
 
-    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(final OptionsDTO options,
+    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
+            final OptionsDTO options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
@@ -31,7 +32,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
 
         var ladeBelastungsplan = new LadeBelastungsplanDTO();
         ladeBelastungsplan.setStreets(new String[8]);
-        (ladeBelastungsplan).setValue1(getEmptyBelastungsplanData());
+        ladeBelastungsplan.setValue1(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue2(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue3(getEmptyBelastungsplanData());
 
@@ -66,7 +67,8 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
 
-        LadeBelastungsplanDTO ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(ladeBelastungsplan,
+        LadeBelastungsplanDTO ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(
+                ladeBelastungsplan,
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV));
 
@@ -192,8 +194,11 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      * @param dataGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um alle Summen erweiterte LadeBelastungsplanDTO-Objekt zurück
      */
-    private LadeBelastungsplanDTO calculateSumsForLadeBelastungsplanDto(final LadeBelastungsplanDTO ladeBelastungsplan, final BelastungsplanDataDTO dataKfz,
-            final BelastungsplanDataDTO dataSv, final BelastungsplanDataDTO dataGv) {
+    private LadeBelastungsplanDTO calculateSumsForLadeBelastungsplanDto(
+            final LadeBelastungsplanDTO ladeBelastungsplan,
+            final BelastungsplanDataDTO dataKfz,
+            final BelastungsplanDataDTO dataSv,
+            final BelastungsplanDataDTO dataGv) {
 
         Map<String, BigDecimal[]> sumsKfz = null;
         Map<String, BigDecimal[]> sumsSv = null;
