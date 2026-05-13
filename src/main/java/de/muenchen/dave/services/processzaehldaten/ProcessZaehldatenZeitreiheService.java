@@ -246,9 +246,16 @@ public class ProcessZaehldatenZeitreiheService {
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
-                        final var ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
+                        final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
-                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+
+                        if (ladeZaehldatum.getFussgaenger() == null) {
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + "\n(Fußverkehr nicht vorh.)");
+                        } else if (ladeZaehldatum.getFahrradfahrer() == null) {
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + "\n(Fahrradverkehr nicht vorh.)");
+                        } else {
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                        }
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     } else {
