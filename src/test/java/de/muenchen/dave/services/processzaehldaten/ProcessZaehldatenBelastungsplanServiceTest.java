@@ -15,13 +15,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -31,9 +30,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -42,22 +39,20 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.messstelle.RoundingService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
-import org.apache.commons.lang3.ArrayUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,9 +78,17 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     private ProcessZaehldatenBelastungsplanService service;
 
+    private static BelastungsplanDataServiceFactory factory;
+
+    @BeforeAll
+    public static void beforeAll() {
+        factory = new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(),
+                new BelastungsplanDataFjsService());
+    }
+
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService);
+        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService, factory);
         Mockito.reset(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService);
     }
 
@@ -221,6 +224,33 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
+     * Testet, ob die FUSS-Zähldaten allein bei FJS hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataFjs() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.FJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("FUSS", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
+    }
+
+    /**
      * Testet, ob die RAD-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
@@ -246,6 +276,34 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         assertEquals("RAD", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
         assertTrue((((BelastungsplanQjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
+    }
+
+    /**
+     * Testet, ob die RAD-Zähldaten bei FJS hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataFjs() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.FJS,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("RAD", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanFjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -303,156 +361,6 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         assertSame(expected, result);
         verify(serviceSpy, times(1)).getDifferenzdatenBelastungsplanDTO(eq("zaehlung-1"), eq(options));
         verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
-    }
-
-    @Test
-    public void testIsKreisverkehr() {
-        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
-        boolean result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(true));
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        verkehrsbeziehung.setVon(1);
-        verkehrsbeziehung.setNach(2);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        verkehrsbeziehung.setVon(null);
-        verkehrsbeziehung.setNach(null);
-        verkehrsbeziehung.setFahrbewegungKreisverkehr(null);
-        result = TestUtils.privateStaticMethodCall(
-                "isKreisverkehr",
-                ProcessZaehldatenBelastungsplanService.class,
-                ArrayUtils.toArray(Verkehrsbeziehung.class),
-                ArrayUtils.toArray(verkehrsbeziehung),
-                Boolean.class);
-        assertThat(result, is(false));
-    }
-
-    @Test
-    public void testGetBelastungsplanData() {
-        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(3);
-
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
-        ladeZaehldatum.setPkw(1);
-        ladeZaehldatum.setLkw(2);
-        ladeZaehldatum.setLastzuege(3);
-        ladeZaehldatum.setBusse(4);
-        ladeZaehldatum.setKraftraeder(5);
-        ladeZaehldatum.setFahrradfahrer(6);
-        ladeZaehldatum.setFussgaenger(7);
-        ladeZaehldatum.setPkwEinheiten(100);
-
-        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
-
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(5);
-        verkehrsbeziehung.setNach(2);
-
-        ladeZaehldatum = new LadeZaehldatumDTO();
-        ladeZaehldatum.setPkw(10);
-        ladeZaehldatum.setLkw(20);
-        ladeZaehldatum.setLastzuege(30);
-        ladeZaehldatum.setBusse(40);
-        ladeZaehldatum.setKraftraeder(50);
-        ladeZaehldatum.setFahrradfahrer(60);
-        ladeZaehldatum.setFussgaenger(70);
-        ladeZaehldatum.setPkwEinheiten(1000);
-
-        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
-
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.SV, Fahrzeug.GV, Fahrzeug.SV_P, Fahrzeug.GV_P, Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.N.toString());
-        zaehlung.setKreisverkehr(false);
-
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
-                .getBelastungsplanData(zaehldatenJeVerkehrsbeziehung, zaehlung);
-
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[1][2], is(BigDecimal.valueOf(15)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV)).getValues()[1][2], is(BigDecimal.valueOf(9)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV)).getValues()[1][2], is(BigDecimal.valueOf(5)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValues()[1][2], is(BigDecimal.valueOf(6)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[1][2], is(BigDecimal.valueOf(7)));
-
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[4][1], is(BigDecimal.valueOf(150)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV)).getValues()[4][1], is(BigDecimal.valueOf(90)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV)).getValues()[4][1], is(BigDecimal.valueOf(50)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValues()[4][1], is(BigDecimal.valueOf(60)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[4][1], is(BigDecimal.valueOf(70)));
-
-    }
-
-    @Test
-    public void testGetBelastungsplanQjsData() {
-        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
-
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(2);
-        verkehrsbeziehung.setNach(4);
-        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
-
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
-        ladeZaehldatum.setFahrradfahrer(6);
-        ladeZaehldatum.setFussgaenger(7);
-
-        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
-
-        verkehrsbeziehung = new Verkehrsbeziehung();
-        verkehrsbeziehung.setVon(4);
-        verkehrsbeziehung.setNach(2);
-        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
-
-        ladeZaehldatum = new LadeZaehldatumDTO();
-        ladeZaehldatum.setFahrradfahrer(60);
-        ladeZaehldatum.setFussgaenger(70);
-
-        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
-
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setKategorien(Arrays.asList(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QJS.toString());
-        zaehlung.setKreisverkehr(false);
-
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new ProcessZaehldatenBelastungsplanService(null, null, null)
-                .getBelastungsplanQjsData(zaehldatenJeVerkehrsbeziehung, zaehlung);
-
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
-                .getValuesVerkehrsbeziehungen();
-        assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
-        assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
-                .getValuesVerkehrsbeziehungen();
-        assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
-        assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
     }
 
     @Test
@@ -534,7 +442,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void testRoundToNearestIfRoundingIsChoosen() {
-        final Integer nearestValueToRound = 100;
+        final int nearestValueToRound = 100;
         final OptionsDTO options = new OptionsDTO();
         options.setWerteHundertRunden(false);
         LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
@@ -546,11 +454,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatumDTO.setFahrradfahrer(49);
         ladeZaehldatumDTO.setFussgaenger(51);
 
-        LadeZaehldatumDTO result = ProcessZaehldatenBelastungsplanService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
         assertThat(result, is(ladeZaehldatumDTO));
 
         options.setWerteHundertRunden(true);
-        result = ProcessZaehldatenBelastungsplanService.roundToNearestIfRoundingIsChoosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
@@ -567,37 +475,37 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void testRoundIfNotNullOrZero() {
-        final Integer nearestValueToRound = 100;
-        Integer valueToRoundInt = 49;
-        Integer resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        final int nearestValueToRound = 100;
+        int valueToRoundInt = 49;
+        Integer resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(0));
 
         valueToRoundInt = 50;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(100));
 
         valueToRoundInt = 149;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(100));
 
         valueToRoundInt = 150;
-        resultInt = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
+        resultInt = RoundingService.roundIfNotNullOrZero(valueToRoundInt, nearestValueToRound);
         assertThat(resultInt, is(200));
 
         BigDecimal valueToRoundBd = BigDecimal.valueOf(49);
-        BigDecimal resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        BigDecimal resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.ZERO));
 
         valueToRoundBd = BigDecimal.valueOf(50);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(100)));
 
         valueToRoundBd = BigDecimal.valueOf(149);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(100)));
 
         valueToRoundBd = BigDecimal.valueOf(150);
-        resultBd = ProcessZaehldatenBelastungsplanService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
+        resultBd = RoundingService.roundIfNotNullOrZero(valueToRoundBd, nearestValueToRound);
         assertThat(resultBd, is(BigDecimal.valueOf(200)));
     }
 
@@ -739,15 +647,6 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         if (fahrzeuge.contains(Fahrzeug.FUSS))
             options.setFussverkehr(true);
         return options;
-    }
-
-    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
-            int expectedValue) {
-        assertThat(values
-                .stream()
-                .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
-                .map(BelastungsplanQjsDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
-                is(BigDecimal.valueOf(expectedValue)));
     }
 
 }
