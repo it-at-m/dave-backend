@@ -36,6 +36,8 @@ import org.springframework.stereotype.Service;
 public class ProcessZaehldatenZeitreiheService {
 
     private static final String VERKEHRSBEZIEHUNG_NICHT_VORHANDEN = "\n(Verkehrsbez. nicht vorh.)";
+    private static final String FUSSVERKEHR_NICHT_VORHANDEN = "\n(Fußverkehr nicht vorh.)";
+    private static final String RADVERKEHR_NICHT_VORHANDEN = "\n(Radverkehr nicht vorh.)";
 
     private final ZaehldatenExtractorService zaehldatenExtractorService;
 
@@ -250,9 +252,9 @@ public class ProcessZaehldatenZeitreiheService {
                                 options);
 
                         if (ladeZaehldatum.getFussgaenger() == null) {
-                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + "\n(Fußverkehr nicht vorh.)");
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + FUSSVERKEHR_NICHT_VORHANDEN);
                         } else if (ladeZaehldatum.getFahrradfahrer() == null) {
-                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + "\n(Fahrradverkehr nicht vorh.)");
+                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + RADVERKEHR_NICHT_VORHANDEN);
                         } else {
                             ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
                         }
