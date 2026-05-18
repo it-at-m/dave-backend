@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -59,8 +58,7 @@ public class ProcessZaehldatenZeitreiheService {
     static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
 
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
-        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString()) || zaehlung.getZaehlart().equals(Zaehlart.QU.toString())
-                || zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+        if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
         }
 
@@ -189,37 +187,37 @@ public class ProcessZaehldatenZeitreiheService {
         return oldestDate;
     }
 
-    private static boolean hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(Zaehlung zaehlung, Zaehlung currentZaehlung) {
+    private static boolean hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
         // Bei QU: Prüfe auf Knotenarm und Richtung
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
-            final var currentKeys = currentZaehlung.getQuerungsverkehr().stream()
-                    .map(qv -> List.of(qv.getKnotenarm(), qv.getRichtung()))
-                    .collect(Collectors.toSet());
-            final var keys = zaehlung.getQuerungsverkehr().stream()
-                    .map(qv -> List.of(qv.getKnotenarm(), qv.getRichtung()))
-                    .collect(Collectors.toSet());
+            final var currentKeys = currentZaehlung.getQuerungsverkehr() != null ? currentZaehlung.getQuerungsverkehr().stream()
+                    .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
+            final var keys = zaehlung.getQuerungsverkehr() != null ? zaehlung.getQuerungsverkehr().stream()
+                    .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
             return currentKeys.equals(keys);
         }
 
         // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
-            final var currentKeys = currentZaehlung.getLaengsverkehr().stream()
-                    .map(lv -> List.of(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
-                    .collect(Collectors.toSet());
-            final var keys = zaehlung.getLaengsverkehr().stream()
-                    .map(lv -> List.of(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
-                    .collect(Collectors.toSet());
+            final var currentKeys = currentZaehlung.getLaengsverkehr() != null ? currentZaehlung.getLaengsverkehr().stream()
+                    .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
+            final var keys = zaehlung.getLaengsverkehr() != null ? zaehlung.getLaengsverkehr().stream()
+                    .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
             return currentKeys.equals(keys);
         }
 
         // Bei QJS: Prüfe auf Von, Nach und Straßenseite
         if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
-            final var currentKeys = currentZaehlung.getVerkehrsbeziehungen().stream()
-                    .map(vb -> List.of(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
-                    .collect(Collectors.toSet());
-            final var keys = zaehlung.getVerkehrsbeziehungen().stream()
-                    .map(vb -> List.of(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
-                    .collect(Collectors.toSet());
+            final var currentKeys = currentZaehlung.getVerkehrsbeziehungen() != null ? currentZaehlung.getVerkehrsbeziehungen().stream()
+                    .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
+            final var keys = zaehlung.getVerkehrsbeziehungen() != null ? zaehlung.getVerkehrsbeziehungen().stream()
+                    .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet()) : Collections.emptySet();
             return currentKeys.equals(keys);
         }
 
@@ -243,8 +241,6 @@ public class ProcessZaehldatenZeitreiheService {
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDTO();
-
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
