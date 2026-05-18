@@ -58,32 +58,9 @@ public class ProcessZaehldatenZeitreiheService {
      */
     static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
 
-        // Bei QU: Prüfe auf Knotenarm und Richtung
-        if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
-            return currentZaehlung.getQuerungsverkehr().size() == zaehlung.getQuerungsverkehr().size() &&
-                    currentZaehlung.getQuerungsverkehr().stream()
-                            .allMatch(current -> zaehlung.getQuerungsverkehr().stream()
-                                    .anyMatch(qv -> Objects.equals(qv.getKnotenarm(), current.getKnotenarm()) &&
-                                            Objects.equals(qv.getRichtung(), current.getRichtung())));
-        }
-        // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
-        if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
-            return currentZaehlung.getLaengsverkehr().size() == zaehlung.getLaengsverkehr().size() &&
-                    currentZaehlung.getLaengsverkehr().stream()
-                            .allMatch(current -> zaehlung.getLaengsverkehr().stream()
-                                    .anyMatch(lv -> Objects.equals(lv.getKnotenarm(), current.getKnotenarm()) &&
-                                            Objects.equals(lv.getRichtung(), current.getRichtung()) &&
-                                            Objects.equals(lv.getStrassenseite(), current.getStrassenseite())));
-        }
-
-        // Bei QJS: Prüfe auf Von, Nach und Straßenseite
-        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
-            return currentZaehlung.getVerkehrsbeziehungen().size() == zaehlung.getVerkehrsbeziehungen().size() &&
-                    currentZaehlung.getVerkehrsbeziehungen().stream()
-                            .allMatch(opt -> zaehlung.getVerkehrsbeziehungen().stream()
-                                    .anyMatch(vb -> Objects.equals(vb.getVon(), opt.getVon()) &&
-                                            Objects.equals(vb.getNach(), opt.getNach()) &&
-                                            Objects.equals(vb.getStrassenseite(), opt.getStrassenseite())));
+        // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
+        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString()) || zaehlung.getZaehlart().equals(Zaehlart.QU.toString()) || zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+            return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
         }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
@@ -91,14 +68,14 @@ public class ProcessZaehldatenZeitreiheService {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
             verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getKnotenarm(), options.getVonKnotenarm()) || options.getVonKnotenarm() == null)
                     .collect(Collectors.toList());
         } else {
             // Bei Kreuzung: Prüfe auf Von und Nach
             verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
-                    .filter(verkehrsbeziehung -> verkehrsbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getVon(), options.getVonKnotenarm()) || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getNach(), options.getNachKnotenarm()) || options.getNachKnotenarm() == null)
                     .collect(Collectors.toList());
         }
         return !verkehrsbeziehungList.isEmpty();
@@ -172,7 +149,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      * @param currentDate Datum der aktuell im Frontend gewählten Zählung
      * @param options Optionen aus dem Frontend
-     * @return
+     * @return ältestes Datum
      */
     static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {
         LocalDate oldestDate;
@@ -185,7 +162,6 @@ public class ProcessZaehldatenZeitreiheService {
             oldestDate = oldestZaehlung.getDatum();
         } else {
             // Es wurde kein Datum ausgewählt, wir versuchen die letzten drei Zählungen zu laden
-
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
@@ -193,7 +169,8 @@ public class ProcessZaehldatenZeitreiheService {
                     .findFirst()
                     .get();
             final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
-                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
+                    // Bei QJS, FJS und QU müssen zusätzlich auch noch alle Bewegungsbeziehungen übereinstimmen
+                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()) && hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung))
                     .toList();
             final int minIndex = filteredZaehlungen.indexOf(currentZaehlung) - 2;
 
@@ -207,6 +184,44 @@ public class ProcessZaehldatenZeitreiheService {
         }
 
         return oldestDate;
+    }
+
+    private static boolean hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(Zaehlung zaehlung, Zaehlung currentZaehlung) {
+        // Bei QU: Prüfe auf Knotenarm und Richtung
+        if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
+            final var currentKeys = currentZaehlung.getQuerungsverkehr().stream()
+                            .map(qv -> List.of(qv.getKnotenarm(), qv.getRichtung()))
+                            .collect(Collectors.toSet());
+            final var keys = zaehlung.getQuerungsverkehr().stream()
+                            .map(qv -> List.of(qv.getKnotenarm(), qv.getRichtung()))
+                            .collect(Collectors.toSet());
+            return currentKeys.equals(keys);
+        }
+
+        // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+            final var currentKeys = currentZaehlung.getLaengsverkehr().stream()
+                    .map(lv -> List.of(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet());
+            final var keys = zaehlung.getLaengsverkehr().stream()
+                    .map(lv -> List.of(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet());
+            return currentKeys.equals(keys);
+        }
+
+        // Bei QJS: Prüfe auf Von, Nach und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
+            final var currentKeys = currentZaehlung.getVerkehrsbeziehungen().stream()
+                    .map(vb -> List.of(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet());
+            final var keys = zaehlung.getVerkehrsbeziehungen().stream()
+                    .map(vb -> List.of(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet());
+            return currentKeys.equals(keys);
+        }
+
+        // Bei allen anderen Zählarten true
+        return true;
     }
 
     /**
@@ -261,7 +276,7 @@ public class ProcessZaehldatenZeitreiheService {
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     } else {
-                        // Wenn Zeitintervalle nicht vorhanden, bei QU, FJS und QU kein leeres Objekt erzeugen
+                        // Wenn Zeitintervalle nicht vorhanden, bei QU, FJS und QJS kein leeres Objekt erzeugen
                         if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
                             final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
