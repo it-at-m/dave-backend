@@ -58,7 +58,7 @@ public class ProcessZaehldatenZeitreiheService {
     static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
 
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
-        if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
+        if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
         }
 
@@ -276,7 +276,7 @@ public class ProcessZaehldatenZeitreiheService {
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum);
                     } else {
-                        // Wenn Zeitintervalle nicht vorhanden, bei QU, FJS und QJS kein leeres Objekt erzeugen
+                        // Wenn Zeitintervalle nicht vorhanden, ein leeres Objekt zurückgeben wenn kein QU, FJS oder QJS
                         if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
                             final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
