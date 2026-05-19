@@ -2,7 +2,6 @@ package de.muenchen.dave.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -176,9 +175,7 @@ public class FillZeitreihePdfBeanService {
             zusatzinformationenZeitreihePdfComponentList.add(zusatzinformationenZeitreihe);
         }
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(zaehlung.getZaehldauer(), zaehlung.getId());
-
-        processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options, zeitauswahlDTO)
+        processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options)
                 .filter(zaehlungForComment -> StringUtils.isNotEmpty(zaehlungForComment.getKommentar()))
                 .forEach(zaehlungForComment -> {
                     final ZusatzinformationenZeitreihePdfComponent zusatzinformationenZeitreihe = new ZusatzinformationenZeitreihePdfComponent();
