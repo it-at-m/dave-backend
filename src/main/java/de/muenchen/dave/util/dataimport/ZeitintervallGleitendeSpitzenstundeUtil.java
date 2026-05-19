@@ -295,4 +295,23 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         }
         return typeSpitzenstunde;
     }
+
+    public static boolean isZeitblockToCompareWithinGivenZeitblock(final Zeitblock zeitblockToCompare, final Zeitblock givenZeitblock) {
+        if (Objects.isNull(zeitblockToCompare) || Objects.isNull(givenZeitblock)) {
+            return false;
+        }
+
+        final var startToCompare = zeitblockToCompare.getStart();
+        final var endToCompare = zeitblockToCompare.getEnd();
+        final var givenStart = givenZeitblock.getStart();
+        final var givenEnd = givenZeitblock.getEnd();
+
+        // Ein Zeitblock liegt innerhalb eines gegebenen Zeitblocks, wenn sein Start
+        // nicht vor dem gegebenen Start liegt und sein Ende nicht nach dem gegebenen Ende.
+        final boolean startWithin = !startToCompare.isBefore(givenStart);
+        final boolean endWithin = !endToCompare.isAfter(givenEnd);
+
+        return startWithin && endWithin;
+    }
+
 }

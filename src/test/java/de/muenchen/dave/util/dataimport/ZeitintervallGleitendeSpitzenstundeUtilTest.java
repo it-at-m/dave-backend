@@ -746,4 +746,23 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(result.get(4), is(expected.get(4)));
         assertThat(result.get(5), is(expected.get(5)));
     }
+
+    @Test
+    public void isZeitblockToCompareWithinGivenZeitblock_Test() {
+        // givenZeitblock encompasses whole day -> inner block should be within
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_06_10, Zeitblock.ZB_00_24), is(true));
+
+        // identical blocks -> within
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_06_10, Zeitblock.ZB_06_10), is(true));
+
+        // block starting before given start -> not within
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_00_06, Zeitblock.ZB_06_10), is(false));
+
+        // block ending after given end -> not within
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_19_24, Zeitblock.ZB_06_19), is(false));
+
+        // null parameters -> false
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(null, Zeitblock.ZB_00_24), is(false));
+        assertThat(ZeitintervallGleitendeSpitzenstundeUtil.isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_06_10, null), is(false));
+    }
 }
