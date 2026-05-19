@@ -108,24 +108,28 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
         if (Objects.nonNull(zaehlungId)) {
             List<Zeitintervall> calculatedSpitzenstunden;
-            if (Zeitblock.ZB_00_06.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+            if (isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_00_06, zeitblock)) {
                 calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
-            if (Zeitblock.ZB_06_10.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+            if (isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_06_10, zeitblock)) {
                 calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
-            if (Zeitblock.ZB_10_15.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+            if (isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_10_15, zeitblock)) {
                 calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
-            if (Zeitblock.ZB_15_19.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+            if (isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_15_19, zeitblock)) {
                 calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
-            if (Zeitblock.ZB_19_24.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
+            if (isZeitblockToCompareWithinGivenZeitblock(Zeitblock.ZB_19_24, zeitblock)) {
                 calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
+                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
+            }
+            if (Zeitblock.ZB_06_19.equals(zeitblock)) {
+                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_19, zeitintervalle, types);
                 gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
             }
             if (Zeitblock.ZB_00_24.equals(zeitblock)) {
@@ -295,4 +299,23 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         }
         return typeSpitzenstunde;
     }
+
+    public static boolean isZeitblockToCompareWithinGivenZeitblock(final Zeitblock zeitblockToCompare, final Zeitblock givenZeitblock) {
+        if (Objects.isNull(zeitblockToCompare) || Objects.isNull(givenZeitblock)) {
+            return false;
+        }
+
+        final var startToCompare = zeitblockToCompare.getStart();
+        final var endToCompare = zeitblockToCompare.getEnd();
+        final var givenStart = givenZeitblock.getStart();
+        final var givenEnd = givenZeitblock.getEnd();
+
+        // Ein Zeitblock liegt innerhalb eines gegebenen Zeitblocks, wenn sein Start
+        // nicht vor dem gegebenen Start liegt und sein Ende nicht nach dem gegebenen Ende.
+        final boolean startWithin = !startToCompare.isBefore(givenStart);
+        final boolean endWithin = !endToCompare.isAfter(givenEnd);
+
+        return startWithin && endWithin;
+    }
+
 }
