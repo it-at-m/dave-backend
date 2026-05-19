@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
 import de.muenchen.dave.domain.dtos.init.MapConfigurationDTO;
 import de.muenchen.dave.domain.dtos.init.TenantConfigurationDTO;
 import de.muenchen.dave.domain.dtos.init.ZaehlstelleConfigurationDTO;
+import de.muenchen.dave.properties.MapConfigProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,16 +18,19 @@ public class ConfigurationService {
     private final ConfigurationDTO configuration;
 
     public ConfigurationService(
-            @Value("${dave.tenant.map.center.lat:48.137227}") final String lat,
-            @Value("${dave.tenant.map.center.lng:11.575517}") final String lng,
-            @Value("${dave.tenant.map.center.zoom:12}") final Integer zoom,
             @Value("${dave.zaehlstelle.automatic-number-assignment:true}") final boolean zaehlstelleAutomaticNumberAssignment,
             @Value("${dave.tenant.datenportal-header:Datenportal}") final String datenportalHeader,
-            @Value("${dave.zaehlstelle.link-documentation-csv-file-for-upload-zaehlung}") final String linkDocumentationCsvFileForUploadZaehlung) {
+            @Value("${dave.zaehlstelle.link-documentation-csv-file-for-upload-zaehlung}") final String linkDocumentationCsvFileForUploadZaehlung,
+            MapConfigProperties mapProperties) {
         final var zaehlstelleConfig = new ZaehlstelleConfigurationDTO(
                 zaehlstelleAutomaticNumberAssignment,
                 linkDocumentationCsvFileForUploadZaehlung);
-        final var mapConfiguration = new MapConfigurationDTO(lat, lng, zoom);
+        final var mapConfiguration = new MapConfigurationDTO(
+                mapProperties.getCenterLat(),
+                mapProperties.getCenterLng(),
+                mapProperties.getCenterZoom(),
+                mapProperties.getBaseLayers(),
+                mapProperties.getOverlayLayers());
         final var tenantConfiguration = new TenantConfigurationDTO(datenportalHeader, mapConfiguration);
         this.configuration = new ConfigurationDTO(zaehlstelleConfig, tenantConfiguration);
     }
