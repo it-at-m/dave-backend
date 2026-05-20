@@ -2,8 +2,11 @@ package de.muenchen.dave.util.dataimport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -745,5 +748,41 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(result.get(3), is(expected.get(3)));
         assertThat(result.get(4), is(expected.get(4)));
         assertThat(result.get(5), is(expected.get(5)));
+    }
+
+    @Test
+    public void setBewegungsbeziehungOnZeitintervall_setsQuerungsverkehr_whenZaehlartIsQU() throws Exception {
+        final Zeitintervall zi = new Zeitintervall();
+        final Querungsverkehr querungsverkehr = new Querungsverkehr();
+
+        ZeitintervallGleitendeSpitzenstundeUtil.setBewegungsbeziehungOnZeitintervallAccordingZaehlart(zi, querungsverkehr, Zaehlart.QU);
+
+        assertThat(zi.getQuerungsverkehr(), is(querungsverkehr));
+        assertThat(zi.getLaengsverkehr(), is(nullValue()));
+        assertThat(zi.getVerkehrsbeziehung(), is(nullValue()));
+    }
+
+    @Test
+    public void setBewegungsbeziehungOnZeitintervall_setsLaengsverkehr_whenZaehlartIsFJS() throws Exception {
+        final Zeitintervall zi = new Zeitintervall();
+        final Laengsverkehr laengsverkehr = new Laengsverkehr();
+
+        ZeitintervallGleitendeSpitzenstundeUtil.setBewegungsbeziehungOnZeitintervallAccordingZaehlart(zi, laengsverkehr, Zaehlart.FJS);
+
+        assertThat(zi.getLaengsverkehr(), is(laengsverkehr));
+        assertThat(zi.getQuerungsverkehr(), is(nullValue()));
+        assertThat(zi.getVerkehrsbeziehung(), is(nullValue()));
+    }
+
+    @Test
+    public void setBewegungsbeziehungOnZeitintervall_setsVerkehrsbeziehung_whenZaehlartIsOther() throws Exception {
+        final Zeitintervall zi = new Zeitintervall();
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+
+        ZeitintervallGleitendeSpitzenstundeUtil.setBewegungsbeziehungOnZeitintervallAccordingZaehlart(zi, verkehrsbeziehung, Zaehlart.N);
+
+        assertThat(zi.getVerkehrsbeziehung(), is(verkehrsbeziehung));
+        assertThat(zi.getQuerungsverkehr(), is(nullValue()));
+        assertThat(zi.getLaengsverkehr(), is(nullValue()));
     }
 }

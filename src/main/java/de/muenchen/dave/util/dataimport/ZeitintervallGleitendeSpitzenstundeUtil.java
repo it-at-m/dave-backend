@@ -1,5 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
@@ -61,15 +62,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                                 zeitintervalleOfBewegungsbeziehung.getValue(),
                                 types)
                         .stream()
-                        .peek(zeitintervall -> {
-                            if (Zaehlart.QU.equals(zaehlart)) {
-                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else if (Zaehlart.FJS.equals(zaehlart)) {
-                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else {
-                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
-                            }
-                        }))
+                        .peek(zeitintervall -> setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+                                zeitintervall,
+                                zeitintervalleOfBewegungsbeziehung.getKey(),
+                                zaehlart)))
                 .toList();
     }
 
@@ -114,15 +110,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                                 zeitintervalleOfBewegungsbeziehung.getValue(),
                                 types)
                         .stream()
-                        .peek(zeitintervall -> {
-                            if (Zaehlart.QU.equals(zaehlart)) {
-                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else if (Zaehlart.FJS.equals(zaehlart)) {
-                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else {
-                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
-                            }
-                        }))
+                        .peek(zeitintervall -> setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+                                zeitintervall,
+                                zeitintervalleOfBewegungsbeziehung.getKey(),
+                                zaehlart)))
                 .toList();
     }
 
@@ -265,6 +256,30 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
         }
 
         return calculatedSpitzenstunden;
+    }
+
+    /**
+     * Setzt die passende Bewegungsbeziehung (Querungsverkehr, Längsverkehr oder Verkehrsbeziehung)
+     * auf das übergebene {@link Zeitintervall} abhängig von der angegebenen {@link Zaehlart}.
+     *
+     * @param zeitintervall Das Ziel-{@link Zeitintervall}, auf das die Bewegungsbeziehung gesetzt wird
+     *            (muss nicht null sein).
+     * @param bewegungsbeziehung Die zu setzende {@link Bewegungsbeziehung} (z. B. Querungsverkehr,
+     *            Laengsverkehr oder Verkehrsbeziehung).
+     * @param zaehlart Die {@link Zaehlart} welche bestimmt, welche spezifische Bewegungsbeziehung auf
+     *            dem Zeitintervall gesetzt wird.
+     */
+    public static void setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+            final Zeitintervall zeitintervall,
+            final Bewegungsbeziehung bewegungsbeziehung,
+            final Zaehlart zaehlart) {
+        if (Zaehlart.QU.equals(zaehlart)) {
+            zeitintervall.setQuerungsverkehr((Querungsverkehr) bewegungsbeziehung);
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+            zeitintervall.setLaengsverkehr((Laengsverkehr) bewegungsbeziehung);
+        } else {
+            zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) bewegungsbeziehung);
+        }
     }
 
     /**
