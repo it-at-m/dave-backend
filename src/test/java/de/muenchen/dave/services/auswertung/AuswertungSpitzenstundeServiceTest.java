@@ -102,7 +102,7 @@ class AuswertungSpitzenstundeServiceTest {
             final Zeitintervall g = new Zeitintervall();
             gleitende.add(g);
             utilMock.when(
-                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(eq(zaehlungId), any(), any(),
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(eq(zaehlungId), any(), any(),
                             any(), any()))
                     .thenReturn(gleitende);
 
@@ -126,7 +126,7 @@ class AuswertungSpitzenstundeServiceTest {
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
                             eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), any(TypeZeitintervall.class));
             utilMock.verify(
-                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(eq(zaehlungId), any(), any(),
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(eq(zaehlungId), any(), any(),
                             any(), any()),
                     times(1));
         }
