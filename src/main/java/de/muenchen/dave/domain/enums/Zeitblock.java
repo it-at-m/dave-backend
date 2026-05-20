@@ -4,6 +4,7 @@ import de.muenchen.dave.util.DaveConstants;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -461,5 +462,23 @@ public enum Zeitblock implements Serializable {
     private final LocalDateTime end;
 
     private final TypeZeitintervall typeZeitintervall;
+
+    public boolean isThisZeitblockWithinZeitblockToCompare(final Zeitblock zeitblockToCompare) {
+        if (Objects.isNull(zeitblockToCompare)) {
+            return false;
+        }
+
+        final var startToCompare = zeitblockToCompare.getStart();
+        final var endToCompare = zeitblockToCompare.getEnd();
+        final var thisStart = this.getStart();
+        final var thisEnd = this.getEnd();
+
+        // Ein Zeitblock liegt innerhalb eines gegebenen Zeitblocks, wenn sein Start
+        // nicht vor dem gegebenen Start liegt und sein Ende nicht nach dem gegebenen Ende.
+        final boolean startWithin = !thisStart.isBefore(startToCompare);
+        final boolean endWithin = !thisEnd.isAfter(endToCompare);
+
+        return startWithin && endWithin;
+    }
 
 }
