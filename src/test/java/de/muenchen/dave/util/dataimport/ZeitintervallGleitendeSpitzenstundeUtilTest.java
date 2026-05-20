@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     @Test
-    public void getGleitendeSpitzenstundenByBewegungsbeziehung_AllTypeZeitintervall() {
+    public void getGleitendeSpitzenstundenForEachBewegungsbeziehung_AllTypeZeitintervall() {
         // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
         List<Zeitintervall> intervals = new ArrayList<>();
         LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
@@ -71,7 +71,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
                 TypeZeitintervall.SPITZENSTUNDE_RAD,
                 TypeZeitintervall.SPITZENSTUNDE_FUSS);
 
-        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(
                 zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
         List<Zeitintervall> expected = new ArrayList<>();
@@ -331,7 +331,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
     }
 
     @Test
-    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallKfz() {
+    public void getGleitendeSpitzenstundenForEachBewegungsbeziehung_TypeZeitintervallKfz() {
         // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
         List<Zeitintervall> intervals = new ArrayList<>();
         LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
@@ -378,7 +378,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         Set<TypeZeitintervall> types = Set.of(
                 TypeZeitintervall.SPITZENSTUNDE_KFZ);
 
-        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(
                 zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
         List<Zeitintervall> expected = new ArrayList<>();
@@ -470,7 +470,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
     }
 
     @Test
-    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallRad() {
+    public void getGleitendeSpitzenstundenForEachBewegungsbeziehung_TypeZeitintervallRad() {
         // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
         List<Zeitintervall> intervals = new ArrayList<>();
         LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
@@ -517,7 +517,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         Set<TypeZeitintervall> types = Set.of(
                 TypeZeitintervall.SPITZENSTUNDE_RAD);
 
-        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(
                 zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
         List<Zeitintervall> expected = new ArrayList<>();
@@ -609,7 +609,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
     }
 
     @Test
-    public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallFuss() {
+    public void getGleitendeSpitzenstundenForEachBewegungsbeziehung_TypeZeitintervallFuss() {
         // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
         List<Zeitintervall> intervals = new ArrayList<>();
         LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
@@ -656,7 +656,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         Set<TypeZeitintervall> types = Set.of(
                 TypeZeitintervall.SPITZENSTUNDE_FUSS);
 
-        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(
+        List<Zeitintervall> result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehung(
                 zaehlungId, Zeitblock.ZB_00_24, Zaehlart.N, intervals, types);
 
         List<Zeitintervall> expected = new ArrayList<>();

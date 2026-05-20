@@ -30,6 +30,53 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
      * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
      * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
+     * Spitzenstunde des gegebenen {@link Zeitblock}s ermittelt:
+     *
+     * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
+     * @param zaehlart die Zählart der Zählung.
+     * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
+     *            sollen.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
+     * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
+     *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
+     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
+     *         die angefragten Spitzenstundentypen.
+     */
+    public static List<Zeitintervall> getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+            final UUID zaehlungId,
+            final Zeitblock zeitblock,
+            final Zaehlart zaehlart,
+            final List<Zeitintervall> zeitintervalle,
+            final Set<TypeZeitintervall> types) {
+        return zeitintervalle
+                .stream()
+                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
+                .entrySet()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtil
+                        .calculateGleitendeSpitzenstunden(
+                                zaehlungId,
+                                zeitblock,
+                                zeitintervalleOfBewegungsbeziehung.getValue(),
+                                types)
+                        .stream()
+                        .peek(zeitintervall -> {
+                            if (Zaehlart.QU.equals(zaehlart)) {
+                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else if (Zaehlart.FJS.equals(zaehlart)) {
+                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
+                            } else {
+                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
+                            }
+                        }))
+                .toList();
+    }
+
+    /**
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
+     * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
      * Spitzenstunde für folgende {@link Zeitblock}e ermittelt:
      * - {@link Zeitblock#ZB_00_06}
      * - {@link Zeitblock#ZB_06_10}
@@ -49,7 +96,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
      *         die angefragten Spitzenstundentypen.
      */
-    public static List<Zeitintervall> getGleitendeSpitzenstundenByBewegungsbeziehung(
+    public static List<Zeitintervall> getGleitendeSpitzenstundenForEachBewegungsbeziehung(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final Zaehlart zaehlart,
@@ -61,7 +108,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                 .entrySet()
                 .stream()
                 .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtil
-                        .calculateGleitendeSpitzenstunden(
+                        .getGleitendeSpitzenstunden(
                                 zaehlungId,
                                 zeitblock,
                                 zeitintervalleOfBewegungsbeziehung.getValue(),

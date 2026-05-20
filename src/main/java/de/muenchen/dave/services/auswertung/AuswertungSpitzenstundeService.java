@@ -200,7 +200,7 @@ public class AuswertungSpitzenstundeService {
         }
 
         return ZeitintervallGleitendeSpitzenstundeUtil
-                .getGleitendeSpitzenstundenByBewegungsbeziehung(
+                .getGleitendeSpitzenstundenForEachBewegungsbeziehung(
                         UUID.fromString(zaehlung.getId()),
                         zeitblock,
                         zaehlart,

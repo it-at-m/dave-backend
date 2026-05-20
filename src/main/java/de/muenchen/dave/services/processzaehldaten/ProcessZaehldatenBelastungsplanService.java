@@ -646,7 +646,7 @@ public class ProcessZaehldatenBelastungsplanService {
                             Set.of(TypeZeitintervall.STUNDE_VIERTEL));
 
             return ZeitintervallGleitendeSpitzenstundeUtil
-                    .getGleitendeSpitzenstundenByBewegungsbeziehung(
+                    .getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
                             UUID.fromString(zaehlung.getId()),
                             options.getZeitblock(),
                             zaehlart,
