@@ -463,6 +463,25 @@ public enum Zeitblock implements Serializable {
 
     private final TypeZeitintervall typeZeitintervall;
 
+    /**
+     * Prüft, ob dieser {@link Zeitblock} vollständig innerhalb des übergebenen
+     * {@code zeitblockToCompare} liegt.
+     *
+     * Ein Zeitblock liegt innerhalb eines anderen, wenn
+     * <ul>
+     * <li>der Startzeitpunkt dieses Zeitblocks nicht vor dem Start von {@code zeitblockToCompare} liegt
+     * (inklusive),</li>
+     * <li>und der Endzeitpunkt dieses Zeitblocks nicht nach dem Ende von {@code zeitblockToCompare}
+     * liegt (inklusive).</li>
+     * </ul>
+     *
+     * Wenn {@code zeitblockToCompare} {@code null} ist, wird {@code false} zurückgegeben.
+     *
+     * @param zeitblockToCompare der Zeitblock, in dem geprüft werden soll, ob sich dieser Zeitblock
+     *            befindet
+     * @return {@code true} wenn dieser Zeitblock vollständig innerhalb von {@code zeitblockToCompare}
+     *         liegt, sonst {@code false}
+     */
     public boolean isThisZeitblockWithinZeitblockToCompare(final Zeitblock zeitblockToCompare) {
         if (Objects.isNull(zeitblockToCompare)) {
             return false;
