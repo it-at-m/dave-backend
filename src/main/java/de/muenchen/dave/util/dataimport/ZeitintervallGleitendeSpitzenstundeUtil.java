@@ -152,7 +152,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr
      *         falls diese im Parameter types vorhanden sind.
      */
-    public static List<Zeitintervall> calculateGleitendeSpitzenstunden(
+    private static List<Zeitintervall> calculateGleitendeSpitzenstunden(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final List<Zeitintervall> sortedZeitintervalle,
