@@ -61,7 +61,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                 .entrySet()
                 .stream()
                 .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtil
-                        .getGleitendeSpitzenstunden(
+                        .calculateGleitendeSpitzenstunden(
                                 zaehlungId,
                                 zeitblock,
                                 zeitintervalleOfBewegungsbeziehung.getValue(),
@@ -152,7 +152,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @return Die gleitende Spitzenstunde als Zeitintervall jeweils für den KFZ-, Rad- und Fussverkehr
      *         falls diese im Parameter types vorhanden sind.
      */
-    private static List<Zeitintervall> calculateGleitendeSpitzenstunden(
+    public static List<Zeitintervall> calculateGleitendeSpitzenstunden(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final List<Zeitintervall> sortedZeitintervalle,
