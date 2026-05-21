@@ -2,6 +2,7 @@ package de.muenchen.dave.util.dataimport;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.Hochrechnung;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
@@ -784,5 +787,269 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(zi.getVerkehrsbeziehung(), is(verkehrsbeziehung));
         assertThat(zi.getQuerungsverkehr(), is(nullValue()));
         assertThat(zi.getLaengsverkehr(), is(nullValue()));
+    }
+
+    @Test
+    public void emptyInput_returnsEmpty_forZeitblock() {
+        final List<Zeitintervall> input = new ArrayList<>();
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+        assertThat(result, is(notNullValue()));
+        assertThat(result.size(), is(0));
+    }
+
+    @Test
+    public void emptyTypes_returnsEmpty() {
+        final List<Zeitintervall> input = new ArrayList<>();
+        final Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        zi.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15)));
+        final Verkehrsbeziehung vb = new Verkehrsbeziehung();
+        vb.setVon(1);
+        zi.setVerkehrsbeziehung(vb);
+        input.add(zi);
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of());
+        assertThat(result, is(notNullValue()));
+        assertThat(result.size(), is(0));
+    }
+
+    @Test
+    public void groups_and_setsVerkehrsbeziehung_forNormalZaehlart() {
+        final List<Zeitintervall> input = new ArrayList<>();
+
+        // group A
+        final Verkehrsbeziehung vbA = new Verkehrsbeziehung();
+        vbA.setVon(1);
+        for (int i = 0; i < 4; i++) {
+            final Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)).plusMinutes(15L * i));
+            zi.setEndeUhrzeit(zi.getStartUhrzeit().plusMinutes(15));
+            zi.setPkw(i + 1);
+            zi.setVerkehrsbeziehung(vbA);
+            input.add(zi);
+        }
+
+        // group B
+        final Verkehrsbeziehung vbB = new Verkehrsbeziehung();
+        vbB.setVon(2);
+        for (int i = 0; i < 4; i++) {
+            final Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)).plusMinutes(15L * i));
+            zi.setEndeUhrzeit(zi.getStartUhrzeit().plusMinutes(15));
+            zi.setPkw((i + 1) * 10);
+            zi.setVerkehrsbeziehung(vbB);
+            input.add(zi);
+        }
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        // two groups -> two resulting spitzenstunden (one per group)
+        assertThat(result.size(), is(2));
+
+        // check that for each result the Verkehrsbeziehung is set
+        for (final Zeitintervall out : result) {
+            assertThat(out.getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+            assertThat(out.getVerkehrsbeziehung(), notNullValue());
+            // other fields for other bewegungsbeziehung types must be null
+            assertThat(out.getLaengsverkehr(), is(nullValue()));
+            assertThat(out.getQuerungsverkehr(), is(nullValue()));
+        }
+    }
+
+    @Test
+    public void setsLaengsverkehr_forFJSZaehlart() {
+        final List<Zeitintervall> input = new ArrayList<>();
+
+        final Laengsverkehr lvA = new Laengsverkehr();
+        lvA.setKnotenarm(1);
+        for (int i = 0; i < 4; i++) {
+            final Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)).plusMinutes(15L * i));
+            zi.setEndeUhrzeit(zi.getStartUhrzeit().plusMinutes(15));
+            zi.setPkw(i + 1);
+            zi.setLaengsverkehr(lvA);
+            input.add(zi);
+        }
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.FJS, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        assertThat(result.size(), is(1));
+        final var out = result.get(0);
+        assertThat(out.getLaengsverkehr(), is(lvA));
+        assertThat(out.getVerkehrsbeziehung(), is(nullValue()));
+        assertThat(out.getQuerungsverkehr(), is(nullValue()));
+    }
+
+    @Test
+    public void setsQuerungsverkehr_forQUZaehlart() {
+        final List<Zeitintervall> input = new ArrayList<>();
+
+        final Querungsverkehr qv = new Querungsverkehr();
+        qv.setKnotenarm(5);
+        for (int i = 0; i < 4; i++) {
+            final Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)).plusMinutes(15L * i));
+            zi.setEndeUhrzeit(zi.getStartUhrzeit().plusMinutes(15));
+            zi.setPkw(i + 1);
+            zi.setQuerungsverkehr(qv);
+            input.add(zi);
+        }
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.QU, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        assertThat(result.size(), is(1));
+        final var out = result.get(0);
+        assertThat(out.getQuerungsverkehr(), is(qv));
+        assertThat(out.getVerkehrsbeziehung(), is(nullValue()));
+        assertThat(out.getLaengsverkehr(), is(nullValue()));
+    }
+
+    @Test
+    public void mockedSetBewegungsbeziehung_isCalled_perResultingZeitintervall() {
+        final List<Zeitintervall> input = new ArrayList<>();
+        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        vb1.setVon(1);
+        final Zeitintervall zi1 = new Zeitintervall();
+        zi1.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        zi1.setEndeUhrzeit(zi1.getStartUhrzeit().plusMinutes(15));
+        zi1.setPkw(20);
+        zi1.setVerkehrsbeziehung(vb1);
+        input.add(zi1);
+
+        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        vb2.setVon(2);
+        final Zeitintervall zi2 = new Zeitintervall();
+        zi2.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15)));
+        zi2.setEndeUhrzeit(zi2.getStartUhrzeit().plusMinutes(15));
+        zi2.setPkw(10);
+        zi2.setVerkehrsbeziehung(vb2);
+        input.add(zi2);
+
+        try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilMock = Mockito.mockStatic(
+                ZeitintervallGleitendeSpitzenstundeUtil.class, Mockito.CALLS_REAL_METHODS)) {
+            utilMock.when(() -> ZeitintervallGleitendeSpitzenstundeUtil
+                    .setBewegungsbeziehungOnZeitintervallAccordingZaehlart(Mockito.any(), Mockito.any(), Mockito.any()))
+                    .thenAnswer(invocation -> null);
+
+            final UUID id = UUID.randomUUID();
+            final var result = ZeitintervallGleitendeSpitzenstundeUtil
+                    .getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                            id, Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+            // Expect one result per group
+            assertThat(result.size(), is(2));
+
+            // verify that the mocked setter was called for each returned Zeitintervall
+            utilMock.verify(() -> ZeitintervallGleitendeSpitzenstundeUtil
+                    .setBewegungsbeziehungOnZeitintervallAccordingZaehlart(Mockito.any(), Mockito.any(), Mockito.any()), Mockito.times(2));
+        }
+    }
+
+    @Test
+    public void nullZaehlungId_returnsEmpty() {
+        final List<Zeitintervall> input = new ArrayList<>();
+        final Zeitintervall zi = new Zeitintervall();
+        zi.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        zi.setEndeUhrzeit(zi.getStartUhrzeit().plusMinutes(15));
+        final Verkehrsbeziehung vb = new Verkehrsbeziehung();
+        vb.setVon(1);
+        zi.setVerkehrsbeziehung(vb);
+        input.add(zi);
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                null, Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        assertThat(result, is(notNullValue()));
+        assertThat(result.size(), is(0));
+    }
+
+    @Test
+    public void intervalsOutsideZeitblock_areIgnored() {
+        final List<Zeitintervall> input = new ArrayList<>();
+
+        // outside the Zeitblock ZB_06_10 (05:45)
+        final Verkehrsbeziehung vbOutside = new Verkehrsbeziehung();
+        vbOutside.setVon(1);
+        final Zeitintervall ziOutside = new Zeitintervall();
+        ziOutside.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 45)));
+        ziOutside.setEndeUhrzeit(ziOutside.getStartUhrzeit().plusMinutes(15));
+        ziOutside.setPkw(10);
+        ziOutside.setVerkehrsbeziehung(vbOutside);
+        input.add(ziOutside);
+
+        // inside the Zeitblock ZB_06_10 (06:00)
+        final Verkehrsbeziehung vbInside = new Verkehrsbeziehung();
+        vbInside.setVon(2);
+        final Zeitintervall ziInside = new Zeitintervall();
+        ziInside.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        ziInside.setEndeUhrzeit(ziInside.getStartUhrzeit().plusMinutes(15));
+        ziInside.setPkw(20);
+        ziInside.setVerkehrsbeziehung(vbInside);
+        input.add(ziInside);
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        // only the group with the interval inside the block should produce a spitzenstunde
+        assertThat(result.size(), is(1));
+        final var out = result.get(0);
+        assertThat(out.getVerkehrsbeziehung(), is(vbInside));
+        assertThat(out.getLaengsverkehr(), is(nullValue()));
+        assertThat(out.getQuerungsverkehr(), is(nullValue()));
+    }
+
+    @Test
+    public void mixedGroup_onlyInsideIntervalsContribute() {
+        final List<Zeitintervall> input = new ArrayList<>();
+
+        // group that has only intervals outside the block
+        final Verkehrsbeziehung vbOnlyOutside = new Verkehrsbeziehung();
+        vbOnlyOutside.setVon(9);
+        final Zeitintervall ziOnlyOutside = new Zeitintervall();
+        ziOnlyOutside.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 30)));
+        ziOnlyOutside.setEndeUhrzeit(ziOnlyOutside.getStartUhrzeit().plusMinutes(15));
+        ziOnlyOutside.setPkw(50);
+        ziOnlyOutside.setVerkehrsbeziehung(vbOnlyOutside);
+        input.add(ziOnlyOutside);
+
+        // group that has both outside and inside intervals
+        final Verkehrsbeziehung vbMixed = new Verkehrsbeziehung();
+        vbMixed.setVon(7);
+        // outside interval (should be ignored)
+        final Zeitintervall ziMixedOutside = new Zeitintervall();
+        ziMixedOutside.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(5, 45)));
+        ziMixedOutside.setEndeUhrzeit(ziMixedOutside.getStartUhrzeit().plusMinutes(15));
+        ziMixedOutside.setPkw(100);
+        ziMixedOutside.setVerkehrsbeziehung(vbMixed);
+        input.add(ziMixedOutside);
+        // inside intervals (should be considered)
+        final Zeitintervall ziMixed1 = new Zeitintervall();
+        ziMixed1.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0)));
+        ziMixed1.setEndeUhrzeit(ziMixed1.getStartUhrzeit().plusMinutes(15));
+        ziMixed1.setPkw(1);
+        ziMixed1.setVerkehrsbeziehung(vbMixed);
+        input.add(ziMixed1);
+
+        final Zeitintervall ziMixed2 = new Zeitintervall();
+        ziMixed2.setStartUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 15)));
+        ziMixed2.setEndeUhrzeit(ziMixed2.getStartUhrzeit().plusMinutes(15));
+        ziMixed2.setPkw(2);
+        ziMixed2.setVerkehrsbeziehung(vbMixed);
+        input.add(ziMixed2);
+
+        final var result = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                UUID.randomUUID(), Zeitblock.ZB_06_10, Zaehlart.N, input, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+
+        // Expect only one resulting spitzenstunde (for vbMixed), since vbOnlyOutside has no intervals inside the block
+        assertThat(result.size(), is(1));
+        final var out = result.get(0);
+        assertThat(out.getVerkehrsbeziehung().getVon(), is(vbMixed.getVon()));
+        assertThat(out.getLaengsverkehr(), is(nullValue()));
+        assertThat(out.getQuerungsverkehr(), is(nullValue()));
     }
 }
