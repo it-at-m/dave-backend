@@ -23,28 +23,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     @Test
     public void getGleitendeSpitzenstundenByBewegungsbeziehung_AllTypeZeitintervall() {
-        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
-        List<Zeitintervall> intervals = new ArrayList<>();
-        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
-        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        for (int i = 0; i < 96; i++) {
-            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
-            LocalTime end = start.plusMinutes(15);
-            Zeitintervall zi = new Zeitintervall();
-            zi.setStartUhrzeit(LocalDateTime.of(day, start));
-            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
-            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
-            // Basiszählung: 1 PKW pro Intervall
-            zi.setPkw(1);
-            // Basiszählung: 1 Fahrradfahrer pro Intervall
-            zi.setFahrradfahrer(1);
-            // Basiszählung: 1 Fussgänger pro Intervall
-            zi.setFussgaenger(1);
-            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
-            zi.setVerkehrsbeziehung(verkehrsbeziehung);
-            intervals.add(zi);
-        }
+        List<Zeitintervall> intervals = createIntervals();
 
         // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
         intervals.get(27).setPkw(20);
@@ -332,28 +311,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     @Test
     public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallKfz() {
-        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
-        List<Zeitintervall> intervals = new ArrayList<>();
-        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
-        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        for (int i = 0; i < 96; i++) {
-            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
-            LocalTime end = start.plusMinutes(15);
-            Zeitintervall zi = new Zeitintervall();
-            zi.setStartUhrzeit(LocalDateTime.of(day, start));
-            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
-            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
-            // Basiszählung: 1 PKW pro Intervall
-            zi.setPkw(1);
-            // Basiszählung: 1 Fahrradfahrer pro Intervall
-            zi.setFahrradfahrer(1);
-            // Basiszählung: 1 Fussgänger pro Intervall
-            zi.setFussgaenger(1);
-            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
-            zi.setVerkehrsbeziehung(verkehrsbeziehung);
-            intervals.add(zi);
-        }
+        List<Zeitintervall> intervals = createIntervals();
 
         // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
         intervals.get(27).setPkw(20);
@@ -471,28 +429,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     @Test
     public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallRad() {
-        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
-        List<Zeitintervall> intervals = new ArrayList<>();
-        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
-        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        for (int i = 0; i < 96; i++) {
-            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
-            LocalTime end = start.plusMinutes(15);
-            Zeitintervall zi = new Zeitintervall();
-            zi.setStartUhrzeit(LocalDateTime.of(day, start));
-            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
-            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
-            // Basiszählung: 1 PKW pro Intervall
-            zi.setPkw(1);
-            // Basiszählung: 1 Fahrradfahrer pro Intervall
-            zi.setFahrradfahrer(1);
-            // Basiszählung: 1 Fussgänger pro Intervall
-            zi.setFussgaenger(1);
-            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
-            zi.setVerkehrsbeziehung(verkehrsbeziehung);
-            intervals.add(zi);
-        }
+        List<Zeitintervall> intervals = createIntervals();
 
         // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
         intervals.get(27).setPkw(20);
@@ -610,28 +547,7 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
 
     @Test
     public void getGleitendeSpitzenstundenByBewegungsbeziehung_TypeZeitintervallFuss() {
-        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
-        List<Zeitintervall> intervals = new ArrayList<>();
-        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
-        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
-        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
-        for (int i = 0; i < 96; i++) {
-            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
-            LocalTime end = start.plusMinutes(15);
-            Zeitintervall zi = new Zeitintervall();
-            zi.setStartUhrzeit(LocalDateTime.of(day, start));
-            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
-            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
-            // Basiszählung: 1 PKW pro Intervall
-            zi.setPkw(1);
-            // Basiszählung: 1 Fahrradfahrer pro Intervall
-            zi.setFahrradfahrer(1);
-            // Basiszählung: 1 Fussgänger pro Intervall
-            zi.setFussgaenger(1);
-            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
-            zi.setVerkehrsbeziehung(verkehrsbeziehung);
-            intervals.add(zi);
-        }
+        List<Zeitintervall> intervals = createIntervals();
 
         // Definiere PKW-Peak: Indizes 27..30 -> hohe Werte, sodass die Stundensumme hier maximal ist
         intervals.get(27).setPkw(20);
@@ -746,4 +662,72 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(result.get(4), is(expected.get(4)));
         assertThat(result.get(5), is(expected.get(5)));
     }
+
+    @Test
+    public void getGleitendeSpitzenstunden_Block06_19_AllTypeZeitintervall() {
+        List<Zeitintervall> intervals = createIntervals();
+
+        // Definiere RAD-Peak um 07:00 Uhr
+        intervals.get(28).setFahrradfahrer(1000);
+        intervals.get(29).setFahrradfahrer(1000);
+        intervals.get(30).setFahrradfahrer(1000);
+        intervals.get(31).setFahrradfahrer(1000);
+
+        UUID zaehlungId = UUID.randomUUID();
+        List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_19,
+                intervals, Set.of(TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.STUNDE_VIERTEL));
+
+        // Der Peak muss um 07:00 Uhr mit der Summe der Zählwerte der 4 Intervalle dieser Stunde sein:
+        assertThat(gleitendeSpitzenstunden.getFirst().getStartUhrzeit(), is(DaveConstants.DEFAULT_LOCALDATE.atTime(7, 0)));
+        assertThat(gleitendeSpitzenstunden.getFirst().getFahrradfahrer(), is(4000));
+        assertThat(gleitendeSpitzenstunden.getFirst().getType(), is(TypeZeitintervall.SPITZENSTUNDE_RAD));
+    }
+
+    @Test
+    public void getGleitendeSpitzenstunden_Block06_22_AllTypeZeitintervall() {
+        List<Zeitintervall> intervals = createIntervals();
+
+        // Definiere RAD-Peak um 07:00 Uhr
+        intervals.get(28).setPkw(1000);
+        intervals.get(29).setPkw(1000);
+        intervals.get(30).setPkw(1000);
+        intervals.get(31).setPkw(1000);
+
+        UUID zaehlungId = UUID.randomUUID();
+        List<Zeitintervall> gleitendeSpitzenstunden = ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_22,
+                intervals, Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.STUNDE_VIERTEL));
+
+        // Der Peak muss um 07:00 Uhr mit der Summe der Zählwerte der 4 Intervalle dieser Stunde sein:
+        assertThat(gleitendeSpitzenstunden.getFirst().getStartUhrzeit(), is(DaveConstants.DEFAULT_LOCALDATE.atTime(7, 0)));
+        assertThat(gleitendeSpitzenstunden.getFirst().getPkw(), is(4000));
+        assertThat(gleitendeSpitzenstunden.getFirst().getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
+    }
+
+    private List<Zeitintervall> createIntervals() {
+        // Erzeuge 96 Viertelstundenintervalle vom DaveConstants.DEFAULT_LOCALDATE 00:00 bis 24:00
+        List<Zeitintervall> intervals = new ArrayList<>();
+        LocalDate day = DaveConstants.DEFAULT_LOCALDATE;
+
+        // Eine einzige Verkehrsbeziehung-Instanz für alle Intervalle, damit die Gruppierung eine Gruppe ergibt
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        for (int i = 0; i < 96; i++) {
+            LocalTime start = LocalTime.MIDNIGHT.plusMinutes(15L * i);
+            LocalTime end = start.plusMinutes(15);
+            Zeitintervall zi = new Zeitintervall();
+            zi.setStartUhrzeit(LocalDateTime.of(day, start));
+            // Für das letzte Intervall kann das Ende dem Mitternachtspunkt des nächsten Tages entsprechen, die Utils behandeln dies jedoch über LocalTime.MAX
+            zi.setEndeUhrzeit(LocalDateTime.of(day, end));
+            // Basiszählung: 1 PKW pro Intervall
+            zi.setPkw(1);
+            // Basiszählung: 1 Fahrradfahrer pro Intervall
+            zi.setFahrradfahrer(1);
+            // Basiszählung: 1 Fussgänger pro Intervall
+            zi.setFussgaenger(1);
+            // Gleiche Verkehrsbeziehung zuweisen, damit die Gruppierung eine Gruppe ergibt
+            zi.setVerkehrsbeziehung(verkehrsbeziehung);
+            intervals.add(zi);
+        }
+        return intervals;
+    }
+
 }
