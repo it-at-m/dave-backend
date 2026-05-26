@@ -2,7 +2,7 @@ name: test-FV-327
 
 on:
   repository_dispatch:
-    types: [custom_event]
+    types: [trigger_release_action]
 
 jobs:
   build:
@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Empfangene Parameter anzeigen
         env:
-          PARAM1: ${{ github.event.client_payload.param1 }}
+          RELEASE_VERSION: ${{ github.event.client_payload.releaseVersion }}
+          DEVELOPMENT_VERSION: ${{ github.event.client_payload.developmentVersion }}
         run: |
-          echo "Parameter 1: $PARAM1"
+          echo "releaseVersion: $RELEASE_VERSION"
+          echo "developmentVersion: $DEVELOPMENT_VERSION"
