@@ -1,8 +1,8 @@
 name: release
 
 on:
-#  repository_dispatch: # TODO
-#    types: [trigger_release_action]
+  repository_dispatch:
+    types: [trigger_release_action]
   workflow_dispatch:
     inputs:
       releaseVersion:
@@ -26,6 +26,7 @@ jobs:
     outputs:
       releaseVersion: ${{ steps.set-params.outputs.releaseVersion }}
       developmentVersion: ${{ steps.set-params.outputs.developmentVersion }}
+      use-pr: ${{ steps.set-params.outputs.use-pr }}
     steps:
       - name: set parameters
         id: set-params
