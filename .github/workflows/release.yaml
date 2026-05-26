@@ -33,9 +33,11 @@ jobs:
           if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             echo "releaseVersion=${{ github.event.client_payload.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.client_payload.developmentVersion }}" >> $GITHUB_OUTPUT
+            echo "use-pr=true" >> $GITHUB_OUTPUT
           else
             echo "releaseVersion=${{ github.event.inputs.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_OUTPUT
+            echo "use-pr=${{ github.event.inputs.use-pr }}" >> $GITHUB_OUTPUT
           fi
           echo "use-pr: ${{ github.event.inputs.use-pr }}"
   release-maven:
@@ -56,7 +58,7 @@ jobs:
           app-path: ""
           releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}
           developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}
-          use-pr: ${{ github.event.inputs.use-pr }}
+          use-pr: ${{ needs.set-parameters.outputs.use-pr }}
 
   build-image:
     runs-on: ubuntu-latest
