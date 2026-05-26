@@ -18,20 +18,51 @@ on:
         default: "true"
 
 jobs:
-  build:
+  set-parameters:
     runs-on: ubuntu-latest
+    outputs:
+      releaseVersion: ${{ steps.set-params.outputs.releaseVersion }}
+      developmentVersion: ${{ steps.set-params.outputs.developmentVersion }}
     steps:
-      - name: Empfangene Parameter anzeigen
+      - name: set parameters
+        id: set-params
         run: |
           if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            RELEASE_VERSION="${{ github.event.client_payload.releaseVersion }}"
-            DEVELOPMENT_VERSION="${{ github.event.client_payload.developmentVersion }}"
-            SRC="event"
+            echo "releaseVersion=${{ github.event.client_payload.releaseVersion }}" >> $GITHUB_ENV
+            echo "developmentVersion=${{ github.event.client_payload.developmentVersion }}" >> $GITHUB_ENV
           else
-            RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
-            DEVELOPMENT_VERSION="${{ github.event.inputs.developmentVersion }}"
-            SRC="manuell"
+            echo "releaseVersion=${{ github.event.inputs.releaseVersion }}" >> $GITHUB_ENV
+            echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_ENV
           fi
-          echo "releaseVersion: $RELEASE_VERSION"
-          echo "developmentVersion: $DEVELOPMENT_VERSION"
-          echo "src: $SRC"
+          echo "::set-output name=releaseVersion::${{ env.releaseVersion }}"
+          echo "::set-output name=developmentVersion::${{ env.developmentVersion }}"
+  job1:
+    runs-on: ubuntu-latest
+    needs: set-parameters
+    steps:
+      - name: Job1 Empfangene Parameter anzeigen
+        run: |
+          echo "releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
+          echo "developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
+
+      # Füge hier weitere Schritte hinzu, die die Parameter verwenden
+      - name: Job1 Beispiel Schritt
+        run: |
+          # Hier kannst du mit den Parametern arbeiten
+          echo "Verwende releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
+          echo "Verwende developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
+  job2:
+    runs-on: ubuntu-latest
+    needs: set-parameters
+    steps:
+      - name: Job2 Empfangene Parameter anzeigen
+        run: |
+          echo "releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
+          echo "developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
+
+      # Füge hier weitere Schritte hinzu, die die Parameter verwenden
+      - name: Job2 Beispiel Schritt
+        run: |
+          # Hier kannst du mit den Parametern arbeiten
+          echo "Verwende releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
+          echo "Verwende developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
