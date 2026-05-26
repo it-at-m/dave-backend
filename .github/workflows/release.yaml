@@ -37,6 +37,7 @@ jobs:
             echo "releaseVersion=${{ github.event.inputs.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_OUTPUT
           fi
+          echo "use-pr: ${{ github.event.inputs.use-pr }}"
   release-maven:
     runs-on: ubuntu-latest
     needs: set-parameters
