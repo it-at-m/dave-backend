@@ -35,7 +35,9 @@ jobs:
             echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_ENV
           fi
           echo "::set-output name=releaseVersion::${{ env.releaseVersion }}"
+          echo "releaseVersion=${{ env.releaseVersion }}" >> $GITHUB_OUTPUT
           echo "::set-output name=developmentVersion::${{ env.developmentVersion }}"
+          echo "developmentVersion=${{ env.developmentVersion }}" >> $GITHUB_OUTPUT
   job1:
     runs-on: ubuntu-latest
     needs: set-parameters
