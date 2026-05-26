@@ -107,6 +107,8 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             return List.of();
         }
 
+        // Ermittlung aller Unter-Zeitblöcke, deren Intervalle für die Berechnung
+        // der Spitzenstunde herangezogen werden sollen.
         final List<Zeitblock> blocksToProcess = PROCESS_MAP.getOrDefault(zeitblock, List.of(zeitblock));
 
         List<Zeitintervall> gleitendeSpitzenstunden = blocksToProcess.stream()
@@ -276,12 +278,13 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     }
 
     /**
-     * Erstellt für einen angegebenen Zeitblock eine Liste mit darin enthaltenen Teilblöcken.
+     * Erstellt für alle Zeitblöcke eine Liste mit darin enthaltenen Zeitblöcken
+     * (z.B. ZB_06_19 beinhaltet ZB_06_10, ZB_10_15 und ZB_15_19).
      */
     private static java.util.Map<Zeitblock, List<Zeitblock>> createProcessMap() {
         final var m = new java.util.EnumMap<Zeitblock, List<Zeitblock>>(Zeitblock.class);
 
-        // Einzelne Blöcke -> nur sich selbst berechnen
+        // Einzelne Blöcke -> beinhalten nur sich selbst
         m.put(Zeitblock.ZB_00_06, List.of(Zeitblock.ZB_00_06));
         m.put(Zeitblock.ZB_06_10, List.of(Zeitblock.ZB_06_10));
         m.put(Zeitblock.ZB_10_15, List.of(Zeitblock.ZB_10_15));

@@ -663,6 +663,10 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(result.get(5), is(expected.get(5)));
     }
 
+    /**
+     * Testet, ob die Spitzenstunde auch innerhalb des 06-bis-19-Uhr-Blocks
+     * richtig ermittelt wird.
+     */
     @Test
     public void getGleitendeSpitzenstunden_Block06_19_AllTypeZeitintervall() {
         List<Zeitintervall> intervals = createIntervals();
@@ -683,6 +687,10 @@ public class ZeitintervallGleitendeSpitzenstundeUtilTest {
         assertThat(gleitendeSpitzenstunden.getFirst().getType(), is(TypeZeitintervall.SPITZENSTUNDE_RAD));
     }
 
+    /**
+     * Testet, ob die Spitzenstunde auch innerhalb des 06-bis-22-Uhr-Blocks
+     * richtig ermittelt wird.
+     */
     @Test
     public void getGleitendeSpitzenstunden_Block06_22_AllTypeZeitintervall() {
         List<Zeitintervall> intervals = createIntervals();
