@@ -101,6 +101,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
         }
 
+        // Fahrzeugkategorien und -klassen setzen
+        zaehlungDto.setKategorien(getFahrzeugklassen(zaehlungDto.getKategorien()));
+
         final Zaehlung zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {
             // createZaehlung

@@ -158,54 +158,58 @@ public abstract class ZaehlungPersistierungsService {
     public List<Fahrzeug> getFahrzeugKategorienAndFahrzeugklassen(final List<Zeitintervall> zeitintervalle) {
         final Set<Fahrzeug> fahrzeugkategorien = new HashSet<>();
         zeitintervalle.forEach(zeitintervall -> {
-            boolean pkweinheiten = false;
             if (ObjectUtils.isNotEmpty(zeitintervall.getPkw())) {
                 fahrzeugkategorien.add(Fahrzeug.PKW);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getLkw())) {
                 fahrzeugkategorien.add(Fahrzeug.LKW);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getLastzuege())) {
                 fahrzeugkategorien.add(Fahrzeug.LZ);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getBusse())) {
                 fahrzeugkategorien.add(Fahrzeug.BUS);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getKraftraeder())) {
                 fahrzeugkategorien.add(Fahrzeug.KRAD);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getFahrradfahrer())) {
                 fahrzeugkategorien.add(Fahrzeug.RAD);
-                pkweinheiten = true;
             }
             if (ObjectUtils.isNotEmpty(zeitintervall.getFussgaenger())) {
                 fahrzeugkategorien.add(Fahrzeug.FUSS);
             }
-            if (fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)) {
-                fahrzeugkategorien.add(Fahrzeug.GV);
-            }
-            if (fahrzeugkategorien.contains(Fahrzeug.GV) || fahrzeugkategorien.contains(Fahrzeug.BUS)) {
-                fahrzeugkategorien.add(Fahrzeug.SV);
-            }
-            if (fahrzeugkategorien.contains(Fahrzeug.SV) || fahrzeugkategorien.contains(Fahrzeug.PKW)) {
-                fahrzeugkategorien.add(Fahrzeug.KFZ);
-            }
-            if (fahrzeugkategorien.contains(Fahrzeug.SV) && fahrzeugkategorien.contains(Fahrzeug.KFZ)) {
-                fahrzeugkategorien.add(Fahrzeug.SV_P);
-            }
-            if (fahrzeugkategorien.contains(Fahrzeug.GV) && fahrzeugkategorien.contains(Fahrzeug.KFZ)) {
-                fahrzeugkategorien.add(Fahrzeug.GV_P);
-            }
-            if (pkweinheiten) {
-                fahrzeugkategorien.add(Fahrzeug.PKW_EINHEIT);
-            }
         });
-        return new ArrayList<>(fahrzeugkategorien);
+        return getFahrzeugklassen(new ArrayList<>(fahrzeugkategorien));
+    }
+
+    /**
+     * Diese Methode ermittelt aus den Fahrzeugkategorien die zugehörigen Fahrzeugklassen.
+     *
+     * @param fahrzeugkategorien zur Ermittlung der Fahrzeugklassen.
+     * @return die Fahrzeugkategorien und Fahrzeugklassen als gemeinsame Liste.
+     */
+    public List<Fahrzeug> getFahrzeugklassen(final List<Fahrzeug> fahrzeugkategorien) {
+        if (fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)) {
+            fahrzeugkategorien.add(Fahrzeug.GV);
+        }
+        if (fahrzeugkategorien.contains(Fahrzeug.GV) || fahrzeugkategorien.contains(Fahrzeug.BUS)) {
+            fahrzeugkategorien.add(Fahrzeug.SV);
+        }
+        if (fahrzeugkategorien.contains(Fahrzeug.SV) || fahrzeugkategorien.contains(Fahrzeug.PKW)) {
+            fahrzeugkategorien.add(Fahrzeug.KFZ);
+        }
+        if (fahrzeugkategorien.contains(Fahrzeug.SV) && fahrzeugkategorien.contains(Fahrzeug.KFZ)) {
+            fahrzeugkategorien.add(Fahrzeug.SV_P);
+        }
+        if (fahrzeugkategorien.contains(Fahrzeug.GV) && fahrzeugkategorien.contains(Fahrzeug.KFZ)) {
+            fahrzeugkategorien.add(Fahrzeug.GV_P);
+        }
+        if (fahrzeugkategorien.contains(Fahrzeug.PKW) || fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)
+                || fahrzeugkategorien.contains(Fahrzeug.BUS) || fahrzeugkategorien.contains(Fahrzeug.KRAD) || fahrzeugkategorien.contains(Fahrzeug.RAD)) {
+            fahrzeugkategorien.add(Fahrzeug.PKW_EINHEIT);
+        }
+        return fahrzeugkategorien;
     }
 
     public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)
