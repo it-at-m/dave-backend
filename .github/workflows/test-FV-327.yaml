@@ -33,11 +33,12 @@ jobs:
           if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             echo "releaseVersion=${{ github.event.client_payload.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.client_payload.developmentVersion }}" >> $GITHUB_OUTPUT
-            echo "use-pr=true" >> $GITHUB_OUTPUT
             echo "usePr=true" >> $GITHUB_OUTPUT
+            echo "use-pr=true" >> $GITHUB_OUTPUT
           else
             echo "releaseVersion=${{ github.event.inputs.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_OUTPUT
+            echo "usePr=${{ github.event.inputs.use-pr }}" >> $GITHUB_OUTPUT
             echo "use-pr=${{ github.event.inputs.use-pr }}" >> $GITHUB_OUTPUT
           fi
           echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
@@ -49,6 +50,7 @@ jobs:
         run: |
           echo "releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
           echo "developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
+          echo "usePr: ${{ needs.set-parameters.outputs.usePr }}"
           echo "use-pr: ${{ needs.set-parameters.outputs.use-pr }}"
 
       # Füge hier weitere Schritte hinzu, die die Parameter verwenden
@@ -57,4 +59,5 @@ jobs:
           # Hier kannst du mit den Parametern arbeiten
           echo "Verwende releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
           echo "Verwende developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
+          echo "usePr: ${{ needs.set-parameters.outputs.usePr }}"
           echo "use-pr: ${{ needs.set-parameters.outputs.use-pr }}"
