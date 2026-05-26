@@ -28,8 +28,8 @@ jobs:
             DEVELOPMENT_VERSION="${{ github.event.client_payload.developmentVersion }}"
             SRC="event"
           else
-            RELEASE_VERSION="${{ github.inputs.releaseVersion }}"
-            DEVELOPMENT_VERSION="${{ github.inputs.developmentVersion }}"
+            RELEASE_VERSION="${{ github.event.inputs.releaseVersion }}"
+            DEVELOPMENT_VERSION="${{ github.event.inputs.developmentVersion }}"
             SRC="manuell"
           fi
           echo "releaseVersion: $RELEASE_VERSION"
