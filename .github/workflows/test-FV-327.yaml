@@ -13,7 +13,7 @@ on:
         description: "Next version number with snapshot (e.g., 1.2.4-SNAPSHOT)"
         required: true
         default: "6.0.1-SNAPSHOT"
-      usePr:
+      use-pr:
         description: "Use PR for version bump instead of direct push"
         default: "true"
 
@@ -26,6 +26,7 @@ jobs:
     outputs:
       releaseVersion: ${{ steps.set-params.outputs.releaseVersion }}
       developmentVersion: ${{ steps.set-params.outputs.developmentVersion }}
+      use-pr: ${{ steps.set-params.outputs.use-pr }}
     steps:
       - name: set parameters
         id: set-params
@@ -33,11 +34,11 @@ jobs:
           if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             echo "releaseVersion=${{ github.event.client_payload.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.client_payload.developmentVersion }}" >> $GITHUB_OUTPUT
-            echo "usePr=true" >> $GITHUB_OUTPUT
+            echo "use-pr=true" >> $GITHUB_OUTPUT
           else
             echo "releaseVersion=${{ github.event.inputs.releaseVersion }}" >> $GITHUB_OUTPUT
             echo "developmentVersion=${{ github.event.inputs.developmentVersion }}" >> $GITHUB_OUTPUT
-            echo "usePr=${{ github.event.inputs.usePr }}" >> $GITHUB_OUTPUT
+            echo "use-pr=${{ github.event.inputs.use-pr }}" >> $GITHUB_OUTPUT
           fi
           echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
   job1:
@@ -48,7 +49,7 @@ jobs:
         run: |
           echo "releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
           echo "developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
-          echo "usePr: ${{ needs.set-parameters.outputs.usePr }}"
+          echo "use-pr: ${{ needs.set-parameters.outputs.use-pr }}"
 
       # Füge hier weitere Schritte hinzu, die die Parameter verwenden
       - name: Job1 Beispiel Schritt
@@ -56,4 +57,4 @@ jobs:
           # Hier kannst du mit den Parametern arbeiten
           echo "Verwende releaseVersion: ${{ needs.set-parameters.outputs.releaseVersion }}"
           echo "Verwende developmentVersion: ${{ needs.set-parameters.outputs.developmentVersion }}"
-          echo "usePr: ${{ needs.set-parameters.outputs.usePr }}"
+          echo "use-pr: ${{ needs.set-parameters.outputs.use-pr }}"
