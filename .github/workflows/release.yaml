@@ -23,6 +23,7 @@ env:
 jobs:
   set-parameters:
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       releaseVersion: ${{ steps.set-params.outputs.releaseVersion }}
       developmentVersion: ${{ steps.set-params.outputs.developmentVersion }}
