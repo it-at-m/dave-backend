@@ -45,6 +45,7 @@ jobs:
             echo "developmentVersion=${DEVELOPMENT_VERSION}" >> $GITHUB_OUTPUT
             echo "use-pr=${USE_PR}" >> $GITHUB_OUTPUT
           fi
+          cat $GITHUB_OUTPUT
   job1:
     runs-on: ubuntu-latest
     needs: set-parameters
