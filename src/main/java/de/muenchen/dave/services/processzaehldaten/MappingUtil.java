@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.RoundingService;
@@ -11,7 +12,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -44,26 +44,39 @@ public final class MappingUtil {
             final OptionsDTO options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
-        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
-                .filter(MappingUtil::isVerkehrsbeziehungNachOrKreisverkehrSet)
-                .collect(Collectors.toMap(
-                        // Schlüssel-Mapper
-                        Zeitintervall::getVerkehrsbeziehung,
-                        // Wert-Mapper
-                        zeitintervall -> new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
-                                LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options),
-                                RoundingService.roundToNearestIfRoundingIsChosen(
-                                        LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options),
-                                        VALUE_TO_ROUND,
-                                        options)),
-                        // Konflikt-Löser
-                        (existing, replacement) -> {
-                            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
-                            throw new IllegalStateException("Fehler beim Berechnen der Daten");
-                        },
-                        // Map-Typ
-                        LinkedHashMap::new));
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
+        for (Zeitintervall zeitintervall : zeitintervalle) {
+            // Filter-Bedingung
+            if (!isVerkehrsbeziehungNachOrKreisverkehrSet(zeitintervall)) {
+                continue;
+            }
+
+            // Schlüssel bestimmen
+            final Verkehrsbeziehung key = zeitintervall.getVerkehrsbeziehung();
+
+            // Zwischenergebnisse in lokalen Variablen
+            final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options);
+            final LadeZaehldatumDTO zaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options);
+            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(
+                    zaehldatum,
+                    VALUE_TO_ROUND,
+                    options);
+
+            log.debug("Mapping Zeitintervall -> key={}, isTageswert={}, zaehldatum={}, roundedZaehldatum={}",
+                    key, isTageswert, zaehldatum, roundedZaehldatum);
+
+            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
+                    isTageswert, roundedZaehldatum);
+
+            // Konflikt-Behandlung
+            if (ladeZaehldatumBelastungsplan.containsKey(key)) {
+                log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key={}", key);
+                throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key=" + key);
+            }
+
+            ladeZaehldatumBelastungsplan.put(key, value);
+        }
         return ladeZaehldatumBelastungsplan;
     }
 
@@ -86,26 +99,46 @@ public final class MappingUtil {
             final OptionsDTO options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
-        final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = zeitintervalle.stream()
+        final List<Zeitintervall> laengsverkehrIntervalle = zeitintervalle.stream()
                 .filter(MappingUtil::isLaengsverkehrKnotenarm)
                 .sorted(Comparator.comparingInt(z -> z.getLaengsverkehr().getKnotenarm()))
-                .collect(Collectors.toMap(
-                        // Schlüssel-Mapper
-                        Zeitintervall::getLaengsverkehr,
-                        // Wert-Mapper
-                        zeitintervall -> new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
-                                LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options),
-                                RoundingService.roundToNearestIfRoundingIsChosen(
-                                        LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options),
-                                        VALUE_TO_ROUND,
-                                        options)),
-                        // Konflikt-Löser
-                        (existing, replacement) -> {
-                            log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
-                            throw new IllegalStateException("Fehler beim Berechnen der Daten");
-                        },
-                        // Map-Typ
-                        LinkedHashMap::new));
+                .toList();
+
+        final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
+
+        for (Zeitintervall zi : laengsverkehrIntervalle) {
+            final Laengsverkehr key = zi.getLaengsverkehr();
+            try {
+                final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
+                final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
+                final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
+
+                final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
+                        isTageswert, roundedZaehldatum);
+
+                if (ladeZaehldatumBelastungsplan.containsKey(key)) {
+                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
+                            "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                            key.getKnotenarm(),
+                            ladeZaehldatumBelastungsplan.get(key),
+                            value,
+                            zi);
+                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
+                            + key.getKnotenarm());
+                }
+
+                ladeZaehldatumBelastungsplan.put(key, value);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
+                            key.getKnotenarm(), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
+                }
+            } catch (Exception e) {
+                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
+                        zi, key != null ? key.getKnotenarm() : "null", e.getMessage(), e);
+                throw e;
+            }
+        }
         return ladeZaehldatumBelastungsplan;
     }
 
