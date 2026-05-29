@@ -27,6 +27,11 @@ import org.apache.commons.lang3.ObjectUtils;
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
+     * Mapping: für eine gegebene Zeitblock-Auswahl die Ziel-Zeitblöcke, die berechnet werden sollen
+     */
+    private static final java.util.Map<Zeitblock, List<Zeitblock>> PROCESS_MAP = createProcessMap();
+
+    /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
      * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
      * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
@@ -44,8 +49,6 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
      *            sollen.
      * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
-     * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
-     *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
      * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
      *         die angefragten Spitzenstundentypen.
      */
@@ -82,15 +85,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung der
      * Verkehrsbeziehung jeweils für KFZ-, Rad- oder auch Fussverkehr.
-     *
-     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für folgende
-     * {@link Zeitblock}e ermittelt:
-     * - {@link Zeitblock#ZB_00_06}
-     * - {@link Zeitblock#ZB_06_10}
-     * - {@link Zeitblock#ZB_10_15}
-     * - {@link Zeitblock#ZB_15_19}
-     * - {@link Zeitblock#ZB_19_24}
-     * - {@link Zeitblock#ZB_00_24}
+     * <p>
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende Spitzenstunde für die
+     * angegebenen
+     * {@link Zeitblock}e ermittelt.
      *
      * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
      * @param zeitblock für den die Auswertung vorgenommen werden soll.
@@ -105,34 +103,17 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             final Zeitblock zeitblock,
             final List<Zeitintervall> zeitintervalle,
             final Set<TypeZeitintervall> types) {
-        List<Zeitintervall> gleitendeSpitzenstunden = new ArrayList<>();
-        if (Objects.nonNull(zaehlungId)) {
-            List<Zeitintervall> calculatedSpitzenstunden;
-            if (Zeitblock.ZB_00_06.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_06, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
-            if (Zeitblock.ZB_06_10.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_06_10, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
-            if (Zeitblock.ZB_10_15.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_10_15, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
-            if (Zeitblock.ZB_15_19.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_15_19, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
-            if (Zeitblock.ZB_19_24.equals(zeitblock) || Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_19_24, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
-            if (Zeitblock.ZB_00_24.equals(zeitblock)) {
-                calculatedSpitzenstunden = calculateGleitendeSpitzenstunden(zaehlungId, Zeitblock.ZB_00_24, zeitintervalle, types);
-                gleitendeSpitzenstunden.addAll(calculatedSpitzenstunden);
-            }
+        if (Objects.isNull(zaehlungId)) {
+            return List.of();
         }
+
+        // Ermittlung aller Unter-Zeitblöcke, deren Intervalle für die Berechnung
+        // der Spitzenstunde herangezogen werden sollen.
+        final List<Zeitblock> blocksToProcess = PROCESS_MAP.getOrDefault(zeitblock, List.of(zeitblock));
+
+        List<Zeitintervall> gleitendeSpitzenstunden = blocksToProcess.stream()
+                .flatMap(block -> calculateGleitendeSpitzenstunden(zaehlungId, block, zeitintervalle, types).stream())
+                .collect(Collectors.toList());
         return gleitendeSpitzenstunden;
     }
 
@@ -153,9 +134,9 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             final Zeitblock zeitblock,
             final List<Zeitintervall> sortedZeitintervalle,
             final Set<TypeZeitintervall> types) {
-        Integer valueGleitendeSpitzenstundeKfz = 0;
-        Integer valueGleitendeSpitzenstundeRad = 0;
-        Integer valueGleitendeSpitzenstundeFuss = 0;
+        int valueGleitendeSpitzenstundeKfz = 0;
+        int valueGleitendeSpitzenstundeRad = 0;
+        int valueGleitendeSpitzenstundeFuss = 0;
         Optional<Zeitintervall> gleitendeSpitzenstundeKfz = Optional.empty();
         Optional<Zeitintervall> gleitendeSpitzenstundeRad = Optional.empty();
         Optional<Zeitintervall> gleitendeSpitzenstundeFuss = Optional.empty();
@@ -294,5 +275,35 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
             throw new IncorrectZeitauswahlException();
         }
         return typeSpitzenstunde;
+    }
+
+    /**
+     * Erstellt für alle Zeitblöcke eine Liste mit darin enthaltenen Zeitblöcken
+     * (z.B. ZB_06_19 beinhaltet ZB_06_10, ZB_10_15 und ZB_15_19).
+     */
+    private static java.util.Map<Zeitblock, List<Zeitblock>> createProcessMap() {
+        final var m = new java.util.EnumMap<Zeitblock, List<Zeitblock>>(Zeitblock.class);
+
+        // Einzelne Blöcke -> beinhalten nur sich selbst
+        m.put(Zeitblock.ZB_00_06, List.of(Zeitblock.ZB_00_06));
+        m.put(Zeitblock.ZB_06_10, List.of(Zeitblock.ZB_06_10));
+        m.put(Zeitblock.ZB_10_15, List.of(Zeitblock.ZB_10_15));
+        m.put(Zeitblock.ZB_15_19, List.of(Zeitblock.ZB_15_19));
+        m.put(Zeitblock.ZB_19_24, List.of(Zeitblock.ZB_19_24));
+
+        // Kombinationen: z.B. 06_19 und 06_22 umfassen die drei Teilblöcke 06_10,10_15,15_19
+        m.put(Zeitblock.ZB_06_19, List.of(Zeitblock.ZB_06_10, Zeitblock.ZB_10_15, Zeitblock.ZB_15_19));
+        m.put(Zeitblock.ZB_06_22, List.of(Zeitblock.ZB_06_10, Zeitblock.ZB_10_15, Zeitblock.ZB_15_19, Zeitblock.ZB_19_24));
+
+        // kompletter Tag -> alle Unterblöcke + kompletter Tag
+        m.put(Zeitblock.ZB_00_24, List.of(
+                Zeitblock.ZB_00_06,
+                Zeitblock.ZB_06_10,
+                Zeitblock.ZB_10_15,
+                Zeitblock.ZB_15_19,
+                Zeitblock.ZB_19_24,
+                Zeitblock.ZB_00_24));
+
+        return java.util.Collections.unmodifiableMap(m);
     }
 }
