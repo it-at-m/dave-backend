@@ -336,6 +336,11 @@ public class ProcessZaehldatenBelastungsplanService {
      */
     private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
         final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        // Keine Berechnung bei Prozentwerten
+        if (basis.isPercent()) {
+            belastungsplanData.setFilled(false);
+            return belastungsplanData;
+        }
         belastungsplanData.setLabel(basis.getLabel());
         belastungsplanData.setFilled(basis.isFilled());
         belastungsplanData.setPercent(basis.isPercent());
