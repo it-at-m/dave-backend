@@ -41,15 +41,16 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         ladeBelastungsplan.setKreisverkehr(zaehlung.getKreisverkehr());
 
         // Wenn KFZ, GV, SV, GV_Prozent oder SV_Prozent gesetzt ist, dürfen RAD und FUSS nicht angezeigt werden
-        if ((options.getGueterverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.GV_P))
-                || (options.getSchwerverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.SV_P))
+        // GV_Prozent und SV_Prozent dürfen nur angezeigt werden, wenn keine Differenzdatendarstellung aktiviert ist
+        if ((options.getGueterverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.GV_P) && !isDifferenzdatenDarstellung(options))
+                || (options.getSchwerverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.SV_P) && !isDifferenzdatenDarstellung(options))
                 || (options.getGueterverkehr() && belastungsplanData.containsKey(Fahrzeug.GV))
                 || (options.getSchwerverkehr() && belastungsplanData.containsKey(Fahrzeug.SV))
                 || (options.getKraftfahrzeugverkehr() && belastungsplanData.containsKey(Fahrzeug.KFZ))) {
-            if (options.getGueterverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.GV_P)) {
+            if (options.getGueterverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.GV_P) && !isDifferenzdatenDarstellung(options)) {
                 putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.GV_P);
             }
-            if (options.getSchwerverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.SV_P)) {
+            if (options.getSchwerverkehrsanteilProzent() && belastungsplanData.containsKey(Fahrzeug.SV_P) && !isDifferenzdatenDarstellung(options)) {
                 putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.SV_P);
             }
             if (options.getGueterverkehr() && belastungsplanData.containsKey(Fahrzeug.GV)) {
@@ -265,6 +266,15 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
     private static boolean isKreisverkehr(final Verkehrsbeziehung verkehrsbeziehung) {
         return ObjectUtils.isNotEmpty(verkehrsbeziehung.getFahrbewegungKreisverkehr())
                 && ObjectUtils.isEmpty(verkehrsbeziehung.getNach());
+    }
+
+    /**
+     * Die DifferenzdatenDarstellung ist eingeschaltet, wenn in den Optionen der Haken bei Differenzdaten gesetzt ist UND eine Vergleichszählung gewählt wurde.
+     * @param options die Optionen
+     * @return true wenn Differenzdaten angezeigt werden sollen, sonst false.
+     */
+    private static boolean isDifferenzdatenDarstellung(final OptionsDTO options) {
+        return options.getDifferenzdatenDarstellen() && options.getVergleichszaehlungsId() != null;
     }
 
 }
