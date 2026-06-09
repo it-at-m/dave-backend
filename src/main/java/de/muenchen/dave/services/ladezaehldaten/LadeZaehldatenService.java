@@ -135,6 +135,11 @@ public class LadeZaehldatenService {
             final PkwEinheit pkwEinheit,
             final OptionsDTO options) {
         final LadeZaehldatumDTO ladeZaehldatum;
+        // Hier wird entscheiden, ob für das gegebene Zeitintervall statt eines normalen Intervall-Datensatzes (LadeZaehldatumDTO)
+        // ein Tageswert-Datensatz (LadeZaehldatumTageswertDTO) erzeugt werden soll.
+        // Das ist notwendig, weil bei einem Zeitintervall vom Typ GESAMT (also Tages-/Summenintervall)
+        // und falls die Zählung nicht 24 Stunden dauerte, der im Zeitintervall gespeicherte Hochrechnungswert
+        // als Tageswert verwendet werden muss — statt der rohen Intervalldaten.
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumTageswert.setKfz(

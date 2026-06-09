@@ -4,7 +4,6 @@ import de.muenchen.dave.util.DaveConstants;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -462,42 +461,5 @@ public enum Zeitblock implements Serializable {
     private final LocalDateTime end;
 
     private final TypeZeitintervall typeZeitintervall;
-
-    /**
-     * Prüft, ob dieser {@link Zeitblock} vollständig innerhalb des übergebenen
-     * {@code zeitblockToCompare} liegt.
-     *
-     * Ein Zeitblock liegt innerhalb eines anderen, wenn
-     * <ul>
-     * <li>der Startzeitpunkt dieses Zeitblocks nicht vor dem Start von {@code zeitblockToCompare} liegt
-     * (inklusive),</li>
-     * <li>und der Endzeitpunkt dieses Zeitblocks nicht nach dem Ende von {@code zeitblockToCompare}
-     * liegt (inklusive).</li>
-     * </ul>
-     *
-     * Wenn {@code zeitblockToCompare} {@code null} ist, wird {@code false} zurückgegeben.
-     *
-     * @param zeitblockToCompare der Zeitblock, in dem geprüft werden soll, ob sich dieser Zeitblock
-     *            befindet
-     * @return {@code true} wenn dieser Zeitblock vollständig innerhalb von {@code zeitblockToCompare}
-     *         liegt, sonst {@code false}
-     */
-    public boolean isThisZeitblockWithinZeitblockToCompare(final Zeitblock zeitblockToCompare) {
-        if (Objects.isNull(zeitblockToCompare)) {
-            return false;
-        }
-
-        final var startToCompare = zeitblockToCompare.getStart();
-        final var endToCompare = zeitblockToCompare.getEnd();
-        final var thisStart = this.getStart();
-        final var thisEnd = this.getEnd();
-
-        // Ein Zeitblock liegt innerhalb eines gegebenen Zeitblocks, wenn sein Start
-        // nicht vor dem gegebenen Start liegt und sein Ende nicht nach dem gegebenen Ende.
-        final boolean startWithin = !thisStart.isBefore(startToCompare);
-        final boolean endWithin = !thisEnd.isAfter(endToCompare);
-
-        return startWithin && endWithin;
-    }
 
 }
