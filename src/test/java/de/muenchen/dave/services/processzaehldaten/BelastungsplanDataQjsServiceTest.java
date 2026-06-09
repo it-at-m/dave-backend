@@ -1,0 +1,133 @@
+package de.muenchen.dave.services.processzaehldaten;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import de.muenchen.dave.domain.Verkehrsbeziehung;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.elasticsearch.Knotenarm;
+import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+public class BelastungsplanDataQjsServiceTest {
+
+    @Test
+    public void testBuildBelastungsplanDataMap() {
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung = new HashMap<>();
+
+        Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(4);
+        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
+
+        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setFahrradfahrer(6);
+        ladeZaehldatum.setFussgaenger(7);
+
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+
+        verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(4);
+        verkehrsbeziehung.setNach(2);
+        verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
+
+        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setFahrradfahrer(60);
+        ladeZaehldatum.setFussgaenger(70);
+
+        zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
+
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setKategorien(Arrays.asList(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QJS.toString());
+        zaehlung.setKreisverkehr(false);
+
+        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQjsService()
+                .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
+
+        BelastungsplanQjsDataDTO dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS));
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = dto.getValuesVerkehrsbeziehungen();
+
+        assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
+        assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
+        assertThat(dto.getSumAll(), is(BigDecimal.valueOf(77)));
+        assertThat(dto.getValuesStrassenseite().stream().filter(v -> v.getStrassenseite().equals(Himmelsrichtung.N)).findFirst().orElseThrow().getValue(),
+                is(BigDecimal.valueOf(77)));
+
+        dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD));
+        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = dto.getValuesVerkehrsbeziehungen();
+        assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
+        assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
+        assertThat(dto.getSumAll(), is(BigDecimal.valueOf(66)));
+        assertThat(dto.getValuesStrassenseite().stream().filter(v -> v.getStrassenseite().equals(Himmelsrichtung.N)).findFirst().orElseThrow().getValue(),
+                is(BigDecimal.valueOf(66)));
+    }
+
+    @Test
+    public void testBuildLadeBelastungsplanDTO() {
+        final OptionsDTO options = new OptionsDTO();
+        options.setFussverkehr(true);
+        options.setRadverkehr(false);
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setKategorien(List.of(Fahrzeug.FUSS));
+        var kn1 = new Knotenarm();
+        kn1.setNummer(1);
+        kn1.setStrassenname("Eins");
+        var kn3 = new Knotenarm();
+        kn3.setNummer(3);
+        kn3.setStrassenname("Drei");
+        zaehlung.setKnotenarme(List.of(kn1, kn3));
+        zaehlung.setPkwEinheit(new PkwEinheit());
+        var vb = new Verkehrsbeziehung();
+        vb.setVon(1);
+        vb.setNach(3);
+        vb.setStrassenseite(Himmelsrichtung.W);
+        List<Zeitintervall> zeitintervalle = new ArrayList<>();
+        Zeitintervall zi1 = new Zeitintervall();
+        zi1.setFussgaenger(99);
+        zi1.setVerkehrsbeziehung(vb);
+        zi1.setStartUhrzeit(LocalDateTime.now());
+        zi1.setEndeUhrzeit(LocalDateTime.now());
+        zeitintervalle.add(zi1);
+
+        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
+        assertNotNull(data);
+        assertEquals("Eins", data.getStreets()[0]);
+        assertNull(data.getStreets()[1]);
+        assertEquals("Drei", data.getStreets()[2]);
+        assertNotNull(data.getValue1());
+        BelastungsplanQjsDataDTO value1 = (BelastungsplanQjsDataDTO) data.getValue1();
+        assertEquals(BigDecimal.valueOf(99), value1.getSumAll());
+        assertEquals(BigDecimal.valueOf(99), value1.getValuesStrassenseite().getFirst().getValue());
+        assertEquals(BigDecimal.valueOf(99), value1.getValuesVerkehrsbeziehungen().getFirst().getValue());
+    }
+
+    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
+            int expectedValue) {
+        assertThat(values
+                .stream()
+                .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
+                .map(BelastungsplanQjsDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                is(BigDecimal.valueOf(expectedValue)));
+    }
+
+}
