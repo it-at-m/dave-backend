@@ -269,7 +269,9 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
     }
 
     /**
-     * Die DifferenzdatenDarstellung ist eingeschaltet, wenn in den Optionen der Haken bei Differenzdaten gesetzt ist UND eine Vergleichszählung gewählt wurde.
+     * Die DifferenzdatenDarstellung ist eingeschaltet, wenn in den Optionen der Haken bei
+     * Differenzdaten gesetzt ist UND eine Vergleichszählung gewählt wurde.
+     *
      * @param options die Optionen
      * @return true wenn Differenzdaten angezeigt werden sollen, sonst false.
      */
