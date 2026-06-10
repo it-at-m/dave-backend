@@ -1,5 +1,6 @@
 package de.muenchen.dave.util.dataimport;
 
+import de.muenchen.dave.domain.Bewegungsbeziehung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
@@ -11,6 +12,7 @@ import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -29,7 +31,49 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     /**
      * Mapping: für eine gegebene Zeitblock-Auswahl die Ziel-Zeitblöcke, die berechnet werden sollen
      */
-    private static final java.util.Map<Zeitblock, List<Zeitblock>> PROCESS_MAP = createProcessMap();
+    private static final Map<Zeitblock, List<Zeitblock>> ZEITBLOCK_PROCESS_MAP = createProcessMap();
+
+    /**
+     * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
+     * der Bewegungsbeziehung jeweils für KFZ-, Rad- und Fussverkehr.
+     * Je möglicher Ausprägung der Verkehrsbeziehung wird die gleitende
+     * Spitzenstunde des gegebenen {@link Zeitblock}s ermittelt:
+     *
+     * @param zaehlungId die Id der Zählung zu welchem die Zeitintervalle gehören
+     * @param zeitblock für den die Auswertung vorgenommen werden soll.
+     * @param zaehlart die Zählart der Zählung.
+     * @param zeitintervalle Die Zeitintervalle auf Basis derer die Spitzenstunden ermittelt werden
+     *            sollen.
+     * @param types als Zeitintervalltypen der Spitzenstunde welche angefragt wurden.
+     * @param zeitintervalle Die Zeitintervalle für welche die gleitende Spitzenstunde je mögliche
+     *            Ausprägung der Verkehrsbeziehung ermittelt werden soll.
+     * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
+     *         die angefragten Spitzenstundentypen.
+     */
+    public static List<Zeitintervall> getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+            final UUID zaehlungId,
+            final Zeitblock zeitblock,
+            final Zaehlart zaehlart,
+            final List<Zeitintervall> zeitintervalle,
+            final Set<TypeZeitintervall> types) {
+        return zeitintervalle
+                .stream()
+                .collect(Collectors.groupingBy(ZeitintervallBaseUtil::getBewegungbeziehung))
+                .entrySet()
+                .stream()
+                .flatMap(zeitintervalleOfBewegungsbeziehung -> ZeitintervallGleitendeSpitzenstundeUtil
+                        .calculateGleitendeSpitzenstunden(
+                                zaehlungId,
+                                zeitblock,
+                                zeitintervalleOfBewegungsbeziehung.getValue(),
+                                types)
+                        .stream()
+                        .peek(zeitintervall -> setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+                                zeitintervall,
+                                zeitintervalleOfBewegungsbeziehung.getKey(),
+                                zaehlart)))
+                .toList();
+    }
 
     /**
      * Diese Methode ermittelt die gleitende Spitzenstunden je möglicher Ausprägung
@@ -52,7 +96,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      * @return die gleitenden Spitzenstunden als List von {@link Zeitintervall}en jeweils für
      *         die angefragten Spitzenstundentypen.
      */
-    public static List<Zeitintervall> getGleitendeSpitzenstundenByBewegungsbeziehung(
+    public static List<Zeitintervall> getGleitendeSpitzenstundenForEachBewegungsbeziehung(
             final UUID zaehlungId,
             final Zeitblock zeitblock,
             final Zaehlart zaehlart,
@@ -70,15 +114,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                                 zeitintervalleOfBewegungsbeziehung.getValue(),
                                 types)
                         .stream()
-                        .peek(zeitintervall -> {
-                            if (Zaehlart.QU.equals(zaehlart)) {
-                                zeitintervall.setQuerungsverkehr((Querungsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else if (Zaehlart.FJS.equals(zaehlart)) {
-                                zeitintervall.setLaengsverkehr((Laengsverkehr) zeitintervalleOfBewegungsbeziehung.getKey());
-                            } else {
-                                zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) zeitintervalleOfBewegungsbeziehung.getKey());
-                            }
-                        }))
+                        .peek(zeitintervall -> setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+                                zeitintervall,
+                                zeitintervalleOfBewegungsbeziehung.getKey(),
+                                zaehlart)))
                 .toList();
     }
 
@@ -109,9 +148,10 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
         // Ermittlung aller Unter-Zeitblöcke, deren Intervalle für die Berechnung
         // der Spitzenstunde herangezogen werden sollen.
-        final List<Zeitblock> blocksToProcess = PROCESS_MAP.getOrDefault(zeitblock, List.of(zeitblock));
+        final List<Zeitblock> zeitbloeckeToProcess = ZEITBLOCK_PROCESS_MAP.getOrDefault(zeitblock, List.of(zeitblock));
 
-        List<Zeitintervall> gleitendeSpitzenstunden = blocksToProcess.stream()
+        final List<Zeitintervall> gleitendeSpitzenstunden = zeitbloeckeToProcess
+                .stream()
                 .flatMap(block -> calculateGleitendeSpitzenstunden(zaehlungId, block, zeitintervalle, types).stream())
                 .collect(Collectors.toList());
         return gleitendeSpitzenstunden;
@@ -198,6 +238,30 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
     }
 
     /**
+     * Setzt die passende Bewegungsbeziehung (Querungsverkehr, Längsverkehr oder Verkehrsbeziehung)
+     * auf das übergebene {@link Zeitintervall} abhängig von der angegebenen {@link Zaehlart}.
+     *
+     * @param zeitintervall Das Ziel-{@link Zeitintervall}, auf das die Bewegungsbeziehung gesetzt wird
+     *            (muss nicht null sein).
+     * @param bewegungsbeziehung Die zu setzende {@link Bewegungsbeziehung} (z. B. Querungsverkehr,
+     *            Laengsverkehr oder Verkehrsbeziehung).
+     * @param zaehlart Die {@link Zaehlart} welche bestimmt, welche spezifische Bewegungsbeziehung auf
+     *            dem Zeitintervall gesetzt wird.
+     */
+    public static void setBewegungsbeziehungOnZeitintervallAccordingZaehlart(
+            final Zeitintervall zeitintervall,
+            final Bewegungsbeziehung bewegungsbeziehung,
+            final Zaehlart zaehlart) {
+        if (Zaehlart.QU.equals(zaehlart)) {
+            zeitintervall.setQuerungsverkehr((Querungsverkehr) bewegungsbeziehung);
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+            zeitintervall.setLaengsverkehr((Laengsverkehr) bewegungsbeziehung);
+        } else {
+            zeitintervall.setVerkehrsbeziehung((Verkehrsbeziehung) bewegungsbeziehung);
+        }
+    }
+
+    /**
      * Ermittlung des {@link Zeitintervall}#getSortingIndex() für KFZ-Verkehr.
      *
      * @param zeitintervall Der {@link Zeitintervall} für welchen der Index ermittelt werden soll.
@@ -279,31 +343,38 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
     /**
      * Erstellt für alle Zeitblöcke eine Liste mit darin enthaltenen Zeitblöcken
-     * (z.B. ZB_06_19 beinhaltet ZB_06_10, ZB_10_15 und ZB_15_19).
+     * (z.B. ZB_06_19 beinhaltet ZB_06_10, ZB_10_15, ZB_15_19 und ZB_06_19).
      */
-    private static java.util.Map<Zeitblock, List<Zeitblock>> createProcessMap() {
-        final var m = new java.util.EnumMap<Zeitblock, List<Zeitblock>>(Zeitblock.class);
+    private static Map<Zeitblock, List<Zeitblock>> createProcessMap() {
+        return Map.of(
+                // Einzelne Blöcke -> beinhalten nur sich selbst
+                Zeitblock.ZB_00_06, List.of(Zeitblock.ZB_00_06),
+                Zeitblock.ZB_06_10, List.of(Zeitblock.ZB_06_10),
+                Zeitblock.ZB_10_15, List.of(Zeitblock.ZB_10_15),
+                Zeitblock.ZB_15_19, List.of(Zeitblock.ZB_15_19),
+                Zeitblock.ZB_19_24, List.of(Zeitblock.ZB_19_24),
 
-        // Einzelne Blöcke -> beinhalten nur sich selbst
-        m.put(Zeitblock.ZB_00_06, List.of(Zeitblock.ZB_00_06));
-        m.put(Zeitblock.ZB_06_10, List.of(Zeitblock.ZB_06_10));
-        m.put(Zeitblock.ZB_10_15, List.of(Zeitblock.ZB_10_15));
-        m.put(Zeitblock.ZB_15_19, List.of(Zeitblock.ZB_15_19));
-        m.put(Zeitblock.ZB_19_24, List.of(Zeitblock.ZB_19_24));
+                // Zeitblöcke für 13h
+                Zeitblock.ZB_06_19, List.of(
+                        Zeitblock.ZB_06_10,
+                        Zeitblock.ZB_10_15,
+                        Zeitblock.ZB_15_19,
+                        Zeitblock.ZB_06_19),
 
-        // Kombinationen: z.B. 06_19 und 06_22 umfassen die drei Teilblöcke 06_10,10_15,15_19
-        m.put(Zeitblock.ZB_06_19, List.of(Zeitblock.ZB_06_10, Zeitblock.ZB_10_15, Zeitblock.ZB_15_19));
-        m.put(Zeitblock.ZB_06_22, List.of(Zeitblock.ZB_06_10, Zeitblock.ZB_10_15, Zeitblock.ZB_15_19, Zeitblock.ZB_19_24));
+                // Zeitblöcke für 16h
+                Zeitblock.ZB_06_22, List.of(
+                        Zeitblock.ZB_06_10,
+                        Zeitblock.ZB_10_15,
+                        Zeitblock.ZB_15_19,
+                        Zeitblock.ZB_19_24),
 
-        // kompletter Tag -> alle Unterblöcke + kompletter Tag
-        m.put(Zeitblock.ZB_00_24, List.of(
-                Zeitblock.ZB_00_06,
-                Zeitblock.ZB_06_10,
-                Zeitblock.ZB_10_15,
-                Zeitblock.ZB_15_19,
-                Zeitblock.ZB_19_24,
-                Zeitblock.ZB_00_24));
-
-        return java.util.Collections.unmodifiableMap(m);
+                // Zeitblöcke für 24h
+                Zeitblock.ZB_00_24, List.of(
+                        Zeitblock.ZB_00_06,
+                        Zeitblock.ZB_06_10,
+                        Zeitblock.ZB_10_15,
+                        Zeitblock.ZB_15_19,
+                        Zeitblock.ZB_19_24,
+                        Zeitblock.ZB_00_24));
     }
 }
