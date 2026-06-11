@@ -11,7 +11,8 @@ import lombok.Data;
     {
             @JsonSubTypes.Type(value = LadeBelastungsplanDTO.class, name = "DEFAULT"),
             @JsonSubTypes.Type(value = LadeBelastungsplanQjsDTO.class, name = "QJS"),
-            @JsonSubTypes.Type(value = LadeBelastungsplanFjsDTO.class, name = "FJS")
+            @JsonSubTypes.Type(value = LadeBelastungsplanFjsDTO.class, name = "FJS"),
+            @JsonSubTypes.Type(value = LadeBelastungsplanQuDTO.class, name = "QU")
     }
 )
 public abstract class AbstractLadeBelastungsplanDTO<T> implements Serializable {

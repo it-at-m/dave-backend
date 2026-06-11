@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -142,6 +143,72 @@ public final class MappingUtil {
         return ladeZaehldatumBelastungsplan;
     }
 
+    /**
+     * Baut aus einer Liste von {@link Zeitintervall} eine Zuordnung (Map) von
+     * {@link Querungsverkehr} auf
+     * {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     * <p>
+     *
+     * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
+     * @param zaehlung Die Zählung, deren Einheit für die Umwandlung der Zeitintervalle verwendet wird.
+     * @param zeitintervalle Die Liste der zu verarbeitenden Zeitintervalle.
+     *
+     * @return Eine Map von {@link Querungsverkehr} auf
+     *         {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}. Nur
+     *         Zeitintervalle,
+     *         die die Bedingungen für Querungsverkehre erfüllen, werden berücksichtigt.
+     */
+    public static Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapQuerungsverkehre(
+            final OptionsDTO options,
+            final Zaehlung zaehlung,
+            final List<Zeitintervall> zeitintervalle) {
+        final List<Zeitintervall> querungsverkehrIntervalle = zeitintervalle.stream()
+                .filter(MappingUtil::isQuerungsverkehrKnotenarm)
+                .sorted(Comparator.comparingInt(z -> z.getQuerungsverkehr().getKnotenarm()))
+                .toList();
+
+        final Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
+
+        for (Zeitintervall zi : querungsverkehrIntervalle) {
+            // Schlüssel bestimmen
+            final Querungsverkehr key = zi.getQuerungsverkehr();
+            try {
+                // Zwischenergebnisse in lokalen Variablen
+                final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
+                final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
+                final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
+
+                final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
+                        isTageswert, roundedZaehldatum);
+
+                // Konflikt-Behandlung
+                if (ladeZaehldatumBelastungsplan.containsKey(key)) {
+                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
+                                    "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                            key.getKnotenarm(),
+                            ladeZaehldatumBelastungsplan.get(key),
+                            value,
+                            zi);
+                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
+                            + key.getKnotenarm());
+                }
+
+                ladeZaehldatumBelastungsplan.put(key, value);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
+                            key.getKnotenarm(), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
+                }
+            } catch (Exception e) {
+                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
+                        zi, key != null ? key.getKnotenarm() : "null", e.getMessage(), e);
+                throw e;
+            }
+        }
+
+        return ladeZaehldatumBelastungsplan;
+    }
+
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
         return ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung())
                 && (ObjectUtils.isNotEmpty(zeitintervall.getVerkehrsbeziehung().getNach())
@@ -151,6 +218,11 @@ public final class MappingUtil {
     private static boolean isLaengsverkehrKnotenarm(final Zeitintervall zeitintervall) {
         return ObjectUtils.isNotEmpty(zeitintervall.getLaengsverkehr())
                 && ObjectUtils.isNotEmpty(zeitintervall.getLaengsverkehr().getKnotenarm());
+    }
+
+    private static boolean isQuerungsverkehrKnotenarm(final Zeitintervall zeitintervall) {
+        return ObjectUtils.isNotEmpty(zeitintervall.getQuerungsverkehr())
+                && ObjectUtils.isNotEmpty(zeitintervall.getQuerungsverkehr().getKnotenarm());
     }
 
 }
