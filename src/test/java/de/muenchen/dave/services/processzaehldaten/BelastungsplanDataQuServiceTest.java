@@ -1,5 +1,9 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -13,19 +17,14 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -63,14 +62,16 @@ public class BelastungsplanDataQuServiceTest {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQuService()
                 .buildBelastungsplanDataMap(zaehldatenJeQuerungsverkehr, zaehlung);
 
-        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValuesKnotenarme();
+        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+                .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeFuss);
         assertEquals(2, valuesKnotenarmeFuss.size());
 
         assertQuerungsverkehr(valuesKnotenarmeFuss, 2, Himmelsrichtung.O, 7);
         assertQuerungsverkehr(valuesKnotenarmeFuss, 4, Himmelsrichtung.O, 70);
 
-        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValuesKnotenarme();
+        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+                .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeRad);
         assertEquals(2, valuesKnotenarmeRad.size());
 

@@ -184,7 +184,7 @@ public final class MappingUtil {
                 // Konflikt-Behandlung
                 if (ladeZaehldatumBelastungsplan.containsKey(key)) {
                     log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
-                                    "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                            "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
                             key.getKnotenarm(),
                             ladeZaehldatumBelastungsplan.get(key),
                             value,
