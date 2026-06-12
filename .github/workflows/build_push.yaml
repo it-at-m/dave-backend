@@ -1,18 +1,18 @@
 name: build maven and image
 
 on:
-  pull_request:
-    branches:
-      - demotest # TODO: demo
+#  pull_request:
+#    branches:
+#      - demotest # TODO: demo
   push:
     branches:
-      - demotest # TODO: demo
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'What should the image be tagged as?'
-        required: false
-        default: 'demotest' # TODO: demo
+      - demotest
+#  workflow_dispatch:
+#    inputs:
+#      tag:
+#        description: 'What should the image be tagged as?'
+#        required: false
+#        default: 'demotest' # TODO: demo
 
 env:
   IMAGE_NAME: "dave-backend"
