@@ -1,0 +1,18 @@
+name: build2
+
+on: [push]
+
+jobs:
+  build-maven:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Build with Maven
+        id: maven
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "workflow_dispatch"
+          else
+            echo "push?"
+          fi
