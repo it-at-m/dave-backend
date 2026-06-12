@@ -16,6 +16,8 @@ on:
 
 env:
   IMAGE_NAME: "dave-backend"
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
 
 jobs:
   build-maven:
