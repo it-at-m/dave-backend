@@ -1,12 +1,15 @@
 name: build maven and image
 
 on:
+  push:
+    branches:
+      - demotest # TODO: demo
   workflow_dispatch:
     inputs:
       tag:
         description: 'What should the image be tagged as?'
         required: false
-        default: 'dev'
+        default: 'demotest' # TODO: demo
 
 env:
   IMAGE_NAME: "dave-backend"
@@ -39,6 +42,6 @@ jobs:
           registry-password: ${{ secrets.GITHUB_TOKEN }}
           image-tags: |
             # use tag from input only if triggered by workflow_dispatch
-            type=raw,value=${{ github.event.inputs.tag }},enable=${{ github.event_name == 'workflow_dispatch' }}
+            type=raw,value=${{ github.event.inputs.tag }},enable=true
           image-labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
