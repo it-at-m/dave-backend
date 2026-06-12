@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - demotest # TODO: demo
+  push:
+    branches:
+      - demotest # TODO: demo
   workflow_dispatch:
     inputs:
       tag:
