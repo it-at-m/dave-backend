@@ -60,6 +60,9 @@ public final class ZeitintervallSortingIndexUtil {
     /**
      * Summand zur Indexermittlung für {@link Zeitblock#ZB_19_24}.
      */
+    /**
+     * TODO: Da die Sortierindexkonstante "SORTING_INDEX_ZB_19_24" auch beim neuen Zeitblock ZB_19_22 Anwendung findet, ist die Konstante entsprechend umzubenennen.
+     */
     public static final int SORTING_INDEX_ZB_19_24 = 50000000;
 
     /**

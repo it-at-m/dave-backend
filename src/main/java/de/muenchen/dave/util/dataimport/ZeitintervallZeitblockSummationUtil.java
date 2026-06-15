@@ -77,6 +77,7 @@ public final class ZeitintervallZeitblockSummationUtil {
                      */
                     .filter(zeitblock -> shouldZeitblockBeCreated(zeitblock, startEndeUhrzeit))
                     // TODO: Info -> Hier findet die Summenbildung über die vorher ermittelten Zeitblöcke statt.
+                    // TODO: forEach durch peek ersetzen, .ifPresent(summen::add) entfernen und das Ergebnis direkt der Summierungen der variablen "summe" zuweisen.
                     .forEach(zeitblock -> getSumme(zaehlungId.get(), zeitblock, bewegungsbeziehung, zeitintervalleForBewegungsbeziehung)
                             .ifPresent(summen::add));
         }
