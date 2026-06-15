@@ -44,6 +44,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+/**
+ * TODO: FV-290 ->Neue Migration in einem neuen Migrationsklasse abgeleitet von BaseJavaMigration mit Namen "VXX__ZeitblockNeunzehnBisZweiundzwanzigUhr" oder ähnlich erforderlich.
+ *
+ *
+ *
+ *
+ */
 public class V12__FahrbeziehungToVerkehrsbeziehung extends BaseJavaMigration {
 
     private static final String SCRIPT_SOURCE_ZAEHLSTELLE_COPY_FAHRBEZIEHUNG_TO_VERKEHRSBEZIEHUNG_AND_REMOVE_FAHRBEZIEHUNGEN = "" +
