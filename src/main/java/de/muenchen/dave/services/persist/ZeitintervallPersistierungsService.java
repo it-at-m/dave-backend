@@ -134,7 +134,7 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    public void aufbereitenUndPersistierenWhenNumberOfZeitintervalleIsPlausible(
+    public void aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(
             final Zaehlung zaehlung,
             final int numberOfIntervalle) throws PlausibilityException {
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
