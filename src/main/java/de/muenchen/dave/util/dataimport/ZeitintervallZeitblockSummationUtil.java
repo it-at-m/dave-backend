@@ -149,7 +149,8 @@ public final class ZeitintervallZeitblockSummationUtil {
      *         an Stunden zwischen der Start- und Endeuhrzeit entspricht
      *         nicht dem Zeitblock, so wird false zurückgegeben. Andernfalls wird true zurückgegeben.
      */
-    private static boolean shouldZeitblockBeCreated(final Zeitblock zeitblock,
+    private static boolean shouldZeitblockBeCreated(
+            final Zeitblock zeitblock,
             final StartEndeUhrzeit startEndeUhrzeit) {
         return !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
                 || (startEndeUhrzeit.getStartUhrzeit().equals(zeitblock.getStart())

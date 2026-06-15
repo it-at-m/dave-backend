@@ -134,7 +134,9 @@ public class ZeitintervallPersistierungsService {
     }
 
     @Transactional
-    public void checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
+    public void aufbereitenUndPersistierenWhenNumberOfZeitintervalleIsPlausible(
+            final Zaehlung zaehlung,
+            final int numberOfIntervalle) throws PlausibilityException {
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
                 UUID.fromString(zaehlung.getId()),
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
