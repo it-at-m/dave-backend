@@ -39,6 +39,7 @@ public class ZeitauswahlService {
             optionsZeitauswahl = getZeitauswahlFor13h();
             break;
         case DAUER_16_STUNDEN:
+            // TODO: FV-290 Anpassen der Methode getZeitauswahlFor16h um neuen Zeitblock
             optionsZeitauswahl = getZeitauswahlFor16h(zaehlungId);
             break;
         case SONSTIGE:
@@ -95,8 +96,11 @@ public class ZeitauswahlService {
      * @return
      */
     private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
+        // TODO: FV-290 Ersetzen getZeitauswahlDtoByZeitintervalle durch Blockaufbau analog getZeitauswahlFor13h
         final ZeitauswahlDTO zeitauswahlDTO = getZeitauswahlDtoByZeitintervalle(id);
         zeitauswahlDTO.getBlocks().add(Zeitblock.ZB_06_22);
+
+        // TODO: FV-290 Setzen der Blöcke und Stunden analog getZeitauswahlFor13h
         return zeitauswahlDTO;
     }
 
@@ -141,6 +145,7 @@ public class ZeitauswahlService {
         case ZB_15_19:
             hours.addAll(getHoursOf15Bis19());
             break;
+        // TODO: FV-290  Case for ZB_19_22
         case ZB_19_24:
             hours.addAll(getHoursOf19Bis24());
             break;
@@ -189,6 +194,8 @@ public class ZeitauswahlService {
         hours.add(Zeitblock.ZB_18_19);
         return hours;
     }
+
+    // TODO: FV-290 erstellen get getHoursOf19Bis22()
 
     private Set<Zeitblock> getHoursOf19Bis24() {
         final Set<Zeitblock> hours = new TreeSet<>();

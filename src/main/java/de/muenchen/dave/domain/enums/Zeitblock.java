@@ -50,6 +50,8 @@ public enum Zeitblock implements Serializable {
             LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(19, 0)),
             TypeZeitintervall.BLOCK),
 
+    // TODO: FV-290 Einfügen neuen Zeitblock ZB_19_22.
+
     /**
      * 19:00 bis 24:00 Uhr
      */
