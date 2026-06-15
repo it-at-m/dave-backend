@@ -70,10 +70,8 @@ public final class ZeitintervallZeitblockSummationUtil {
                     /**
                      * TODO: Die Zeitblockermittlung soll nicht durch die Prüfungsmethode "shouldZeitblockBeCreated" gemacht werden.
                      * Im Zeitblock-Enum oder in einer Util-Klasse sind für den gewählten Zeitblock die
-                     * Unterzeitblocke (Blöcke (z.B. 06-10 Uhr, Stundenblöcke, Halbstundenblöcke)) mittels einer Methode zurückzugeben.
-                     * Dies sollte idealerweise jedoch nur für die mehrere Stunden umfassenden Zeitblöcke hart kodiert werden.
-                     * Die Stunden- und Halbstundenzeitblöcke können über eine Logik ermittelt werden.
-                     * Die Entscheidung ob komplette oder teilweise Hartkodierung oobliegt der Entwicklerin.
+                     * Unterzeitblocke (Blöcke (z.B. 06-10 Uhr, Stundenblöcke, Halbstundenblöcke)) mittels einer Methode zurückzugeben,
+                     * die auf Basis der Zähldauer die erforderlichen Zeitblöcke ermittelt.
                      */
                     .filter(zeitblock -> shouldZeitblockBeCreated(zeitblock, startEndeUhrzeit))
                     // TODO: Info -> Hier findet die Summenbildung über die vorher ermittelten Zeitblöcke statt.
