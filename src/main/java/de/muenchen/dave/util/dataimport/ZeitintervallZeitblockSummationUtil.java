@@ -67,7 +67,16 @@ public final class ZeitintervallZeitblockSummationUtil {
         List<Zeitintervall> summen = new ArrayList<>();
         if (zaehlungId.isPresent()) {
             Stream.of(Zeitblock.values())
+                    /**
+                     * TODO: Die Zeitblockermittlung soll nicht durch die Prüfungsmethode "shouldZeitblockBeCreated" gemacht werden.
+                     * Im Zeitblock-Enum oder in einer Util-Klasse sind für den gewählten Zeitblock die
+                     * Unterzeitblocke (Blöcke (z.B. 06-10 Uhr, Stundenblöcke, Halbstundenblöcke)) mittels einer Methode zurückzugeben.
+                     * Dies sollte idealerweise jedoch nur für die mehrere Stunden umfassenden Zeitblöcke hart kodiert werden.
+                     * Die Stunden- und Halbstundenzeitblöcke können über eine Logik ermittelt werden.
+                     * Die Entscheidung ob komplette oder teilweise Hartkodierung oobliegt der Entwicklerin.
+                     */
                     .filter(zeitblock -> shouldZeitblockBeCreated(zeitblock, startEndeUhrzeit))
+                    // TODO: Info -> Hier findet die Summenbildung über die vorher ermittelten Zeitblöcke statt.
                     .forEach(zeitblock -> getSumme(zaehlungId.get(), zeitblock, bewegungsbeziehung, zeitintervalleForBewegungsbeziehung)
                             .ifPresent(summen::add));
         }
@@ -128,6 +137,7 @@ public final class ZeitintervallZeitblockSummationUtil {
                 zeitintervallSumme.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexBlockSpezial());
             } else {
                 zeitintervallSumme.setSortingIndex(
+                        // TODO: Anpassung im Sortingindex erforderlich.
                         ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(zeitintervallSumme));
             }
             // Ermitteln der Start- und Endeuhrzeit aus Zeitintervallen des Zeitblocks
