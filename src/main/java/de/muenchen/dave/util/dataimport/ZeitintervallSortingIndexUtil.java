@@ -158,7 +158,8 @@ public final class ZeitintervallSortingIndexUtil {
             sortingIndex = SORTING_INDEX_ZB_15_19;
         } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24)) {
             /**
-             * TODO: Dieser Codebschnitt soll auch für den neuen Zeitblock ZB_19_22 ausgeführt werden.
+             * TODO: Dieser Codeabschnitt soll auch für den neuen Zeitblock ZB_19_22 ausgeführt werden.
+             * Der Grund ist, das in der Liste der Intervalle der Intevall für den Zeitblock ZB_19_22 an der selben Stelle steht wie der Intervall für den Zeitblcok ZB_19_24.
              */
             /**
              * TODO: Da die Sortierindexkonstante "SORTING_INDEX_ZB_19_24" auch beim neuen Zeitblock ZB_19_22 Anwendung findet, ist die Konstante entsprechend umzubenennen.
