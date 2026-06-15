@@ -1,9 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.domain.Laengsverkehr;
-import de.muenchen.dave.domain.Querungsverkehr;
-import de.muenchen.dave.domain.Verkehrsbeziehung;
-import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.*;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -118,12 +115,7 @@ public final class MappingUtil {
                         isTageswert, roundedZaehldatum);
 
                 if (ladeZaehldatumBelastungsplan.containsKey(key)) {
-                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
-                            "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
-                            key.getKnotenarm(),
-                            ladeZaehldatumBelastungsplan.get(key),
-                            value,
-                            zi);
+                    logDoppelteBewegungsbeziehung(key.getKnotenarm(), ladeZaehldatumBelastungsplan.get(key), value, zi);
                     throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
                             + key.getKnotenarm());
                 }
@@ -183,12 +175,7 @@ public final class MappingUtil {
 
                 // Konflikt-Behandlung
                 if (ladeZaehldatumBelastungsplan.containsKey(key)) {
-                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
-                            "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
-                            key.getKnotenarm(),
-                            ladeZaehldatumBelastungsplan.get(key),
-                            value,
-                            zi);
+                    logDoppelteBewegungsbeziehung(key.getKnotenarm(), ladeZaehldatumBelastungsplan.get(key), value, zi);
                     throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
                             + key.getKnotenarm());
                 }
@@ -207,6 +194,15 @@ public final class MappingUtil {
         }
 
         return ladeZaehldatumBelastungsplan;
+    }
+
+    private static void logDoppelteBewegungsbeziehung(Integer knotenarm, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum existingValue, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum newValue, Zeitintervall zi) {
+        log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
+                        "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                knotenarm,
+                existingValue,
+                newValue,
+                zi);
     }
 
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
