@@ -102,11 +102,7 @@ public class ZeitauswahlService {
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_10_15);
         blocks.add(Zeitblock.ZB_15_19);
-        /**
-         * Verwenden des Zeitblocks ZB_19_24, da die Berechnung der Blocksumme und Spitzenstunde
-         * des Zeitraums von 19 - 22 Uhr mit genau dem Zeitblock ZB_19_24 durchgeführt wird.
-         */
-        blocks.add(Zeitblock.ZB_19_24);
+        blocks.add(Zeitblock.ZB_19_22);
         blocks.add(Zeitblock.ZB_06_22);
 
         final Set<Zeitblock> hours = new TreeSet<>();
@@ -158,6 +154,9 @@ public class ZeitauswahlService {
         case ZB_15_19:
             hours.addAll(getHoursOf15Bis19());
             break;
+        case ZB_19_22:
+            hours.addAll(getHoursOf19Bis22());
+            break;
         case ZB_19_24:
             hours.addAll(getHoursOf19Bis24());
             break;
@@ -204,6 +203,14 @@ public class ZeitauswahlService {
         hours.add(Zeitblock.ZB_16_17);
         hours.add(Zeitblock.ZB_17_18);
         hours.add(Zeitblock.ZB_18_19);
+        return hours;
+    }
+
+    private Set<Zeitblock> getHoursOf19Bis22() {
+        final Set<Zeitblock> hours = new TreeSet<>();
+        hours.add(Zeitblock.ZB_19_20);
+        hours.add(Zeitblock.ZB_20_21);
+        hours.add(Zeitblock.ZB_21_22);
         return hours;
     }
 
