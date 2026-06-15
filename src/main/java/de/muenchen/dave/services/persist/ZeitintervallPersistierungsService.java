@@ -133,6 +133,7 @@ public class ZeitintervallPersistierungsService {
         zeitintervallRepository.saveAllAndFlush(toPersist);
     }
 
+    // TODO: Umbennnen der Methode, da hier keine Prüfung durchgeführt wird. Es wird die aufbereitung (Aggregation und Summation über Blöcke) der beim Hochladen bereits gespeicherten Intervalle gemacht.
     @Transactional
     public void checkZeitintervalleIfPlausible(final Zaehlung zaehlung, final int numberOfIntervalle) throws PlausibilityException {
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
