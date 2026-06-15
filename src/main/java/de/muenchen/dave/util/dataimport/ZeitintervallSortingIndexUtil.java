@@ -122,6 +122,7 @@ public final class ZeitintervallSortingIndexUtil {
      * @return 0 falls der Zeitintervall nicht in einem {@link Zeitblock} vorkommt, ansonsten der
      *         Indexwert.
      */
+    // TODO: Anpassung bezüglich Ermittlung des Sortierindex.
     public static int getSortingIndexWithinBlock(final Zeitintervall zeitintervall) {
         int sortingIndex = 0;
 
@@ -129,6 +130,7 @@ public final class ZeitintervallSortingIndexUtil {
                 || zeitintervall.getType().equals(TypeZeitintervall.STUNDE_HALB)
                 || zeitintervall.getType().equals(TypeZeitintervall.STUNDE_VIERTEL)
                 || zeitintervall.getType().equals(TypeZeitintervall.BLOCK)) {
+            // TODO: Anpassung in getFirstStepSortingIndex
             sortingIndex += getFirstStepSortingIndex(zeitintervall);
             sortingIndex += getSecondStepSortingIndex(zeitintervall);
             sortingIndex += getThirdAndFourthStepSortingIndex(zeitintervall);
@@ -155,6 +157,12 @@ public final class ZeitintervallSortingIndexUtil {
         } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_15_19)) {
             sortingIndex = SORTING_INDEX_ZB_15_19;
         } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24)) {
+            /**
+             * TODO: Dieser Codebschnitt soll auch für den neuen Zeitblock ZB_19_22 ausgeführt werden.
+             */
+            /**
+             * TODO: Da die Sortierindexkonstante "SORTING_INDEX_ZB_19_24" auch beim neuen Zeitblock ZB_19_22 Anwendung findet, ist die Konstante entsprechend umzubenennen.
+             */
             sortingIndex = SORTING_INDEX_ZB_19_24;
         }
         return sortingIndex;
