@@ -11,7 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -135,7 +134,8 @@ public final class MappingUtil {
             final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
             final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
 
-            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(isTageswert, roundedZaehldatum);
+            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
+                    isTageswert, roundedZaehldatum);
 
             // Konfliktbehandlung
             if (ladeZaehldatumBelastungsplan.containsKey(key)) {
@@ -144,7 +144,7 @@ public final class MappingUtil {
                     throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key=" + key);
                 } else {
                     log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
-                                    "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                            "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
                             knotenarmExtractor.apply(key), ladeZaehldatumBelastungsplan.get(key), value, zi);
                     throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
                             + knotenarmExtractor.apply(key));
@@ -156,10 +156,10 @@ public final class MappingUtil {
             if (log.isDebugEnabled()) {
                 if (key instanceof Verkehrsbeziehung) {
                     log.debug("Mapping Zeitintervall -> key={}, isTageswert={}, zaehldatum={}, roundedZaehldatum={}",
-                    key, isTageswert, mappedZaehldatum, roundedZaehldatum);
+                            key, isTageswert, mappedZaehldatum, roundedZaehldatum);
                 } else {
                     log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
-                        knotenarmExtractor.apply(key), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
+                            knotenarmExtractor.apply(key), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
 
                 }
             }
@@ -169,7 +169,7 @@ public final class MappingUtil {
                         zi, key, e.getMessage(), e);
             } else {
                 log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
-                    zi, key != null ? knotenarmExtractor.apply(key) : "null", e.getMessage(), e);
+                        zi, key != null ? knotenarmExtractor.apply(key) : "null", e.getMessage(), e);
             }
             throw e;
         }
