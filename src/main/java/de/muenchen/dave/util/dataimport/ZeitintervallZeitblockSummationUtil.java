@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,32 +29,38 @@ public final class ZeitintervallZeitblockSummationUtil {
 
     /**
      * In dieser Methode werden die {@link Zeitintervall}e je {@link Bewegungsbeziehung} über die
-     * {@link Zeitblock}e summiert.
+     * {@link Zeitblock}e der gegebenen {@link Zaehldauer} summiert.
      *
+     * @param zaehldauer auf Basis deren die Zeitblöcke zur Summierung ermittelt werden.
      * @param zeitintervalle Die zur Summierung vorgesehenen Zeitintervalle.
      * @return Die Summen je {@link Bewegungsbeziehung} und je {@link Zeitblock}.
      */
-    public static List<Zeitintervall> getSummen(final List<Zeitintervall> zeitintervalle) {
+    public static List<Zeitintervall> getSummen(
+            final Zaehldauer zaehldauer,
+            final List<Zeitintervall> zeitintervalle) {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
         final Set<Bewegungsbeziehung> possibleBewegungsbeziehungen = ZeitintervallBaseUtil.getAllPossibleBewegungsbeziehungen(zeitintervalle);
-        final List<Zeitintervall> blockSummen = new ArrayList<>();
-        possibleBewegungsbeziehungen
-                .forEach(bewegungsbeziehung -> blockSummen.addAll(getSummenForBewegungsbeziehung(bewegungsbeziehung, zeitintervalleGroupedByIntervall)));
-        return blockSummen;
+        return possibleBewegungsbeziehungen
+                .stream()
+                .flatMap(bewegungsbeziehung -> getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer(zaehldauer, bewegungsbeziehung,
+                        zeitintervalleGroupedByIntervall).stream())
+                .toList();
     }
 
     /**
      * Summierung der {@link Zeitintervall}e der {@link Bewegungsbeziehung} über alle
-     * {@link Zeitblock}e.
+     * {@link Zeitblock}e der gegebenen {@link Zaehldauer}.
      *
+     * @param zaehldauer auf Basis deren die Zeitblöcke zur Summierung ermittelt werden.
      * @param bewegungsbeziehung Die für die Summierung relevante {@link Bewegungsbeziehung}.
      * @param zeitintervalleGroupedByIntervall Die Zeitintervalle gruppiert nach den einzelnen
      *            Intervallen.
      * @return Die Summen je {@link Zeitblock} für die im Parameter übergebene
      *         {@link Bewegungsbeziehung}.
      */
-    static List<Zeitintervall> getSummenForBewegungsbeziehung(
+    static List<Zeitintervall> getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer(
+            final Zaehldauer zaehldauer,
             final Bewegungsbeziehung bewegungsbeziehung,
             final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall) {
         final List<Zeitintervall> zeitintervalleForBewegungsbeziehung = ZeitintervallBaseUtil.getZeitintervalleForBewegungsbeziehung(
@@ -63,13 +69,15 @@ public final class ZeitintervallZeitblockSummationUtil {
         final Optional<UUID> zaehlungId = zeitintervalleForBewegungsbeziehung.stream()
                 .map(Zeitintervall::getZaehlungId)
                 .findFirst();
-        final StartEndeUhrzeit startEndeUhrzeit = getStartAndEndeuhrzeit(zeitintervalleForBewegungsbeziehung);
         List<Zeitintervall> summen = new ArrayList<>();
         if (zaehlungId.isPresent()) {
-            Stream.of(Zeitblock.values())
-                    .filter(zeitblock -> shouldZeitblockBeCreated(zeitblock, startEndeUhrzeit))
-                    .forEach(zeitblock -> getSumme(zaehlungId.get(), zeitblock, bewegungsbeziehung, zeitintervalleForBewegungsbeziehung)
-                            .ifPresent(summen::add));
+            summen = zaehldauer
+                    .getZeitbloecke()
+                    .stream()
+                    .map(zeitblock -> getSumme(zaehlungId.get(), zeitblock, bewegungsbeziehung, zeitintervalleForBewegungsbeziehung))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
         }
         return summen;
     }
@@ -137,24 +145,6 @@ public final class ZeitintervallZeitblockSummationUtil {
             summeOptional = Optional.of(zeitintervallSumme);
         }
         return summeOptional;
-    }
-
-    /**
-     * Mit dieser Methode wird speziell auf eine Erstellung der Zeitblöcke {@link Zeitblock#ZB_06_19}
-     * und {@link Zeitblock#ZB_06_22} geprüft.
-     *
-     * @param zeitblock zur Prüfung.
-     * @param startEndeUhrzeit zur Prüfung.
-     * @return Handelt es sich im Parameter zeitblock um einen dieser beiden Zeitblöcke und die Anzahl
-     *         an Stunden zwischen der Start- und Endeuhrzeit entspricht
-     *         nicht dem Zeitblock, so wird false zurückgegeben. Andernfalls wird true zurückgegeben.
-     */
-    private static boolean shouldZeitblockBeCreated(
-            final Zeitblock zeitblock,
-            final StartEndeUhrzeit startEndeUhrzeit) {
-        return !zeitblock.getTypeZeitintervall().equals(TypeZeitintervall.BLOCK_SPEZIAL)
-                || (startEndeUhrzeit.getStartUhrzeit().equals(zeitblock.getStart())
-                        && startEndeUhrzeit.getEndeUhrzeit().equals(zeitblock.getEnd()));
     }
 
     /**

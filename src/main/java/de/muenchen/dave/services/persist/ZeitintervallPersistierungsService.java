@@ -64,7 +64,10 @@ public class ZeitintervallPersistierungsService {
      *            Persistierung.
      * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
      */
-    public void aufbereitenUndPersistieren(final List<Zeitintervall> zeitintervalle, final boolean kiAufbereitung) {
+    public void aufbereitenUndPersistieren(
+            final Zaehldauer zaehldauer,
+            final List<Zeitintervall> zeitintervalle,
+            final boolean kiAufbereitung) {
 
         /*
          * - Die im Parameter übergebenen Zeitintervalle werden überprüft,
@@ -87,7 +90,7 @@ public class ZeitintervallPersistierungsService {
          * - Bildung der Summen für die einzelnen {@link Zeitblock}e für die übergebenen Zeitintervalle.
          */
         final var summierteZeitbloecke = ZeitintervallZeitblockSummationUtil
-                .getSummen(byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
+                .getSummen(zaehldauer, byTimeAndTypeAndSortingIndexAdaptedZeitintervalle);
 
         /*
          * Für die im Parameter übergebenen Zeitintervalle werden die KI-Tagessummen ermittelt,
@@ -145,7 +148,8 @@ public class ZeitintervallPersistierungsService {
             final var kiAufbereitungNecessary = List
                     .of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
                     .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
-            aufbereitenUndPersistieren(zeitintervalle, kiAufbereitungNecessary);
+            final var zaehldauer = Zaehldauer.valueOf(zaehlung.getZaehldauer());
+            aufbereitenUndPersistieren(zaehldauer, zeitintervalle, kiAufbereitungNecessary);
         } else {
             throw new PlausibilityException("Die Anzahl der übermittelten Zeitintervalle stimmt nicht mit den erwarteten überein");
         }

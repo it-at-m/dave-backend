@@ -19,7 +19,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -28,7 +27,6 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +45,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     private final PkwEinheitMapper pkwEinheitMapper;
 
     private final PkwEinheitRepository pkwEinheitRepository;
-
-    @Value(value = "${dave.radius.distance-check-meter}")
-    private int radiusDistanceCheck;
 
     public InternalZaehlungPersistierungsService(
             final ZaehlstelleIndexService indexService,
@@ -116,65 +110,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
                     zaehlungDto,
                     zaehlstelleId);
         }
-
-        // Rückgabe der ZaehlungsId
-        final var backendIdDto = new BackendIdDTO();
-        backendIdDto.setId(zaehlung.getId());
-        return backendIdDto;
-    }
-
-    /**
-     * In der Methode wird die Zaehlung im Elasticsearch-Server und es werden die Zeitintervalle in der
-     * relationalen Datenbank gespeichert.
-     *
-     * @param zaehlungDto die Zaehlung zum speichern.
-     * @param zaehlstelleId die Id der dazugehörigen Zählstelle
-     * @return die Id der gespeicherten Zaehlung.
-     * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException Beim Schreiben/Laden in/aus den/dem Index
-     */
-    @Transactional
-    public BackendIdDTO saveZaehlungWithZeitintervalle(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
-            throws BrokenInfrastructureException, DataNotFoundException {
-
-        // Setzen der PKW-Einheiten
-        if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
-            this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
-        }
-
-        final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelle(zaehlstelleId);
-
-        // Zaehlung persitieren - ohne Suggestions
-        final Zaehlung zaehlung = this.indexService.erstelleZaehlung(
-                zaehlungDto,
-                zaehlstelleId);
-
-        // Koordinate prüfen.
-        final var coordinate = this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(
-                this.radiusDistanceCheck,
-                zaehlstelle,
-                zaehlung);
-        zaehlung.setPunkt(coordinate);
-
-        // Zeitintervalle persistieren
-        final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        final List<BearbeiteBewegungsbeziehungDTO> bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
-
-        bewegungsbeziehungen.forEach(bewegungsbeziehung -> {
-            bewegungsbeziehung.getZeitintervalle().stream()
-                    .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
-                    .forEach(zeitintervalleToPersist::add);
-        });
-
-        this.zeitintervallPersistierungsService.aufbereitenUndPersistieren(zeitintervalleToPersist,
-                List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                        .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
-
-        // Fahrzeugkategorien und -klassen setzen
-        zaehlung.setKategorien(this.getFahrzeugKategorienAndFahrzeugklassen(zeitintervalleToPersist));
-
-        this.indexService.erneuereZaehlung(zaehlung, zaehlstelle.getId());
 
         // Rückgabe der ZaehlungsId
         final var backendIdDto = new BackendIdDTO();
