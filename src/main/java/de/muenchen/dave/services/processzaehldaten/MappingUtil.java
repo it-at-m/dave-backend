@@ -10,6 +10,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -49,31 +51,7 @@ public final class MappingUtil {
             if (!isVerkehrsbeziehungNachOrKreisverkehrSet(zeitintervall)) {
                 continue;
             }
-
-            // Schlüssel bestimmen
-            final Verkehrsbeziehung key = zeitintervall.getVerkehrsbeziehung();
-
-            // Zwischenergebnisse in lokalen Variablen
-            final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options);
-            final LadeZaehldatumDTO zaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options);
-            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(
-                    zaehldatum,
-                    VALUE_TO_ROUND,
-                    options);
-
-            log.debug("Mapping Zeitintervall -> key={}, isTageswert={}, zaehldatum={}, roundedZaehldatum={}",
-                    key, isTageswert, zaehldatum, roundedZaehldatum);
-
-            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
-                    isTageswert, roundedZaehldatum);
-
-            // Konflikt-Behandlung
-            if (ladeZaehldatumBelastungsplan.containsKey(key)) {
-                log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key={}", key);
-                throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key=" + key);
-            }
-
-            ladeZaehldatumBelastungsplan.put(key, value);
+            calculateZaehldatum(zeitintervall, options, zaehlung, ladeZaehldatumBelastungsplan, Zeitintervall::getVerkehrsbeziehung, null);
         }
         return ladeZaehldatumBelastungsplan;
     }
@@ -105,32 +83,7 @@ public final class MappingUtil {
         final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
         for (Zeitintervall zi : laengsverkehrIntervalle) {
-            final Laengsverkehr key = zi.getLaengsverkehr();
-            try {
-                final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
-                final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
-                final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
-
-                final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
-                        isTageswert, roundedZaehldatum);
-
-                if (ladeZaehldatumBelastungsplan.containsKey(key)) {
-                    logDoppelteBewegungsbeziehung(key.getKnotenarm(), ladeZaehldatumBelastungsplan.get(key), value, zi);
-                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
-                            + key.getKnotenarm());
-                }
-
-                ladeZaehldatumBelastungsplan.put(key, value);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
-                            key.getKnotenarm(), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
-                }
-            } catch (Exception e) {
-                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
-                        zi, key != null ? key.getKnotenarm() : "null", e.getMessage(), e);
-                throw e;
-            }
+            calculateZaehldatum(zi, options, zaehlung, ladeZaehldatumBelastungsplan, Zeitintervall::getLaengsverkehr, Laengsverkehr::getKnotenarm);
         }
         return ladeZaehldatumBelastungsplan;
     }
@@ -162,47 +115,64 @@ public final class MappingUtil {
         final Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
         for (Zeitintervall zi : querungsverkehrIntervalle) {
-            // Schlüssel bestimmen
-            final Querungsverkehr key = zi.getQuerungsverkehr();
-            try {
-                // Zwischenergebnisse in lokalen Variablen
-                final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
-                final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
-                final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
-
-                final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
-                        isTageswert, roundedZaehldatum);
-
-                // Konflikt-Behandlung
-                if (ladeZaehldatumBelastungsplan.containsKey(key)) {
-                    logDoppelteBewegungsbeziehung(key.getKnotenarm(), ladeZaehldatumBelastungsplan.get(key), value, zi);
-                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
-                            + key.getKnotenarm());
-                }
-
-                ladeZaehldatumBelastungsplan.put(key, value);
-
-                if (log.isDebugEnabled()) {
-                    log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
-                            key.getKnotenarm(), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
-                }
-            } catch (Exception e) {
-                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
-                        zi, key != null ? key.getKnotenarm() : "null", e.getMessage(), e);
-                throw e;
-            }
+            calculateZaehldatum(zi, options, zaehlung, ladeZaehldatumBelastungsplan, Zeitintervall::getQuerungsverkehr, Querungsverkehr::getKnotenarm);
         }
-
         return ladeZaehldatumBelastungsplan;
     }
 
-    private static void logDoppelteBewegungsbeziehung(Integer knotenarm, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum existingValue, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum newValue, Zeitintervall zi) {
-        log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
-                        "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
-                knotenarm,
-                existingValue,
-                newValue,
-                zi);
+    private static <T extends Bewegungsbeziehung> void calculateZaehldatum(
+            Zeitintervall zi,
+            OptionsDTO options,
+            Zaehlung zaehlung,
+            Map<T, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan,
+            Function<Zeitintervall, T> keyExtractor,
+            Function<T, Integer> knotenarmExtractor) {
+        // Schlüssel bestimmen
+        final T key = keyExtractor.apply(zi);
+        try {
+            // Zwischenergebnisse in lokalen Variablen
+            final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
+            final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
+            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
+
+            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(isTageswert, roundedZaehldatum);
+
+            // Konfliktbehandlung
+            if (ladeZaehldatumBelastungsplan.containsKey(key)) {
+                if (key instanceof Verkehrsbeziehung) {
+                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key={}", key);
+                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehung für key=" + key);
+                } else {
+                    log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm {}. " +
+                                    "Existierender Wert: {}, neuer Wert: {}, verursachendes Zeitintervall: {}",
+                            knotenarmExtractor.apply(key), ladeZaehldatumBelastungsplan.get(key), value, zi);
+                    throw new IllegalStateException("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen für Knotenarm "
+                            + knotenarmExtractor.apply(key));
+                }
+            }
+
+            ladeZaehldatumBelastungsplan.put(key, value);
+
+            if (log.isDebugEnabled()) {
+                if (key instanceof Verkehrsbeziehung) {
+                    log.debug("Mapping Zeitintervall -> key={}, isTageswert={}, zaehldatum={}, roundedZaehldatum={}",
+                    key, isTageswert, mappedZaehldatum, roundedZaehldatum);
+                } else {
+                    log.debug("Zuordnung: Knotenarm={}, isTageswert={}, zaehldatum(original)={}, zaehldatum(gerundet)={}, zeitintervall={}",
+                        knotenarmExtractor.apply(key), isTageswert, mappedZaehldatum, roundedZaehldatum, zi);
+
+                }
+            }
+        } catch (Exception e) {
+            if (key instanceof Verkehrsbeziehung) {
+                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Key={}): {}",
+                        zi, key, e.getMessage(), e);
+            } else {
+                log.error("Fehler beim Verarbeiten des Zeitintervalls {} (Knotenarm={}): {}",
+                    zi, key != null ? knotenarmExtractor.apply(key) : "null", e.getMessage(), e);
+            }
+            throw e;
+        }
     }
 
     private static boolean isVerkehrsbeziehungNachOrKreisverkehrSet(final Zeitintervall zeitintervall) {
