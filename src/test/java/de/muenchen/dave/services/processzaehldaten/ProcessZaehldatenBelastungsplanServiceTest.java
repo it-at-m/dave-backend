@@ -548,7 +548,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
             gleitende.add(g);
 
             utilMock.when(
-                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()))
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(eq(zaehlungId), any(), any(),
+                            any(), any()))
                     .thenReturn(gleitende);
 
             final List<Zeitintervall> result = service.extractZeitintervalleSpitzenstunde(zaehlung, options);
@@ -559,7 +560,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
             assertEquals(99, result.getFirst().getPkw());
 
             utilMock.verify(
-                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenByBewegungsbeziehung(eq(zaehlungId), any(), any(), any(), any()),
+                    () -> ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(eq(zaehlungId), any(), any(),
+                            any(), any()),
                     times(1));
             verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), eq(Boolean.FALSE),
                     any(OptionsDTO.class));
