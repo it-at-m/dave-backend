@@ -293,6 +293,7 @@ public final class ZeitintervallZeitblockSummationUtil {
                 Zeitblock.ZB_15_19,
                 Zeitblock.ZB_19_22,
                 Zeitblock.ZB_06_22,
+                // Für Tageswertermittlung
                 Zeitblock.ZB_00_24);
 
         final var hours = Stream.of(
@@ -359,6 +360,7 @@ public final class ZeitintervallZeitblockSummationUtil {
                 Zeitblock.ZB_10_15,
                 Zeitblock.ZB_15_19,
                 Zeitblock.ZB_06_19,
+                // Für Tageswertermittlung
                 Zeitblock.ZB_00_24);
 
         final var hours = Stream.of(
@@ -414,6 +416,7 @@ public final class ZeitintervallZeitblockSummationUtil {
         final var bloecke = Stream.of(
                 Zeitblock.ZB_06_10,
                 Zeitblock.ZB_15_19,
+                // Für Tageswertermittlung
                 Zeitblock.ZB_00_24);
 
         final var hours = Stream.of(
