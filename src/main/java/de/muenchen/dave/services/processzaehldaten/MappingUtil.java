@@ -119,6 +119,21 @@ public final class MappingUtil {
         return ladeZaehldatumBelastungsplan;
     }
 
+    /**
+     * Berechnet für ein {@link Zeitintervall} das zugehörige {@link LadeZaehldatumDTO} und fügt es
+     * unter der aus dem Zeitintervall extrahierten {@link Bewegungsbeziehung} in die übergebene Map ein.
+     * <p>
+     * Bereits vorhandene Einträge für dieselbe Bewegungsbeziehung führen zu einer {@link IllegalStateException}.
+     *
+     * @param zi Das zu verarbeitende {@link Zeitintervall}.
+     * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
+     * @param zaehlung Die Zählung, deren Einheit für die Umwandlung der Zeitintervalle verwendet wird.
+     * @param ladeZaehldatumBelastungsplan Die zu befüllende Map von {@link Bewegungsbeziehung} auf
+     *        {@link de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     * @param keyExtractor Funktion zur Ermittlung der Bewegungsbeziehung aus dem Zeitintervall.
+     * @param knotenarmExtractor Funktion zur Ermittlung des Knotenarms aus der {@link Bewegungsbeziehung} bei
+     *        {@link Laengsverkehr} und {@link Querungsverkehr}.
+     */
     private static <T extends Bewegungsbeziehung> void calculateZaehldatum(
             Zeitintervall zi,
             OptionsDTO options,
