@@ -60,6 +60,7 @@ public class ZeitintervallPersistierungsService {
      * {@link Zeitintervall} als {@link TypeZeitintervall#GESAMT_KI} ermittelt
      * und zusätzlich mit den anderen Zeitintervallen persistiert.
      *
+     * @param zaehldauer für Bildung der Summen der einzelnen {@link Zeitblock}e.
      * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
      *            Persistierung.
      * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
