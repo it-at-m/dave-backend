@@ -134,8 +134,8 @@ public final class MappingUtil {
      *            {@link de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
      * @param keyExtractor Funktion zur Ermittlung der Bewegungsbeziehung aus dem Zeitintervall.
      * @param knotenarmExtractor Funktion zur Ermittlung des Knotenarms aus der
-     *             {@link Bewegungsbeziehung} bei
-     *             {@link Laengsverkehr} und {@link Querungsverkehr}.
+     *            {@link Bewegungsbeziehung} bei
+     *            {@link Laengsverkehr} und {@link Querungsverkehr}.
      */
     private static <T extends Bewegungsbeziehung> void calculateZaehldatum(
             Zeitintervall zi,
