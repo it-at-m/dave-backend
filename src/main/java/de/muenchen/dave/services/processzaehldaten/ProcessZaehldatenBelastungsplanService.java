@@ -131,21 +131,17 @@ public class ProcessZaehldatenBelastungsplanService {
         // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-        if (Zaehlart.QU.equals(zaehlart)) {
-            return new LadeBelastungsplanDTO(); // TODO
-        } else {
-            if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
-                    && options.getVergleichszaehlungsId() != null) {
-                if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
-                    throw new UnsupportedOperationException("Differenzdatenvergleich nicht implementiert für Zählarten QJS, FJS und QU");
-                }
-                // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
-                findByZaehlungenId(options.getVergleichszaehlungsId());
-                log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
-                return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
-            } else {
-                return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+        if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
+                && options.getVergleichszaehlungsId() != null) {
+            if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+                throw new UnsupportedOperationException("Differenzdatenvergleich nicht implementiert für Zählarten QJS, FJS und QU");
             }
+            // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
+            findByZaehlungenId(options.getVergleichszaehlungsId());
+            log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
+            return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
+        } else {
+            return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
         }
     }
 

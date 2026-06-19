@@ -18,13 +18,7 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
+import de.muenchen.dave.domain.dtos.laden.*;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
@@ -83,7 +77,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @BeforeAll
     public static void beforeAll() {
         factory = new BelastungsplanDataServiceFactory(new BelastungsplanDataDefaultService(), new BelastungsplanDataQjsService(),
-                new BelastungsplanDataFjsService());
+                new BelastungsplanDataFjsService(), new BelastungsplanDataQuService());
     }
 
     @BeforeEach
@@ -251,6 +245,33 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     }
 
     /**
+     * Testet, ob die FUSS-Zähldaten allein bei Qu hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQu() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QU.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.QU,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("FUSS", ((BelastungsplanQuDataDTO) dto.getValue1()).getLabel());
+    }
+
+    /**
      * Testet, ob die RAD-Zähldaten bei QJS hierarchisch richtig eingeordnet werden.
      */
     @Test
@@ -304,6 +325,34 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         assertEquals("RAD", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
         assertTrue((((BelastungsplanFjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
+    }
+
+    /**
+     * Testet, ob die RAD-Zähldaten bei Qu hierarchisch richtig eingeordnet werden.
+     */
+    @Test
+    public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQu() throws DataNotFoundException {
+        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        zaehlung.setZaehlart(Zaehlart.QU.name());
+        zaehlstelle.setZaehlungen(List.of(zaehlung));
+        when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
+        when(ladeZaehldatenService.extractZeitintervalle(
+                UUID.fromString(zaehlung.getId()),
+                Zaehlart.QU,
+                options.getZeitblock().getStart(),
+                options.getZeitblock().getEnd(),
+                options,
+                false,
+                Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
+                .thenReturn(List.of(
+                        createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
+
+        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+
+        assertEquals("RAD", ((BelastungsplanQuDataDTO) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanQuDataDTO) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
