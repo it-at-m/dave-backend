@@ -5,6 +5,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
@@ -12,15 +15,10 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
-import de.muenchen.dave.domain.enums.TagesTyp;
-import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
@@ -136,6 +134,88 @@ class FillPdfBeanServiceTest {
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("10 - 11 Uhr"));
         optionsDTO.setZeitblock(Zeitblock.ZB_00_24);
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("0 - 24 Uhr"));
+    }
+
+    @Test
+    void getSchematischeUebersichtNeeded() {
+        final Zaehlung zaehlung = new Zaehlung();
+        final OptionsDTO optionsDTO = new OptionsDTO();
+
+        // Standardzählung
+        zaehlung.setZaehlart("N");
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
+        optionsDTO.setVonKnotenarm(1);
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
+        optionsDTO.setNachKnotenarm(2);
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
+
+        // QJS
+        zaehlung.setZaehlart("QJS");
+        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        vb1.setVon(2);
+        vb1.setNach(4);
+        vb1.setStrassenseite(Himmelsrichtung.N);
+        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        vb2.setVon(2);
+        vb2.setNach(4);
+        vb2.setStrassenseite(Himmelsrichtung.S);
+        zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+        final OptionsVerkehrsbeziehungDTO ovb1 = new OptionsVerkehrsbeziehungDTO();
+        ovb1.setVon(2);
+        ovb1.setNach(4);
+        ovb1.setStrassenseite(Himmelsrichtung.N);
+        optionsDTO.setChosenVerkehrsbeziehungen(List.of(ovb1));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
+        final OptionsVerkehrsbeziehungDTO ovb2 = new OptionsVerkehrsbeziehungDTO();
+        ovb2.setVon(2);
+        ovb2.setNach(4);
+        ovb2.setStrassenseite(Himmelsrichtung.S);
+        optionsDTO.setChosenVerkehrsbeziehungen(List.of(ovb1, ovb2));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
+
+        // FJS
+        zaehlung.setZaehlart("FJS");
+        final Laengsverkehr lv1 = new Laengsverkehr();
+        lv1.setKnotenarm(1);
+        lv1.setStrassenseite(Himmelsrichtung.W);
+        lv1.setRichtung(Bewegungsrichtung.EIN);
+        final Laengsverkehr lv2 = new Laengsverkehr();
+        lv2.setKnotenarm(1);
+        lv2.setStrassenseite(Himmelsrichtung.O);
+        lv2.setRichtung(Bewegungsrichtung.EIN);
+        zaehlung.setLaengsverkehr(List.of(lv1, lv2));
+        final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
+        olv1.setKnotenarm(1);
+        olv1.setStrassenseite(Himmelsrichtung.W);
+        olv1.setRichtung(Bewegungsrichtung.EIN);
+        optionsDTO.setChosenLaengsverkehre(List.of(olv1));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
+        final OptionsLaengsverkehrDTO olv2 = new OptionsLaengsverkehrDTO();
+        olv2.setKnotenarm(1);
+        olv2.setStrassenseite(Himmelsrichtung.O);
+        olv2.setRichtung(Bewegungsrichtung.EIN);
+        optionsDTO.setChosenLaengsverkehre(List.of(olv1, olv2));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
+
+        // QU
+        zaehlung.setZaehlart("QU");
+        final Querungsverkehr qv1 = new Querungsverkehr();
+        qv1.setKnotenarm(2);
+        qv1.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr qv2 = new Querungsverkehr();
+        qv2.setKnotenarm(2);
+        qv2.setRichtung(Himmelsrichtung.S);
+        zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
+        oqv1.setKnotenarm(2);
+        oqv1.setRichtung(Himmelsrichtung.N);
+        optionsDTO.setChosenQuerungsverkehre(List.of(oqv1));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
+        final OptionsQuerungsverkehrDTO oqv2 = new OptionsQuerungsverkehrDTO();
+        oqv2.setKnotenarm(2);
+        oqv2.setRichtung(Himmelsrichtung.S);
+        optionsDTO.setChosenQuerungsverkehre(List.of(oqv1, oqv2));
+        assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
     }
 
     // Messstelle

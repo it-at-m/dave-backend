@@ -480,7 +480,22 @@ public class FillPdfBeanService {
 
     }
 
-    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO) {
+    /**
+     * Überprüft, ob die schematische Übersicht beim Export dargestellt werden soll.
+     *
+     * @param optionsDTO Options aus dem Frontend
+     * @param zaehlung Die zu exportierende {@link Zaehlung}
+     * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt sind.
+     */
+    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final Zaehlung zaehlung) {
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart)) {
+            return optionsDTO.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size();
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+            return optionsDTO.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size();
+        } else if (Zaehlart.QU.equals(zaehlart)) {
+            return optionsDTO.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size();
+        }
         return optionsDTO.getVonKnotenarm() != null || optionsDTO.getNachKnotenarm() != null;
     }
 
@@ -723,7 +738,7 @@ public class FillPdfBeanService {
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
-        gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
+        gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
@@ -1099,7 +1114,7 @@ public class FillPdfBeanService {
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
 
-        datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
+        datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.getDatentabellePdfZaehldaten(options, zaehlungId);
