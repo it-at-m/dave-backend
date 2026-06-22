@@ -485,7 +485,8 @@ public class FillPdfBeanService {
      *
      * @param optionsDTO Options aus dem Frontend
      * @param zaehlung Die zu exportierende {@link Zaehlung}
-     * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt sind.
+     * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt
+     *         sind.
      */
     static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final Zaehlung zaehlung) {
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
