@@ -352,6 +352,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                 Zeitblock.ZB_06_10, List.of(Zeitblock.ZB_06_10),
                 Zeitblock.ZB_10_15, List.of(Zeitblock.ZB_10_15),
                 Zeitblock.ZB_15_19, List.of(Zeitblock.ZB_15_19),
+                Zeitblock.ZB_19_22, List.of(Zeitblock.ZB_19_22),
                 Zeitblock.ZB_19_24, List.of(Zeitblock.ZB_19_24),
 
                 // Zeitblöcke für 13h
@@ -366,7 +367,8 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
                         Zeitblock.ZB_06_10,
                         Zeitblock.ZB_10_15,
                         Zeitblock.ZB_15_19,
-                        Zeitblock.ZB_19_24),
+                        Zeitblock.ZB_19_22,
+                        Zeitblock.ZB_06_22),
 
                 // Zeitblöcke für 24h
                 Zeitblock.ZB_00_24, List.of(

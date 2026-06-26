@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
@@ -66,10 +67,10 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
     @Test
     public void getSummen() {
-        final List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummen(zeitintervalle);
-        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Verkehrsbeziehung
-        // abzüglich der beiden ZB_06_19 und ZB_06_22 je Verkehrsbeziehung.
-        assertThat(result.size(), is(Zeitblock.values().length * 2 - 4));
+        final List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummen(Zaehldauer.DAUER_24_STUNDEN, zeitintervalle);
+        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Verkehrsbeziehung für Zähldauer 24h
+        // abzüglich der drei Zeitblöcke ZB_19_22, ZB_06_19 und ZB_06_22 je Verkehrsbeziehung.
+        assertThat(result.size(), is(Zeitblock.values().length * 2 - 6));
 
         // List for each Verkehrsbeziehung in result has same sorting as Zeitblock-Enum entries
 
@@ -167,17 +168,18 @@ public class ZeitintervallZeitblockSummationUtilTest {
     }
 
     @Test
-    public void getSummenForBewegungsbeziehung() {
+    public void getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
         final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setVon(2);
         verkehrsbeziehung.setNach(1);
 
-        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForBewegungsbeziehung(verkehrsbeziehung, zeitintervalleGroupedByIntervall);
+        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer(
+                Zaehldauer.DAUER_24_STUNDEN, verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
-        // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
-        assertThat(result.size(), is(Zeitblock.values().length - 2));
+        // Anzahl der Zeitblöcke für Zähldauer 24h abzüglich der Zeitblöcke ZB_19_22, ZB_06_19 und ZB_06_22
+        assertThat(result.size(), is(Zeitblock.values().length - 3));
 
         // List in result has same sorting as Zeitblock-Enum entries
 
@@ -566,92 +568,6 @@ public class ZeitintervallZeitblockSummationUtilTest {
         result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_10_15, laengserverkehr, zeitintervalle12.subList(0, 16));
 
         assertThat(result.isPresent(), is(false));
-
-    }
-
-    @Test
-    public void shouldZeitblockBeCreated() {
-        final ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit startEndeUhrzeit = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0));
-        boolean result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 22, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 22, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
-
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
-
-        startEndeUhrzeit.setStartUhrzeit(null);
-        startEndeUhrzeit.setEndeUhrzeit(null);
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
 
     }
 

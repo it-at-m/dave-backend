@@ -74,7 +74,8 @@ public class LadeZaehldatenService {
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
-                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24_AND_19_22
+                        + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
         // Rad
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
@@ -85,7 +86,8 @@ public class LadeZaehldatenService {
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
-                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24_AND_19_22
+                        + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockRad());
         // Fuss
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
@@ -96,7 +98,8 @@ public class LadeZaehldatenService {
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
-                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
+                .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24_AND_19_22
+                        + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockFuss());
     }
 
     /**
