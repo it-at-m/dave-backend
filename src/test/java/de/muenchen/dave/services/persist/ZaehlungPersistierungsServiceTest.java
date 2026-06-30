@@ -755,7 +755,7 @@ class ZaehlungPersistierungsServiceTest {
         // Verifikation der Mockaufrufe
         verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z1");
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
-        verify(mockZeitService, never()).checkZeitintervalleIfPlausible(any(), anyInt());
+        verify(mockZeitService, never()).aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(any(), anyInt());
         verify(mockZeitService, never()).deleteZeitintervalleForCorrection(anyString());
     }
 
@@ -794,7 +794,7 @@ class ZaehlungPersistierungsServiceTest {
         assertThat(zaehlung.getStatus(), is(Status.ACCOMPLISHED.name()));
 
         // checkZeitintervalleIfPlausible muss aufgerufen werden
-        verify(mockZeitService, times(1)).checkZeitintervalleIfPlausible(eq(zaehlung), anyInt());
+        verify(mockZeitService, times(1)).aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(eq(zaehlung), anyInt());
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
         verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z2");
     }
