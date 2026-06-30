@@ -87,7 +87,7 @@ public class KIService {
                         .filter(interval -> (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 &&
                                 interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15) ||
                                 (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 &&
-                                        interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24))
+                                        interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24_AND_19_22))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 

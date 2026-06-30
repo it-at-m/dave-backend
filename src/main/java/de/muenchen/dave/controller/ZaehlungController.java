@@ -62,23 +62,6 @@ public class ZaehlungController {
         }
     }
 
-    @PostMapping(value = "/saveWithZeitintervall", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<BackendIdDTO> saveWithZeitintervall(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
-            @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
-        log.debug("Zaehlung mit Zeitintervalle speichern: {}", zaehlung);
-        try {
-            final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlungWithZeitintervalle(zaehlung, zaehlstelleId);
-            this.chatMessageService.saveUpdateMessageForZaehlungInternal(backendIdDto.getId());
-            log.debug("Die Zaehlung wurde erfolgreich gespeichert.");
-            return ResponseEntity.ok(backendIdDto);
-        } catch (final DataNotFoundException dnfe) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, dnfe.getMessage());
-        } catch (final BrokenInfrastructureException bie) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     public ResponseEntity<BackendIdDTO> saveZaehlung(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
