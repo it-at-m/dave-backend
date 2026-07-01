@@ -95,7 +95,7 @@ public class FillPdfBeanServiceSpringTest {
         zaehlung.setJahr("2020");
         zaehlung.setMonat("November");
         zaehlung.setJahreszeit("Herbst");
-        zaehlung.setZaehlart("K");
+        zaehlung.setZaehlart(String.valueOf(Zaehlart.N));
         zaehlung.setPunkt(null);
         zaehlung.setTagesTyp(null);
         zaehlung.setProjektNummer("M3213");
