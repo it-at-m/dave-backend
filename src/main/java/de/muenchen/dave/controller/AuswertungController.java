@@ -25,7 +25,8 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 @PreAuthorize(
     "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+            "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
+            "T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name())"
 )
 public class AuswertungController {
 
