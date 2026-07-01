@@ -81,13 +81,15 @@ public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
-    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
+    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle";
     public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
     public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Ausgewählte Messstellen";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
     public static final String CHART_TITLE_CLOSE_PARENTHESIS = ")";
+    public static final String CHART_TITLE_ZULAUF = "(Zulauf)";
+    public static final String CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL = "Zählstelle - Teilauswahl";
     public static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String BELASTUNGSPLAN_TITLE_ZAEHLSTELLE = "Belastungsplan - Zählstelle ";
     private static final String BELASTUNGSPLAN_TITLE_MESSSTELLE = "Belastungsplan - Messstelle ";
@@ -342,6 +344,8 @@ public class FillPdfBeanService {
      * [straßenname] ([knotenarmnummer]) " NachKnotenarm ausgewählt: "nach [straßenname]
      * ([knotenarmnummer])" Beides ausgewählt: "von [straßenname]
      * ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
+     * Bei QJS, FJS und QU wird, wenn nicht alle Bewegungsbeziehungen ausgewählt wurden, "Zählstelle - Teilauswahl"
+     * gesetzt, sonst "Gesamte Zählstelle".
      *
      * @param options Optionen aus dem Frontend
      * @param zaehlung Die im Frontend gewählte Zählung
@@ -350,7 +354,21 @@ public class FillPdfBeanService {
     static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
-            chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+            final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+            if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+                if (options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size() ||
+                        options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size() ||
+                        options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()
+                ) {
+                    chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
+                } else {
+                    chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+                }
+            } else {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+                chartTitle.append(StringUtils.SPACE);
+                chartTitle.append(CHART_TITLE_ZULAUF);
+            }
         }
         if (options.getVonKnotenarm() != null) {
             for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
