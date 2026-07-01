@@ -24,9 +24,9 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @AllArgsConstructor
 @PreAuthorize(
-    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name(), " +
+    "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
             "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
-            "T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name())"
+            "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
 )
 public class AuswertungController {
 
