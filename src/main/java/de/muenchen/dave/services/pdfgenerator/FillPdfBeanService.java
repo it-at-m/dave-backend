@@ -344,7 +344,8 @@ public class FillPdfBeanService {
      * [straßenname] ([knotenarmnummer]) " NachKnotenarm ausgewählt: "nach [straßenname]
      * ([knotenarmnummer])" Beides ausgewählt: "von [straßenname]
      * ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
-     * Bei QJS, FJS und QU wird, wenn nicht alle Bewegungsbeziehungen ausgewählt wurden, "Zählstelle - Teilauswahl"
+     * Bei QJS, FJS und QU wird, wenn nicht alle Bewegungsbeziehungen ausgewählt wurden, "Zählstelle -
+     * Teilauswahl"
      * gesetzt, sonst "Gesamte Zählstelle".
      *
      * @param options Optionen aus dem Frontend
@@ -358,8 +359,7 @@ public class FillPdfBeanService {
             if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
                 if (options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size() ||
                         options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size() ||
-                        options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()
-                ) {
+                        options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()) {
                     chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
                 } else {
                     chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
