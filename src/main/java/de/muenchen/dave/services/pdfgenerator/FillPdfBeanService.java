@@ -354,49 +354,48 @@ public class FillPdfBeanService {
      */
     static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
-        if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
-            final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-            if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
-                if (options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size()
-                        ||
-                        options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size() ||
-                        options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()) {
-                    chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
-                } else {
-                    chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
-                }
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+            if (options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size() ||
+                    options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size() ||
+                    options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()) {
+                chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
             } else {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+            }
+        } else {
+            if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
                 chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
                 chartTitle.append(StringUtils.SPACE);
                 chartTitle.append(CHART_TITLE_ZULAUF);
             }
-        }
-        if (options.getVonKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
-                    if (!zaehlung.getKreisverkehr()) {
-                        chartTitle.append(CHART_TITLE_VON);
+            if (options.getVonKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
+                        if (!zaehlung.getKreisverkehr()) {
+                            chartTitle.append(CHART_TITLE_VON);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
                         chartTitle.append(StringUtils.SPACE);
                     }
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
-                    chartTitle.append(StringUtils.SPACE);
                 }
             }
-        }
-        if (options.getNachKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
-                    chartTitle.append(CHART_TITLE_NACH);
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+            if (options.getNachKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
+                        chartTitle.append(CHART_TITLE_NACH);
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+                    }
                 }
             }
         }
