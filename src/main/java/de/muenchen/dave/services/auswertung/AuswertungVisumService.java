@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -47,9 +48,14 @@ public class AuswertungVisumService {
         this.ladeZaehldatenService = ladeZaehldatenService;
     }
 
-    public static boolean isZaehlungRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
+    public static boolean isZaehlDatumRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
         return StringUtils.equals(jahr, zaehlung.getJahr())
                 && StringUtils.equals(monat, zaehlung.getMonat());
+    }
+
+    public static boolean isZaehlartRelevant(final Zaehlung zaehlung) {
+        return !Zaehlart.QJS.name().equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.name().equals(zaehlung.getZaehlart())
+                && !Zaehlart.QU.name().equals(zaehlung.getZaehlart());
     }
 
     /**
@@ -132,7 +138,8 @@ public class AuswertungVisumService {
 
                     // Durcharbeiten der Zählungen für das im Parameter gegebene Jahr und Monat
                     final List<LadeZaehlungVisumDTO> relevantZaehlungenVisum = zaehlstelle.getZaehlungen().stream()
-                            .filter(zaehlung -> isZaehlungRelevant(zaehlung, jahr.toString(), monatTextuell))
+                            .filter(AuswertungVisumService::isZaehlartRelevant)
+                            .filter(zaehlung -> isZaehlDatumRelevant(zaehlung, jahr.toString(), monatTextuell))
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Verkehrsbeziehungen einer Zählung
