@@ -211,7 +211,7 @@ public class GenerateCsvServiceSpringTest {
         final StringBuilder expected = new StringBuilder();
         expected.append("Zählstellennummer;Zählart;Zähldatum;Verkehrsbeziehung;;;;;;;;;;;;");
         expected.append("\n");
-        expected.append("133301;K;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;");
+        expected.append("133301;N;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;");
         expected.append("\n");
         expected.append("von;bis;;Pkw;Lkw;Lz;Bus;Krad;Rad;KFZ;SV;GV;SV%;GV%;PKW-Einheiten;");
         expected.append("\n");
