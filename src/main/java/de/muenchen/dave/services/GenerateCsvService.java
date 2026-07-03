@@ -127,9 +127,13 @@ public class GenerateCsvService {
         final StringBuilder verkehrsbeziehung = new StringBuilder();
         final var zaehlart = Zaehlart.valueOf(metaObject.getZaehlung().getZaehlart());
         if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
-            if ((options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != metaObject.getZaehlung().getVerkehrsbeziehungen().size()) ||
-                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size()) ||
-                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())
+            if ((options.getChosenVerkehrsbeziehungen() != null
+                    && options.getChosenVerkehrsbeziehungen().size() != metaObject.getZaehlung().getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null
+                            && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size())
+                    ||
+                    (options.getChosenQuerungsverkehre() != null
+                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())
             ) {
                 verkehrsbeziehung.append("Teilauswahl");
             } else {
