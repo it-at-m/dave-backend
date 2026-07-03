@@ -133,8 +133,7 @@ public class GenerateCsvService {
                             && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size())
                     ||
                     (options.getChosenQuerungsverkehre() != null
-                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())
-            ) {
+                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())) {
                 verkehrsbeziehung.append("Teilauswahl");
             } else {
                 verkehrsbeziehung.append("Alle");
