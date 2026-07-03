@@ -356,9 +356,9 @@ public class FillPdfBeanService {
         final StringBuilder chartTitle = new StringBuilder();
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
-            if (options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size() ||
-                    options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size() ||
-                    options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size()) {
+            if ((options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size()) ||
+                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size())) {
                 chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
             } else {
                 chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
