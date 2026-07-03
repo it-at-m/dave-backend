@@ -95,7 +95,7 @@ public class FillZeitreihePdfBeanService {
 
         zeitreihePdf.setDocumentTitle(String.format("%s %s %s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), zaehlung.getZaehlart()));
         zeitreihePdf.setChart(chartAsBase64Png);
-        zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options));
+        zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options, zaehlung));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final ZeitreiheTable zeitreiheTable = new ZeitreiheTable();
