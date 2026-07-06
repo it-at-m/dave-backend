@@ -48,7 +48,7 @@ public class AuswertungVisumService {
         this.ladeZaehldatenService = ladeZaehldatenService;
     }
 
-    public static boolean isZaehlDatumRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
+    public static boolean isZaehldatumRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
         return StringUtils.equals(jahr, zaehlung.getJahr())
                 && StringUtils.equals(monat, zaehlung.getMonat());
     }
@@ -139,7 +139,7 @@ public class AuswertungVisumService {
                     // Durcharbeiten der Zählungen für das im Parameter gegebene Jahr und Monat
                     final List<LadeZaehlungVisumDTO> relevantZaehlungenVisum = zaehlstelle.getZaehlungen().stream()
                             .filter(AuswertungVisumService::isZaehlartRelevant)
-                            .filter(zaehlung -> isZaehlDatumRelevant(zaehlung, jahr.toString(), monatTextuell))
+                            .filter(zaehlung -> isZaehldatumRelevant(zaehlung, jahr.toString(), monatTextuell))
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Verkehrsbeziehungen einer Zählung

@@ -20,21 +20,21 @@ import org.junit.jupiter.api.Test;
 class AuswertungVisumServiceTest {
 
     @Test
-    public void testIsZaehlDatumRelevant() {
+    public void testIsZaehldatumRelevant() {
         var zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlDatumRelevant(zaehlung, "2020", "Juli"), is(true));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, "2020", "Juli"), is(true));
 
         zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlDatumRelevant(zaehlung, "2020", "November"), is(false));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, "2020", "November"), is(false));
 
         zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlDatumRelevant(zaehlung, null, null), is(false));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, null, null), is(false));
     }
 
     @Test
