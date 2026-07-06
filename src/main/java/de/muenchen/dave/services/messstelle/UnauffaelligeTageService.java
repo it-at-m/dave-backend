@@ -55,6 +55,14 @@ public class UnauffaelligeTageService {
                 tagesTyp);
     }
 
+    /**
+     * Führt für den gegebenen Zeitraum eine Prüfung bezüglich unauffälliger Tage durch und speichert
+     * die Ergebnisse in der Datenbank.
+     * Ein Tag ist unauffällig, sobald für diesen Tag ein Tagesaggregat vorhanden ist.
+     *
+     * @param startDateToReset für den Beginn des Zeitraums.
+     * @param endDateToReset für das Ende des Zeitraums.
+     */
     public void deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(
             final LocalDate startDateToReset,
             final LocalDate endDateToReset) {
