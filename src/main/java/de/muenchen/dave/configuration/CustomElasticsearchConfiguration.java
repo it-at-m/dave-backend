@@ -55,7 +55,7 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
         builder = builder.withClientConfigurer(ElasticsearchClients.ElasticsearchHttpClientConfigurationCallback
                 .from(clientBuilder -> {
                     /*
-                      Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
+                     * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
                      */
                     clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
                         final var headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
