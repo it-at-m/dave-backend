@@ -41,10 +41,7 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
     @Override
     public ClientConfiguration clientConfiguration() {
         ClientConfiguration.TerminalClientConfigurationBuilder builder = ClientConfiguration.builder()
-                .connectedTo(this.host + ":" + this.port)
-                .withBasicAuth(this.user, this.password)
-                .withConnectTimeout(Duration.ofSeconds(connectTimeout))
-                .withSocketTimeout(Duration.ofSeconds(socketTimeout));
+                .connectedTo(this.host + ":" + this.port);
 
         // nur SSL/CACert setzen, wenn ein Wert vorhanden ist
         if (StringUtils.isNotBlank(this.httpCaCertificate)) {
@@ -52,36 +49,39 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
         }
 
         // ClientConfigurer anhängen
-        builder = builder.withClientConfigurer(ElasticsearchClients.ElasticsearchHttpClientConfigurationCallback
-                .from(clientBuilder -> {
-                    /*
-                     * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
-                     */
-                    clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
-                        final var headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
+        builder = builder.withBasicAuth(this.user, this.password)
+                .withConnectTimeout(Duration.ofSeconds(connectTimeout))
+                .withSocketTimeout(Duration.ofSeconds(socketTimeout))
+                .withClientConfigurer(ElasticsearchClients.ElasticsearchHttpClientConfigurationCallback
+                        .from(clientBuilder -> {
+                            /*
+                             * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
+                             */
+                            clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
+                                final var headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HTTP.CONN_KEEP_ALIVE));
 
-                        while (headerIterator.hasNext()) {
-                            final var header = headerIterator.nextElement();
-                            final var headerName = header.getName();
-                            final var headerValue = header.getValue();
+                                while (headerIterator.hasNext()) {
+                                    final var header = headerIterator.nextElement();
+                                    final var headerName = header.getName();
+                                    final var headerValue = header.getValue();
 
-                            if (StringUtils.isNotEmpty(headerValue) && headerName.equalsIgnoreCase("timeout")) {
-                                try {
-                                    final var timeoutSeconds = Long.parseLong(headerValue);
-                                    // to millis
-                                    return timeoutSeconds * 1000;
-                                } catch (NumberFormatException ignore) {
+                                    if (StringUtils.isNotEmpty(headerValue) && headerName.equalsIgnoreCase("timeout")) {
+                                        try {
+                                            final var timeoutSeconds = Long.parseLong(headerValue);
+                                            // to millis
+                                            return timeoutSeconds * 1000;
+                                        } catch (NumberFormatException ignore) {
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        // Connections nicht unendlich lange offen halten,
-                        // da Netzwerk-Firewall sie sonst evtl. mit deny auslaufen lässt.
-                        // 30000 Millisekunden
-                        return 30 * 1000;
-                    });
-                    return clientBuilder;
-                }));
+                                // Connections nicht unendlich lange offen halten,
+                                // da Netzwerk-Firewall sie sonst evtl. mit deny auslaufen lässt.
+                                // 30000 Millisekunden
+                                return 30 * 1000;
+                            });
+                            return clientBuilder;
+                        }));
 
         return builder.build();
     }
