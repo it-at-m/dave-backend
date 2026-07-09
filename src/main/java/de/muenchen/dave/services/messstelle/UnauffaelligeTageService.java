@@ -55,15 +55,31 @@ public class UnauffaelligeTageService {
                 tagesTyp);
     }
 
-    public void deleteAndReloadUnauffaelligerTagByDatum(final LocalDate dateToReload) {
-        unauffaelligeTageRepository.deleteAllByKalendertagDatum(dateToReload);
-        unauffaelligeTageRepository.flush();
-        final List<UnauffaelligerTag> unauffaelligeTage = getUnauffaelligeTageForEachMessstelle(dateToReload).parallelStream()
-                .map(this::mapDto2Entity)
+    /**
+     * Führt für den gegebenen Zeitraum eine Prüfung bezüglich unauffälliger Tage durch und speichert
+     * die Ergebnisse in der Datenbank.
+     * Ein Tag ist unauffällig, sobald für diesen Tag ein Tagesaggregat vorhanden ist.
+     *
+     * @param startDateToReset für den Beginn des Zeitraums.
+     * @param endDateToReset für das Ende des Zeitraums.
+     */
+    public void deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(
+            final LocalDate startDateToReset,
+            final LocalDate endDateToReset) {
+        final List<LocalDate> datesToReset = startDateToReset
+                .datesUntil(endDateToReset.plusDays(1))
                 .toList();
 
-        log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
-        unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+        for (final var dateToReset : datesToReset) {
+            unauffaelligeTageRepository.deleteAllByKalendertagDatum(dateToReset);
+            unauffaelligeTageRepository.flush();
+            final List<UnauffaelligerTag> unauffaelligeTage = getUnauffaelligeTageForEachMessstelle(dateToReset)
+                    .parallelStream()
+                    .map(this::mapDto2Entity)
+                    .toList();
+            log.debug("Save {} unauffaellige Tage in DB", unauffaelligeTage.size());
+            unauffaelligeTageRepository.saveAllAndFlush(unauffaelligeTage);
+        }
     }
 
     /**
