@@ -14,21 +14,21 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>3.5.4</spring.boot.version>
-        <spring.cloud.version>2025.0.0</spring.cloud.version>
+        <spring.boot.version>3.5.16</spring.boot.version>
+        <spring.cloud.version>2025.0.3</spring.cloud.version>
         <logstash.encoder>8.1</logstash.encoder>
         <apache.commons.collections4>4.5.0</apache.commons.collections4>
         <apache.commons.csv>1.14.1</apache.commons.csv>
-        <apache.commons.io>2.20.0</apache.commons.io>
-        <apache.commons.lang3>3.18.0</apache.commons.lang3>
+        <apache.commons.io>2.21.0</apache.commons.io>
+        <apache.commons.lang3>3.20.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
-        <apache.commons.exec>1.5.0</apache.commons.exec>
-        <apache.poi>5.4.1</apache.poi>
+        <apache.commons.exec>1.6.0</apache.commons.exec>
+        <apache.poi>5.5.1</apache.poi>
         <guava>33.4.8-jre</guava>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
-        <apache.sis.version>1.4</apache.sis.version>
+        <apache.sis.version>1.6</apache.sis.version>
         <org.jsoup.version>1.20.1</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>2.1.0</maven-scm-plugin.version>
@@ -36,11 +36,11 @@
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
-        <org.projectlombok.lombok.version>1.18.38</org.projectlombok.lombok.version>
+        <org.projectlombok.lombok.version>1.18.46</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
         <shedlock.version>6.8.0</shedlock.version>
         <openapi-generator-version>7.13.0</openapi-generator-version>
-        <openapi-ui.version>2.8.13</openapi-ui.version>
+        <openapi-ui.version>2.8.17</openapi-ui.version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
         <ai.onnxruntime>1.22.0</ai.onnxruntime>
 
