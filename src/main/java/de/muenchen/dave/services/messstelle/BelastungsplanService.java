@@ -26,8 +26,6 @@ public class BelastungsplanService {
 
     private final MessstelleService messstelleService;
 
-    private final RoundingService roundingService;
-
     private final SpitzenstundeService spitzenstundeService;
 
     protected static String getStrassennameFromMessquerschnitt(final ReadMessstelleInfoDTO messstelle) {
