@@ -30,7 +30,9 @@ public class AdministrationController {
     public ResponseEntity<Void> resetUnauffaelligerTag(@RequestBody @NotNull @Valid final ResetAuffaelligkeitenDTO reloadAuffaelligkeiten) {
         log.debug("#resetUnauffaelligerTag");
         try {
-            this.unauffaelligeTageService.deleteAndReloadUnauffaelligerTagByDatum(reloadAuffaelligkeiten.getDateToReset());
+            this.unauffaelligeTageService.deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(
+                    reloadAuffaelligkeiten.getStartDateToReset(),
+                    reloadAuffaelligkeiten.getEndDateToReset());
             return ResponseEntity.noContent().build();
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im AdministrationController", e);
