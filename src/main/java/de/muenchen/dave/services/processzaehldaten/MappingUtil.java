@@ -17,8 +17,6 @@ import org.apache.commons.lang3.ObjectUtils;
 @Slf4j
 public final class MappingUtil {
 
-    private static final Integer VALUE_TO_ROUND = 100;
-
     /**
      * Prevent accidental instantiation/subclassing
      */
@@ -150,7 +148,7 @@ public final class MappingUtil {
             // Zwischenergebnisse in lokalen Variablen
             final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
             final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
-            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, VALUE_TO_ROUND, options);
+            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
 
             final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
                     isTageswert, roundedZaehldatum);

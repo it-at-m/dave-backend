@@ -17,6 +17,7 @@ import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Quelle;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -170,7 +171,7 @@ public class GenerateCsvServiceSpringTest {
         optionsDTO.setFahrzeugklassenStapeln(false);
         optionsDTO.setBeschriftung(false);
         optionsDTO.setDatentabelle(false);
-        optionsDTO.setWerteHundertRunden(true);
+        optionsDTO.setRounding(Rounding.R100);
         optionsDTO.setDifferenzdatenDarstellen(false);
         optionsDTO.setVergleichszaehlungsId(null);
         optionsDTO.setVonKnotenarm(null);

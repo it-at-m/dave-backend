@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -89,7 +90,7 @@ class GenerateCsvServiceTest {
         optionsDTO.setFahrzeugklassenStapeln(false);
         optionsDTO.setBeschriftung(false);
         optionsDTO.setDatentabelle(false);
-        optionsDTO.setWerteHundertRunden(true);
+        optionsDTO.setRounding(Rounding.R100);
         optionsDTO.setDifferenzdatenDarstellen(false);
         optionsDTO.setVergleichszaehlungsId(null);
         optionsDTO.setVonKnotenarm(null);

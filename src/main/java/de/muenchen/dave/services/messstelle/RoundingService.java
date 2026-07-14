@@ -4,11 +4,11 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.enums.Rounding;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +44,6 @@ public class RoundingService {
      * Andernfalls wird aufgerundet.
      *
      * @param toRound Auf welchem die Rundung durchgeführt werden soll.
-     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll (nur Zehner-Potenzen).
      * @param optionsDto Um auf Durchführung der Rundung zu prüfen
      * @return den gerundeten {@link LadeZaehldatumDTO}, falls
      *         {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
@@ -52,9 +51,9 @@ public class RoundingService {
      */
     public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(
             final LadeZaehldatumDTO toRound,
-            final int nearestValueToRound,
             final OptionsDTO optionsDto) {
-        if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {
+        if (optionsDto.getRounding() != Rounding.NONE) {
+            final int nearestValueToRound = optionsDto.getRounding().getValue();
             final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumDTO.setType(toRound.getType());
             ladeZaehldatumDTO.setStartUhrzeit(toRound.getStartUhrzeit());
