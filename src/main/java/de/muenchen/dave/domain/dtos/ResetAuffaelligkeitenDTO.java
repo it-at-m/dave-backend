@@ -10,6 +10,10 @@ public class ResetAuffaelligkeitenDTO {
 
     @NotNull
     @Past
-    private LocalDate dateToReset;
+    private LocalDate startDateToReset;
+
+    @NotNull
+    @Past
+    private LocalDate endDateToReset;
 
 }

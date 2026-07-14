@@ -361,36 +361,84 @@ class UnauffaelligeTageServiceTest {
     }
 
     @Test
-    void deleteAndReloadUnauffaelligerTagByDatum() {
-        final LocalDate dateToReload = LocalDate.of(2025, 2, 2);
-        final var unauffaelligeTag20250202 = new ArrayList<UnauffaelligerTagDto>();
-        var unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId("1234");
-        unauffaelligerTagDto.setDatum(dateToReload);
-        unauffaelligeTag20250202.add(unauffaelligerTagDto);
-        unauffaelligerTagDto = new UnauffaelligerTagDto();
-        unauffaelligerTagDto.setMstId("5678");
-        unauffaelligerTagDto.setDatum(dateToReload);
-        unauffaelligeTag20250202.add(unauffaelligerTagDto);
-        final var mono20250202 = Mono.just(ResponseEntity.of(Optional.of((List<UnauffaelligerTagDto>) unauffaelligeTag20250202)));
-        final var kalendertag20250202 = new Kalendertag();
-        kalendertag20250202.setDatum(LocalDate.of(2025, 2, 2));
-        kalendertag20250202.setTagestyp(TagesTyp.MO_SO);
+    void deleteAndReload_singleDate_savesFetchedEntities() {
+        final var date = LocalDate.of(2025, 2, 2);
 
-        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(
-                dateToReload, dateToReload)).thenReturn(mono20250202);
-        Mockito.when(kalendertagRepository.findByDatum(
-                dateToReload)).thenReturn(Optional.of(kalendertag20250202));
+        // API-Antwort für das einzelne Datum vorbereiten
+        final var dto = new UnauffaelligerTagDto();
+        dto.setDatum(date);
+        dto.setMstId("1234");
+        final var dtos = List.of(dto);
+        final Mono<ResponseEntity<List<UnauffaelligerTagDto>>> mono = Mono.just(ResponseEntity.of(Optional.of(dtos)));
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(date, date)).thenReturn(mono);
 
-        unauffaelligeTageService.deleteAndReloadUnauffaelligerTagByDatum(dateToReload);
+        // Kalendertag, der vom Repository für das Mapping zurückgegeben wird
+        final var kalendertag = new Kalendertag();
+        kalendertag.setDatum(date);
+        kalendertag.setTagestyp(TagesTyp.MO_SO);
+        Mockito.when(kalendertagRepository.findByDatum(date)).thenReturn(Optional.of(kalendertag));
 
-        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1))
-                .deleteAllByKalendertagDatum(any());
-        Mockito.verify(messstelleApi, Mockito.times(1))
-                .getUnauffaelligeTageForEachMessstelleWithHttpInfo(dateToReload, dateToReload);
-        Mockito.verify(kalendertagRepository, Mockito.times(2))
-                .findByDatum(dateToReload);
-        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1))
-                .saveAllAndFlush(anyList());
+        // ausführen
+        unauffaelligeTageService.deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(date, date);
+
+        // prüfe, dass delete + flush + saveAllAndFlush aufgerufen wurden und das Mapping das Kalendertag-Repository verwendet
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).deleteAllByKalendertagDatum(date);
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).flush();
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).saveAllAndFlush(any());
+
+        Mockito.verify(kalendertagRepository, Mockito.times(1)).findByDatum(date);
     }
+
+    @Test
+    void deleteAndReload_range_withEmptyApiResponses_callsDeleteForEachDay() {
+        final var start = LocalDate.of(2025, 2, 2);
+        final var end = LocalDate.of(2025, 2, 4);
+
+        final Mono<ResponseEntity<List<UnauffaelligerTagDto>>> emptyListMono = Mono.just(ResponseEntity.of(Optional.of(new ArrayList<>())));
+
+        // API-Mock für jeden Tag im Bereich vorbereiten
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 2), LocalDate.of(2025, 2, 2)))
+                .thenReturn(emptyListMono);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 3), LocalDate.of(2025, 2, 3)))
+                .thenReturn(emptyListMono);
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(LocalDate.of(2025, 2, 4), LocalDate.of(2025, 2, 4)))
+                .thenReturn(emptyListMono);
+
+        // ausführen
+        unauffaelligeTageService.deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(start, end);
+
+        // für 3 Tage im Bereich werden delete + flush + saveAllAndFlush jeweils 3-mal erwartet
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(3)).deleteAllByKalendertagDatum(Mockito.any());
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(3)).flush();
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(3)).saveAllAndFlush(anyList());
+
+        // da die API leere Listen zurückgab, sollte niemals nach einem Kalendertag gefragt werden (kein Mapping)
+        Mockito.verify(kalendertagRepository, Mockito.times(0)).findByDatum(Mockito.any());
+    }
+
+    @Test
+    void deleteAndReload_mappingThrowsEntityNotFound() {
+        final var date = LocalDate.of(2025, 2, 2);
+
+        // API liefert ein DTO, aber das Repository liefert keinen entsprechenden Kalendertag -> Mapping wirft
+        final var dto = new UnauffaelligerTagDto();
+        dto.setDatum(date);
+        dto.setMstId("1234");
+        final var dtos = List.of(dto);
+        final Mono<ResponseEntity<List<UnauffaelligerTagDto>>> mono = Mono.just(ResponseEntity.of(Optional.of(dtos)));
+        Mockito.when(messstelleApi.getUnauffaelligeTageForEachMessstelleWithHttpInfo(date, date)).thenReturn(mono);
+
+        Mockito.when(kalendertagRepository.findByDatum(date)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> unauffaelligeTageService.deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(date, date));
+
+        // delete und flush sollten vor der Mapping-Ausnahme aufgerufen worden sein
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).deleteAllByKalendertagDatum(date);
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(1)).flush();
+
+        // save sollte wegen der Ausnahme nicht aufgerufen werden
+        Mockito.verify(unauffaelligeTageRepository, Mockito.times(0)).saveAllAndFlush(any());
+    }
+
 }
