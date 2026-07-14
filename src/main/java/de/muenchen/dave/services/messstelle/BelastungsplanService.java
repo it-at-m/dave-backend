@@ -54,19 +54,19 @@ public class BelastungsplanService {
                     final LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
 
                     final var kfz = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue();
-                    final var sumKfz = roundNumberToHundredIfNeeded(kfz, options);
+                    final var sumKfz = roundNumberIfNeeded(kfz, options);
                     messquerschnitt.setSumKfz(sumKfz);
 
                     final var gv = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeGueterverkehr(), BigDecimal.ZERO).intValue();
-                    final var sumGv = roundNumberToHundredIfNeeded(gv, options);
+                    final var sumGv = roundNumberIfNeeded(gv, options);
                     messquerschnitt.setSumGv(sumGv);
 
                     final var sv = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue();
-                    final var sumSv = roundNumberToHundredIfNeeded(sv, options);
+                    final var sumSv = roundNumberIfNeeded(sv, options);
                     messquerschnitt.setSumSv(sumSv);
 
                     final var rad = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getAnzahlRad(), BigDecimal.ZERO).intValue();
-                    final var sumRad = roundNumberToHundredIfNeeded(rad, options);
+                    final var sumRad = roundNumberIfNeeded(rad, options);
                     messquerschnitt.setSumRad(sumRad);
 
                     final var percentGv = calcPercentage(gv, kfz);
@@ -100,25 +100,25 @@ public class BelastungsplanService {
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
-        belastungsplanMessquerschnitte.setTotalKfz(roundNumberToHundredIfNeeded(totalSumKfz, options));
+        belastungsplanMessquerschnitte.setTotalKfz(roundNumberIfNeeded(totalSumKfz, options));
 
         final Integer totalSumSv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeSchwerverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
-        belastungsplanMessquerschnitte.setTotalSv(roundNumberToHundredIfNeeded(totalSumSv, options));
+        belastungsplanMessquerschnitte.setTotalSv(roundNumberIfNeeded(totalSumSv, options));
 
         final Integer totalSumGv = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeGueterverkehr(), BigDecimal.ZERO).intValue())
                 .sum();
-        belastungsplanMessquerschnitte.setTotalGv(roundNumberToHundredIfNeeded(totalSumGv, options));
+        belastungsplanMessquerschnitte.setTotalGv(roundNumberIfNeeded(totalSumGv, options));
 
         final Integer totalSumRad = totalSumForEachMessquerschnitt
                 .stream()
                 .mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlRad(), BigDecimal.ZERO).intValue())
                 .sum();
-        belastungsplanMessquerschnitte.setTotalRad(roundNumberToHundredIfNeeded(totalSumRad, options));
+        belastungsplanMessquerschnitte.setTotalRad(roundNumberIfNeeded(totalSumRad, options));
 
         final var totalSum = totalSumGv + totalSumKfz + totalSumSv;
         final var totalPercentageGv = calcPercentage(totalSumGv, totalSum);
@@ -161,7 +161,7 @@ public class BelastungsplanService {
         return BigDecimal.valueOf(percentage).setScale(1, RoundingMode.HALF_UP);
     }
 
-    protected Integer roundNumberToHundredIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
+    protected Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
         if (Rounding.NONE.equals(options.getRounding())) {
             return numberToRound;
         } else {
