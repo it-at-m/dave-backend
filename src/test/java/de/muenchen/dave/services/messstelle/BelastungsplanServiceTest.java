@@ -43,7 +43,7 @@ class BelastungsplanServiceTest {
 
     @BeforeEach
     void setup() {
-        belastungsplanService = new BelastungsplanService(messstelleService, new RoundingService(), spitzenstundeService);
+        belastungsplanService = new BelastungsplanService(messstelleService, spitzenstundeService);
     }
 
     @Test
