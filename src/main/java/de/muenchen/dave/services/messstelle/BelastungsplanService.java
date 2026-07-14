@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquersc
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.OptionsUtil;
@@ -163,10 +164,10 @@ public class BelastungsplanService {
     }
 
     protected Integer roundNumberToHundredIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
-        if (Boolean.TRUE.equals(options.getWerteHundertRunden())) {
-            return roundingService.roundIfNotNullOrZero(numberToRound, 100);
-        } else {
+        if (Rounding.NONE.equals(options.getRounding())) {
             return numberToRound;
+        } else {
+            return RoundingService.roundIfNotNullOrZero(numberToRound, options.getRounding().getValue());
         }
     }
 }

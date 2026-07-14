@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -38,10 +39,8 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotEmpty
     private Set<@NotEmpty String> messquerschnittIds;
 
-    // Belastungsplan
     @NotNull
-    private Boolean werteHundertRunden;
-    // Listenausgabe
+    private Rounding rounding;
     @NotNull
     private Boolean stundensumme;
     @NotNull

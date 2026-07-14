@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -234,43 +235,59 @@ class BelastungsplanServiceTest {
     void roundNumberToHundredIfNeeded() {
         final var options = new MessstelleOptionsDTO();
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         var result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
         Assertions.assertThat(result).isNull();
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(0, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(0);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(1, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(0);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(49, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(0);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(50, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(100);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(99, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(100);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(100, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(100);
 
-        options.setWerteHundertRunden(true);
+        options.setRounding(Rounding.R100);
         result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(100);
 
-        options.setWerteHundertRunden(false);
+        options.setRounding(Rounding.R10);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(4, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(0);
+
+        options.setRounding(Rounding.R10);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(9, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(10);
+
+        options.setRounding(Rounding.R10);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(91, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(90);
+
+        options.setRounding(Rounding.R10);
+        result = belastungsplanService.roundNumberToHundredIfNeeded(99, options);
+        Assertions.assertThat(result).isNotNull().isEqualTo(100);
+
+        options.setRounding(Rounding.NONE);
         result = belastungsplanService.roundNumberToHundredIfNeeded(null, options);
         Assertions.assertThat(result).isNull();
 
-        options.setWerteHundertRunden(false);
+        options.setRounding(Rounding.NONE);
         result = belastungsplanService.roundNumberToHundredIfNeeded(101, options);
         Assertions.assertThat(result).isNotNull().isEqualTo(101);
     }
