@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import java.math.BigDecimal;
@@ -102,9 +103,12 @@ public class ProcessZaehldatenZeitreiheTest {
         ladeZaehldatumDTO.setFussgaenger(45);
         ladeZaehldatumDTO.setPkwEinheiten(100);
 
+        final List<Fahrzeug> kategorien = List.of(Fahrzeug.KFZ, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.GV, Fahrzeug.RAD, Fahrzeug.SV,
+                Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD);
+
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO1 = new LadeZaehldatenZeitreiheDTO();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO1,
-                ladeZaehldatumDTO);
+                ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO1.getKfz().getFirst(), is(new BigDecimal(200)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getSv().getFirst(), is(new BigDecimal(75)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getGv().getFirst(), is(new BigDecimal(70)));
@@ -123,7 +127,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO2 = new LadeZaehldatenZeitreiheDTO();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO2,
-                ladeZaehldatumDTO);
+                ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO2.getKfz().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getSv().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getGv().size(), is(0));
