@@ -108,10 +108,10 @@ public class ProcessZaehldatenZeitreiheService {
             ladeZaehldatenZeitreiheDTO.getGv().add(kategorien.contains(Fahrzeug.GV) ? ladeZaehldatumDTO.getGueterverkehr() : null);
         }
         if (options.getFussverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getFuss().add(ladeZaehldatumDTO.getFussgaenger());
+            ladeZaehldatenZeitreiheDTO.getFuss().add(kategorien.contains(Fahrzeug.FUSS) ? ladeZaehldatumDTO.getFussgaenger() : null);
         }
         if (options.getRadverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getRad().add(ladeZaehldatumDTO.getFahrradfahrer());
+            ladeZaehldatenZeitreiheDTO.getRad().add(kategorien.contains(Fahrzeug.RAD) ? ladeZaehldatumDTO.getFahrradfahrer() : null);
         }
         if (options.getSchwerverkehrsanteilProzent()) {
             ladeZaehldatenZeitreiheDTO.getSvAnteilInProzent()
