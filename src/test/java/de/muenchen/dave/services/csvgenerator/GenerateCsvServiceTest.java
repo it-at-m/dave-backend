@@ -3,14 +3,18 @@ package de.muenchen.dave.services.csvgenerator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
+import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
-import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.elasticsearch.*;
+import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.services.GenerateCsvService;
+import de.muenchen.dave.spring.services.csvgenerator.GenerateCsvServiceSpringTest;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class GenerateCsvServiceTest {
@@ -114,5 +118,119 @@ class GenerateCsvServiceTest {
         final String header = csvService.getHeader(GenerateCsvServiceTest.getOptionsDTO());
         final String headerExpected = "von;bis;;Pkw;Lkw;Lz;Bus;Rad;Fuß;KFZ;SV;GV;SV%;GV%;PKW-Einheiten;";
         assertThat(header, is(headerExpected));
+    }
+
+    @Test
+    public void getMetaData() {
+        final String header = csvService.getHeader(GenerateCsvServiceTest.getOptionsDTO());
+        Zaehlung zaehlung = GenerateCsvServiceSpringTest.getZaehlung();
+        Zaehlstelle zaehlstelle = GenerateCsvServiceSpringTest.getZaehlstelle(zaehlung);
+        CsvMetaObject metaObject = new CsvMetaObject();
+        metaObject.setZaehlstelle(zaehlstelle);
+        metaObject.setZaehlung(zaehlung);
+        OptionsDTO options = GenerateCsvServiceTest.getOptionsDTO();
+
+        // Zählart N; Alle Verkehrsbeziehungen
+        String expected = "133301;N;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart N; Nur vonKnotenarm != null
+        options.setVonKnotenarm(1);
+        expected = "133301;N;04.11.2020;Von: 1 - Nach: Alle;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart N; Nur nachKnotenarm != null
+        options.setVonKnotenarm(null);
+        options.setNachKnotenarm(4);
+        expected = "133301;N;04.11.2020;Von: Alle - Nach: 4;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart N; vonKnotenarm != null und nachKnotenarm != null
+        options.setVonKnotenarm(1);
+        expected = "133301;N;04.11.2020;Von: 1 - Nach: 4;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        options.setVonKnotenarm(null);
+        options.setNachKnotenarm(null);
+
+        // Zählart QjS; Nicht alle Verkehrsbeziehungen
+        zaehlung.setZaehlart(String.valueOf(Zaehlart.QJS));
+        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        vb1.setVon(1);
+        vb1.setNach(3);
+        vb1.setStrassenseite(Himmelsrichtung.W);
+        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        vb2.setVon(1);
+        vb2.setNach(3);
+        vb2.setStrassenseite(Himmelsrichtung.O);
+        zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+        final OptionsVerkehrsbeziehungDTO ovb1 = new OptionsVerkehrsbeziehungDTO();
+        ovb1.setVon(1);
+        ovb1.setNach(3);
+        ovb1.setStrassenseite(Himmelsrichtung.W);
+        options.setChosenVerkehrsbeziehungen(List.of(ovb1));
+        expected = "133301;QJS;04.11.2020;Teilauswahl;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart QjS; Alle Verkehrsbeziehungen
+        final OptionsVerkehrsbeziehungDTO ovb2 = new OptionsVerkehrsbeziehungDTO();
+        ovb2.setVon(1);
+        ovb2.setNach(3);
+        ovb2.setStrassenseite(Himmelsrichtung.O);
+        options.setChosenVerkehrsbeziehungen(List.of(ovb1, ovb2));
+        expected = "133301;QJS;04.11.2020;Alle;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart FjS; Nicht alle Verkehrsbeziehungen
+        zaehlung.setZaehlart(String.valueOf(Zaehlart.FJS));
+        final Laengsverkehr lv1 = new Laengsverkehr();
+        lv1.setKnotenarm(1);
+        lv1.setStrassenseite(Himmelsrichtung.W);
+        lv1.setRichtung(Bewegungsrichtung.EIN);
+        final Laengsverkehr lv2 = new Laengsverkehr();
+        lv2.setKnotenarm(1);
+        lv2.setStrassenseite(Himmelsrichtung.O);
+        lv2.setRichtung(Bewegungsrichtung.EIN);
+        zaehlung.setLaengsverkehr(List.of(lv1, lv2));
+        final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
+        olv1.setKnotenarm(1);
+        olv1.setStrassenseite(Himmelsrichtung.W);
+        olv1.setRichtung(Bewegungsrichtung.EIN);
+        options.setChosenLaengsverkehre(List.of(olv1));
+        expected = "133301;FJS;04.11.2020;Teilauswahl;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart FjS; Alle Verkehrsbeziehungen
+        final OptionsLaengsverkehrDTO olv2 = new OptionsLaengsverkehrDTO();
+        olv2.setKnotenarm(1);
+        olv2.setStrassenseite(Himmelsrichtung.O);
+        olv2.setRichtung(Bewegungsrichtung.EIN);
+        options.setChosenLaengsverkehre(List.of(olv1, olv2));
+        expected = "133301;FJS;04.11.2020;Alle;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart Qu; Nicht alle Verkehrsbeziehungen
+        zaehlung.setZaehlart(String.valueOf(Zaehlart.QU));
+        final Querungsverkehr qv1 = new Querungsverkehr();
+        qv1.setKnotenarm(4);
+        qv1.setRichtung(Himmelsrichtung.N);
+        final Querungsverkehr qv2 = new Querungsverkehr();
+        qv2.setKnotenarm(4);
+        qv2.setRichtung(Himmelsrichtung.S);
+        zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
+        oqv1.setKnotenarm(4);
+        oqv1.setRichtung(Himmelsrichtung.N);
+        options.setChosenQuerungsverkehre(List.of(oqv1));
+        expected = "133301;QU;04.11.2020;Teilauswahl;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
+
+        // Zählart Qu; Alle Verkehrsbeziehungen
+        final OptionsQuerungsverkehrDTO oqv2 = new OptionsQuerungsverkehrDTO();
+        oqv2.setKnotenarm(4);
+        oqv2.setRichtung(Himmelsrichtung.S);
+        options.setChosenQuerungsverkehre(List.of(oqv1, oqv2));
+        expected = "133301;QU;04.11.2020;Alle;;;;;;;;;;;;";
+        assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
     }
 }

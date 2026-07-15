@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -123,17 +124,34 @@ public class GenerateCsvService {
             metaData.append(metaObject.getZaehlung().getDatum());
         }
         metaData.append(SEMIKOLON);
-        final StringBuilder verkehrsbeziehung = new StringBuilder("Von: ");
-        if (options.getVonKnotenarm() != null) {
-            verkehrsbeziehung.append(options.getVonKnotenarm());
+        final StringBuilder verkehrsbeziehung = new StringBuilder();
+        final var zaehlart = Zaehlart.valueOf(metaObject.getZaehlung().getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+            // Entscheidung, ob bei Verkehrsbeziehung "Teilauswahl" oder "Alle" angezeigt wird
+            if ((options.getChosenVerkehrsbeziehungen() != null
+                    && options.getChosenVerkehrsbeziehungen().size() != metaObject.getZaehlung().getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null
+                            && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size())
+                    ||
+                    (options.getChosenQuerungsverkehre() != null
+                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())) {
+                verkehrsbeziehung.append("Teilauswahl");
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
         } else {
-            verkehrsbeziehung.append("Alle");
-        }
-        verkehrsbeziehung.append(" - Nach: ");
-        if (options.getNachKnotenarm() != null) {
-            verkehrsbeziehung.append(options.getNachKnotenarm());
-        } else {
-            verkehrsbeziehung.append("Alle");
+            verkehrsbeziehung.append("Von: ");
+            if (options.getVonKnotenarm() != null) {
+                verkehrsbeziehung.append(options.getVonKnotenarm());
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
+            verkehrsbeziehung.append(" - Nach: ");
+            if (options.getNachKnotenarm() != null) {
+                verkehrsbeziehung.append(options.getNachKnotenarm());
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
         }
 
         metaData.append(verkehrsbeziehung);
