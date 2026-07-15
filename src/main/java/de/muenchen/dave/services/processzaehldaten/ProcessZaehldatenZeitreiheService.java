@@ -15,6 +15,7 @@ import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
+import de.muenchen.dave.util.ChartLegendUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -31,14 +32,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProcessZaehldatenZeitreiheService {
 
-    private static final String VERKEHRSBEZIEHUNG_NICHT_VORHANDEN = "\n(Verkehrsbez. nicht vorh.)";
-    private static final String FUSSVERKEHR_NICHT_VORHANDEN = "\n(Fußverkehr nicht vorh.)";
-    private static final String RADVERKEHR_NICHT_VORHANDEN = "\n(Radverkehr nicht vorh.)";
-    public static final String KFZ_NICHT_VORH = "\n(KFZ nicht vorh.)";
-    public static final String GV_NICHT_VORH = "\n(GV nicht vorh.)";
-    public static final String SV_NICHT_VORH = "\n(SV nicht vorh.)";
-    public static final String SV_P_NICHT_VORH = "\n(SV-P nicht vorh.)";
-    public static final String GV_P_NICHT_VORH = "\n(GV-P nicht vorh.)";
+    private static final String VERKEHRSBEZIEHUNG = "Verkehrsbez.";
+    public static final String MEHRERE_VERKEHRSARTEN = "mehrere Verkehrsarten";
+    public static final String NICHT_VORH = "\n(%s nicht vorh.)";
 
     private final ZaehldatenExtractorService zaehldatenExtractorService;
 
@@ -298,7 +294,7 @@ public class ProcessZaehldatenZeitreiheService {
                         final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
 
-                        String suffix = getSuffix(options, zaehlung);
+                        final String suffix = getSuffix(options, zaehlung.getKategorien());
 
                         ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + suffix);
 
@@ -308,7 +304,8 @@ public class ProcessZaehldatenZeitreiheService {
                         if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
                             final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
-                            ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + VERKEHRSBEZIEHUNG_NICHT_VORHANDEN);
+                            ladeZaehldatenZeitreihe.getDatum()
+                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
                             fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                         }
                     }
@@ -316,31 +313,65 @@ public class ProcessZaehldatenZeitreiheService {
         return ladeZaehldatenZeitreihe;
     }
 
-    private static String getSuffix(OptionsDTO options, Zaehlung zaehlung) {
-        String suffix = "";
+    /**
+     * Ermittelt Suffix für nicht vorhandene Verkehrsarten.
+     *
+     * @param options Filteroptionen fürs Auslesen der gewählten Fahrzeugkategorien
+     * @param kategorien beauftragte Fahrzeugkategorien
+     * @return Suffix
+     */
+    private static String getSuffix(final OptionsDTO options, final List<Fahrzeug> kategorien) {
+        int missing = 0;
+        if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
+            missing++;
+        }
+        if (options.getFussverkehr() && !kategorien.contains(Fahrzeug.FUSS)) {
+            missing++;
+        }
+        if (options.getKraftfahrzeugverkehr() && !kategorien.contains(Fahrzeug.KFZ)) {
+            missing++;
+        }
+        if (options.getGueterverkehr() && !kategorien.contains(Fahrzeug.GV)) {
+            missing++;
+        }
+        if (options.getSchwerverkehr() && !kategorien.contains(Fahrzeug.SV)) {
+            missing++;
+        }
+        if (options.getSchwerverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.SV_P)) {
+            missing++;
+        }
+        if (options.getGueterverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.GV_P)) {
+            missing++;
+        }
 
-        if (options.getRadverkehr() && !zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
-            suffix += RADVERKEHR_NICHT_VORHANDEN;
+        // Wenn 2 oder mehr fehlen zusammenfassen
+        if (missing >= 2) {
+            return String.format(NICHT_VORH, MEHRERE_VERKEHRSARTEN);
         }
-        if (options.getFussverkehr() && !zaehlung.getKategorien().contains(Fahrzeug.FUSS)) {
-            suffix += FUSSVERKEHR_NICHT_VORHANDEN;
+
+        // Sonst Einzelausgabe
+        if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.RAD);
         }
-        if (options.getKraftfahrzeugverkehr() && !zaehlung.getKategorien().contains(Fahrzeug.KFZ)) {
-            suffix += KFZ_NICHT_VORH;
+        if (options.getFussverkehr() && !kategorien.contains(Fahrzeug.FUSS)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.FUSSGAENGER);
         }
-        if (options.getGueterverkehr() && !zaehlung.getKategorien().contains(Fahrzeug.GV)) {
-            suffix += GV_NICHT_VORH;
+        if (options.getKraftfahrzeugverkehr() && !kategorien.contains(Fahrzeug.KFZ)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.KFZ);
         }
-        if (options.getSchwerverkehr() && !zaehlung.getKategorien().contains(Fahrzeug.SV)) {
-            suffix += SV_NICHT_VORH;
+        if (options.getGueterverkehr() && !kategorien.contains(Fahrzeug.GV)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.GUETERVERKEHR);
         }
-        if (options.getSchwerverkehrsanteilProzent() && !zaehlung.getKategorien().contains(Fahrzeug.SV_P)) {
-            suffix += SV_P_NICHT_VORH;
+        if (options.getSchwerverkehr() && !kategorien.contains(Fahrzeug.SV)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.SCHWERVERKEHR);
         }
-        if (options.getGueterverkehrsanteilProzent() && !zaehlung.getKategorien().contains(Fahrzeug.GV_P)) {
-            suffix += GV_P_NICHT_VORH;
+        if (options.getSchwerverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.SV_P)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
         }
-        return suffix;
+        if (options.getGueterverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.GV_P)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
+        }
+        return "";
     }
 
     // Erstellt ein leeres LadeZaehldatumDTO
