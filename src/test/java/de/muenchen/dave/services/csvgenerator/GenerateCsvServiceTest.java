@@ -12,7 +12,6 @@ import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.services.GenerateCsvService;
-import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.spring.services.csvgenerator.GenerateCsvServiceSpringTest;
 import java.math.BigDecimal;
 import java.util.List;
