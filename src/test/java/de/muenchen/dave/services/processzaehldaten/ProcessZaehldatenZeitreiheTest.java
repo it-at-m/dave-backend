@@ -2,6 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
@@ -237,14 +238,27 @@ public class ProcessZaehldatenZeitreiheTest {
     @Test
     public void calculateGesamt() {
         BigDecimal kfz = new BigDecimal(1000);
-        Integer fussgaenger = 100;
         Integer fahrradfahrer = 300;
 
-        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fussgaenger, fahrradfahrer), is(new BigDecimal(1400)));
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(1300)));
 
-        fussgaenger = null;
         fahrradfahrer = null;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fussgaenger, fahrradfahrer), is(new BigDecimal(1000)));
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(1000)));
+
+        kfz = null;
+        fahrradfahrer = 300;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(300)));
+
+        // wenn nichts davon gezählt wurde, bleibt es 0
+        fahrradfahrer = null;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(nullValue()));
+
+        // Wenn beide 0 dann ist Summe 0
+        kfz = new BigDecimal(0);
+        ;
+        fahrradfahrer = 0;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(0)));
+
     }
 
     @Test

@@ -125,24 +125,26 @@ public class ProcessZaehldatenZeitreiheService {
             // wenn kein KFZ oder RAD vorhanden, null statt 0
             ladeZaehldatenZeitreiheDTO.getGesamt()
                     .add(kategorien.contains(Fahrzeug.KFZ) || kategorien.contains(Fahrzeug.RAD)
-                            ? calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFussgaenger(), ladeZaehldatumDTO.getFahrradfahrer())
+                            ? calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFahrradfahrer())
                             : null);
         }
     }
 
     /**
-     * Ermittelt einen Gesamtwert auf KFZ, Fussgänger und Fahrradfahrer und gibt diesen zurück
+     * Ermittelt einen Gesamtwert auf KFZ und Fahrradfahrer und gibt diesen zurück
      *
      * @param kfz Wert für Kraftfahrzeuge
-     * @param fussgaenger Wert für Fussgänger
      * @param fahrradfahrer Wert für Fahrradfahrer
-     * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
+     * @return Summe aus KFZ und Fahrradfahrer als BigDecimal
      */
-    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fussgaenger, final Integer fahrradfahrer) {
+    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fahrradfahrer) {
+        // Im Fall, dass kein KFZ und kein Rad gezählt wurde, wird null zurückgegeben (um zu unterscheiden von Summen die tatsächlich 0 sind).
+        if (kfz == null && fahrradfahrer == null) {
+            return null;
+        }
         BigDecimal gesamt = new BigDecimal(0);
-        gesamt = gesamt.add(kfz);
-        if (fussgaenger != null) {
-            gesamt = gesamt.add(BigDecimal.valueOf(fussgaenger));
+        if (kfz != null) {
+            gesamt = gesamt.add(kfz);
         }
         if (fahrradfahrer != null) {
             gesamt = gesamt.add(BigDecimal.valueOf(fahrradfahrer));
