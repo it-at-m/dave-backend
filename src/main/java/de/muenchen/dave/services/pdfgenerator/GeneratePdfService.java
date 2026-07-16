@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
+import de.muenchen.dave.domain.pdf.assets.TextAsset;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
@@ -32,6 +33,8 @@ import java.io.StringWriter;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -279,6 +282,22 @@ public class GeneratePdfService {
         final StringWriter writer = new StringWriter();
         mustache.execute(writer, bean);
         return writer.toString();
+    }
+
+    /**
+     * Filtert aus dem HTML-String des übergebenen {@link TextAsset} alles Unerwünschte heraus und aktualisiert
+     * den Text des Assets.
+     *
+     * @param asset TextAsset mit dem HTML-Text
+     */
+    public void sanitizeAllowedHtml(TextAsset asset) {
+        String inputHtml = asset.getText();
+
+        Safelist safelist = Safelist.basic();
+        safelist.removeEnforcedAttribute("a", "rel");
+
+        String cleanedHtml = Jsoup.clean(inputHtml, safelist);
+        asset.setText(cleanedHtml);
     }
 
     /**
