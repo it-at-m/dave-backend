@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -19,25 +20,44 @@ import org.junit.jupiter.api.Test;
 class AuswertungVisumServiceTest {
 
     @Test
-    public void isZaehlungRelevant() {
+    public void testIsZaehldatumRelevant() {
         var zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlungRelevant(zaehlung, "2020", "Juli"), is(true));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, "2020", "Juli"), is(true));
 
         zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlungRelevant(zaehlung, "2020", "November"), is(false));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, "2020", "November"), is(false));
 
         zaehlung = new Zaehlung();
         zaehlung.setJahr("2020");
         zaehlung.setMonat("Juli");
-        assertThat(AuswertungVisumService.isZaehlungRelevant(zaehlung, null, null), is(false));
+        assertThat(AuswertungVisumService.isZaehldatumRelevant(zaehlung, null, null), is(false));
     }
 
     @Test
-    public void getVerkehrsbeziehungVisum() {
+    public void testIsZaehlartRelevant() {
+        var zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.QJS.name());
+        assertThat(AuswertungVisumService.isZaehlartRelevant(zaehlung), is(false));
+
+        zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        assertThat(AuswertungVisumService.isZaehlartRelevant(zaehlung), is(false));
+
+        zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.QU.name());
+        assertThat(AuswertungVisumService.isZaehlartRelevant(zaehlung), is(false));
+
+        zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.N.name());
+        assertThat(AuswertungVisumService.isZaehlartRelevant(zaehlung), is(true));
+    }
+
+    @Test
+    public void testGetVerkehrsbeziehungVisum() {
         // Kreuzung
         var verkehrsbeziehung = new Verkehrsbeziehung();
         verkehrsbeziehung.setIsKreuzung(true);
@@ -113,7 +133,7 @@ class AuswertungVisumServiceTest {
     }
 
     @Test
-    public void createOptions() {
+    public void testCreateOptions() {
         final var zaehlung = new Zaehlung();
         zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehldauer("DAUER_2_X_4_STUNDEN");
