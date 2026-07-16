@@ -285,8 +285,8 @@ public class GeneratePdfService {
     }
 
     /**
-     * Filtert aus dem HTML-String des übergebenen {@link TextAsset} alles Unerwünschte heraus und aktualisiert
-     * den Text des Assets.
+     * Filtert aus dem HTML-String des übergebenen {@link TextAsset} alles Unerwünschte heraus und
+     * aktualisiert den Text des Assets.
      *
      * @param asset TextAsset mit dem HTML-Text
      */

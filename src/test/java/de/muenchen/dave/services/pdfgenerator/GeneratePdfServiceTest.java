@@ -197,28 +197,28 @@ class GeneratePdfServiceTest {
         TextAsset assetWithNotAllowedHtml1 = new TextAsset();
         assetWithNotAllowedHtml1.setText(notAllowedHtml1);
         generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml1);
-        String expected1 = "<p>Click <a>here</a></p>";  // href mit nicht erlaubtem uri scheme sowie script tags werden entfernt
+        String expected1 = "<p>Click <a>here</a></p>"; // href mit nicht erlaubtem uri scheme sowie script tags werden entfernt
         assertThat(assetWithNotAllowedHtml1.getText(), is(expected1));
 
         String notAllowedHtml2 = "<p onclick=\"doEvil()\" style=\"color:red\" class=\"foo\">Hi</p>";
         TextAsset assetWithNotAllowedHtml2 = new TextAsset();
         assetWithNotAllowedHtml2.setText(notAllowedHtml2);
         generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml2);
-        String expected2 = "<p>Hi</p>";  // onclick wird entfernt
+        String expected2 = "<p>Hi</p>"; // onclick wird entfernt
         assertThat(assetWithNotAllowedHtml2.getText(), is(expected2));
 
         String notAllowedHtml3 = "Before<img src=\"https://example.com/pic.png\" alt=\"pic\">After";
         TextAsset assetWithNotAllowedHtml3 = new TextAsset();
         assetWithNotAllowedHtml3.setText(notAllowedHtml3);
         generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml3);
-        String expected3 = "BeforeAfter";  // img wird entfernt
+        String expected3 = "BeforeAfter"; // img wird entfernt
         assertThat(assetWithNotAllowedHtml3.getText(), is(expected3));
 
         String notAllowedHtml4 = "<a href=\"/local/path\">Local</a>";
         TextAsset assetWithNotAllowedHtml4 = new TextAsset();
         assetWithNotAllowedHtml4.setText(notAllowedHtml4);
         generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml4);
-        String expected4 = "<a>Local</a>";  // relative URL wird entfernt
+        String expected4 = "<a>Local</a>"; // relative URL wird entfernt
         assertThat(assetWithNotAllowedHtml4.getText(), is(expected4));
     }
 }
