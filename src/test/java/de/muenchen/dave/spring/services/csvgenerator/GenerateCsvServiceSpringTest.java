@@ -16,13 +16,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Quelle;
-import de.muenchen.dave.domain.enums.Rounding;
-import de.muenchen.dave.domain.enums.Wetter;
-import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitauswahl;
-import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
@@ -78,14 +72,14 @@ public class GenerateCsvServiceSpringTest {
     @MockitoBean
     private ZaehlstelleIndexService indexService;
 
-    private static Zaehlung getZaehlung() {
+    public static Zaehlung getZaehlung() {
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setId(MOCKABLE_ZAEHLUNG_ID);
         zaehlung.setDatum(LocalDate.of(2020, 11, 4));
         zaehlung.setJahr("2020");
         zaehlung.setMonat("November");
         zaehlung.setJahreszeit("Herbst");
-        zaehlung.setZaehlart("K");
+        zaehlung.setZaehlart(String.valueOf(Zaehlart.N));
         zaehlung.setPunkt(null);
         zaehlung.setTagesTyp(null);
         zaehlung.setProjektNummer("M3213");
@@ -126,7 +120,7 @@ public class GenerateCsvServiceSpringTest {
         return zaehlung;
     }
 
-    private static Zaehlstelle getZaehlstelle(Zaehlung zaehlung) {
+    public static Zaehlstelle getZaehlstelle(Zaehlung zaehlung) {
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         zaehlstelle.setId("abcd-ef12-3456");
         zaehlstelle.setNummer("133301");
@@ -217,7 +211,7 @@ public class GenerateCsvServiceSpringTest {
         final StringBuilder expected = new StringBuilder();
         expected.append("Zählstellennummer;Zählart;Zähldatum;Verkehrsbeziehung;;;;;;;;;;;;");
         expected.append("\n");
-        expected.append("133301;K;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;");
+        expected.append("133301;N;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;");
         expected.append("\n");
         expected.append("von;bis;;Pkw;Lkw;Lz;Bus;Krad;Rad;KFZ;SV;GV;SV%;GV%;PKW-Einheiten;");
         expected.append("\n");

@@ -81,13 +81,15 @@ public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
-    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
+    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle";
     public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
     public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Ausgewählte Messstellen";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
     public static final String CHART_TITLE_CLOSE_PARENTHESIS = ")";
+    public static final String CHART_TITLE_ZULAUF = "(Zulauf)";
+    public static final String CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL = "Zählstelle - Teilauswahl";
     public static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String BELASTUNGSPLAN_TITLE_ZAEHLSTELLE = "Belastungsplan - Zählstelle ";
     private static final String BELASTUNGSPLAN_TITLE_MESSSTELLE = "Belastungsplan - Messstelle ";
@@ -342,6 +344,9 @@ public class FillPdfBeanService {
      * [straßenname] ([knotenarmnummer]) " NachKnotenarm ausgewählt: "nach [straßenname]
      * ([knotenarmnummer])" Beides ausgewählt: "von [straßenname]
      * ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
+     * Bei QJS, FJS und QU wird, wenn nicht alle Bewegungsbeziehungen ausgewählt wurden, "Zählstelle -
+     * Teilauswahl"
+     * gesetzt, sonst "Gesamte Zählstelle".
      *
      * @param options Optionen aus dem Frontend
      * @param zaehlung Die im Frontend gewählte Zählung
@@ -349,35 +354,48 @@ public class FillPdfBeanService {
      */
     static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
-        if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
-            chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
-        }
-        if (options.getVonKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
-                    if (!zaehlung.getKreisverkehr()) {
-                        chartTitle.append(CHART_TITLE_VON);
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+            if ((options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size()) ||
+                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size())) {
+                chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
+            } else {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+            }
+        } else {
+            if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+                chartTitle.append(StringUtils.SPACE);
+                chartTitle.append(CHART_TITLE_ZULAUF);
+            }
+            if (options.getVonKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
+                        if (!zaehlung.getKreisverkehr()) {
+                            chartTitle.append(CHART_TITLE_VON);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
                         chartTitle.append(StringUtils.SPACE);
                     }
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
-                    chartTitle.append(StringUtils.SPACE);
                 }
             }
-        }
-        if (options.getNachKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
-                    chartTitle.append(CHART_TITLE_NACH);
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+            if (options.getNachKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
+                        chartTitle.append(CHART_TITLE_NACH);
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+                    }
                 }
             }
         }
