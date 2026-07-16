@@ -115,7 +115,7 @@ public class ProcessZaehldatenZeitreiheTest {
         assertThat(ladeZaehldatenZeitreiheDTO1.getGv().getFirst(), is(new BigDecimal(70)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getFuss().getFirst(), is(45));
         assertThat(ladeZaehldatenZeitreiheDTO1.getRad().getFirst(), is(40));
-        assertThat(ladeZaehldatenZeitreiheDTO1.getGesamt().getFirst(), is(new BigDecimal(285)));
+        assertThat(ladeZaehldatenZeitreiheDTO1.getGesamt().getFirst(), is(new BigDecimal(240)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getSvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(37.5)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getGvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(35.0)));
 
@@ -134,7 +134,7 @@ public class ProcessZaehldatenZeitreiheTest {
         assertThat(ladeZaehldatenZeitreiheDTO2.getGv().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getFuss().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getRad().size(), is(0));
-        assertThat(ladeZaehldatenZeitreiheDTO2.getGesamt().getFirst(), is(new BigDecimal(285)));
+        assertThat(ladeZaehldatenZeitreiheDTO2.getGesamt().getFirst(), is(new BigDecimal(240)));
         assertThat(ladeZaehldatenZeitreiheDTO2.getSvAnteilInProzent().size(), is(0));
     }
 
