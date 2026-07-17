@@ -34,6 +34,7 @@ import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -295,9 +296,15 @@ public class GeneratePdfService {
 
         Safelist safelist = Safelist.basic();
         safelist.removeEnforcedAttribute("a", "rel");
+        Document.OutputSettings settings = new Document.OutputSettings();
+        settings.prettyPrint(false);
 
-        String cleanedHtml = Jsoup.clean(inputHtml, safelist);
-        asset.setText(cleanedHtml);
+        String cleanedHtml = Jsoup.clean(inputHtml, "", safelist, settings);
+
+        Document doc = Jsoup.parseBodyFragment(cleanedHtml);
+        doc.outputSettings().prettyPrint(false).syntax(Document.OutputSettings.Syntax.xml);
+
+        asset.setText(doc.body().html());
     }
 
     /**

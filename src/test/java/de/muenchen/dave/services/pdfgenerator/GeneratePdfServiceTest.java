@@ -192,6 +192,13 @@ class GeneratePdfServiceTest {
         String expected = "<p>Hello <strong>World</strong>. Visit <a href=\"https://example.com\">Link</a> or <a href=\"mailto:foo@example.com\">Email</a></p>";
         assertThat(assetWithAllowedHtml.getText(), is(expected));
 
+        // Closing Tags (z.B. <br />) bleiben erhalten und werden nicht umgewandelt (z.B. <br /> -> <br> => Fehler bei der PDF-Generierung)
+        String allowedHtml2 = "Knotenarme:<br />1 1<br />2 2<br />";
+        TextAsset assetWithAllowedHtml2 = new TextAsset();
+        assetWithAllowedHtml2.setText(allowedHtml2);
+        generatePdfService.sanitizeAllowedHtml(assetWithAllowedHtml2);
+        assertThat(assetWithAllowedHtml2.getText(), is(allowedHtml2));
+
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
         String notAllowedHtml1 = "<p>Click <a href=\"javascript:alert('XSS')\">here</a></p><script>alert('x')</script>";
         TextAsset assetWithNotAllowedHtml1 = new TextAsset();
