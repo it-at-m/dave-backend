@@ -133,6 +133,7 @@ public class ReportService {
                 this.generatePdfService.sanitizeAllowedHtml((TextAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.textAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.IMAGE)) {
+                this.generatePdfService.sanitizeImageUri((ImageAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.imageAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.PAGEBREAK)) {
                 sb.append(this.generatePdfService.getHtml(this.pagebreakAssetMustache, asset));
