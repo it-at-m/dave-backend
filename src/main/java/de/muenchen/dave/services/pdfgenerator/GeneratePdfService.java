@@ -25,13 +25,12 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import jakarta.annotation.PostConstruct;
-
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Set;
-
+import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
@@ -40,8 +39,6 @@ import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-
-import javax.imageio.ImageIO;
 
 @Service
 @Slf4j

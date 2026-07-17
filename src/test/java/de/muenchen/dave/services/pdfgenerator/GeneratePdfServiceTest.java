@@ -19,7 +19,6 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,12 +29,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Random;
-
+import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.imageio.ImageIO;
 
 @Slf4j
 class GeneratePdfServiceTest {
