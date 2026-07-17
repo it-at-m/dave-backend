@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -95,7 +96,7 @@ class ZaehldatenExtractorServiceTest {
         options.setFahrzeugklassenStapeln(false);
         options.setBeschriftung(false);
         options.setDatentabelle(false);
-        options.setWerteHundertRunden(false);
+        options.setRounding(Rounding.R100);
         options.setDifferenzdatenDarstellen(false);
         options.setZeitreiheGesamt(false);
         return options;

@@ -93,7 +93,7 @@ class GenerateCsvServiceTest {
         optionsDTO.setFahrzeugklassenStapeln(false);
         optionsDTO.setBeschriftung(false);
         optionsDTO.setDatentabelle(false);
-        optionsDTO.setWerteHundertRunden(true);
+        optionsDTO.setRounding(Rounding.R100);
         optionsDTO.setDifferenzdatenDarstellen(false);
         optionsDTO.setVergleichszaehlungsId(null);
         optionsDTO.setVonKnotenarm(null);

@@ -25,6 +25,7 @@ import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -491,9 +492,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void testRoundToNearestIfRoundingIsChoosen() {
-        final int nearestValueToRound = 100;
         final OptionsDTO options = new OptionsDTO();
-        options.setWerteHundertRunden(false);
+        options.setRounding(Rounding.NONE);
         LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setType("TEST");
         ladeZaehldatumDTO.setStartUhrzeit(LocalTime.of(8, 0));
@@ -503,12 +503,27 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatumDTO.setFahrradfahrer(49);
         ladeZaehldatumDTO.setFussgaenger(51);
 
-        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
         assertThat(result, is(ladeZaehldatumDTO));
 
-        options.setWerteHundertRunden(true);
-        result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, nearestValueToRound, options);
+        options.setRounding(Rounding.R10);
+        result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
+        expectedTageswert.setType("TEST");
+        expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
+        expectedTageswert.setEndeUhrzeit(LocalTime.of(9, 0));
+        expectedTageswert.setPkw(150);
+        expectedTageswert.setLkw(250);
+        expectedTageswert.setFahrradfahrer(50);
+        expectedTageswert.setFussgaenger(50);
+        expectedTageswert.setKfz(BigDecimal.valueOf(400));
+        expectedTageswert.setSchwerverkehr(BigDecimal.valueOf(250));
+        expectedTageswert.setGueterverkehr(BigDecimal.valueOf(250));
+        assertThat(result, is(expectedTageswert));
+
+        options.setRounding(Rounding.R100);
+        result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
+        expectedTageswert = new LadeZaehldatumTageswertDTO();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
         expectedTageswert.setEndeUhrzeit(LocalTime.of(9, 0));
