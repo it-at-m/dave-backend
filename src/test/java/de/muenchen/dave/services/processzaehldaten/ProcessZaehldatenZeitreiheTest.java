@@ -171,6 +171,7 @@ public class ProcessZaehldatenZeitreiheTest {
         assertThat(result.getRad().getFirst(), is((Integer) null));
         assertThat(result.getFuss().getFirst(), is(45));
         assertThat(result.getKfz().getFirst(), is(new BigDecimal(200)));
+        assertThat(result.getGesamt().getFirst(), is(new BigDecimal(200)));
         assertThat(result.getSvAnteilInProzent().getFirst(), is((BigDecimal) null));
         assertThat(result.getGvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(35.0)));
     }
@@ -249,15 +250,15 @@ public class ProcessZaehldatenZeitreiheTest {
         fahrradfahrer = 300;
         assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(300)));
 
-        // wenn nichts davon gezählt wurde, bleibt es 0
+        // wenn nichts davon gezählt wurde, wird null zurückgegeben
         fahrradfahrer = null;
         assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(nullValue()));
 
         // Wenn beide 0 dann ist Summe 0
-        kfz = new BigDecimal(0);
+        kfz = BigDecimal.ZERO;
         ;
         fahrradfahrer = 0;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(0)));
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(BigDecimal.ZERO));
 
     }
 

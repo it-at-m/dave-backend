@@ -122,23 +122,23 @@ public class ProcessZaehldatenZeitreiheService {
                     .add(kategorien.contains(Fahrzeug.GV_P) ? ladeZaehldatumDTO.getAnteilGueterverkehrAnKfzProzent() : null);
         }
         if (options.getZeitreiheGesamt()) {
-            // wenn kein KFZ oder RAD vorhanden, null statt 0
             ladeZaehldatenZeitreiheDTO.getGesamt()
-                    .add(kategorien.contains(Fahrzeug.KFZ) || kategorien.contains(Fahrzeug.RAD)
-                            ? calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFahrradfahrer())
-                            : null);
+                    .add(calculateGesamt(
+                            kategorien.contains(Fahrzeug.KFZ) ? ladeZaehldatumDTO.getKfz() : null,
+                            kategorien.contains(Fahrzeug.RAD) ? ladeZaehldatumDTO.getFahrradfahrer() : null));
         }
     }
 
     /**
-     * Ermittelt einen Gesamtwert auf KFZ und Fahrradfahrer und gibt diesen zurück
+     * Ermittelt einen Gesamtwert auf KFZ und Fahrradfahrer und gibt diesen zurück.
+     * Im Fall, dass kein KFZ und kein Rad gezählt wurde, wird null zurückgegeben (um zu unterscheiden
+     * von Summen die tatsächlich 0 sind).
      *
      * @param kfz Wert für Kraftfahrzeuge
      * @param fahrradfahrer Wert für Fahrradfahrer
      * @return Summe aus KFZ und Fahrradfahrer als BigDecimal
      */
     static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fahrradfahrer) {
-        // Im Fall, dass kein KFZ und kein Rad gezählt wurde, wird null zurückgegeben (um zu unterscheiden von Summen die tatsächlich 0 sind).
         if (kfz == null && fahrradfahrer == null) {
             return null;
         }
