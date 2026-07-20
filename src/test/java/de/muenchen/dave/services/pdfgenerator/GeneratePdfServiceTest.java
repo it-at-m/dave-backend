@@ -358,8 +358,7 @@ class GeneratePdfServiceTest {
      * @return Image URI
      */
     public String createTestSvgImageURIWithPngInHeader() {
-        String svg =
-                """
+        String svg = """
                 <svg xmlns="http://www.w3.org/2000/svg">
                     <rect width="100" height="100"/>
                 </svg>
