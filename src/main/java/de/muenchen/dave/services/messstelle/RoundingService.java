@@ -4,11 +4,11 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.enums.Rounding;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,28 +33,25 @@ public class RoundingService {
 
     /**
      * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound"
-     * auf den nächsten Wert welcher im Parameter
-     * "nearestValueToRound" angegeben ist.
+     * auf den nächsten Wert welcher im Parameter "nearestValueToRound" angegeben ist.
      * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
-     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getWerteHundertRunden() den Wert true
+     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getRounding() nicht den Wert NONE
      * besitzt.
      * <p>
-     * Sobald der Wert im Zehnerbereich kleiner 50 wird auf den nächsten 100er-Wert abgerundet.
-     * Andernfalls wird aufgerundet.
+     * Es wird kaufmännisch auf- bzw. abgerundet.
      *
      * @param toRound Auf welchem die Rundung durchgeführt werden soll.
-     * @param nearestValueToRound Der Wert auf welchen aufgerundet werden soll (nur Zehner-Potenzen).
      * @param optionsDto Um auf Durchführung der Rundung zu prüfen
      * @return den gerundeten {@link LadeZaehldatumDTO}, falls
-     *         {@link OptionsDTO}#getWerteHundertRunden() den Wert true besitzt. Andernfall wird das
+     *         gerundet werden soll. Andernfall wird das
      *         {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
      */
     public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(
             final LadeZaehldatumDTO toRound,
-            final int nearestValueToRound,
             final OptionsDTO optionsDto) {
-        if (BooleanUtils.isTrue(optionsDto.getWerteHundertRunden())) {
+        if (optionsDto.getRounding() != null && optionsDto.getRounding() != Rounding.NONE) {
+            final int nearestValueToRound = optionsDto.getRounding().getValue();
             final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();
             ladeZaehldatumDTO.setType(toRound.getType());
             ladeZaehldatumDTO.setStartUhrzeit(toRound.getStartUhrzeit());

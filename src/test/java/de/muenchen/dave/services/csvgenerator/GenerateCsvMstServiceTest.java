@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -96,7 +97,7 @@ class GenerateCsvMstServiceTest {
         optionsDTO.setBlocksumme(true);
         optionsDTO.setTagessumme(true);
         optionsDTO.setSpitzenstunde(true);
-        optionsDTO.setWerteHundertRunden(true);
+        optionsDTO.setRounding(Rounding.R100);
         optionsDTO.setMessquerschnittIds(Set.of("0"));
         return optionsDTO;
     }
