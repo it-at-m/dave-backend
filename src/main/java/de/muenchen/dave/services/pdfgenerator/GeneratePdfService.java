@@ -95,6 +95,7 @@ public class GeneratePdfService {
     public static final int MAX_WIDTH = 10000;
     public static final int MAX_HEIGHT = 10000;
     public static final long MAX_PIXELS = 50_000_000L; // 50 Megapixel
+    public static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/png", "image/jpeg", "image/jpg");
 
     @Value("classpath:pdf/fonts/roboto/Roboto-Thin.ttf")
     Resource robotoThin;
@@ -340,8 +341,8 @@ public class GeneratePdfService {
         String base64 = inputUri.substring(commaIndex + 1);
 
         // Nur png, jpeg und jpg akzeptieren (in URI-Header prüfen)
-        String format = header.substring("data:image/".length(), header.indexOf(';')).toLowerCase();
-        if (!Set.of("png", "jpeg", "jpg").contains(format)) {
+        String mime = header.substring("data:".length(), header.indexOf(';')).toLowerCase();
+        if (!ALLOWED_MIME_TYPES.contains(mime)) {
             throw new IllegalArgumentException("Unsupported image type");
         }
 
@@ -360,7 +361,7 @@ public class GeneratePdfService {
 
             // Nur png, jpeg und jpg akzeptieren (in Byte-String prüfen)
             String detectedMime = new Tika().detect(imageBytes);
-            if (!Set.of("image/png", "image/jpeg", "image/jpg").contains(detectedMime)) {
+            if (!ALLOWED_MIME_TYPES.contains(detectedMime)) {
                 throw new IllegalArgumentException("Unsupported image type: " + detectedMime);
             }
 
