@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -256,9 +257,9 @@ class GeneratePdfServiceTest {
         IllegalArgumentException ex3 = assertThrows(IllegalArgumentException.class, () -> generatePdfService.sanitizeImageUri(asset3));
         assertThat(ex3.getMessage(), is("Invalid data URI"));
 
-        // Nur png, jpeg und jpg akzeptieren
+        // Falscher MIME-Type im Header
         ImageAsset asset4 = new ImageAsset();
-        asset4.setImage("data:image/svg;base64,");
+        asset4.setImage("data:image/svg+xml;base64,");
         IllegalArgumentException ex4 = assertThrows(IllegalArgumentException.class, () -> generatePdfService.sanitizeImageUri(asset4));
         assertThat(ex4.getMessage(), is("Unsupported image type"));
 
@@ -292,12 +293,19 @@ class GeneratePdfServiceTest {
         IllegalArgumentException ex9 = assertThrows(IllegalArgumentException.class, () -> generatePdfService.sanitizeImageUri(asset9));
         assertThat(ex9.getMessage(), is("Image has too many pixels"));
 
-        // Zufällig erzeugtes Test-Bild wird akzeptiert
+        // Falscher MIME-Type im Byte-String
         ImageAsset asset10 = new ImageAsset();
+        String imageUriWithWrongMimeType = createTestSvgImageURIWithPngInHeader();
+        asset10.setImage(imageUriWithWrongMimeType);
+        IllegalArgumentException ex10 = assertThrows(IllegalArgumentException.class, () -> generatePdfService.sanitizeImageUri(asset10));
+        assertThat(ex10.getMessage(), is("Unsupported image type: image/svg+xml"));
+
+        // Zufällig erzeugtes Test-Bild wird akzeptiert
+        ImageAsset asset11 = new ImageAsset();
         String testImageUri = createTestImageURI(2000, 2000);
-        asset10.setImage(testImageUri);
-        generatePdfService.sanitizeImageUri(asset10);
-        assertThat(asset10.getImage(), is(testImageUri));
+        asset11.setImage(testImageUri);
+        generatePdfService.sanitizeImageUri(asset11);
+        assertThat(asset11.getImage(), is(testImageUri));
 
     }
 
@@ -342,5 +350,22 @@ class GeneratePdfServiceTest {
             throw new RuntimeException(e);
         }
         return "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
+    }
+
+    /**
+     * Erzeugt eine Image URI eines SVG-Bildes. Im Header der Image URI steht 'png' statt 'svg+xml'.
+     *
+     * @return Image URI
+     */
+    public String createTestSvgImageURIWithPngInHeader() {
+        String svg =
+                """
+                <svg xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100"/>
+                </svg>
+                """;
+
+        return "data:image/png;base64," +
+                Base64.getEncoder().encodeToString(svg.getBytes(StandardCharsets.UTF_8));
     }
 }

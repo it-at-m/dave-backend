@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.tika.Tika;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
@@ -338,7 +339,7 @@ public class GeneratePdfService {
         String header = inputUri.substring(0, commaIndex);
         String base64 = inputUri.substring(commaIndex + 1);
 
-        // Nur png, jpeg und jpg akzeptieren
+        // Nur png, jpeg und jpg akzeptieren (in URI-Header prüfen)
         String format = header.substring("data:image/".length(), header.indexOf(';')).toLowerCase();
         if (!Set.of("png", "jpeg", "jpg").contains(format)) {
             throw new IllegalArgumentException("Unsupported image type");
@@ -356,6 +357,12 @@ public class GeneratePdfService {
             }
 
             byte[] imageBytes = Base64.getDecoder().decode(base64);
+
+            // Nur png, jpeg und jpg akzeptieren (in Byte-String prüfen)
+            String detectedMime = new Tika().detect(imageBytes);
+            if (!Set.of("image/png", "image/jpeg", "image/jpg").contains(detectedMime)) {
+                throw new IllegalArgumentException("Unsupported image type: " + detectedMime);
+            }
 
             // Größe des dekodierten Images prüfen
             if (imageBytes.length > MAX_IMAGE_SIZE_BYTES) {
