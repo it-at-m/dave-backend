@@ -8,10 +8,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
-import de.muenchen.dave.domain.pdf.assets.BaseAsset;
-import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
-import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
-import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
+import de.muenchen.dave.domain.pdf.assets.*;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
@@ -133,8 +130,10 @@ public class ReportService {
 
         assetList.forEach(asset -> {
             if (asset.getType().equals(AssetType.TEXT)) {
+                this.generatePdfService.sanitizeAllowedHtml((TextAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.textAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.IMAGE)) {
+                this.generatePdfService.sanitizeImageUri((ImageAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.imageAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.PAGEBREAK)) {
                 sb.append(this.generatePdfService.getHtml(this.pagebreakAssetMustache, asset));
