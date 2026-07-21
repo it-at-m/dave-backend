@@ -18,6 +18,7 @@ import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -87,6 +88,7 @@ public class BelastungsplanDataQjsServiceTest {
         final OptionsDTO options = new OptionsDTO();
         options.setFussverkehr(true);
         options.setRadverkehr(false);
+        options.setRounding(Rounding.NONE);
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setKategorien(List.of(Fahrzeug.FUSS));
         var kn1 = new Knotenarm();

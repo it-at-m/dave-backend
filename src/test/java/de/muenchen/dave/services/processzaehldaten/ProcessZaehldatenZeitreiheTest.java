@@ -2,12 +2,14 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import java.math.BigDecimal;
@@ -102,15 +104,18 @@ public class ProcessZaehldatenZeitreiheTest {
         ladeZaehldatumDTO.setFussgaenger(45);
         ladeZaehldatumDTO.setPkwEinheiten(100);
 
+        final List<Fahrzeug> kategorien = List.of(Fahrzeug.KFZ, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.GV, Fahrzeug.RAD, Fahrzeug.SV,
+                Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD);
+
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO1 = new LadeZaehldatenZeitreiheDTO();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO1,
-                ladeZaehldatumDTO);
+                ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO1.getKfz().getFirst(), is(new BigDecimal(200)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getSv().getFirst(), is(new BigDecimal(75)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getGv().getFirst(), is(new BigDecimal(70)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getFuss().getFirst(), is(45));
         assertThat(ladeZaehldatenZeitreiheDTO1.getRad().getFirst(), is(40));
-        assertThat(ladeZaehldatenZeitreiheDTO1.getGesamt().getFirst(), is(new BigDecimal(285)));
+        assertThat(ladeZaehldatenZeitreiheDTO1.getGesamt().getFirst(), is(new BigDecimal(240)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getSvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(37.5)));
         assertThat(ladeZaehldatenZeitreiheDTO1.getGvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(35.0)));
 
@@ -123,27 +128,138 @@ public class ProcessZaehldatenZeitreiheTest {
 
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO2 = new LadeZaehldatenZeitreiheDTO();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO2,
-                ladeZaehldatumDTO);
+                ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO2.getKfz().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getSv().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getGv().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getFuss().size(), is(0));
         assertThat(ladeZaehldatenZeitreiheDTO2.getRad().size(), is(0));
-        assertThat(ladeZaehldatenZeitreiheDTO2.getGesamt().getFirst(), is(new BigDecimal(285)));
+        assertThat(ladeZaehldatenZeitreiheDTO2.getGesamt().getFirst(), is(new BigDecimal(240)));
         assertThat(ladeZaehldatenZeitreiheDTO2.getSvAnteilInProzent().size(), is(0));
+    }
+
+    @Test
+    public void fillLadeZaehldatenZeitreiheDTO_missingCategoriesProducesNulls() {
+        final OptionsDTO options = new OptionsDTO();
+        options.setKraftfahrzeugverkehr(true);
+        options.setSchwerverkehr(true);
+        options.setGueterverkehr(true);
+        options.setFussverkehr(true);
+        options.setRadverkehr(true);
+        options.setSchwerverkehrsanteilProzent(true);
+        options.setGueterverkehrsanteilProzent(true);
+        options.setZeitreiheGesamt(true);
+
+        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        ladeZaehldatumDTO.setPkw(100);
+        ladeZaehldatumDTO.setLkw(50);
+        ladeZaehldatumDTO.setLastzuege(20);
+        ladeZaehldatumDTO.setBusse(5);
+        ladeZaehldatumDTO.setKraftraeder(25);
+        ladeZaehldatumDTO.setFahrradfahrer(40);
+        ladeZaehldatumDTO.setFussgaenger(45);
+        ladeZaehldatumDTO.setPkwEinheiten(100);
+
+        // Kategorien ohne RAD und ohne SV_P (Schwerverkehrsanteil in Prozent fehlt)
+        final List<Fahrzeug> kategorien = List.of(Fahrzeug.KFZ, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.GV,
+                Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD);
+
+        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
+                ladeZaehldatumDTO, kategorien);
+
+        assertThat(result.getRad().getFirst(), is((Integer) null));
+        assertThat(result.getFuss().getFirst(), is(45));
+        assertThat(result.getKfz().getFirst(), is(new BigDecimal(200)));
+        assertThat(result.getGesamt().getFirst(), is(new BigDecimal(200)));
+        assertThat(result.getSvAnteilInProzent().getFirst(), is((BigDecimal) null));
+        assertThat(result.getGvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(35.0)));
+    }
+
+    @Test
+    public void fillLadeZaehldatenZeitreiheDTO_zeitreiheGesamtNullWhenNoKfzOrRad() {
+        final OptionsDTO options = new OptionsDTO();
+
+        options.setKraftfahrzeugverkehr(false);
+        options.setSchwerverkehr(false);
+        options.setGueterverkehr(false);
+        options.setFussverkehr(false);
+        options.setRadverkehr(true); // Anfrage für Rad vorhanden
+        options.setSchwerverkehrsanteilProzent(false);
+        options.setGueterverkehrsanteilProzent(false);
+        options.setZeitreiheGesamt(true);
+
+        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        ladeZaehldatumDTO.setPkw(100);
+        ladeZaehldatumDTO.setFahrradfahrer(40);
+        ladeZaehldatumDTO.setFussgaenger(10);
+        ladeZaehldatumDTO.setPkwEinheiten(100);
+
+        // Kategorien ohne KFZ und ohne RAD => Gesamt muss null sein
+        final List<Fahrzeug> kategorien = List.of(Fahrzeug.FUSS, Fahrzeug.GV_P);
+
+        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
+                ladeZaehldatumDTO, kategorien);
+
+        // Da weder KFZ noch RAD in kategorien vorhanden sind, muss Gesamt null sein
+        assertThat(result.getGesamt().getFirst(), is((BigDecimal) null));
+    }
+
+    @Test
+    public void fillLadeZaehldatenZeitreiheDTO_percentPresentButAbsoluteMissing() {
+        final OptionsDTO options = new OptionsDTO();
+        options.setKraftfahrzeugverkehr(false);
+        options.setSchwerverkehr(false);
+        options.setGueterverkehr(true);
+        options.setFussverkehr(false);
+        options.setRadverkehr(false);
+        options.setSchwerverkehrsanteilProzent(false);
+        options.setGueterverkehrsanteilProzent(true);
+        options.setZeitreiheGesamt(false);
+
+        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        ladeZaehldatumDTO.setPkw(100);
+        ladeZaehldatumDTO.setFahrradfahrer(40);
+        ladeZaehldatumDTO.setFussgaenger(10);
+        ladeZaehldatumDTO.setPkwEinheiten(100);
+
+        // GV (absolute) fehlt, GV_P (prozent) ist vorhanden
+        final List<Fahrzeug> kategorien = List.of(Fahrzeug.GV_P);
+
+        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
+                ladeZaehldatumDTO, kategorien);
+
+        // Absoluter Gueterverkehr soll null sein, Prozentwert aber vorhanden in form von 0.0
+        assertThat(result.getGv().getFirst(), is((BigDecimal) null));
+        assertThat(result.getGvAnteilInProzent().getFirst(), is(BigDecimal.valueOf(0.0)));
     }
 
     @Test
     public void calculateGesamt() {
         BigDecimal kfz = new BigDecimal(1000);
-        Integer fussgaenger = 100;
         Integer fahrradfahrer = 300;
 
-        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fussgaenger, fahrradfahrer), is(new BigDecimal(1400)));
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(1300)));
 
-        fussgaenger = null;
         fahrradfahrer = null;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fussgaenger, fahrradfahrer), is(new BigDecimal(1000)));
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(1000)));
+
+        kfz = null;
+        fahrradfahrer = 300;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(new BigDecimal(300)));
+
+        // wenn nichts davon gezählt wurde, wird null zurückgegeben
+        fahrradfahrer = null;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(nullValue()));
+
+        // Wenn beide 0 dann ist Summe 0
+        kfz = BigDecimal.ZERO;
+        ;
+        fahrradfahrer = 0;
+        assertThat(ProcessZaehldatenZeitreiheService.calculateGesamt(kfz, fahrradfahrer), is(BigDecimal.ZERO));
+
     }
 
     @Test
