@@ -28,6 +28,8 @@ import org.apache.commons.lang3.ObjectUtils;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallGleitendeSpitzenstundeUtil {
 
+    private static final Set<Zeitblock> ZEITBLOECKE_FOR_SPSTD_DAY_SORTING_INDEX = Set.of(Zeitblock.ZB_00_24, Zeitblock.ZB_06_22, Zeitblock.ZB_06_19);
+
     /**
      * Mapping: für eine gegebene Zeitblock-Auswahl die Ziel-Zeitblöcke, die berechnet werden sollen
      */
@@ -270,7 +272,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      */
     public static int getSortingIndexKfz(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {
         int sortingIndex;
-        if (zeitblock.equals(Zeitblock.ZB_00_24)) {
+        if (ZEITBLOECKE_FOR_SPSTD_DAY_SORTING_INDEX.contains(zeitblock)) {
             sortingIndex = ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayKfz();
         } else {
             sortingIndex = ZeitintervallSortingIndexUtil.getFirstStepSortingIndex(zeitintervall);
@@ -288,11 +290,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      */
     public static int getSortingIndexRad(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {
         int sortingIndex;
-        final var zeitbloeckeForDayIndex = Set.of(
-                Zeitblock.ZB_00_24,
-                Zeitblock.ZB_06_22,
-                Zeitblock.ZB_06_19);
-        if (zeitbloeckeForDayIndex.contains(zeitblock)) {
+        if (ZEITBLOECKE_FOR_SPSTD_DAY_SORTING_INDEX.contains(zeitblock)) {
             sortingIndex = ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad();
         } else {
             sortingIndex = ZeitintervallSortingIndexUtil.getFirstStepSortingIndex(zeitintervall);
@@ -310,7 +308,7 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      */
     public static int getSortingIndexFuss(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {
         int sortingIndex;
-        if (zeitblock.equals(Zeitblock.ZB_00_24)) {
+        if (ZEITBLOECKE_FOR_SPSTD_DAY_SORTING_INDEX.contains(zeitblock)) {
             sortingIndex = ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayFuss();
         } else {
             sortingIndex = ZeitintervallSortingIndexUtil.getFirstStepSortingIndex(zeitintervall);
