@@ -288,7 +288,11 @@ public final class ZeitintervallGleitendeSpitzenstundeUtil {
      */
     public static int getSortingIndexRad(final Zeitintervall zeitintervall, final Zeitblock zeitblock) {
         int sortingIndex;
-        if (zeitblock.equals(Zeitblock.ZB_00_24)) {
+        final var zeitbloeckeForDayIndex = Set.of(
+                Zeitblock.ZB_00_24,
+                Zeitblock.ZB_06_22,
+                Zeitblock.ZB_06_19);
+        if (zeitbloeckeForDayIndex.contains(zeitblock)) {
             sortingIndex = ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeCompleteDayRad();
         } else {
             sortingIndex = ZeitintervallSortingIndexUtil.getFirstStepSortingIndex(zeitintervall);
