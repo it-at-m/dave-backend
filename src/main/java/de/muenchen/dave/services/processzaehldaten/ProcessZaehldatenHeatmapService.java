@@ -115,7 +115,7 @@ public class ProcessZaehldatenHeatmapService {
             // Split SeriesEntries (Y Axis) data
             splittedSize = ladeZaehldatenHeatmap.getSeriesEntriesFirstChart().size() / SPLIT_DIVISOR;
 
-            // Wenn keine Y Daten zum Splitten vorhanden sind (bei GV und SV), nicht splitten
+            // Wenn keine Y Daten zum Splitten vorhanden sind (bei GV% und SV%), nicht splitten
             if (splittedSize == 0) {
                 return;
             }
