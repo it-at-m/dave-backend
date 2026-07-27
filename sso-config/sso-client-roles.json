@@ -15,7 +15,7 @@
       },
       {
         "name": "POWERUSER",
-        "description": "Ein Poweruser sieht alle freigegebene Zählungen, inklusive Sonderzählungen. Des Weiteren kann dieser die Felder Zählstellenkommentar und Zählungskommentar bearbeiten."
+        "description": "Ein Poweruser sieht alle freigegebenen Zählungen, inklusive Sonderzählungen. Des Weiteren kann dieser die Felder Zählstellenkommentar und Zählungskommentar bearbeiten."
       },
       {
         "name": "VERKEHRSDETEKTOR_VIEWER",
