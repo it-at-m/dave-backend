@@ -162,8 +162,7 @@ public class LadeZaehldatenService {
                     Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungRad(),
                             0));
-            ladeZaehldatumTageswert.setFussgaenger(
-                    0);
+            ladeZaehldatumTageswert.setFussgaenger(null);
             ladeZaehldatumTageswert.setType(TAGESWERT);
             ladeZaehldatum = ladeZaehldatumTageswert;
         } else {
