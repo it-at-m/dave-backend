@@ -21,6 +21,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
@@ -245,5 +246,35 @@ public abstract class ZaehlungPersistierungsService {
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks, that the token of the request matches with the dienstleisterkennung of the zaehlung.
+     * This prevents IDOR attacks.
+     * @param token of the request
+     * @param zaehlungId of the zaehlung that should be modified
+     * @return true, when token and dienstleisterkennung match
+     */
+    public boolean matchesDienstleisterkennung(String token, String zaehlungId) throws DataNotFoundException {
+        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
+        String dienstleisterkennung = zaehlung.getDienstleisterkennung();
+
+        log.debug("kennung: " + token);
+        log.debug("Dienstleisterkennung der Zählung: " + dienstleisterkennung);
+
+        if (token.isBlank() || dienstleisterkennung.isBlank()) {
+            return false;
+        }
+
+        return token.equals(dienstleisterkennung);
+    }
+
+    public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException {
+        if (SecurityContextInformationExtractor.isFachadmin()) {
+            return;
+        }
+        if (!matchesDienstleisterkennung(token, zaehlungId)) {
+            throw new IllegalArgumentException("Der Dienstleister ist nicht berechtigt diese Zählung zu ändern.");
+        }
     }
 }
