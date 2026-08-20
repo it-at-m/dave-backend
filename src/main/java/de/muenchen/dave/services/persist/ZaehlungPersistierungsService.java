@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -67,7 +68,7 @@ public abstract class ZaehlungPersistierungsService {
      * @throws DataNotFoundException Beim Laden der Zaehlstelle
      * @throws PlausibilityException Beim Pruefen der Daten
      */
-    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
@@ -272,10 +273,6 @@ public abstract class ZaehlungPersistierungsService {
         return token.equals(dienstleisterkennung);
     }
 
-    public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException {
-        if (SecurityContextInformationExtractor.isFachadmin()) {
-            return;
-        }
     public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
         if (!matchesDienstleisterkennung(token, zaehlungId)) {
             throw new AccessDeniedException("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
