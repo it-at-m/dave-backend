@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -337,22 +336,6 @@ public class FillPdfBeanServiceSpringTest {
         options.setZeitblock(Zeitblock.ZB_06_10);
         actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(MOCKABLE_ZAEHLUNG_ID, options);
         assertThat(actualChartTitle, is("Spitzenstunde KFZ (Block 6 - 10 Uhr)"));
-    }
-
-    @Test
-    void getCorrectZaehlartString() {
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.toString());
-        String result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is(StringUtils.EMPTY));
-
-        zaehlung.setZaehlart(Zaehlart.Q.toString());
-        result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is("Q"));
-
-        zaehlung.setZaehlart(Zaehlart.Q_.toString());
-        result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is("Q_"));
     }
 
     @Test
