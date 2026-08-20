@@ -253,10 +253,11 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     /**
-     * Checks, that the token of the request matches with the dienstleisterkennung of the zaehlung.
+     * Checks, that the token of the logged-in user matches with the dienstleisterkennung of the {@link Zaehlung}.
      * This prevents IDOR attacks.
-     * @param token of the request
-     * @param zaehlungId of the zaehlung that should be modified
+     *
+     * @param token of the logged-in user
+     * @param zaehlungId of the {@link Zaehlung} that should be modified
      * @return true, when token and dienstleisterkennung match
      */
     public boolean matchesDienstleisterkennung(String token, String zaehlungId) throws DataNotFoundException {
@@ -273,7 +274,18 @@ public abstract class ZaehlungPersistierungsService {
         return token.equals(dienstleisterkennung);
     }
 
+    /**
+     * Asserts, that the user is allowed to modify a {@link Zaehlung}.
+     *
+     * @param token of the logged-in user
+     * @param zaehlungId of the {@link Zaehlung} the user wants to modify
+     * @throws DataNotFoundException when the {@link Zaehlung} does not exist
+     * @throws AccessDeniedException when the user is not allowed to modify the {@link Zaehlung}
+     */
     public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+        if (SecurityContextInformationExtractor.isFachadmin()) {
+            return;
+        }
         if (!matchesDienstleisterkennung(token, zaehlungId)) {
             throw new AccessDeniedException("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
         }
