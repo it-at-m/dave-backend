@@ -125,7 +125,7 @@ public class ZaehlungController {
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (final IllegalArgumentException iae) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
         }
     }
 
@@ -151,7 +151,7 @@ public class ZaehlungController {
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (final IllegalArgumentException iae) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, iae.getMessage());
         }
     }
 
