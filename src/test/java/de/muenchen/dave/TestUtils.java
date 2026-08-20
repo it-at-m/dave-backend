@@ -5,18 +5,26 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.security.UserInfoDataService;
 import de.muenchen.dave.util.DaveConstants;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TestUtils {
@@ -119,4 +127,34 @@ public final class TestUtils {
         return returnType.cast(result);
     }
 
+    /**
+     * Setzt einen Nutzer mit einem Username und einer Rolle, der für die Tests verwendet wird.
+     *
+     * @param username des Test-Nutzers
+     * @param fachadmin Wenn {@code true}, erhält der Test-Nutzer die Rolle Fachadmin
+     */
+    public static void setSecurityContext(String username, boolean fachadmin) {
+        final Jwt jwt = new Jwt(
+                "token-value",
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                Map.of("alg", "none"),
+                Map.of(UserInfoDataService.CLAIM_USERNAME, username)
+        );
+
+        final List<GrantedAuthority> authorities = new ArrayList<>();
+        if (fachadmin) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_FACHADMIN"));
+        }
+
+        final JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, authorities);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    /**
+     * Leert den Security Context. Diese Methode sollte nach jedem Testfall aufgerufen werden, um zu verhindern, dass sich die Tests gegenseitig beeinflussen.
+     */
+    public static void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 }

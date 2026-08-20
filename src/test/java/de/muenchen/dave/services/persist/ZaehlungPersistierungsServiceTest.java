@@ -2,6 +2,7 @@ package de.muenchen.dave.services.persist;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
@@ -57,9 +59,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import org.springframework.security.access.AccessDeniedException;
 
 class ZaehlungPersistierungsServiceTest {
 
@@ -83,6 +89,17 @@ class ZaehlungPersistierungsServiceTest {
                 null,
                 null,
                 null);
+    }
+
+    @BeforeEach
+    void setUp() {
+        // Setze Test-Nutzer mit Rolle Fachadmin
+        TestUtils.setSecurityContext("test", true);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestUtils.clearSecurityContext();
     }
 
     // Internal
@@ -1152,4 +1169,85 @@ class ZaehlungPersistierungsServiceTest {
         verify(mockIndexService, never()).updateStatusOfZaehlung(eq(id), eq(Status.COUNTING));
     }
 
+    @Test
+    public void assertCorrectDienstleisterOrFachadmin_asFachadmin_noException() throws DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zf1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().plusDays(2));
+        zaehlung.setDienstleisterkennung("dl1");
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        // Act and Assert
+        assertDoesNotThrow(() -> svc.assertCorrectDienstleisterOrFachadmin("test", id));
+    }
+
+    @Test
+    public void assertCorrectDienstleisterOrFachadmin_asAllowedUser_noException() throws DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zf1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().plusDays(2));
+        zaehlung.setDienstleisterkennung("dl1");
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        // Setze einen Nutzer ohne Fachadmin-Rolle
+        TestUtils.setSecurityContext("dl1", false);
+
+        // Act and Assert
+        assertDoesNotThrow(() -> svc.assertCorrectDienstleisterOrFachadmin("dl1", id));
+    }
+
+    @Test
+    public void assertCorrectDienstleisterOrFachadmin_asNotAllowedUser_throwsAccessDeniedException() throws DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+
+        final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
+                mockIndexService,
+                mockZeitService,
+                pkwEinheitRepository,
+                null,
+                null);
+
+        final String id = "zf1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().plusDays(2));
+        zaehlung.setDienstleisterkennung("dl1");
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        // Nutzer mit einem anderen Username als der Dienstleisterkennung der Zählung und ohne Rolle Fachadmin setzen
+        TestUtils.setSecurityContext("test", false);
+
+        // Act and Assert
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> svc.assertCorrectDienstleisterOrFachadmin("test", id));
+        assertThat(ex.getMessage(), is("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern."));
+    }
 }
