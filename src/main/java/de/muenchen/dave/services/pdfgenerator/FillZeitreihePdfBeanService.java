@@ -14,13 +14,12 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
+import de.muenchen.dave.util.DomainValues;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.muenchen.dave.util.DomainValues;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -95,7 +94,8 @@ public class FillZeitreihePdfBeanService {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
 
-        zeitreihePdf.setDocumentTitle(String.format("%s %s %s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart())));
+        zeitreihePdf.setDocumentTitle(
+                String.format("%s %s %s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart())));
         zeitreihePdf.setChart(chartAsBase64Png);
         zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options, zaehlung));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
