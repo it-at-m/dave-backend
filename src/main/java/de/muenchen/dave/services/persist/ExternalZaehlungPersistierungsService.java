@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,10 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      */
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
         log.debug("saveZaehlung");
+
+        // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern
+        this.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), zaehlungDto.getId());
+
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(zaehlungDto.getId())) {

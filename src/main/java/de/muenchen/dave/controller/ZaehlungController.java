@@ -116,7 +116,6 @@ public class ZaehlungController {
     public ResponseEntity<BackendIdDTO> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDTO zaehlung) {
         log.debug("Externe Zaehlung speichern: {}", zaehlung);
         try {
-            this.externalZaehlungPersistierungsService.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), zaehlung.getId());
             final BackendIdDTO backendIdDto = this.externalZaehlungPersistierungsService.saveZaehlung(zaehlung);
             this.chatMessageService.saveUpdateMessageForZaehlungExternal(backendIdDto.getId());
             log.debug("Die externe Zaehlung wurde erfolgreich gespeichert.");
@@ -139,7 +138,6 @@ public class ZaehlungController {
     public ResponseEntity<BackendIdDTO> updateStatus(@RequestBody @NotNull final UpdateStatusDTO updateZaehlung) {
         try {
             log.debug("Status aktualisieren: {}", updateZaehlung);
-            this.externalZaehlungPersistierungsService.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), updateZaehlung.getZaehlungId());
             final BackendIdDTO backendIdDto = this.externalZaehlungPersistierungsService.updateStatus(updateZaehlung);
             this.chatMessageService.saveUpdateMessageForZaehlungStatus(backendIdDto.getId(), updateZaehlung);
             // Wenn eine Zaehlung beauftragt wird, deren Zaehldatum bereits in der Vergangeheit liegt, so wird der Status gleich auf COUNTING gesetzt

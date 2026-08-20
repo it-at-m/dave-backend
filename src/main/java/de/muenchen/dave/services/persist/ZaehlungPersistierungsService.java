@@ -70,6 +70,9 @@ public abstract class ZaehlungPersistierungsService {
     public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
+        // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
+        this.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), updateStatusDto.getZaehlungId());
+
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(updateStatusDto.getZaehlungId())) {
                 zaehlung.setStatus(updateStatusDto.getStatus());
