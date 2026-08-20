@@ -28,6 +28,7 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,7 +54,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws BrokenInfrastructureException Beim Erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      */
-    public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
+    public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
         log.debug("saveZaehlung");
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern

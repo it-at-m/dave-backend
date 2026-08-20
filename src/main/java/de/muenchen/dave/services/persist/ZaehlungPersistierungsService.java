@@ -276,8 +276,9 @@ public abstract class ZaehlungPersistierungsService {
         if (SecurityContextInformationExtractor.isFachadmin()) {
             return;
         }
+    public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
         if (!matchesDienstleisterkennung(token, zaehlungId)) {
-            throw new IllegalArgumentException("Der Dienstleister ist nicht berechtigt diese Zählung zu ändern.");
+            throw new AccessDeniedException("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
         }
     }
 }
