@@ -19,12 +19,13 @@ import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import de.muenchen.dave.services.ZaehlungAuthorizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,8 +42,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
-            final KnotenarmMapper knotenarmMapper) {
-        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
+            final KnotenarmMapper knotenarmMapper,
+            final ZaehlungAuthorizationService authorizationService) {
+        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, authorizationService);
         this.knotenarmMapper = knotenarmMapper;
     }
 
@@ -58,7 +60,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         log.debug("saveZaehlung");
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern
-        this.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), zaehlungDto.getId());
+        authorizationService.assertCanModifyZaehlung(zaehlungDto.getId());
 
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {

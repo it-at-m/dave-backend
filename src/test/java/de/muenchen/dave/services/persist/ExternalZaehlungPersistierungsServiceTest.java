@@ -28,6 +28,8 @@ import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import de.muenchen.dave.services.ZaehlungAuthorizationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +72,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Erzeuge ein Spy-Objekt, so dass einzelne Hilfsmethoden (z.B. createHochrechnung)
         // bei Bedarf gestubbt werden können.
         service = Mockito
-                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper));
+                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
+                        new ZaehlungAuthorizationService(indexService)));
 
         // Setze Test-Nutzer mit Rolle Fachadmin
         TestUtils.setSecurityContext("test", true);
@@ -533,7 +536,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     }
 
     @Test
-    void testSaveZaehlung_dienstleisterkennungDoesNotMatch_throwsAccessDeniedException() throws DataNotFoundException {
+    void testSaveZaehlung_notAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
         // Vorbereitung
         final var bewegungsId = "b3";
         final var dto = new ExternalZaehlungDTO();

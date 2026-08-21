@@ -21,8 +21,8 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.ZaehlungAuthorizationService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,12 +51,16 @@ public abstract class ZaehlungPersistierungsService {
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
+    protected final ZaehlungAuthorizationService authorizationService;
+
     public ZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-            final ZeitintervallMapper zeitintervallMapper) {
+            final ZeitintervallMapper zeitintervallMapper,
+            final ZaehlungAuthorizationService authorizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         this.zeitintervallMapper = zeitintervallMapper;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -73,7 +77,7 @@ public abstract class ZaehlungPersistierungsService {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
-        this.assertCorrectDienstleisterOrFachadmin(SecurityContextInformationExtractor.getUserName(), updateStatusDto.getZaehlungId());
+        authorizationService.assertCanModifyZaehlung(updateStatusDto.getZaehlungId());
 
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(updateStatusDto.getZaehlungId())) {
@@ -251,45 +255,5 @@ public abstract class ZaehlungPersistierungsService {
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Checks, that the token of the logged-in user matches with the dienstleisterkennung of the
-     * {@link Zaehlung}.
-     * This prevents IDOR attacks.
-     *
-     * @param token of the logged-in user
-     * @param zaehlungId of the {@link Zaehlung} that should be modified
-     * @return true, when token and dienstleisterkennung match
-     */
-    public boolean matchesDienstleisterkennung(String token, String zaehlungId) throws DataNotFoundException {
-        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
-        String dienstleisterkennung = zaehlung.getDienstleisterkennung();
-
-        log.debug("kennung: " + token);
-        log.debug("Dienstleisterkennung der Zählung: " + dienstleisterkennung);
-
-        if (token.isBlank() || dienstleisterkennung.isBlank()) {
-            return false;
-        }
-
-        return token.equals(dienstleisterkennung);
-    }
-
-    /**
-     * Asserts, that the user is allowed to modify a {@link Zaehlung}.
-     *
-     * @param token of the logged-in user
-     * @param zaehlungId of the {@link Zaehlung} the user wants to modify
-     * @throws DataNotFoundException when the {@link Zaehlung} does not exist
-     * @throws AccessDeniedException when the user is not allowed to modify the {@link Zaehlung}
-     */
-    public void assertCorrectDienstleisterOrFachadmin(final String token, final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
-        if (SecurityContextInformationExtractor.isFachadmin()) {
-            return;
-        }
-        if (!matchesDienstleisterkennung(token, zaehlungId)) {
-            throw new AccessDeniedException("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
-        }
     }
 }
