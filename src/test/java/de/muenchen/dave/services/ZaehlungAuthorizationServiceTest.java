@@ -1,17 +1,16 @@
 package de.muenchen.dave.services;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
-
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 class ZaehlungAuthorizationServiceTest {
 

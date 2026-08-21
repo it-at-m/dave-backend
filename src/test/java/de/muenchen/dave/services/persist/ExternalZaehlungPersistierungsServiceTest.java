@@ -25,11 +25,10 @@ import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.ZaehlungAuthorizationService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import de.muenchen.dave.services.ZaehlungAuthorizationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
