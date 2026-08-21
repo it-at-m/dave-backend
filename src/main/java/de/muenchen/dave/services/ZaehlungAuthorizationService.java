@@ -37,7 +37,7 @@ public class ZaehlungAuthorizationService {
      *
      * @param zaehlungId der {@link Zaehlung}, welche der Nutzer bearbeiten will
      * @throws DataNotFoundException wenn der Nutzer nicht berechtigt ist, die {@link Zaehlung} zu
-*                  bearbeiten
+     *             bearbeiten
      */
     public void assertCanModifyZaehlung(final String zaehlungId) throws DataNotFoundException {
         if (SecurityContextInformationExtractor.isFachadmin()) {
