@@ -139,8 +139,7 @@ public final class TestUtils {
                 Instant.now(),
                 Instant.now().plusSeconds(3600),
                 Map.of("alg", "none"),
-                Map.of(UserInfoDataService.CLAIM_USERNAME, username)
-        );
+                Map.of(UserInfoDataService.CLAIM_USERNAME, username));
 
         final List<GrantedAuthority> authorities = new ArrayList<>();
         if (fachadmin) {
@@ -152,7 +151,8 @@ public final class TestUtils {
     }
 
     /**
-     * Leert den Security Context. Diese Methode sollte nach jedem Testfall aufgerufen werden, um zu verhindern, dass sich die Tests gegenseitig beeinflussen.
+     * Leert den Security Context. Diese Methode sollte nach jedem Testfall aufgerufen werden, um zu
+     * verhindern, dass sich die Tests gegenseitig beeinflussen.
      */
     public static void clearSecurityContext() {
         SecurityContextHolder.clearContext();

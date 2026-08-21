@@ -68,7 +68,8 @@ public abstract class ZaehlungPersistierungsService {
      * @throws DataNotFoundException Beim Laden der Zaehlstelle
      * @throws PlausibilityException Beim Pruefen der Daten
      */
-    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
+    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto)
+            throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
@@ -253,7 +254,8 @@ public abstract class ZaehlungPersistierungsService {
     }
 
     /**
-     * Checks, that the token of the logged-in user matches with the dienstleisterkennung of the {@link Zaehlung}.
+     * Checks, that the token of the logged-in user matches with the dienstleisterkennung of the
+     * {@link Zaehlung}.
      * This prevents IDOR attacks.
      *
      * @param token of the logged-in user
