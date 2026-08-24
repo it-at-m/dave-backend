@@ -54,6 +54,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim Erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
     public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
         log.debug("saveZaehlung");

@@ -71,6 +71,7 @@ public abstract class ZaehlungPersistierungsService {
      * @throws BrokenInfrastructureException Beim Speichern der Zaehlstelle
      * @throws DataNotFoundException Beim Laden der Zaehlstelle
      * @throws PlausibilityException Beim Pruefen der Daten
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
     public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto)
             throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
