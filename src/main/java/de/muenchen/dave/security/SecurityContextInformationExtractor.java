@@ -33,6 +33,10 @@ public final class SecurityContextInformationExtractor {
     public static boolean isFachadmin() {
         log.debug("get isFachadmin");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            log.debug("No authentication present - not fachadmin");
+            return false;
+        }
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())
                 .stream()
@@ -55,6 +59,10 @@ public final class SecurityContextInformationExtractor {
     public static boolean isAnwender() {
         log.debug("get isAnwender");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            log.debug("No authentication present - not anwender");
+            return false;
+        }
         // Ein Nutzer ist immer mindestens Anwender
         return CollectionUtils
                 .emptyIfNull(authentication.getAuthorities())

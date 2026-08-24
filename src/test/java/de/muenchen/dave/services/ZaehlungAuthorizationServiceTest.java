@@ -82,4 +82,25 @@ class ZaehlungAuthorizationServiceTest {
         AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> authorizationService.assertCanModifyZaehlung(id));
         assertEquals("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.", ex.getMessage());
     }
+
+    @Test
+    void assertCanModifyZaehlung_withoutSecurityContext_throwsAccessDeniedException() throws DataNotFoundException {
+        // Arrange
+        final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
+        final ZaehlungAuthorizationService authorizationService = new ZaehlungAuthorizationService(mockIndexService);
+
+        final String id = "zf1";
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDatum(LocalDate.now().plusDays(2));
+        zaehlung.setDienstleisterkennung("dl1");
+
+        when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        // Keinen Security-Context setzen
+
+        // Act and Assert
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> authorizationService.assertCanModifyZaehlung(id));
+        assertEquals("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.", ex.getMessage());
+    }
 }
