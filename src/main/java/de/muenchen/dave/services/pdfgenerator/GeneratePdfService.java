@@ -24,6 +24,7 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePd
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.services.SanitizationService;
 import jakarta.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -113,6 +114,7 @@ public class GeneratePdfService {
     final FillPdfBeanService fillPdfBeanService;
     final FillZeitreihePdfBeanService fillZeitreihePdfBeanService;
     final ReportLogoService reportLogoService;
+    final SanitizationService sanitizationService;
 
     // Templates
     private Mustache belastungsplan;
@@ -148,11 +150,11 @@ public class GeneratePdfService {
     private Mustache zeitreiheCss;
 
     public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService,
-            ReportLogoService reportLogoService) {
+            ReportLogoService reportLogoService, SanitizationService sanitizationService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.fillZeitreihePdfBeanService = fillZeitreihePdfBeanService;
         this.reportLogoService = reportLogoService;
-
+        this.sanitizationService = sanitizationService;
     }
 
     /**
@@ -301,18 +303,8 @@ public class GeneratePdfService {
      */
     public void sanitizeAllowedHtml(TextAsset asset) {
         String inputHtml = asset.getText();
-
-        Safelist safelist = Safelist.basic();
-        safelist.removeEnforcedAttribute("a", "rel");
-        Document.OutputSettings settings = new Document.OutputSettings();
-        settings.prettyPrint(false);
-
-        String cleanedHtml = Jsoup.clean(inputHtml, "", safelist, settings);
-
-        Document doc = Jsoup.parseBodyFragment(cleanedHtml);
-        doc.outputSettings().prettyPrint(false).syntax(Document.OutputSettings.Syntax.xml);
-
-        asset.setText(doc.body().html());
+        String sanitizedHtml = sanitizationService.sanitizeAllowedHtml(inputHtml);
+        asset.setText(sanitizedHtml);
     }
 
     /**

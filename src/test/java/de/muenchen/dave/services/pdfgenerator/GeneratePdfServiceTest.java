@@ -31,6 +31,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
+
+import de.muenchen.dave.services.SanitizationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +40,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class GeneratePdfServiceTest {
 
-    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null, null);
+    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null, null, new SanitizationService());
 
     @BeforeEach
     public void init() {
