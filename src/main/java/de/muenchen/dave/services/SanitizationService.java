@@ -97,10 +97,11 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessquerschnittDTO}. Unerwünschter
-     * HTML-Code wird entfernt.
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessquerschnittDTO}.
+     * Unerwünschter HTML-Code wird entfernt.
      *
-     * @param messquerschnittDTO Das {@link EditMessquerschnittDTO}, dessen Attribute bereinigt werden sollen
+     * @param messquerschnittDTO Das {@link EditMessquerschnittDTO}, dessen Attribute bereinigt werden
+     *                          sollen
      */
     public void sanitizeEditMessquerschnittDto(final EditMessquerschnittDTO messquerschnittDTO) {
         if (messquerschnittDTO == null) return;
