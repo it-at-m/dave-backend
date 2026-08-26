@@ -70,7 +70,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Erzeuge ein Spy-Objekt, so dass einzelne Hilfsmethoden (z.B. createHochrechnung)
         // bei Bedarf gestubbt werden können.
         service = Mockito
-                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper, sanitizationService));
+                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
+                        sanitizationService));
     }
 
     @Test

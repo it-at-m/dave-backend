@@ -1,12 +1,11 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import java.util.Objects;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class SanitizationService {
@@ -62,8 +61,7 @@ public class SanitizationService {
         if (zaehlungDTO.getKnotenarme() != null) {
             zaehlungDTO.getKnotenarme().stream()
                     .filter(Objects::nonNull)
-                    .forEach((knotenarmDTO ->
-                            knotenarmDTO.setStrassenname(sanitizeAllowedHtml(knotenarmDTO.getStrassenname()))));
+                    .forEach((knotenarmDTO -> knotenarmDTO.setStrassenname(sanitizeAllowedHtml(knotenarmDTO.getStrassenname()))));
         }
     }
 }
