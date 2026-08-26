@@ -1,5 +1,6 @@
 package de.muenchen.dave.services;
 
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
@@ -64,6 +65,26 @@ public class SanitizationService {
             zaehlungDTO.getKnotenarme().stream()
                     .filter(Objects::nonNull)
                     .forEach((knotenarmDTO -> knotenarmDTO.setStrassenname(sanitizeAllowedHtml(knotenarmDTO.getStrassenname()))));
+        }
+    }
+
+    /**
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlstelleDTO}. Unerwünschter
+     * HTML-Code wird entfernt.
+     *
+     * @param bearbeiteZaehlstelleDTO Das {@link BearbeiteZaehlstelleDTO}, dessen Attribute bereinigt werden
+     *            sollen
+     */
+    public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO) {
+        if (bearbeiteZaehlstelleDTO == null) return;
+        bearbeiteZaehlstelleDTO.setStadtbezirk(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getStadtbezirk()));
+        bearbeiteZaehlstelleDTO.setKommentar(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getKommentar()));
+
+        if (bearbeiteZaehlstelleDTO.getCustomSuchwoerter() != null) {
+            bearbeiteZaehlstelleDTO.setCustomSuchwoerter(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().stream()
+                    .filter(Objects::nonNull)
+                    .map(this::sanitizeAllowedHtml)
+                    .toList());
         }
     }
 
