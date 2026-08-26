@@ -63,8 +63,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 zaehlung.setDatum(zaehlungDto.getDatum());
                 zaehlung.setZaehlart(zaehlungDto.getZaehlart());
                 zaehlung.setWetter(zaehlungDto.getWetter());
-                zaehlung.setZaehlsituation(zaehlungDto.getZaehlsituation());
-                zaehlung.setZaehlsituationErweitert(zaehlungDto.getZaehlsituationErweitert());
+                zaehlung.setZaehlsituation(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituation()));
+                zaehlung.setZaehlsituationErweitert(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituationErweitert()));
 
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));

@@ -60,9 +60,6 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Mock
     private KnotenarmMapper knotenarmMapper;
 
-    @Mock
-    private SanitizationService sanitizationService;
-
     private ExternalZaehlungPersistierungsService service;
 
     @BeforeEach
@@ -71,7 +68,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // bei Bedarf gestubbt werden können.
         service = Mockito
                 .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
-                        sanitizationService));
+                        new SanitizationService()));
     }
 
     @Test
