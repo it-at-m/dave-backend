@@ -69,11 +69,11 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlstelleDTO}. Unerwünschter
-     * HTML-Code wird entfernt.
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlstelleDTO}.
+     * Unerwünschter HTML-Code wird entfernt.
      *
-     * @param bearbeiteZaehlstelleDTO Das {@link BearbeiteZaehlstelleDTO}, dessen Attribute bereinigt werden
-     *            sollen
+     * @param bearbeiteZaehlstelleDTO Das {@link BearbeiteZaehlstelleDTO}, dessen Attribute bereinigt
+     *            werden sollen
      */
     public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO) {
         if (bearbeiteZaehlstelleDTO == null) return;
