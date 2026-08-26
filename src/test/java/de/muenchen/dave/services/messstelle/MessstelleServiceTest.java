@@ -15,6 +15,8 @@ import de.muenchen.dave.services.CustomSuggestIndexService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import de.muenchen.dave.services.SanitizationService;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,9 @@ class MessstelleServiceTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
+    @Mock
+    private SanitizationService sanitizationService;
+
     private final MessstelleMapper messstelleMapper = new MessstelleMapperImpl();
 
     private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
@@ -50,7 +55,8 @@ class MessstelleServiceTest {
                 messstelleIndexService,
                 customSuggestIndexService,
                 messstelleMapper,
-                stadtbezirkMapper);
+                stadtbezirkMapper,
+                sanitizationService);
     }
 
     @Test

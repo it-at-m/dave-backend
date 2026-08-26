@@ -2,6 +2,9 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import java.util.Objects;
+
+import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
+import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
@@ -63,5 +66,48 @@ public class SanitizationService {
                     .filter(Objects::nonNull)
                     .forEach((knotenarmDTO -> knotenarmDTO.setStrassenname(sanitizeAllowedHtml(knotenarmDTO.getStrassenname()))));
         }
+    }
+
+    /**
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessstelleDTO}. Unerwünschter
+     * HTML-Code wird entfernt.
+     *
+     * @param messstelleDTO Das {@link EditMessstelleDTO}, dessen Attribute bereinigt werden sollen
+     */
+    public void sanitizeEditMessstelleDto(final EditMessstelleDTO messstelleDTO) {
+        if (messstelleDTO == null) return;
+        messstelleDTO.setName(sanitizeAllowedHtml(messstelleDTO.getName()));
+        messstelleDTO.setBemerkung(sanitizeAllowedHtml(messstelleDTO.getBemerkung()));
+        messstelleDTO.setStadtbezirk(sanitizeAllowedHtml(messstelleDTO.getStadtbezirk()));
+        messstelleDTO.setHersteller(sanitizeAllowedHtml(messstelleDTO.getHersteller()));
+        messstelleDTO.setKommentar(sanitizeAllowedHtml(messstelleDTO.getKommentar()));
+        messstelleDTO.setStandort(sanitizeAllowedHtml(messstelleDTO.getStandort()));
+
+        if (messstelleDTO.getCustomSuchwoerter() != null) {
+            messstelleDTO.setCustomSuchwoerter(messstelleDTO.getCustomSuchwoerter().stream()
+                    .filter(Objects::nonNull)
+                    .map(this::sanitizeAllowedHtml)
+                    .toList());
+        }
+
+        if (messstelleDTO.getMessquerschnitte() != null) {
+            messstelleDTO.getMessquerschnitte().stream()
+                    .filter(Objects::nonNull)
+                    .forEach((this::sanitizeEditMessquerschnittDto));
+        }
+    }
+
+    /**
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessquerschnittDTO}. Unerwünschter
+     * HTML-Code wird entfernt.
+     *
+     * @param messquerschnittDTO Das {@link EditMessquerschnittDTO}, dessen Attribute bereinigt werden sollen
+     */
+    public void sanitizeEditMessquerschnittDto(final EditMessquerschnittDTO messquerschnittDTO) {
+        if (messquerschnittDTO == null) return;
+        messquerschnittDTO.setStrassenname(messquerschnittDTO.getStrassenname());
+        messquerschnittDTO.setLageMessquerschnitt(messquerschnittDTO.getLageMessquerschnitt());
+        messquerschnittDTO.setHersteller(messquerschnittDTO.getHersteller());
+        messquerschnittDTO.setStandort(messquerschnittDTO.getStandort());
     }
 }

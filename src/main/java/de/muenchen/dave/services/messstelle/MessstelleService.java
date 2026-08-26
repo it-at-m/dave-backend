@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import de.muenchen.dave.services.SanitizationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final SanitizationService sanitizationService;
 
     public Messstelle getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
@@ -73,6 +76,7 @@ public class MessstelleService {
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
+        sanitizationService.sanitizeEditMessstelleDto(dto);
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
