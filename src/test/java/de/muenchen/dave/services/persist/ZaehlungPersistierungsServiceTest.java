@@ -44,6 +44,7 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
@@ -77,8 +78,10 @@ class ZaehlungPersistierungsServiceTest {
                 null,
                 pkwEinheitRepository,
                 null,
+                null,
                 null);
         externalZaehlungPersistierungsService = new ExternalZaehlungPersistierungsService(
+                null,
                 null,
                 null,
                 null,
@@ -729,6 +732,7 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z1")).thenReturn(zaehlstelle);
 
@@ -737,7 +741,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("z1");
@@ -772,6 +777,7 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z2")).thenReturn(zaehlstelle);
 
@@ -780,7 +786,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("z2");
@@ -816,6 +823,7 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z3")).thenReturn(zaehlstelle);
 
@@ -824,7 +832,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("z3");
@@ -857,6 +866,7 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("not-existing")).thenReturn(zaehlstelle);
 
@@ -865,7 +875,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("not-existing");
@@ -888,6 +899,7 @@ class ZaehlungPersistierungsServiceTest {
         // Arrange: IndexService wirft DataNotFoundException
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("missing")).thenThrow(new DataNotFoundException("not found"));
 
@@ -896,7 +908,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("missing");
@@ -921,13 +934,15 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         // Act
         final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
@@ -955,13 +970,15 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         // Act
         final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
@@ -993,13 +1010,15 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         // Act
         final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
@@ -1020,13 +1039,15 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         // Act
         final int result = svc.getNumberOfNecessaryZeitintervalle(zaehlung);
@@ -1045,13 +1066,15 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         // Act / Assert
         assertThrows(NullPointerException.class, () -> svc.getNumberOfNecessaryZeitintervalle(zaehlung));
@@ -1064,13 +1087,15 @@ class ZaehlungPersistierungsServiceTest {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final String id = "zp1";
         final Zaehlung zaehlung = new Zaehlung();
@@ -1095,13 +1120,15 @@ class ZaehlungPersistierungsServiceTest {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final String id = "zt1";
         final Zaehlung zaehlung = new Zaehlung();
@@ -1126,13 +1153,15 @@ class ZaehlungPersistierungsServiceTest {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
+        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
                 mockZeitService,
                 pkwEinheitRepository,
                 null,
-                null);
+                null,
+                mockSanitizationService);
 
         final String id = "zf1";
         final Zaehlung zaehlung = new Zaehlung();
