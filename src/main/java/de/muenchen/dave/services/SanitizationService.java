@@ -101,7 +101,7 @@ public class SanitizationService {
      * Unerwünschter HTML-Code wird entfernt.
      *
      * @param messquerschnittDTO Das {@link EditMessquerschnittDTO}, dessen Attribute bereinigt werden
-     *                          sollen
+     *            sollen
      */
     public void sanitizeEditMessquerschnittDto(final EditMessquerschnittDTO messquerschnittDTO) {
         if (messquerschnittDTO == null) return;
