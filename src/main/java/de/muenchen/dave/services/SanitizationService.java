@@ -126,9 +126,9 @@ public class SanitizationService {
      */
     public void sanitizeEditMessquerschnittDto(final EditMessquerschnittDTO messquerschnittDTO) {
         if (messquerschnittDTO == null) return;
-        messquerschnittDTO.setStrassenname(messquerschnittDTO.getStrassenname());
-        messquerschnittDTO.setLageMessquerschnitt(messquerschnittDTO.getLageMessquerschnitt());
-        messquerschnittDTO.setHersteller(messquerschnittDTO.getHersteller());
-        messquerschnittDTO.setStandort(messquerschnittDTO.getStandort());
+        messquerschnittDTO.setStrassenname(sanitizeAllowedHtml(messquerschnittDTO.getStrassenname()));
+        messquerschnittDTO.setLageMessquerschnitt(sanitizeAllowedHtml(messquerschnittDTO.getLageMessquerschnitt()));
+        messquerschnittDTO.setHersteller(sanitizeAllowedHtml(messquerschnittDTO.getHersteller()));
+        messquerschnittDTO.setStandort(sanitizeAllowedHtml(messquerschnittDTO.getStandort()));
     }
 }
