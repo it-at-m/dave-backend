@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
-
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,14 +13,12 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Set;
-
+import javax.imageio.ImageIO;
 import org.apache.tika.Tika;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
-
-import javax.imageio.ImageIO;
 
 @Service
 public class SanitizationService {
