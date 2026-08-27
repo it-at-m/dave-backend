@@ -61,7 +61,6 @@ class SanitizationServiceTest {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
         bearbeiteZaehlungDTO.setZaehlart(Zaehlart.N.toString());
-        bearbeiteZaehlungDTO.setTagesTyp(TagesTyp.UNSPECIFIED.toString());
         bearbeiteZaehlungDTO.setProjektNummer(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setProjektName(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setKreuzungsname(ALLOWED_HTML_1);
@@ -130,9 +129,6 @@ class SanitizationServiceTest {
         bearbeiteZaehlungDTO.setZaehlart("P");
         assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeBearbeiteZaehlungDto(bearbeiteZaehlungDTO));
         bearbeiteZaehlungDTO.setZaehlart(null);
-        bearbeiteZaehlungDTO.setTagesTyp("NO");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeBearbeiteZaehlungDto(bearbeiteZaehlungDTO));
-        bearbeiteZaehlungDTO.setTagesTyp(null);
         bearbeiteZaehlungDTO.setWetter("Rain");
         assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeBearbeiteZaehlungDto(bearbeiteZaehlungDTO));
         bearbeiteZaehlungDTO.setWetter(null);

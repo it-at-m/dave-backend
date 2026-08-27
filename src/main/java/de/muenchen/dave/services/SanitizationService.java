@@ -192,7 +192,6 @@ public class SanitizationService {
     public void sanitizeBearbeiteZaehlungDto(final BearbeiteZaehlungDTO zaehlungDTO) {
         if (zaehlungDTO == null) return;
         validateZaehlart(zaehlungDTO.getZaehlart());
-        validateTagesTyp(zaehlungDTO.getTagesTyp());
         zaehlungDTO.setProjektNummer(sanitizeAllowedHtml(zaehlungDTO.getProjektNummer()));
         zaehlungDTO.setProjektName(sanitizeAllowedHtml(zaehlungDTO.getProjektName()));
         zaehlungDTO.setKreuzungsname(sanitizeAllowedHtml(zaehlungDTO.getKreuzungsname()));
