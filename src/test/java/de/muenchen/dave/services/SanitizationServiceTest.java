@@ -2,15 +2,27 @@ package de.muenchen.dave.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
+
 import org.junit.jupiter.api.Test;
+
+import javax.imageio.ImageIO;
 
 class SanitizationServiceTest {
 
@@ -265,5 +277,136 @@ class SanitizationServiceTest {
         assetWithNotAllowedHtml4.setText(NOT_ALLOWED_HTML_4);
         sanitizationService.sanitizeTextAsset(assetWithNotAllowedHtml4);
         assertThat(assetWithNotAllowedHtml4.getText(), is(EXPECTED_4));
+    }
+
+    @Test
+    public void sanitizeImageUri() {
+        // Leere Image URI
+        ImageAsset asset1 = new ImageAsset();
+        asset1.setImage("");
+        IllegalArgumentException ex1 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset1));
+        assertThat(ex1.getMessage(), is("Image is empty"));
+
+        // Keine Image URI
+        ImageAsset asset2 = new ImageAsset();
+        asset2.setImage("data:text/plain;");
+        IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset2));
+        assertThat(ex2.getMessage(), is("Only image data URIs are allowed"));
+
+        // Ungültige Image URI
+        ImageAsset asset3 = new ImageAsset();
+        asset3.setImage("data:image/png;base642141");
+        IllegalArgumentException ex3 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset3));
+        assertThat(ex3.getMessage(), is("Invalid data URI"));
+
+        // Falscher MIME-Type im Header
+        ImageAsset asset4 = new ImageAsset();
+        asset4.setImage("data:image/svg+xml;base64,");
+        IllegalArgumentException ex4 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset4));
+        assertThat(ex4.getMessage(), is("Unsupported image type"));
+
+        // Leerer base64 Teil der URI
+        ImageAsset asset5 = new ImageAsset();
+        asset5.setImage("data:image/png;base64,");
+        IllegalArgumentException ex5 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset5));
+        assertThat(ex5.getMessage(), is("Invalid data URI"));
+
+        // Image ist zu groß
+        ImageAsset asset6 = new ImageAsset();
+        asset6.setImage(createTooLargeTestImage());
+        IllegalArgumentException ex6 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset6));
+        assertThat(ex6.getMessage(), is("Image exceeds maximum size"));
+
+        // Dimension width des Images ist zu groß
+        ImageAsset asset7 = new ImageAsset();
+        asset7.setImage(createTestImageURI(12000, 1000));
+        IllegalArgumentException ex7 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset7));
+        assertThat(ex7.getMessage(), is("Image dimensions too large"));
+
+        // Dimension height des Images ist zu groß
+        ImageAsset asset8 = new ImageAsset();
+        asset8.setImage(createTestImageURI(1000, 12000));
+        IllegalArgumentException ex8 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset8));
+        assertThat(ex8.getMessage(), is("Image dimensions too large"));
+
+        // Image hat zu große Auflösung
+        ImageAsset asset9 = new ImageAsset();
+        asset9.setImage(createTestImageURI(8000, 7000));
+        IllegalArgumentException ex9 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset9));
+        assertThat(ex9.getMessage(), is("Image has too many pixels"));
+
+        // Falscher MIME-Type im Byte-String
+        ImageAsset asset10 = new ImageAsset();
+        String imageUriWithWrongMimeType = createTestSvgImageURIWithPngInHeader();
+        asset10.setImage(imageUriWithWrongMimeType);
+        IllegalArgumentException ex10 = assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeImageUri(asset10));
+        assertThat(ex10.getMessage(), is("Unsupported image type: image/svg+xml"));
+
+        // Zufällig erzeugtes Test-Bild wird akzeptiert
+        ImageAsset asset11 = new ImageAsset();
+        String testImageUri = createTestImageURI(2000, 2000);
+        asset11.setImage(testImageUri);
+        sanitizationService.sanitizeImageUri(asset11);
+        assertThat(asset11.getImage(), is(testImageUri));
+
+    }
+
+    /**
+     * Erzeugt eine Image URI zum Testen mit den übergebenen Werten für Höhe und Breite des Images.
+     *
+     * @param width Breite des Images
+     * @param height Höhe des Images
+     * @return Image URI
+     */
+    public String createTestImageURI(int width, int height) {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
+    }
+
+    /**
+     * Erzeugt eine Image URI eines sehr großen Images zum Testen.
+     *
+     * @return Image URI
+     */
+    public String createTooLargeTestImage() {
+        BufferedImage image = new BufferedImage(5000, 5000, BufferedImage.TYPE_INT_RGB);
+
+        Random random = new Random();
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int rgb = random.nextInt(0xFFFFFF);
+                image.setRGB(x, y, rgb);
+            }
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
+    }
+
+    /**
+     * Erzeugt eine Image URI eines SVG-Bildes. Im Header der Image URI steht 'png' statt 'svg+xml'.
+     *
+     * @return Image URI
+     */
+    public String createTestSvgImageURIWithPngInHeader() {
+        String svg = """
+                <svg xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100"/>
+                </svg>
+                """;
+
+        return "data:image/png;base64," +
+                Base64.getEncoder().encodeToString(svg.getBytes(StandardCharsets.UTF_8));
     }
 }

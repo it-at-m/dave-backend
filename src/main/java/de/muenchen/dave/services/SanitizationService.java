@@ -4,15 +4,34 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Objects;
+import java.util.Set;
+
+import org.apache.tika.Tika;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+
 @Service
 public class SanitizationService {
+
+    // Image URI Validierung
+    public static final long MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+    public static final int MAX_WIDTH = 10000;
+    public static final int MAX_HEIGHT = 10000;
+    public static final long MAX_PIXELS = 50_000_000L; // 50 Megapixel
+    public static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/png", "image/jpeg", "image/jpg");
 
     /**
      * Filtert aus dem übergebenen {@link String} unerwünschten HTML-Code heraus.
@@ -143,5 +162,83 @@ public class SanitizationService {
         String inputHtml = asset.getText();
         String sanitizedHtml = sanitizeAllowedHtml(inputHtml);
         asset.setText(sanitizedHtml);
+    }
+
+    /**
+     * Überprüft die im übergebenen {@link ImageAsset} enthaltene Image URI und ersetzt diese durch
+     * eine neu kodierte sichere Kopie.
+     *
+     * @param asset ImageAsset mit dem src String des Bildes
+     */
+    public void sanitizeImageUri(ImageAsset asset) {
+        String inputUri = asset.getImage();
+
+        if (inputUri == null || inputUri.isBlank()) {
+            throw new IllegalArgumentException("Image is empty");
+        }
+
+        if (!inputUri.startsWith("data:image/")) {
+            throw new IllegalArgumentException("Only image data URIs are allowed");
+        }
+
+        int commaIndex = inputUri.indexOf(',');
+        if (commaIndex < 0) {
+            throw new IllegalArgumentException("Invalid data URI");
+        }
+
+        String header = inputUri.substring(0, commaIndex);
+        String base64 = inputUri.substring(commaIndex + 1);
+
+        // Nur png, jpeg und jpg akzeptieren (in URI-Header prüfen)
+        String mime = header.substring("data:".length(), header.indexOf(';')).toLowerCase();
+        if (!ALLOWED_MIME_TYPES.contains(mime)) {
+            throw new IllegalArgumentException("Unsupported image type");
+        }
+
+        if (base64.isBlank()) {
+            throw new IllegalArgumentException("Invalid data URI");
+        }
+
+        try {
+            // Frühzeitige Abschätzung der Größe des dekodierten Images
+            long estimatedDecodedSize = (long) base64.length() * 3 / 4;
+            if (estimatedDecodedSize > MAX_IMAGE_SIZE_BYTES) {
+                throw new IllegalArgumentException("Image exceeds maximum size");
+            }
+
+            byte[] imageBytes = Base64.getDecoder().decode(base64);
+
+            // Nur png, jpeg und jpg akzeptieren (in Byte-String prüfen)
+            String detectedMime = new Tika().detect(imageBytes);
+            if (!ALLOWED_MIME_TYPES.contains(detectedMime)) {
+                throw new IllegalArgumentException("Unsupported image type: " + detectedMime);
+            }
+
+            // Größe des dekodierten Images prüfen
+            if (imageBytes.length > MAX_IMAGE_SIZE_BYTES) {
+                throw new IllegalArgumentException("Image exceeds maximum size");
+            }
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
+
+            // Bilddimension und Auflösung prüfen
+            int width = image.getWidth();
+            int height = image.getHeight();
+            if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                throw new IllegalArgumentException("Image dimensions too large");
+            }
+            if ((long) width * height > MAX_PIXELS) {
+                throw new IllegalArgumentException("Image has too many pixels");
+            }
+
+            // Neu kodieren
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", out);
+
+            String safeUri = "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
+            asset.setImage(safeUri);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

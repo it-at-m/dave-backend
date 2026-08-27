@@ -12,7 +12,6 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
-import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
@@ -24,15 +23,10 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import jakarta.annotation.PostConstruct;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Base64;
 import java.util.Objects;
-import java.util.Set;
-import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -85,13 +79,6 @@ public class GeneratePdfService {
 
     // Font
     private static final String FONT_FAMILY_ROBOTO = "Roboto";
-
-    // Image URI Validierung
-    public static final long MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
-    public static final int MAX_WIDTH = 10000;
-    public static final int MAX_HEIGHT = 10000;
-    public static final long MAX_PIXELS = 50_000_000L; // 50 Megapixel
-    public static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/png", "image/jpeg", "image/jpg");
 
     @Value("classpath:pdf/fonts/roboto/Roboto-Thin.ttf")
     Resource robotoThin;
@@ -286,84 +273,6 @@ public class GeneratePdfService {
         final StringWriter writer = new StringWriter();
         mustache.execute(writer, bean);
         return writer.toString();
-    }
-
-    /**
-     * Überprüft die im übergebenen {@link ImageAsset} enthaltene Image URI und ersetzt diese durch
-     * eine neu kodierte sichere Kopie.
-     *
-     * @param asset ImageAsset mit dem src String des Bildes
-     */
-    public void sanitizeImageUri(ImageAsset asset) {
-        String inputUri = asset.getImage();
-
-        if (inputUri == null || inputUri.isBlank()) {
-            throw new IllegalArgumentException("Image is empty");
-        }
-
-        if (!inputUri.startsWith("data:image/")) {
-            throw new IllegalArgumentException("Only image data URIs are allowed");
-        }
-
-        int commaIndex = inputUri.indexOf(',');
-        if (commaIndex < 0) {
-            throw new IllegalArgumentException("Invalid data URI");
-        }
-
-        String header = inputUri.substring(0, commaIndex);
-        String base64 = inputUri.substring(commaIndex + 1);
-
-        // Nur png, jpeg und jpg akzeptieren (in URI-Header prüfen)
-        String mime = header.substring("data:".length(), header.indexOf(';')).toLowerCase();
-        if (!ALLOWED_MIME_TYPES.contains(mime)) {
-            throw new IllegalArgumentException("Unsupported image type");
-        }
-
-        if (base64.isBlank()) {
-            throw new IllegalArgumentException("Invalid data URI");
-        }
-
-        try {
-            // Frühzeitige Abschätzung der Größe des dekodierten Images
-            long estimatedDecodedSize = (long) base64.length() * 3 / 4;
-            if (estimatedDecodedSize > MAX_IMAGE_SIZE_BYTES) {
-                throw new IllegalArgumentException("Image exceeds maximum size");
-            }
-
-            byte[] imageBytes = Base64.getDecoder().decode(base64);
-
-            // Nur png, jpeg und jpg akzeptieren (in Byte-String prüfen)
-            String detectedMime = new Tika().detect(imageBytes);
-            if (!ALLOWED_MIME_TYPES.contains(detectedMime)) {
-                throw new IllegalArgumentException("Unsupported image type: " + detectedMime);
-            }
-
-            // Größe des dekodierten Images prüfen
-            if (imageBytes.length > MAX_IMAGE_SIZE_BYTES) {
-                throw new IllegalArgumentException("Image exceeds maximum size");
-            }
-
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageBytes));
-
-            // Bilddimension und Auflösung prüfen
-            int width = image.getWidth();
-            int height = image.getHeight();
-            if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                throw new IllegalArgumentException("Image dimensions too large");
-            }
-            if ((long) width * height > MAX_PIXELS) {
-                throw new IllegalArgumentException("Image has too many pixels");
-            }
-
-            // Neu kodieren
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", out);
-
-            String safeUri = "data:image/png;base64," + Base64.getEncoder().encodeToString(out.toByteArray());
-            asset.setImage(safeUri);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
