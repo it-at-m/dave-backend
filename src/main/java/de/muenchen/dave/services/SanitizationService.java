@@ -141,8 +141,8 @@ public class SanitizationService {
     }
 
     /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Fahrzeugklasse} ist.
-     * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
+     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Fahrzeugklasse}
+     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
      *
      * @param fahrzeugklasse Zu validierende Fahrzeugklasse als {@link String}
      */
@@ -155,8 +155,8 @@ public class SanitizationService {
     }
 
     /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Verkehrsart} ist.
-     * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
+     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Verkehrsart}
+     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
      *
      * @param verkehrsart Zu validierende Verkehrsart als {@link String}
      */
