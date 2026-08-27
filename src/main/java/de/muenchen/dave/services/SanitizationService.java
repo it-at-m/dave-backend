@@ -71,20 +71,6 @@ public class SanitizationService {
     }
 
     /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link TagesTyp} ist.
-     * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
-     *
-     * @param tagesTyp Zu validierender TagesTyp als {@link String}
-     */
-    public void validateTagesTyp(final String tagesTyp) {
-        if (tagesTyp == null) return;
-        List<String> allowedTagesTypen = Arrays.stream(TagesTyp.values()).map(TagesTyp::toString).toList();
-        if (!allowedTagesTypen.contains(tagesTyp)) {
-            throw new IllegalArgumentException("Ungültiger TagesTyp: " + tagesTyp);
-        }
-    }
-
-    /**
      * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Wetter} ist.
      * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
      *
