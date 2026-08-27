@@ -8,7 +8,6 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
-import de.muenchen.dave.domain.pdf.assets.TextAsset;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
@@ -19,7 +18,6 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.PdfBean;
-import de.muenchen.dave.services.SanitizationService;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,7 +37,7 @@ import org.junit.jupiter.api.Test;
 @Slf4j
 class GeneratePdfServiceTest {
 
-    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null, null, new SanitizationService());
+    private final GeneratePdfService generatePdfService = new GeneratePdfService(null, null, null);
 
     @BeforeEach
     public void init() {
@@ -189,53 +187,6 @@ class GeneratePdfServiceTest {
         expected = "<html>\n<head>\n  <style></style>\n</head>\n<body>\nNur ein Test-Template.\n<header>Der Header</header>\n\n<footer>Der Footer</footer>\n\n14.12.2020\n&lt;TestOU&gt;\n</body>\n</html>";
 
         assertThat(html, is(expected));
-    }
-
-    @Test
-    public void testSanitizeAllowedHtml() {
-        // Harmloser HTML-Input bleibt erhalten
-        String allowedHtml = "<p>Hello <strong>World</strong>. Visit <a href=\"https://example.com\">Link</a> or <a href=\"mailto:foo@example.com\">Email</a></p>";
-        TextAsset assetWithAllowedHtml = new TextAsset();
-        assetWithAllowedHtml.setText(allowedHtml);
-        generatePdfService.sanitizeAllowedHtml(assetWithAllowedHtml);
-        String expected = "<p>Hello <strong>World</strong>. Visit <a href=\"https://example.com\">Link</a> or <a href=\"mailto:foo@example.com\">Email</a></p>";
-        assertThat(assetWithAllowedHtml.getText(), is(expected));
-
-        // Closing Tags (z.B. <br />) bleiben erhalten und werden nicht umgewandelt (z.B. <br /> -> <br> => Fehler bei der PDF-Generierung)
-        String allowedHtml2 = "Knotenarme:<br />1 1<br />2 2<br />";
-        TextAsset assetWithAllowedHtml2 = new TextAsset();
-        assetWithAllowedHtml2.setText(allowedHtml2);
-        generatePdfService.sanitizeAllowedHtml(assetWithAllowedHtml2);
-        assertThat(assetWithAllowedHtml2.getText(), is(allowedHtml2));
-
-        // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        String notAllowedHtml1 = "<p>Click <a href=\"javascript:alert('XSS')\">here</a></p><script>alert('x')</script>";
-        TextAsset assetWithNotAllowedHtml1 = new TextAsset();
-        assetWithNotAllowedHtml1.setText(notAllowedHtml1);
-        generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml1);
-        String expected1 = "<p>Click <a>here</a></p>"; // href mit nicht erlaubtem uri scheme sowie script tags werden entfernt
-        assertThat(assetWithNotAllowedHtml1.getText(), is(expected1));
-
-        String notAllowedHtml2 = "<p onclick=\"doEvil()\" style=\"color:red\" class=\"foo\">Hi</p>";
-        TextAsset assetWithNotAllowedHtml2 = new TextAsset();
-        assetWithNotAllowedHtml2.setText(notAllowedHtml2);
-        generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml2);
-        String expected2 = "<p>Hi</p>"; // onclick wird entfernt
-        assertThat(assetWithNotAllowedHtml2.getText(), is(expected2));
-
-        String notAllowedHtml3 = "Before<img src=\"https://example.com/pic.png\" alt=\"pic\">After";
-        TextAsset assetWithNotAllowedHtml3 = new TextAsset();
-        assetWithNotAllowedHtml3.setText(notAllowedHtml3);
-        generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml3);
-        String expected3 = "BeforeAfter"; // img wird entfernt
-        assertThat(assetWithNotAllowedHtml3.getText(), is(expected3));
-
-        String notAllowedHtml4 = "<a href=\"/local/path\">Local</a>";
-        TextAsset assetWithNotAllowedHtml4 = new TextAsset();
-        assetWithNotAllowedHtml4.setText(notAllowedHtml4);
-        generatePdfService.sanitizeAllowedHtml(assetWithNotAllowedHtml4);
-        String expected4 = "<a>Local</a>"; // relative URL wird entfernt
-        assertThat(assetWithNotAllowedHtml4.getText(), is(expected4));
     }
 
     @Test

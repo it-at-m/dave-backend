@@ -13,7 +13,6 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
-import de.muenchen.dave.domain.pdf.assets.TextAsset;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
@@ -24,7 +23,6 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePd
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.SanitizationService;
 import jakarta.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -111,7 +109,6 @@ public class GeneratePdfService {
     final FillPdfBeanService fillPdfBeanService;
     final FillZeitreihePdfBeanService fillZeitreihePdfBeanService;
     final ReportLogoService reportLogoService;
-    final SanitizationService sanitizationService;
 
     // Templates
     private Mustache belastungsplan;
@@ -147,11 +144,10 @@ public class GeneratePdfService {
     private Mustache zeitreiheCss;
 
     public GeneratePdfService(final FillPdfBeanService fillPdfBeanService, final FillZeitreihePdfBeanService fillZeitreihePdfBeanService,
-            ReportLogoService reportLogoService, SanitizationService sanitizationService) {
+            ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.fillZeitreihePdfBeanService = fillZeitreihePdfBeanService;
         this.reportLogoService = reportLogoService;
-        this.sanitizationService = sanitizationService;
     }
 
     /**
@@ -290,18 +286,6 @@ public class GeneratePdfService {
         final StringWriter writer = new StringWriter();
         mustache.execute(writer, bean);
         return writer.toString();
-    }
-
-    /**
-     * Filtert aus dem HTML-String des übergebenen {@link TextAsset} alles Unerwünschte heraus und
-     * aktualisiert den Text des Assets.
-     *
-     * @param asset TextAsset mit dem HTML-Text
-     */
-    public void sanitizeAllowedHtml(TextAsset asset) {
-        String inputHtml = asset.getText();
-        String sanitizedHtml = sanitizationService.sanitizeAllowedHtml(inputHtml);
-        asset.setText(sanitizedHtml);
     }
 
     /**

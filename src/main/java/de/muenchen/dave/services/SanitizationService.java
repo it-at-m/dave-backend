@@ -5,6 +5,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import java.util.Objects;
+import de.muenchen.dave.domain.pdf.assets.TextAsset;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Safelist;
@@ -130,5 +131,17 @@ public class SanitizationService {
         messquerschnittDTO.setLageMessquerschnitt(sanitizeAllowedHtml(messquerschnittDTO.getLageMessquerschnitt()));
         messquerschnittDTO.setHersteller(sanitizeAllowedHtml(messquerschnittDTO.getHersteller()));
         messquerschnittDTO.setStandort(sanitizeAllowedHtml(messquerschnittDTO.getStandort()));
+    }
+
+    /**
+     * Filtert aus dem HTML-String des übergebenen {@link TextAsset} alles Unerwünschte heraus und
+     * aktualisiert den Text des Assets.
+     *
+     * @param asset TextAsset mit dem HTML-Text
+     */
+    public void sanitizeTextAsset(final TextAsset asset) {
+        String inputHtml = asset.getText();
+        String sanitizedHtml = sanitizeAllowedHtml(inputHtml);
+        asset.setText(sanitizedHtml);
     }
 }

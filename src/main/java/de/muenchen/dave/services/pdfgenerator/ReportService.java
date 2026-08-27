@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import jakarta.annotation.PostConstruct;
@@ -49,6 +50,7 @@ public class ReportService {
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
     private final ReportLogoService reportLogoService;
+    private final SanitizationService sanitizationService;
 
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
@@ -71,14 +73,15 @@ public class ReportService {
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
             final LadeZaehldatumMapper ladeZaehldatumMapper,
-            final ReportLogoService reportLogoService) {
+            final ReportLogoService reportLogoService,
+            final SanitizationService sanitizationService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
         this.reportLogoService = reportLogoService;
-
+        this.sanitizationService = sanitizationService;
     }
 
     public byte[] generateReportPdf(final List<BaseAsset> assetList, final String department) throws IOException {
@@ -130,7 +133,7 @@ public class ReportService {
 
         assetList.forEach(asset -> {
             if (asset.getType().equals(AssetType.TEXT)) {
-                this.generatePdfService.sanitizeAllowedHtml((TextAsset) asset);
+                this.sanitizationService.sanitizeTextAsset((TextAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.textAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.IMAGE)) {
                 this.generatePdfService.sanitizeImageUri((ImageAsset) asset);
