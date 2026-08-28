@@ -281,7 +281,11 @@ public class SanitizationService {
         String base64 = inputUri.substring(commaIndex + 1);
 
         // Nur png, jpeg und jpg akzeptieren (in URI-Header prüfen)
-        String mime = header.substring("data:".length(), header.indexOf(';')).toLowerCase();
+        int semicolonIndex = header.indexOf(';');
+        if (semicolonIndex < 0) {
+            throw new IllegalArgumentException("Invalid data URI");
+        }
+        String mime = header.substring("data:".length(), semicolonIndex).toLowerCase();
         if (!ALLOWED_MIME_TYPES.contains(mime)) {
             throw new IllegalArgumentException("Unsupported image type");
         }
