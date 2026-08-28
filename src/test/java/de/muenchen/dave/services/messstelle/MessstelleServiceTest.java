@@ -12,6 +12,7 @@ import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.SanitizationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,9 @@ class MessstelleServiceTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
+    @Mock
+    private SanitizationService sanitizationService;
+
     private final MessstelleMapper messstelleMapper = new MessstelleMapperImpl();
 
     private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
@@ -50,7 +54,8 @@ class MessstelleServiceTest {
                 messstelleIndexService,
                 customSuggestIndexService,
                 messstelleMapper,
-                stadtbezirkMapper);
+                stadtbezirkMapper,
+                sanitizationService);
     }
 
     @Test

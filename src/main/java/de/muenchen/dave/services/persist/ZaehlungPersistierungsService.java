@@ -21,6 +21,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
@@ -49,12 +50,16 @@ public abstract class ZaehlungPersistierungsService {
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
+    protected final SanitizationService sanitizationService;
+
     public ZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-            final ZeitintervallMapper zeitintervallMapper) {
+            final ZeitintervallMapper zeitintervallMapper,
+            final SanitizationService sanitizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         this.zeitintervallMapper = zeitintervallMapper;
+        this.sanitizationService = sanitizationService;
     }
 
     /**
@@ -74,7 +79,7 @@ public abstract class ZaehlungPersistierungsService {
                 zaehlung.setStatus(updateStatusDto.getStatus());
                 // WIrd eine Zaehlung beauftragt, so wird die dienstleiserkennung gespeichert
                 if (zaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
-                    zaehlung.setDienstleisterkennung(updateStatusDto.getDienstleisterkennung());
+                    zaehlung.setDienstleisterkennung(sanitizationService.sanitizeAllowedHtml(updateStatusDto.getDienstleisterkennung()));
                 } else if (zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())) {
                     // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(

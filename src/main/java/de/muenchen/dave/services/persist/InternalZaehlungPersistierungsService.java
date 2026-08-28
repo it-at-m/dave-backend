@@ -24,6 +24,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
@@ -51,8 +52,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,
-            final PkwEinheitMapper pkwEinheitMapper) {
-        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
+            final PkwEinheitMapper pkwEinheitMapper,
+            final SanitizationService sanitizationService) {
+        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, sanitizationService);
         this.pkwEinheitMapper = pkwEinheitMapper;
         this.pkwEinheitRepository = pkwEinheitRepository;
     }
@@ -89,6 +91,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     @Transactional
     public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
+
+        // Sanitize attributes of zaehlungDto
+        this.sanitizationService.sanitizeBearbeiteZaehlungDto(zaehlungDto);
 
         // Setzen der PKW-Einheiten
         if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
