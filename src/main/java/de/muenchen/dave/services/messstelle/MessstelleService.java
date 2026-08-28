@@ -75,9 +75,9 @@ public class MessstelleService {
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
-        sanitizationService.sanitizeEditMessstelleDto(dto);
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
+        sanitizationService.sanitizeMessstelle(aktualisiert);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
         final Messstelle messstelle = messstelleIndexService.saveMessstelle(aktualisiert);
         final BackendIdDTO backendIdDTO = new BackendIdDTO();

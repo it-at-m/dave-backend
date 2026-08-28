@@ -2,8 +2,8 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
@@ -11,9 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import javax.imageio.ImageIO;
 import org.apache.tika.Tika;
@@ -127,34 +124,6 @@ public class SanitizationService {
     }
 
     /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Fahrzeugklasse}
-     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
-     *
-     * @param fahrzeugklasse Zu validierende Fahrzeugklasse als {@link String}
-     */
-    public void validateFahrzeugklasse(final String fahrzeugklasse) {
-        if (fahrzeugklasse == null) return;
-        List<String> allowedFahrzeugklassen = Arrays.stream(Fahrzeugklasse.values()).map(Fahrzeugklasse::toString).toList();
-        if (!allowedFahrzeugklassen.contains(fahrzeugklasse)) {
-            throw new IllegalArgumentException("Ungültige Fahrzeugklasse: " + fahrzeugklasse);
-        }
-    }
-
-    /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Verkehrsart}
-     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
-     *
-     * @param verkehrsart Zu validierende Verkehrsart als {@link String}
-     */
-    public void validateVerkehrsart(final String verkehrsart) {
-        if (verkehrsart == null) return;
-        List<String> allowedVerkehrsarten = Arrays.stream(Verkehrsart.values()).map(Verkehrsart::toString).toList();
-        if (!allowedVerkehrsarten.contains(verkehrsart)) {
-            throw new IllegalArgumentException("Ungültige Verkehrsart: " + verkehrsart);
-        }
-    }
-
-    /**
      * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Stadtbezirk}
      * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
      *
@@ -165,21 +134,6 @@ public class SanitizationService {
         List<String> allowedStadtbezirke = Arrays.stream(Stadtbezirk.values()).map(Stadtbezirk::toString).toList();
         if (!allowedStadtbezirke.contains(stadtbezirk)) {
             throw new IllegalArgumentException("Ungültiger Stadtbezirk: " + stadtbezirk);
-        }
-    }
-
-    /**
-     * Validiert, dass der übergebene {@link String} ein gültiges Datum ist.
-     * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
-     *
-     * @param date Zu validierendes Datum als {@link String}
-     */
-    public void validateDate(final String date) {
-        if (date == null) return;
-        try {
-            LocalDate.parse(date.trim(), DateTimeFormatter.ISO_DATE);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Ungültiges Datum: " + date);
         }
     }
 
@@ -240,54 +194,53 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessstelleDTO}. Unerwünschter
+     * Bereinigt die Attribute vom Typ {@link String} einer {@link Messstelle}. Unerwünschter
      * HTML-Code wird entfernt.
      *
-     * @param messstelleDTO Das {@link EditMessstelleDTO}, dessen Attribute bereinigt werden sollen
+     * @param messstelle Die {@link Messstelle}, deren Attribute bereinigt werden sollen
      */
-    public void sanitizeEditMessstelleDto(final EditMessstelleDTO messstelleDTO) {
-        if (messstelleDTO == null) return;
-        messstelleDTO.setName(sanitizeAllowedHtml(messstelleDTO.getName()));
-        validateStatus(messstelleDTO.getStatus());
-        messstelleDTO.setBemerkung(sanitizeAllowedHtml(messstelleDTO.getBemerkung()));
-        validateStadtbezirk(messstelleDTO.getStadtbezirk());
-        validateDate(messstelleDTO.getRealisierungsdatum());
-        validateDate(messstelleDTO.getAbbaudatum());
-        validateDate(messstelleDTO.getDatumLetztePlausibleMessung());
-        messstelleDTO.setHersteller(sanitizeAllowedHtml(messstelleDTO.getHersteller()));
-        messstelleDTO.setKommentar(sanitizeAllowedHtml(messstelleDTO.getKommentar()));
-        messstelleDTO.setStandort(sanitizeAllowedHtml(messstelleDTO.getStandort()));
+    public void sanitizeMessstelle(final Messstelle messstelle) {
+        if (messstelle == null) return;
+        messstelle.setName(sanitizeAllowedHtml(messstelle.getName()));
+        messstelle.setBemerkung(sanitizeAllowedHtml(messstelle.getBemerkung()));
+        messstelle.setHersteller(sanitizeAllowedHtml(messstelle.getHersteller()));
+        messstelle.setKommentar(sanitizeAllowedHtml(messstelle.getKommentar()));
+        messstelle.setStandort(sanitizeAllowedHtml(messstelle.getStandort()));
 
-        if (messstelleDTO.getCustomSuchwoerter() != null) {
-            messstelleDTO.setCustomSuchwoerter(messstelleDTO.getCustomSuchwoerter().stream()
+        if (messstelle.getSuchwoerter() != null) {
+            messstelle.setSuchwoerter(messstelle.getSuchwoerter().stream()
                     .filter(Objects::nonNull)
                     .map(this::sanitizeAllowedHtml)
                     .toList());
         }
 
-        if (messstelleDTO.getMessquerschnitte() != null) {
-            messstelleDTO.getMessquerschnitte().stream()
+        if (messstelle.getCustomSuchwoerter() != null) {
+            messstelle.setCustomSuchwoerter(messstelle.getCustomSuchwoerter().stream()
                     .filter(Objects::nonNull)
-                    .forEach((this::sanitizeEditMessquerschnittDto));
+                    .map(this::sanitizeAllowedHtml)
+                    .toList());
+        }
+
+        if (messstelle.getMessquerschnitte() != null) {
+            messstelle.getMessquerschnitte().stream()
+                    .filter(Objects::nonNull)
+                    .forEach((this::sanitizeMessquerschnitt));
         }
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link EditMessquerschnittDTO}.
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link Messquerschnitt}s.
      * Unerwünschter HTML-Code wird entfernt.
      *
-     * @param messquerschnittDTO Das {@link EditMessquerschnittDTO}, dessen Attribute bereinigt werden
+     * @param messquerschnitt Der {@link Messquerschnitt}, dessen Attribute bereinigt werden
      *            sollen
      */
-    public void sanitizeEditMessquerschnittDto(final EditMessquerschnittDTO messquerschnittDTO) {
-        if (messquerschnittDTO == null) return;
-        messquerschnittDTO.setStrassenname(sanitizeAllowedHtml(messquerschnittDTO.getStrassenname()));
-        messquerschnittDTO.setLageMessquerschnitt(sanitizeAllowedHtml(messquerschnittDTO.getLageMessquerschnitt()));
-        messquerschnittDTO.setFahrtrichtung(sanitizeAllowedHtml(messquerschnittDTO.getFahrtrichtung()));
-        validateFahrzeugklasse(messquerschnittDTO.getFahrzeugklasse());
-        validateVerkehrsart(messquerschnittDTO.getDetektierteVerkehrsart());
-        messquerschnittDTO.setHersteller(sanitizeAllowedHtml(messquerschnittDTO.getHersteller()));
-        messquerschnittDTO.setStandort(sanitizeAllowedHtml(messquerschnittDTO.getStandort()));
+    public void sanitizeMessquerschnitt(Messquerschnitt messquerschnitt) {
+        if (messquerschnitt == null) return;
+        messquerschnitt.setStrassenname(sanitizeAllowedHtml(messquerschnitt.getStrassenname()));
+        messquerschnitt.setLageMessquerschnitt(sanitizeAllowedHtml(messquerschnitt.getLageMessquerschnitt()));
+        messquerschnitt.setFahrtrichtung(sanitizeAllowedHtml(messquerschnitt.getFahrtrichtung()));
+        messquerschnitt.setStandort(sanitizeAllowedHtml(messquerschnitt.getStandort()));
     }
 
     /**

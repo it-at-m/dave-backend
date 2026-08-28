@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
+import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
@@ -178,110 +178,87 @@ class SanitizationServiceTest {
     }
 
     @Test
-    void sanitizeEditMessstelleDto_safeInputIsKept() {
+    void sanitizeMessstelle_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        EditMessstelleDTO editMessstelleDTO = new EditMessstelleDTO();
-        editMessstelleDTO.setName(ALLOWED_HTML_1);
-        editMessstelleDTO.setStatus(Status.ACTIVE.toString());
-        editMessstelleDTO.setBemerkung(ALLOWED_HTML_1);
-        editMessstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.toString());
-        editMessstelleDTO.setRealisierungsdatum("2023-02-21");
-        editMessstelleDTO.setAbbaudatum("2026-08-27");
-        editMessstelleDTO.setDatumLetztePlausibleMessung("2026-08-26");
-        editMessstelleDTO.setHersteller(ALLOWED_HTML_1);
-        editMessstelleDTO.setKommentar(ALLOWED_HTML_1);
-        editMessstelleDTO.setStandort(ALLOWED_HTML_1);
-        editMessstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1));
+        Messstelle messstelle = new Messstelle();
+        messstelle.setName(ALLOWED_HTML_1);
+        messstelle.setBemerkung(ALLOWED_HTML_1);
+        messstelle.setHersteller(ALLOWED_HTML_1);
+        messstelle.setKommentar(ALLOWED_HTML_1);
+        messstelle.setStandort(ALLOWED_HTML_1);
+        messstelle.setSuchwoerter(List.of(ALLOWED_HTML_1));
+        messstelle.setCustomSuchwoerter(List.of(ALLOWED_HTML_1));
 
-        sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO);
+        sanitizationService.sanitizeMessstelle(messstelle);
 
-        assertThat(editMessstelleDTO.getName(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getBemerkung(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.toString()));
-        assertThat(editMessstelleDTO.getHersteller(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getKommentar(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getStandort(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getCustomSuchwoerter().size(), is(1));
-        assertThat(editMessstelleDTO.getCustomSuchwoerter().getFirst(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getName(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getBemerkung(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getHersteller(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getKommentar(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getStandort(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getSuchwoerter().size(), is(1));
+        assertThat(messstelle.getSuchwoerter().getFirst(), is(ALLOWED_HTML_1));
+        assertThat(messstelle.getCustomSuchwoerter().size(), is(1));
+        assertThat(messstelle.getCustomSuchwoerter().getFirst(), is(ALLOWED_HTML_1));
     }
 
     @Test
-    void sanitizeEditMessstelleDto_unsafeInputIsRemoved() {
+    void sanitizeMessstelle_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        EditMessstelleDTO editMessstelleDTO = new EditMessstelleDTO();
-        editMessstelleDTO.setName(NOT_ALLOWED_HTML_1);
-        editMessstelleDTO.setBemerkung(NOT_ALLOWED_HTML_2);
-        editMessstelleDTO.setHersteller(NOT_ALLOWED_HTML_4);
-        editMessstelleDTO.setKommentar(NOT_ALLOWED_HTML_1);
-        editMessstelleDTO.setStandort(NOT_ALLOWED_HTML_2);
-        editMessstelleDTO.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_3));
+        Messstelle messstelle = new Messstelle();
+        messstelle.setName(NOT_ALLOWED_HTML_1);
+        messstelle.setBemerkung(NOT_ALLOWED_HTML_2);
+        messstelle.setHersteller(NOT_ALLOWED_HTML_4);
+        messstelle.setKommentar(NOT_ALLOWED_HTML_1);
+        messstelle.setStandort(NOT_ALLOWED_HTML_2);
+        messstelle.setSuchwoerter(List.of(NOT_ALLOWED_HTML_3));
+        messstelle.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_4));
 
-        sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO);
+        sanitizationService.sanitizeMessstelle(messstelle);
 
-        assertThat(editMessstelleDTO.getName(), is(EXPECTED_1));
-        assertThat(editMessstelleDTO.getBemerkung(), is(EXPECTED_2));
-        assertThat(editMessstelleDTO.getHersteller(), is(EXPECTED_4));
-        assertThat(editMessstelleDTO.getKommentar(), is(EXPECTED_1));
-        assertThat(editMessstelleDTO.getStandort(), is(EXPECTED_2));
-        assertThat(editMessstelleDTO.getCustomSuchwoerter().size(), is(1));
-        assertThat(editMessstelleDTO.getCustomSuchwoerter().getFirst(), is(EXPECTED_3));
-
-        editMessstelleDTO.setStatus("No");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
-        editMessstelleDTO.setStatus(null);
-        editMessstelleDTO.setStadtbezirk("Südkreuz");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
-        editMessstelleDTO.setStadtbezirk(null);
-        editMessstelleDTO.setRealisierungsdatum("12.02");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
-        editMessstelleDTO.setRealisierungsdatum(null);
-        editMessstelleDTO.setAbbaudatum("27.08");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
-        editMessstelleDTO.setAbbaudatum(null);
-        editMessstelleDTO.setDatumLetztePlausibleMessung("gestern");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
+        assertThat(messstelle.getName(), is(EXPECTED_1));
+        assertThat(messstelle.getBemerkung(), is(EXPECTED_2));
+        assertThat(messstelle.getHersteller(), is(EXPECTED_4));
+        assertThat(messstelle.getKommentar(), is(EXPECTED_1));
+        assertThat(messstelle.getStandort(), is(EXPECTED_2));
+        assertThat(messstelle.getSuchwoerter().size(), is(1));
+        assertThat(messstelle.getSuchwoerter().getFirst(), is(EXPECTED_3));
+        assertThat(messstelle.getCustomSuchwoerter().size(), is(1));
+        assertThat(messstelle.getCustomSuchwoerter().getFirst(), is(EXPECTED_4));
     }
 
     @Test
-    void sanitizeEditMessquerschnittDto_safeInputIsKept() {
+    void sanitizeMessquerschnitt_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        EditMessquerschnittDTO editMessquerschnittDTO = new EditMessquerschnittDTO();
-        editMessquerschnittDTO.setStrassenname(ALLOWED_HTML_1);
-        editMessquerschnittDTO.setLageMessquerschnitt(ALLOWED_HTML_2);
-        editMessquerschnittDTO.setFahrzeugklasse(Fahrzeugklasse.RAD.toString());
-        editMessquerschnittDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ.toString());
-        editMessquerschnittDTO.setHersteller(ALLOWED_HTML_1);
-        editMessquerschnittDTO.setStandort(ALLOWED_HTML_2);
+        Messquerschnitt messquerschnitt = new Messquerschnitt();
+        messquerschnitt.setStrassenname(ALLOWED_HTML_1);
+        messquerschnitt.setLageMessquerschnitt(ALLOWED_HTML_2);
+        messquerschnitt.setFahrtrichtung(ALLOWED_HTML_1);
+        messquerschnitt.setStandort(ALLOWED_HTML_2);
 
-        sanitizationService.sanitizeEditMessquerschnittDto(editMessquerschnittDTO);
+        sanitizationService.sanitizeMessquerschnitt(messquerschnitt);
 
-        assertThat(editMessquerschnittDTO.getStrassenname(), is(ALLOWED_HTML_1));
-        assertThat(editMessquerschnittDTO.getLageMessquerschnitt(), is(ALLOWED_HTML_2));
-        assertThat(editMessquerschnittDTO.getHersteller(), is(ALLOWED_HTML_1));
-        assertThat(editMessquerschnittDTO.getStandort(), is(ALLOWED_HTML_2));
+        assertThat(messquerschnitt.getStrassenname(), is(ALLOWED_HTML_1));
+        assertThat(messquerschnitt.getLageMessquerschnitt(), is(ALLOWED_HTML_2));
+        assertThat(messquerschnitt.getFahrtrichtung(), is(ALLOWED_HTML_1));
+        assertThat(messquerschnitt.getStandort(), is(ALLOWED_HTML_2));
     }
 
     @Test
-    void sanitizeEditMessquerschnittDto_unsafeInputIsRemoved() {
+    void sanitizeMessquerschnitt_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        EditMessquerschnittDTO editMessquerschnittDTO = new EditMessquerschnittDTO();
-        editMessquerschnittDTO.setStrassenname(NOT_ALLOWED_HTML_1);
-        editMessquerschnittDTO.setLageMessquerschnitt(NOT_ALLOWED_HTML_2);
-        editMessquerschnittDTO.setHersteller(NOT_ALLOWED_HTML_3);
-        editMessquerschnittDTO.setStandort(NOT_ALLOWED_HTML_4);
+        Messquerschnitt messquerschnitt = new Messquerschnitt();
+        messquerschnitt.setStrassenname(NOT_ALLOWED_HTML_1);
+        messquerschnitt.setLageMessquerschnitt(NOT_ALLOWED_HTML_2);
+        messquerschnitt.setFahrtrichtung(NOT_ALLOWED_HTML_3);
+        messquerschnitt.setStandort(NOT_ALLOWED_HTML_4);
 
-        sanitizationService.sanitizeEditMessquerschnittDto(editMessquerschnittDTO);
+        sanitizationService.sanitizeMessquerschnitt(messquerschnitt);
 
-        assertThat(editMessquerschnittDTO.getStrassenname(), is(EXPECTED_1));
-        assertThat(editMessquerschnittDTO.getLageMessquerschnitt(), is(EXPECTED_2));
-        assertThat(editMessquerschnittDTO.getHersteller(), is(EXPECTED_3));
-        assertThat(editMessquerschnittDTO.getStandort(), is(EXPECTED_4));
-
-        editMessquerschnittDTO.setFahrzeugklasse("Auto");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessquerschnittDto(editMessquerschnittDTO));
-        editMessquerschnittDTO.setFahrzeugklasse(null);
-        editMessquerschnittDTO.setDetektierteVerkehrsart("Auto");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessquerschnittDto(editMessquerschnittDTO));
+        assertThat(messquerschnitt.getStrassenname(), is(EXPECTED_1));
+        assertThat(messquerschnitt.getLageMessquerschnitt(), is(EXPECTED_2));
+        assertThat(messquerschnitt.getFahrtrichtung(), is(EXPECTED_3));
+        assertThat(messquerschnitt.getStandort(), is(EXPECTED_4));
     }
 
     @Test
