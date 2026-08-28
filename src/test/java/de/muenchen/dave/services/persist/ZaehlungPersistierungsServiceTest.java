@@ -732,7 +732,6 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
-        final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z1")).thenReturn(zaehlstelle);
 
@@ -742,7 +741,7 @@ class ZaehlungPersistierungsServiceTest {
                 pkwEinheitRepository,
                 null,
                 null,
-                mockSanitizationService);
+                new SanitizationService());
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId("z1");
