@@ -155,6 +155,20 @@ public class SanitizationService {
     }
 
     /**
+     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Stadtbezirk}
+     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
+     *
+     * @param stadtbezirk Zu validierender Stadtbezirk als {@link String}
+     */
+    public void validateStadtbezirk(final String stadtbezirk) {
+        if (stadtbezirk == null) return;
+        List<String> allowedStadtbezirke = Arrays.stream(Stadtbezirk.values()).map(Stadtbezirk::toString).toList();
+        if (!allowedStadtbezirke.contains(stadtbezirk)) {
+            throw new IllegalArgumentException("Ungültiger Stadtbezirk: " + stadtbezirk);
+        }
+    }
+
+    /**
      * Validiert, dass der übergebene {@link String} ein gültiges Datum ist.
      * Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
      *
@@ -214,7 +228,7 @@ public class SanitizationService {
      */
     public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO) {
         if (bearbeiteZaehlstelleDTO == null) return;
-        bearbeiteZaehlstelleDTO.setStadtbezirk(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getStadtbezirk()));
+        validateStadtbezirk(bearbeiteZaehlstelleDTO.getStadtbezirk());
         bearbeiteZaehlstelleDTO.setKommentar(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getKommentar()));
 
         if (bearbeiteZaehlstelleDTO.getCustomSuchwoerter() != null) {
@@ -236,7 +250,7 @@ public class SanitizationService {
         messstelleDTO.setName(sanitizeAllowedHtml(messstelleDTO.getName()));
         validateStatus(messstelleDTO.getStatus());
         messstelleDTO.setBemerkung(sanitizeAllowedHtml(messstelleDTO.getBemerkung()));
-        messstelleDTO.setStadtbezirk(sanitizeAllowedHtml(messstelleDTO.getStadtbezirk()));
+        validateStadtbezirk(messstelleDTO.getStadtbezirk());
         validateDate(messstelleDTO.getRealisierungsdatum());
         validateDate(messstelleDTO.getAbbaudatum());
         validateDate(messstelleDTO.getDatumLetztePlausibleMessung());

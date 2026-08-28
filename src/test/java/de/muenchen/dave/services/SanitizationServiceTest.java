@@ -146,13 +146,13 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlstelleDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setStadtbezirk(ALLOWED_HTML_1);
+        bearbeiteZaehlstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.toString());
         bearbeiteZaehlstelleDTO.setKommentar(ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1, ALLOWED_HTML_2));
 
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
 
-        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(ALLOWED_HTML_1));
+        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.toString()));
         assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(ALLOWED_HTML_2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(ALLOWED_HTML_1));
@@ -163,17 +163,18 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlstelleDto_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
         BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setStadtbezirk(NOT_ALLOWED_HTML_1);
         bearbeiteZaehlstelleDTO.setKommentar(NOT_ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_3, NOT_ALLOWED_HTML_4));
 
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
 
-        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(EXPECTED_1));
         assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(EXPECTED_2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(EXPECTED_3));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(1), is(EXPECTED_4));
+
+        bearbeiteZaehlstelleDTO.setStadtbezirk("Südkreuz");
+        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO));
     }
 
     @Test
@@ -183,7 +184,7 @@ class SanitizationServiceTest {
         editMessstelleDTO.setName(ALLOWED_HTML_1);
         editMessstelleDTO.setStatus(Status.ACTIVE.toString());
         editMessstelleDTO.setBemerkung(ALLOWED_HTML_1);
-        editMessstelleDTO.setStadtbezirk(ALLOWED_HTML_1);
+        editMessstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.toString());
         editMessstelleDTO.setRealisierungsdatum("2023-02-21");
         editMessstelleDTO.setAbbaudatum("2026-08-27");
         editMessstelleDTO.setDatumLetztePlausibleMessung("2026-08-26");
@@ -196,7 +197,7 @@ class SanitizationServiceTest {
 
         assertThat(editMessstelleDTO.getName(), is(ALLOWED_HTML_1));
         assertThat(editMessstelleDTO.getBemerkung(), is(ALLOWED_HTML_1));
-        assertThat(editMessstelleDTO.getStadtbezirk(), is(ALLOWED_HTML_1));
+        assertThat(editMessstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.toString()));
         assertThat(editMessstelleDTO.getHersteller(), is(ALLOWED_HTML_1));
         assertThat(editMessstelleDTO.getKommentar(), is(ALLOWED_HTML_1));
         assertThat(editMessstelleDTO.getStandort(), is(ALLOWED_HTML_1));
@@ -210,7 +211,6 @@ class SanitizationServiceTest {
         EditMessstelleDTO editMessstelleDTO = new EditMessstelleDTO();
         editMessstelleDTO.setName(NOT_ALLOWED_HTML_1);
         editMessstelleDTO.setBemerkung(NOT_ALLOWED_HTML_2);
-        editMessstelleDTO.setStadtbezirk(NOT_ALLOWED_HTML_3);
         editMessstelleDTO.setHersteller(NOT_ALLOWED_HTML_4);
         editMessstelleDTO.setKommentar(NOT_ALLOWED_HTML_1);
         editMessstelleDTO.setStandort(NOT_ALLOWED_HTML_2);
@@ -220,7 +220,6 @@ class SanitizationServiceTest {
 
         assertThat(editMessstelleDTO.getName(), is(EXPECTED_1));
         assertThat(editMessstelleDTO.getBemerkung(), is(EXPECTED_2));
-        assertThat(editMessstelleDTO.getStadtbezirk(), is(EXPECTED_3));
         assertThat(editMessstelleDTO.getHersteller(), is(EXPECTED_4));
         assertThat(editMessstelleDTO.getKommentar(), is(EXPECTED_1));
         assertThat(editMessstelleDTO.getStandort(), is(EXPECTED_2));
@@ -230,6 +229,9 @@ class SanitizationServiceTest {
         editMessstelleDTO.setStatus("No");
         assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
         editMessstelleDTO.setStatus(null);
+        editMessstelleDTO.setStadtbezirk("Südkreuz");
+        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
+        editMessstelleDTO.setStadtbezirk(null);
         editMessstelleDTO.setRealisierungsdatum("12.02");
         assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeEditMessstelleDto(editMessstelleDTO));
         editMessstelleDTO.setRealisierungsdatum(null);
