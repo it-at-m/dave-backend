@@ -79,7 +79,7 @@ public abstract class ZaehlungPersistierungsService {
                 zaehlung.setStatus(updateStatusDto.getStatus());
                 // WIrd eine Zaehlung beauftragt, so wird die dienstleiserkennung gespeichert
                 if (zaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
-                    zaehlung.setDienstleisterkennung(updateStatusDto.getDienstleisterkennung());
+                    zaehlung.setDienstleisterkennung(sanitizationService.sanitizeAllowedHtml(updateStatusDto.getDienstleisterkennung()));
                 } else if (zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())) {
                     // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(
