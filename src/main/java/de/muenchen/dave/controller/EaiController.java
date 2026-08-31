@@ -39,7 +39,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @Validated
 @RequiredArgsConstructor
-@PreAuthorize("permitAll()")
+@PreAuthorize("isAuthenticated()")
 public class EaiController {
 
     private static final String REQUEST_PARAMETER_ZAEHLSTELLE_NUMMER = "zaehlstelle_nummer";
