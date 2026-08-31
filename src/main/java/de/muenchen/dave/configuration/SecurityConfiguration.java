@@ -43,9 +43,6 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-spitzenstunde"),
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-zaehlstellen-koordinate"),
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-visum"),
                                 // allow access to /actuator/info
                                 AntPathRequestMatcher.antMatcher("/actuator/info"),
                                 // allow access to /actuator/health for OpenShift Health Check
