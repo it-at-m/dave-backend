@@ -22,7 +22,7 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.services.ZaehlungAuthorizationService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,12 +51,12 @@ public abstract class ZaehlungPersistierungsService {
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
-    protected final ZaehlungAuthorizationService authorizationService;
+    protected final AuthorizationService authorizationService;
 
     public ZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
-            final ZaehlungAuthorizationService authorizationService) {
+            final AuthorizationService authorizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         this.zeitintervallMapper = zeitintervallMapper;

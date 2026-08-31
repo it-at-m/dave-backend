@@ -25,7 +25,7 @@ import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.services.ZaehlungAuthorizationService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -72,7 +72,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // bei Bedarf gestubbt werden können.
         service = Mockito
                 .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
-                        new ZaehlungAuthorizationService(indexService)));
+                        new AuthorizationService(indexService)));
 
         // Setze Test-Nutzer mit Rolle Fachadmin
         TestUtils.setSecurityContext("test", true);

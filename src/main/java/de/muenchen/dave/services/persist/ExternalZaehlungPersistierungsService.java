@@ -20,7 +20,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.services.ZaehlungAuthorizationService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
             final KnotenarmMapper knotenarmMapper,
-            final ZaehlungAuthorizationService authorizationService) {
+            final AuthorizationService authorizationService) {
         super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, authorizationService);
         this.knotenarmMapper = knotenarmMapper;
     }

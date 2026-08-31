@@ -19,7 +19,7 @@ import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.services.ZaehlungAuthorizationService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +61,7 @@ class InternalZaehlungPersistierungsServiceTest {
     private PkwEinheitMapper pkwEinheitMapper;
 
     @Mock
-    private ZaehlungAuthorizationService authorizationService;
+    private AuthorizationService authorizationService;
 
     private InternalZaehlungPersistierungsService service;
 

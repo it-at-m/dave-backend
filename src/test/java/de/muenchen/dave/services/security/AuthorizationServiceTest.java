@@ -1,4 +1,4 @@
-package de.muenchen.dave.services;
+package de.muenchen.dave.services.security;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -7,12 +7,14 @@ import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import java.time.LocalDate;
+
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
 
-class ZaehlungAuthorizationServiceTest {
+class AuthorizationServiceTest {
 
     @AfterEach
     void tearDown() {
@@ -23,7 +25,7 @@ class ZaehlungAuthorizationServiceTest {
     void assertCanModifyZaehlung_asFachadmin_noException() throws DataNotFoundException {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
-        final ZaehlungAuthorizationService authorizationService = new ZaehlungAuthorizationService(mockIndexService);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
 
         final String id = "zf1";
         final Zaehlung zaehlung = new Zaehlung();
@@ -44,7 +46,7 @@ class ZaehlungAuthorizationServiceTest {
     void assertCanModifyZaehlung_asAuthorizedUser_noException() throws DataNotFoundException {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
-        final ZaehlungAuthorizationService authorizationService = new ZaehlungAuthorizationService(mockIndexService);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
 
         final String id = "zf1";
         final Zaehlung zaehlung = new Zaehlung();
@@ -65,7 +67,7 @@ class ZaehlungAuthorizationServiceTest {
     void assertCanModifyZaehlung_asNotAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
-        final ZaehlungAuthorizationService authorizationService = new ZaehlungAuthorizationService(mockIndexService);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
 
         final String id = "zf1";
         final Zaehlung zaehlung = new Zaehlung();
@@ -87,7 +89,7 @@ class ZaehlungAuthorizationServiceTest {
     void assertCanModifyZaehlung_withoutSecurityContext_throwsAccessDeniedException() throws DataNotFoundException {
         // Arrange
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
-        final ZaehlungAuthorizationService authorizationService = new ZaehlungAuthorizationService(mockIndexService);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
 
         final String id = "zf1";
         final Zaehlung zaehlung = new Zaehlung();

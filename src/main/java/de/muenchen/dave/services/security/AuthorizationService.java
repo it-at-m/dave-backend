@@ -1,17 +1,18 @@
-package de.muenchen.dave.services;
+package de.muenchen.dave.services.security;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractor;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ZaehlungAuthorizationService {
+public class AuthorizationService {
 
     private final ZaehlstelleIndexService indexService;
 
-    public ZaehlungAuthorizationService(final ZaehlstelleIndexService indexService) {
+    public AuthorizationService(final ZaehlstelleIndexService indexService) {
         this.indexService = indexService;
     }
 
