@@ -6,9 +6,8 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import java.time.LocalDate;
-
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import java.time.LocalDate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
