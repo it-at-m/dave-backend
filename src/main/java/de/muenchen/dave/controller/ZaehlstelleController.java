@@ -9,10 +9,11 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,22 +35,24 @@ import org.springframework.web.server.ResponseStatusException;
     "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
             "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
 )
+@RequiredArgsConstructor
 public class ZaehlstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
+
     private static final String REQUEST_PARAMETER_PARTICIPANT = "participant";
 
     private final ZaehlstelleIndexService indexService;
 
-    public ZaehlstelleController(final ZaehlstelleIndexService indexService) {
-        this.indexService = indexService;
-    }
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     @GetMapping(value = "/byId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<LeseZaehlstelleDTO> getZaehlstelleHeader(@RequestParam(value = REQUEST_PARAMETER_ID) final String zaehlstelleId) {
         try {
-            final LeseZaehlstelleDTO dto = this.indexService.readZaehlstelleDTO(zaehlstelleId, SecurityContextInformationExtractor.isFachadmin());
+            final LeseZaehlstelleDTO dto = this.indexService.readZaehlstelleDTO(
+                    zaehlstelleId,
+                    securityContextInformationExtractorService.isFachadmin());
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im ZaehlstellenController, Zählstelle konnte nicht gefunden werden. ID: {}", zaehlstelleId, e);
