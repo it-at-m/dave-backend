@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public final class SecurityContextInformationExtractorService {
+public class SecurityContextInformationExtractorService {
 
     public static final String UNAUTHENTICATED_USER = "unauthenticated";
 
@@ -79,10 +79,10 @@ public final class SecurityContextInformationExtractorService {
     /**
      * Die Prüfung auf aktivierte Security wird anhand des Spring-Profils "no-security" durchgeführt.
      *
-     * @return true, falls das Profil "no-security" im Spring-Kontext in Verwendung ist. Andernfalls
-     *         wird false zurückgegeben.
+     * @return true, falls das Profil "no-security" im Spring-Kontext NICHT in Verwendung ist.
+     *         Andernfalls wird false zurückgegeben.
      */
-    private boolean isSecurityActivated() {
+    protected boolean isSecurityActivated() {
         final var noSecurityProfile = "no-security";
         final var activeProfiles = Arrays.asList(ObjectUtils.getIfNull(environment.getActiveProfiles(), new String[0]));
         return !activeProfiles.contains(noSecurityProfile);
