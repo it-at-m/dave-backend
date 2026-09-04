@@ -73,12 +73,12 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
-    void testGetAuthenticatedUsername_noAuthentication_returnsUnauthenticated() {
+    void testGetAuthenticatedUsername_withoutAuthentication_returnsUnauthenticatedUser() {
         // Testet den Fall, dass keine Authentication im SecurityContext vorhanden ist
         // -> es muss der Platzhalter UNAUTHENTICATED_USER zurückgegeben werden.
 
-        // SecurityContext ist leer (wurde durch tearDown sichergestellt)
+        SecurityContextHolder.clearContext();
+
         final String username = service.getAuthenticatedUsername();
         assertEquals(SecurityContextInformationExtractorService.UNAUTHENTICATED_USER, username);
     }
