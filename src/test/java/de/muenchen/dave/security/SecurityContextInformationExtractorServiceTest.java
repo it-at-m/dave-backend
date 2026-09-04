@@ -201,9 +201,25 @@ class SecurityContextInformationExtractorServiceTest {
 
     @Test
     @WithMockUser
+    void testIsSecurityActivated_profilesContainNoSecurityAndOtherProfile_returnsFalse() {
+        // Wenn das Profil "no-security" und ein weiteres Profil aktiv ist -> isSecurityActivated liefert false
+        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security", "dev" });
+        assertFalse(service.isSecurityActivated());
+    }
+
+    @Test
+    @WithMockUser
     void testIsSecurityActivated_profilesDoNotContainNoSecurity_returnsTrue() {
         // Wenn das Profil "no-security" NICHT aktiv ist -> isSecurityActivated liefert true
         org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "dev", "test" });
+        assertTrue(service.isSecurityActivated());
+    }
+
+    @Test
+    @WithMockUser
+    void testIsSecurityActivated_profilesDoNotContainProfiles_returnsTrue() {
+        // Wenn das Profil "no-security" NICHT aktiv und kein andere Profil gesetzt ist -> isSecurityActivated liefert true
+        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
         assertTrue(service.isSecurityActivated());
     }
 }
