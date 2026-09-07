@@ -9,13 +9,12 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.KIService;
+import de.muenchen.dave.services.hochrechnung.HochrechnungsService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +29,12 @@ public class ZeitintervallPersistierungsService {
 
     private final ZeitintervallRepository zeitintervallRepository;
 
-    private final KIService kiService;
+    private final HochrechnungsService hochrechnungsService;
 
-    public ZeitintervallPersistierungsService(final ZeitintervallRepository zeitintervallRepository, final KIService kiService) {
+    public ZeitintervallPersistierungsService(final ZeitintervallRepository zeitintervallRepository,
+            final HochrechnungsService hochrechnungsService) {
         this.zeitintervallRepository = zeitintervallRepository;
-        this.kiService = kiService;
+        this.hochrechnungsService = hochrechnungsService;
     }
 
     public boolean deleteZaehlung(final String zaehlungId) {
@@ -63,7 +63,8 @@ public class ZeitintervallPersistierungsService {
      * @param zaehldauer für Bildung der Summen der einzelnen {@link Zeitblock}e.
      * @param zeitintervalle Die {@link Zeitintervall}e zur vorherigen Aufbereitung vor der eigentlichen
      *            Persistierung.
-     * @param kiAufbereitung KI Aufbereitung ausführen (Nur für 2x4h Zählungen)
+     * @param kiAufbereitung KI-Aufbereitung ausführen, wenn ein Modell fuer die Zaehlungsdauer
+     *            verfuegbar ist.
      */
     public void aufbereitenUndPersistieren(
             final Zaehldauer zaehldauer,
@@ -102,18 +103,20 @@ public class ZeitintervallPersistierungsService {
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
                     .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
             try {
-                final KIPredictionResult[] predictionResults = kiService
-                        .predictHochrechnungTageswerteForZeitIntervalleOfZaehlung(groupedZeitintervalleByBewegungsbeziehung);
-                final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
-                        .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
-                        .createKIZeitintervalleForTagessummeFromKIPredictionResults(
-                                Arrays.asList(predictionResults),
-                                firstZeitintervallForEachBewegungsbeziehung);
-                kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
-                ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+                final List<KIPredictionResult> predictionResults = hochrechnungsService
+                        .berechneRadhochrechnung(zaehldauer, groupedZeitintervalleByBewegungsbeziehung);
+                if (!predictionResults.isEmpty()) {
+                    final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                            .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
+                    final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
+                            .createKIZeitintervalleForTagessummeFromKIPredictionResults(
+                                    predictionResults,
+                                    firstZeitintervallForEachBewegungsbeziehung);
+                    kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
+                    ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+                }
             } catch (final PredictionFailedException exception) {
-                final var message = "Error predicting Tagessummen with KIService:\n"
+                final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"
                         + exception.getMessage();
                 log.error(message, exception);
             }
