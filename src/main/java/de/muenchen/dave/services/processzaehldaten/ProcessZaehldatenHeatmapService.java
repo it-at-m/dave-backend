@@ -106,6 +106,9 @@ public class ProcessZaehldatenHeatmapService {
             // Split X axis data
             int splittedSize = ladeZaehldatenHeatmap.getXAxisDataFirstChart().size() / SPLIT_DIVISOR;
 
+            if (ladeZaehldatenHeatmap.getXAxisDataFirstChart().isEmpty()) {
+                return;
+            }
             List<List<String>> splittetXAxisData = ListUtils.partition(
                     ladeZaehldatenHeatmap.getXAxisDataFirstChart(),
                     splittedSize);
