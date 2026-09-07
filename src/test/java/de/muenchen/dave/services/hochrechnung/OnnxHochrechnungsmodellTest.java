@@ -4,13 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KIZeitintervall;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungsziel;
-import de.muenchen.dave.domain.enums.ModelleingabeSchema;
+import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
 import de.muenchen.dave.exceptions.PredictionFailedException;
-import de.muenchen.dave.properties.OnnxModellDefinition;
+import de.muenchen.dave.properties.OnnxModelDefinition;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,31 +25,31 @@ class OnnxHochrechnungsmodellTest {
     @Test
     void test_With2x4HoursModel_ReturnsOnePredictionPerMovementRelation() throws PredictionFailedException {
         final KIZeitintervallMapper mapper = Mockito.mock(KIZeitintervallMapper.class);
-        final de.muenchen.dave.domain.KIZeitintervall kiZeitintervall = de.muenchen.dave.domain.KIZeitintervall.builder()
+        final KIZeitintervall kiZeitintervall = KIZeitintervall.builder()
                 .rad(6)
                 .jahresZeit(3)
                 .jahreSeit89(31)
                 .mittwoch(1)
                 .build();
         Mockito.when(mapper.zeitintervallToKIZeitintervall(Mockito.any())).thenReturn(kiZeitintervall);
-        final OnnxHochrechnungsmodell modell = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadV1Encoder(mapper));
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadV1Encoder(mapper));
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
-        final List<KIPredictionResult> ergebnis = modell.berechne(zeitintervalle);
+        final List<KIPredictionResult> result = model.calculate(zeitintervalle);
 
-        assertThat(ergebnis.size(), equalTo(1));
-        assertThat(ergebnis.getFirst().getRadTagessumme(), equalTo(356));
-        modell.schliessen();
+        assertThat(result.size(), equalTo(1));
+        assertThat(result.getFirst().getRadTagessumme(), equalTo(356));
+        model.closeSession();
     }
 
-    private OnnxModellDefinition createDefinition() {
-        final OnnxModellDefinition definition = new OnnxModellDefinition();
+    private OnnxModelDefinition createDefinition() {
+        final OnnxModelDefinition definition = new OnnxModelDefinition();
         definition.setId("rad-2x4h-v1");
-        definition.setZiel(Hochrechnungsziel.RAD);
+        definition.setHochrechnungskategorie(Hochrechnungskategorie.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         definition.setResourcePath("model/Rad_Modell_DAVE.onnx");
         definition.setInputTensorName("int64_input");
-        definition.setInputSchema(ModelleingabeSchema.KONTEXT_RAD_V1);
+        definition.setInputSchema(ModelInputSchema.KONTEXT_RAD_V1);
         return definition;
     }
 

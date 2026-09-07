@@ -8,7 +8,7 @@ import ai.onnxruntime.OrtSession;
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.exceptions.PredictionFailedException;
-import de.muenchen.dave.properties.OnnxModellDefinition;
+import de.muenchen.dave.properties.OnnxModelDefinition;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,39 +23,39 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
 
     private final OrtSession session;
 
-    private final OnnxModellDefinition definition;
+    private final OnnxModelDefinition definition;
 
-    private final ModelleingabeEncoder modelleingabeEncoder;
+    private final ModelInputEncoder modelInputEncoder;
 
-    public OnnxHochrechnungsmodell(final OnnxModellDefinition definition,
-            final ModelleingabeEncoder modelleingabeEncoder) throws PredictionFailedException {
+    public OnnxHochrechnungsmodell(final OnnxModelDefinition definition,
+            final ModelInputEncoder modelInputEncoder) throws PredictionFailedException {
         this.definition = definition;
-        this.modelleingabeEncoder = modelleingabeEncoder;
+        this.modelInputEncoder = modelInputEncoder;
         this.environment = OrtEnvironment.getEnvironment();
         this.session = initializeSession(definition.getResourcePath());
     }
 
     @Override
-    public OnnxModellDefinition getDefinition() {
+    public OnnxModelDefinition getDefinition() {
         return definition;
     }
 
     @Override
-    public List<KIPredictionResult> berechne(final List<List<Zeitintervall>> gruppierteZeitintervalle) throws PredictionFailedException {
-        final long[][] eingabedaten = modelleingabeEncoder.encodiere(definition.getZaehldauer(), gruppierteZeitintervalle);
-        final long[][] vorhersagen = fuehreVorhersageAus(eingabedaten);
-        final List<KIPredictionResult> ergebnisse = new ArrayList<>();
-        for (final long[] vorhersage : vorhersagen) {
+    public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
+        final long[][] inputData = modelInputEncoder.encode(definition.getZaehldauer(), groupedZeitintervalle);
+        final long[][] predictions = runPrediction(inputData);
+        final List<KIPredictionResult> results = new ArrayList<>();
+        for (final long[] prediction : predictions) {
             try {
-                ergebnisse.add(KIPredictionResult.fromArray(vorhersage));
+                results.add(KIPredictionResult.fromArray(prediction));
             } catch (final IllegalArgumentException | ArithmeticException exception) {
                 throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
             }
         }
-        return ergebnisse;
+        return results;
     }
 
-    public void schliessen() {
+    public void closeSession() {
         try {
             session.close();
         } catch (final OrtException exception) {
@@ -71,17 +71,17 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
         }
     }
 
-    private long[][] fuehreVorhersageAus(final long[][] eingabedaten) throws PredictionFailedException {
-        try (OnnxTensor tensor = OnnxTensor.createTensor(environment, eingabedaten);
-                OrtSession.Result ergebnis = session.run(Map.of(definition.getInputTensorName(), tensor))) {
-            if (ergebnis.size() == 0) {
+    private long[][] runPrediction(final long[][] inputData) throws PredictionFailedException {
+        try (OnnxTensor tensor = OnnxTensor.createTensor(environment, inputData);
+                OrtSession.Result result = session.run(Map.of(definition.getInputTensorName(), tensor))) {
+            if (result.size() == 0) {
                 throw new PredictionFailedException(PredictionFailedException.ONNX_NO_PREDICTION_RESULTS_ERROR);
             }
-            final OnnxValue onnxWert = ergebnis.get(0);
-            if (onnxWert.getType() == OnnxValue.OnnxValueType.ONNX_TYPE_UNKNOWN) {
+            final OnnxValue onnxValue = result.get(0);
+            if (onnxValue.getType() == OnnxValue.OnnxValueType.ONNX_TYPE_UNKNOWN) {
                 throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
             }
-            return (long[][]) onnxWert.getValue();
+            return (long[][]) onnxValue.getValue();
         } catch (final OrtException exception) {
             throw new PredictionFailedException(PredictionFailedException.ONNX_RUN_MODEL_ERROR);
         } catch (final ClassCastException exception) {

@@ -24,29 +24,29 @@ class ReineRadwerteV1EncoderTest {
         final List<Zeitintervall> zeitintervalle = createZeitintervalle(52);
         Collections.reverse(zeitintervalle);
 
-        final long[][] ergebnis = encoder.encodiere(Zaehldauer.DAUER_13_STUNDEN, List.of(zeitintervalle));
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_13_STUNDEN, List.of(zeitintervalle));
 
-        assertThat(ergebnis.length, equalTo(1));
-        assertThat(ergebnis[0].length, equalTo(52));
-        for (int index = 0; index < ergebnis[0].length; index++) {
-            assertThat(ergebnis[0][index], equalTo((long) index));
+        assertThat(result.length, equalTo(1));
+        assertThat(result[0].length, equalTo(52));
+        for (int index = 0; index < result[0].length; index++) {
+            assertThat(result[0][index], equalTo((long) index));
         }
     }
 
     @Test
     void test_With16Hours_Encodes64RadValues() throws PredictionFailedException {
-        final long[][] ergebnis = encoder.encodiere(Zaehldauer.DAUER_16_STUNDEN, List.of(createZeitintervalle(64)));
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_16_STUNDEN, List.of(createZeitintervalle(64)));
 
-        assertThat(ergebnis.length, equalTo(1));
-        assertThat(ergebnis[0].length, equalTo(64));
-        assertThat(ergebnis[0][63], equalTo(63L));
+        assertThat(result.length, equalTo(1));
+        assertThat(result[0].length, equalTo(64));
+        assertThat(result[0][63], equalTo(63L));
     }
 
     @Test
     void test_WithIncompleteIntervals_ThrowsPredictionFailedException() {
         final PredictionFailedException exception = assertThrows(
                 PredictionFailedException.class,
-                () -> encoder.encodiere(Zaehldauer.DAUER_13_STUNDEN, List.of(createZeitintervalle(51))));
+                () -> encoder.encode(Zaehldauer.DAUER_13_STUNDEN, List.of(createZeitintervalle(51))));
 
         assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION));
     }

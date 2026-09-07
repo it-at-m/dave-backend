@@ -1,18 +1,18 @@
 package de.muenchen.dave.properties;
 
-import de.muenchen.dave.domain.enums.Hochrechnungsziel;
-import de.muenchen.dave.domain.enums.ModelleingabeSchema;
+import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import lombok.Data;
 
 @Data
-public class OnnxModellDefinition {
+public class OnnxModelDefinition {
 
     private String id;
 
     private String version;
 
-    private Hochrechnungsziel ziel;
+    private Hochrechnungskategorie hochrechnungskategorie;
 
     private Zaehldauer zaehldauer;
 
@@ -20,6 +20,6 @@ public class OnnxModellDefinition {
 
     private String inputTensorName;
 
-    private ModelleingabeSchema inputSchema;
+    private ModelInputSchema inputSchema;
 
 }

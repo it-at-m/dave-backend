@@ -104,7 +104,7 @@ public class ZeitintervallPersistierungsService {
                     .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
             try {
                 final List<KIPredictionResult> predictionResults = hochrechnungsService
-                        .berechneRadhochrechnung(zaehldauer, groupedZeitintervalleByBewegungsbeziehung);
+                        .calculateRadhochrechnung(zaehldauer, groupedZeitintervalleByBewegungsbeziehung);
                 if (!predictionResults.isEmpty()) {
                     final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
                             .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);

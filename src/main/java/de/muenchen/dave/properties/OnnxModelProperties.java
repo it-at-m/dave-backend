@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "dave.onnx")
 @Getter
 @Setter
-public class OnnxModellProperties {
+public class OnnxModelProperties {
 
-    private List<OnnxModellDefinition> modelle = new ArrayList<>();
+    private List<OnnxModelDefinition> modelle = new ArrayList<>();
 
 }

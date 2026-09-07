@@ -54,6 +54,6 @@ public enum Zaehldauer {
 
     private final int anzahlZeitintervalle;
 
-    private final List<Zeitblock> modelleingabeZeitbloecke;
+    private final List<Zeitblock> modelInputZeitbloecke;
 
 }

@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
-public enum Hochrechnungsziel {
+public enum Hochrechnungskategorie {
 
     RAD
 

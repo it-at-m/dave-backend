@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.hochrechnung;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.ModelleingabeSchema;
+import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
@@ -9,28 +9,28 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ReineRadwerteV1Encoder extends AbstrakterModelleingabeEncoder {
+public class ReineRadwerteV1Encoder extends AbstractModelInputEncoder {
 
     @Override
-    public ModelleingabeSchema getSchema() {
-        return ModelleingabeSchema.REINE_RADWERTE_V1;
+    public ModelInputSchema getSchema() {
+        return ModelInputSchema.REINE_RADWERTE_V1;
     }
 
     @Override
-    public long[][] encodiere(final Zaehldauer zaehldauer, final List<List<Zeitintervall>> gruppierteZeitintervalle)
+    public long[][] encode(final Zaehldauer zaehldauer, final List<List<Zeitintervall>> groupedZeitintervalle)
             throws PredictionFailedException {
-        final List<List<Zeitintervall>> gefilterteZeitintervalle = filtereUndSortiere(zaehldauer, gruppierteZeitintervalle);
-        final long[][] eingabedaten = new long[gefilterteZeitintervalle.size()][];
-        for (int gruppenIndex = 0; gruppenIndex < gefilterteZeitintervalle.size(); gruppenIndex++) {
-            final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung = gefilterteZeitintervalle.get(gruppenIndex);
-            final long[] eingabedatenJeBewegungsbeziehung = new long[zeitintervalleJeBewegungsbeziehung.size()];
+        final List<List<Zeitintervall>> filteredZeitintervalle = filterAndSort(zaehldauer, groupedZeitintervalle);
+        final long[][] inputData = new long[filteredZeitintervalle.size()][];
+        for (int groupIndex = 0; groupIndex < filteredZeitintervalle.size(); groupIndex++) {
+            final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung = filteredZeitintervalle.get(groupIndex);
+            final long[] inputDataJeBewegungsbeziehung = new long[zeitintervalleJeBewegungsbeziehung.size()];
             for (int intervallIndex = 0; intervallIndex < zeitintervalleJeBewegungsbeziehung.size(); intervallIndex++) {
-                eingabedatenJeBewegungsbeziehung[intervallIndex] = ObjectUtils.defaultIfNull(
+                inputDataJeBewegungsbeziehung[intervallIndex] = ObjectUtils.defaultIfNull(
                         zeitintervalleJeBewegungsbeziehung.get(intervallIndex).getFahrradfahrer(), 0);
             }
-            eingabedaten[gruppenIndex] = eingabedatenJeBewegungsbeziehung;
+            inputData[groupIndex] = inputDataJeBewegungsbeziehung;
         }
-        return eingabedaten;
+        return inputData;
     }
 
 }

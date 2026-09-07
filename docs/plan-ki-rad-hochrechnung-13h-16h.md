@@ -61,7 +61,7 @@ classDiagram
     class OnnxHochrechnungsmodell {
         -OrtSession session
         -OnnxModellDefinition definition
-        -ModelleingabeEncoder modelleingabeEncoder
+        -ModelleingabeEncoder modelInputEncoder
         +berechne(gruppierteIntervalle) List~KIPredictionResult~
     }
 

@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
-public enum ModelleingabeSchema {
+public enum ModelInputSchema {
 
     KONTEXT_RAD_V1,
     REINE_RADWERTE_V1
