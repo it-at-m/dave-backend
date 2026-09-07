@@ -345,10 +345,17 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
-        final int minLength = Math.min(basis.length, vergleich.length);
+        int minLength = basis.length;
+        if (vergleich != null) {
+            minLength = Math.min(basis.length, vergleich.length);
+        }
         final BigDecimal[] differences = new BigDecimal[minLength];
         for (int i = 0; i < minLength; i++) {
-            differences[i] = basis[i].subtract(vergleich[i]);
+            if (vergleich != null) {
+                differences[i] = basis[i].subtract(vergleich[i]);
+            } else {
+                differences[i] = basis[i].subtract(BigDecimal.ZERO);
+            }
         }
         return differences;
     }
