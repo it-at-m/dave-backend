@@ -52,8 +52,10 @@ public enum Zaehldauer {
 
     private final List<String> suchwoerter;
 
+    /** Erwartete Anzahl der Viertelstundenintervalle innerhalb der Modellzeitbloecke. */
     private final int anzahlZeitintervalle;
 
+    /** Ausschliesslich die erfassten Zeitfenster, die als Modelleingabe verwendet werden. */
     private final List<Zeitblock> modelInputZeitbloecke;
 
 }

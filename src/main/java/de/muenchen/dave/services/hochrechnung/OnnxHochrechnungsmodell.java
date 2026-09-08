@@ -17,6 +17,15 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
+/**
+ * Fuehrt ein ONNX-Modell aus, das als Klassenpfadressource ausgeliefert wird.
+ *
+ * <p>
+ * Pro Modellinstanz wird eine ONNX-Session erstellt und bis zum Beenden der Anwendung
+ * wiederverwendet. Die Ein- und Ausgabe dieses Modelladapters sind {@code long[][]}, passend zum
+ * {@code int64}-Tensorvertrag der aktuell konfigurierten Radmodelle.
+ * </p>
+ */
 public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
 
     private final OrtEnvironment environment;
@@ -55,6 +64,9 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
         return results;
     }
 
+    /**
+     * Schliesst die langlebige ONNX-Session. Wird durch die Registry beim Herunterfahren aufgerufen.
+     */
     public void closeSession() {
         try {
             session.close();
@@ -81,6 +93,7 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
             if (onnxValue.getType() == OnnxValue.OnnxValueType.ONNX_TYPE_UNKNOWN) {
                 throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
             }
+            // Der Outputvertrag der Radmodelle ist [bewegungsbeziehung][tagessumme].
             return (long[][]) onnxValue.getValue();
         } catch (final OrtException exception) {
             throw new PredictionFailedException(PredictionFailedException.ONNX_RUN_MODEL_ERROR);

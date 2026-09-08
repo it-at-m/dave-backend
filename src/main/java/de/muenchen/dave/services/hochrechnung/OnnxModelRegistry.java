@@ -14,6 +14,15 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Initialisiert und verwaltet die konfigurierten ONNX-Modelle.
+ *
+ * <p>
+ * Modelle werden ueber die Kombination aus Zaehlungsdauer und Hochrechnungskategorie
+ * eindeutig identifiziert. Fehler eines einzelnen Artefakts werden beim Start isoliert behandelt;
+ * das Modell wird dann nicht registriert und beeinflusst andere Modelle nicht.
+ * </p>
+ */
 @Service
 @Slf4j
 public class OnnxModelRegistry {
@@ -27,6 +36,9 @@ public class OnnxModelRegistry {
         }
     }
 
+    /**
+     * Sucht ein zur Zaehlung und Zielgroesse passendes, erfolgreich initialisiertes Modell.
+     */
     public Optional<Hochrechnungsmodell> findModel(final Zaehldauer zaehldauer, final Hochrechnungskategorie hochrechnungskategorie) {
         return Optional.ofNullable(models.get(new ModelSet(zaehldauer, hochrechnungskategorie)));
     }
@@ -55,6 +67,7 @@ public class OnnxModelRegistry {
             return;
         }
 
+        // Eine Zielgroesse darf je Zaehlungsdauer nur von einem Modell beliefert werden.
         final ModelSet modelSet = new ModelSet(definition.getZaehldauer(), definition.getHochrechnungskategorie());
         if (models.containsKey(modelSet)) {
             log.error("ONNX-Modell {} wird wegen doppelter Zaehlungsdauer und Zielgroesse uebersprungen", definition.getId());

@@ -8,6 +8,15 @@ import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
+/**
+ * Kodiert Radwerte zusammen mit den zehn Kontextmerkmalen des historischen 2x4h-Modells.
+ *
+ * <p>
+ * Das Schema bleibt fuer vorhandene Modelle erhalten. Neue Modelle sollen ein eigenes
+ * {@link ModelInputSchema} und einen eigenen Encoder erhalten, statt die Merkmalsreihenfolge
+ * dieser Implementierung zu veraendern.
+ * </p>
+ */
 @Component
 public class KontextRadV1Encoder extends AbstractModelInputEncoder {
 
@@ -32,6 +41,7 @@ public class KontextRadV1Encoder extends AbstractModelInputEncoder {
             final long[] inputdataJeBewegungsbeziehung = new long[zeitintervalleJeBewegungsbeziehung.size() * 10];
             int inputIndex = 0;
             for (final Zeitintervall zeitintervall : zeitintervalleJeBewegungsbeziehung) {
+                // Die Mapper-Reihenfolge ist Teil des ONNX-Modellvertrags.
                 for (final long feature : kiZeitintervallMapper.zeitintervallToKIZeitintervall(zeitintervall).toArray()) {
                     inputdataJeBewegungsbeziehung[inputIndex++] = feature;
                 }

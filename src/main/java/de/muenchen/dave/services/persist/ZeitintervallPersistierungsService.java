@@ -25,6 +25,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
+/**
+ * Bereitet importierte Zeitintervalle auf, ergaenzt Aggregate und persistiert sie.
+ *
+ * <p>
+ * Wenn die KI-Aufbereitung angefordert wurde, ist eine fehlende oder fehlgeschlagene
+ * Modellinferenz bewusst nicht persistierungsblockierend. Die regulaeren Viertelstunden- und
+ * Gesamtintervalle werden in diesem Fall trotzdem gespeichert.
+ * </p>
+ */
 public class ZeitintervallPersistierungsService {
 
     private final ZeitintervallRepository zeitintervallRepository;
@@ -100,6 +109,7 @@ public class ZeitintervallPersistierungsService {
          */
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
+            // Die Gruppierung bestimmt zugleich die Zuordnung einer Modellzeile zu einer Bewegungsbeziehung.
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
                     .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
             try {

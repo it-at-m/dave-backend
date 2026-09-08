@@ -45,29 +45,33 @@ classDiagram
     }
 
     class HochrechnungsService {
-        +berechneRadhochrechnung(zaehldauer, intervalle) List~KIPredictionResult~
+        +calculateRadhochrechnung(zaehldauer, groupedIntervalle) List~KIPredictionResult~
     }
 
     class OnnxModelRegistry {
-        +findeModel(zaehldauer, hochrechnungskategorie) Optional~Hochrechnungsmodell~
+        -Map~ModelSet, Hochrechnungsmodell~ models
+        +findModel(zaehldauer, hochrechnungskategorie) Optional~Hochrechnungsmodell~
+        +closeModels()
     }
 
     class Hochrechnungsmodell {
         <<interface>>
         +getDefinition() OnnxModelDefinition
-        +calculate(groupedIntervalle) List~KIPredictionResult~
+        +calculate(groupedZeitintervalle) List~KIPredictionResult~
     }
 
     class OnnxHochrechnungsmodell {
         -OrtSession session
         -OnnxModelDefinition definition
         -ModelInputEncoder modelInputEncoder
-        +calculate(groupedIntervalle) List~KIPredictionResult~
+        +calculate(groupedZeitintervalle) List~KIPredictionResult~
+        +closeSession()
     }
 
     class ModelInputEncoder {
         <<interface>>
         +encode(zaehldauer, groupedIntervalle) long[][]
+        +getSchema() ModelInputSchema
     }
 
     class KontextRadV1Encoder {
@@ -80,27 +84,47 @@ classDiagram
 
     class OnnxModelDefinition {
         +String id
-        +String version
-        +PredictionTarget target
+        +Hochrechnungskategorie hochrechnungskategorie
         +Zaehldauer zaehldauer
         +String resourcePath
         +String inputTensorName
-        +String inputSchema
+        +ModelInputSchema inputSchema
     }
 
     class OnnxModelProperties {
         +List~OnnxModelDefinition~ modelle
     }
 
+    class Zaehldauer {
+        +int anzahlZeitintervalle
+        +List~Zeitblock~ modelInputZeitbloecke
+    }
+
+    class KIPredictionResult {
+        +int radTagessumme
+    }
+
+    class ZeitintervallKIUtil {
+        <<utility>>
+        +groupZeitintervalleByBewegungsbeziehung(intervalle) List~List~Zeitintervall~~
+        +createKIZeitintervalleForTagessummeFromKIPredictionResults(results, intervalle) List~Zeitintervall~
+        +mergeKiHochrechnungInGesamt(intervalle, kiIntervalle)
+    }
+
     ZeitintervallPersistierungsService --> HochrechnungsService
+    ZeitintervallPersistierungsService ..> ZeitintervallKIUtil
     HochrechnungsService --> OnnxModelRegistry
     OnnxModelRegistry --> Hochrechnungsmodell
+    OnnxModelRegistry --> OnnxModelProperties
     Hochrechnungsmodell <|.. OnnxHochrechnungsmodell
     OnnxHochrechnungsmodell --> OnnxModelDefinition
     OnnxHochrechnungsmodell --> ModelInputEncoder
     ModelInputEncoder <|.. KontextRadV1Encoder
     ModelInputEncoder <|.. ReineRadwerteV1Encoder
     OnnxModelProperties --> OnnxModelDefinition
+    ModelInputEncoder --> Zaehldauer
+    Hochrechnungsmodell --> KIPredictionResult
+    ZeitintervallKIUtil --> KIPredictionResult
 ```
 
 ## Modellkonfiguration
