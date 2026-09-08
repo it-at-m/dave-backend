@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +19,7 @@ public class HochrechnungsService {
     }
 
     public List<KIPredictionResult> calculateRadhochrechnung(final Zaehldauer zaehldauer,
-                                                             final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
+            final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         final Optional<Hochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Hochrechnungskategorie.RAD);
         if (model.isEmpty()) {
             return List.of();

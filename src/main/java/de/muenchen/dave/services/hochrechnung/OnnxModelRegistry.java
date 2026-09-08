@@ -21,7 +21,7 @@ public class OnnxModelRegistry {
     private final Map<ModelSet, Hochrechnungsmodell> models = new HashMap<>();
 
     public OnnxModelRegistry(final OnnxModelProperties onnxModelProperties,
-                             final List<ModelInputEncoder> modelInputEncoder) {
+            final List<ModelInputEncoder> modelInputEncoder) {
         for (final OnnxModelDefinition definition : onnxModelProperties.getModelle()) {
             initializeModels(definition, modelInputEncoder);
         }
@@ -69,7 +69,7 @@ public class OnnxModelRegistry {
     }
 
     private Optional<ModelInputEncoder> findEncoder(final ModelInputSchema inputSchema,
-                                                    final List<ModelInputEncoder> modelInputEncoder) {
+            final List<ModelInputEncoder> modelInputEncoder) {
         return modelInputEncoder.stream().filter(encoder -> encoder.getSchema() == inputSchema).findFirst();
     }
 

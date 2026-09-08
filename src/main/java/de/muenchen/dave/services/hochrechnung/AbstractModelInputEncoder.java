@@ -11,7 +11,7 @@ import java.util.List;
 abstract class AbstractModelInputEncoder implements ModelInputEncoder {
 
     protected List<List<Zeitintervall>> filterAndSort(final Zaehldauer zaehldauer,
-                                                      final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
+            final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         if (groupedZeitintervalle.isEmpty()) {
             throw new PredictionFailedException(PredictionFailedException.NO_VERKEHRSBEZIEHUNGEN);
         }

@@ -4,11 +4,11 @@
 
 Die bestehende Radverkehrshochrechnung fuer 2x4h-Zaehlungen wird so modularisiert, dass fuer jede Zaehlungsdauer ein eigenes ONNX-Modell verwendet werden kann. In Teil 1 werden drei Radmodelle unterstuetzt:
 
-| Zaehlungsdauer | Modell | Eingabe pro Bewegungsbeziehung |
-| --- | --- | --- |
-| `DAUER_2_X_4_STUNDEN` | `Rad_Modell_DAVE.onnx` | Bestehendes Schema mit Radwert und Kalendermerkmalen fuer 32 Intervalle |
-| `DAUER_13_STUNDEN` | `Rad_Modell_DAVE_13h.onnx` | 52 reine Radzaehlwerte in zeitlicher Reihenfolge |
-| `DAUER_16_STUNDEN` | `Rad_Modell_DAVE_16h.onnx` | 64 reine Radzaehlwerte in zeitlicher Reihenfolge |
+| Zaehlungsdauer | Modell                      | Eingabe pro Bewegungsbeziehung |
+| --- |-----------------------------| --- |
+| `DAUER_2_X_4_STUNDEN` | `Rad_Modell_DAVE_2x4h.onnx` | Bestehendes Schema mit Radwert und Kalendermerkmalen fuer 32 Intervalle |
+| `DAUER_13_STUNDEN` | `Rad_Modell_DAVE_13h.onnx`  | 52 reine Radzaehlwerte in zeitlicher Reihenfolge |
+| `DAUER_16_STUNDEN` | `Rad_Modell_DAVE_16h.onnx`  | 64 reine Radzaehlwerte in zeitlicher Reihenfolge |
 
 Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV noch fuegt er neue Fahrzeugtypen als Hochrechnungswerte hinzu. Diese Erweiterung ist Teil 2 und wird erst nach Abschluss von Teil 1 umgesetzt.
 
@@ -48,37 +48,37 @@ classDiagram
         +berechneRadhochrechnung(zaehldauer, intervalle) List~KIPredictionResult~
     }
 
-    class OnnxModellRegistry {
-        +findeModell(zaehldauer, ziel) Optional~Hochrechnungsmodell~
+    class OnnxModelRegistry {
+        +findeModel(zaehldauer, hochrechnungskategorie) Optional~Hochrechnungsmodell~
     }
 
     class Hochrechnungsmodell {
         <<interface>>
-        +getDefinition() OnnxModellDefinition
-        +berechne(gruppierteIntervalle) List~KIPredictionResult~
+        +getDefinition() OnnxModelDefinition
+        +calculate(groupedIntervalle) List~KIPredictionResult~
     }
 
     class OnnxHochrechnungsmodell {
         -OrtSession session
-        -OnnxModellDefinition definition
-        -ModelleingabeEncoder modelInputEncoder
-        +berechne(gruppierteIntervalle) List~KIPredictionResult~
+        -OnnxModelDefinition definition
+        -ModelInputEncoder modelInputEncoder
+        +calculate(groupedIntervalle) List~KIPredictionResult~
     }
 
-    class ModelleingabeEncoder {
+    class ModelInputEncoder {
         <<interface>>
-        +encodiere(zaehldauer, gruppierteIntervalle) long[][]
+        +encode(zaehldauer, groupedIntervalle) long[][]
     }
 
     class KontextRadV1Encoder {
-        +encodiere(zaehldauer, gruppierteIntervalle) long[][]
+        +encode(zaehldauer, groupedIntervalle) long[][]
     }
 
     class ReineRadwerteV1Encoder {
-        +encodiere(zaehldauer, gruppierteIntervalle) long[][]
+        +encode(zaehldauer, groupedIntervalle) long[][]
     }
 
-    class OnnxModellDefinition {
+    class OnnxModelDefinition {
         +String id
         +String version
         +PredictionTarget target
@@ -88,19 +88,19 @@ classDiagram
         +String inputSchema
     }
 
-    class OnnxModellProperties {
-        +List~OnnxModellDefinition~ modelle
+    class OnnxModelProperties {
+        +List~OnnxModelDefinition~ modelle
     }
 
     ZeitintervallPersistierungsService --> HochrechnungsService
-    HochrechnungsService --> OnnxModellRegistry
-    OnnxModellRegistry --> Hochrechnungsmodell
+    HochrechnungsService --> OnnxModelRegistry
+    OnnxModelRegistry --> Hochrechnungsmodell
     Hochrechnungsmodell <|.. OnnxHochrechnungsmodell
-    OnnxHochrechnungsmodell --> OnnxModellDefinition
-    OnnxHochrechnungsmodell --> ModelleingabeEncoder
-    ModelleingabeEncoder <|.. KontextRadV1Encoder
-    ModelleingabeEncoder <|.. ReineRadwerteV1Encoder
-    OnnxModellProperties --> OnnxModellDefinition
+    OnnxHochrechnungsmodell --> OnnxModelDefinition
+    OnnxHochrechnungsmodell --> ModelInputEncoder
+    ModelInputEncoder <|.. KontextRadV1Encoder
+    ModelInputEncoder <|.. ReineRadwerteV1Encoder
+    OnnxModelProperties --> OnnxModelDefinition
 ```
 
 ## Modellkonfiguration
@@ -115,9 +115,9 @@ dave:
         version: "1"
         ziel: RAD
         zaehldauer: DAUER_2_X_4_STUNDEN
-        resource-path: model/Rad_Modell_DAVE.onnx
+        resource-path: model/Rad_Modell_DAVE_2x4h.onnx
         input-tensor-name: int64_input
-        input-schema: CONTEXTUAL_RAD_V1
+        input-schema: RAW_RAD_COUNTS_V1
 
       - id: rad-13h-v1
         version: "1"
@@ -136,7 +136,7 @@ dave:
         input-schema: RAW_RAD_COUNTS_V1
 ```
 
-`input-schema` ist bewusst kein Boolean. Neue Eingabeformate werden durch einen eigenen `ModelleingabeEncoder` ergaenzt. Damit kann ein kuenftiges Modell beispielsweise andere Fahrzeugtypen oder weitere Merkmale nutzen, ohne die ONNX-Laufzeit oder die Modellselektion anzupassen.
+`input-schema` ist bewusst kein Boolean. Neue Eingabeformate werden durch einen eigenen `ModelInputEncoder` ergaenzt. Damit kann ein kuenftiges Modell beispielsweise andere Fahrzeugtypen oder weitere Merkmale nutzen, ohne die ONNX-Laufzeit oder die Modellselektion anzupassen.
 
 `Hochrechnungsmodell` ist die bewusst kleine Modellabstraktion. Sie ermoeglicht Tests mit einem Fake-Modell ohne ONNX-Artefakt und entkoppelt die fachliche Auswahl und Ergebnisverarbeitung von der ONNX-Laufzeit. Fuer Teil 1 gibt es genau eine Implementierung, `OnnxHochrechnungsmodell`; weitere technische Modelltypen werden erst bei konkretem Bedarf ergaenzt.
 
@@ -154,7 +154,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 3. Eingabe-Encoder einfuehren.
 
-   `ModelleingabeEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadV1Encoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineRadwerteV1Encoder` liest ausschliesslich `Zeitintervall.getFahrradfahrer()` und erzeugt eine Zeile mit 52 beziehungsweise 64 Werten je Bewegungsbeziehung. Die Verarbeitung vermeidet mehrfach verschachtelte Streams.
+   `ModelInputEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadV1Encoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineRadwerteV1Encoder` liest ausschliesslich `Zeitintervall.getFahrradfahrer()` und erzeugt eine Zeile mit 52 beziehungsweise 64 Werten je Bewegungsbeziehung. Die Verarbeitung vermeidet mehrfach verschachtelte Streams.
 
 4. ONNX-Laufzeit modularisieren.
 
@@ -162,7 +162,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 5. Modellselektion und Orchestrierung einfuehren.
 
-   `HochrechnungsService` ermittelt ueber `OnnxModellRegistry` die aktiven Modelle fuer die Zaehlungsdauer, gruppiert die Zeitintervalle nach Bewegungsbeziehung und fuehrt die Modelle aus. In Teil 1 existiert jeweils hoechstens ein Radmodell pro Zaehlungsdauer. Das Design erlaubt dennoch mehrere, nicht ueberlappende Zielgroessen.
+   `HochrechnungsService` ermittelt ueber `OnnxModelRegistry` die aktiven Modelle fuer die Zaehlungsdauer, gruppiert die Zeitintervalle nach Bewegungsbeziehung und fuehrt die Modelle aus. In Teil 1 existiert jeweils hoechstens ein Radmodell pro Zaehlungsdauer. Das Design erlaubt dennoch mehrere, nicht ueberlappende Zielgroessen.
 
 6. Ergebnisverarbeitung aus `ZeitintervallKIUtil` herausloesen.
 
@@ -184,7 +184,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 10. Rollout und Dokumentation.
 
-    Zuerst wird die Infrastruktur mit dem bisherigen 2x4h-Modell migriert. Danach werden die beiden neuen Artefakte und Konfigurationseintraege aktiviert. `docs/ki-radverkehr-hochrechnung.md` wird auf die neue Architektur aktualisiert. Eine automatische Nachberechnung bereits abgeschlossener Zaehlungen wird nicht implementiert.
+    Zuerst wird die Infrastruktur mit dem bisherigen 2x4h-Modell migriert. Danach werden die beiden neuen Artefakte und Konfigurationseintraege aktiviert. Eine automatische Nachberechnung bereits abgeschlossener Zaehlungen wird nicht implementiert.
 
 ## Teil 2: Hochrechnung einzelner Fahrzeugtypen
 
@@ -213,7 +213,7 @@ Kfz = Pkw + Lkw + Lastzuege + Busse + Kraftraeder
 ### Vorbereitete Erweiterungspunkte
 
 - Ein Ergebnisobjekt wie `Hochrechnungswerte` kann um die fuenf Fahrzeugtypen erweitert werden.
-- Ein `Kfz`-Modell erhaelt einen eigenen `ModelleingabeEncoder`, falls sein Eingabeformat vom reinen Radwertschema abweicht.
+- Ein `Kfz`-Modell erhaelt einen eigenen `ModelInputEncoder`, falls sein Eingabeformat vom reinen Radwertschema abweicht.
 - Die Ergebnisverarbeitung wird aus `ZeitintervallKIUtil` in einen eigenen Service ueberfuehrt und fasst dann mehrere Modelle je Bewegungsbeziehung zusammen, bevor ein einziges fachliches `GESAMT_KI`-Intervall persistiert wird.
 - Eine separate Herkunfts- und Ergebnistabelle sollte Modell-ID, Modellversion, Zielgroesse, Bewegungsbeziehung, Zeitpunkt und Ergebniswert speichern. Damit bleibt nachvollziehbar, welches Modell welchen Teilwert beigesteuert hat.
 - Eine Flyway-Migration erweitert die Datenbankspalten fuer die neuen Hochrechnungswerte.
