@@ -136,24 +136,21 @@ dave:
   prediction:
     models:
       - id: rad-2x4h-v1
-        version: "1"
-         fahrzeug: RAD
+        fahrzeug: RAD
         zaehldauer: DAUER_2_X_4_STUNDEN
         resource-path: model/Rad_Modell_DAVE_2x4h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 
       - id: rad-13h-v1
-        version: "1"
-         fahrzeug: RAD
+        fahrzeug: RAD
         zaehldauer: DAUER_13_STUNDEN
         resource-path: model/Rad_Modell_DAVE_13h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 
       - id: rad-16h-v1
-        version: "1"
-         fahrzeug: RAD
+        fahrzeug: RAD
         zaehldauer: DAUER_16_STUNDEN
         resource-path: model/Rad_Modell_DAVE_16h.onnx
         input-tensor-name: int64_input
