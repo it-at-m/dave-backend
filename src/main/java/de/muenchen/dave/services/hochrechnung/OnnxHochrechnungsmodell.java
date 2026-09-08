@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -47,6 +46,13 @@ public class OnnxHochrechnungsmodell {
         this.session = initializeSession(definition.getResourcePath());
     }
 
+    /**
+     * Berechnet eine Tagessumme je Bewegungsbeziehung.
+     *
+     * @param groupedZeitintervalle Eingabewerte, je Bewegungsbeziehung gruppiert
+     * @return Vorhersagen in derselben Reihenfolge wie die Eingabegruppen
+     * @throws PredictionFailedException wenn die Inferenz nicht ausgefuehrt werden kann
+     */
     public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         final long[][] inputData = modelInputEncoder.encode(
                 definition.getZaehldauer(), definition.getFahrzeug(), groupedZeitintervalle);
