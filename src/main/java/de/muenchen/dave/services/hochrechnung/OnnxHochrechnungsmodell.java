@@ -14,6 +14,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
@@ -26,12 +28,13 @@ import org.springframework.core.io.ClassPathResource;
  * {@code int64}-Tensorvertrag der aktuell konfigurierten Radmodelle.
  * </p>
  */
-public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
+public class OnnxHochrechnungsmodell {
 
     private final OrtEnvironment environment;
 
     private final OrtSession session;
 
+    @Getter
     private final OnnxModelDefinition definition;
 
     private final ModelInputEncoder modelInputEncoder;
@@ -44,12 +47,6 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
         this.session = initializeSession(definition.getResourcePath());
     }
 
-    @Override
-    public OnnxModelDefinition getDefinition() {
-        return definition;
-    }
-
-    @Override
     public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         final long[][] inputData = modelInputEncoder.encode(
                 definition.getZaehldauer(), definition.getFahrzeug(), groupedZeitintervalle);

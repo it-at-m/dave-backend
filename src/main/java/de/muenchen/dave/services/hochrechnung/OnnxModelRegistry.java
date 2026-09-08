@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class OnnxModelRegistry {
 
-    private final Map<ModelSet, Hochrechnungsmodell> models = new HashMap<>();
+    private final Map<ModelSet, OnnxHochrechnungsmodell> models = new HashMap<>();
 
     public OnnxModelRegistry(final OnnxModelProperties onnxModelProperties,
             final List<ModelInputEncoder> modelInputEncoder) {
@@ -39,19 +39,17 @@ public class OnnxModelRegistry {
     /**
      * Sucht ein zur Zaehlung und Zielgroesse passendes, erfolgreich initialisiertes Modell.
      */
-    public Optional<Hochrechnungsmodell> findModel(final Zaehldauer zaehldauer, final Fahrzeug fahrzeug) {
+    public Optional<OnnxHochrechnungsmodell> findModel(final Zaehldauer zaehldauer, final Fahrzeug fahrzeug) {
         return Optional.ofNullable(models.get(new ModelSet(zaehldauer, fahrzeug)));
     }
 
     @PreDestroy
     public void closeModels() {
         models.values().forEach(model -> {
-            if (model instanceof OnnxHochrechnungsmodell) {
-                try {
-                    ((OnnxHochrechnungsmodell) model).closeSession();
-                } catch (final IllegalStateException exception) {
-                    log.error("ONNX-Modell {} konnte nicht geschlossen werden", model.getDefinition().getId(), exception);
-                }
+            try {
+                model.closeSession();
+            } catch (final IllegalStateException exception) {
+                log.error("ONNX-Modell {} konnte nicht geschlossen werden", model.getDefinition().getId(), exception);
             }
         });
     }

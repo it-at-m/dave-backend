@@ -36,7 +36,7 @@ public class HochrechnungsService {
      */
     public List<KIPredictionResult> calculateRadhochrechnung(final Zaehldauer zaehldauer,
             final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
-        final Optional<Hochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Fahrzeug.RAD);
+        final Optional<OnnxHochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Fahrzeug.RAD);
         if (model.isEmpty()) {
             return List.of();
         }

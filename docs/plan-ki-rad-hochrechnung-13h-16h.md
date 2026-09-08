@@ -49,15 +49,9 @@ classDiagram
     }
 
     class OnnxModelRegistry {
-        -Map~ModelSet, Hochrechnungsmodell~ models
-        +findModel(zaehldauer, fahrzeug) Optional~Hochrechnungsmodell~
+        -Map~ModelSet, OnnxHochrechnungsmodell~ models
+        +findModel(zaehldauer, fahrzeug) Optional~OnnxHochrechnungsmodell~
         +closeModels()
-    }
-
-    class Hochrechnungsmodell {
-        <<interface>>
-        +getDefinition() OnnxModelDefinition
-        +calculate(groupedZeitintervalle) List~KIPredictionResult~
     }
 
     class OnnxHochrechnungsmodell {
@@ -114,16 +108,15 @@ classDiagram
     ZeitintervallPersistierungsService --> HochrechnungsService
     ZeitintervallPersistierungsService ..> ZeitintervallKIUtil
     HochrechnungsService --> OnnxModelRegistry
-    OnnxModelRegistry --> Hochrechnungsmodell
+    OnnxModelRegistry --> OnnxHochrechnungsmodell
     OnnxModelRegistry --> OnnxModelProperties
-    Hochrechnungsmodell <|.. OnnxHochrechnungsmodell
     OnnxHochrechnungsmodell --> OnnxModelDefinition
     OnnxHochrechnungsmodell --> ModelInputEncoder
     ModelInputEncoder <|.. KontextRadV1Encoder
     ModelInputEncoder <|.. ReineFahrzeugwerteEncoder
     OnnxModelProperties --> OnnxModelDefinition
     ModelInputEncoder --> Zaehldauer
-    Hochrechnungsmodell --> KIPredictionResult
+    OnnxHochrechnungsmodell --> KIPredictionResult
     ZeitintervallKIUtil --> KIPredictionResult
 ```
 
@@ -159,9 +152,9 @@ dave:
 
 `input-schema` ist bewusst kein Boolean. `REINE_FAHRZEUGWERTE` verwendet das bestehende Enum `Fahrzeug`, um den passenden Zaehlwert aus dem Zeitintervall zu lesen. Neue Tensorformate werden durch einen eigenen `ModelInputEncoder` ergaenzt. Damit kann ein kuenftiges Modell beispielsweise weitere Merkmale nutzen, ohne die ONNX-Laufzeit oder die Modellselektion anzupassen.
 
-`Hochrechnungsmodell` ist die bewusst kleine Modellabstraktion. Sie ermoeglicht Tests mit einem Fake-Modell ohne ONNX-Artefakt und entkoppelt die fachliche Auswahl und Ergebnisverarbeitung von der ONNX-Laufzeit. Fuer Teil 1 gibt es genau eine Implementierung, `OnnxHochrechnungsmodell`; weitere technische Modelltypen werden erst bei konkretem Bedarf ergaenzt.
+`OnnxHochrechnungsmodell` bildet die technische ONNX-Laufzeit ab. Da alle konfigurierten Modelle ONNX-Artefakte sind, verwendet die Registry direkt diesen Typ. Der `HochrechnungsService` und die Registry bleiben in Unit-Tests durch Mockito testbar, ohne ein ONNX-Artefakt zu laden.
 
-Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefakte unter den konfigurierten Pfaden bereitgestellt werden, markiert die `OnnxModellRegistry` sie als nicht verfuegbar. Zaehlungen dieser Dauer werden dann ohne KI-Radhochrechnung persistiert.
+Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefakte unter den konfigurierten Pfaden bereitgestellt werden, markiert die `OnnxModelRegistry` sie als nicht verfuegbar. Zaehlungen dieser Dauer werden dann ohne KI-Radhochrechnung persistiert.
 
 ## Umsetzungsschritte: Teil 1
 
@@ -179,7 +172,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 4. ONNX-Laufzeit modularisieren.
 
-   Die technische Session-Verwaltung aus `KIService` wird nach `OnnxHochrechnungsmodell` ueberfuehrt. Ein Modell besitzt eine eigene ONNX-Session. Die `OnnxModellRegistry` initialisiert alle konfigurierten Modelle und markiert bei einem Initialisierungsfehler nur das betroffene Modell als nicht verfuegbar. Der Start der Anwendung bleibt moeglich.
+    Die technische Session-Verwaltung aus `KIService` wird nach `OnnxHochrechnungsmodell` ueberfuehrt. Ein Modell besitzt eine eigene ONNX-Session. Die `OnnxModelRegistry` initialisiert alle konfigurierten Modelle und markiert bei einem Initialisierungsfehler nur das betroffene Modell als nicht verfuegbar. Der Start der Anwendung bleibt moeglich.
 
 5. Modellselektion und Orchestrierung einfuehren.
 
@@ -199,7 +192,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 9. Alle notwendigen Tests implementieren.
 
-     Alle in diesem Plan beschriebenen Unit- und Integrationstests muessen mit der Umsetzung implementiert werden; sie sind kein optionaler Nachbereitungsschritt. Unit-Tests pruefen die Auswahl der Zeitfenster, Sortierung, Dimensionspruefung, den `ReineFahrzeugwerteEncoder` fuer 52 und 64 Werte sowie verschiedene Fahrzeuge und die Auswahl des korrekten Modells. Der `HochrechnungsService` wird zusaetzlich mit einem Fake-`Hochrechnungsmodell` ohne ONNX-Artefakt getestet. Tests fuer den bestehenden 2x4h-Pfad sichern dessen unveraendertes Verhalten. Integrationstests mit kleinen ONNX-Testmodellen pruefen die vollstaendige 13h- und 16h-Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts. Zusaetzlich wird getestet, dass ein defektes Modell nur seine eigene Zaehlungsdauer ohne KI-Ergebnis laesst. Neue Testmethoden folgen dem Muster `test_With...`.
+      Alle in diesem Plan beschriebenen Unit- und Integrationstests muessen mit der Umsetzung implementiert werden; sie sind kein optionaler Nachbereitungsschritt. Unit-Tests pruefen die Auswahl der Zeitfenster, Sortierung, Dimensionspruefung, den `ReineFahrzeugwerteEncoder` fuer 52 und 64 Werte sowie verschiedene Fahrzeuge und die Auswahl des korrekten Modells. Der `HochrechnungsService` wird zusaetzlich mit einem gemockten `OnnxHochrechnungsmodell` ohne ONNX-Artefakt getestet. Tests fuer den bestehenden 2x4h-Pfad sichern dessen unveraendertes Verhalten. Integrationstests mit kleinen ONNX-Testmodellen pruefen die vollstaendige 13h- und 16h-Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts. Zusaetzlich wird getestet, dass ein defektes Modell nur seine eigene Zaehlungsdauer ohne KI-Ergebnis laesst. Neue Testmethoden folgen dem Muster `test_With...`.
 
    Stand der Umsetzung: Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 13h und 16h sind getestet. Echte ONNX-Integrationstests fuer diese beiden Dauern werden ergaenzt, sobald die entsprechenden ONNX-Artefakte oder kleine Testartefakte bereitgestellt sind; sie fehlen derzeit im Repository.
 

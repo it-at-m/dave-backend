@@ -20,7 +20,7 @@ class HochrechnungsServiceTest {
     @Test
     void test_WithAvailableRadModel_ReturnsModelPrediction() throws PredictionFailedException {
         final OnnxModelRegistry modelRegistry = Mockito.mock(OnnxModelRegistry.class);
-        final Hochrechnungsmodell model = Mockito.mock(Hochrechnungsmodell.class);
+        final OnnxHochrechnungsmodell model = Mockito.mock(OnnxHochrechnungsmodell.class);
         final List<List<Zeitintervall>> zeitintervalle = List.of(List.of(new Zeitintervall()));
         when(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD)).thenReturn(Optional.of(model));
         when(model.calculate(zeitintervalle)).thenReturn(List.of(new KIPredictionResult(42)));
