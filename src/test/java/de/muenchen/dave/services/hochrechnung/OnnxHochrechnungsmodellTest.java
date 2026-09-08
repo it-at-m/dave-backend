@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.KIZeitintervall;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
@@ -45,7 +45,7 @@ class OnnxHochrechnungsmodellTest {
     private OnnxModelDefinition createDefinition() {
         final OnnxModelDefinition definition = new OnnxModelDefinition();
         definition.setId("rad-2x4h-v1");
-        definition.setHochrechnungskategorie(Hochrechnungskategorie.RAD);
+        definition.setFahrzeug(Fahrzeug.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         definition.setResourcePath("model/Rad_Modell_DAVE.onnx");
         definition.setInputTensorName("int64_input");

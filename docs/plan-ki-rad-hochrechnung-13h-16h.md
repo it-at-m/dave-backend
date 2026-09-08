@@ -50,7 +50,7 @@ classDiagram
 
     class OnnxModelRegistry {
         -Map~ModelSet, Hochrechnungsmodell~ models
-        +findModel(zaehldauer, hochrechnungskategorie) Optional~Hochrechnungsmodell~
+        +findModel(zaehldauer, fahrzeug) Optional~Hochrechnungsmodell~
         +closeModels()
     }
 
@@ -70,7 +70,7 @@ classDiagram
 
     class ModelInputEncoder {
         <<interface>>
-        +encode(zaehldauer, hochrechnungskategorie, groupedIntervalle) long[][]
+        +encode(zaehldauer, fahrzeug, groupedIntervalle) long[][]
         +getSchema() ModelInputSchema
     }
 
@@ -79,12 +79,12 @@ classDiagram
     }
 
     class ReineFahrzeugwerteEncoder {
-        +encode(zaehldauer, hochrechnungskategorie, groupedIntervalle) long[][]
+        +encode(zaehldauer, fahrzeug, groupedIntervalle) long[][]
     }
 
     class OnnxModelDefinition {
         +String id
-        +Hochrechnungskategorie hochrechnungskategorie
+        +Fahrzeug fahrzeug
         +Zaehldauer zaehldauer
         +String resourcePath
         +String inputTensorName
@@ -137,7 +137,7 @@ dave:
     models:
       - id: rad-2x4h-v1
         version: "1"
-        ziel: RAD
+         fahrzeug: RAD
         zaehldauer: DAUER_2_X_4_STUNDEN
         resource-path: model/Rad_Modell_DAVE_2x4h.onnx
         input-tensor-name: int64_input
@@ -145,7 +145,7 @@ dave:
 
       - id: rad-13h-v1
         version: "1"
-        ziel: RAD
+         fahrzeug: RAD
         zaehldauer: DAUER_13_STUNDEN
         resource-path: model/Rad_Modell_DAVE_13h.onnx
         input-tensor-name: int64_input
@@ -153,14 +153,14 @@ dave:
 
       - id: rad-16h-v1
         version: "1"
-        ziel: RAD
+         fahrzeug: RAD
         zaehldauer: DAUER_16_STUNDEN
         resource-path: model/Rad_Modell_DAVE_16h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 ```
 
-`input-schema` ist bewusst kein Boolean. `REINE_FAHRZEUGWERTE` verwendet die `Hochrechnungskategorie`, um den passenden Zaehlwert aus dem Zeitintervall zu lesen. Neue Tensorformate werden durch einen eigenen `ModelInputEncoder` ergaenzt. Damit kann ein kuenftiges Modell beispielsweise weitere Merkmale nutzen, ohne die ONNX-Laufzeit oder die Modellselektion anzupassen.
+`input-schema` ist bewusst kein Boolean. `REINE_FAHRZEUGWERTE` verwendet das bestehende Enum `Fahrzeug`, um den passenden Zaehlwert aus dem Zeitintervall zu lesen. Neue Tensorformate werden durch einen eigenen `ModelInputEncoder` ergaenzt. Damit kann ein kuenftiges Modell beispielsweise weitere Merkmale nutzen, ohne die ONNX-Laufzeit oder die Modellselektion anzupassen.
 
 `Hochrechnungsmodell` ist die bewusst kleine Modellabstraktion. Sie ermoeglicht Tests mit einem Fake-Modell ohne ONNX-Artefakt und entkoppelt die fachliche Auswahl und Ergebnisverarbeitung von der ONNX-Laufzeit. Fuer Teil 1 gibt es genau eine Implementierung, `OnnxHochrechnungsmodell`; weitere technische Modelltypen werden erst bei konkretem Bedarf ergaenzt.
 
@@ -178,7 +178,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 3. Eingabe-Encoder einfuehren.
 
-    `ModelInputEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadV1Encoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineFahrzeugwerteEncoder` liest anhand der `Hochrechnungskategorie` den passenden Zaehlwert aus dem `Zeitintervall` und erzeugt eine Zeile mit 52 beziehungsweise 64 Werten je Bewegungsbeziehung.
+     `ModelInputEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadV1Encoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineFahrzeugwerteEncoder` liest anhand von `Fahrzeug` den passenden Zaehlwert aus dem `Zeitintervall` und erzeugt eine Zeile mit 52 beziehungsweise 64 Werten je Bewegungsbeziehung.
 
 4. ONNX-Laufzeit modularisieren.
 
@@ -202,7 +202,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 9. Alle notwendigen Tests implementieren.
 
-    Alle in diesem Plan beschriebenen Unit- und Integrationstests muessen mit der Umsetzung implementiert werden; sie sind kein optionaler Nachbereitungsschritt. Unit-Tests pruefen die Auswahl der Zeitfenster, Sortierung, Dimensionspruefung, den `ReineFahrzeugwerteEncoder` fuer 52 und 64 Werte sowie verschiedene Hochrechnungskategorien und die Auswahl des korrekten Modells. Der `HochrechnungsService` wird zusaetzlich mit einem Fake-`Hochrechnungsmodell` ohne ONNX-Artefakt getestet. Tests fuer den bestehenden 2x4h-Pfad sichern dessen unveraendertes Verhalten. Integrationstests mit kleinen ONNX-Testmodellen pruefen die vollstaendige 13h- und 16h-Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts. Zusaetzlich wird getestet, dass ein defektes Modell nur seine eigene Zaehlungsdauer ohne KI-Ergebnis laesst. Neue Testmethoden folgen dem Muster `test_With...`.
+     Alle in diesem Plan beschriebenen Unit- und Integrationstests muessen mit der Umsetzung implementiert werden; sie sind kein optionaler Nachbereitungsschritt. Unit-Tests pruefen die Auswahl der Zeitfenster, Sortierung, Dimensionspruefung, den `ReineFahrzeugwerteEncoder` fuer 52 und 64 Werte sowie verschiedene Fahrzeuge und die Auswahl des korrekten Modells. Der `HochrechnungsService` wird zusaetzlich mit einem Fake-`Hochrechnungsmodell` ohne ONNX-Artefakt getestet. Tests fuer den bestehenden 2x4h-Pfad sichern dessen unveraendertes Verhalten. Integrationstests mit kleinen ONNX-Testmodellen pruefen die vollstaendige 13h- und 16h-Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts. Zusaetzlich wird getestet, dass ein defektes Modell nur seine eigene Zaehlungsdauer ohne KI-Ergebnis laesst. Neue Testmethoden folgen dem Muster `test_With...`.
 
    Stand der Umsetzung: Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 13h und 16h sind getestet. Echte ONNX-Integrationstests fuer diese beiden Dauern werden ergaenzt, sobald die entsprechenden ONNX-Artefakte oder kleine Testartefakte bereitgestellt sind; sie fehlen derzeit im Repository.
 

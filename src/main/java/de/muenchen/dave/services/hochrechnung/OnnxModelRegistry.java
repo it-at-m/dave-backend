@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.hochrechnung;
 
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  * Initialisiert und verwaltet die konfigurierten ONNX-Modelle.
  *
  * <p>
- * Modelle werden ueber die Kombination aus Zaehlungsdauer und Hochrechnungskategorie
+ * Modelle werden ueber die Kombination aus Zaehlungsdauer und Fahrzeug
  * eindeutig identifiziert. Fehler eines einzelnen Artefakts werden beim Start isoliert behandelt;
  * das Modell wird dann nicht registriert und beeinflusst andere Modelle nicht.
  * </p>
@@ -39,8 +39,8 @@ public class OnnxModelRegistry {
     /**
      * Sucht ein zur Zaehlung und Zielgroesse passendes, erfolgreich initialisiertes Modell.
      */
-    public Optional<Hochrechnungsmodell> findModel(final Zaehldauer zaehldauer, final Hochrechnungskategorie hochrechnungskategorie) {
-        return Optional.ofNullable(models.get(new ModelSet(zaehldauer, hochrechnungskategorie)));
+    public Optional<Hochrechnungsmodell> findModel(final Zaehldauer zaehldauer, final Fahrzeug fahrzeug) {
+        return Optional.ofNullable(models.get(new ModelSet(zaehldauer, fahrzeug)));
     }
 
     @PreDestroy
@@ -68,7 +68,7 @@ public class OnnxModelRegistry {
         }
 
         // Eine Zielgroesse darf je Zaehlungsdauer nur von einem Modell beliefert werden.
-        final ModelSet modelSet = new ModelSet(definition.getZaehldauer(), definition.getHochrechnungskategorie());
+        final ModelSet modelSet = new ModelSet(definition.getZaehldauer(), definition.getFahrzeug());
         if (models.containsKey(modelSet)) {
             log.error("ONNX-Modell {} wird wegen doppelter Zaehlungsdauer und Zielgroesse uebersprungen", definition.getId());
             return;
@@ -88,14 +88,14 @@ public class OnnxModelRegistry {
 
     private boolean isIncomplete(final OnnxModelDefinition definition) {
         return definition.getId() == null
-                || definition.getHochrechnungskategorie() == null
+                || definition.getFahrzeug() == null
                 || definition.getZaehldauer() == null
                 || definition.getResourcePath() == null
                 || definition.getInputTensorName() == null
                 || definition.getInputSchema() == null;
     }
 
-    private record ModelSet(Zaehldauer zaehldauer, Hochrechnungskategorie hochrechnungskategorie) {
+    private record ModelSet(Zaehldauer zaehldauer, Fahrzeug fahrzeug) {
     }
 
 }

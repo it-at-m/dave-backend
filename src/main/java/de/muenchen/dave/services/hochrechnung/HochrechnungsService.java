@@ -2,7 +2,7 @@ package de.muenchen.dave.services.hochrechnung;
 
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
@@ -36,7 +36,7 @@ public class HochrechnungsService {
      */
     public List<KIPredictionResult> calculateRadhochrechnung(final Zaehldauer zaehldauer,
             final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
-        final Optional<Hochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Hochrechnungskategorie.RAD);
+        final Optional<Hochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Fahrzeug.RAD);
         if (model.isEmpty()) {
             return List.of();
         }

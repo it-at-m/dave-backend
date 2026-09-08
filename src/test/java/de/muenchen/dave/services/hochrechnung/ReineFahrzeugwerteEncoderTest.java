@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.util.DaveConstants;
@@ -25,7 +25,7 @@ class ReineFahrzeugwerteEncoderTest {
         final List<Zeitintervall> zeitintervalle = createZeitintervalle(52);
         Collections.reverse(zeitintervalle);
 
-        final long[][] result = encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.RAD, List.of(zeitintervalle));
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD, List.of(zeitintervalle));
 
         assertThat(result.length, equalTo(1));
         assertThat(result[0].length, equalTo(52));
@@ -36,7 +36,7 @@ class ReineFahrzeugwerteEncoderTest {
 
     @Test
     void test_With16Hours_Encodes64RadValues() throws PredictionFailedException {
-        final long[][] result = encoder.encode(Zaehldauer.DAUER_16_STUNDEN, Hochrechnungskategorie.RAD, List.of(createZeitintervalle(64)));
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_16_STUNDEN, Fahrzeug.RAD, List.of(createZeitintervalle(64)));
 
         assertThat(result.length, equalTo(1));
         assertThat(result[0].length, equalTo(64));
@@ -50,7 +50,7 @@ class ReineFahrzeugwerteEncoderTest {
             zeitintervalle.get(index).setPkw(index + 100);
         }
 
-        final long[][] result = encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.PKW, List.of(zeitintervalle));
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.PKW, List.of(zeitintervalle));
 
         assertThat(result[0][0], equalTo(100L));
         assertThat(result[0][51], equalTo(151L));
@@ -60,7 +60,7 @@ class ReineFahrzeugwerteEncoderTest {
     void test_WithIncompleteIntervals_ThrowsPredictionFailedException() {
         final PredictionFailedException exception = assertThrows(
                 PredictionFailedException.class,
-                () -> encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.RAD, List.of(createZeitintervalle(51))));
+                () -> encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD, List.of(createZeitintervalle(51))));
 
         assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION));
     }

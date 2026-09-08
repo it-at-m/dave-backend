@@ -12,7 +12,7 @@ public enum ModelInputSchema {
 
     /** Zehn Kontextmerkmale je Viertelstundenintervall, einschliesslich des Radwerts. */
     KONTEXT_RAD_V1,
-    /** Ausschliesslich ein Zaehlwert der konfigurierten Hochrechnungskategorie je Viertelstunde. */
+    /** Ausschliesslich ein Zaehlwert des konfigurierten Fahrzeugs je Viertelstunde. */
     REINE_FAHRZEUGWERTE
 
 }

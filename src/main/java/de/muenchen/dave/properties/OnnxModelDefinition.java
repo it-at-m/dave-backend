@@ -1,6 +1,6 @@
 package de.muenchen.dave.properties;
 
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class OnnxModelDefinition {
 
     private String id;
 
-    private Hochrechnungskategorie hochrechnungskategorie;
+    private Fahrzeug fahrzeug;
 
     private Zaehldauer zaehldauer;
 

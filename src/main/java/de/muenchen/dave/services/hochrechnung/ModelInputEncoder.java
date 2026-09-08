@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.hochrechnung;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
@@ -29,14 +29,14 @@ public interface ModelInputEncoder {
      * Filtert, sortiert und kodiert die Zeitintervalle fuer die ONNX-Inferenz.
      *
      * @param zaehldauer bestimmt die Eingabezeitbloecke und die erwartete Intervallzahl
-     * @param hochrechnungskategorie bestimmt bei reinen Fahrzeugwerten das auszulesende Zaehlfeld
+     * @param fahrzeug bestimmt bei reinen Fahrzeugwerten das auszulesende Zaehlfeld
      * @param groupedZeitintervalle Zeitintervalle, je Bewegungsbeziehung gruppiert
      * @return ONNX-Eingabetensor als {@code [bewegungsbeziehung][merkmale]}
      * @throws PredictionFailedException wenn keine Bewegungsbeziehung oder nicht die erwartete
      *             Anzahl von Intervallen vorliegt
      */
     long[][] encode(final Zaehldauer zaehldauer,
-            final Hochrechnungskategorie hochrechnungskategorie,
+            final Fahrzeug fahrzeug,
             final List<List<Zeitintervall>> groupedZeitintervalle)
             throws PredictionFailedException;
 

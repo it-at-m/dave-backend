@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
@@ -22,7 +22,7 @@ class HochrechnungsServiceTest {
         final OnnxModelRegistry modelRegistry = Mockito.mock(OnnxModelRegistry.class);
         final Hochrechnungsmodell model = Mockito.mock(Hochrechnungsmodell.class);
         final List<List<Zeitintervall>> zeitintervalle = List.of(List.of(new Zeitintervall()));
-        when(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.RAD)).thenReturn(Optional.of(model));
+        when(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD)).thenReturn(Optional.of(model));
         when(model.calculate(zeitintervalle)).thenReturn(List.of(new KIPredictionResult(42)));
 
         final List<KIPredictionResult> result = new HochrechnungsService(modelRegistry)
@@ -34,7 +34,7 @@ class HochrechnungsServiceTest {
     @Test
     void test_WithUnavailableRadModel_ReturnsEmptyPrediction() throws PredictionFailedException {
         final OnnxModelRegistry modelRegistry = Mockito.mock(OnnxModelRegistry.class);
-        when(modelRegistry.findModel(Zaehldauer.DAUER_16_STUNDEN, Hochrechnungskategorie.RAD)).thenReturn(Optional.empty());
+        when(modelRegistry.findModel(Zaehldauer.DAUER_16_STUNDEN, Fahrzeug.RAD)).thenReturn(Optional.empty());
 
         final List<KIPredictionResult> result = new HochrechnungsService(modelRegistry)
                 .calculateRadhochrechnung(Zaehldauer.DAUER_16_STUNDEN, List.of(List.of(new Zeitintervall())));

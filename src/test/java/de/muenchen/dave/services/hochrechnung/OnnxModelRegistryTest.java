@@ -3,7 +3,7 @@ package de.muenchen.dave.services.hochrechnung;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 
-import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.properties.OnnxModelDefinition;
@@ -17,7 +17,7 @@ class OnnxModelRegistryTest {
     void test_WithMissingModelArtifact_DoesNotRegisterModel() {
         final OnnxModelDefinition definition = new OnnxModelDefinition();
         definition.setId("nicht-vorhanden");
-        definition.setHochrechnungskategorie(Hochrechnungskategorie.RAD);
+        definition.setFahrzeug(Fahrzeug.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_13_STUNDEN);
         definition.setResourcePath("model/nicht-vorhanden.onnx");
         definition.setInputTensorName("int64_input");
@@ -27,7 +27,7 @@ class OnnxModelRegistryTest {
 
         final OnnxModelRegistry modelRegistry = new OnnxModelRegistry(properties, List.of(new ReineFahrzeugwerteEncoder()));
 
-        assertThat(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.RAD).stream().toList(), empty());
+        assertThat(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD).stream().toList(), empty());
     }
 
 }
