@@ -19,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith({ SpringExtension.class, MockitoExtension.class })
@@ -51,7 +50,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
     void testGetAuthenticatedUsername_withJwtClaim_returnsUsername() {
         // Testet den Weg, in dem ein Jwt im SecurityContext vorhanden ist
         // und der erwartete Username-Claim gesetzt ist -> sollte der Username zurückgegeben werden.
@@ -84,7 +82,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
     void testGetUserName_principalNotJwt_returnsEmpty() {
         // Wenn das Principal-Objekt keine Jwt-Instanz ist, muss getUserName "" liefern.
 
@@ -97,7 +94,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "ADMIN")
     void testGetUserName_jwtWithoutMatchingClaim_returnsEmpty() {
         // Ein Jwt ist vorhanden, jedoch fehlt der erwartete Claim -> leerer String
 
@@ -117,7 +113,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "FACHADMIN")
     void testIsFachadmin_securityActivated_withRoleFachadmin_returnsTrue() {
         // Security ist aktiviert und der Nutzer hat die Rolle FACHADMIN -> true
 
@@ -133,7 +128,21 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser
+    void testIsFachadmin_securityActivated_withoutRoleFachadmin_returnsFalse() {
+        // Security ist aktiviert und der Nutzer hat nicht die Rolle FACHADMIN -> false
+
+        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        "principal",
+                        null,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))));
+
+        assertFalse(service.isFachadmin());
+    }
+
+    @Test
     void testIsFachadmin_securityDeactivated_returnsTrue() {
         // Wenn Security deaktiviert ist (Profil "no-security" aktiv), wird standardmäßig true zurückgegeben.
 
@@ -147,7 +156,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "USER")
     void testIsAnwender_securityActivated_noAdminOrPoweruser_returnsTrue() {
         // Security aktiviert und Nutzer hat weder FACHADMIN noch POWERUSER -> Anwender true
 
@@ -160,7 +168,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "POWERUSER")
     void testIsAnwender_withPoweruser_returnsFalse() {
         // Nutzer hat ROLE_POWERUSER -> isAnwender muss false liefern
 
@@ -176,7 +183,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser(authorities = "ADMIN")
     void testIsAnwender_withFachadmin_returnsFalse() {
         // Nutzer hat ROLE_FACHADMIN -> isAnwender muss false liefern
 
@@ -192,7 +198,19 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser
+    void testIsAnwender_securityDeactivated_returnsTrue() {
+        // Wenn Security deaktiviert ist (Profil "no-security" aktiv), wird standardmäßig true zurückgegeben.
+
+        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
+
+        // Auch ohne Authorities -> sollte true sein
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("principal", null, Collections.emptyList()));
+
+        assertFalse(service.isAnwender());
+    }
+
+    @Test
     void testIsSecurityActivated_profilesContainNoSecurity_returnsFalse() {
         // Wenn das Profil "no-security" aktiv ist -> isSecurityActivated liefert false
         org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
@@ -200,7 +218,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser
     void testIsSecurityActivated_profilesContainNoSecurityAndOtherProfile_returnsFalse() {
         // Wenn das Profil "no-security" und ein weiteres Profil aktiv ist -> isSecurityActivated liefert false
         org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security", "dev" });
@@ -208,7 +225,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser
     void testIsSecurityActivated_profilesDoNotContainNoSecurity_returnsTrue() {
         // Wenn das Profil "no-security" NICHT aktiv ist -> isSecurityActivated liefert true
         org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "dev", "test" });
@@ -216,7 +232,6 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     @Test
-    @WithMockUser
     void testIsSecurityActivated_profilesDoNotContainProfiles_returnsTrue() {
         // Wenn das Profil "no-security" NICHT aktiv und kein andere Profil gesetzt ist -> isSecurityActivated liefert true
         org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
