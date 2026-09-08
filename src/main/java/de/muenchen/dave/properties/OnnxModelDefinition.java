@@ -10,8 +10,6 @@ public class OnnxModelDefinition {
 
     private String id;
 
-    private String version;
-
     private Hochrechnungskategorie hochrechnungskategorie;
 
     private Zaehldauer zaehldauer;
