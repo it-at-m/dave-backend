@@ -98,7 +98,7 @@ class SecurityContextInformationExtractorServiceTest {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    void testGetUserName_jwtWithoutClaim_returnsEmpty() {
+    void testGetUserName_jwtWithoutMatchingClaim_returnsEmpty() {
         // Ein Jwt ist vorhanden, jedoch fehlt der erwartete Claim -> leerer String
 
         final Jwt jwt = new Jwt(
