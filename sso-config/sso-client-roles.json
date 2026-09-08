@@ -1,0 +1,26 @@
+{
+  "clientRoles": {
+    "dave": [
+      {
+        "name": "ANWENDER",
+        "description": "Ein Anwender sieht nur normale, freigegebene Zählungen."
+      },
+      {
+        "name": "EXTERNAL",
+        "description": "Ein External kann beauftragte Zählungen speichern."
+      },
+      {
+        "name": "FACHADMIN",
+        "description": "Ein Fachadmin sieht auch nicht freigegebene Zählungen und kann Zählungen speichern."
+      },
+      {
+        "name": "POWERUSER",
+        "description": "Ein Poweruser sieht alle freigegebenen Zählungen, inklusive Sonderzählungen. Des Weiteren kann dieser die Felder Zählstellenkommentar und Zählungskommentar bearbeiten."
+      },
+      {
+        "name": "VERKEHRSDETEKTOR_VIEWER",
+        "description": "Der Viewer kann Detektordaten aus der Mobilitätsplattform lesen."
+      }
+    ]
+  }
+}
