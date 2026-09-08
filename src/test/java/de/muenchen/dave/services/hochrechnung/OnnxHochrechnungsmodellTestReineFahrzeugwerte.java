@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class OnnxHochrechnungsmodellTestReineRadwerte {
+class OnnxHochrechnungsmodellTestReineFahrzeugwerte {
 
     @Test
     void test_With2x4HoursModel_ReturnsOnePredictionPerMovementRelation() throws PredictionFailedException {
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new ReineRadwerteV1Encoder());
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new ReineFahrzeugwerteEncoder());
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
         final List<KIPredictionResult> result = model.calculate(zeitintervalle);
@@ -37,7 +37,7 @@ class OnnxHochrechnungsmodellTestReineRadwerte {
         definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         definition.setResourcePath("model/Rad_Modell_DAVE_2x4h.onnx");
         definition.setInputTensorName("int64_input");
-        definition.setInputSchema(ModelInputSchema.REINE_RADWERTE_V1);
+        definition.setInputSchema(ModelInputSchema.REINE_FAHRZEUGWERTE);
         return definition;
     }
 

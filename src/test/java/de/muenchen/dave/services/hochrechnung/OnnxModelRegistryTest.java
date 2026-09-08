@@ -21,11 +21,11 @@ class OnnxModelRegistryTest {
         definition.setZaehldauer(Zaehldauer.DAUER_13_STUNDEN);
         definition.setResourcePath("model/nicht-vorhanden.onnx");
         definition.setInputTensorName("int64_input");
-        definition.setInputSchema(ModelInputSchema.REINE_RADWERTE_V1);
+        definition.setInputSchema(ModelInputSchema.REINE_FAHRZEUGWERTE);
         final OnnxModelProperties properties = new OnnxModelProperties();
         properties.setModelle(List.of(definition));
 
-        final OnnxModelRegistry modelRegistry = new OnnxModelRegistry(properties, List.of(new ReineRadwerteV1Encoder()));
+        final OnnxModelRegistry modelRegistry = new OnnxModelRegistry(properties, List.of(new ReineFahrzeugwerteEncoder()));
 
         assertThat(modelRegistry.findModel(Zaehldauer.DAUER_13_STUNDEN, Hochrechnungskategorie.RAD).stream().toList(), empty());
     }

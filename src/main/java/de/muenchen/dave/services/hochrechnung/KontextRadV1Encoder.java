@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.hochrechnung;
 
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
@@ -32,7 +33,9 @@ public class KontextRadV1Encoder extends AbstractModelInputEncoder {
     }
 
     @Override
-    public long[][] encode(final Zaehldauer zaehldauer, final List<List<Zeitintervall>> groupedZeitintervalle)
+    public long[][] encode(final Zaehldauer zaehldauer,
+            final Hochrechnungskategorie hochrechnungskategorie,
+            final List<List<Zeitintervall>> groupedZeitintervalle)
             throws PredictionFailedException {
         final List<List<Zeitintervall>> filteredZeitintervalle = filterAndSort(zaehldauer, groupedZeitintervalle);
         final long[][] inputData = new long[filteredZeitintervalle.size()][];

@@ -51,7 +51,8 @@ public class OnnxHochrechnungsmodell implements Hochrechnungsmodell {
 
     @Override
     public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
-        final long[][] inputData = modelInputEncoder.encode(definition.getZaehldauer(), groupedZeitintervalle);
+        final long[][] inputData = modelInputEncoder.encode(
+                definition.getZaehldauer(), definition.getHochrechnungskategorie(), groupedZeitintervalle);
         final long[][] predictions = runPrediction(inputData);
         final List<KIPredictionResult> results = new ArrayList<>();
         for (final long[] prediction : predictions) {

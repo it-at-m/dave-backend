@@ -1,6 +1,7 @@
 package de.muenchen.dave.services.hochrechnung;
 
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Hochrechnungskategorie;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
@@ -9,23 +10,25 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 /**
- * Kodiert ausschliesslich die gezahlten Radfahrer je Viertelstunde.
+ * Kodiert ausschliesslich die Zaehlwerte einer Hochrechnungskategorie je Viertelstunde.
  *
  * <p>
  * Fuer 13h- und 16h-Modelle entstehen dadurch je Bewegungsbeziehung 52 beziehungsweise
- * 64 Merkmale. Nicht erfasste Radwerte werden als {@code 0} an das Modell uebergeben.
+ * 64 Merkmale. Nicht erfasste Zaehlwerte werden als {@code 0} an das Modell uebergeben.
  * </p>
  */
 @Component
-public class ReineRadwerteV1Encoder extends AbstractModelInputEncoder {
+public class ReineFahrzeugwerteEncoder extends AbstractModelInputEncoder {
 
     @Override
     public ModelInputSchema getSchema() {
-        return ModelInputSchema.REINE_RADWERTE_V1;
+        return ModelInputSchema.REINE_FAHRZEUGWERTE;
     }
 
     @Override
-    public long[][] encode(final Zaehldauer zaehldauer, final List<List<Zeitintervall>> groupedZeitintervalle)
+    public long[][] encode(final Zaehldauer zaehldauer,
+            final Hochrechnungskategorie hochrechnungskategorie,
+            final List<List<Zeitintervall>> groupedZeitintervalle)
             throws PredictionFailedException {
         final List<List<Zeitintervall>> filteredZeitintervalle = filterAndSort(zaehldauer, groupedZeitintervalle);
         final long[][] inputData = new long[filteredZeitintervalle.size()][];
@@ -35,11 +38,22 @@ public class ReineRadwerteV1Encoder extends AbstractModelInputEncoder {
             for (int intervallIndex = 0; intervallIndex < zeitintervalleJeBewegungsbeziehung.size(); intervallIndex++) {
                 // ONNX erwartet einen int64-Wert fuer jedes Viertelstundenintervall.
                 inputDataJeBewegungsbeziehung[intervallIndex] = ObjectUtils.defaultIfNull(
-                        zeitintervalleJeBewegungsbeziehung.get(intervallIndex).getFahrradfahrer(), 0);
+                        getZaehlwert(zeitintervalleJeBewegungsbeziehung.get(intervallIndex), hochrechnungskategorie), 0);
             }
             inputData[groupIndex] = inputDataJeBewegungsbeziehung;
         }
         return inputData;
+    }
+
+    private Integer getZaehlwert(final Zeitintervall zeitintervall, final Hochrechnungskategorie hochrechnungskategorie) {
+        return switch (hochrechnungskategorie) {
+        case RAD -> zeitintervall.getFahrradfahrer();
+        case PKW -> zeitintervall.getPkw();
+        case LKW -> zeitintervall.getLkw();
+        case LZ -> zeitintervall.getLastzuege();
+        case BUS -> zeitintervall.getBusse();
+        case KRAD -> zeitintervall.getKraftraeder();
+        };
     }
 
 }
