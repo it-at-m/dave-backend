@@ -20,6 +20,7 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,8 +41,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
-            final KnotenarmMapper knotenarmMapper) {
-        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
+            final KnotenarmMapper knotenarmMapper,
+            final AuthorizationService authorizationService) {
+        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, authorizationService);
         this.knotenarmMapper = knotenarmMapper;
     }
 
@@ -51,9 +54,14 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return Id der aktualiserten Zaehlung
      * @throws BrokenInfrastructureException Beim Erneuern der Zaehlstelle im Index
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
-    public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException {
+    public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
         log.debug("saveZaehlung");
+
+        // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern
+        authorizationService.assertCanModifyZaehlung(zaehlungDto.getId());
+
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(zaehlungDto.getId())) {

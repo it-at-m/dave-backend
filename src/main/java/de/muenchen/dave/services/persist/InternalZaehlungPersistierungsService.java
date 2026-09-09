@@ -25,6 +25,7 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -51,8 +52,9 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,
-            final PkwEinheitMapper pkwEinheitMapper) {
-        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
+            final PkwEinheitMapper pkwEinheitMapper,
+            final AuthorizationService authorizationService) {
+        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, authorizationService);
         this.pkwEinheitMapper = pkwEinheitMapper;
         this.pkwEinheitRepository = pkwEinheitRepository;
     }

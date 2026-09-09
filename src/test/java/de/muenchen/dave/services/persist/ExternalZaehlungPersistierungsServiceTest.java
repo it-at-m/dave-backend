@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
@@ -22,10 +23,13 @@ import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
+import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +37,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 /**
  * Unit-Tests für die Methode setAdditionalDataToZeitintervall der Klasse
@@ -66,7 +71,16 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Erzeuge ein Spy-Objekt, so dass einzelne Hilfsmethoden (z.B. createHochrechnung)
         // bei Bedarf gestubbt werden können.
         service = Mockito
-                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper));
+                .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
+                        new AuthorizationService(indexService)));
+
+        // Setze Test-Nutzer mit Rolle Fachadmin
+        TestUtils.setSecurityContext("test", true);
+    }
+
+    @AfterEach
+    void tearDown() {
+        TestUtils.clearSecurityContext();
     }
 
     @Test
@@ -520,4 +534,34 @@ class ExternalZaehlungPersistierungsServiceTest {
         Mockito.verify(indexService, times(1)).erneuereZaehlstelle(zaehlstelle);
     }
 
+    @Test
+    void testSaveZaehlung_notAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
+        // Vorbereitung
+        final var bewegungsId = "b3";
+        final var dto = new ExternalZaehlungDTO();
+        final var id = UUID.randomUUID().toString();
+        dto.setId(id);
+        dto.setDatum(null);
+        dto.setZaehlart("N");
+
+        final var ev = new ExternalVerkehrsbeziehungDTO();
+        ev.setId(bewegungsId);
+        ev.setZeitintervalle(null); // no zeitintervalle
+        dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));
+
+        final var zaehlstelle = new Zaehlstelle();
+        final var zaehlung = new Zaehlung();
+        zaehlung.setId(id);
+        zaehlung.setDienstleisterkennung("dl1");
+        zaehlstelle.getZaehlungen().add(zaehlung);
+
+        when(indexService.getZaehlung(id)).thenReturn(zaehlung);
+
+        // Nutzer mit einem anderen Username als der Dienstleisterkennung der Zählung und ohne Rolle Fachadmin setzen
+        TestUtils.setSecurityContext("tester", false);
+
+        // Ausführung
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> service.saveZaehlung(dto));
+        assertEquals("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.", ex.getMessage());
+    }
 }
