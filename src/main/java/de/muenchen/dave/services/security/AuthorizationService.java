@@ -34,18 +34,41 @@ public class AuthorizationService {
     }
 
     /**
-     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link Zaehlung} zu bearbeiten.
+     * Überprüft, ob der Nutzer die Rolle FACHADMIN hat oder ob seine Dienstleisterkennung mit der Dienstleisterkennung
+     * {@link Zaehlung} übereinstimmt.
      *
-     * @param zaehlungId der {@link Zaehlung}, welche der Nutzer bearbeiten will
-     * @throws DataNotFoundException wenn der Nutzer nicht berechtigt ist, die {@link Zaehlung} zu
-     *             bearbeiten
+     * @param zaehlungId der {@link Zaehlung}
+     * @param errorMessage für die {@link AccessDeniedException}
+     * @throws AccessDeniedException wenn der Nutzer nicht FACHADMIN ist und die Dienstleisterkennung nicht übereinstimmt
      */
-    public void assertCanModifyZaehlung(final String zaehlungId) throws DataNotFoundException {
+    private void assertCanAccessZaehlung(final String zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
         if (SecurityContextInformationExtractor.isFachadmin()) {
             return;
         }
         if (!matchesDienstleisterkennung(zaehlungId)) {
-            throw new AccessDeniedException("Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
+            throw new AccessDeniedException(errorMessage);
         }
+    }
+
+    /**
+     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link Zaehlung} zu bearbeiten.
+     *
+     * @param zaehlungId der {@link Zaehlung}, welche der Nutzer bearbeiten will
+     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, die {@link Zaehlung} zu
+     *             bearbeiten
+     */
+    public void assertCanModifyZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+        assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
+    }
+
+    /**
+     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage} zu lesen oder zu senden.
+     *
+     * @param zaehlungId der {@link Zaehlung}, für welche der Nutzer eine {@link de.muenchen.dave.domain.ChatMessage} lesen/senden will
+     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage} für
+     *             die {@link Zaehlung} zu lesen/senden
+     */
+    public void assertCanReadAndWriteMessagesForZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+        assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden.");
     }
 }

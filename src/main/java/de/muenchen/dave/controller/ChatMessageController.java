@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +55,8 @@ public class ChatMessageController {
         } catch (ResourceNotFoundException e) {
             log.error("Fehler im ChatMessageController, ChatMessages konnten nicht gefunden werden. ID der Zählung: {}", zaehlungId, e);
             throw e;
+        } catch (final AccessDeniedException ade) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         } catch (Exception e) {
             log.error("Unerwarteter Fehler im ChatMessageController beim Laden der ChatMessages mit der Zählung ID: {}", zaehlungId, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden der ChatMessages aufgetreten.");
@@ -75,6 +78,8 @@ public class ChatMessageController {
         log.debug("Neue ChatMessage speichern: {}", chatMessageDTO.getContent());
         try {
             return ResponseEntity.ok(chatMessageService.saveChatMessage(chatMessageDTO));
+        } catch (AccessDeniedException ade) {
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         } catch (Exception e) {
             log.error("Unerwarteter Fehler im ChatMessageController beim Speichern der ChatMessage: {}", chatMessageDTO, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Speichern der ChatMessage aufgetreten.");
