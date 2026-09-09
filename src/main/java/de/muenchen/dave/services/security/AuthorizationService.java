@@ -34,12 +34,13 @@ public class AuthorizationService {
     }
 
     /**
-     * Überprüft, ob der Nutzer die Rolle FACHADMIN hat oder ob seine Dienstleisterkennung mit der Dienstleisterkennung
-     * {@link Zaehlung} übereinstimmt.
+     * Überprüft, ob der Nutzer die Rolle FACHADMIN hat oder ob seine Dienstleisterkennung mit der
+     * Dienstleisterkennung der {@link Zaehlung} übereinstimmt.
      *
      * @param zaehlungId der {@link Zaehlung}
      * @param errorMessage für die {@link AccessDeniedException}
-     * @throws AccessDeniedException wenn der Nutzer nicht FACHADMIN ist und die Dienstleisterkennung nicht übereinstimmt
+     * @throws AccessDeniedException wenn der Nutzer nicht FACHADMIN ist und die Dienstleisterkennung
+     *             nicht übereinstimmt
      */
     private void assertCanAccessZaehlung(final String zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
         if (SecurityContextInformationExtractor.isFachadmin()) {
@@ -62,10 +63,13 @@ public class AuthorizationService {
     }
 
     /**
-     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage} zu lesen oder zu senden.
+     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage}
+     * zu lesen oder zu senden.
      *
-     * @param zaehlungId der {@link Zaehlung}, für welche der Nutzer eine {@link de.muenchen.dave.domain.ChatMessage} lesen/senden will
-     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage} für
+     * @param zaehlungId der {@link Zaehlung}, für welche der Nutzer eine
+     *            {@link de.muenchen.dave.domain.ChatMessage} lesen/senden will
+     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, eine
+     *             {@link de.muenchen.dave.domain.ChatMessage} für
      *             die {@link Zaehlung} zu lesen/senden
      */
     public void assertCanReadAndWriteMessagesForZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {

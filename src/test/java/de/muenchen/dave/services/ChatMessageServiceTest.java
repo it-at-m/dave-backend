@@ -2,8 +2,8 @@ package de.muenchen.dave.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.TestUtils;
@@ -18,10 +18,9 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.List;
 import java.util.UUID;
-
-import de.muenchen.dave.services.security.AuthorizationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

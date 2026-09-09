@@ -79,7 +79,7 @@ public class ChatMessageController {
         try {
             return ResponseEntity.ok(chatMessageService.saveChatMessage(chatMessageDTO));
         } catch (AccessDeniedException ade) {
-          throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         } catch (Exception e) {
             log.error("Unerwarteter Fehler im ChatMessageController beim Speichern der ChatMessage: {}", chatMessageDTO, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Speichern der ChatMessage aufgetreten.");

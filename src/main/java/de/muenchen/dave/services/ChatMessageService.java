@@ -59,9 +59,11 @@ public class ChatMessageService {
      * @return Das gespeicherte {@link ChatMessageDTO}.
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
-     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die {@link Zaehlung} zu speichern
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die
+     *             {@link Zaehlung} zu speichern
      */
-    public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO) throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
+    public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO)
+            throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu senden
         authorizationService.assertCanReadAndWriteMessagesForZaehlung(chatMessageDTO.getZaehlungId());
 
@@ -86,7 +88,8 @@ public class ChatMessageService {
      * @param zaehlungID Die ID der Zählung zum Laden der ChatMessage.
      * @return Alle geladenen {@link ChatMessageDTO}s.
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
-     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die {@link Zaehlung} zu laden
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die
+     *             {@link Zaehlung} zu laden
      */
     public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu lesen
