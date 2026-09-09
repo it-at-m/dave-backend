@@ -98,7 +98,25 @@ dave:
     # Sollte immer knapp unter dem Cron sein
     shedlock: 1380m
   onnx:
-    model-path: model/Rad_Modell_DAVE.onnx
+    modelle:
+      - id: rad-2x4h-v1
+        fahrzeug: RAD
+        zaehldauer: DAUER_2_X_4_STUNDEN
+        resource-path: model/Rad_Modell_DAVE_2x4h.onnx
+        input-tensor-name: int64_input
+        input-schema: REINE_FAHRZEUGWERTE
+      - id: rad-13h-v1
+        fahrzeug: RAD
+        zaehldauer: DAUER_13_STUNDEN
+        resource-path: model/Rad_Modell_DAVE_13h.onnx
+        input-tensor-name: int64_input
+        input-schema: REINE_FAHRZEUGWERTE
+      - id: rad-16h-v1
+        fahrzeug: RAD
+        zaehldauer: DAUER_16_STUNDEN
+        resource-path: model/Rad_Modell_DAVE_16h.onnx
+        input-tensor-name: int64_input
+        input-schema: REINE_FAHRZEUGWERTE
   zaehlstelle:
     automatic-number-assignment: true
     link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md
