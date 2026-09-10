@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(1)
 @Slf4j
+@RequiredArgsConstructor
 public class RequestResponseLoggingFilter implements Filter {
 
     private static final String REQUEST_LOGGING_MODE_ALL = "all";
@@ -30,6 +32,8 @@ public class RequestResponseLoggingFilter implements Filter {
     private static final String REQUEST_LOGGING_MODE_CHANGING = "changing";
 
     private static final List<String> CHANGING_METHODS = Arrays.asList("POST", "PUT", "PATCH", "DELETE");
+
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     /**
      * The property or a zero length string if no property is available.
@@ -58,7 +62,7 @@ public class RequestResponseLoggingFilter implements Filter {
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
         if (this.checkForLogging(httpRequest)) {
             log.info("User {} executed {} on URI {} with http status {}",
-                    SecurityContextInformationExtractor.getAuthenticatedUsername(),
+                    securityContextInformationExtractorService.getAuthenticatedUsername(),
                     httpRequest.getMethod(),
                     httpRequest.getRequestURI(),
                     httpResponse.getStatus());
