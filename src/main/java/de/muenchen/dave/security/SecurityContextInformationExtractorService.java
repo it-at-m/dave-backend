@@ -26,9 +26,9 @@ public class SecurityContextInformationExtractorService {
     private final Environment environment;
 
     /**
-     * The method extracts the username out of the {@link BearerTokenAuthentication}.
+     * Extrahiert den Benutzernamen aus der {@link BearerTokenAuthentication}.
      *
-     * @return The username or a placeholder if there is no {@link BearerTokenAuthentication} available.
+     * @return Den Benutzernamen oder einen Platzhalter, falls keine {@link BearerTokenAuthentication} vorhanden ist.
      */
     public String getAuthenticatedUsername() {
         final var username = getUserName();
