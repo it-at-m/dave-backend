@@ -28,13 +28,25 @@ public class SecurityContextInformationExtractorService {
     /**
      * Extrahiert den Benutzernamen aus der {@link BearerTokenAuthentication}.
      *
-     * @return Den Benutzernamen oder einen Platzhalter, falls keine {@link BearerTokenAuthentication} vorhanden ist.
+     * @return Den Benutzernamen oder einen Platzhalter, falls keine {@link BearerTokenAuthentication}
+     *         vorhanden ist.
      */
     public String getAuthenticatedUsername() {
         final var username = getUserName();
         return StringUtils.isNotBlank(username) ? username : UNAUTHENTICATED_USER;
     }
 
+    /**
+     * Prüft, ob der aktuell angemeldete Nutzer die Rolle ROLE_FACHADMIN besitzt.
+     *
+     * Wenn Security deaktiviert ist (Spring-Profil "no-security" aktiv), gibt die Methode
+     * standardmäßig true zurück.
+     *
+     * Die Methode liest die aktuelle Authentication aus dem SecurityContext und prüft die Authorities.
+     *
+     * @return true, falls die Security deaktiviert ist oder der Nutzer die Rolle ROLE_FACHADMIN hat;
+     *         andernfalls false
+     */
     public boolean isFachadmin() {
         log.debug("get isFachadmin");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,6 +60,17 @@ public class SecurityContextInformationExtractorService {
         return isFachadmin;
     }
 
+    /**
+     * Liest den Benutzernamen aus dem JWT im aktuellen SecurityContext.
+     *
+     * Die Methode prüft, ob eine Authentication vorhanden ist und ob das Principal
+     * eine Jwt-Instanz ist. Falls ja, wird der Claim hinterlegt in der Konstante TOKEN_USER_NAME
+     * aus dem Jwt gelesen und zurückgegeben.
+     * Falls keine Authentication vorhanden ist oder das Principal kein Jwt ist,
+     * wird ein leerer String zurückgegeben.
+     *
+     * @return Benutzernamen aus dem JWT-Claim oder ein leerer String wenn nicht vorhanden
+     */
     public String getUserName() {
         String username = null;
         final var authentication = SecurityContextHolder.getContext().getAuthentication();
