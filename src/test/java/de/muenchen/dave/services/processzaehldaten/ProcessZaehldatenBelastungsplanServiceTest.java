@@ -578,7 +578,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      * Zählung.
      */
     @Test
-    void testExtractZeitintervalleSpitzenstundeForEachSpitzenstunde() {
+    void testExtractZeitintervalleSpitzenstundeForEachBewegungsbeziehung() {
         final UUID zaehlungId = UUID.randomUUID();
         final Zaehlung zaehlung = Mockito.mock(Zaehlung.class);
         when(zaehlung.getId()).thenReturn(zaehlungId.toString());
@@ -616,7 +616,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                             any(), any()))
                     .thenReturn(gleitende);
 
-            final List<Zeitintervall> result = service.extractZeitintervalleSpitzenstundeForEachSpitzenstunde(zaehlung, options);
+            final List<Zeitintervall> result = service.extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(zaehlung, options);
 
             assertNotNull(result);
             assertEquals(1, result.size());

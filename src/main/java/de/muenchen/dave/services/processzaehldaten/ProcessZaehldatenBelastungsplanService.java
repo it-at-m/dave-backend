@@ -173,7 +173,7 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
-            zeitintervalle = extractZeitintervalleSpitzenstundeForEachSpitzenstunde(zaehlung, options);
+            zeitintervalle = extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(zaehlung, options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, options.getZeitblock());
         }
@@ -223,7 +223,8 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Diese Methode extrahiert je Bewegungsbeziehung die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
+     * Diese Methode extrahiert je Bewegungsbeziehung die Zeitintervalle für die Zeitauswahl bezüglich
+     * Spitzenstunde.
      * <p>
      * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert.
      * Diese Spitzenstunde dient mit der
@@ -235,7 +236,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
-    public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachSpitzenstunde(
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(
             final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
@@ -279,7 +280,8 @@ public class ProcessZaehldatenBelastungsplanService {
                             Set.of(TypeZeitintervall.STUNDE_VIERTEL));
 
             /*
-             * Auf Grundlage der zuvor ermittelten 15‑minütigen Zeitintervalle, die zusammen die Spitzenstunde bilden,
+             * Auf Grundlage der zuvor ermittelten 15‑minütigen Zeitintervalle,
+             * die zusammen die Spitzenstunde bilden,
              * wird für jede Bewegungsbeziehung die zugehörige Spitzenstunde ermittelt.
              * Die gefundenen Zeitintervalle werden anschließend angepasst (Start/Ende) und gefiltert.
              */
