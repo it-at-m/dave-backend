@@ -288,7 +288,11 @@ public class ProcessZaehldatenBelastungsplanService {
                          * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
                          * alle Zeitblöcke eine Berechnung der Spitzenstunde durchgeführt wird.
                          */
-                        if (options.getZeitblock().equals(Zeitblock.ZB_00_24)) {
+                        final var zeitbloeckeContainingSpitzenstundeTag = Set.of(
+                                Zeitblock.ZB_00_24,
+                                Zeitblock.ZB_06_22,
+                                Zeitblock.ZB_06_19);
+                        if (zeitbloeckeContainingSpitzenstundeTag.contains(options.getZeitblock())) {
                             return containsSortingIndexForCompleteDay(zeitintervall);
                         } else {
                             return !containsSortingIndexForCompleteDay(zeitintervall);
