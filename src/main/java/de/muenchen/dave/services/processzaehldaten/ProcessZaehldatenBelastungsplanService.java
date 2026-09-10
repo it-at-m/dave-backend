@@ -173,7 +173,7 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
-            zeitintervalle = extractZeitintervalleSpitzenstunde(zaehlung, options);
+            zeitintervalle = extractZeitintervalleSpitzenstundeForEachSpitzenstunde(zaehlung, options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, options.getZeitblock());
         }
@@ -223,19 +223,19 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Diese Methode extrahiert die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
+     * Diese Methode extrahiert je Bewegungsbeziehung die Zeitintervalle für die Zeitauswahl bezüglich Spitzenstunde.
      * <p>
      * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert.
      * Diese Spitzenstunde dient mit der
      * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als
      * Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
-     * Zeitintervalle je Verkehrsbeziehung.
+     * Zeitintervalle je Bewegungsbeziehung.
      *
      * @param zaehlung zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
-    public List<Zeitintervall> extractZeitintervalleSpitzenstunde(
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachSpitzenstunde(
             final Zaehlung zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
@@ -255,16 +255,22 @@ public class ProcessZaehldatenBelastungsplanService {
         if (!spitzenstunden.isEmpty()) {
 
             /*
-             * Bei Auswahl des Zeitblocks für den gesamten Tag werden alle Spitzenstunden zurückgegeben.
-             * d.h. die Spitzenstunden je Zeitblock und die Spitzenstunde über den ganzen Tag.
-             * Hier ist dann für den Belastungsplan die am Ende der Liste befindliche
-             * Spitzenstunde über den ganzen Tag zu extrahieren.
+             * Wenn als Zeitblock der gesamte Tag gewählt wurde, liefert die Abfrage
+             * alle Spitzenstunden (für einzelne Zeitblöcke und die Tages‑Spitzenstunde).
+             * Für den Belastungsplan wird daraus die zuletzt in der Liste stehende
+             * Spitzenstunde (die Tages‑Spitzenstunde) verwendet.
              *
-             * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
-             * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
+             * Wird ein bestimmter Teilzeitblock gewählt (nicht der gesamte Tag),
+             * enthält die Liste nur die relevante Spitzenstunde für diesen Block.
+             * Auch diese einzelne Spitzenstunde wird aus dem Ende der Liste entnommen.
              */
             final Zeitintervall spitzenstunde = spitzenstunden.getLast();
-            final List<Zeitintervall> zeitintervalle = zeitintervallRepository
+
+            /*
+             * Extrahiert die 15‑minütigen Zeitintervalle, die zusammen die Spitzenstunde bilden,
+             * jeweils für jede Bewegungsbeziehung.
+             */
+            final List<Zeitintervall> zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                             UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
@@ -272,12 +278,17 @@ public class ProcessZaehldatenBelastungsplanService {
                             // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
                             Set.of(TypeZeitintervall.STUNDE_VIERTEL));
 
+            /*
+             * Auf Grundlage der zuvor ermittelten 15‑minütigen Zeitintervalle, die zusammen die Spitzenstunde bilden,
+             * wird für jede Bewegungsbeziehung die zugehörige Spitzenstunde ermittelt.
+             * Die gefundenen Zeitintervalle werden anschließend angepasst (Start/Ende) und gefiltert.
+             */
             return ZeitintervallGleitendeSpitzenstundeUtil
                     .getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
                             UUID.fromString(zaehlung.getId()),
                             options.getZeitblock(),
                             zaehlart,
-                            zeitintervalle,
+                            zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung,
                             Set.of(chosenSpitzenstunde))
                     .stream()
                     .peek(zeitintervall -> {

@@ -315,7 +315,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
     }
 
     @Test
-    void extractZeitintervalleSpitzenstunde() {
+    void extractZeitintervalleSpitzenstundeForEachSpitzenstunde() {
         final UUID zaehlungId = UUID.randomUUID();
         final OptionsDTO options = new OptionsDTO();
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
@@ -417,7 +417,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
                         Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(zeitintervalle);
 
-        final List<Zeitintervall> result = processZaehldatenBelastungsplanService.extractZeitintervalleSpitzenstunde(zaehlung, options);
+        final List<Zeitintervall> result = processZaehldatenBelastungsplanService.extractZeitintervalleSpitzenstundeForEachSpitzenstunde(zaehlung, options);
 
         result.sort(Comparator.comparingInt(Zeitintervall::getPkw));
 
