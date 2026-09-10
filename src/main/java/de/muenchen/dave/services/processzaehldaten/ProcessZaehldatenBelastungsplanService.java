@@ -257,7 +257,8 @@ public class ProcessZaehldatenBelastungsplanService {
             /*
              * Bei Auswahl des Zeitblocks für den gesamten Tag werden alle Spitzenstunden zurückgegeben.
              * d.h. die Spitzenstunden je Zeitblock und die Spitzenstunde über den ganzen Tag.
-             * Hier ist dann die am Ende der Liste befindliche Spitzenstunde über den ganzen Tag zu extrahieren.
+             * Hier ist dann für den Belastungsplan die am Ende der Liste befindliche
+             * Spitzenstunde über den ganzen Tag zu extrahieren.
              *
              * Bei Auswahl eines bestimmten Zeitblocks (nicht gesamter Tag) wird nur diese eine Spitzenstunde
              * in der Liste zurückgegeben. Diese wird ebenfalls vom Ende der Liste extrahiert.
