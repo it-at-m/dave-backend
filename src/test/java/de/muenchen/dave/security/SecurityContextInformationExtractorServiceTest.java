@@ -49,10 +49,12 @@ class SecurityContextInformationExtractorServiceTest {
         SecurityContextHolder.clearContext();
     }
 
+/**
+     * Testet den Weg, in dem ein Jwt im SecurityContext vorhanden ist
+     * und der erwartete Username-Claim gesetzt ist -> sollte der Username zurückgegeben werden.
+     */
     @Test
     void testGetAuthenticatedUsername_withJwtClaim_returnsUsername() {
-        // Testet den Weg, in dem ein Jwt im SecurityContext vorhanden ist
-        // und der erwartete Username-Claim gesetzt ist -> sollte der Username zurückgegeben werden.
 
         // Jwt mit dem erwarteten Claim erzeugen
         final Jwt jwt = new Jwt(
@@ -102,7 +104,7 @@ class SecurityContextInformationExtractorServiceTest {
                 Instant.now(),
                 Instant.now().plusSeconds(3600),
                 Map.of("alg", "none"),
-                Map.of("claim-not-expected", "claim-not-expected") // keine Claims notwendig
+                Map.of("claim-not-expected", "claim-not-expected") // keine Claims notwendig, es darf in Klasse JWT jedoch keine leere Map übergeben werden.
         );
 
         SecurityContextHolder.getContext().setAuthentication(
