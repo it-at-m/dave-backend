@@ -61,10 +61,23 @@ public class SecurityContextInformationExtractorService {
         return StringUtils.isNotBlank(username) ? username : "";
     }
 
+    /**
+     * Prüft, ob der aktuell angemeldete Nutzer ein reiner Anwender ist.
+     *
+     * Ein Anwender ist definiert als ein Nutzer, der weder die Rolle ROLE_FACHADMIN
+     * noch ROLE_POWERUSER besitzt. Die Prüfung wird nur durchgeführt, wenn die
+     * Security aktiviert ist (das Spring-Profil "no-security" ist nicht aktiv).
+     * Ist die Security deaktiviert, liefert die Methode false zurück.
+     *
+     * Die Methode liest die aktuelle Authentication aus dem SecurityContext und
+     * prüft die Authorities des Nutzers.
+     *
+     * @return true, falls die Security aktiviert ist und der Nutzer weder FACHADMIN noch POWERUSER ist;
+     *         andernfalls false
+     */
     public boolean isAnwender() {
         log.debug("get isAnwender");
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // Ein Nutzer ist immer mindestens Anwender
         var isAnwender = false;
         if (isSecurityActivated()) {
             isAnwender = CollectionUtils
