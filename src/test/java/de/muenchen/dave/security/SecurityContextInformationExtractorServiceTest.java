@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -126,7 +127,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsFachadmin_securityActivated_withRoleFachadmin_returnsTrue() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
@@ -143,7 +144,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsFachadmin_securityActivated_withoutRoleFachadmin_returnsFalse() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
@@ -161,7 +162,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsFachadmin_securityDeactivated_returnsTrue() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
 
         // Auch ohne Authorities -> sollte true sein
         SecurityContextHolder.getContext().setAuthentication(
@@ -176,7 +177,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsAnwender_securityActivated_noAdminOrPoweruser_returnsTrue() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("principal", null, Collections.emptyList()));
@@ -190,7 +191,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsAnwender_withPoweruser_returnsFalse() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
@@ -207,7 +208,7 @@ class SecurityContextInformationExtractorServiceTest {
     @Test
     void testIsAnwender_withFachadmin_returnsFalse() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
 
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
@@ -219,15 +220,15 @@ class SecurityContextInformationExtractorServiceTest {
     }
 
     /**
-     * Wenn Security deaktiviert ist (Profil "no-security" aktiv), wird standardmäßig true
+     * Wenn Security deaktiviert ist (Profil "no-security" aktiv), wird standardmäßig false
      * zurückgegeben.
      */
     @Test
-    void testIsAnwender_securityDeactivated_returnsTrue() {
+    void testIsAnwender_securityDeactivated_returnsFalse() {
 
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
 
-        // Auch ohne Authorities -> sollte true sein
+        // Auch ohne Authorities -> sollte false sein
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("principal", null, Collections.emptyList()));
 
@@ -239,7 +240,7 @@ class SecurityContextInformationExtractorServiceTest {
      */
     @Test
     void testIsSecurityActivated_profilesContainNoSecurity_returnsFalse() {
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security" });
         assertFalse(service.isSecurityActivated());
     }
 
@@ -249,7 +250,7 @@ class SecurityContextInformationExtractorServiceTest {
      */
     @Test
     void testIsSecurityActivated_profilesContainNoSecurityAndOtherProfile_returnsFalse() {
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security", "dev" });
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "no-security", "dev" });
         assertFalse(service.isSecurityActivated());
     }
 
@@ -258,7 +259,7 @@ class SecurityContextInformationExtractorServiceTest {
      */
     @Test
     void testIsSecurityActivated_profilesDoNotContainNoSecurity_returnsTrue() {
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "dev", "test" });
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] { "dev", "test" });
         assertTrue(service.isSecurityActivated());
     }
 
@@ -268,7 +269,7 @@ class SecurityContextInformationExtractorServiceTest {
      */
     @Test
     void testIsSecurityActivated_profilesDoNotContainProfiles_returnsTrue() {
-        org.mockito.Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
+        Mockito.when(environment.getActiveProfiles()).thenReturn(new String[] {});
         assertTrue(service.isSecurityActivated());
     }
 }
