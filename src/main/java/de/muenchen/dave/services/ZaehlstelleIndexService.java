@@ -56,6 +56,7 @@ public class ZaehlstelleIndexService {
     private final ZeitauswahlService zeitauswahlService;
     private final ChatMessageService messageService;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final SanitizationService sanitizationService;
     @Value(value = "${elasticsearch.host}")
     private String elasticsearchHost;
 
@@ -69,7 +70,8 @@ public class ZaehlstelleIndexService {
             final ZaehlstelleIndex zaehlstelleIndex,
             // @Lazy prevents circular dependency
             @Lazy final ChatMessageService messageService,
-            final StadtbezirkMapper stadtbezirkMapper) {
+            final StadtbezirkMapper stadtbezirkMapper,
+            final SanitizationService sanitizationService) {
         this.zeitauswahlService = zeitauswahlService;
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.customSuggestIndexService = customSuggestIndexService;
@@ -77,11 +79,13 @@ public class ZaehlstelleIndexService {
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.messageService = messageService;
         this.stadtbezirkMapper = stadtbezirkMapper;
+        this.sanitizationService = sanitizationService;
     }
 
     public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle)
             throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
         final var backendIdDto = new BackendIdDTO();
+        sanitizationService.sanitizeBearbeiteZaehlstelleDto(zaehlstelle);
         if (StringUtils.isEmpty(zaehlstelle.getId())) {
             final var alreadySavedZaehlstelle = zaehlstelleIndex.findByNummer(zaehlstelle.getNummer());
             if (alreadySavedZaehlstelle.isPresent()) {

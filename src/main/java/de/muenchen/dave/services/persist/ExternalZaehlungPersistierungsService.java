@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,9 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final ZeitintervallMapper zeitintervallMapper,
-            final KnotenarmMapper knotenarmMapper) {
-        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper);
+            final KnotenarmMapper knotenarmMapper,
+            final SanitizationService sanitizationService) {
+        super(indexService, zeitintervallPersistierungsService, zeitintervallMapper, sanitizationService);
         this.knotenarmMapper = knotenarmMapper;
     }
 
@@ -61,8 +63,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                 zaehlung.setDatum(zaehlungDto.getDatum());
                 zaehlung.setZaehlart(zaehlungDto.getZaehlart());
                 zaehlung.setWetter(zaehlungDto.getWetter());
-                zaehlung.setZaehlsituation(zaehlungDto.getZaehlsituation());
-                zaehlung.setZaehlsituationErweitert(zaehlungDto.getZaehlsituationErweitert());
+                zaehlung.setZaehlsituation(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituation()));
+                zaehlung.setZaehlsituationErweitert(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituationErweitert()));
 
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
