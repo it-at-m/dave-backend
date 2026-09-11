@@ -21,7 +21,6 @@ import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -337,20 +336,11 @@ public class ProcessZaehldatenBelastungsplanService {
         belastungsplanData.setPercent(basis.isPercent());
         belastungsplanData.setValues(BelastungsplanCalculator.subtractMatrice(basis.getValues(), vergleich.getValues()));
 
-        belastungsplanData.setSum(subtractSums(basis.getSum(), vergleich.getSum()));
-        belastungsplanData.setSumIn(subtractSums(basis.getSumIn(), vergleich.getSumIn()));
-        belastungsplanData.setSumOut(subtractSums(basis.getSumOut(), vergleich.getSumOut()));
+        belastungsplanData.setSum(BelastungsplanCalculator.subtractSums(basis.getSum(), vergleich.getSum()));
+        belastungsplanData.setSumIn(BelastungsplanCalculator.subtractSums(basis.getSumIn(), vergleich.getSumIn()));
+        belastungsplanData.setSumOut(BelastungsplanCalculator.subtractSums(basis.getSumOut(), vergleich.getSumOut()));
 
         return belastungsplanData;
-    }
-
-    private static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
-        final int minLength = Math.min(basis.length, vergleich.length);
-        final BigDecimal[] differences = new BigDecimal[minLength];
-        for (int i = 0; i < minLength; i++) {
-            differences[i] = basis[i].subtract(vergleich[i]);
-        }
-        return differences;
     }
 
     private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
