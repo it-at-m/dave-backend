@@ -23,6 +23,7 @@ import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
@@ -72,7 +73,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // bei Bedarf gestubbt werden können.
         service = Mockito
                 .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
-                        new AuthorizationService(indexService)));
+                        new SanitizationService()), new AuthorizationService(indexService));
 
         // Setze Test-Nutzer mit Rolle Fachadmin
         TestUtils.setSecurityContext("test", true);

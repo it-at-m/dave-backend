@@ -11,6 +11,7 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.List;
@@ -42,6 +43,7 @@ public class MessstelleReceiver {
     private final StadtbezirkMapper stadtbezirkMapper;
     private final LageplanService lageplanService;
     private final EmailSendService emailSendService;
+    private final SanitizationService sanitizationService;
     private MessstelleApi messstelleApi;
     private MessstelleReceiverMapper messstelleReceiverMapper;
 
@@ -93,6 +95,7 @@ public class MessstelleReceiver {
     protected void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
         Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
+        sanitizationService.sanitizeMessstelle(newMessstelle);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         newMessstelle = messstelleIndexService.saveMessstelle(newMessstelle);
         this.sendMailForUpdatedOrChangedMessstelle(
@@ -121,6 +124,7 @@ public class MessstelleReceiver {
         }
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(toSave.getMessquerschnitte(), dto.getMessquerschnitte());
         toSave.setMessquerschnitte(updatedMessquerschnitte);
+        sanitizationService.sanitizeMessstelle(toSave);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
         final Messstelle updated = messstelleIndexService.saveMessstelle(toSave);
         final var statusMessstelleNeu = updated.getStatus();
