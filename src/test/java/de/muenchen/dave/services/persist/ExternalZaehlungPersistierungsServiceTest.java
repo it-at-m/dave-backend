@@ -73,7 +73,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // bei Bedarf gestubbt werden können.
         service = Mockito
                 .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
-                        new SanitizationService()), new AuthorizationService(indexService));
+                        new SanitizationService(), new AuthorizationService(indexService)));
 
         // Setze Test-Nutzer mit Rolle Fachadmin
         TestUtils.setSecurityContext("test", true);
