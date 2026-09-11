@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -124,6 +125,8 @@ public class ZaehlungController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, dnfe.getMessage());
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (final AccessDeniedException ade) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         }
     }
 
@@ -148,6 +151,8 @@ public class ZaehlungController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (final AccessDeniedException ade) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         }
     }
 
