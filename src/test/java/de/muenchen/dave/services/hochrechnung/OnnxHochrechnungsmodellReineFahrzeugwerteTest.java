@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class OnnxHochrechnungsmodellTestReineFahrzeugwerte {
+class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
 
     @Test
     void test_With2x4HoursModel_ReturnsOnePredictionPerMovementRelation() throws PredictionFailedException {
