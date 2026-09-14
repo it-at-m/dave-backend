@@ -1,4 +1,4 @@
-package de.muenchen.dave.security;
+package de.muenchen.dave.configuration.security;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.http.HttpEntity;
@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -51,6 +52,7 @@ public class UserInfoDataService {
     public UserInfoDataService(final String userInfoUri,
             final RestTemplateBuilder restTemplateBuilder) {
         this.userInfoUri = userInfoUri;
+        final var test = RestClient.builder();
         this.restTemplate = restTemplateBuilder.build();
         this.cache = new CaffeineCache(
                 NAME_AUTHENTICATION_CACHE,

@@ -1,6 +1,8 @@
 package de.muenchen.dave.security;
 
 import java.util.Objects;
+
+import de.muenchen.dave.configuration.security.UserInfoDataService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
