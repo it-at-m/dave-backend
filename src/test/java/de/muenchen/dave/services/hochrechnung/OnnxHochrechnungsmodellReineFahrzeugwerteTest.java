@@ -23,6 +23,9 @@ import org.junit.jupiter.api.Test;
  */
 class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
 
+    /**
+     * Prüft, dass das 2x4h-Modell für jede Bewegungsbeziehung eine Vorhersage erzeugt.
+     */
     @Test
     void test_With2x4hModel_ReturnsOnePredictionPerBewegungsbeziehung() throws PredictionFailedException {
         final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder());
@@ -34,6 +37,9 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
         model.closeSession();
     }
 
+    /**
+     * Prüft, dass ein Modell mit inkompatibler Eingabedimension einen Vorhersagefehler auslöst.
+     */
     @Test
     void test_WithWrongModel_ReturnsPredictionFailedException() throws PredictionFailedException {
         final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createWrongDefinition(), new ReineFahrzeugwerteEncoder());

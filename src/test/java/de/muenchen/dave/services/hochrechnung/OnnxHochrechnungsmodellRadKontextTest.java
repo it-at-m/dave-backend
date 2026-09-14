@@ -21,10 +21,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * Integrationstest mit echtem Modell für Kontesxt-Eingabewerte.
+ * Integrationstest mit echtem Modell für Kontext-Eingabewerte.
  */
 class OnnxHochrechnungsmodellRadKontextTest {
 
+    /**
+     * Prüft, dass das 2x4h-Kontextmodell eine Vorhersage mit der erwarteten Tagessumme erzeugt.
+     */
     @Test
     void test_With2x4hModel_ReturnsOnePredictionPerBewegungsbeziehung() throws PredictionFailedException {
         final KIZeitintervallMapper mapper = Mockito.mock(KIZeitintervallMapper.class);

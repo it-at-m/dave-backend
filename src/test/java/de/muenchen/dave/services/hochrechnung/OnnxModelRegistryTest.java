@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 
 class OnnxModelRegistryTest {
 
+    /**
+     * Prüft, dass ein Modell ohne vorhandenes Artefakt nicht registriert wird.
+     */
     @Test
     void test_WithMissingModelArtifact_DoesNotRegisterModel() {
         final OnnxModelDefinition definition = new OnnxModelDefinition();

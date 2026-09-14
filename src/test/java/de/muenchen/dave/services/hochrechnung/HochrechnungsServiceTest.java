@@ -17,6 +17,9 @@ import org.mockito.Mockito;
 
 class HochrechnungsServiceTest {
 
+    /**
+     * Prüft, dass der Service die Vorhersage des verfügbaren Radmodells zurückgibt.
+     */
     @Test
     void test_WithAvailableRadModel_ReturnsModelPrediction() throws PredictionFailedException {
         final OnnxModelRegistry modelRegistry = Mockito.mock(OnnxModelRegistry.class);
@@ -31,6 +34,9 @@ class HochrechnungsServiceTest {
         assertThat(result, equalTo(List.of(new KIPredictionResult(42))));
     }
 
+    /**
+     * Prüft, dass der Service ohne verfügbares Radmodell keine Vorhersage zurückgibt.
+     */
     @Test
     void test_WithUnavailableRadModel_ReturnsEmptyPrediction() throws PredictionFailedException {
         final OnnxModelRegistry modelRegistry = Mockito.mock(OnnxModelRegistry.class);
