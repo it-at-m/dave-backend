@@ -57,6 +57,10 @@ public class OnnxHochrechnungsmodell {
         final long[][] inputData = modelInputEncoder.encode(
                 definition.getZaehldauer(), definition.getFahrzeug(), groupedZeitintervalle);
         final long[][] predictions = runPrediction(inputData);
+        // check ob die Länge der Predictions mit der Anzahl der Bewegungsbeziehungen übereinstimmt
+        if (predictions.length != groupedZeitintervalle.size()) {
+            throw new PredictionFailedException(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
+        }
         final List<KIPredictionResult> results = new ArrayList<>();
         for (final long[] prediction : predictions) {
             try {
