@@ -1,4 +1,4 @@
-# Umsetzungsplan: KI-Hochrechnung Radverkehr fuer 13h und 16h
+# Dokumentation: Erweiterung KI-Hochrechnung Radverkehr fuer 13h und 16h
 
 ## Ziel und Umfang
 
@@ -10,7 +10,7 @@ Die bestehende Radverkehrshochrechnung fuer 2x4h-Zaehlungen wird so modularisier
 | `DAUER_13_STUNDEN` | `RAD_13h.onnx`  | 52 reine Radzaehlwerte in zeitlicher Reihenfolge |
 | `DAUER_16_STUNDEN` | `RAD_16h.onnx`  | 64 reine Radzaehlwerte in zeitlicher Reihenfolge |
 
-Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV noch fuegt er neue Fahrzeugtypen als Hochrechnungswerte hinzu. Diese Erweiterung ist Teil 2 und wird erst nach Abschluss von Teil 1 umgesetzt.
+Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV noch fuegt er neue Fahrzeugtypen als Hochrechnungswerte hinzu. Diese Erweiterung ist Teil 2 und wird erst nach Abschluss von Teil 1 optional nach Absprache mit dem Fachbereich umgesetzt.
 
 ## Fachliche Festlegungen
 
@@ -19,8 +19,8 @@ Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV n
 - Die ONNX-Modelle verwenden den Eingabetensornamen `int64_input` und den Datentyp `int64`.
 - Die Ausgabe bleibt `long[anzahlBewegungsbeziehungen][1]`. Der einzelne Wert je Bewegungsbeziehung ist die vorhergesagte Rad-Tagessumme.
 - Die Zeitfenster und die erwartete Zahl der Viertelstundenintervalle werden ausschliesslich aus `Zaehldauer` abgeleitet. Sie werden nicht nochmals pro Modell konfiguriert.
-- Fehlende, nicht lesbare oder inkompatible 13h-/16h-Modelle verhindern den Anwendungsstart nicht. Die betroffene Zaehlung wird ohne KI-Radhochrechnung verarbeitet; der Fehler wird mit Modell-ID und Zaehlungs-ID protokolliert.
-- Bestehende abgeschlossene 13h- und 16h-Zaehlungen werden nicht nachberechnet. Die neuen Modelle gelten fuer kuenftige Aufbereitungen.
+- Fehlende, nicht lesbare oder inkompatible Modelle verhindern den Anwendungsstart nicht. Die betroffene Zaehlung wird ohne KI-Radhochrechnung verarbeitet; der Fehler wird mit Modell-ID und Zaehlungs-ID protokolliert.
+- Bestehende abgeschlossene Zaehlungen werden nicht nachberechnet. Die neuen Modelle gelten fuer kuenftige Aufbereitungen.
 
 ## Bestehende Grundlage
 
@@ -68,7 +68,7 @@ classDiagram
         +getSchema() ModelInputSchema
     }
 
-    class KontextRadV1Encoder {
+    class KontextRadEncoder {
         +encode(zaehldauer, groupedIntervalle) long[][]
     }
 
@@ -156,19 +156,19 @@ dave:
 
 Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefakte unter den konfigurierten Pfaden bereitgestellt werden, markiert die `OnnxModelRegistry` sie als nicht verfuegbar. Zaehlungen dieser Dauer werden dann ohne KI-Radhochrechnung persistiert.
 
-## Umsetzungsschritte: Teil 1
+## Umsetzung Teil 1
 
 1. Modelle ablegen und konfigurieren.
 
-   Die Artefakte `Rad_Modell_DAVE_13h.onnx` und `Rad_Modell_DAVE_16h.onnx` werden unter `src/main/resources/model/` abgelegt. `application.yml` erhaelt die beschriebene Modellliste. Eine `@ConfigurationProperties`-Klasse validiert eindeutige Modell-IDs sowie die Kombination aus Zielgroesse und Zaehlungsdauer.
+   Die Artefakte `RAD_2x4h.onnx`, `RAD_13h.onnx` und `RAD_16h.onnx` werden unter `src/main/resources/models/` abgelegt. `application.yml` erhaelt die beschriebene Modellliste. Eine `@ConfigurationProperties`-Klasse validiert eindeutige Modell-IDs sowie die Kombination aus Zielgroesse und Zaehlungsdauer.
 
 2. Zaehlungsdauerbasierte Eingabezeitfenster zentralisieren.
 
-   Eine Methode wie `Zaehldauer#getInputZeitbloeckeForPrediction()` oder ein kleiner, zentraler Selektor liefert genau die Erhebungsfenster. Sie gibt fuer 2x4h `ZB_06_10` und `ZB_15_19`, fuer 13h `ZB_06_19` und fuer 16h `ZB_06_22` zurueck. Die erwartete Intervallzahl wird aus `Zaehldauer#getAnzahlZeitintervalle()` bezogen.
+   Die Methode `Zaehldauer#modelInputZeitbloecke()` liefert genau die Erhebungsfenster. Sie gibt fuer 2x4h `ZB_06_10` und `ZB_15_19`, fuer 13h `ZB_06_19` und fuer 16h `ZB_06_22` zurueck. Die erwartete Intervallzahl wird aus `Zaehldauer#getAnzahlZeitintervalle()` bezogen.
 
 3. Eingabe-Encoder einfuehren.
 
-     `ModelInputEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadV1Encoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineFahrzeugwerteEncoder` liest anhand von `Fahrzeug` den passenden Zaehlwert aus dem `Zeitintervall` und erzeugt eine Zeile mit 52 beziehungsweise 64 Werten je Bewegungsbeziehung.
+   `ModelInputEncoder` selektiert die Intervalle mit den zentralen Zeitfenstern, sortiert sie aufsteigend nach `sortingIndex`, prueft die erwartete Anzahl und erstellt den `long[][]`-Tensorinhalt. `KontextRadEncoder` kapselt die bestehende Logik mit `KIZeitintervallMapper`. `ReineFahrzeugwerteEncoder` liest anhand von `Fahrzeug` den passenden Zaehlwert aus dem `Zeitintervall` und erzeugt eine Zeile mit 32, 52 beziehungsweise 64 Werten je Bewegungsbeziehung.
 
 4. ONNX-Laufzeit modularisieren.
 
@@ -192,11 +192,7 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
 9. Tests
 
-   Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 13h und 16h sind getestet. Echte ONNX-Integrationstests mit den bereitgestellten kleinen Testartefakten pruefen fuer beide Dauern die Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts.
-
-10. Rollout und Dokumentation.
-
-    Zuerst wird die Infrastruktur mit dem bisherigen 2x4h-Modell migriert. Danach werden die beiden neuen Artefakte und Konfigurationseintraege aktiviert. Eine automatische Nachberechnung bereits abgeschlossener Zaehlungen wird nicht implementiert.
+   Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 2x4h, 13h und 16h sind getestet. Echte ONNX-Integrationstests mit den bereitgestellten kleinen Testartefakten pruefen fuer beide Dauern die Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts.
 
 ## Teil 2: Hochrechnung einzelner Fahrzeugtypen
 
@@ -225,7 +221,7 @@ Kfz = Pkw + Lkw + Lastzuege + Busse + Kraftraeder
 ### Vorbereitete Erweiterungspunkte
 
 - Ein Ergebnisobjekt wie `Hochrechnungswerte` kann um die fuenf Fahrzeugtypen erweitert werden.
-- Ein `Kfz`-Modell erhaelt einen eigenen `ModelInputEncoder`, falls sein Eingabeformat vom reinen Radwertschema abweicht.
+- Ein neues Modell kann einen eigenen `ModelInputEncoder` erhalten, falls sein Eingabeformat vom bisherigen Schema abweicht (bisher aber nicht geplant).
 - Die Ergebnisverarbeitung wird aus `ZeitintervallKIUtil` in einen eigenen Service ueberfuehrt und fasst dann mehrere Modelle je Bewegungsbeziehung zusammen, bevor ein einziges fachliches `GESAMT_KI`-Intervall persistiert wird.
 - Eine separate Herkunfts- und Ergebnistabelle sollte Modell-ID, Modellversion, Zielgroesse, Bewegungsbeziehung, Zeitpunkt und Ergebniswert speichern. Damit bleibt nachvollziehbar, welches Modell welchen Teilwert beigesteuert hat.
 - Eine Flyway-Migration erweitert die Datenbankspalten fuer die neuen Hochrechnungswerte.
