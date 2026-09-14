@@ -19,17 +19,17 @@ import org.springframework.stereotype.Component;
  * </p>
  */
 @Component
-public class KontextRadV1Encoder extends AbstractModelInputEncoder {
+public class KontextRadEncoder extends AbstractModelInputEncoder {
 
     private final KIZeitintervallMapper kiZeitintervallMapper;
 
-    public KontextRadV1Encoder(final KIZeitintervallMapper kiZeitintervallMapper) {
+    public KontextRadEncoder(final KIZeitintervallMapper kiZeitintervallMapper) {
         this.kiZeitintervallMapper = kiZeitintervallMapper;
     }
 
     @Override
     public ModelInputSchema getSchema() {
-        return ModelInputSchema.KONTEXT_RAD_V1;
+        return ModelInputSchema.KONTEXT_RAD;
     }
 
     @Override

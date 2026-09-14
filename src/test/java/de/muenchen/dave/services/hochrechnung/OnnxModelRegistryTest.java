@@ -19,7 +19,7 @@ class OnnxModelRegistryTest {
         definition.setId("nicht-vorhanden");
         definition.setFahrzeug(Fahrzeug.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_13_STUNDEN);
-        definition.setResourcePath("model/nicht-vorhanden.onnx");
+        definition.setResourcePath("models/nicht-vorhanden.onnx");
         definition.setInputTensorName("int64_input");
         definition.setInputSchema(ModelInputSchema.REINE_FAHRZEUGWERTE);
         final OnnxModelProperties properties = new OnnxModelProperties();

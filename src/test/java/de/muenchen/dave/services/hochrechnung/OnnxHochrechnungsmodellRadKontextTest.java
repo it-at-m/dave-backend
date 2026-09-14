@@ -20,10 +20,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class OnnxHochrechnungsmodellTest {
+/**
+ * Integrationstest mit echtem Modell für Kontesxt-Eingabewerte.
+ */
+class OnnxHochrechnungsmodellRadKontextTest {
 
     @Test
-    void test_With2x4HoursModel_ReturnsOnePredictionPerMovementRelation() throws PredictionFailedException {
+    void test_With2x4hModel_ReturnsOnePredictionPerBewegungsbeziehung() throws PredictionFailedException {
         final KIZeitintervallMapper mapper = Mockito.mock(KIZeitintervallMapper.class);
         final KIZeitintervall kiZeitintervall = KIZeitintervall.builder()
                 .rad(6)
@@ -32,10 +35,10 @@ class OnnxHochrechnungsmodellTest {
                 .mittwoch(1)
                 .build();
         Mockito.when(mapper.zeitintervallToKIZeitintervall(Mockito.any())).thenReturn(kiZeitintervall);
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadV1Encoder(mapper));
-        final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadEncoder(mapper));
+        final List<List<Zeitintervall>> zeitintervalleProBewegungsbeziehung = List.of(createZeitintervalle());
 
-        final List<KIPredictionResult> result = model.calculate(zeitintervalle);
+        final List<KIPredictionResult> result = model.calculate(zeitintervalleProBewegungsbeziehung);
 
         assertThat(result.size(), equalTo(1));
         assertThat(result.getFirst().getRadTagessumme(), equalTo(356));
@@ -44,12 +47,12 @@ class OnnxHochrechnungsmodellTest {
 
     private OnnxModelDefinition createDefinition() {
         final OnnxModelDefinition definition = new OnnxModelDefinition();
-        definition.setId("rad-2x4h-v1");
+        definition.setId("rad-2x4h-kontext");
         definition.setFahrzeug(Fahrzeug.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
-        definition.setResourcePath("model/Rad_Modell_DAVE.onnx");
+        definition.setResourcePath("models/RAD_2x4h_kontext_test.onnx");
         definition.setInputTensorName("int64_input");
-        definition.setInputSchema(ModelInputSchema.KONTEXT_RAD_V1);
+        definition.setInputSchema(ModelInputSchema.KONTEXT_RAD);
         return definition;
     }
 

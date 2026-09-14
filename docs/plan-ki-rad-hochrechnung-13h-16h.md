@@ -4,11 +4,11 @@
 
 Die bestehende Radverkehrshochrechnung fuer 2x4h-Zaehlungen wird so modularisiert, dass fuer jede Zaehlungsdauer ein eigenes ONNX-Modell verwendet werden kann. In Teil 1 werden drei Radmodelle unterstuetzt:
 
-| Zaehlungsdauer | Modell                      | Eingabe pro Bewegungsbeziehung |
-| --- |-----------------------------| --- |
-| `DAUER_2_X_4_STUNDEN` | `Rad_Modell_DAVE_2x4h.onnx` | Bestehendes Schema mit Radwert und Kalendermerkmalen fuer 32 Intervalle |
-| `DAUER_13_STUNDEN` | `Rad_Modell_DAVE_13h.onnx`  | 52 reine Radzaehlwerte in zeitlicher Reihenfolge |
-| `DAUER_16_STUNDEN` | `Rad_Modell_DAVE_16h.onnx`  | 64 reine Radzaehlwerte in zeitlicher Reihenfolge |
+| Zaehlungsdauer | Modell          | Eingabe pro Bewegungsbeziehung |
+| --- |-----------------| --- |
+| `DAUER_2_X_4_STUNDEN` | `RAD_2x4h.onnx` | Bestehendes Schema mit Radwert und Kalendermerkmalen fuer 32 Intervalle |
+| `DAUER_13_STUNDEN` | `RAD_13h.onnx`  | 52 reine Radzaehlwerte in zeitlicher Reihenfolge |
+| `DAUER_16_STUNDEN` | `RAD_16h.onnx`  | 64 reine Radzaehlwerte in zeitlicher Reihenfolge |
 
 Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV noch fuegt er neue Fahrzeugtypen als Hochrechnungswerte hinzu. Diese Erweiterung ist Teil 2 und wird erst nach Abschluss von Teil 1 umgesetzt.
 
@@ -20,7 +20,7 @@ Teil 1 veraendert weder die vorhandenen Hochrechnungswerte fuer Kfz, SV und GV n
 - Die Ausgabe bleibt `long[anzahlBewegungsbeziehungen][1]`. Der einzelne Wert je Bewegungsbeziehung ist die vorhergesagte Rad-Tagessumme.
 - Die Zeitfenster und die erwartete Zahl der Viertelstundenintervalle werden ausschliesslich aus `Zaehldauer` abgeleitet. Sie werden nicht nochmals pro Modell konfiguriert.
 - Fehlende, nicht lesbare oder inkompatible 13h-/16h-Modelle verhindern den Anwendungsstart nicht. Die betroffene Zaehlung wird ohne KI-Radhochrechnung verarbeitet; der Fehler wird mit Modell-ID und Zaehlungs-ID protokolliert.
-- Bestehende abgeschlossene 13h- und 16h-Zaehlungen werden nicht automatisch nachberechnet. Die neuen Modelle gelten fuer kuenftige Abschluesse sowie regulare erneute Aufbereitungen.
+- Bestehende abgeschlossene 13h- und 16h-Zaehlungen werden nicht nachberechnet. Die neuen Modelle gelten fuer kuenftige Aufbereitungen.
 
 ## Bestehende Grundlage
 
@@ -112,7 +112,7 @@ classDiagram
     OnnxModelRegistry --> OnnxModelProperties
     OnnxHochrechnungsmodell --> OnnxModelDefinition
     OnnxHochrechnungsmodell --> ModelInputEncoder
-    ModelInputEncoder <|.. KontextRadV1Encoder
+    ModelInputEncoder <|.. KontextRadEncoder
     ModelInputEncoder <|.. ReineFahrzeugwerteEncoder
     OnnxModelProperties --> OnnxModelDefinition
     ModelInputEncoder --> Zaehldauer
@@ -131,21 +131,21 @@ dave:
       - id: rad-2x4h-v1
         fahrzeug: RAD
         zaehldauer: DAUER_2_X_4_STUNDEN
-        resource-path: model/Rad_Modell_DAVE_2x4h.onnx
+        resource-path: model/RAD_2x4h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 
       - id: rad-13h-v1
         fahrzeug: RAD
         zaehldauer: DAUER_13_STUNDEN
-        resource-path: model/Rad_Modell_DAVE_13h.onnx
+        resource-path: model/RAD_13h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 
       - id: rad-16h-v1
         fahrzeug: RAD
         zaehldauer: DAUER_16_STUNDEN
-        resource-path: model/Rad_Modell_DAVE_16h.onnx
+        resource-path: model/RAD_16h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
 ```

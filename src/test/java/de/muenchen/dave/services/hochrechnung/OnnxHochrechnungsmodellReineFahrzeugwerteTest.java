@@ -2,6 +2,7 @@ package de.muenchen.dave.services.hochrechnung;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
@@ -17,11 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Integrationstest mit echtem Modell für reine Fahrzeugwerte.
+ */
 class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
 
     @Test
-    void test_With2x4HoursModel_ReturnsOnePredictionPerMovementRelation() throws PredictionFailedException {
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new ReineFahrzeugwerteEncoder());
+    void test_With2x4hModel_ReturnsOnePredictionPerBewegungsbeziehung() throws PredictionFailedException {
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder());
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
         final List<KIPredictionResult> result = model.calculate(zeitintervalle);
@@ -30,12 +34,35 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
         model.closeSession();
     }
 
-    private OnnxModelDefinition createDefinition() {
+    @Test
+    void test_WithWrongModel_ReturnsPredictionFailedException() throws PredictionFailedException {
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createWrongDefinition(), new ReineFahrzeugwerteEncoder());
+        final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
+
+        final PredictionFailedException exception = assertThrows(PredictionFailedException.class, () -> model.calculate(zeitintervalle));
+
+        assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+
+        model.closeSession();
+    }
+
+    private OnnxModelDefinition create2x4hDefinition() {
         final OnnxModelDefinition definition = new OnnxModelDefinition();
-        definition.setId("rad-2x4h-v1");
+        definition.setId("rad-2x4h-test");
         definition.setFahrzeug(Fahrzeug.RAD);
         definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
-        definition.setResourcePath("model/Rad_Modell_DAVE_2x4h.onnx");
+        definition.setResourcePath("models/RAD_2x4h_test.onnx");
+        definition.setInputTensorName("int64_input");
+        definition.setInputSchema(ModelInputSchema.REINE_FAHRZEUGWERTE);
+        return definition;
+    }
+
+    private OnnxModelDefinition createWrongDefinition() {
+        final OnnxModelDefinition definition = new OnnxModelDefinition();
+        definition.setId("rad-2x4h-wrong-test");
+        definition.setFahrzeug(Fahrzeug.RAD);
+        definition.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
+        definition.setResourcePath("models/RAD_13h_test.onnx");
         definition.setInputTensorName("int64_input");
         definition.setInputSchema(ModelInputSchema.REINE_FAHRZEUGWERTE);
         return definition;
