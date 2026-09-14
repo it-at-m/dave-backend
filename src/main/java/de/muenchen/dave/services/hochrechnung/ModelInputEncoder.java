@@ -26,7 +26,8 @@ public interface ModelInputEncoder {
     ModelInputSchema getSchema();
 
     /**
-     * Filtert, sortiert und kodiert die Zeitintervalle fuer die ONNX-Inferenz.
+     * Diese Methode fFiltert, sortiert und wandelt die zweidimensionale Liste von Zeitintervallen in ein ONNX-kompatibles
+     * long[][]-Array um.
      *
      * @param zaehldauer bestimmt die Eingabezeitbloecke und die erwartete Intervallzahl
      * @param fahrzeug bestimmt bei reinen Fahrzeugwerten das auszulesende Zaehlfeld

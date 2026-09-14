@@ -20,6 +20,9 @@ class ReineFahrzeugwerteEncoderTest {
 
     private final ReineFahrzeugwerteEncoder encoder = new ReineFahrzeugwerteEncoder();
 
+    /**
+     * Prüft, dass der Encoder unsortierte 13h-Radintervalle zeitlich sortiert und vollständig kodiert.
+     */
     @Test
     void test_With13HoursAndUnsortedIntervals_Encodes52SortedRadValues() throws PredictionFailedException {
         final List<Zeitintervall> zeitintervalle = createZeitintervalle(52);
@@ -34,6 +37,9 @@ class ReineFahrzeugwerteEncoderTest {
         }
     }
 
+    /**
+     * Prüft, dass der Encoder alle 64 Radwerte einer 16h-Zählung kodiert.
+     */
     @Test
     void test_With16Hours_Encodes64RadValues() throws PredictionFailedException {
         final long[][] result = encoder.encode(Zaehldauer.DAUER_16_STUNDEN, Fahrzeug.RAD, List.of(createZeitintervalle(64)));
@@ -43,6 +49,25 @@ class ReineFahrzeugwerteEncoderTest {
         assertThat(result[0][63], equalTo(63L));
     }
 
+    /**
+     * Prüft, dass der Encoder für 2x4h nur die Zeitfenster von 06:00 bis 10:00 und 15:00 bis 19:00
+     * verwendet.
+     */
+    @Test
+    void test_With2x4Hours_EncodesValuesFromBothModelInputTimeBlocks() throws PredictionFailedException {
+        final long[][] result = encoder.encode(Zaehldauer.DAUER_2_X_4_STUNDEN, Fahrzeug.RAD, List.of(createZeitintervalle(64)));
+
+        assertThat(result.length, equalTo(1));
+        assertThat(result[0].length, equalTo(32));
+        for (int index = 0; index < 16; index++) {
+            assertThat(result[0][index], equalTo((long) index));
+            assertThat(result[0][index + 16], equalTo((long) index + 36));
+        }
+    }
+
+    /**
+     * Prüft, dass der Encoder die für das angeforderte Fahrzeug hinterlegten Werte verwendet.
+     */
     @Test
     void test_WithPkwCategory_EncodesPkwValues() throws PredictionFailedException {
         final List<Zeitintervall> zeitintervalle = createZeitintervalle(52);
@@ -56,6 +81,9 @@ class ReineFahrzeugwerteEncoderTest {
         assertThat(result[0][51], equalTo(151L));
     }
 
+    /**
+     * Prüft, dass eine unvollständige Intervallreihe als ungültige Modelldimension abgelehnt wird.
+     */
     @Test
     void test_WithIncompleteIntervals_ThrowsPredictionFailedException() {
         final PredictionFailedException exception = assertThrows(

@@ -186,15 +186,13 @@ Die Konfiguration der beiden neuen Modelle ist bereits vorhanden. Bis die Artefa
 
    `ZeitintervallPersistierungsService` ruft statt `KIService` direkt den `HochrechnungsService` auf. Die bisherige feste Aktivierung fuer 2x4h, 13h und 16h wird durch die Verfuegbarkeit eines passenden Modells in der Registry ersetzt. Bei Inferenzfehlern wird die konventionelle Aufbereitung weiterhin gespeichert.
 
-8. Fehlerbehandlung und Protokollierung umsetzen.
+8. Fehlerbehandlung und Protokollierung
 
-   Fehlermeldungen enthalten mindestens Modell-ID, Zaehlungs-ID, Zaehlungsdauer und Ursache. Ein Fehler bei der 13h-Inferenz darf weder das 2x4h- noch das 16h-Modell noch die restliche Aufbereitung beeinflussen. Nicht verfuegbare Modelle werden beim Start und bei der Verwendung klar geloggt.
+   Fehlermeldungen enthalten Modell-ID und Ursache. Ein Fehler bei der Inferenz darf weder ein anderes Modell noch die restliche Aufbereitung beeinflussen. Nicht verfuegbare Modelle werden beim Start und bei der Verwendung klar geloggt.
 
-9. Alle notwendigen Tests implementieren.
+9. Tests
 
-      Alle in diesem Plan beschriebenen Unit- und Integrationstests muessen mit der Umsetzung implementiert werden; sie sind kein optionaler Nachbereitungsschritt. Unit-Tests pruefen die Auswahl der Zeitfenster, Sortierung, Dimensionspruefung, den `ReineFahrzeugwerteEncoder` fuer 52 und 64 Werte sowie verschiedene Fahrzeuge und die Auswahl des korrekten Modells. Der `HochrechnungsService` wird zusaetzlich mit einem gemockten `OnnxHochrechnungsmodell` ohne ONNX-Artefakt getestet. Tests fuer den bestehenden 2x4h-Pfad sichern dessen unveraendertes Verhalten. Integrationstests mit kleinen ONNX-Testmodellen pruefen die vollstaendige 13h- und 16h-Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts. Zusaetzlich wird getestet, dass ein defektes Modell nur seine eigene Zaehlungsdauer ohne KI-Ergebnis laesst. Neue Testmethoden folgen dem Muster `test_With...`.
-
-   Stand der Umsetzung: Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 13h und 16h sind getestet. Echte ONNX-Integrationstests fuer diese beiden Dauern werden ergaenzt, sobald die entsprechenden ONNX-Artefakte oder kleine Testartefakte bereitgestellt sind; sie fehlen derzeit im Repository.
+   Die Encoder-, Modellselektions-, Fehler- und Persistenzpfade fuer 13h und 16h sind getestet. Echte ONNX-Integrationstests mit den bereitgestellten kleinen Testartefakten pruefen fuer beide Dauern die Inferenz bis zur Persistierung des `GESAMT_KI`- und `GESAMT`-Werts.
 
 10. Rollout und Dokumentation.
 
