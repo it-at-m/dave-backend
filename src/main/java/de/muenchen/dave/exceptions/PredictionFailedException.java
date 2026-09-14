@@ -10,6 +10,8 @@ public class PredictionFailedException extends Exception {
 
     public static final String NO_VERKEHRSBEZIEHUNGEN = "Outer list (Verkehrsbeziehungen) is empty";
     public static final String ONNX_INVALID_INPUT_DIMENSION = "ONNX invalid input dimension";
+    public static final String ONNX_MISSING_INPUT_VALUE = "ONNX input contains a missing counting value";
+    public static final String ONNX_UNSUPPORTED_INPUT_VEHICLE = "ONNX input contains an unsupported vehicle type";
 
     public static final String ONNX_SESSION_CREATION_ERROR = "ONNX session could not be created";
     public static final String ONNX_TENSOR_CREATION_ERROR = "ONNX tensor could not be created";

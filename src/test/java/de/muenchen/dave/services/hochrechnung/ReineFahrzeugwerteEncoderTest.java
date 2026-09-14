@@ -93,6 +93,33 @@ class ReineFahrzeugwerteEncoderTest {
         assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION));
     }
 
+    /**
+     * Prüft, dass ein fehlender Zählwert die Modellvorhersage verhindert.
+     */
+    @Test
+    void test_WithMissingCountingValue_ThrowsPredictionFailedException() {
+        final List<Zeitintervall> zeitintervalle = createZeitintervalle(52);
+        zeitintervalle.get(0).setFahrradfahrer(null);
+
+        final PredictionFailedException exception = assertThrows(
+                PredictionFailedException.class,
+                () -> encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.RAD, List.of(zeitintervalle)));
+
+        assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
+    }
+
+    /**
+     * Prüft, dass ein Fahrzeug ohne einzelnen Zählwert die Modellvorhersage verhindert.
+     */
+    @Test
+    void test_WithUnsupportedVehicle_ThrowsPredictionFailedException() {
+        final PredictionFailedException exception = assertThrows(
+                PredictionFailedException.class,
+                () -> encoder.encode(Zaehldauer.DAUER_13_STUNDEN, Fahrzeug.KFZ, List.of(createZeitintervalle(52))));
+
+        assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_UNSUPPORTED_INPUT_VEHICLE));
+    }
+
     private List<Zeitintervall> createZeitintervalle(final int anzahl) {
         final List<Zeitintervall> zeitintervalle = new ArrayList<>();
         final LocalDateTime start = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(6, 0));

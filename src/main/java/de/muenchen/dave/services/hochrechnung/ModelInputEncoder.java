@@ -26,7 +26,8 @@ public interface ModelInputEncoder {
     ModelInputSchema getSchema();
 
     /**
-     * Diese Methode fFiltert, sortiert und wandelt die zweidimensionale Liste von Zeitintervallen in ein ONNX-kompatibles
+     * Diese Methode filtert, sortiert und wandelt die zweidimensionale Liste von Zeitintervallen in
+     * ein ONNX-kompatibles
      * long[][]-Array um.
      *
      * @param zaehldauer bestimmt die Eingabezeitbloecke und die erwartete Intervallzahl

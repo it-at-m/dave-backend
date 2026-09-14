@@ -6,7 +6,6 @@ import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import java.util.List;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>
  * Fuer 13h- und 16h-Modelle entstehen dadurch je Bewegungsbeziehung 52 beziehungsweise
- * 64 Merkmale. Nicht erfasste Zaehlwerte werden als {@code 0} an das Modell uebergeben.
+ * 64 Merkmale. Fehlende Zaehlwerte verhindern die Vorhersage.
  * </p>
  */
 @Component
@@ -37,24 +36,28 @@ public class ReineFahrzeugwerteEncoder extends AbstractModelInputEncoder {
             final long[] inputDataJeBewegungsbeziehung = new long[zeitintervalleJeBewegungsbeziehung.size()];
             for (int intervallIndex = 0; intervallIndex < zeitintervalleJeBewegungsbeziehung.size(); intervallIndex++) {
                 // ONNX erwartet einen int64-Wert fuer jedes Viertelstundenintervall.
-                inputDataJeBewegungsbeziehung[intervallIndex] = ObjectUtils.defaultIfNull(
-                        getZaehlwert(zeitintervalleJeBewegungsbeziehung.get(intervallIndex), fahrzeug), 0);
+                inputDataJeBewegungsbeziehung[intervallIndex] = getZaehlwert(
+                        zeitintervalleJeBewegungsbeziehung.get(intervallIndex), fahrzeug);
             }
             inputData[groupIndex] = inputDataJeBewegungsbeziehung;
         }
         return inputData;
     }
 
-    private Integer getZaehlwert(final Zeitintervall zeitintervall, final Fahrzeug fahrzeug) {
-        return switch (fahrzeug) {
+    private Integer getZaehlwert(final Zeitintervall zeitintervall, final Fahrzeug fahrzeug) throws PredictionFailedException {
+        final Integer zaehlwert = switch (fahrzeug) {
         case RAD -> zeitintervall.getFahrradfahrer();
         case PKW -> zeitintervall.getPkw();
         case LKW -> zeitintervall.getLkw();
         case LZ -> zeitintervall.getLastzuege();
         case BUS -> zeitintervall.getBusse();
         case KRAD -> zeitintervall.getKraftraeder();
-        default -> throw new IllegalArgumentException("Fahrzeug " + fahrzeug + " hat keinen einzelnen Zaehlwert");
+        default -> throw new PredictionFailedException(PredictionFailedException.ONNX_UNSUPPORTED_INPUT_VEHICLE);
         };
+        if (zaehlwert == null) {
+            throw new PredictionFailedException(PredictionFailedException.ONNX_MISSING_INPUT_VALUE);
+        }
+        return zaehlwert;
     }
 
 }
