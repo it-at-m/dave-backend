@@ -14,7 +14,8 @@ public class AuthorizationService {
 
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
-    public AuthorizationService(final ZaehlstelleIndexService indexService, final SecurityContextInformationExtractorService securityContextInformationExtractorService) {
+    public AuthorizationService(final ZaehlstelleIndexService indexService,
+            final SecurityContextInformationExtractorService securityContextInformationExtractorService) {
         this.indexService = indexService;
         this.securityContextInformationExtractorService = securityContextInformationExtractorService;
     }
