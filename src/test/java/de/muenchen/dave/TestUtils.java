@@ -126,35 +126,4 @@ public final class TestUtils {
         }
         return returnType.cast(result);
     }
-
-    /**
-     * Setzt einen Nutzer mit einem Username und einer Rolle, der für die Tests verwendet wird.
-     *
-     * @param username des Test-Nutzers
-     * @param fachadmin Wenn {@code true}, erhält der Test-Nutzer die Rolle Fachadmin
-     */
-    public static void setSecurityContext(String username, boolean fachadmin) {
-        final Jwt jwt = new Jwt(
-                "token-value",
-                Instant.now(),
-                Instant.now().plusSeconds(3600),
-                Map.of("alg", "none"),
-                Map.of(UserInfoDataService.CLAIM_USERNAME, username));
-
-        final List<GrantedAuthority> authorities = new ArrayList<>();
-        if (fachadmin) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_FACHADMIN"));
-        }
-
-        final JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, authorities);
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    /**
-     * Leert den Security Context. Diese Methode sollte nach jedem Testfall aufgerufen werden, um zu
-     * verhindern, dass sich die Tests gegenseitig beeinflussen.
-     */
-    public static void clearSecurityContext() {
-        SecurityContextHolder.clearContext();
-    }
 }

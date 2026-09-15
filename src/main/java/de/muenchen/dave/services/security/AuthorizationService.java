@@ -2,7 +2,7 @@ package de.muenchen.dave.services.security;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -12,8 +12,11 @@ public class AuthorizationService {
 
     private final ZaehlstelleIndexService indexService;
 
-    public AuthorizationService(final ZaehlstelleIndexService indexService) {
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
+
+    public AuthorizationService(final ZaehlstelleIndexService indexService, final SecurityContextInformationExtractorService securityContextInformationExtractorService) {
         this.indexService = indexService;
+        this.securityContextInformationExtractorService = securityContextInformationExtractorService;
     }
 
     /**
@@ -26,7 +29,7 @@ public class AuthorizationService {
     private boolean matchesDienstleisterkennung(String zaehlungId) throws DataNotFoundException {
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
         final String dienstleisterkennung = zaehlung.getDienstleisterkennung();
-        final String currentUser = SecurityContextInformationExtractor.getUserName();
+        final String currentUser = securityContextInformationExtractorService.getAuthenticatedUsername();
 
         return currentUser != null && !currentUser.isBlank()
                 && dienstleisterkennung != null && !dienstleisterkennung.isBlank()
@@ -43,7 +46,7 @@ public class AuthorizationService {
      *             nicht übereinstimmt
      */
     private void assertCanAccessZaehlung(final String zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
-        if (SecurityContextInformationExtractor.isFachadmin()) {
+        if (securityContextInformationExtractorService.isFachadmin()) {
             return;
         }
         if (!matchesDienstleisterkennung(zaehlungId)) {

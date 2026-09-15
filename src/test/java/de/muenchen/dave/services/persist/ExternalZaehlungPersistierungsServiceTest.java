@@ -5,7 +5,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
@@ -24,13 +23,13 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,21 +66,16 @@ class ExternalZaehlungPersistierungsServiceTest {
 
     private ExternalZaehlungPersistierungsService service;
 
+    @Mock
+    private SecurityContextInformationExtractorService securityContextInformationExtractorService;
+
     @BeforeEach
     void setUp() {
         // Erzeuge ein Spy-Objekt, so dass einzelne Hilfsmethoden (z.B. createHochrechnung)
         // bei Bedarf gestubbt werden können.
         service = Mockito
                 .spy(new ExternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, zeitintervallMapper, knotenarmMapper,
-                        new SanitizationService(), new AuthorizationService(indexService)));
-
-        // Setze Test-Nutzer mit Rolle Fachadmin
-        TestUtils.setSecurityContext("test", true);
-    }
-
-    @AfterEach
-    void tearDown() {
-        TestUtils.clearSecurityContext();
+                        new SanitizationService(), new AuthorizationService(indexService, securityContextInformationExtractorService)));
     }
 
     @Test
@@ -422,6 +416,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlstelle.getZaehlungen().add(zaehlung);
 
         doReturn(zaehlstelle).when(indexService).getZaehlstelleByZaehlungId(id);
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
 
         // Ausführung
         final var backend = service.saveZaehlung(dto);
@@ -466,6 +461,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlstelle.getZaehlungen().add(zaehlung);
 
         when(indexService.getZaehlstelleByZaehlungId(id)).thenReturn(zaehlstelle);
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
 
         // Mock: Mapping vom DTO zum Domain-Zeitintervall
         final var mappedZeitintervall = new Zeitintervall();
@@ -518,6 +514,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlstelle.getZaehlungen().add(zaehlung);
 
         when(indexService.getZaehlstelleByZaehlungId(id)).thenReturn(zaehlstelle);
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
 
         // Ausführung
         final var backend = service.saveZaehlung(dto);
@@ -559,7 +556,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         when(indexService.getZaehlung(id)).thenReturn(zaehlung);
 
         // Nutzer mit einem anderen Username als der Dienstleisterkennung der Zählung und ohne Rolle Fachadmin setzen
-        TestUtils.setSecurityContext("tester", false);
+        when(securityContextInformationExtractorService.getAuthenticatedUsername()).thenReturn("tester");
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
 
         // Ausführung
         AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> service.saveZaehlung(dto));

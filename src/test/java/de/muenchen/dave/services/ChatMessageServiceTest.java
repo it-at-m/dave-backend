@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
@@ -17,11 +16,11 @@ import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,28 +32,26 @@ public class ChatMessageServiceTest {
     private final ChatMessageRepository chatMessageRepository;
     private final ZaehlstelleIndexService indexService;
     private final EmailSendService emailSendService;
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     public ChatMessageServiceTest() {
         this.chatMessageRepository = Mockito.mock(ChatMessageRepository.class);
         this.indexService = Mockito.mock(ZaehlstelleIndexService.class);
         this.emailSendService = Mockito.mock(EmailSendService.class);
+        this.securityContextInformationExtractorService = Mockito.mock(SecurityContextInformationExtractorService.class);
         this.chatMessageService = new ChatMessageService(
                 this.chatMessageRepository,
                 new ChatMessageMapperImpl(),
                 this.indexService,
                 this.emailSendService,
-                new AuthorizationService(this.indexService));
+                new AuthorizationService(this.indexService, this.securityContextInformationExtractorService));
     }
 
     @BeforeEach
     void setUp() {
         // Setze Test-Nutzer mit Rolle Fachadmin
-        TestUtils.setSecurityContext("test", true);
-    }
-
-    @AfterEach
-    void tearDown() {
-        TestUtils.clearSecurityContext();
+        when(securityContextInformationExtractorService.getAuthenticatedUsername()).thenReturn("test");
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
     }
 
     @Test
@@ -80,7 +77,8 @@ public class ChatMessageServiceTest {
         final ChatMessageDTO chatMessageDTO = ChatMessageDTORandomFactory.getOne();
         chatMessageDTO.setZaehlungId(id);
 
-        TestUtils.setSecurityContext("tester", false);
+        when(securityContextInformationExtractorService.getUserName()).thenReturn("tester");
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
 
         AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> chatMessageService.saveChatMessage(chatMessageDTO));
         assertThat(ex.getMessage(), is("Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden."));
@@ -106,7 +104,8 @@ public class ChatMessageServiceTest {
 
         when(indexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        TestUtils.setSecurityContext("tester", false);
+        when(securityContextInformationExtractorService.getUserName()).thenReturn("tester");
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
 
         AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> chatMessageService.loadChatMessages(UUID.fromString(id)));
         assertThat(ex.getMessage(), is("Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden."));

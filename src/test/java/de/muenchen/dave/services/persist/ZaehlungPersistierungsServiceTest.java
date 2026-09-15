@@ -14,7 +14,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
@@ -45,6 +44,7 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
@@ -60,8 +60,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
@@ -93,17 +91,6 @@ class ZaehlungPersistierungsServiceTest {
                 null,
                 null,
                 null);
-    }
-
-    @BeforeEach
-    void setUp() {
-        // Setze Test-Nutzer mit Rolle Fachadmin
-        TestUtils.setSecurityContext("test", true);
-    }
-
-    @AfterEach
-    void tearDown() {
-        TestUtils.clearSecurityContext();
     }
 
     // Internal
@@ -750,9 +737,11 @@ class ZaehlungPersistierungsServiceTest {
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z1")).thenReturn(zaehlstelle);
+        when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -797,9 +786,11 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z2")).thenReturn(zaehlstelle);
+        when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -845,9 +836,11 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("z3")).thenReturn(zaehlstelle);
+        when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -890,9 +883,11 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("not-existing")).thenReturn(zaehlstelle);
+        when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -925,7 +920,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         when(mockIndexService.getZaehlstelleByZaehlungId("missing")).thenThrow(new DataNotFoundException("not found"));
 
@@ -956,7 +952,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -981,7 +978,8 @@ class ZaehlungPersistierungsServiceTest {
         dto.setStatus(Status.ACCOMPLISHED.name());
 
         // Nutzer mit einem anderen Username als der Dienstleisterkennung der Zählung und ohne Rolle Fachadmin setzen
-        TestUtils.setSecurityContext("tester", false);
+        when(mockSecService.getAuthenticatedUsername()).thenReturn("tester");
+        when(mockSecService.isFachadmin()).thenReturn(false);
 
         // Act and Assert
         AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> svc.updateStatus(dto));
@@ -1000,7 +998,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1038,7 +1037,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1080,7 +1080,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1111,7 +1112,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1140,7 +1142,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1163,7 +1166,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1198,7 +1202,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -1233,7 +1238,8 @@ class ZaehlungPersistierungsServiceTest {
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
         final SanitizationService mockSanitizationService = Mockito.mock(SanitizationService.class);
-        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService);
+        final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
+        final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
