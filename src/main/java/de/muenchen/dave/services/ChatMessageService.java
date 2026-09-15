@@ -11,11 +11,13 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,15 +36,18 @@ public class ChatMessageService {
     private final ChatMessageMapper chatMessageMapper;
     private final ZaehlstelleIndexService indexService;
     private final EmailSendService emailSendService;
+    private final AuthorizationService authorizationService;
 
     public ChatMessageService(final ChatMessageRepository chatMessageRepository,
             final ChatMessageMapper chatMessageMapper,
             final ZaehlstelleIndexService indexService,
-            final EmailSendService emailSendService) {
+            final EmailSendService emailSendService,
+            final AuthorizationService authorizationService) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatMessageMapper = chatMessageMapper;
         this.indexService = indexService;
         this.emailSendService = emailSendService;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -54,8 +59,14 @@ public class ChatMessageService {
      * @return Das gespeicherte {@link ChatMessageDTO}.
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die
+     *             {@link Zaehlung} zu speichern
      */
-    public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO) throws BrokenInfrastructureException, DataNotFoundException {
+    public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO)
+            throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
+        // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu senden
+        authorizationService.assertCanReadAndWriteMessagesForZaehlung(chatMessageDTO.getZaehlungId());
+
         ChatMessage chatMessage = chatMessageMapper.dto2bean(chatMessageDTO);
         chatMessage = chatMessageRepository.saveAndFlush(chatMessage);
 
@@ -76,8 +87,14 @@ public class ChatMessageService {
      *
      * @param zaehlungID Die ID der Zählung zum Laden der ChatMessage.
      * @return Alle geladenen {@link ChatMessageDTO}s.
+     * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die
+     *             {@link Zaehlung} zu laden
      */
-    public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) {
+    public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
+        // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu lesen
+        authorizationService.assertCanReadAndWriteMessagesForZaehlung(zaehlungID.toString());
+
         final List<ChatMessage> messages = chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(zaehlungID);
         return chatMessageMapper.beanList2DtoList(messages);
     }
