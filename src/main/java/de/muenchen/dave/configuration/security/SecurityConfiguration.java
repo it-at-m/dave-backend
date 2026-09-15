@@ -35,10 +35,9 @@ public class SecurityConfiguration {
      *
      * @param http HttpSecurity
      * @return SecurityFilterChain
-     * @throws Exception falls was passiert
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
