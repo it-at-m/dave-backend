@@ -1,7 +1,6 @@
 package de.muenchen.dave.configuration;
 
 import java.time.Duration;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpHeaders;
@@ -60,7 +59,8 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
                              * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
                              */
                             clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
-                                final BasicHeaderElementIterator  headerIterator = new BasicHeaderElementIterator(httpResponse.headerIterator(HttpHeaders.KEEP_ALIVE));
+                                final BasicHeaderElementIterator headerIterator = new BasicHeaderElementIterator(
+                                        httpResponse.headerIterator(HttpHeaders.KEEP_ALIVE));
 
                                 while (headerIterator.hasNext()) {
                                     final var header = headerIterator.next();

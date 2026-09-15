@@ -6,9 +6,6 @@ import static org.hamcrest.Matchers.is;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-
-import de.muenchen.dave.configuration.security.CustomJwtAuthenticationConverter;
-import de.muenchen.dave.configuration.security.UserInfoDataService;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
