@@ -59,7 +59,7 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
                              * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
                              */
                             clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
-                                final BasicHeaderElementIterator headerIterator = new BasicHeaderElementIterator(
+                                final var headerIterator = new BasicHeaderElementIterator(
                                         httpResponse.headerIterator(HttpHeaders.KEEP_ALIVE));
 
                                 while (headerIterator.hasNext()) {
