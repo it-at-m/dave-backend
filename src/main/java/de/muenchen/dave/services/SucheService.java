@@ -31,7 +31,7 @@ import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -86,6 +86,8 @@ public class SucheService {
     private final ElasticsearchClient elasticsearchClient;
 
     private final ElasticsearchOperations elasticsearchOperations;
+
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     /**
      * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en, die nach Koordinaten
@@ -389,11 +391,11 @@ public class SucheService {
     private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
 
         // Für das Adminportal wird nichts gefiltert => Fachadmin ist angemeldet
-        if (noFilter && SecurityContextInformationExtractor.isFachadmin()) {
+        if (noFilter && securityContextInformationExtractorService.isFachadmin()) {
             return zaehlstellen;
         }
 
-        final boolean isAnwender = SecurityContextInformationExtractor.isAnwender();
+        final boolean isAnwender = securityContextInformationExtractorService.isAnwender();
 
         // Nur die Sichtbaren Zaehlstellen durchsuchen
         zaehlstellen.stream()
