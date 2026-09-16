@@ -1,5 +1,6 @@
 package de.muenchen.dave.security;
 
+import de.muenchen.dave.configuration.security.UserInfoDataService;
 import java.util.Arrays;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
