@@ -40,7 +40,8 @@
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
         <shedlock.version>6.8.0</shedlock.version>
         <openapi-generator-version>7.25.0</openapi-generator-version>
-        <openapi-ui.version>3.1.1</openapi-ui.version>
+        <!-- Verwendung der Openapi-Version mit der in der Lib passenden transitiv verwendeten Spring-Version -->
+        <openapi-ui.version>2.9.1</openapi-ui.version>
         <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
         <ai.onnxruntime>1.22.0</ai.onnxruntime>
         <tika.version>4.0.0</tika.version>
