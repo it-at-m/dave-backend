@@ -14,6 +14,29 @@ import org.mockito.Mockito;
 public class BelastungsplanCalculatorTest {
 
     @Test
+    public void testSubtractSums() {
+        final BigDecimal[] basis = new BigDecimal[] { BigDecimal.valueOf(5), BigDecimal.valueOf(3), BigDecimal.valueOf(6), BigDecimal.valueOf(10) };
+        final BigDecimal[] vergleich = new BigDecimal[] { BigDecimal.valueOf(1), BigDecimal.valueOf(3), BigDecimal.valueOf(10), BigDecimal.valueOf(5) };
+
+        final BigDecimal[] diff = BelastungsplanCalculator.subtractSums(basis, vergleich);
+        assertEquals(4, diff.length);
+        assertEquals(BigDecimal.valueOf(4), diff[0]);
+        assertEquals(BigDecimal.valueOf(0), diff[1]);
+        assertEquals(BigDecimal.valueOf(-4), diff[2]);
+        assertEquals(BigDecimal.valueOf(5), diff[3]);
+    }
+
+    @Test
+    void testSubtractSums_SubtrahendIsNull() {
+        final BigDecimal[] basis = new BigDecimal[] { BigDecimal.valueOf(1), BigDecimal.valueOf(5) };
+
+        final BigDecimal[] diff = BelastungsplanCalculator.subtractSums(basis, null);
+        assertEquals(2, diff.length);
+        assertEquals(BigDecimal.valueOf(1), diff[0]);
+        assertEquals(BigDecimal.valueOf(5), diff[1]);
+    }
+
+    @Test
     public void testSubtractMatrice() {
         BigDecimal[][] basis = {
                 { BigDecimal.valueOf(5), BigDecimal.valueOf(3) },

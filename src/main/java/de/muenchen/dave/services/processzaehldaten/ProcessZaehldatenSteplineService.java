@@ -87,6 +87,9 @@ public class ProcessZaehldatenSteplineService {
             final int splittedSize = ladeZaehldatenStepline.getXAxisDataFirstChart().size() / 2;
 
             // Split X axis data
+            if (ladeZaehldatenStepline.getXAxisDataFirstChart().size() < 2) {
+                return;
+            }
             List<List<String>> splittetXAxisData = ListUtils.partition(
                     ladeZaehldatenStepline.getXAxisDataFirstChart(),
                     splittedSize);
