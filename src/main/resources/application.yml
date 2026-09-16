@@ -100,22 +100,22 @@ dave:
   onnx:
     # pro Kombination (Fahrzeug, Zaehldauer) ein Modell definieren
     modelle:
-      - id: rad_2x4h_2026-09-07_10-45-49
+      - id: rad_2x4h
         fahrzeug: RAD
         zaehldauer: DAUER_2_X_4_STUNDEN
-        resource-path: model/RAD_2x4h.onnx
+        resource-path: models/RAD_2x4h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
-      - id: rad_13h_2026-09-07_10-45-49
+      - id: rad_13h
         fahrzeug: RAD
         zaehldauer: DAUER_13_STUNDEN
-        resource-path: model/RAD_13h.onnx
+        resource-path: models/RAD_13h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
-      - id: rad_16h_2026-09-07_10-45-49
+      - id: rad_16h
         fahrzeug: RAD
         zaehldauer: DAUER_16_STUNDEN
-        resource-path: model/RAD_16h.onnx
+        resource-path: models/RAD_16h.onnx
         input-tensor-name: int64_input
         input-schema: REINE_FAHRZEUGWERTE
   zaehlstelle:
