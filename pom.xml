@@ -38,7 +38,7 @@
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
         <org.projectlombok.lombok.version>1.18.46</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
-        <shedlock.version>6.8.0</shedlock.version>
+        <shedlock.version>6.10.0</shedlock.version>
         <openapi-generator-version>7.25.0</openapi-generator-version>
         <!-- Verwendung der Openapi-Version mit der in der Lib passenden transitiv verwendeten Spring-Version -->
         <openapi-ui.version>2.9.1</openapi-ui.version>
