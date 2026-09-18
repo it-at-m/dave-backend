@@ -93,6 +93,10 @@ public class ZaehlungController {
         }
     }
 
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name()," +
+                " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
+    )
     @GetMapping(value = "/getZaehlungenForExternal", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ExternalZaehlungDTO>> getZaehlungenForExternal() {
         log.debug("Lade Zaehlungen für Dienstleister");
