@@ -420,4 +420,101 @@ public class ProcessZaehldatenZeitreiheTest {
         nonMatchingZaehlung4.setVerkehrsbeziehungen(List.of(vb1, vb5));
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(zaehlung, new OptionsDTO(), nonMatchingZaehlung4), is(false));
     }
+
+    @Test
+    public void checkBewegungsbeziehungenOtherThanQjsFjsQuWithFussverkehr() {
+        // setup
+        Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.N.name());
+        zaehlung.setKreisverkehr(false);
+        Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        vb1.setVon(1);
+        vb1.setNach(2);
+        Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        vb2.setVon(2);
+        vb2.setNach(1);
+        zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+
+        OptionsDTO options = new OptionsDTO();
+        options.setFussverkehr(true);
+
+        // positive case
+        Zaehlung matchingZaehlung = new Zaehlung();
+        matchingZaehlung.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung.setKreisverkehr(false);
+        matchingZaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, options, zaehlung), is(true));
+
+        // negative cases
+        Zaehlung nonMatchingZaehlung1 = new Zaehlung();
+        nonMatchingZaehlung1.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung1.setKreisverkehr(false);
+        nonMatchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, options, zaehlung), is(false));
+
+        Zaehlung nonMatchingZaehlung2 = new Zaehlung();
+        nonMatchingZaehlung2.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung2.setKreisverkehr(false);
+        Verkehrsbeziehung vb3 = new Verkehrsbeziehung();
+        vb3.setVon(1);
+        vb3.setNach(1);
+        nonMatchingZaehlung2.setVerkehrsbeziehungen(List.of(vb1, vb3));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, options, zaehlung), is(false));
+
+        Zaehlung nonMatchingZaehlung3 = new Zaehlung();
+        nonMatchingZaehlung3.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung3.setKreisverkehr(false);
+        Verkehrsbeziehung vb4 = new Verkehrsbeziehung();
+        vb4.setVon(3);
+        vb4.setNach(2);
+        nonMatchingZaehlung3.setVerkehrsbeziehungen(List.of(vb2, vb4));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, options, zaehlung), is(false));
+
+        Zaehlung nonMatchingZaehlung4 = new Zaehlung();
+        nonMatchingZaehlung4.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung4.setKreisverkehr(false);
+        Verkehrsbeziehung vb5 = new Verkehrsbeziehung();
+        vb5.setVon(3);
+        vb5.setNach(1);
+        nonMatchingZaehlung4.setVerkehrsbeziehungen(List.of(vb1, vb5));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, options, zaehlung), is(false));
+    }
+
+    @Test
+    public void checkBewegungsbeziehungenOtherThanQjsFjsQuWithoutFussverkehr() {
+        // setup
+        Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setZaehlart(Zaehlart.N.name());
+        zaehlung.setKreisverkehr(false);
+        Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        vb1.setVon(1);
+        vb1.setNach(2);
+        Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        vb2.setVon(2);
+        vb2.setNach(1);
+        zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
+
+        OptionsDTO options = new OptionsDTO();
+        options.setFussverkehr(false);
+
+        // positive cases
+        Zaehlung matchingZaehlung1 = new Zaehlung();
+        matchingZaehlung1.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung1.setKreisverkehr(false);
+        matchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1, vb2));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung1, options, zaehlung), is(true));
+
+        Zaehlung matchingZaehlung2 = new Zaehlung();
+        matchingZaehlung2.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung2.setKreisverkehr(false);
+        matchingZaehlung2.setVerkehrsbeziehungen(List.of(vb1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung2, options, zaehlung), is(true));
+
+        // negative case
+        Zaehlung nonMatchingZaehlung = new Zaehlung();
+        nonMatchingZaehlung.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung.setKreisverkehr(false);
+        nonMatchingZaehlung.setVerkehrsbeziehungen(List.of());
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung, options, zaehlung), is(false));
+    }
 }
