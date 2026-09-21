@@ -1,12 +1,16 @@
 package de.muenchen.dave.exceptions;
 
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * Allgemeine Exception, die für Fehler bei der Arbeit mit ONNX-Vorhersagen genutzt wird.
  */
-@Data
+@Getter
 public class PredictionFailedException extends Exception {
+
+    private final String modelId;
+
+    private final String details;
 
     public static final String NO_VERKEHRSBEZIEHUNGEN = "Outer list (Verkehrsbeziehungen) is empty";
     public static final String ONNX_INVALID_INPUT_DIMENSION = "ONNX invalid input dimension";
@@ -19,8 +23,16 @@ public class PredictionFailedException extends Exception {
     public static final String ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR = "Unknown result type returned";
     public static final String ONNX_RUN_MODEL_ERROR = "Error running the model";
 
-    public PredictionFailedException(final String message) {
-        super(message);
+    public PredictionFailedException(final String details) {
+        super(details);
+        this.modelId = null;
+        this.details = details;
+    }
+
+    public PredictionFailedException(final String modelId, final String details) {
+        super(String.format("Modell '%s': %s", modelId, details));
+        this.modelId = modelId;
+        this.details = details;
     }
 
 }

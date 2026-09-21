@@ -47,7 +47,28 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
 
         final PredictionFailedException exception = assertThrows(PredictionFailedException.class, () -> model.calculate(zeitintervalle));
 
-        assertThat(exception.getMessage(), equalTo(PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+        assertThat(exception.getModelId(), equalTo("rad-2x4h-wrong-test"));
+        assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+        assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-wrong-test': " + PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+
+        model.closeSession();
+    }
+
+    /**
+     * Prueft, dass Encoderfehler mit der ID des berechneten Modells angereichert werden.
+     */
+    @Test
+    void test_WithMissingCountingValue_AddsModelIdToPredictionFailedException() throws PredictionFailedException {
+        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder());
+        final List<Zeitintervall> zeitintervalle = createZeitintervalle();
+        zeitintervalle.getFirst().setFahrradfahrer(null);
+
+        final PredictionFailedException exception = assertThrows(
+                PredictionFailedException.class, () -> model.calculate(List.of(zeitintervalle)));
+
+        assertThat(exception.getModelId(), equalTo("rad-2x4h-test"));
+        assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
+        assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-test': " + PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
 
         model.closeSession();
     }

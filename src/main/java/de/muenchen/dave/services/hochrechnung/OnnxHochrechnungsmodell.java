@@ -54,19 +54,25 @@ public class OnnxHochrechnungsmodell {
      * @throws PredictionFailedException wenn die Inferenz nicht ausgefuehrt werden kann
      */
     public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
-        final long[][] inputData = modelInputEncoder.encode(
-                definition.getZaehldauer(), definition.getFahrzeug(), groupedZeitintervalle);
+        final long[][] inputData;
+        try {
+            inputData = modelInputEncoder.encode(
+                    definition.getZaehldauer(), definition.getFahrzeug(), groupedZeitintervalle);
+        } catch (final PredictionFailedException exception) {
+            throw new PredictionFailedException(definition.getId(), exception.getDetails());
+        }
         final long[][] predictions = runPrediction(inputData);
         // check ob die Länge der Predictions mit der Anzahl der Bewegungsbeziehungen übereinstimmt
         if (predictions.length != groupedZeitintervalle.size()) {
-            throw new PredictionFailedException(PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
+            throw new PredictionFailedException(definition.getId(), PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
         }
         final List<KIPredictionResult> results = new ArrayList<>();
         for (final long[] prediction : predictions) {
             try {
                 results.add(KIPredictionResult.fromArray(prediction));
             } catch (final IllegalArgumentException | ArithmeticException exception) {
-                throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
+                throw new PredictionFailedException(
+                        definition.getId(), PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
             }
         }
         return results;
@@ -87,7 +93,7 @@ public class OnnxHochrechnungsmodell {
         try (InputStream stream = new ClassPathResource(resourcePath).getInputStream()) {
             return environment.createSession(IOUtils.toByteArray(stream), new OrtSession.SessionOptions());
         } catch (final OrtException | IOException exception) {
-            throw new PredictionFailedException(PredictionFailedException.ONNX_SESSION_CREATION_ERROR);
+            throw new PredictionFailedException(definition.getId(), PredictionFailedException.ONNX_SESSION_CREATION_ERROR);
         }
     }
 
@@ -95,18 +101,20 @@ public class OnnxHochrechnungsmodell {
         try (OnnxTensor tensor = OnnxTensor.createTensor(environment, inputData);
                 OrtSession.Result result = session.run(Map.of(definition.getInputTensorName(), tensor))) {
             if (result.size() == 0) {
-                throw new PredictionFailedException(PredictionFailedException.ONNX_NO_PREDICTION_RESULTS_ERROR);
+                throw new PredictionFailedException(definition.getId(), PredictionFailedException.ONNX_NO_PREDICTION_RESULTS_ERROR);
             }
             final OnnxValue onnxValue = result.get(0);
             if (onnxValue.getType() == OnnxValue.OnnxValueType.ONNX_TYPE_UNKNOWN) {
-                throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
+                throw new PredictionFailedException(
+                        definition.getId(), PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
             }
             // Der Outputvertrag der Radmodelle ist [bewegungsbeziehung][tagessumme].
             return (long[][]) onnxValue.getValue();
         } catch (final OrtException exception) {
-            throw new PredictionFailedException(PredictionFailedException.ONNX_RUN_MODEL_ERROR);
+            throw new PredictionFailedException(definition.getId(), PredictionFailedException.ONNX_RUN_MODEL_ERROR);
         } catch (final ClassCastException exception) {
-            throw new PredictionFailedException(PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
+            throw new PredictionFailedException(
+                    definition.getId(), PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);
         }
     }
 
