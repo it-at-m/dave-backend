@@ -264,15 +264,15 @@ public class ProcessZaehldatenZeitreiheService {
     private static boolean hasEqualVerkehrsbeziehungen(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
         final var currentKeys = currentZaehlung.getVerkehrsbeziehungen() != null
                 ? currentZaehlung.getVerkehrsbeziehungen()
-                .stream()
-                .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
-                .collect(Collectors.toSet())
+                        .stream()
+                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                        .collect(Collectors.toSet())
                 : Collections.emptySet();
         final var keys = zaehlung.getVerkehrsbeziehungen() != null
                 ? zaehlung.getVerkehrsbeziehungen()
-                .stream()
-                .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
-                .collect(Collectors.toSet())
+                        .stream()
+                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                        .collect(Collectors.toSet())
                 : Collections.emptySet();
         return currentKeys.equals(keys);
     }
