@@ -26,8 +26,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+/**
+ * Unit-Tests fuer {@link ZeitintervallPersistierungsService} mit KI-Hochrechnung.
+ */
 class ZeitintervallPersistierungsServiceTest {
 
+    /**
+     * Verifiziert, dass bei einer 13-stuendigen Zaehlung die KI-Hochrechnung und die
+     * Gesamthochrechnung persistiert werden.
+     */
     @Test
     void test_With13HoursPrediction_PersistsKiAndGesamtHochrechnung() throws PredictionFailedException {
         final ZeitintervallRepository zeitintervallRepository = Mockito.mock(ZeitintervallRepository.class);
@@ -40,6 +47,10 @@ class ZeitintervallPersistierungsServiceTest {
         assertKiHochrechnung(zeitintervallRepository);
     }
 
+    /**
+     * Verifiziert, dass bei einer 16-stuendigen Zaehlung die KI-Hochrechnung und die
+     * Gesamthochrechnung persistiert werden.
+     */
     @Test
     void test_With16HoursPrediction_PersistsKiAndGesamtHochrechnung() throws PredictionFailedException {
         final ZeitintervallRepository zeitintervallRepository = Mockito.mock(ZeitintervallRepository.class);
