@@ -312,7 +312,7 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getKreisverkehr(),
                                 options,
                                 Set.of(options.getZeitblock().getTypeZeitintervall()));
-                    } else if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
+                    } else if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
                         isFussSelectedAndVerkehrsbeziehungNotPresent = true;
 
