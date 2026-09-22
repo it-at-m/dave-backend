@@ -6,6 +6,7 @@ import de.muenchen.dave.domain.enums.ModelInputSchema;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.KIZeitintervallMapper;
 import de.muenchen.dave.exceptions.PredictionFailedException;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -37,21 +38,17 @@ public class KontextRadEncoder extends AbstractModelInputEncoder {
             final Fahrzeug fahrzeug,
             final List<List<Zeitintervall>> groupedZeitintervalle)
             throws PredictionFailedException {
-        final List<List<Zeitintervall>> filteredZeitintervalle = filterAndSort(zaehldauer, groupedZeitintervalle);
-        final long[][] inputData = new long[filteredZeitintervalle.size()][];
-        for (int groupIndex = 0; groupIndex < filteredZeitintervalle.size(); groupIndex++) {
-            final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung = filteredZeitintervalle.get(groupIndex);
-            final long[] inputdataJeBewegungsbeziehung = new long[zeitintervalleJeBewegungsbeziehung.size() * 10];
-            int inputIndex = 0;
-            for (final Zeitintervall zeitintervall : zeitintervalleJeBewegungsbeziehung) {
-                // Die Mapper-Reihenfolge ist Teil des ONNX-Modellvertrags.
-                for (final long feature : kiZeitintervallMapper.zeitintervallToKIZeitintervall(zeitintervall).toArray()) {
-                    inputdataJeBewegungsbeziehung[inputIndex++] = feature;
-                }
-            }
-            inputData[groupIndex] = inputdataJeBewegungsbeziehung;
-        }
-        return inputData;
+        // Jeder Mapper-Output wird in seiner unveraenderten Merkmalsreihenfolge in die ONNX-Zeile uebernommen.
+        return filterAndSort(zaehldauer, groupedZeitintervalle).stream()
+                .map(this::encodeBewegungsbeziehung)
+                .toArray(long[][]::new);
+    }
+
+    private long[] encodeBewegungsbeziehung(final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung) {
+        return zeitintervalleJeBewegungsbeziehung.stream()
+                .flatMapToLong(zeitintervall -> Arrays.stream(
+                        kiZeitintervallMapper.zeitintervallToKIZeitintervall(zeitintervall).toArray()))
+                .toArray();
     }
 
 }
