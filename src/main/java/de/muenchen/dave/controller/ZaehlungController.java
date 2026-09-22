@@ -10,16 +10,18 @@ import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.security.SecurityContextInformationExtractor;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import de.muenchen.dave.services.persist.InternalZaehlungPersistierungsService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,22 +34,20 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RestController
 @RequestMapping("/zaehlung")
+@RequiredArgsConstructor
 public class ZaehlungController {
 
     private static final String REQUEST_PARAMETER_ZAEHLSTELLE_ID = "zaehlstelle_id";
+
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";
 
     private final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService;
+
     private final ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService;
+
     private final ChatMessageService chatMessageService;
 
-    public ZaehlungController(final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService,
-            final ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService,
-            final ChatMessageService chatMessageService) {
-        this.internalZaehlungPersistierungsService = internalZaehlungPersistierungsService;
-        this.externalZaehlungPersistierungsService = externalZaehlungPersistierungsService;
-        this.chatMessageService = chatMessageService;
-    }
+    private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     @GetMapping(value = "/loadAllOpenZaehlungen", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
@@ -101,8 +101,9 @@ public class ZaehlungController {
     public ResponseEntity<List<ExternalZaehlungDTO>> getZaehlungenForExternal() {
         log.debug("Lade Zaehlungen für Dienstleister");
         try {
-            return ResponseEntity.ok(this.externalZaehlungPersistierungsService.getZaehlungenForExternal(SecurityContextInformationExtractor.getUserName(),
-                    SecurityContextInformationExtractor.isFachadmin()));
+            return ResponseEntity.ok(this.externalZaehlungPersistierungsService.getZaehlungenForExternal(
+                    securityContextInformationExtractorService.getUserName(),
+                    securityContextInformationExtractorService.isFachadmin()));
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -124,6 +125,8 @@ public class ZaehlungController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, dnfe.getMessage());
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (final AccessDeniedException ade) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         }
     }
 
@@ -148,6 +151,8 @@ public class ZaehlungController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (final AccessDeniedException ade) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, ade.getMessage());
         }
     }
 

@@ -18,7 +18,9 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,12 +61,18 @@ class InternalZaehlungPersistierungsServiceTest {
     @Mock
     private PkwEinheitMapper pkwEinheitMapper;
 
+    @Mock
+    private SanitizationService sanitizationService;
+
+    @Mock
+    private AuthorizationService authorizationService;
+
     private InternalZaehlungPersistierungsService service;
 
     @BeforeEach
     void setUp() {
         service = Mockito.spy(new InternalZaehlungPersistierungsService(indexService, zeitintervallPersistierungsService, pkwEinheitRepository,
-                zeitintervallMapper, pkwEinheitMapper));
+                zeitintervallMapper, pkwEinheitMapper, sanitizationService, authorizationService));
     }
 
     @Test

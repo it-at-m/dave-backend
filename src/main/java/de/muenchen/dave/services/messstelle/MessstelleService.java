@@ -13,6 +13,7 @@ import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.SanitizationService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -38,6 +39,7 @@ public class MessstelleService {
     private final CustomSuggestIndexService customSuggestIndexService;
     private final MessstelleMapper messstelleMapper;
     private final StadtbezirkMapper stadtbezirkMapper;
+    private final SanitizationService sanitizationService;
 
     public Messstelle getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
@@ -75,6 +77,7 @@ public class MessstelleService {
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
+        sanitizationService.sanitizeMessstelle(aktualisiert);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
         final Messstelle messstelle = messstelleIndexService.saveMessstelle(aktualisiert);
         final BackendIdDTO backendIdDTO = new BackendIdDTO();

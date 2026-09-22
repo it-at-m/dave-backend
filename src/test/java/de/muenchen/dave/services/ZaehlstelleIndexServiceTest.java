@@ -20,6 +20,7 @@ public class ZaehlstelleIndexServiceTest {
             null,
             null,
             null,
+            null,
             null);
 
     @Test
