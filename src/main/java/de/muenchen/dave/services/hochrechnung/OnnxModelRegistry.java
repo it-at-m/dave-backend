@@ -47,7 +47,7 @@ public class OnnxModelRegistry {
     public void closeModels() {
         models.values().forEach(model -> {
             try {
-                model.closeSession();
+                model.close();
             } catch (final IllegalStateException exception) {
                 log.error("ONNX-Modell {} konnte nicht geschlossen werden", model.getDefinition().getId(), exception);
             }

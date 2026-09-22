@@ -28,13 +28,13 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
      */
     @Test
     void test_With2x4hModel_ReturnsOnePredictionPerBewegungsbeziehung() throws PredictionFailedException {
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder());
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
-        final List<KIPredictionResult> result = model.calculate(zeitintervalle);
+        try (OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder())) {
+            final List<KIPredictionResult> result = model.calculate(zeitintervalle);
 
-        assertThat(result.size(), equalTo(1));
-        model.closeSession();
+            assertThat(result.size(), equalTo(1));
+        }
     }
 
     /**
@@ -42,16 +42,15 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
      */
     @Test
     void test_WithWrongModel_ReturnsPredictionFailedException() throws PredictionFailedException {
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createWrongDefinition(), new ReineFahrzeugwerteEncoder());
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
-        final PredictionFailedException exception = assertThrows(PredictionFailedException.class, () -> model.calculate(zeitintervalle));
+        try (OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createWrongDefinition(), new ReineFahrzeugwerteEncoder())) {
+            final PredictionFailedException exception = assertThrows(PredictionFailedException.class, () -> model.calculate(zeitintervalle));
 
-        assertThat(exception.getModelId(), equalTo("rad-2x4h-wrong-test"));
-        assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_RUN_MODEL_ERROR));
-        assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-wrong-test': " + PredictionFailedException.ONNX_RUN_MODEL_ERROR));
-
-        model.closeSession();
+            assertThat(exception.getModelId(), equalTo("rad-2x4h-wrong-test"));
+            assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+            assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-wrong-test': " + PredictionFailedException.ONNX_RUN_MODEL_ERROR));
+        }
     }
 
     /**
@@ -59,18 +58,17 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
      */
     @Test
     void test_WithMissingCountingValue_AddsModelIdToPredictionFailedException() throws PredictionFailedException {
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder());
         final List<Zeitintervall> zeitintervalle = createZeitintervalle();
         zeitintervalle.getFirst().setFahrradfahrer(null);
 
-        final PredictionFailedException exception = assertThrows(
-                PredictionFailedException.class, () -> model.calculate(List.of(zeitintervalle)));
+        try (OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder())) {
+            final PredictionFailedException exception = assertThrows(
+                    PredictionFailedException.class, () -> model.calculate(List.of(zeitintervalle)));
 
-        assertThat(exception.getModelId(), equalTo("rad-2x4h-test"));
-        assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
-        assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-test': " + PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
-
-        model.closeSession();
+            assertThat(exception.getModelId(), equalTo("rad-2x4h-test"));
+            assertThat(exception.getDetails(), equalTo(PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
+            assertThat(exception.getMessage(), equalTo("Modell 'rad-2x4h-test': " + PredictionFailedException.ONNX_MISSING_INPUT_VALUE));
+        }
     }
 
     private OnnxModelDefinition create2x4hDefinition() {

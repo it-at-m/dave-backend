@@ -27,7 +27,7 @@ import org.springframework.core.io.ClassPathResource;
  * {@code int64}-Tensorvertrag der aktuell konfigurierten Radmodelle.
  * </p>
  */
-public class OnnxHochrechnungsmodell {
+public class OnnxHochrechnungsmodell implements AutoCloseable {
 
     private final OrtEnvironment environment;
 
@@ -79,9 +79,10 @@ public class OnnxHochrechnungsmodell {
     }
 
     /**
-     * Schliesst die langlebige ONNX-Session. Wird durch die Registry beim Herunterfahren aufgerufen.
+     * Schliesst die langlebige ONNX-Session.
      */
-    public void closeSession() {
+    @Override
+    public void close() {
         try {
             session.close();
         } catch (final OrtException exception) {

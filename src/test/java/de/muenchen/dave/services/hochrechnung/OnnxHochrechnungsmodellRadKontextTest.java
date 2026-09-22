@@ -38,14 +38,14 @@ class OnnxHochrechnungsmodellRadKontextTest {
                 .mittwoch(1)
                 .build();
         Mockito.when(mapper.zeitintervallToKIZeitintervall(Mockito.any())).thenReturn(kiZeitintervall);
-        final OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadEncoder(mapper));
         final List<List<Zeitintervall>> zeitintervalleProBewegungsbeziehung = List.of(createZeitintervalle());
 
-        final List<KIPredictionResult> result = model.calculate(zeitintervalleProBewegungsbeziehung);
+        try (OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(createDefinition(), new KontextRadEncoder(mapper))) {
+            final List<KIPredictionResult> result = model.calculate(zeitintervalleProBewegungsbeziehung);
 
-        assertThat(result.size(), equalTo(1));
-        assertThat(result.getFirst().getRadTagessumme(), equalTo(356));
-        model.closeSession();
+            assertThat(result.size(), equalTo(1));
+            assertThat(result.getFirst().getRadTagessumme(), equalTo(356));
+        }
     }
 
     private OnnxModelDefinition createDefinition() {
