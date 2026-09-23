@@ -1,17 +1,16 @@
-package de.muenchen.dave.configuration;
+package de.muenchen.dave.configuration.security;
 
-import de.muenchen.dave.security.CustomJwtAuthenticationConverter;
-import de.muenchen.dave.security.UserInfoDataService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * The central class for configuration of all security aspects.
@@ -24,7 +23,8 @@ public class SecurityConfiguration {
 
     private final CustomJwtAuthenticationConverter customJwtAuthenticationConverter;
 
-    public SecurityConfiguration(@Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
+    public SecurityConfiguration(
+            @Value("${spring.security.oauth2.resource.user-info-uri}") final String userInfoUri,
             final RestTemplateBuilder restTemplateBuilder) {
         this.customJwtAuthenticationConverter = new CustomJwtAuthenticationConverter(
                 new UserInfoDataService(userInfoUri, restTemplateBuilder));
@@ -35,25 +35,34 @@ public class SecurityConfiguration {
      *
      * @param http HttpSecurity
      * @return SecurityFilterChain
-     * @throws Exception falls was passiert
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 // allow access to /actuator/info
-                                AntPathRequestMatcher.antMatcher("/actuator/info"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/info"),
                                 // allow access to /actuator/health for OpenShift Health Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health"),
                                 // allow access to /actuator/health/liveness for OpenShift Liveness Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health/liveness"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health/liveness"),
                                 // allow access to /actuator/health/readiness for OpenShift Readiness Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health/readiness"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health/readiness"),
+                                // allow access to opean-api endpoints
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/v3/api-docs"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/v3/api-docs.yaml"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/v3/api-docs/**"),
+                                // allow access to swagger-ui
+                                PathPatternRequestMatcher.withDefaults().matcher("/swagger-ui/**"),
+                                // allow access to SBOM endpoints
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/sbom"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/sbom/application"),
                                 // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
-                                AntPathRequestMatcher.antMatcher("/actuator/metrics"))
-                        .permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**"))
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/metrics"))
+                        .permitAll())
+                .authorizeHttpRequests((requests) -> requests
+                        .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt ->
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
