@@ -26,6 +26,7 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
+import de.muenchen.dave.domain.pdf.helper.GanglinieTableColumn;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
@@ -284,6 +285,33 @@ public class FillPdfBeanServiceSpringTest {
                 GangliniePdf.class);
 
         assertThat(gangliniePdfActual, is(ganglinieExpected));
+    }
+
+    @Test
+    public void fillGangliniePdfIncludesSpitzenstunde() throws DataNotFoundException {
+        final Zaehlung zaehlung = getZaehlung();
+        final OptionsDTO options = getChosenOptionsDTO();
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
+        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
+        ladeZaehldatenTableDTO.getZaehldaten().add(getLadeZaehldatumDTO(
+                LadeZaehldatenService.SPITZENSTUNDE_TAG_KFZ, LocalTime.of(7, 15), LocalTime.of(8, 15),
+                100, 5, 2, 3, 4, 10, 0, 130));
+
+        when(this.indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(getZaehlstelle(zaehlung));
+        when(this.indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
+        when(this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(MOCKABLE_ZAEHLUNG_ID), options)).thenReturn(ladeZaehldatenTableDTO);
+
+        final GangliniePdf gangliniePdf = new GangliniePdf();
+        this.fillPdfBeanService.fillGangliniePdf(gangliniePdf, MOCKABLE_ZAEHLUNG_ID, options, "Chart", "Übersicht", DEPARTMENT);
+
+        final GanglinieTableColumn spitzenstunde = gangliniePdf.getGanglinieTables().stream()
+                .flatMap(table -> table.getGanglinieTableColumns().stream())
+                .filter(column -> "114".equals(column.getKfz()))
+                .findFirst().orElseThrow();
+        assertThat(spitzenstunde.getUhrzeit(), is("7 - 8"));
+        assertThat(spitzenstunde.getKfz(), is("114"));
+        assertThat(spitzenstunde.getPkw(), is("100"));
+        assertThat(spitzenstunde.getLkw(), is("5"));
     }
 
     @Test
