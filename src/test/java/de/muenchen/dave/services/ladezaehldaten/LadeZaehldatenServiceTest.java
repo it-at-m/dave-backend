@@ -320,4 +320,17 @@ class LadeZaehldatenServiceTest {
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
     }
 
+    @Test
+    void testIsSpitzenstundeType() {
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_TAG_KFZ));
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_TAG_RAD));
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_TAG_FUSS));
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_BLOCK_KFZ));
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_BLOCK_RAD));
+        assertTrue(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.SPITZENSTUNDE_BLOCK_FUSS));
+
+        assertFalse(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.TAGESWERT));
+        assertFalse(LadeZaehldatenService.isSpitzenstundeType(LadeZaehldatenService.STUNDE));
+        assertFalse(LadeZaehldatenService.isSpitzenstundeType("test"));
+    }
 }
