@@ -5,20 +5,18 @@
   {{{ganglinieCssMustachePart}}}
 </head>
 <body>
-{{{logoMustachePart}}}
-{{{footerMustachePart}}}
-<!-- Metainformationen -->
-<table><tr>
-<h4>{{documentTitle}}</h4>
-{{{messstelleninformationenMustachePart}}}
-{{{schematischeUebersichtMustachePart}}}
-</tr>
+<table>
+    <tr>
+        {{{logoMustachePart}}}
+        {{{footerMustachePart}}}
+        <!-- Metainformationen -->
+        <h4>{{documentTitle}}</h4>
+        {{{messstelleninformationenMustachePart}}}
+        {{{schematischeUebersichtMustachePart}}}
+    </tr>
 </table>
 <br/>
-<table>
-    <tr class="blank_row"> <td class="no_border"></td></tr>
-    <tr><td class="no_border"><h5 class="no_margin_top">{{chartTitle}}</h5></td></tr>
-</table>
+<h5>{{chartTitle}}</h5>
 <img src="{{chart}}"
      style="max-height: 100%; max-width: 100%;"
 />
