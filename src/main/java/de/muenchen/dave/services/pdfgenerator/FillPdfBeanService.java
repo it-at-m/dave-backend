@@ -1161,6 +1161,7 @@ public class FillPdfBeanService {
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
         datentabellePdf.setDatatableTitle(createChartTitleAsList(options, messstelle));
+        datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(options, messwerte.getZaehldatenTable().getZaehldaten()));
 
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
