@@ -861,6 +861,7 @@ public class FillPdfBeanService {
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_MESSSTELLE + messstelle.getMstId());
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitle(options, messstelle));
+        gangliniePdf.setZeitauswahl(createChartTitleZeitauswahl(options, messwerte.getZaehldatenTable().getZaehldaten()));
         gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
