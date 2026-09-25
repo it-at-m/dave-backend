@@ -1137,6 +1137,7 @@ public class FillPdfBeanService {
                 .setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
+        datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
 
         datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
