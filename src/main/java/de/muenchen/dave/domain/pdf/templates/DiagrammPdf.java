@@ -11,4 +11,6 @@ public class DiagrammPdf extends BasicPdf {
 
     private String chartTitle;
 
+    private String zeitauswahl;
+
 }

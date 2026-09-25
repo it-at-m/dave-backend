@@ -24,4 +24,6 @@ public class DatentabelleMessstellePdf extends BasicMessstellePdf {
 
     private List<DatatableTitle> datatableTitle;
 
+    private String zeitauswahl;
+
 }

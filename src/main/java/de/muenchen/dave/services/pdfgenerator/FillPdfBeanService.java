@@ -758,6 +758,7 @@ public class FillPdfBeanService {
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
+        gangliniePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
@@ -860,6 +861,7 @@ public class FillPdfBeanService {
         gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_MESSSTELLE + messstelle.getMstId());
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitle(options, messstelle));
+        gangliniePdf.setZeitauswahl(createChartTitleZeitauswahl(options, messwerte.getZaehldatenTable().getZaehldaten()));
         gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
@@ -1135,6 +1137,7 @@ public class FillPdfBeanService {
                 .setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
+        datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
 
         datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
@@ -1158,6 +1161,7 @@ public class FillPdfBeanService {
         datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_MESSSTELLE + messstelle.getMstId());
 
         datentabellePdf.setDatatableTitle(createChartTitleAsList(options, messstelle));
+        datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(options, messwerte.getZaehldatenTable().getZaehldaten()));
 
         datentabellePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
