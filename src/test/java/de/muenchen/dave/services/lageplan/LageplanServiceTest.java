@@ -58,7 +58,7 @@ class LageplanServiceTest {
 
         String mstId = "9999";
         Mockito.when(lageplanApi.lageplanExistsWithHttpInfo(mstId)).thenReturn(
-                Mono.just(new ResponseEntity<>(null, HttpStatus.OK)));
+                Mono.just(new ResponseEntity<>(HttpStatus.OK)));
 
         assertThrows(ResourceNotFoundException.class, () -> lageplanService.lageplanVorhanden(mstId));
     }
@@ -85,7 +85,7 @@ class LageplanServiceTest {
 
         String mstId = "9999";
         Mockito.when(lageplanApi.getLageplanWithHttpInfo(mstId)).thenReturn(
-                Mono.just(new ResponseEntity<>(null, HttpStatus.OK)));
+                Mono.just(new ResponseEntity<>(HttpStatus.OK)));
 
         assertThrows(ResourceNotFoundException.class, () -> lageplanService.ladeLageplan(mstId));
     }

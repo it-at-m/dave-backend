@@ -65,7 +65,7 @@ public class V12__FahrbeziehungToVerkehrsbeziehung extends BaseJavaMigration {
         try {
             final var script = new Script.Builder()
                     .lang(ScriptLanguage.Painless)
-                    .source(SCRIPT_SOURCE_ZAEHLSTELLE_COPY_FAHRBEZIEHUNG_TO_VERKEHRSBEZIEHUNG_AND_REMOVE_FAHRBEZIEHUNGEN)
+                    .source(builder -> builder.scriptString(SCRIPT_SOURCE_ZAEHLSTELLE_COPY_FAHRBEZIEHUNG_TO_VERKEHRSBEZIEHUNG_AND_REMOVE_FAHRBEZIEHUNGEN))
                     .build();
 
             final var matchAllQuery = QueryBuilders.matchAll().build();
