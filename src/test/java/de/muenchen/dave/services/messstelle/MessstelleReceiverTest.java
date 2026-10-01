@@ -374,4 +374,99 @@ public class MessstelleReceiverTest {
 
         Assertions.assertThat(result).isEmpty();
     }
+
+    // Gemischter DTO-Fall: Entfernen, Aktualisieren und Erstellen in einem Aufruf
+    @Test
+    void updateMessquerschnitte_mixed_removeUpdateCreate() throws IllegalAccessException {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mqA = new Messquerschnitt();
+        mqA.setMqId("A");
+        final var mqB = new Messquerschnitt();
+        mqB.setMqId("B");
+        final var mqC = new Messquerschnitt();
+        mqC.setMqId("C");
+        existing.add(mqA);
+        existing.add(mqB);
+        existing.add(mqC);
+
+        final var dtoRemove = new MessquerschnittDto();
+        dtoRemove.setMqId("a");
+        dtoRemove.setAnzahlDetektoren(0);
+        final var dtoUpdate = new MessquerschnittDto();
+        dtoUpdate.setMqId("b");
+        dtoUpdate.setAnzahlDetektoren(2);
+        final var dtoCreate = new MessquerschnittDto();
+        dtoCreate.setMqId("D");
+        dtoCreate.setAnzahlDetektoren(1);
+
+        final var mapperSpy = Mockito.spy(this.messstelleReceiverMapper);
+        final var created = new Messquerschnitt();
+        created.setMqId("D");
+        Mockito.doReturn(created).when(mapperSpy).createMessquerschnitt(Mockito.eq(dtoCreate));
+        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", mapperSpy, true);
+
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dtoRemove, dtoUpdate, dtoCreate));
+
+        // A wurde entfernt, B aktualisiert, C bleibt erhalten, D neu erstellt
+        Assertions.assertThat(result).hasSize(3).containsExactlyInAnyOrder(mqB, mqC, created);
+        Mockito.verify(mapperSpy, Mockito.times(1)).updateMessquerschnitt(mqB, dtoUpdate, stadtbezirkMapper);
+        Mockito.verify(mapperSpy, Mockito.times(1)).createMessquerschnitt(dtoCreate);
+    }
+
+    // DTO mit null AnzahlDetektoren -> wird wie 0 behandelt (Entfernen)
+    @Test
+    void updateMessquerschnitte_dtoWithNullAnzahlDetektoren_treatedAsZero() {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId("mq1");
+        existing.add(mq);
+
+        final var dto = new MessquerschnittDto();
+        dto.setMqId("mq1"); // AnzahlDetektoren bleibt null
+
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto));
+
+        // null wird mittels ObjectUtils.getIfNull(...,0) zu 0 -> Entfernen
+        Assertions.assertThat(result).isEmpty();
+    }
+
+    // Vorhandener Messquerschnitt hat null mqId -> aktuell wird eine NullPointerException erwartet
+    @Test
+    void updateMessquerschnitte_existingWithNullMqId_throwsNPE() {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId(null);
+        existing.add(mq);
+
+        // Keine DTOs (oder leere Liste) -> bei Filter wird auf mqId::equalsIgnoreCase zugegriffen -> NPE
+        Assertions.assertThatThrownBy(() -> messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of()))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    // Doppelte DTO-mqId: erstes DTO erzeugt, zweites DTO führt zum Update des erzeugten Eintrags
+    @Test
+    void updateMessquerschnitte_duplicateDtoIds_createThenUpdate() throws IllegalAccessException {
+        final var existing = new ArrayList<Messquerschnitt>();
+
+        final var dto1 = new MessquerschnittDto();
+        dto1.setMqId("dup");
+        dto1.setAnzahlDetektoren(1);
+        final var dto2 = new MessquerschnittDto();
+        dto2.setMqId("dup");
+        dto2.setAnzahlDetektoren(1);
+
+        final var mapperSpy = Mockito.spy(this.messstelleReceiverMapper);
+        final var created = new Messquerschnitt();
+        created.setMqId("dup");
+        Mockito.doReturn(created).when(mapperSpy).createMessquerschnitt(Mockito.any());
+        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", mapperSpy, true);
+
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto1, dto2));
+
+        // Es sollte nur ein Eintrag existieren
+        Assertions.assertThat(result).hasSize(1).containsExactly(created);
+        // create einmal, update einmal (für das zweite DTO)
+        Mockito.verify(mapperSpy, Mockito.times(1)).createMessquerschnitt(Mockito.any());
+        Mockito.verify(mapperSpy, Mockito.times(1)).updateMessquerschnitt(Mockito.eq(created), Mockito.eq(dto2), Mockito.eq(stadtbezirkMapper));
+    }
 }
