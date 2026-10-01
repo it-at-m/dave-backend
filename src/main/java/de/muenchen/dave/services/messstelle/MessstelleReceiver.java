@@ -13,14 +13,18 @@ import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockAssert;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -133,24 +137,52 @@ public class MessstelleReceiver {
         }
     }
 
+    /**
+     * Aktualisiert die Messquerschnitte einer Messstelle anhand der übergebenen DTOs.
+     * Entfernt Querschnitte, die in den DTOs ohne Detektoren gemeldet werden,
+     * aktualisiert vorhandene Einträge bei gleicher mqId (case‑insensitive)
+     * und fügt neue Querschnitte hinzu, wenn sie in den DTOs enthalten sind.
+     *
+     * @param messquerschnitte vorhandene Messquerschnitte (kann null sein)
+     * @param messquerschnitteDto eingehende DTOs mit Messquerschnittsdaten (kann null sein)
+     * @return aktualisierte Liste der Messquerschnitte
+     */
     protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(
             final List<Messquerschnitt> messquerschnitte,
             final List<MessquerschnittDto> messquerschnitteDto) {
-        if (CollectionUtils.isNotEmpty(messquerschnitteDto)) {
-            messquerschnitteDto.forEach(messquerschnittDto -> {
+
+        final var messquerschnitteDtoWithDetectors = new ArrayList<MessquerschnittDto>();
+        final var mqIdsWithoutDetectors = new ArrayList<String>();
+        ListUtils.emptyIfNull(messquerschnitteDto).forEach(messquerschnittDto -> {
+            final var detectorsAvailable = ObjectUtils.getIfNull(messquerschnittDto.getAnzahlDetektoren(), 0) > 0;
+            if (detectorsAvailable) {
+                messquerschnitteDtoWithDetectors.add(messquerschnittDto);
+            } else {
+                mqIdsWithoutDetectors.add(messquerschnittDto.getMqId());
+            }
+        });
+        // Entferne vorhandene Messquerschnitte, deren mqId in den DTOs ohne Detektoren auftaucht
+        final var messquerschnitteWithDetectors = ListUtils.emptyIfNull(messquerschnitte)
+                .stream()
+                .filter(messquerschnitt -> !mqIdsWithoutDetectors.contains(messquerschnitt.getMqId()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // Aktualisiere vorhandene oder füge neue Messquerschnitte für DTOs mit Detektoren hinzu
+        if (CollectionUtils.isNotEmpty(messquerschnitteDtoWithDetectors)) {
+            messquerschnitteDtoWithDetectors.forEach(messquerschnittDto -> {
                 final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
-                messquerschnitte.forEach(messquerschnitt -> {
+                messquerschnitteWithDetectors.forEach(messquerschnitt -> {
                     if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
                         messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto, stadtbezirkMapper);
                         messquerschnittDtoDoesNotExist.set(false);
                     }
                 });
                 if (messquerschnittDtoDoesNotExist.get()) {
-                    messquerschnitte.add(messstelleReceiverMapper.createMessquerschnitt(messquerschnittDto));
+                    messquerschnitteWithDetectors.add(messstelleReceiverMapper.createMessquerschnitt(messquerschnittDto));
                 }
             });
         }
-        return messquerschnitte;
+        return messquerschnitteWithDetectors;
     }
 
     /**
