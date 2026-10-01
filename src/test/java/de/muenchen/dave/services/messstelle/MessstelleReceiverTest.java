@@ -276,138 +276,102 @@ public class MessstelleReceiverTest {
         Mockito.verify(emailSendService, Mockito.times(1)).sendMailForMessstelleChangeMessage(messstelleChangeMessage);
     }
 
-    // -------------------- Tests für updateMessquerschnitteOfMessstelle --------------------
-
+    // Beide Parameter null -> Ergebnisliste leer
     @Test
-    void updateMessquerschnitteOfMessstelle_nullInputs_gibtLeereListeZurueck() throws IllegalAccessException {
-        // Wenn sowohl vorhandene Messquerschnitte als auch DTOs null sind,
-        // dann soll eine leere Liste zurückgegeben werden.
+    void updateMessquerschnitte_bothNull_returnsEmptyList() {
         final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(null, null);
-
         Assertions.assertThat(result).isNotNull().isEmpty();
     }
 
+    // DTO-Liste null -> vorhandene Messquerschnitte bleiben unverändert
     @Test
-    void updateMessquerschnitteOfMessstelle_entferntExactMatchUndFuegtNeueHinzu() throws IllegalAccessException {
-        // Vorhandene Messquerschnitte: mq1, mq2
-        final var existing1 = new Messquerschnitt();
-        existing1.setMqId("mq1");
-        final var existing2 = new Messquerschnitt();
-        existing2.setMqId("mq2");
-        final var existing = new ArrayList<Messquerschnitt>(List.of(existing1, existing2));
+    void updateMessquerschnitte_dtoNull_returnsExistingList() {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId("mq1");
+        existing.add(mq);
 
-        // DTOs: mq1 mit 0 Detektoren (soll entfernt werden), mq3 mit >0 Detektoren (soll neu angelegt werden)
-        final var dtoRemove = new MessquerschnittDto();
-        dtoRemove.setMqId("mq1");
-        dtoRemove.setAnzahlDetektoren(0);
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, null);
 
-        final var dtoNew = new MessquerschnittDto();
-        dtoNew.setMqId("mq3");
-        dtoNew.setAnzahlDetektoren(2);
-
-        final var dtos = List.of(dtoRemove, dtoNew);
-
-        // Spy des Mappers, damit createMessquerschnitt kontrolliert zurückgegeben werden kann
-        final var spyMapper = Mockito.spy(this.messstelleReceiverMapper);
-        final var createdMq3 = new Messquerschnitt();
-        createdMq3.setMqId("mq3");
-        Mockito.doReturn(createdMq3).when(spyMapper).createMessquerschnitt(dtoNew);
-
-        // Mapper in den Receiver injizieren
-        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", spyMapper, true);
-
-        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, dtos);
-
-        // Erwartet: mq1 entfernt, mq2 bleibt, mq3 neu hinzugefügt
-        Assertions.assertThat(result).hasSize(2);
-        Assertions.assertThat(result).extracting(Messquerschnitt::getMqId).containsExactlyInAnyOrder("mq2", "mq3");
-
-        // createMessquerschnitt sollte genau einmal für dtoNew aufgerufen worden sein
-        Mockito.verify(spyMapper, Mockito.times(1)).createMessquerschnitt(dtoNew);
-        // updateMessquerschnitt sollte nicht aufgerufen worden sein
-        Mockito.verify(spyMapper, Mockito.times(0)).updateMessquerschnitt(Mockito.any(), Mockito.any(), Mockito.any());
+        Assertions.assertThat(result).hasSize(1).containsExactly(mq);
     }
 
+    // Wenn DTO einen Messquerschnitt ohne Detektoren meldet, wird der vorhandene entfernt (case-insensitive)
     @Test
-    void updateMessquerschnitteOfMessstelle_updateIgnoreCase_fallsVorhanden() throws IllegalAccessException {
-        // Vorhandenes Messquerschnitt mit MQID "MQ1" (Großbuchstaben)
-        final var existing1 = new Messquerschnitt();
-        existing1.setMqId("MQ1");
-        final var existing = new ArrayList<Messquerschnitt>(List.of(existing1));
+    void updateMessquerschnitte_dtoWithoutDetectors_removesExisting() {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId("MQ1");
+        existing.add(mq);
 
-        // DTO mit gleicher mqId in gleicher Schreibweise "MQ1" und >0 Detektoren -> sollte updaten (equalsIgnoreCase)
         final var dto = new MessquerschnittDto();
-        dto.setMqId("MQ1");
-        dto.setAnzahlDetektoren(1);
-
-        final var spyMapper = Mockito.spy(this.messstelleReceiverMapper);
-        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", spyMapper, true);
+        dto.setMqId("mq1");
+        dto.setAnzahlDetektoren(0);
 
         final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto));
 
-        // Es sollte weiterhin genau ein Eintrag vorhanden sein
-        Assertions.assertThat(result).hasSize(1);
-        // MQID bleibt erhalten (das Objekt wurde ggf. aktualisiert)
-        Assertions.assertThat(result.get(0).getMqId()).isEqualTo("MQ1");
-
-        // updateMessquerschnitt sollte exakt einmal aufgerufen worden sein
-        Mockito.verify(spyMapper, Mockito.times(1)).updateMessquerschnitt(existing1, dto, stadtbezirkMapper);
-        // createMessquerschnitt sollte nicht aufgerufen worden sein
-        Mockito.verify(spyMapper, Mockito.times(0)).createMessquerschnitt(Mockito.any());
+        Assertions.assertThat(result).isEmpty();
     }
 
+    // Wenn DTO einen Messquerschnitt mit Detektoren meldet, wird der vorhandene aktualisiert (updateMessquerschnitt aufgerufen)
     @Test
-    void updateMessquerschnitteOfMessstelle_combinedCase_sensitiveRemoval_and_caseInsensitiveUpdate() throws IllegalAccessException {
-        // Vorhandene: A, B, C
-        final var a = new Messquerschnitt();
-        a.setMqId("A");
-        final var b = new Messquerschnitt();
-        b.setMqId("B");
-        final var c = new Messquerschnitt();
-        c.setMqId("C");
-        final var existing = new ArrayList<Messquerschnitt>(List.of(a, b, c));
+    void updateMessquerschnitte_dtoWithDetectors_updatesExisting() throws IllegalAccessException {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId("MQID");
+        existing.add(mq);
 
-        // DTOs:
-        // - "a" mit 0 Detektoren -> wegen case-sensitive Entfernen wird "A" NICHT entfernt
-        // - "B" mit 0 Detektoren -> exakt match, B soll entfernt werden
-        // - "c" mit >0 Detektoren -> update (equalsIgnoreCase)
-        // - "D" mit >0 Detektoren -> create
-        final var dtoAZero = new MessquerschnittDto();
-        dtoAZero.setMqId("a");
-        dtoAZero.setAnzahlDetektoren(0);
-        final var dtoBZero = new MessquerschnittDto();
-        dtoBZero.setMqId("B");
-        dtoBZero.setAnzahlDetektoren(0);
-        final var dtoCUpdate = new MessquerschnittDto();
-        dtoCUpdate.setMqId("C");
-        dtoCUpdate.setAnzahlDetektoren(2);
-        final var dtoDCreate = new MessquerschnittDto();
-        dtoDCreate.setMqId("D");
-        dtoDCreate.setAnzahlDetektoren(1);
+        final var dto = new MessquerschnittDto();
+        dto.setMqId("mqid"); // case-insensitive match
+        dto.setAnzahlDetektoren(2);
 
-        final var dtos = List.of(dtoAZero, dtoBZero, dtoCUpdate, dtoDCreate);
+        // Spy des Mappers injizieren, um die Interaktion zu prüfen
+        final var mapperSpy = Mockito.spy(this.messstelleReceiverMapper);
+        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", mapperSpy, true);
 
-        final var spyMapper = Mockito.spy(this.messstelleReceiverMapper);
-        // create should return a Messquerschnitt with mqId D
-        final var createdD = new Messquerschnitt();
-        createdD.setMqId("D");
-        Mockito.doReturn(createdD).when(spyMapper).createMessquerschnitt(dtoDCreate);
-        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", spyMapper, true);
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto));
 
-        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, dtos);
+        // Der vorhandene Messquerschnitt bleibt erhalten und wird aktualisiert
+        Assertions.assertThat(result).hasSize(1).containsExactly(mq);
+        Mockito.verify(mapperSpy, Mockito.times(1)).updateMessquerschnitt(mq, dto, stadtbezirkMapper);
+    }
 
-        // Erwartet: A (nicht entfernt, da case-sensitive Removal), C (updated), D (neu)
-        Assertions.assertThat(result).hasSize(3);
-        Assertions.assertThat(result).extracting(Messquerschnitt::getMqId).containsExactlyInAnyOrder("A", "C", "D");
+    // Wenn DTO einen neuen Messquerschnitt mit Detektoren meldet, wird ein neuer Eintrag erstellt (createMessquerschnitt aufgerufen)
+    @Test
+    void updateMessquerschnitte_dtoWithDetectors_createsNew() throws IllegalAccessException {
+        final var existing = new ArrayList<Messquerschnitt>();
 
-        // Verifizieren, dass B entfernt wurde
-        Assertions.assertThat(result).doesNotContain(b);
+        final var dto = new MessquerschnittDto();
+        dto.setMqId("NEWMQ");
+        dto.setAnzahlDetektoren(1);
 
-        // update für C (equalsIgnoreCase) wurde aufgerufen
-        Mockito.verify(spyMapper, Mockito.times(1)).updateMessquerschnitt(c, dtoCUpdate, stadtbezirkMapper);
-        // create für D aufgerufen
-        Mockito.verify(spyMapper, Mockito.times(1)).createMessquerschnitt(dtoDCreate);
-        // create für andere Dtos nicht aufgerufen
-        Mockito.verify(spyMapper, Mockito.times(0)).createMessquerschnitt(dtoCUpdate);
+        // Spy des Mappers injizieren und create stubben
+        final var mapperSpy = Mockito.spy(this.messstelleReceiverMapper);
+        final var created = new Messquerschnitt();
+        created.setMqId("NEWMQ_CREATED");
+        Mockito.doReturn(created).when(mapperSpy).createMessquerschnitt(dto);
+        FieldUtils.writeField(messstelleReceiver, "messstelleReceiverMapper", mapperSpy, true);
+
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto));
+
+        Assertions.assertThat(result).hasSize(1).containsExactly(created);
+        Mockito.verify(mapperSpy, Mockito.times(1)).createMessquerschnitt(dto);
+    }
+
+    // Case-Insensitive: vorhandener MQ 'AbC' wird entfernt, wenn DTO 'abc' ohne Detektoren meldet
+    @Test
+    void updateMessquerschnitte_caseInsensitive_removal() {
+        final var existing = new ArrayList<Messquerschnitt>();
+        final var mq = new Messquerschnitt();
+        mq.setMqId("AbC");
+        existing.add(mq);
+
+        final var dto = new MessquerschnittDto();
+        dto.setMqId("abc");
+        dto.setAnzahlDetektoren(0);
+
+        final var result = messstelleReceiver.updateMessquerschnitteOfMessstelle(existing, List.of(dto));
+
+        Assertions.assertThat(result).isEmpty();
     }
 }

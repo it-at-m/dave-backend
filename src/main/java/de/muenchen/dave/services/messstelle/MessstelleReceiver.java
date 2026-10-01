@@ -164,7 +164,10 @@ public class MessstelleReceiver {
         // Entferne vorhandene Messquerschnitte, deren mqId in den DTOs ohne Detektoren auftaucht
         final var messquerschnitteWithDetectors = ListUtils.emptyIfNull(messquerschnitte)
                 .stream()
-                .filter(messquerschnitt -> !mqIdsWithoutDetectors.contains(messquerschnitt.getMqId()))
+                .filter(messquerschnitt -> {
+                    final var mqId = messquerschnitt.getMqId();
+                    return mqIdsWithoutDetectors.stream().noneMatch(mqId::equalsIgnoreCase);
+                })
                 .collect(Collectors.toCollection(ArrayList::new));
 
         // Aktualisiere vorhandene oder füge neue Messquerschnitte für DTOs mit Detektoren hinzu
