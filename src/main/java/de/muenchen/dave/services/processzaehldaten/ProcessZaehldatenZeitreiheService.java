@@ -48,7 +48,7 @@ public class ProcessZaehldatenZeitreiheService {
      * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
      * Zaehlung übereinstimmen.
      * Für alle anderen Zählarten gilt: wenn Fußverkehr ausgewählt ist und es sich nicht um einen
-     * Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der aktiven Zaehlung übereinstimmen.
+     * Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der aktiven Zählung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
@@ -261,22 +261,6 @@ public class ProcessZaehldatenZeitreiheService {
         return true;
     }
 
-    private static boolean hasEqualVerkehrsbeziehungen(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
-        final var currentKeys = currentZaehlung.getVerkehrsbeziehungen() != null
-                ? currentZaehlung.getVerkehrsbeziehungen()
-                        .stream()
-                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
-                        .collect(Collectors.toSet())
-                : Collections.emptySet();
-        final var keys = zaehlung.getVerkehrsbeziehungen() != null
-                ? zaehlung.getVerkehrsbeziehungen()
-                        .stream()
-                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
-                        .collect(Collectors.toSet())
-                : Collections.emptySet();
-        return currentKeys.equals(keys);
-    }
-
     /**
      * Lädt die Daten für eine Zeitreihe und gibt diese zurück
      *
@@ -297,8 +281,12 @@ public class ProcessZaehldatenZeitreiheService {
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
                     List<Zeitintervall> zeitintervalle = List.of();
-                    boolean isFussSelectedAndVerkehrsbeziehungNotPresent = false;
-                    if (checkBewegungsbeziehung(zaehlung, options, currentZaehlung)) {
+                    boolean hasValidBewegungsbeziehungen = checkBewegungsbeziehung(zaehlung, options, currentZaehlung);
+                    // wenn checkBewegungsbeziehung bei einer Standard-Zählung (nicht QU, QJS oder FJS) false liefert,
+                    // handelt es sich um eine Zählung mit selektiertem Fussverkehr und nicht vorhandenen Verkehrsbeziehungen:
+                    boolean isFussSelectedAndVerkehrsbeziehungNotPresent = (!hasValidBewegungsbeziehungen
+                            && !List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart()));
+                    if (hasValidBewegungsbeziehungen || isFussSelectedAndVerkehrsbeziehungNotPresent) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
@@ -312,22 +300,11 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getKreisverkehr(),
                                 options,
                                 Set.of(options.getZeitblock().getTypeZeitintervall()));
-                    } else if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
-                        options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
-                        isFussSelectedAndVerkehrsbeziehungNotPresent = true;
 
-                        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
-                        zeitintervalle = zaehldatenExtractorService.extractZeitintervalle(
-                                UUID.fromString(zaehlung.getId()),
-                                zaehlart,
-                                options.getZeitblock().getStart(),
-                                options.getZeitblock().getEnd(),
-                                zaehlung.getKreisverkehr(),
-                                options,
-                                Set.of(options.getZeitblock().getTypeZeitintervall()));
-
-                        // Fußgänger auf null setzen, da nicht alle Verkehrsbeziehungen übereinstimmen
-                        zeitintervalle.forEach(zi -> zi.setFussgaenger(null));
+                        if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
+                            // Fußgänger auf null setzen, da nicht alle Verkehrsbeziehungen übereinstimmen
+                            zeitintervalle.forEach(zi -> zi.setFussgaenger(null));
+                        }
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
@@ -356,6 +333,34 @@ public class ProcessZaehldatenZeitreiheService {
                     }
                 });
         return ladeZaehldatenZeitreihe;
+    }
+
+    /**
+     * Überprüft, ob zwei {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben.
+     *
+     * @param zaehlung das erste {@link Zaehlung}-Objekt zum Vergleich
+     * @param currentZaehlung das zweite {@link Zaehlung}-Objekt zum Vergleich
+     * @return true, wenn beide {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben, andernfalls
+     *         false
+     */
+    private static boolean hasEqualVerkehrsbeziehungen(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
+        return collectVerkehrsbeziehungKeys(currentZaehlung.getVerkehrsbeziehungen()).equals(collectVerkehrsbeziehungKeys(zaehlung.getVerkehrsbeziehungen()));
+    }
+
+    /**
+     * Liefert ein Set von Schlüsselpaaren (von, nach) aus den übergebenen
+     * Verkehrsbeziehungen.
+     *
+     * @param verkehrsbeziehungen Liste der Verkehrsbeziehungen; {@code null} ergibt ein leeres Set
+     * @return Set von 2‑elementigen Listen [von, nach]
+     */
+    private static Set<?> collectVerkehrsbeziehungKeys(final List<Verkehrsbeziehung> verkehrsbeziehungen) {
+        return verkehrsbeziehungen != null
+                ? verkehrsbeziehungen
+                        .stream()
+                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                        .collect(Collectors.toSet())
+                : Collections.emptySet();
     }
 
     /**
