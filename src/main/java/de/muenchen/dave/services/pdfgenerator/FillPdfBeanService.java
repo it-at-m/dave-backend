@@ -777,6 +777,7 @@ public class FillPdfBeanService {
             if (LadeZaehldatenService.STUNDE.equals(lzDto.getType())
                     || LadeZaehldatenService.GESAMT.equals(lzDto.getType())
                     || LadeZaehldatenService.TAGESWERT.equals(lzDto.getType())
+                    || LadeZaehldatenService.isSpitzenstundeType(lzDto.getType())
                     //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
                     || (LadeZaehldatenService.BLOCK.equals(lzDto.getType())
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {

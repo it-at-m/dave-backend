@@ -316,6 +316,17 @@ public class LadeZaehldatenService {
     }
 
     /**
+     * Prüft, ob der übergebene Typ eine Spitzenstunde (Tag oder Block) bezeichnet.
+     *
+     * @param type Zu prüfender Typ als String
+     * @return {@code true}, wenn er eine Spitzenstunde bezeichnet
+     */
+    public static boolean isSpitzenstundeType(final String type) {
+        return StringUtils.isNotEmpty(type) &&
+                (type.startsWith(SPITZENSTUNDE_TAG) || type.startsWith(SPITZENSTUNDE_BLOCK));
+    }
+
+    /**
      * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in den
      * {@link OptionsDTO} vorhandenen Informationen und der
      * Zaehlungs-ID. Die aus der Datenbank extrahierten Daten werden anschließend nach
