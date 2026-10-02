@@ -7,5 +7,6 @@ public class DiagrammMessstellePdf extends BasicMessstellePdf {
 
     private String chart;
     private String chartTitle;
+    private String zeitauswahl;
 
 }
