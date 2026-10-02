@@ -48,6 +48,8 @@ public class MessstelleReceiver {
     /**
      * Diese Methode lädt regelmäßig alle relevanten Messstellen aus MobidaM.
      * Der Zyklus kann in der application-xxx.yml mittels einer Property geändert werden.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
@@ -87,6 +89,8 @@ public class MessstelleReceiver {
     /**
      * Die Methode legt für die im Parameter gegebenen Messstelle eine neuen Messstelle an.
      * Nach erfolgreichem Anlegen wird eine Infomail bezüglich der neuen Messstelle versandt.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      *
      * @param dto für Messstelle zum anlegen.
      */
@@ -106,6 +110,8 @@ public class MessstelleReceiver {
      * Die Methode aktualisiert eine bereits gespeicherte Messstelle.
      * Nach erfolgreichen Anlegen und der Feststellung einer Statusänderung
      * wird eine Infomail bezüglich der Aktualisierung versandt.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      *
      * @param existingMessstelle als bereits gespeicherte Messstelle.
      * @param dto der Messstelle mit den zu aktualisierenden Daten.
