@@ -133,6 +133,15 @@ public class MessstelleReceiver {
         }
     }
 
+    /**
+     * Aktualisiert die Messquerschnitte einer Messstelle anhand der übergebenen DTOs.
+     * Existierende Messquerschnitte werden bei gleicher mqId aktualisiert, nicht vorhandene
+     * werden neu angelegt. Bei leerer oder null-DTO-Liste bleibt die Eingabeliste unverändert.
+     *
+     * @param messquerschnitte die vorhandenen Messquerschnitte (wird modifiziert)
+     * @param messquerschnitteDto die DTOs mit den aktuellen Messquerschnittsdaten
+     * @return die aktualisierte Liste der Messquerschnitte
+     */
     protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(
             final List<Messquerschnitt> messquerschnitte,
             final List<MessquerschnittDto> messquerschnitteDto) {
