@@ -94,7 +94,7 @@ public class MessstelleReceiver {
         log.info("#createMessstelleCron");
         Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
-        newMessstelle = messstelleIndexService.saveMessstelle(newMessstelle);
+        newMessstelle = messstelleIndexService.saveMessstelleWithDetectors(newMessstelle);
         this.sendMailForUpdatedOrChangedMessstelle(
                 newMessstelle.getId(),
                 newMessstelle.getMstId(),
@@ -122,7 +122,7 @@ public class MessstelleReceiver {
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(toSave.getMessquerschnitte(), dto.getMessquerschnitte());
         toSave.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
-        final Messstelle updated = messstelleIndexService.saveMessstelle(toSave);
+        final Messstelle updated = messstelleIndexService.saveMessstelleWithDetectors(toSave);
         final var statusMessstelleNeu = updated.getStatus();
         if (statusMessstelleAlt != statusMessstelleNeu) {
             this.sendMailForUpdatedOrChangedMessstelle(
