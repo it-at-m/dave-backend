@@ -131,7 +131,7 @@ public class MessstelleReceiverTest {
         messstelle1Saved.setId("1234");
         messstelle1Saved.setMstId("1");
         messstelle1Saved.setStatus(MessstelleStatus.IN_BESTAND);
-        Mockito.when(messstelleIndexService.saveMessstelle(Mockito.any(Messstelle.class))).thenReturn(messstelle1Saved);
+        Mockito.when(messstelleIndexService.saveMessstelleWithDetectors(Mockito.any(Messstelle.class))).thenReturn(messstelle1Saved);
 
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
@@ -139,7 +139,7 @@ public class MessstelleReceiverTest {
 
         Mockito.verify(messstelleReceiverMapperSpy, Mockito.times(1)).createMessstelle(messstelleDto1, stadtbezirkMapper);
 
-        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(Mockito.any(Messstelle.class));
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(Mockito.any(Messstelle.class));
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
                 messstelle1Saved.getId(),
@@ -179,7 +179,7 @@ public class MessstelleReceiverTest {
         savedMessstelle.setMessfaehigkeiten(List.of());
         savedMessstelle.setSuchwoerter(List.of("1"));
         savedMessstelle.setLageplanVorhanden(true);
-        Mockito.when(messstelleIndexService.saveMessstelle(updatedMessstelle)).thenReturn(savedMessstelle);
+        Mockito.when(messstelleIndexService.saveMessstelleWithDetectors(updatedMessstelle)).thenReturn(savedMessstelle);
 
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
@@ -195,7 +195,7 @@ public class MessstelleReceiverTest {
 
         Mockito.verify(customSuggestIndexService, Mockito.times(1)).updateSuggestionsForMessstelle(updatedMessstelle);
 
-        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(updatedMessstelle);
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(updatedMessstelle);
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
                 savedMessstelle.getId(),
@@ -235,7 +235,7 @@ public class MessstelleReceiverTest {
         savedMessstelle.setMessfaehigkeiten(List.of());
         savedMessstelle.setSuchwoerter(List.of("1"));
         savedMessstelle.setLageplanVorhanden(true);
-        Mockito.when(messstelleIndexService.saveMessstelle(updatedMessstelle)).thenReturn(savedMessstelle);
+        Mockito.when(messstelleIndexService.saveMessstelleWithDetectors(updatedMessstelle)).thenReturn(savedMessstelle);
 
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
@@ -251,7 +251,7 @@ public class MessstelleReceiverTest {
 
         Mockito.verify(customSuggestIndexService, Mockito.times(1)).updateSuggestionsForMessstelle(updatedMessstelle);
 
-        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelle(updatedMessstelle);
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(updatedMessstelle);
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(0)).sendMailForUpdatedOrChangedMessstelle(
                 Mockito.any(),
