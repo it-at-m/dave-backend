@@ -159,7 +159,7 @@ public class LadeZaehldatenService {
                             BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
 
             ladeZaehldatumTageswert.setFahrradfahrer(
-                            zeitintervall.getHochrechnung().getHochrechnungRad());
+                    zeitintervall.getHochrechnung().getHochrechnungRad());
             // Beim Fussverkehrs wird keine Hochrechnung durchgeführt.
             ladeZaehldatumTageswert.setFussgaenger(null);
             ladeZaehldatumTageswert.setType(TAGESWERT);

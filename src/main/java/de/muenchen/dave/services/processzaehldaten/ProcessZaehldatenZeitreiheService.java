@@ -454,9 +454,8 @@ public class ProcessZaehldatenZeitreiheService {
 
         // Rad hinzufügen, wenn kein Tageswert vorhanden ist
         final boolean radExists = kategorien.contains(Fahrzeug.RAD);
-        final boolean radMissingTageswert =
-                !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer())
-                        && zeitintervall.getHochrechnung().getHochrechnungRad() == null;
+        final boolean radMissingTageswert = !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer())
+                && zeitintervall.getHochrechnung().getHochrechnungRad() == null;
 
         if (options.getRadverkehr() && radExists && radMissingTageswert) {
             result.add(Fahrzeug.RAD);
