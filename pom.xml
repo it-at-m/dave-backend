@@ -14,22 +14,21 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.boot.version>3.5.16</spring.boot.version>
-        <spring.cloud.version>2025.0.3</spring.cloud.version>
-        <logstash.encoder>8.1</logstash.encoder>
-        <apache.commons.collections4>4.5.0</apache.commons.collections4>
+        <spring.boot.version>4.1.1</spring.boot.version>
+        <spring.cloud.version>2025.1.3</spring.cloud.version>
+        <apache.commons.collections4>4.6.0</apache.commons.collections4>
         <apache.commons.csv>1.14.1</apache.commons.csv>
-        <apache.commons.io>2.21.0</apache.commons.io>
+        <apache.commons.io>2.22.0</apache.commons.io>
         <apache.commons.lang3>3.20.0</apache.commons.lang3>
         <apache.commons.email>1.6.0</apache.commons.email>
         <apache.commons.exec>1.6.0</apache.commons.exec>
         <apache.poi>5.5.1</apache.poi>
-        <guava>33.4.8-jre</guava>
+        <guava>33.7.1-jre</guava>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <openhtmltopdf.version>1.0.10</openhtmltopdf.version>
         <spullara.mustache.java.version>0.9.14</spullara.mustache.java.version>
         <apache.sis.version>1.6</apache.sis.version>
-        <org.jsoup.version>1.20.1</org.jsoup.version>
+        <org.jsoup.version>1.23.2</org.jsoup.version>
         <!-- Plugins -->
         <maven-scm-plugin.version>2.1.0</maven-scm-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
@@ -38,12 +37,13 @@
         <!-- Version muss mit der in den spring-boot-dependencies bereitgestellten Lombok-Version übereinstimmen -->
         <org.projectlombok.lombok.version>1.18.46</org.projectlombok.lombok.version>
         <org.projectlombok.mapstructbinding.version>0.2.0</org.projectlombok.mapstructbinding.version>
-        <shedlock.version>6.8.0</shedlock.version>
-        <openapi-generator-version>7.13.0</openapi-generator-version>
-        <openapi-ui.version>2.8.17</openapi-ui.version>
-        <openapi.jackson-databind-nullable>0.2.6</openapi.jackson-databind-nullable>
+        <shedlock.version>7.10.1</shedlock.version>
+        <openapi-generator-version>7.25.0</openapi-generator-version>
+        <openapi-ui.version>3.1.1</openapi-ui.version>
+        <openapi.jackson-databind-nullable>0.2.11</openapi.jackson-databind-nullable>
         <ai.onnxruntime>1.22.0</ai.onnxruntime>
-        <tika.version>3.3.1</tika.version>
+        <tika.version>4.0.0</tika.version>
+        <hazelcast-spring-session.version>4.0.0</hazelcast-spring-session.version>
 
         <!-- Linting & Formatting -->
         <spotless-maven-plugin.version>2.44.5</spotless-maven-plugin.version>
@@ -159,6 +159,12 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${openapi-ui.version}</version>
         </dependency>
+        <!-- Notwendig für den openapi-generator-maven-plugin -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${openapi.jackson-databind-nullable}</version>
+        </dependency>
 
         <!-- ElasticSearch -->
         <dependency>
@@ -173,15 +179,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-restclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -189,9 +195,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
 
         <!-- Caching -->
         <dependency>
@@ -203,18 +212,16 @@
             <artifactId>caffeine</artifactId>
         </dependency>
 
-        <!-- hazelcast -->
+        <!-- Session -->
         <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session-hazelcast</artifactId>
+            <groupId>com.hazelcast.spring</groupId>
+            <artifactId>hazelcast-spring-session</artifactId>
+            <version>${hazelcast-spring-session.version}</version>
         </dependency>
+        <!-- kept to keep spring.session.timeout as config property and autowire SessionTimeout bean -->
         <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-spring</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-session</artifactId>
         </dependency>
 
         <!-- Spring security -->
@@ -223,8 +230,8 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-client</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -232,7 +239,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+            <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
         </dependency>
 
         <!-- json etc. -->
@@ -261,7 +268,7 @@
         <!-- Hibernate Model Gen for type safe criterias -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
+            <artifactId>hibernate-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -319,7 +326,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -330,17 +337,12 @@
 
         <!-- Logging -->
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing-bridge-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash.encoder}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -423,16 +425,6 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>${openapi.jackson-databind-nullable}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <!-- Geo lib -->
@@ -644,11 +636,13 @@
                                 <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
                                 <dateLibrary>java8-localdatetime</dateLibrary>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>false</useSpringBoot3>
+                                <useSpringBoot4>true</useSpringBoot4>
                             </configOptions>
 
                             <globalProperties>
                                 <supportingFiles>
-                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java,ExceptionProvider.java
                                 </supportingFiles>
                             </globalProperties>
                         </configuration>
@@ -688,11 +682,13 @@
                                 <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
                                 <dateLibrary>java8-localdatetime</dateLibrary>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>false</useSpringBoot3>
+                                <useSpringBoot4>true</useSpringBoot4>
                             </configOptions>
 
                             <globalProperties>
                                 <supportingFiles>
-                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java,ExceptionProvider.java
                                 </supportingFiles>
                             </globalProperties>
                         </configuration>

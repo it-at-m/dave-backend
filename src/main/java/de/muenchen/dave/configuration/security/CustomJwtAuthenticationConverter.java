@@ -1,4 +1,4 @@
-package de.muenchen.dave.security;
+package de.muenchen.dave.configuration.security;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.exec.util.MapUtils;

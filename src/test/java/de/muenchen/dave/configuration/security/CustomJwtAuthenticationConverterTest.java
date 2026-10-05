@@ -1,4 +1,4 @@
-package de.muenchen.dave.security;
+package de.muenchen.dave.configuration.security;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
