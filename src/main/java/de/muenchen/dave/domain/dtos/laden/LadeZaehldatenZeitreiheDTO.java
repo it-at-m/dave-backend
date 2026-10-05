@@ -4,11 +4,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import lombok.Data;
 
 @Data
 public class LadeZaehldatenZeitreiheDTO implements Serializable {
     private List<String> datum = new ArrayList<>();
+    private List<String> fehlendeWerteMeldung = new ArrayList<>();
+    private List<List<Fahrzeug>> tageswertNichtVorhanden = new ArrayList<>();
     private List<BigDecimal> kfz = new ArrayList<>();
     private List<BigDecimal> sv = new ArrayList<>();
     private List<BigDecimal> gv = new ArrayList<>();
