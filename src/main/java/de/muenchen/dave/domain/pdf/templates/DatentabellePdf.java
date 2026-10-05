@@ -20,4 +20,6 @@ public class DatentabellePdf extends BasicPdf {
 
     private String tableTitle;
 
+    private String zeitauswahl;
+
 }
