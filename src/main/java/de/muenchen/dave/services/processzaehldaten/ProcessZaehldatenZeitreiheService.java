@@ -297,11 +297,13 @@ public class ProcessZaehldatenZeitreiheService {
                         final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
 
+                        // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
                         final String missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
                         ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
 
                         ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
+                        // ProZaehlung ein Array mit Fahrzeugkategorien füllen, für die es KEINEN Tageswert gibt (da es nicht hochgerechnet werden konnte)
                         ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(
                                 getNichtVorhandeneTageswerte(options, zeitintervall, zaehlung.getKategorien()));
 
@@ -314,6 +316,7 @@ public class ProcessZaehldatenZeitreiheService {
                             ladeZaehldatenZeitreihe.getDatum()
                                     .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
                             ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                            ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(new ArrayList<>());
                             fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                         }
                     }
@@ -461,7 +464,7 @@ public class ProcessZaehldatenZeitreiheService {
             result.add(Fahrzeug.RAD);
         }
 
-        // Fuß immer hinzufügen wenn Tageswert ausgewählt ist
+        // Fuß immer hinzufügen wenn es gezählt wurde und wenn Tageswert ausgewählt ist, da für Fuß keine Hochrechnung existiert.
         final boolean fussExists = kategorien.contains(Fahrzeug.FUSS);
         if (!Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer()) && fussExists) {
             result.add(Fahrzeug.FUSS);
