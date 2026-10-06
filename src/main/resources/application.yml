@@ -22,10 +22,12 @@ server:
 springdoc:
   api-docs:
     enabled: true
+    version: openapi_3_0
   swagger-ui:
     enabled: true
     csrf:
-      enabled: 'true'
+      enabled: true
+  show-actuator: true
 
 # Config for spring actuator endpoints
 management:
