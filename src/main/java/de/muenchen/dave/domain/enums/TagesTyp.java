@@ -9,12 +9,15 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum TagesTyp {
 
     UNSPECIFIED("unspecified", MesswertRequestDto.TagesTypEnum.DTV, TagesaggregatRequestDto.TagesTypEnum.DTV, null),

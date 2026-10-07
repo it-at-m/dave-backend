@@ -4,6 +4,8 @@ import de.muenchen.dave.util.DaveConstants;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,6 +18,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum Zeitblock implements Serializable {
 
     /**
