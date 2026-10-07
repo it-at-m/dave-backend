@@ -11,6 +11,6 @@ public enum Fahrzeugklasse {
 
     ZWEI_PLUS_EINS,
 
-    ACHT_PLUS_EINS;
+    ACHT_PLUS_EINS
 
 }
