@@ -308,17 +308,25 @@ public class ProcessZaehldatenZeitreiheService {
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
+                        final Zeitintervall zeitintervall = zeitintervalle.getFirst();
                         final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
 
-                        final String suffix;
+                        // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
+                        final String missingValuesMessage;
+
                         if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
-                            suffix = String.format(NICHT_VORH, VERKEHRSBEZIEHUNG);
+                            missingValuesMessage = String.format(NICHT_VORH, VERKEHRSBEZIEHUNG);
                         } else {
-                            suffix = getSuffix(options, zaehlung.getKategorien());
+                            missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
                         }
 
-                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + suffix);
+                        ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
+                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+
+                        // ProZaehlung ein Array mit Fahrzeugkategorien füllen, für die es KEINEN Tageswert gibt (da es nicht hochgerechnet werden konnte)
+                        ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(
+                                getNichtVorhandeneTageswerte(options, zeitintervall, zaehlung.getKategorien()));
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                     } else {
@@ -327,7 +335,9 @@ public class ProcessZaehldatenZeitreiheService {
                             final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
                             ladeZaehldatenZeitreihe.getDatum()
-                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                            ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                            ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(new ArrayList<>());
                             fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                         }
                     }
@@ -364,13 +374,13 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Ermittelt Suffix für nicht vorhandene Verkehrsarten.
+     * Ermittelt Nachricht für nicht vorhandene Verkehrsarten.
      *
      * @param options Filteroptionen fürs Auslesen der gewählten Fahrzeugkategorien
      * @param kategorien beauftragte Fahrzeugkategorien
-     * @return Suffix
+     * @return Nicht-vorhanden-Nachricht
      */
-    private static String getSuffix(final OptionsDTO options, final List<Fahrzeug> kategorien) {
+    private static String getMissingValuesMessage(final OptionsDTO options, final List<Fahrzeug> kategorien) {
         int missing = 0;
         if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
             missing++;
@@ -478,5 +488,37 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getId()).getHours().contains(options.getZeitblock())
                         ||
                         options.getZeitblock().equals(Zeitblock.ZB_00_24));
+    }
+
+    // Ermittelt für die Fahrzeugkategorien RAD und FUSS ob der Tageswert fehlt bzw. nicht hochgerechnet werden konnte.
+    private static List<Fahrzeug> getNichtVorhandeneTageswerte(
+            final OptionsDTO options,
+            final Zeitintervall zeitintervall,
+            final List<Fahrzeug> kategorien) {
+        final List<Fahrzeug> result = new ArrayList<>();
+
+        final boolean isTageswert = Zeitauswahl.TAGESWERT.getCapitalizedName()
+                .equals(options.getZeitauswahl());
+
+        if (!isTageswert) {
+            return result;
+        }
+
+        // Rad hinzufügen, wenn kein Tageswert vorhanden ist
+        final boolean radExists = kategorien.contains(Fahrzeug.RAD);
+        final boolean radMissingTageswert = !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer())
+                && zeitintervall.getHochrechnung().getHochrechnungRad() == null;
+
+        if (options.getRadverkehr() && radExists && radMissingTageswert) {
+            result.add(Fahrzeug.RAD);
+        }
+
+        // Fuß immer hinzufügen wenn es gezählt wurde und wenn Tageswert ausgewählt ist, da für Fuß keine Hochrechnung existiert.
+        final boolean fussExists = kategorien.contains(Fahrzeug.FUSS);
+        if (!Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer()) && fussExists) {
+            result.add(Fahrzeug.FUSS);
+        }
+
+        return result;
     }
 }
