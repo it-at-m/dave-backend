@@ -5,9 +5,12 @@ import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KalendertagService {
@@ -34,4 +37,16 @@ public class KalendertagService {
         return kalendertagRepository.countAllByDatumGreaterThanEqualAndDatumLessThanEqualAndTagestypIn(startDateIncluded, endDateIncluded, tagestypen);
     }
 
+    public Optional<Kalendertag> findByDatum(final LocalDate datum) {
+        return kalendertagRepository.findByDatum(datum);
+    }
+
+    public void saveAllAndFlush(final List<Kalendertag> kalendertage) {
+        List<Kalendertag> kalendertags = kalendertagRepository.saveAllAndFlush(kalendertage);
+        log.info("Kalendertags saved: {}", kalendertags.size());
+    }
+
+    public void save(final Kalendertag kalendertag) {
+        kalendertagRepository.save(kalendertag);
+    }
 }
