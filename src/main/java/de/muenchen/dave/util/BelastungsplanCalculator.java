@@ -15,6 +15,29 @@ public class BelastungsplanCalculator {
     public static final String SUM_OUT = "sumOut";
 
     /**
+     * Subtrahiert zwei BigDecimal-Arrays elementweise voneinander.
+     *
+     * @param basis Minuend-Array
+     * @param vergleich Subtrahend-Array
+     * @return Differenz
+     */
+    public static BigDecimal[] subtractSums(final BigDecimal[] basis, final BigDecimal[] vergleich) {
+        int minLength = basis.length;
+        if (vergleich != null) {
+            minLength = Math.min(basis.length, vergleich.length);
+        }
+        final BigDecimal[] differences = new BigDecimal[minLength];
+        for (int i = 0; i < minLength; i++) {
+            if (vergleich != null) {
+                differences[i] = basis[i].subtract(vergleich[i]);
+            } else {
+                differences[i] = basis[i].subtract(BigDecimal.ZERO);
+            }
+        }
+        return differences;
+    }
+
+    /**
      * Subtrahiert eine BigDecimal[][]-Matrize von einer anderen.
      *
      * @param basis Minuend-Matrize

@@ -47,6 +47,8 @@ public class ProcessZaehldatenZeitreiheService {
      * Bewegungsbeziehung besitzt.
      * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
      * Zaehlung übereinstimmen.
+     * Für alle anderen Zählarten gilt: wenn Fußverkehr ausgewählt ist und es sich nicht um einen
+     * Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der aktiven Zählung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
@@ -58,6 +60,9 @@ public class ProcessZaehldatenZeitreiheService {
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
         if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
+        } else if (options.getFussverkehr() && !zaehlung.getKreisverkehr() && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
+            // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
+            return false;
         }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
@@ -276,7 +281,12 @@ public class ProcessZaehldatenZeitreiheService {
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
                     List<Zeitintervall> zeitintervalle = List.of();
-                    if (checkBewegungsbeziehung(zaehlung, options, currentZaehlung)) {
+                    boolean hasValidBewegungsbeziehungen = checkBewegungsbeziehung(zaehlung, options, currentZaehlung);
+                    // wenn checkBewegungsbeziehung bei einer Standard-Zählung (nicht QU, QJS oder FJS) false liefert,
+                    // handelt es sich um eine Zählung mit selektiertem Fussverkehr und nicht vorhandenen Verkehrsbeziehungen:
+                    boolean isFussSelectedAndVerkehrsbeziehungNotPresent = (!hasValidBewegungsbeziehungen
+                            && !List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart()));
+                    if (hasValidBewegungsbeziehungen || isFussSelectedAndVerkehrsbeziehungNotPresent) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
@@ -290,6 +300,11 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getKreisverkehr(),
                                 options,
                                 Set.of(options.getZeitblock().getTypeZeitintervall()));
+
+                        if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
+                            // Fußgänger auf null setzen, da nicht alle Verkehrsbeziehungen übereinstimmen
+                            zeitintervalle.forEach(zi -> zi.setFussgaenger(null));
+                        }
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
@@ -298,9 +313,15 @@ public class ProcessZaehldatenZeitreiheService {
                                 options);
 
                         // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
-                        final String missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
-                        ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
+                        final String missingValuesMessage;
 
+                        if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
+                            missingValuesMessage = String.format(NICHT_VORH, VERKEHRSBEZIEHUNG);
+                        } else {
+                            missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
+                        }
+
+                        ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
                         ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
 
                         // ProZaehlung ein Array mit Fahrzeugkategorien füllen, für die es KEINEN Tageswert gibt (da es nicht hochgerechnet werden konnte)
@@ -322,6 +343,34 @@ public class ProcessZaehldatenZeitreiheService {
                     }
                 });
         return ladeZaehldatenZeitreihe;
+    }
+
+    /**
+     * Überprüft, ob zwei {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben.
+     *
+     * @param zaehlung das erste {@link Zaehlung}-Objekt zum Vergleich
+     * @param currentZaehlung das zweite {@link Zaehlung}-Objekt zum Vergleich
+     * @return true, wenn beide {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben, andernfalls
+     *         false
+     */
+    private static boolean hasEqualVerkehrsbeziehungen(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
+        return collectVerkehrsbeziehungKeys(currentZaehlung.getVerkehrsbeziehungen()).equals(collectVerkehrsbeziehungKeys(zaehlung.getVerkehrsbeziehungen()));
+    }
+
+    /**
+     * Liefert ein Set von Schlüsselpaaren (von, nach) aus den übergebenen
+     * Verkehrsbeziehungen.
+     *
+     * @param verkehrsbeziehungen Liste der Verkehrsbeziehungen; {@code null} ergibt ein leeres Set
+     * @return Set von 2‑elementigen Listen [von, nach]
+     */
+    private static Set<?> collectVerkehrsbeziehungKeys(final List<Verkehrsbeziehung> verkehrsbeziehungen) {
+        return verkehrsbeziehungen != null
+                ? verkehrsbeziehungen
+                        .stream()
+                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                        .collect(Collectors.toSet())
+                : Collections.emptySet();
     }
 
     /**

@@ -8,6 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
@@ -56,6 +57,10 @@ public class AuswertungVisumService {
     public static boolean isZaehlartRelevant(final Zaehlung zaehlung) {
         return !Zaehlart.QJS.name().equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.name().equals(zaehlung.getZaehlart())
                 && !Zaehlart.QU.name().equals(zaehlung.getZaehlart());
+    }
+
+    public static boolean isZaehlungActive(final Zaehlung zaehlung) {
+        return Status.ACTIVE.toString().equals(zaehlung.getStatus());
     }
 
     /**
@@ -140,6 +145,7 @@ public class AuswertungVisumService {
                     final List<LadeZaehlungVisumDTO> relevantZaehlungenVisum = zaehlstelle.getZaehlungen().stream()
                             .filter(AuswertungVisumService::isZaehlartRelevant)
                             .filter(zaehlung -> isZaehldatumRelevant(zaehlung, jahr.toString(), monatTextuell))
+                            .filter(AuswertungVisumService::isZaehlungActive)
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Verkehrsbeziehungen einer Zählung
