@@ -210,15 +210,15 @@ public class ProcessZaehldatenZeitreiheService {
         if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
             final var currentKeys = currentZaehlung.getQuerungsverkehr() != null
                     ? currentZaehlung.getQuerungsverkehr()
-                            .stream()
-                            .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             final var keys = zaehlung.getQuerungsverkehr() != null
                     ? zaehlung.getQuerungsverkehr()
-                            .stream()
-                            .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             return currentKeys.equals(keys);
         }
@@ -227,15 +227,15 @@ public class ProcessZaehldatenZeitreiheService {
         if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
             final var currentKeys = currentZaehlung.getLaengsverkehr() != null
                     ? currentZaehlung.getLaengsverkehr()
-                            .stream()
-                            .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             final var keys = zaehlung.getLaengsverkehr() != null
                     ? zaehlung.getLaengsverkehr()
-                            .stream()
-                            .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             return currentKeys.equals(keys);
         }
@@ -244,15 +244,15 @@ public class ProcessZaehldatenZeitreiheService {
         if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
             final var currentKeys = currentZaehlung.getVerkehrsbeziehungen() != null
                     ? currentZaehlung.getVerkehrsbeziehungen()
-                            .stream()
-                            .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             final var keys = zaehlung.getVerkehrsbeziehungen() != null
                     ? zaehlung.getVerkehrsbeziehungen()
-                            .stream()
-                            .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
-                            .collect(Collectors.toSet())
+                    .stream()
+                    .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                    .collect(Collectors.toSet())
                     : Collections.emptySet();
             return currentKeys.equals(keys);
         }
@@ -367,9 +367,9 @@ public class ProcessZaehldatenZeitreiheService {
     private static Set<?> collectVerkehrsbeziehungKeys(final List<Verkehrsbeziehung> verkehrsbeziehungen) {
         return verkehrsbeziehungen != null
                 ? verkehrsbeziehungen
-                        .stream()
-                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
-                        .collect(Collectors.toSet())
+                .stream()
+                .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                .collect(Collectors.toSet())
                 : Collections.emptySet();
     }
 
@@ -466,8 +466,8 @@ public class ProcessZaehldatenZeitreiheService {
      * @return Stream der gefilterten Zählungen
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,
-            final Zaehlung currentZaehlung,
-            final OptionsDTO options) {
+                                                                       final Zaehlung currentZaehlung,
+                                                                       final OptionsDTO options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
 
