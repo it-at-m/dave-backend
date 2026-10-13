@@ -4,10 +4,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.util.DaveConstants;
 import java.math.BigDecimal;
@@ -62,12 +67,12 @@ public class ZeitintervallZeitblockSummationUtilTest {
 
     @Test
     public void getSummen() {
-        final List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummen(zeitintervalle);
-        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Fahrbeziehung
-        // abzüglich der beiden ZB_06_19 und ZB_06_22 je Fahrbeziehung.
-        assertThat(result.size(), is(Zeitblock.values().length * 2 - 4));
+        final List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummen(Zaehldauer.DAUER_24_STUNDEN, zeitintervalle);
+        // Zeitblock.values().length * 2 - 4 -> Anzahl der Zeitblöcke je Verkehrsbeziehung für Zähldauer 24h
+        // abzüglich der drei Zeitblöcke ZB_19_22, ZB_06_19 und ZB_06_22 je Verkehrsbeziehung.
+        assertThat(result.size(), is(Zeitblock.values().length * 2 - 6));
 
-        // List for each Fahrbeziehung in result has same sorting as Zeitblock-Enum entries
+        // List for each Verkehrsbeziehung in result has same sorting as Zeitblock-Enum entries
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -86,11 +91,11 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(2), is(expected));
+        assertThat(result.get(80), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -109,11 +114,11 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(4));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
-        assertThat(result.get(result.size() / 2 - 2), is(expected));
+        assertThat(result.get(154), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -132,11 +137,11 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(20));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(20));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(20));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() / 2 + 2), is(expected));
+        assertThat(result.get(2), is(expected));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -155,30 +160,26 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
-        assertThat(result.get(result.size() - 2), is(expected));
+        assertThat(result.get(76), is(expected));
     }
 
     @Test
-    public void getSummenForFahrbeziehung() {
+    public void getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer() {
         final Map<ZeitintervallBaseUtil.Intervall, List<Zeitintervall>> zeitintervalleGroupedByIntervall = ZeitintervallBaseUtil
                 .createByIntervallGroupedZeitintervalle(zeitintervalle);
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(2);
-        fahrbeziehung.setNach(1);
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(2);
+        verkehrsbeziehung.setNach(1);
 
-        List<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getSummenForFahrbeziehung",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Fahrbeziehung.class, Map.class),
-                ArrayUtils.toArray(fahrbeziehung, zeitintervalleGroupedByIntervall),
-                List.class);
+        List<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSummenForBewegungsbeziehungForEachZeitblockGivenInZaehldauer(
+                Zaehldauer.DAUER_24_STUNDEN, verkehrsbeziehung, zeitintervalleGroupedByIntervall);
 
-        // Anzahl der Zeitblöcke abzüglich der ZB_06_19 und ZB_06_22
-        assertThat(result.size(), is(Zeitblock.values().length - 2));
+        // Anzahl der Zeitblöcke für Zähldauer 24h abzüglich der Zeitblöcke ZB_19_22, ZB_06_19 und ZB_06_22
+        assertThat(result.size(), is(Zeitblock.values().length - 3));
 
         // List in result has same sorting as Zeitblock-Enum entries
 
@@ -199,9 +200,9 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(40));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(40));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(2), is(expected));
 
@@ -222,24 +223,20 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(4));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(4));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(2);
-        expected.getFahrbeziehung().setNach(1);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(2);
+        expected.getVerkehrsbeziehung().setNach(1);
 
         assertThat(result.get(result.size() - 2), is(expected));
     }
 
     @Test
-    public void getSumme() {
-        final Fahrbeziehung fahrbeziehung = new Fahrbeziehung();
-        fahrbeziehung.setVon(1);
-        fahrbeziehung.setNach(2);
-        Optional<Zeitintervall> result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_00_24, fahrbeziehung, zeitintervalle12),
-                Optional.class);
+    public void getSumme_Verkehrsbeziehung() {
+        final Verkehrsbeziehung verkehrsbeziehung = new Verkehrsbeziehung();
+        verkehrsbeziehung.setVon(1);
+        verkehrsbeziehung.setNach(2);
+
+        Optional<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_00_24, verkehrsbeziehung, zeitintervalle12);
 
         Zeitintervall expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -258,18 +255,13 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(96));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(96));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(96));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_06_10, fahrbeziehung, zeitintervalle12),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_06_10, verkehrsbeziehung, zeitintervalle12);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -288,18 +280,13 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_0500_0530, fahrbeziehung, zeitintervalle12),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_0500_0530, verkehrsbeziehung, zeitintervalle12);
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -318,18 +305,13 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_01_02, fahrbeziehung, zeitintervalle12.subList(0, 7)),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_01_02, verkehrsbeziehung, zeitintervalle12.subList(0, 7));
 
         expected = new Zeitintervall();
         expected.setZaehlungId(zaehlungId);
@@ -348,106 +330,244 @@ public class ZeitintervallZeitblockSummationUtilTest {
         expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
         expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
         expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
-        expected.setFahrbeziehung(new Fahrbeziehung());
-        expected.getFahrbeziehung().setVon(1);
-        expected.getFahrbeziehung().setNach(2);
+        expected.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        expected.getVerkehrsbeziehung().setVon(1);
+        expected.getVerkehrsbeziehung().setNach(2);
 
         assertThat(result.get(), is(expected));
 
-        result = TestUtils.privateStaticMethodCall(
-                "getSumme",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(UUID.class, Zeitblock.class, Fahrbeziehung.class, List.class),
-                ArrayUtils.toArray(zaehlungId, Zeitblock.ZB_10_15, fahrbeziehung, zeitintervalle12.subList(0, 16)),
-                Optional.class);
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_10_15, verkehrsbeziehung, zeitintervalle12.subList(0, 16));
 
         assertThat(result.isPresent(), is(false));
 
     }
 
     @Test
-    public void shouldZeitblockBeCreated() {
-        final ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit startEndeUhrzeit = new ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit();
+    public void getSumme_Querungsverkehr() {
+        final Querungsverkehr querungsverkehr = new Querungsverkehr();
+        querungsverkehr.setKnotenarm(1);
+        querungsverkehr.setRichtung(Himmelsrichtung.N);
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0));
-        boolean result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
+        Optional<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_00_24, querungsverkehr, zeitintervalle12);
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 22, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
+        Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_00_24.getStart());
+        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
+        expected.setSortingIndex(90000000);
+        expected.setPkw(96);
+        expected.setLkw(96);
+        expected.setLastzuege(96);
+        expected.setBusse(96);
+        expected.setKraftraeder(96);
+        expected.setFahrradfahrer(96);
+        expected.setFussgaenger(96);
+        expected.setType(TypeZeitintervall.GESAMT);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(96));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(96));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(96));
+        expected.setQuerungsverkehr(new Querungsverkehr());
+        expected.getQuerungsverkehr().setKnotenarm(1);
+        expected.getQuerungsverkehr().setRichtung(Himmelsrichtung.N);
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 19, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
+        assertThat(result.get(), is(expected));
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 20, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_19, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_06_10, querungsverkehr, zeitintervalle12);
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 5, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 22, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_06_10.getStart());
+        expected.setEndeUhrzeit(Zeitblock.ZB_06_10.getEnd());
+        expected.setSortingIndex(25000000);
+        expected.setPkw(16);
+        expected.setLkw(16);
+        expected.setLastzuege(16);
+        expected.setBusse(16);
+        expected.setKraftraeder(16);
+        expected.setFahrradfahrer(16);
+        expected.setFussgaenger(16);
+        expected.setType(TypeZeitintervall.BLOCK);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
+        expected.setQuerungsverkehr(new Querungsverkehr());
+        expected.getQuerungsverkehr().setKnotenarm(1);
+        expected.getQuerungsverkehr().setRichtung(Himmelsrichtung.N);
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_06_22, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(false));
+        assertThat(result.get(), is(expected));
 
-        startEndeUhrzeit.setStartUhrzeit(LocalDateTime.of(1941, 5, 12, 6, 0));
-        startEndeUhrzeit.setEndeUhrzeit(LocalDateTime.of(1941, 5, 12, 21, 0));
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_0500_0530, querungsverkehr, zeitintervalle12);
 
-        startEndeUhrzeit.setStartUhrzeit(null);
-        startEndeUhrzeit.setEndeUhrzeit(null);
-        result = TestUtils.privateStaticMethodCall(
-                "shouldZeitblockBeCreated",
-                ZeitintervallZeitblockSummationUtil.class,
-                ArrayUtils.toArray(Zeitblock.class, ZeitintervallZeitblockSummationUtil.StartEndeUhrzeit.class),
-                ArrayUtils.toArray(Zeitblock.ZB_00_06, startEndeUhrzeit),
-                Boolean.class);
-        assertThat(result, is(true));
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_0500_0530.getStart());
+        expected.setEndeUhrzeit(Zeitblock.ZB_0500_0530.getEnd());
+        expected.setSortingIndex(11022020);
+        expected.setPkw(2);
+        expected.setLkw(2);
+        expected.setLastzuege(2);
+        expected.setBusse(2);
+        expected.setKraftraeder(2);
+        expected.setFahrradfahrer(2);
+        expected.setFussgaenger(2);
+        expected.setType(TypeZeitintervall.STUNDE_HALB);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
+        expected.setQuerungsverkehr(new Querungsverkehr());
+        expected.getQuerungsverkehr().setKnotenarm(1);
+        expected.getQuerungsverkehr().setRichtung(Himmelsrichtung.N);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_01_02, querungsverkehr, zeitintervalle12.subList(0, 7));
+
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_01_02.getStart());
+        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 45)));
+        expected.setSortingIndex(11008008);
+        expected.setPkw(3);
+        expected.setLkw(3);
+        expected.setLastzuege(3);
+        expected.setBusse(3);
+        expected.setKraftraeder(3);
+        expected.setFahrradfahrer(3);
+        expected.setFussgaenger(3);
+        expected.setType(TypeZeitintervall.STUNDE_KOMPLETT);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
+        expected.setQuerungsverkehr(new Querungsverkehr());
+        expected.getQuerungsverkehr().setKnotenarm(1);
+        expected.getQuerungsverkehr().setRichtung(Himmelsrichtung.N);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_10_15, querungsverkehr, zeitintervalle12.subList(0, 16));
+
+        assertThat(result.isPresent(), is(false));
+
+    }
+
+    @Test
+    public void getSumme_Laengsverkehr() {
+        final Laengsverkehr laengserverkehr = new Laengsverkehr();
+        laengserverkehr.setKnotenarm(1);
+        laengserverkehr.setStrassenseite(Himmelsrichtung.N);
+        laengserverkehr.setRichtung(Bewegungsrichtung.EIN);
+
+        Optional<Zeitintervall> result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_00_24, laengserverkehr, zeitintervalle12);
+
+        Zeitintervall expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_00_24.getStart());
+        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(23, 59)));
+        expected.setSortingIndex(90000000);
+        expected.setPkw(96);
+        expected.setLkw(96);
+        expected.setLastzuege(96);
+        expected.setBusse(96);
+        expected.setKraftraeder(96);
+        expected.setFahrradfahrer(96);
+        expected.setFussgaenger(96);
+        expected.setType(TypeZeitintervall.GESAMT);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(96));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(96));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(96));
+        expected.setLaengsverkehr(new Laengsverkehr());
+        expected.getLaengsverkehr().setKnotenarm(1);
+        expected.getLaengsverkehr().setStrassenseite(Himmelsrichtung.N);
+        expected.getLaengsverkehr().setRichtung(Bewegungsrichtung.EIN);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_06_10, laengserverkehr, zeitintervalle12);
+
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_06_10.getStart());
+        expected.setEndeUhrzeit(Zeitblock.ZB_06_10.getEnd());
+        expected.setSortingIndex(25000000);
+        expected.setPkw(16);
+        expected.setLkw(16);
+        expected.setLastzuege(16);
+        expected.setBusse(16);
+        expected.setKraftraeder(16);
+        expected.setFahrradfahrer(16);
+        expected.setFussgaenger(16);
+        expected.setType(TypeZeitintervall.BLOCK);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(16));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(16));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(16));
+        expected.setLaengsverkehr(new Laengsverkehr());
+        expected.getLaengsverkehr().setKnotenarm(1);
+        expected.getLaengsverkehr().setStrassenseite(Himmelsrichtung.N);
+        expected.getLaengsverkehr().setRichtung(Bewegungsrichtung.EIN);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_0500_0530, laengserverkehr, zeitintervalle12);
+
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_0500_0530.getStart());
+        expected.setEndeUhrzeit(Zeitblock.ZB_0500_0530.getEnd());
+        expected.setSortingIndex(11022020);
+        expected.setPkw(2);
+        expected.setLkw(2);
+        expected.setLastzuege(2);
+        expected.setBusse(2);
+        expected.setKraftraeder(2);
+        expected.setFahrradfahrer(2);
+        expected.setFussgaenger(2);
+        expected.setType(TypeZeitintervall.STUNDE_HALB);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(2));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(2));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(2));
+        expected.setLaengsverkehr(new Laengsverkehr());
+        expected.getLaengsverkehr().setKnotenarm(1);
+        expected.getLaengsverkehr().setStrassenseite(Himmelsrichtung.N);
+        expected.getLaengsverkehr().setRichtung(Bewegungsrichtung.EIN);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_01_02, laengserverkehr, zeitintervalle12.subList(0, 7));
+
+        expected = new Zeitintervall();
+        expected.setZaehlungId(zaehlungId);
+        expected.setStartUhrzeit(Zeitblock.ZB_01_02.getStart());
+        expected.setEndeUhrzeit(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(1, 45)));
+        expected.setSortingIndex(11008008);
+        expected.setPkw(3);
+        expected.setLkw(3);
+        expected.setLastzuege(3);
+        expected.setBusse(3);
+        expected.setKraftraeder(3);
+        expected.setFahrradfahrer(3);
+        expected.setFussgaenger(3);
+        expected.setType(TypeZeitintervall.STUNDE_KOMPLETT);
+        expected.setHochrechnung(new Hochrechnung());
+        expected.getHochrechnung().setHochrechnungKfz(BigDecimal.valueOf(3));
+        expected.getHochrechnung().setHochrechnungGv(BigDecimal.valueOf(3));
+        expected.getHochrechnung().setHochrechnungSv(BigDecimal.valueOf(3));
+        expected.setLaengsverkehr(new Laengsverkehr());
+        expected.getLaengsverkehr().setKnotenarm(1);
+        expected.getLaengsverkehr().setStrassenseite(Himmelsrichtung.N);
+        expected.getLaengsverkehr().setRichtung(Bewegungsrichtung.EIN);
+
+        assertThat(result.get(), is(expected));
+
+        result = ZeitintervallZeitblockSummationUtil.getSumme(zaehlungId, Zeitblock.ZB_10_15, laengserverkehr, zeitintervalle12.subList(0, 16));
+
+        assertThat(result.isPresent(), is(false));
 
     }
 

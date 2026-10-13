@@ -1,6 +1,10 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.muenchen.dave.configuration.json.EmptyListSerializer;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,9 +51,14 @@ public class LadeZaehlungDTO {
 
     List<Fahrzeug> kategorien;
 
-    List<BearbeiteFahrbeziehungDTO> fahrbeziehungen;
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
+    List<BearbeiteLaengsverkehrDTO> laengsverkehr;
 
-    FahrbeziehungenDTO auswaehlbareFahrbeziehungen;
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
+    List<BearbeiteQuerungsverkehrDTO> querungsverkehr;
+
+    @JsonSerialize(nullsUsing = EmptyListSerializer.class)
+    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
     ZeitauswahlDTO zeitauswahl;
 

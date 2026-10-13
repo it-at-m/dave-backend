@@ -5,123 +5,146 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.Status;
-import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
+import de.muenchen.dave.util.ChartLegendUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProcessZaehldatenZeitreiheService {
 
-    private static final String FAHRBEZIEHUNG_NICHT_VORHANDEN = "\n(Fahrbez. nicht vorh.)";
-    private final ZeitintervallRepository zeitintervallRepository;
-    private final ZaehlstelleIndexService indexService;
-    private final ZeitauswahlService zeitauswahlService;
+    private static final String VERKEHRSBEZIEHUNG = "Verkehrsbez.";
+    public static final String MEHRERE_VERKEHRSARTEN = "mehrere Verkehrsarten";
+    public static final String NICHT_VORH = "\n(%s nicht vorh.)";
 
-    public ProcessZaehldatenZeitreiheService(final ZaehlstelleIndexService indexService,
-            final ZeitintervallRepository zeitintervallRepository,
-            final ZeitauswahlService zeitauswahlService) {
-        this.zeitauswahlService = zeitauswahlService;
-        this.indexService = indexService;
-        this.zeitintervallRepository = zeitintervallRepository;
-    }
+    private final ZaehldatenExtractorService zaehldatenExtractorService;
+
+    private final ZaehlstelleIndexService indexService;
+
+    private final ZeitauswahlService zeitauswahlService;
 
     /**
      * Hier wird überprüft, ob die mitgegebene Zählung die in den mitgegebenen Optionen ausgewählte
-     * Fahrbeziehung besitzt
+     * Bewegungsbeziehung besitzt.
+     * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
+     * Zaehlung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
-     * @param options
-     * @return
+     * @param options Optionen aus dem Frontend
+     * @param currentZaehlung die aktuelle Zählung
+     * @return true, wenn Check erfolgreich, sonst false
      */
-    private static boolean checkFahrbeziehungen(Zaehlung zaehlung, OptionsDTO options) {
-        List<Fahrbeziehung> fahrbeziehungList;
+    static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
+
+        // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
+        if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
+            return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
+        }
+
+        final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
             // Bei Kreisverkehr: Prüfe auf Knotenarm
-            fahrbeziehungList = zaehlung.getFahrbeziehungen()
+            verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(fahrbeziehung -> fahrbeziehung.getKnotenarm() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getKnotenarm(), options.getVonKnotenarm())
+                            || options.getVonKnotenarm() == null)
                     .collect(Collectors.toList());
         } else {
             // Bei Kreuzung: Prüfe auf Von und Nach
-            fahrbeziehungList = zaehlung.getFahrbeziehungen()
+            verkehrsbeziehungList = zaehlung.getVerkehrsbeziehungen()
                     .stream()
-                    .filter(fahrbeziehung -> fahrbeziehung.getVon() == options.getVonKnotenarm() || options.getVonKnotenarm() == null)
-                    .filter(fahrbeziehung -> fahrbeziehung.getNach() == options.getNachKnotenarm() || options.getNachKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getVon(), options.getVonKnotenarm()) || options.getVonKnotenarm() == null)
+                    .filter(verkehrsbeziehung -> Objects.equals(verkehrsbeziehung.getNach(), options.getNachKnotenarm()) || options.getNachKnotenarm() == null)
                     .collect(Collectors.toList());
         }
-        return fahrbeziehungList.size() > 0;
+        return !verkehrsbeziehungList.isEmpty();
     }
 
     /**
      * Befüllt das übergebene ladeZaehldatenZeitreiheDTO Objekt mit den Zeitreihe-Daten
+     * Dabei wird geprüft, ob die Kategorie existiert/gezählt wurde. Wenn sie nicht existiert, wird der
+     * Wert null
+     * zurückgegeben statt 0 um von einem tatsächlich gezählten 0 Wert unterscheiden zu können.
      *
      * @param options Optionen aus dem Frontend
      * @param ladeZaehldatenZeitreiheDTO Objekt, das befüllt werden soll
      * @param ladeZaehldatumDTO Objekt mit den Werten
+     * @param kategorien Liste der gezählten Fahrzeugkategorien
      */
-    static void fillLadeZaehldatenZeitreiheDTO(final OptionsDTO options, final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
-            final LadeZaehldatumDTO ladeZaehldatumDTO) {
+    static void fillLadeZaehldatenZeitreiheDTO(
+            final OptionsDTO options,
+            final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
+            final LadeZaehldatumDTO ladeZaehldatumDTO,
+            final List<Fahrzeug> kategorien) {
         if (options.getKraftfahrzeugverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getKfz().add(ladeZaehldatumDTO.getKfz());
+            // Wenn Kategorie KFZ nicht vorhanden ist, null liefern statt 0
+            ladeZaehldatenZeitreiheDTO.getKfz().add(kategorien.contains(Fahrzeug.KFZ)
+                    ? ladeZaehldatumDTO.getKfz()
+                    : null);
         }
         if (options.getSchwerverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getSv().add(ladeZaehldatumDTO.getSchwerverkehr());
+            ladeZaehldatenZeitreiheDTO.getSv().add(kategorien.contains(Fahrzeug.SV) ? ladeZaehldatumDTO.getSchwerverkehr() : null);
         }
         if (options.getGueterverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getGv().add(ladeZaehldatumDTO.getGueterverkehr());
+            ladeZaehldatenZeitreiheDTO.getGv().add(kategorien.contains(Fahrzeug.GV) ? ladeZaehldatumDTO.getGueterverkehr() : null);
         }
         if (options.getFussverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getFuss().add(ladeZaehldatumDTO.getFussgaenger());
+            ladeZaehldatenZeitreiheDTO.getFuss().add(kategorien.contains(Fahrzeug.FUSS) ? ladeZaehldatumDTO.getFussgaenger() : null);
         }
         if (options.getRadverkehr()) {
-            ladeZaehldatenZeitreiheDTO.getRad().add(ladeZaehldatumDTO.getFahrradfahrer());
+            ladeZaehldatenZeitreiheDTO.getRad().add(kategorien.contains(Fahrzeug.RAD) ? ladeZaehldatumDTO.getFahrradfahrer() : null);
         }
         if (options.getSchwerverkehrsanteilProzent()) {
-            ladeZaehldatenZeitreiheDTO.getSvAnteilInProzent().add(ladeZaehldatumDTO.getAnteilSchwerverkehrAnKfzProzent());
+            ladeZaehldatenZeitreiheDTO.getSvAnteilInProzent()
+                    .add(kategorien.contains(Fahrzeug.SV_P) ? ladeZaehldatumDTO.getAnteilSchwerverkehrAnKfzProzent() : null);
         }
         if (options.getGueterverkehrsanteilProzent()) {
-            ladeZaehldatenZeitreiheDTO.getGvAnteilInProzent().add(ladeZaehldatumDTO.getAnteilGueterverkehrAnKfzProzent());
+            ladeZaehldatenZeitreiheDTO.getGvAnteilInProzent()
+                    .add(kategorien.contains(Fahrzeug.GV_P) ? ladeZaehldatumDTO.getAnteilGueterverkehrAnKfzProzent() : null);
         }
         if (options.getZeitreiheGesamt()) {
             ladeZaehldatenZeitreiheDTO.getGesamt()
-                    .add(calculateGesamt(ladeZaehldatumDTO.getKfz(), ladeZaehldatumDTO.getFussgaenger(), ladeZaehldatumDTO.getFahrradfahrer()));
+                    .add(calculateGesamt(
+                            kategorien.contains(Fahrzeug.KFZ) ? ladeZaehldatumDTO.getKfz() : null,
+                            kategorien.contains(Fahrzeug.RAD) ? ladeZaehldatumDTO.getFahrradfahrer() : null));
         }
     }
 
     /**
-     * Ermittelt einen Gesamtwert auf KFZ, Fussgänger und Fahrradfahrer und gibt diesen zurück
+     * Ermittelt einen Gesamtwert auf KFZ und Fahrradfahrer und gibt diesen zurück.
+     * Im Fall, dass kein KFZ und kein Rad gezählt wurde, wird null zurückgegeben (um zu unterscheiden
+     * von Summen die tatsächlich 0 sind).
      *
      * @param kfz Wert für Kraftfahrzeuge
-     * @param fussgaenger Wert für Fussgänger
      * @param fahrradfahrer Wert für Fahrradfahrer
-     * @return Summe aus KFZ, Fussgänger und Fahrradfahrer als BigDecimal
+     * @return Summe aus KFZ und Fahrradfahrer als BigDecimal
      */
-    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fussgaenger, final Integer fahrradfahrer) {
+    static BigDecimal calculateGesamt(final BigDecimal kfz, final Integer fahrradfahrer) {
+        if (kfz == null && fahrradfahrer == null) {
+            return null;
+        }
         BigDecimal gesamt = new BigDecimal(0);
-        gesamt = gesamt.add(kfz);
-        if (fussgaenger != null) {
-            gesamt = gesamt.add(BigDecimal.valueOf(fussgaenger));
+        if (kfz != null) {
+            gesamt = gesamt.add(kfz);
         }
         if (fahrradfahrer != null) {
             gesamt = gesamt.add(BigDecimal.valueOf(fahrradfahrer));
@@ -139,7 +162,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      * @param currentDate Datum der aktuell im Frontend gewählten Zählung
      * @param options Optionen aus dem Frontend
-     * @return
+     * @return ältestes Datum
      */
     static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {
         LocalDate oldestDate;
@@ -152,7 +175,6 @@ public class ProcessZaehldatenZeitreiheService {
             oldestDate = oldestZaehlung.getDatum();
         } else {
             // Es wurde kein Datum ausgewählt, wir versuchen die letzten drei Zählungen zu laden
-
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
@@ -160,7 +182,9 @@ public class ProcessZaehldatenZeitreiheService {
                     .findFirst()
                     .get();
             final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
-                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
+                    // Bei QJS, FJS und QU müssen neben der Zählart auch noch alle Bewegungsbeziehungen übereinstimmen
+                    .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart())
+                            && hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung))
                     .toList();
             final int minIndex = filteredZaehlungen.indexOf(currentZaehlung) - 2;
 
@@ -174,6 +198,62 @@ public class ProcessZaehldatenZeitreiheService {
         }
 
         return oldestDate;
+    }
+
+    private static boolean hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
+        // Bei QU: Prüfe auf Knotenarm und Richtung
+        if (zaehlung.getZaehlart().equals(Zaehlart.QU.toString())) {
+            final var currentKeys = currentZaehlung.getQuerungsverkehr() != null
+                    ? currentZaehlung.getQuerungsverkehr()
+                            .stream()
+                            .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            final var keys = zaehlung.getQuerungsverkehr() != null
+                    ? zaehlung.getQuerungsverkehr()
+                            .stream()
+                            .map(qv -> Arrays.asList(qv.getKnotenarm(), qv.getRichtung()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            return currentKeys.equals(keys);
+        }
+
+        // Bei FJS: Prüfe auf Knotenarm, Richtung und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.FJS.toString())) {
+            final var currentKeys = currentZaehlung.getLaengsverkehr() != null
+                    ? currentZaehlung.getLaengsverkehr()
+                            .stream()
+                            .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            final var keys = zaehlung.getLaengsverkehr() != null
+                    ? zaehlung.getLaengsverkehr()
+                            .stream()
+                            .map(lv -> Arrays.asList(lv.getKnotenarm(), lv.getRichtung(), lv.getStrassenseite()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            return currentKeys.equals(keys);
+        }
+
+        // Bei QJS: Prüfe auf Von, Nach und Straßenseite
+        if (zaehlung.getZaehlart().equals(Zaehlart.QJS.toString())) {
+            final var currentKeys = currentZaehlung.getVerkehrsbeziehungen() != null
+                    ? currentZaehlung.getVerkehrsbeziehungen()
+                            .stream()
+                            .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            final var keys = zaehlung.getVerkehrsbeziehungen() != null
+                    ? zaehlung.getVerkehrsbeziehungen()
+                            .stream()
+                            .map(vb -> Arrays.asList(vb.getVon(), vb.getNach(), vb.getStrassenseite()))
+                            .collect(Collectors.toSet())
+                    : Collections.emptySet();
+            return currentKeys.equals(keys);
+        }
+
+        // Bei allen anderen Zählarten true
+        return true;
     }
 
     /**
@@ -191,46 +271,132 @@ public class ProcessZaehldatenZeitreiheService {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDTO();
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(currentZaehlung.getZaehldauer(), currentZaehlung.getId());
-
-        getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options, zeitauswahlDTO)
+        getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
-                    if (checkFahrbeziehungen(zaehlung, options)) {
+                    List<Zeitintervall> zeitintervalle = List.of();
+                    if (checkBewegungsbeziehung(zaehlung, options, currentZaehlung)) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-                        final Zeitintervall zeitintervall = zeitintervallRepository
-                                .findByZaehlungIdAndTypeAndFahrbeziehungVonAndFahrbeziehungNachAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungFahrbewegungKreisverkehrIsNull(
-                                        UUID.fromString(zaehlung.getId()),
-                                        options.getZeitblock().getTypeZeitintervall(),
-                                        options.getVonKnotenarm(),
-                                        options.getNachKnotenarm(),
-                                        options.getZeitblock().getStart(),
-                                        options.getZeitblock().getEnd());
+                        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+                        zeitintervalle = zaehldatenExtractorService.extractZeitintervalle(
+                                UUID.fromString(zaehlung.getId()),
+                                zaehlart,
+                                options.getZeitblock().getStart(),
+                                options.getZeitblock().getEnd(),
+                                zaehlung.getKreisverkehr(),
+                                options,
+                                Set.of(options.getZeitblock().getTypeZeitintervall()));
+                    }
 
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(zeitintervall, zaehlung.getPkwEinheit(), options);
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                    if (CollectionUtils.isNotEmpty(zeitintervalle)) {
+                        final Zeitintervall zeitintervall = zeitintervalle.getFirst();
+                        final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
+                                options);
 
-                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
+                        // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
+                        final String missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
+                        ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
+
+                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+
+                        // ProZaehlung ein Array mit Fahrzeugkategorien füllen, für die es KEINEN Tageswert gibt (da es nicht hochgerechnet werden konnte)
+                        ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(
+                                getNichtVorhandeneTageswerte(options, zeitintervall, zaehlung.getKategorien()));
+
+                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                     } else {
-                        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
-                        ladeZaehldatumDTO.setPkw(0);
-                        ladeZaehldatumDTO.setLkw(0);
-                        ladeZaehldatumDTO.setLastzuege(0);
-                        ladeZaehldatumDTO.setBusse(0);
-                        ladeZaehldatumDTO.setKraftraeder(0);
-                        ladeZaehldatumDTO.setFahrradfahrer(0);
-                        ladeZaehldatumDTO.setFussgaenger(0);
-                        ladeZaehldatumDTO.setPkwEinheiten(0);
+                        // Wenn Zeitintervalle nicht vorhanden, ein leeres Objekt zurückgeben wenn kein QU, FJS oder QJS
+                        if (!List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
+                            final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
-                        ladeZaehldatenZeitreiheDTO.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + FAHRBEZIEHUNG_NICHT_VORHANDEN);
-                        fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO, ladeZaehldatumDTO);
+                            ladeZaehldatenZeitreihe.getDatum()
+                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                            ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                            ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(new ArrayList<>());
+                            fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
+                        }
                     }
                 });
-        return ladeZaehldatenZeitreiheDTO;
+        return ladeZaehldatenZeitreihe;
+    }
+
+    /**
+     * Ermittelt Nachricht für nicht vorhandene Verkehrsarten.
+     *
+     * @param options Filteroptionen fürs Auslesen der gewählten Fahrzeugkategorien
+     * @param kategorien beauftragte Fahrzeugkategorien
+     * @return Nicht-vorhanden-Nachricht
+     */
+    private static String getMissingValuesMessage(final OptionsDTO options, final List<Fahrzeug> kategorien) {
+        int missing = 0;
+        if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
+            missing++;
+        }
+        if (options.getFussverkehr() && !kategorien.contains(Fahrzeug.FUSS)) {
+            missing++;
+        }
+        if (options.getKraftfahrzeugverkehr() && !kategorien.contains(Fahrzeug.KFZ)) {
+            missing++;
+        }
+        if (options.getGueterverkehr() && !kategorien.contains(Fahrzeug.GV)) {
+            missing++;
+        }
+        if (options.getSchwerverkehr() && !kategorien.contains(Fahrzeug.SV)) {
+            missing++;
+        }
+        if (options.getSchwerverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.SV_P)) {
+            missing++;
+        }
+        if (options.getGueterverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.GV_P)) {
+            missing++;
+        }
+
+        // Wenn 2 oder mehr fehlen zusammenfassen
+        if (missing >= 2) {
+            return String.format(NICHT_VORH, MEHRERE_VERKEHRSARTEN);
+        }
+
+        // Sonst Einzelausgabe
+        if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.RAD);
+        }
+        if (options.getFussverkehr() && !kategorien.contains(Fahrzeug.FUSS)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.FUSSGAENGER);
+        }
+        if (options.getKraftfahrzeugverkehr() && !kategorien.contains(Fahrzeug.KFZ)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.KFZ);
+        }
+        if (options.getGueterverkehr() && !kategorien.contains(Fahrzeug.GV)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.GUETERVERKEHR);
+        }
+        if (options.getSchwerverkehr() && !kategorien.contains(Fahrzeug.SV)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.SCHWERVERKEHR);
+        }
+        if (options.getSchwerverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.SV_P)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
+        }
+        if (options.getGueterverkehrsanteilProzent() && !kategorien.contains(Fahrzeug.GV_P)) {
+            return String.format(NICHT_VORH, ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
+        }
+        return "";
+    }
+
+    // Erstellt ein leeres LadeZaehldatumDTO
+    private static LadeZaehldatumDTO getEmptyLadeZaehldatumDTO() {
+        final var ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum.setPkw(0);
+        ladeZaehldatum.setLkw(0);
+        ladeZaehldatum.setLastzuege(0);
+        ladeZaehldatum.setBusse(0);
+        ladeZaehldatum.setKraftraeder(0);
+        ladeZaehldatum.setFahrradfahrer(0);
+        ladeZaehldatum.setFussgaenger(0);
+        ladeZaehldatum.setPkwEinheiten(0);
+        return ladeZaehldatum;
     }
 
     /**
@@ -243,17 +409,16 @@ public class ProcessZaehldatenZeitreiheService {
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
+     * - Bei QJS, FJS und QU müssen alle Bewegungsbeziehungen übereinstimmen
      *
      * @param zaehlstelle Zählstelle mit allen Zählungen
      * @param currentZaehlung Im Frontend ausgewählten Zählung
      * @param options Optionen aus dem Frontend
-     * @param zeitauswahlDTO ZeitauswahlDTO um für Vergleich von Zeitblock in Zählung
      * @return Stream der gefilterten Zählungen
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,
             final Zaehlung currentZaehlung,
-            final OptionsDTO options,
-            final ZeitauswahlDTO zeitauswahlDTO) {
+            final OptionsDTO options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
 
@@ -274,5 +439,37 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getId()).getHours().contains(options.getZeitblock())
                         ||
                         options.getZeitblock().equals(Zeitblock.ZB_00_24));
+    }
+
+    // Ermittelt für die Fahrzeugkategorien RAD und FUSS ob der Tageswert fehlt bzw. nicht hochgerechnet werden konnte.
+    private static List<Fahrzeug> getNichtVorhandeneTageswerte(
+            final OptionsDTO options,
+            final Zeitintervall zeitintervall,
+            final List<Fahrzeug> kategorien) {
+        final List<Fahrzeug> result = new ArrayList<>();
+
+        final boolean isTageswert = Zeitauswahl.TAGESWERT.getCapitalizedName()
+                .equals(options.getZeitauswahl());
+
+        if (!isTageswert) {
+            return result;
+        }
+
+        // Rad hinzufügen, wenn kein Tageswert vorhanden ist
+        final boolean radExists = kategorien.contains(Fahrzeug.RAD);
+        final boolean radMissingTageswert = !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer())
+                && zeitintervall.getHochrechnung().getHochrechnungRad() == null;
+
+        if (options.getRadverkehr() && radExists && radMissingTageswert) {
+            result.add(Fahrzeug.RAD);
+        }
+
+        // Fuß immer hinzufügen wenn es gezählt wurde und wenn Tageswert ausgewählt ist, da für Fuß keine Hochrechnung existiert.
+        final boolean fussExists = kategorien.contains(Fahrzeug.FUSS);
+        if (!Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer()) && fussExists) {
+            result.add(Fahrzeug.FUSS);
+        }
+
+        return result;
     }
 }

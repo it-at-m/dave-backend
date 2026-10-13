@@ -18,4 +18,6 @@ public class PkwEinheitDTO {
 
     BigDecimal fahrradfahrer;
 
+    BigDecimal fussgaenger;
+
 }

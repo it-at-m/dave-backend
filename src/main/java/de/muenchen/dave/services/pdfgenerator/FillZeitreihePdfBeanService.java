@@ -2,7 +2,6 @@ package de.muenchen.dave.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -15,6 +14,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
+import de.muenchen.dave.util.DomainValues;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -94,9 +94,10 @@ public class FillZeitreihePdfBeanService {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
 
-        zeitreihePdf.setDocumentTitle(String.format("%s %s %s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), zaehlung.getZaehlart()));
+        zeitreihePdf.setDocumentTitle(
+                String.format("%s%s%s", DOCUMENT_TITLE_PREFIX, zaehlstelle.getNummer(), DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart())));
         zeitreihePdf.setChart(chartAsBase64Png);
-        zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options));
+        zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options, zaehlung));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final ZeitreiheTable zeitreiheTable = new ZeitreiheTable();
@@ -107,7 +108,7 @@ public class FillZeitreihePdfBeanService {
         FillPdfBeanService.fillPdfBeanWithData(zeitreihePdf, department);
         fillZusatzinformationenZeitreihe(zeitreihePdf, zaehlung, options, zaehlstelle);
         fillZaehlstelleninformationenZeitreihe(zeitreihePdf, zaehlung);
-        zeitreihePdf.setChartTitle(FillPdfBeanService.createChartTitleFahrbeziehung(options, zaehlung));
+        zeitreihePdf.setChartTitle(FillPdfBeanService.createChartTitleVerkehrsbeziehung(options, zaehlung));
 
         return zeitreihePdf;
     }
@@ -176,9 +177,7 @@ public class FillZeitreihePdfBeanService {
             zusatzinformationenZeitreihePdfComponentList.add(zusatzinformationenZeitreihe);
         }
 
-        final ZeitauswahlDTO zeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(zaehlung.getZaehldauer(), zaehlung.getId());
-
-        processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options, zeitauswahlDTO)
+        processZaehldatenZeitreiheService.getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, zaehlung, options)
                 .filter(zaehlungForComment -> StringUtils.isNotEmpty(zaehlungForComment.getKommentar()))
                 .forEach(zaehlungForComment -> {
                     final ZusatzinformationenZeitreihePdfComponent zusatzinformationenZeitreihe = new ZusatzinformationenZeitreihePdfComponent();

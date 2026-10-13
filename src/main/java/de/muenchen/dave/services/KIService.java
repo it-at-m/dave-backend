@@ -66,11 +66,11 @@ public class KIService {
 
     /**
      * Diese Methode berechnet für eine zweidimensionale Liste von Zeitintervallen einer Zählung (d.h.
-     * für jede Fahrbeziehung der Zählung eine Liste von
-     * Zeitintervallen) die resultierenden Tagessummen der einzelnen Fahrzeugklassen.
+     * für jede Bewegungsbeziehung der Zählung eine Liste von Zeitintervallen) die resultierenden
+     * Tagessummen der einzelnen Fahrzeugklassen.
      *
-     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Fahrbeziehungen in Form einer
-     *            zweidimensionalen Liste
+     * @param zeitintervalle Alle Zeitintervalle einer Zählung für alle Bewegungsbeziehungen in Form
+     *            einer zweidimensionalen Liste
      * @return Ergebnisse als Array von KIPredictionResult
      * @throws PredictionFailedException wenn Eingabedaten falsche Dimension aufweisen
      */
@@ -78,16 +78,16 @@ public class KIService {
             throws PredictionFailedException {
         // Prüfung ob korrekter Parameter übergeben wurde
         if (zeitintervalle.isEmpty()) {
-            throw new PredictionFailedException(PredictionFailedException.NO_FAHRBEZIEHUNGEN);
+            throw new PredictionFailedException(PredictionFailedException.NO_VERKEHRSBEZIEHUNGEN);
         }
 
         // Ueberfluessige Intervall entfernen
         zeitintervalle = zeitintervalle.stream()
-                .map(fahrbeziehung -> fahrbeziehung.stream()
+                .map(zeitintervalleOfBewegungsbeziehungen -> zeitintervalleOfBewegungsbeziehungen.stream()
                         .filter(interval -> (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_06_10 &&
                                 interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_10_15) ||
                                 (interval.getSortingIndex() >= ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_15_19 &&
-                                        interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24))
+                                        interval.getSortingIndex() < ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_19_24_AND_19_22))
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
@@ -114,7 +114,7 @@ public class KIService {
      */
     private long[][] convertToOnnxCompatibleFormat(List<List<Zeitintervall>> zeitintervalle) {
         return zeitintervalle.stream()
-                .map(fahrbeziehungIntervalle -> fahrbeziehungIntervalle.stream()
+                .map(zeitintervalleOfVerkehrsbeziehung -> zeitintervalleOfVerkehrsbeziehung.stream()
                         .map(zeitintervall -> mapper.zeitintervallToKIZeitintervall(zeitintervall).toArray())
                         .flatMapToLong(Arrays::stream)
                         .toArray())
@@ -122,9 +122,8 @@ public class KIService {
     }
 
     /**
-     * @param inputData zweidimensionales long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
-     *            Ebene: Zählungdaten der einzelnen Fahrzeugtypen der
-     *            Fahrbeziehung)
+     * @param inputData zweidimensionales long[][]-Array (1. Ebene: Verkehrsbeziehungen der Zaehlung, 2.
+     *            Ebene: Zählungdaten der einzelnen Fahrzeugtypen der Verkehrsbeziehung)
      * @return Map von OnnxTensor's, die zur Vorhersage benötigt wird.
      * @throws PredictionFailedException wenn bei der Erstellung des Tensors ein Fehler aufgetreten ist.
      */
@@ -140,9 +139,9 @@ public class KIService {
 
     /**
      * @param tensorData Inputdaten in Form einer Map von String zu OnnxTensor
-     * @return Ergebnisse der Berechnung als long[][]-Array (1. Ebene: Fahrbeziehungen der Zaehlung, 2.
-     *         Ebene: Tagessummen der einzelnen Fahrzeugtypen der
-     *         Fahrbeziehung)
+     * @return Ergebnisse der Berechnung als long[][]-Array (1. Ebene: Verkehrsbeziehungen der Zaehlung,
+     *         2.
+     *         Ebene: Tagessummen der einzelnen Fahrzeugtypen der Verkehrsbeziehung)
      * @throws PredictionFailedException wenn eine Inkompatibilität der Daten zum Modell vorliegt oder
      *             kein bzw. ein Ergebnis unbekannten Formates
      *             zurückgeliefert wurde.

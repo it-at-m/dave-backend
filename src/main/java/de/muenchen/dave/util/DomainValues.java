@@ -1,5 +1,7 @@
 package de.muenchen.dave.util;
 
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,4 +49,16 @@ public final class DomainValues {
         }
     }
 
+    /**
+     * Gibt den für die Verwendung in PDF-Reports korrekten Zählart-String zurück.
+     *
+     * @param zaehlart als {@link String}
+     * @return die {@link Zaehlart} der {@link Zaehlung} als String oder {@link StringUtils#EMPTY} falls
+     *         {@link Zaehlart#N}.
+     */
+    public static String getCorrectZaehlartString(String zaehlart) {
+        return Zaehlart.N.toString().equals(zaehlart)
+                ? StringUtils.EMPTY
+                : zaehlart;
+    }
 }

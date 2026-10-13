@@ -9,7 +9,7 @@ public class LadeProcessedZaehldatenDTO implements Serializable {
     LadeZaehldatenTableDTO zaehldatenTable;
     LadeZaehldatenSteplineDTO zaehldatenStepline;
     LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
-    LadeBelastungsplanDTO zaehldatenBelastungsplan;
+    AbstractLadeBelastungsplanDTO<?> zaehldatenBelastungsplan;
     LadeZaehldatenZeitreiheDTO zaehldatenZeitreihe;
 
 }

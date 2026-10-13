@@ -6,7 +6,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
@@ -53,7 +52,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
+                "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS DAVE\\\\;SET SCHEMA DAVE" }
 )
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 class LadeZaehldatenServiceSpringTest {
@@ -93,14 +92,11 @@ class LadeZaehldatenServiceSpringTest {
             startTime = startTime.plusMinutes(15);
         }
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonAndFahrbeziehungNachAndFahrbeziehungFahrbewegungKreisverkehrAndTypeInOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         any(),
                         any(),
                         any(),
-                        any(),
-                        any(),
-                        any(),
-                        anySet()))
+                        any()))
                 .thenReturn(zeitintervalle);
 
     }
@@ -543,6 +539,7 @@ class LadeZaehldatenServiceSpringTest {
         zaehlung.setId(zaehlungId.toString());
         zaehlung.setPkwEinheit(new PkwEinheit());
         zaehlung.setKreisverkehr(false);
+        zaehlung.setZaehlart("N");
         zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
@@ -550,7 +547,7 @@ class LadeZaehldatenServiceSpringTest {
         chosenOptions.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         chosenOptions.setZeitblock(Zeitblock.ZB_00_24);
         chosenOptions.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
-        zeitintervalle.get(0).setType(TypeZeitintervall.BLOCK);
+        zeitintervalle.getFirst().setType(TypeZeitintervall.BLOCK);
         LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(zaehlungId, chosenOptions);
 
         assertThat(ladeZaehldatenTable.getZaehldaten().size(), is(96));

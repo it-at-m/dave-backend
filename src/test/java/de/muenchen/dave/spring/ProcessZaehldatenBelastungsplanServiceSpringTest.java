@@ -5,22 +5,19 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anySet;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
-import de.muenchen.dave.domain.Fahrbeziehung;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -44,6 +41,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,9 +103,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(5);
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(5);
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         zeitintervalle.add(zeitintervall);
 
         zeitintervall = new Zeitintervall();
@@ -122,9 +120,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(50);
         zeitintervall.setFahrradfahrer(60);
         zeitintervall.setFussgaenger(70);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
-        zeitintervall.getFahrbeziehung().setNach(5);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
+        zeitintervall.getVerkehrsbeziehung().setNach(5);
         zeitintervalle.add(zeitintervall);
 
         final Zaehlung zaehlung = new Zaehlung();
@@ -146,44 +144,53 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
-                        Zeitblock.ZB_00_24.getTypeZeitintervall()))
+                        Set.of(Zeitblock.ZB_00_24.getTypeZeitintervall())))
                 .thenReturn(zeitintervalle);
 
-        LadeBelastungsplanDTO ladeBelastungsplan = processZaehldatenBelastungsplanService
+        AbstractLadeBelastungsplanDTO<?> ladeBelastungsplan = processZaehldatenBelastungsplanService
                 .ladeProcessedZaehldatenBelastungsplan(zaehlungId.toString(), options);
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[4][1], is(BigDecimal.valueOf(15)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[4][1], is(BigDecimal.valueOf(9)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[4][1], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getValues()[4][1], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getValues()[4][1], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getValues()[4][1], is(BigDecimal.valueOf(5)));
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[1][4], is(BigDecimal.valueOf(150)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[1][4], is(BigDecimal.valueOf(90)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[1][4], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getValues()[1][4], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getValues()[1][4], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getValues()[1][4], is(BigDecimal.valueOf(50)));
 
-        assertThat(ladeBelastungsplan.getValue1().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSumOut(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(150), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(165), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue2().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSumOut(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(90), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(99), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue3().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSumOut(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSumOut(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(50), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(55), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
         final String[] strassen = { null, "knotenarm_2", null, null, "knotenarm_5", null, null, null };
         assertThat(ladeBelastungsplan.getStreets(), is(strassen));
@@ -218,9 +225,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(5);
-        zeitintervall.getFahrbeziehung().setNach(2);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(5);
+        zeitintervall.getVerkehrsbeziehung().setNach(2);
         zeitintervalle.add(zeitintervall);
 
         zeitintervall = new Zeitintervall();
@@ -235,9 +242,9 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         zeitintervall.setKraftraeder(50);
         zeitintervall.setFahrradfahrer(60);
         zeitintervall.setFussgaenger(70);
-        zeitintervall.setFahrbeziehung(new Fahrbeziehung());
-        zeitintervall.getFahrbeziehung().setVon(2);
-        zeitintervall.getFahrbeziehung().setNach(5);
+        zeitintervall.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        zeitintervall.getVerkehrsbeziehung().setVon(2);
+        zeitintervall.getVerkehrsbeziehung().setNach(5);
         zeitintervalle.add(zeitintervall);
 
         final Zaehlung zaehlung = new Zaehlung();
@@ -259,50 +266,56 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         Zeitblock.ZB_00_24.getStart(),
                         Zeitblock.ZB_00_24.getEnd(),
-                        Zeitblock.ZB_00_24.getTypeZeitintervall()))
+                        Set.of(Zeitblock.ZB_00_24.getTypeZeitintervall())))
                 .thenReturn(zeitintervalle);
 
-        LadeBelastungsplanDTO ladeBelastungsplan = processZaehldatenBelastungsplanService
+        AbstractLadeBelastungsplanDTO<?> ladeBelastungsplan = processZaehldatenBelastungsplanService
                 .ladeProcessedZaehldatenBelastungsplan(zaehlungId.toString(), options);
 
         System.err.println(ladeBelastungsplan);
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[4][1], is(BigDecimal.valueOf(15)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[4][1], is(BigDecimal.valueOf(9)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[4][1], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getValues()[4][1], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getValues()[4][1], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getValues()[4][1], is(BigDecimal.valueOf(5)));
 
-        assertThat(ladeBelastungsplan.getValue1().getValues()[1][4], is(BigDecimal.valueOf(150)));
-        assertThat(ladeBelastungsplan.getValue2().getValues()[1][4], is(BigDecimal.valueOf(90)));
-        assertThat(ladeBelastungsplan.getValue3().getValues()[1][4], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getValues()[1][4], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getValues()[1][4], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getValues()[1][4], is(BigDecimal.valueOf(50)));
 
-        assertThat(ladeBelastungsplan.getValue1().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue1().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue1().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(15), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue2().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue2().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue2().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(9), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
-        assertThat(ladeBelastungsplan.getValue3().getSumIn(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
-        assertThat(ladeBelastungsplan.getValue3().getSumOut(), nullValue());
-        assertThat(ladeBelastungsplan.getValue3().getSum(), is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
-                BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSumIn(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(5), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSumOut(), nullValue());
+        assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue3()).getSum(),
+                is(new BigDecimal[] { BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0),
+                        BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0), BigDecimal.valueOf(0) }));
 
         final String[] strassen = { null, "knotenarm_2", null, null, "knotenarm_5", null, null, null };
         assertThat(ladeBelastungsplan.getStreets(), is(strassen));
     }
 
     @Test
-    void extractZeitintervalleSpitzenstunde() {
+    void extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung() {
         final UUID zaehlungId = UUID.randomUUID();
         final OptionsDTO options = new OptionsDTO();
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
@@ -342,16 +355,13 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         spitzenstunde.setKraftraeder(1);
         spitzenstunde.setFahrradfahrer(1);
         spitzenstunde.setFussgaenger(1);
-        spitzenstunde.setFahrbeziehung(new Fahrbeziehung());
-        spitzenstunde.getFahrbeziehung().setVon(5);
-        spitzenstunde.getFahrbeziehung().setNach(2);
+        spitzenstunde.setVerkehrsbeziehung(new Verkehrsbeziehung());
+        spitzenstunde.getVerkehrsbeziehung().setVon(5);
+        spitzenstunde.getVerkehrsbeziehung().setNach(2);
         spitzenstunde.setType(TypeZeitintervall.SPITZENSTUNDE_KFZ);
         spitzenstunde.setSortingIndex(ZeitintervallSortingIndexUtil.getSortingIndexWithinBlock(spitzenstunde));
         List<Zeitintervall> spitzenstunden = new ArrayList<>();
         spitzenstunden.add(spitzenstunde);
-
-        when(ladeZaehldatenService.extractZeitintervalle(any(), any(), any(), any(), any(), nullable(FahrbewegungKreisverkehr.class), anySet()))
-                .thenReturn(spitzenstunden);
 
         List<Zeitintervall> zeitintervalle = new ArrayList<>();
         LocalDateTime startTime = LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15));
@@ -400,14 +410,15 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         }
 
         when(zeitintervallRepository
-                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndTypeOrderBySortingIndexAsc(
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                         zaehlungId,
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15)),
                         LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15)),
-                        TypeZeitintervall.STUNDE_VIERTEL))
+                        Set.of(TypeZeitintervall.STUNDE_VIERTEL)))
                 .thenReturn(zeitintervalle);
 
-        final List<Zeitintervall> result = processZaehldatenBelastungsplanService.extractZeitintervalleSpitzenstunde(zaehlung, options);
+        final List<Zeitintervall> result = processZaehldatenBelastungsplanService.extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(zaehlung,
+                options);
 
         result.sort(Comparator.comparingInt(Zeitintervall::getPkw));
 
@@ -417,28 +428,28 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         assertThat(result.get(0).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(0).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(0).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(0).getFahrbeziehung().getVon(), is(1));
-        assertThat(result.get(0).getFahrbeziehung().getNach(), is(2));
+        assertThat(result.get(0).getVerkehrsbeziehung().getVon(), is(1));
+        assertThat(result.get(0).getVerkehrsbeziehung().getNach(), is(2));
 
         assertThat(result.get(1).getPkw(), is(8));
         assertThat(result.get(1).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(1).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(1).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(1).getFahrbeziehung().getVon(), is(2));
-        assertThat(result.get(1).getFahrbeziehung().getNach(), is(1));
+        assertThat(result.get(1).getVerkehrsbeziehung().getVon(), is(2));
+        assertThat(result.get(1).getVerkehrsbeziehung().getNach(), is(1));
 
         assertThat(result.get(2).getPkw(), is(12));
         assertThat(result.get(2).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(2).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(2).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(2).getFahrbeziehung().getVon(), is(1));
-        assertThat(result.get(2).getFahrbeziehung().getNach(), is(nullValue()));
+        assertThat(result.get(2).getVerkehrsbeziehung().getVon(), is(1));
+        assertThat(result.get(2).getVerkehrsbeziehung().getNach(), is(nullValue()));
 
         assertThat(result.get(3).getPkw(), is(16));
         assertThat(result.get(3).getType(), is(TypeZeitintervall.SPITZENSTUNDE_KFZ));
         assertThat(result.get(3).getStartUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(8, 15))));
         assertThat(result.get(3).getEndeUhrzeit(), is(LocalDateTime.of(DaveConstants.DEFAULT_LOCALDATE, LocalTime.of(9, 15))));
-        assertThat(result.get(3).getFahrbeziehung().getVon(), is(2));
-        assertThat(result.get(3).getFahrbeziehung().getNach(), is(nullValue()));
+        assertThat(result.get(3).getVerkehrsbeziehung().getVon(), is(2));
+        assertThat(result.get(3).getVerkehrsbeziehung().getNach(), is(nullValue()));
     }
 }

@@ -58,9 +58,9 @@ public final class ZeitintervallSortingIndexUtil {
     public static final int SORTING_INDEX_ZB_15_19 = 40000000;
 
     /**
-     * Summand zur Indexermittlung für {@link Zeitblock#ZB_19_24}.
+     * Summand zur Indexermittlung für {@link Zeitblock#ZB_19_24} und {@link Zeitblock#ZB_19_22}.
      */
-    public static final int SORTING_INDEX_ZB_19_24 = 50000000;
+    public static final int SORTING_INDEX_ZB_19_24_AND_19_22 = 50000000;
 
     /**
      * Der Index für die Spitzenstunde des gesamten Tages für KFZ-Verkehr.
@@ -154,8 +154,10 @@ public final class ZeitintervallSortingIndexUtil {
             sortingIndex = SORTING_INDEX_ZB_10_15;
         } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_15_19)) {
             sortingIndex = SORTING_INDEX_ZB_15_19;
+        } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_22)) {
+            sortingIndex = SORTING_INDEX_ZB_19_24_AND_19_22;
         } else if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, Zeitblock.ZB_19_24)) {
-            sortingIndex = SORTING_INDEX_ZB_19_24;
+            sortingIndex = SORTING_INDEX_ZB_19_24_AND_19_22;
         }
         return sortingIndex;
     }

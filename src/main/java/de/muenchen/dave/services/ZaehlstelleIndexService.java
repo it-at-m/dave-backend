@@ -10,7 +10,6 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -22,15 +21,18 @@ import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -77,9 +79,16 @@ public class ZaehlstelleIndexService {
         this.stadtbezirkMapper = stadtbezirkMapper;
     }
 
-    public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle) throws BrokenInfrastructureException, DataNotFoundException {
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
+    public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle)
+            throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+        final var backendIdDto = new BackendIdDTO();
         if (StringUtils.isEmpty(zaehlstelle.getId())) {
+            final var alreadySavedZaehlstelle = zaehlstelleIndex.findByNummer(zaehlstelle.getNummer());
+            if (alreadySavedZaehlstelle.isPresent()) {
+                final var message = "Es existiert bereits eine Zählstelle mit der Nummer " + zaehlstelle.getNummer();
+                log.error(message);
+                throw new PlausibilityException(message);
+            }
             backendIdDto.setId(this.erstelleZaehlstelle(zaehlstelle));
         } else {
             backendIdDto.setId(this.erneuereZaehlstelle(zaehlstelle, zaehlstelle.getId()));
@@ -167,12 +176,15 @@ public class ZaehlstelleIndexService {
         if (StringUtils.isEmpty(zaehlung.getId())) {
             zaehlung.setId(UUID.randomUUID().toString());
         }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+
+        // Set ID in Verkehrsbeziehung, Laengsverkehr and Querungsverkehr if it exists.
+        Stream.of(
+                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
+                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()),
+                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()))
+                .flatMap(Collection::stream)
+                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId()))
+                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID().toString()));
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
@@ -203,12 +215,15 @@ public class ZaehlstelleIndexService {
         if (StringUtils.isEmpty(zaehlung.getId())) {
             zaehlung.setId(UUID.randomUUID().toString());
         }
-        // Set Fahrbeziehung ID
-        if (CollectionUtils.isNotEmpty(zaehlung.getFahrbeziehungen())) {
-            zaehlung.getFahrbeziehungen().stream()
-                    .filter(fahrbeziehung -> StringUtils.isEmpty(fahrbeziehung.getId()))
-                    .forEach(fahrbeziehung -> fahrbeziehung.setId(UUID.randomUUID().toString()));
-        }
+
+        // Set ID in Verkehrsbeziehung, Laengsverkehr and Querungsverkehr if it exists.
+        Stream.of(
+                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
+                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()),
+                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()))
+                .flatMap(Collection::stream)
+                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId()))
+                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID().toString()));
 
         // Zählstelle erneuern
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
@@ -399,14 +414,6 @@ public class ZaehlstelleIndexService {
             final Zaehlart zaehlart,
             final LocalDate zaehldatum) throws DataNotFoundException {
         return this.ladeZaehlung(zaehlstellenNummer, zaehlart, zaehldatum);
-    }
-
-    public LadeZaehlungDTO getLadeZaehlung(final String zaehlungId) throws DataNotFoundException {
-        final LadeZaehlungDTO ladeZaehlungDTO = this.zaehlungMapper.bean2LadeDto(this.ladeZaehlung(zaehlungId));
-        // Ermittlung möglicher Zeitauswahl
-        ladeZaehlungDTO.setZeitauswahl(
-                this.zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlungDTO.getZaehldauer(), ladeZaehlungDTO.getId()));
-        return ladeZaehlungDTO;
     }
 
     @Cacheable(value = CachingConfiguration.READ_ZAEHLSTELLE_DTO, key = "{#p0, #p1}")

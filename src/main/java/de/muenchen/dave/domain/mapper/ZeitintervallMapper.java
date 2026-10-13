@@ -1,11 +1,16 @@
 package de.muenchen.dave.domain.mapper;
 
+import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
@@ -40,6 +45,17 @@ public interface ZeitintervallMapper {
         zeitintervalle.setEndeUhrzeit(time.toString());
     }
 
-    Zeitintervall zeitintervallDtoToZeitintervall(final ZeitintervallDTO zeitintervalle);
+    Zeitintervall zeitintervallDtoToZeitintervall(final ZeitintervallDTO zeitintervall);
 
+    List<Zeitintervall> deepCopy(final List<Zeitintervall> zeitintervalle);
+
+    Zeitintervall deepCopy(final Zeitintervall zeitintervall);
+
+    Hochrechnung deepCopy(final Hochrechnung hochrechnung);
+
+    Querungsverkehr deepCopy(final Querungsverkehr querungsverkehr);
+
+    Laengsverkehr deepCopy(final Laengsverkehr laengsverkehr);
+
+    Verkehrsbeziehung deepCopy(final Verkehrsbeziehung verkehrsbeziehung);
 }

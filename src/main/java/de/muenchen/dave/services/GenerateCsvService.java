@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -94,7 +95,7 @@ public class GenerateCsvService {
         metaHeader.append(SEMIKOLON);
         metaHeader.append("Zähldatum");
         metaHeader.append(SEMIKOLON);
-        metaHeader.append("Fahrbeziehung");
+        metaHeader.append("Verkehrsbeziehung");
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaHeader.append(SEMIKOLON);
@@ -107,7 +108,7 @@ public class GenerateCsvService {
      *
      * @param metaObject enthält die Zählstelle und Zählung
      * @param header Zur Berechnung der Anzahl der Semikolons
-     * @param options Zur Anzeige der Fahrbeziehung
+     * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
     public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDTO options) {
@@ -123,20 +124,37 @@ public class GenerateCsvService {
             metaData.append(metaObject.getZaehlung().getDatum());
         }
         metaData.append(SEMIKOLON);
-        final StringBuilder fahrbeziehung = new StringBuilder("Von: ");
-        if (options.getVonKnotenarm() != null) {
-            fahrbeziehung.append(options.getVonKnotenarm());
+        final StringBuilder verkehrsbeziehung = new StringBuilder();
+        final var zaehlart = Zaehlart.valueOf(metaObject.getZaehlung().getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+            // Entscheidung, ob bei Verkehrsbeziehung "Teilauswahl" oder "Alle" angezeigt wird
+            if ((options.getChosenVerkehrsbeziehungen() != null
+                    && options.getChosenVerkehrsbeziehungen().size() != metaObject.getZaehlung().getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null
+                            && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size())
+                    ||
+                    (options.getChosenQuerungsverkehre() != null
+                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())) {
+                verkehrsbeziehung.append("Teilauswahl");
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
         } else {
-            fahrbeziehung.append("Alle");
-        }
-        fahrbeziehung.append(" - Nach: ");
-        if (options.getNachKnotenarm() != null) {
-            fahrbeziehung.append(options.getNachKnotenarm());
-        } else {
-            fahrbeziehung.append("Alle");
+            verkehrsbeziehung.append("Von: ");
+            if (options.getVonKnotenarm() != null) {
+                verkehrsbeziehung.append(options.getVonKnotenarm());
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
+            verkehrsbeziehung.append(" - Nach: ");
+            if (options.getNachKnotenarm() != null) {
+                verkehrsbeziehung.append(options.getNachKnotenarm());
+            } else {
+                verkehrsbeziehung.append("Alle");
+            }
         }
 
-        metaData.append(fahrbeziehung);
+        metaData.append(verkehrsbeziehung);
 
         for (int i = 2; i < neededSemikolons; i++) {
             metaData.append(SEMIKOLON);

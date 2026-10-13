@@ -1,0 +1,238 @@
+package de.muenchen.dave.services.ladezaehldaten;
+
+import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.Querungsverkehr;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
+import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
+import de.muenchen.dave.domain.mapper.OptionsMapper;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service zum Extrahieren und Verarbeiten von Zeitintervallen.
+ */
+@Service
+@RequiredArgsConstructor
+public class ZaehldatenExtractorService {
+
+    private final ZeitintervallExtractorService zeitintervallExtractorService;
+
+    private final ZeitintervallSummationService zeitintervallSummationService;
+
+    private final SpitzenstundeCalculatorService spitzenstundeCalculatorService;
+
+    private final OptionsMapper optionsMapper;
+
+    /**
+     * Extrahiert und aggregiert die Zeitintervalle basierend auf den übergebenen Parametern.
+     *
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
+     * Bewegungsbeziehungen.
+     * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     *
+     * Befindet sich im Parameter "types" der Type für eine Spitzenstunde, so werden die aggregierten
+     * Zeitintervalle um die Spitzenstunden ergänzt,
+     *
+     * @param zaehlungId ID der Zählung
+     * @param zaehlart Art der Zählung (QU, FJS, QJS)
+     * @param startUhrzeit Startzeitpunkt
+     * @param endeUhrzeit Endzeitpunkt
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @param options Optionen für die Zählung
+     * @param types Menge der gewünschten Zeitintervalltypen
+     * @return nach dem {@link Zeitintervall#getSortingIndex()} sortierte Liste von verarbeiteten
+     *         Zeitintervallen
+     */
+    public List<Zeitintervall> extractZeitintervalle(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Boolean isKreisverkehr,
+            final OptionsDTO options,
+            final Set<TypeZeitintervall> types) {
+
+        // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung
+        final var zeitintervalleByBewegungsbeziehung = zeitintervallExtractorService.extractZeitintervalle(
+                zaehlungId,
+                zaehlart,
+                startUhrzeit,
+                endeUhrzeit,
+                isKreisverkehr,
+                options,
+                types);
+
+        // Summieren der Zeitintervalle über die Bewegungsbeziehung
+        final var overBewegungsbeziehungSummedZeitintervalle = zeitintervallSummationService
+                .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehung);
+
+        // Ermittlung der Spitzenstunden
+        if (CollectionUtils.containsAny(types, TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD,
+                TypeZeitintervall.SPITZENSTUNDE_FUSS)) {
+
+            /**
+             * Spitzenstunden sind grundsätzlich immer auf Basis der 15-Minuten-Intervalle zu ermitteln.
+             */
+            final var spitzenstunden = extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
+                    zaehlungId,
+                    zaehlart,
+                    startUhrzeit,
+                    endeUhrzeit,
+                    isKreisverkehr,
+                    options,
+                    types);
+            overBewegungsbeziehungSummedZeitintervalle.addAll(spitzenstunden);
+        }
+
+        // Anreichern der Zeitintervalle um die entsprechende Bewegungsbeziehung und Sortieren der Intervalle
+        return overBewegungsbeziehungSummedZeitintervalle.stream()
+                .map(zeitintervall -> enrichZeitintervalleByBewegungsbeziehung(zeitintervall, options, zaehlart, isKreisverkehr))
+                .sorted(Comparator.comparing(Zeitintervall::getSortingIndex)).toList();
+    }
+
+    /**
+     * Extrahiert nur die Spitzenstunden aus den über die Bewegungsbeziehungen aggregierten
+     * Zeitintervallen.
+     * Bei der Aggregation handelt es sich um die Summierung der Zeitintervalle über die einzelnen
+     * Bewegungsbeziehungen.
+     * D.h. es wird die Summe über dieselben Zeitintervalle über die Bewegungsbeziehungen gebildet.
+     *
+     * Unabhängig von den in den Parameter gewählten "types" werden die Spitzenstunden
+     * grundsätzlich immer auf Basis der 15-Minuten-Intervalle ermittelt!
+     *
+     * @param zaehlungId ID der Zählung
+     * @param zaehlart Art der Zählung
+     * @param startUhrzeit Startzeitpunkt
+     * @param endeUhrzeit Endzeitpunkt
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @param options als die gewählten Optionen für die Zählung
+     * @param types Menge der gewünschten Zeitintervalltypen
+     * @return nach dem {@link Zeitintervall#getSortingIndex} sortierte Liste von verarbeiteten
+     *         Spitzenstunden
+     */
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
+            final UUID zaehlungId,
+            final Zaehlart zaehlart,
+            final LocalDateTime startUhrzeit,
+            final LocalDateTime endeUhrzeit,
+            final Boolean isKreisverkehr,
+            final OptionsDTO options,
+            final Set<TypeZeitintervall> types) {
+
+        final var optionsForSpitzenstunden = optionsMapper.deepCopy(options);
+        optionsForSpitzenstunden.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
+        final var typesForSpitzenstunde = new HashSet<>(types);
+        // Ausschließliche Entfernung der halbstündigen Intervalle, da Stundenintervalle ggf. für die Darstellung der Stundensumme benötigt werden.
+        typesForSpitzenstunde.removeAll(Set.of(TypeZeitintervall.STUNDE_HALB));
+        typesForSpitzenstunde.add(optionsForSpitzenstunden.getIntervall().getTypeZeitintervall());
+
+        // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung für die Spitzenstunden
+        final var zeitintervalleByBewegungsbeziehungForSpitzenstunden = zeitintervallExtractorService.extractZeitintervalle(
+                zaehlungId,
+                zaehlart,
+                startUhrzeit,
+                endeUhrzeit,
+                isKreisverkehr,
+                options,
+                typesForSpitzenstunde);
+
+        // Summieren der Zeitintervalle über die Bewegungsbeziehung für die Spitzenstunden
+        final var overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden = zeitintervallSummationService
+                .sumZeitintervelleOverBewegungsbeziehung(zeitintervalleByBewegungsbeziehungForSpitzenstunden);
+
+        // Ermittlung der Spitzenstunden
+        return spitzenstundeCalculatorService.calculateSpitzenstundeForGivenZeitintervalle(
+                zaehlungId,
+                options.getZeitblock(),
+                overBewegungsbeziehungSummedZeitintervalleForSpitzenstunden,
+                typesForSpitzenstunde);
+    }
+
+    /**
+     * Überprüft, ob ein Zeitinterval ein Spitzenstunden-Typ ist.
+     *
+     * @param zeitintervall das Zeitintervall zu überprüfen
+     * @return {@code true}, wenn das Zeitintervall ein Spitzenstunden-Typ ist, andernfalls
+     *         {@code false}
+     */
+    protected boolean isZeitintervallOfTypeSpitzenstunde(final Zeitintervall zeitintervall) {
+        final var typesSpitzenstunde = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.SPITZENSTUNDE_FUSS);
+        return CollectionUtils.containsAny(typesSpitzenstunde, zeitintervall.getType());
+    }
+
+    /**
+     * Ergänzt ein Zeitinterval um die entsprechende Bewegungsbeziehung.
+     *
+     * @param zeitintervall das Zeitintervall zu ergänzen
+     * @param options Optionen für die Zählung
+     * @param zaehlart Art der Zählung (QU, FJS, QJS)
+     * @param isKreisverkehr Flag zur Angabe eines Kreisverkehrs
+     * @return das ergänzte Zeitintervall
+     */
+    protected Zeitintervall enrichZeitintervalleByBewegungsbeziehung(
+            final Zeitintervall zeitintervall,
+            final OptionsDTO options,
+            final Zaehlart zaehlart,
+            final Boolean isKreisverkehr) {
+
+        if (Zaehlart.QU.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenQuerungsverkehre())) {
+            var querungsverkehr = new Querungsverkehr();
+            if (options.getChosenQuerungsverkehre().size() == 1) {
+                var chosenQuerungsverkehr = options.getChosenQuerungsverkehre().getFirst();
+                querungsverkehr.setKnotenarm(chosenQuerungsverkehr.getKnotenarm());
+                querungsverkehr.setRichtung(chosenQuerungsverkehr.getRichtung());
+            }
+            zeitintervall.setQuerungsverkehr(querungsverkehr);
+        } else if (Zaehlart.FJS.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenLaengsverkehre())) {
+            var langsverkehr = new Laengsverkehr();
+            if (options.getChosenLaengsverkehre().size() == 1) {
+                var chosenLaengsverkehr = options.getChosenLaengsverkehre().getFirst();
+                langsverkehr.setKnotenarm(chosenLaengsverkehr.getKnotenarm());
+                langsverkehr.setRichtung(chosenLaengsverkehr.getRichtung());
+                langsverkehr.setStrassenseite(chosenLaengsverkehr.getStrassenseite());
+            }
+            zeitintervall.setLaengsverkehr(langsverkehr);
+        } else if (Zaehlart.QJS.equals(zaehlart) && CollectionUtils.isNotEmpty(options.getChosenVerkehrsbeziehungen())) {
+            var verkehrsbeziehung = new Verkehrsbeziehung();
+            if (options.getChosenVerkehrsbeziehungen().size() == 1) {
+                var chosenVerkehrsbeziehung = options.getChosenVerkehrsbeziehungen().getFirst();
+                verkehrsbeziehung.setVon(chosenVerkehrsbeziehung.getVon());
+                verkehrsbeziehung.setNach(chosenVerkehrsbeziehung.getNach());
+                verkehrsbeziehung.setStrassenseite(chosenVerkehrsbeziehung.getStrassenseite());
+            }
+            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
+        } else {
+            /**
+             * Alle anderen Zaehlarten.
+             */
+            var verkehrsbeziehung = new Verkehrsbeziehung();
+            verkehrsbeziehung.setVon(options.getVonKnotenarm());
+            verkehrsbeziehung.setNach(options.getNachKnotenarm());
+            if (isKreisverkehr) {
+                if (ObjectUtils.isNotEmpty(options.getVonKnotenarm()) && ObjectUtils.isEmpty(options.getNachKnotenarm())) {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HINEIN);
+                } else if (ObjectUtils.isEmpty(options.getVonKnotenarm()) && ObjectUtils.isNotEmpty(options.getNachKnotenarm())) {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.HERAUS);
+                } else {
+                    verkehrsbeziehung.setFahrbewegungKreisverkehr(FahrbewegungKreisverkehr.VORBEI);
+                }
+            }
+            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehung);
+        }
+
+        return zeitintervall;
+    }
+}

@@ -46,11 +46,11 @@ public final class ChartLegendUtil {
 
     public static final String KRAFTRAEDER_HEATMAP = "Krafträder";
 
-    public static final String RAD_HEATMAP = "Fahrräder";
+    public static final String RAD_HEATMAP = "Radverkehr";
 
-    public static final String FUSSGAENGER_HEATMAP = "Fußgänger";
+    public static final String FUSSGAENGER_HEATMAP = "Fußverkehr";
 
-    public static final String KFZ_HEATMAP = "Kraftfahrzeuge";
+    public static final String KFZ_HEATMAP = "Kraftfahrzeugverkehr";
 
     public static final String SCHWERVERKEHR_HEATMAP = "Schwerverkehr";
 

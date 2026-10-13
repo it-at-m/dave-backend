@@ -81,13 +81,15 @@ public class FillPdfBeanService {
 
     public static final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     public static final String DEPARTMENT_FOOTER_NO_AUTHORITY = "no-authority";
-    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle (Zulauf)";
+    public static final String CHART_TITLE_GESAMTE_ZAEHLSTELLE = "Gesamte Zählstelle";
     public static final String CHART_TITLE_GESAMTE_MESSSTELLE = "Gesamte Messstelle";
     public static final String CHART_TITLE_MEHRERE_MESSSTELLE = "Ausgewählte Messstellen";
     public static final String CHART_TITLE_VON = "von";
     public static final String CHART_TITLE_NACH = "nach";
     public static final String CHART_TITLE_OPEN_PARENTHESIS = "(";
     public static final String CHART_TITLE_CLOSE_PARENTHESIS = ")";
+    public static final String CHART_TITLE_ZULAUF = "(Zulauf)";
+    public static final String CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL = "Zählstelle - Teilauswahl";
     public static final String KEINE_DATEN_VORHANDEN = "Keine Daten vorhanden";
     private static final String BELASTUNGSPLAN_TITLE_ZAEHLSTELLE = "Belastungsplan - Zählstelle ";
     private static final String BELASTUNGSPLAN_TITLE_MESSSTELLE = "Belastungsplan - Messstelle ";
@@ -336,48 +338,64 @@ public class FillPdfBeanService {
 
     /**
      * Erstellt und setzt den Titel des Diagramms. Hier wird überprüft ob in den Optionen eine bestimmte
-     * Fahrbeziehung ausgewählt wurde (VonKnotenarm oder / und
+     * Verkehrsbeziehung ausgewählt wurde (VonKnotenarm oder / und
      * NachKnotenarm) und ggf. die Straßennamen und Knotenarmnummern gesetzt. Wenn nichts ausgewählt:
      * "Gesamte Zählstelle" VonKnotenarm ausgewählt: "von
      * [straßenname] ([knotenarmnummer]) " NachKnotenarm ausgewählt: "nach [straßenname]
      * ([knotenarmnummer])" Beides ausgewählt: "von [straßenname]
      * ([knotenarmnummer]) nach [straßenname] ([knotenarmnummer])"
+     * Bei QJS, FJS und QU wird, wenn nicht alle Bewegungsbeziehungen ausgewählt wurden, "Zählstelle -
+     * Teilauswahl"
+     * gesetzt, sonst "Gesamte Zählstelle".
      *
      * @param options Optionen aus dem Frontend
      * @param zaehlung Die im Frontend gewählte Zählung
      * @return chartTitle als String
      */
-    static String createChartTitleFahrbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
+    static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
-        if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
-            chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
-        }
-        if (options.getVonKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
-                    if (!zaehlung.getKreisverkehr()) {
-                        chartTitle.append(CHART_TITLE_VON);
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+            if ((options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size()) ||
+                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size()) ||
+                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size())) {
+                chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
+            } else {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+            }
+        } else {
+            if (options.getVonKnotenarm() == null && options.getNachKnotenarm() == null) {
+                chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
+                chartTitle.append(StringUtils.SPACE);
+                chartTitle.append(CHART_TITLE_ZULAUF);
+            }
+            if (options.getVonKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
+                        if (!zaehlung.getKreisverkehr()) {
+                            chartTitle.append(CHART_TITLE_VON);
+                            chartTitle.append(StringUtils.SPACE);
+                        }
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
                         chartTitle.append(StringUtils.SPACE);
                     }
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
-                    chartTitle.append(StringUtils.SPACE);
                 }
             }
-        }
-        if (options.getNachKnotenarm() != null) {
-            for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
-                if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
-                    chartTitle.append(CHART_TITLE_NACH);
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(knotenarm.getStrassenname());
-                    chartTitle.append(StringUtils.SPACE);
-                    chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
-                    chartTitle.append(knotenarm.getNummer());
-                    chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+            if (options.getNachKnotenarm() != null) {
+                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                    if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
+                        chartTitle.append(CHART_TITLE_NACH);
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(knotenarm.getStrassenname());
+                        chartTitle.append(StringUtils.SPACE);
+                        chartTitle.append(CHART_TITLE_OPEN_PARENTHESIS);
+                        chartTitle.append(knotenarm.getNummer());
+                        chartTitle.append(CHART_TITLE_CLOSE_PARENTHESIS);
+                    }
                 }
             }
         }
@@ -480,7 +498,23 @@ public class FillPdfBeanService {
 
     }
 
-    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO) {
+    /**
+     * Überprüft, ob die schematische Übersicht beim Export dargestellt werden soll.
+     *
+     * @param optionsDTO Options aus dem Frontend
+     * @param zaehlung Die zu exportierende {@link Zaehlung}
+     * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt
+     *         sind.
+     */
+    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final Zaehlung zaehlung) {
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.QJS.equals(zaehlart)) {
+            return optionsDTO.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size();
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+            return optionsDTO.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size();
+        } else if (Zaehlart.QU.equals(zaehlart)) {
+            return optionsDTO.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size();
+        }
         return optionsDTO.getVonKnotenarm() != null || optionsDTO.getNachKnotenarm() != null;
     }
 
@@ -671,7 +705,8 @@ public class FillPdfBeanService {
 
         fillBasicPdf(diagrammPdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        diagrammPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        diagrammPdf
+                .setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         if (zaehlung.getKreisverkehr()) {
             diagrammPdf.setBelastungsplanKreisverkehr(chartAsBase64Png);
         } else {
@@ -720,10 +755,10 @@ public class FillPdfBeanService {
 
         fillBasicPdf(gangliniePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         gangliniePdf.setChart(chartAsBase64Png);
-        gangliniePdf.setChartTitle(createChartTitleFahrbeziehung(options, zaehlung));
-        gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
+        gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
+        gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
@@ -742,6 +777,7 @@ public class FillPdfBeanService {
             if (LadeZaehldatenService.STUNDE.equals(lzDto.getType())
                     || LadeZaehldatenService.GESAMT.equals(lzDto.getType())
                     || LadeZaehldatenService.TAGESWERT.equals(lzDto.getType())
+                    || LadeZaehldatenService.isSpitzenstundeType(lzDto.getType())
                     //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
                     || (LadeZaehldatenService.BLOCK.equals(lzDto.getType())
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
@@ -1095,11 +1131,12 @@ public class FillPdfBeanService {
 
         fillBasicPdf(datentabellePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        datentabellePdf
+                .setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
 
-        datentabellePdf.setTableTitle(createChartTitleFahrbeziehung(options, zaehlung));
+        datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
 
-        datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options));
+        datentabellePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         datentabellePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.getDatentabellePdfZaehldaten(options, zaehlungId);
@@ -1305,16 +1342,5 @@ public class FillPdfBeanService {
             activeTabsAnteile++;
         }
         return activeTabsAnteile;
-    }
-
-    /**
-     * @param zaehlung als {@link Zaehlung}
-     * @return die {@link Zaehlart} der {@link Zaehlung} als String oder {@link StringUtils#EMPTY} falls
-     *         {@link Zaehlart#N}.
-     */
-    public String getCorrectZaehlartString(final Zaehlung zaehlung) {
-        return Zaehlart.N.toString().equals(zaehlung.getZaehlart())
-                ? StringUtils.EMPTY
-                : zaehlung.getZaehlart();
     }
 }

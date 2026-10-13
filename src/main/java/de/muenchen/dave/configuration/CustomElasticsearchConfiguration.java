@@ -35,20 +35,26 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
     @Value(value = "${elasticsearch.socketTimeout}")
     private int socketTimeout;
 
-    @Value(value = "${elasticsearch.http-ca-certificate}")
+    @Value(value = "${elasticsearch.http-ca-certificate:}")
     private String httpCaCertificate;
 
     @Override
     public ClientConfiguration clientConfiguration() {
-        return ClientConfiguration.builder()
-                .connectedTo(this.host + ":" + this.port)
-                .usingSsl(httpCaCertificate)
-                .withBasicAuth(this.user, this.password)
+        ClientConfiguration.TerminalClientConfigurationBuilder builder = ClientConfiguration.builder()
+                .connectedTo(this.host + ":" + this.port);
+
+        // nur SSL/CACert setzen, wenn ein Wert vorhanden ist
+        if (StringUtils.isNotBlank(this.httpCaCertificate)) {
+            builder = ((ClientConfiguration.MaybeSecureClientConfigurationBuilder) builder).usingSsl(this.httpCaCertificate);
+        }
+
+        // ClientConfigurer anhängen
+        builder = builder.withBasicAuth(this.user, this.password)
                 .withConnectTimeout(Duration.ofSeconds(connectTimeout))
                 .withSocketTimeout(Duration.ofSeconds(socketTimeout))
                 .withClientConfigurer(ElasticsearchClients.ElasticsearchHttpClientConfigurationCallback
                         .from(clientBuilder -> {
-                            /**
+                            /*
                              * Setzen der {@link org.apache.http.conn.ConnectionKeepAliveStrategy} in Millisekunden.
                              */
                             clientBuilder.setKeepAliveStrategy((httpResponse, httpContext) -> {
@@ -75,8 +81,9 @@ public class CustomElasticsearchConfiguration extends ElasticsearchConfiguration
                                 return 30 * 1000;
                             });
                             return clientBuilder;
-                        }))
-                .build();
+                        }));
+
+        return builder.build();
     }
 
 }

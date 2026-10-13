@@ -8,6 +8,10 @@ public class PdfBean implements MustacheBean {
 
     private String logoMustachePart;
 
+    private String logoIcon;
+
+    private String logoSubtitle;
+
     private String globalCssMustachePart;
 
     private String footerMustachePart;

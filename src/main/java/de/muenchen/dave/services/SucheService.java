@@ -23,6 +23,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -96,19 +98,22 @@ public class SucheService {
         final Set<ZaehlartenKarteDTO> zaehlartenKarteSet = new HashSet<>();
         CollectionUtils.emptyIfNull(zaehlungen).forEach(zaehlung -> {
             log.debug("Zaehlung: {}", zaehlung.toString());
-            final ZaehlartenKarteDTO zaehlartenKarte = new ZaehlartenKarteDTO();
+            final var zaehlartenKarte = new ZaehlartenKarteDTO();
             zaehlartenKarte.setLatitude(zaehlung.getPunkt().getLat());
             zaehlartenKarte.setLongitude(zaehlung.getPunkt().getLon());
             final Optional<ZaehlartenKarteDTO> optZaehlartenKarte = zaehlartenKarteSet.stream()
                     .filter(zaehlartenKarteDTO -> zaehlartenKarteDTO.equals(zaehlartenKarte))
                     .findFirst();
-            if (optZaehlartenKarte.isPresent()) {
-                optZaehlartenKarte.get().getZaehlarten().add(zaehlung.getZaehlart());
-            } else {
-                final Set<String> zaehlarten = new TreeSet<>();
-                zaehlarten.add(zaehlung.getZaehlart());
-                zaehlartenKarte.setZaehlarten(zaehlarten);
-                zaehlartenKarteSet.add(zaehlartenKarte);
+            final var kuerzelZaehlart = Zaehlart.getKuerzelForZaehlartOrNullIfZaehlartNotExisting(zaehlung.getZaehlart());
+            if (!Objects.isNull(kuerzelZaehlart)) {
+                if (optZaehlartenKarte.isPresent()) {
+                    optZaehlartenKarte.get().getZaehlarten().add(kuerzelZaehlart);
+                } else {
+                    final var zaehlarten = new TreeSet<String>();
+                    zaehlarten.add(kuerzelZaehlart);
+                    zaehlartenKarte.setZaehlarten(zaehlarten);
+                    zaehlartenKarteSet.add(zaehlartenKarte);
+                }
             }
         });
         return zaehlartenKarteSet;

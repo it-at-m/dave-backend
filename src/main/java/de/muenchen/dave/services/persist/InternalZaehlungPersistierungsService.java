@@ -6,13 +6,19 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteFahrbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Fahrbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
+import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
+import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
-import de.muenchen.dave.domain.enums.Zaehldauer;
+import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -21,7 +27,6 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +46,8 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
     private final PkwEinheitRepository pkwEinheitRepository;
 
-    @Value(value = "${dave.radius.distance-check-meter}")
-    private int radiusDistanceCheck;
-
-    public InternalZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
+    public InternalZaehlungPersistierungsService(
+            final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,
@@ -87,12 +89,14 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     @Transactional
     public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
 
         // Setzen der PKW-Einheiten
         if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
             this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
         }
+
+        // Fahrzeugkategorien und -klassen setzen
+        zaehlungDto.setKategorien(getFahrzeugklassen(zaehlungDto.getKategorien()));
 
         final Zaehlung zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {
@@ -108,60 +112,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         }
 
         // Rückgabe der ZaehlungsId
-        backendIdDto.setId(zaehlung.getId());
-        return backendIdDto;
-    }
-
-    /**
-     * In der Methode wird die Zaehlung im Elasticsearch-Server und es werden die Zeitintervalle in der
-     * relationalen Datenbank gespeichert.
-     *
-     * @param zaehlungDto die Zaehlung zum speichern.
-     * @param zaehlstelleId die Id der dazugehörigen Zählstelle
-     * @return die Id der gespeicherten Zaehlung.
-     * @throws BrokenInfrastructureException Beim Schreiben in den Index
-     * @throws DataNotFoundException Beim Schreiben/Laden in/aus den/dem Index
-     */
-    @Transactional
-    public BackendIdDTO saveZaehlungWithZeitintervalle(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
-            throws BrokenInfrastructureException, DataNotFoundException {
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
-
-        // Setzen der PKW-Einheiten
-        if (ObjectUtils.isEmpty(zaehlungDto.getPkwEinheit())) {
-            this.setYoungestPkwEinheitFromRelationalDatabase(zaehlungDto);
-        }
-
-        final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelle(zaehlstelleId);
-
-        // Zaehlung persitieren - ohne Suggestions
-        final Zaehlung zaehlung = this.indexService.erstelleZaehlung(
-                zaehlungDto,
-                zaehlstelleId);
-
-        // Koordinate prüfen.
-        zaehlung.setPunkt(
-                this.getKoordinateZaehlstelleWhenZaehlungWithinDistance(this.radiusDistanceCheck, zaehlstelle, zaehlung));
-
-        // Zeitintervalle persistieren
-        final List<Zeitintervall> zeitintervalleToPersist = new ArrayList<>();
-        zaehlungDto.getFahrbeziehungen().forEach(fahrbeziehungDto -> {
-            fahrbeziehungDto.getZeitintervalle().stream()
-                    .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
-                    .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, fahrbeziehungDto))
-                    .forEach(zeitintervalleToPersist::add);
-        });
-
-        this.zeitintervallPersistierungsService.aufbereitenUndPersistieren(zeitintervalleToPersist,
-                List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                        .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer())));
-
-        // Fahrzeugkategorien und -klassen setzen
-        zaehlung.setKategorien(this.getFahrzeugKategorienAndFahrzeugklassen(zeitintervalleToPersist));
-
-        this.indexService.erneuereZaehlung(zaehlung, zaehlstelle.getId());
-
-        // Rückgabe der ZaehlungsId
+        final var backendIdDto = new BackendIdDTO();
         backendIdDto.setId(zaehlung.getId());
         return backendIdDto;
     }
@@ -170,69 +121,117 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * Diese Methode setzt zusätzliche Informationen in den {@link Zeitintervall}.
      * <p>
      * - Die UUID der {@link Zaehlung}
-     * - Die UUID der {@link Fahrbeziehung}
+     * - Die UUID der {@link Verkehrsbeziehung}
      * - Die {@link Hochrechnung}
-     * - Die {@link de.muenchen.dave.domain.Fahrbeziehung}
+     * - Die {@link de.muenchen.dave.domain.Verkehrsbeziehung}, den
+     * {@link de.muenchen.dave.domain.Laengsverkehr}
+     * oder den {@link de.muenchen.dave.domain.Querungsverkehr}
      *
      * @param zeitintervall in welchem die zusätzlichen Informationen gesetzt werden sollen.
      * @param zaehlung zum Setzen der zusätzlichen Daten.
-     * @param fahrbeziehungDto zum Setzen der zusätzlichen Daten.
+     * @param bearbeiteBewegungsbeziehung zum Setzen der zusätzlichen Daten.
      * @return den {@link Zeitintervall} in welchem die zusätzlichen Informationen gesetzt sind.
      */
-    public Zeitintervall setAdditionalDataToZeitintervall(final Zeitintervall zeitintervall,
+    public Zeitintervall setAdditionalDataToZeitintervall(
+            final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
 
-        this.getFromBearbeiteFahrbeziehungDto(zaehlung, fahrbeziehungDto)
-                .ifPresent(fahrbeziehung -> zeitintervall.setFahrbeziehungId(UUID.fromString(fahrbeziehung.getId())));
+        // Setzen der Bewegungsbeziehungs-Id in Zeitintervall
+        this.getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(zaehlung, bearbeiteBewegungsbeziehung)
+                .ifPresent(bewegungsbeziehung -> zeitintervall.setBewegungsbeziehungId(UUID.fromString(bewegungsbeziehung.getId())));
 
-        zeitintervall.setHochrechnung(
-                this.createHochrechnung(
-                        zeitintervall,
-                        fahrbeziehungDto.getHochrechnungsfaktor(),
-                        zaehlung.getZaehldauer()));
+        // Setzen der Hochrechnug in Zeitintervall
+        final Hochrechnung hochrechnung = this.createHochrechnung(
+                zeitintervall,
+                bearbeiteBewegungsbeziehung.getHochrechnungsfaktor(),
+                zaehlung.getZaehldauer());
+        zeitintervall.setHochrechnung(hochrechnung);
 
-        zeitintervall.setFahrbeziehung(this.mapToFahrbeziehungForZeitintervall(fahrbeziehungDto));
+        // Setzen der Bewegungsbeziehung im Zeitintervall
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        if (Zaehlart.FJS.equals(zaehlart)) {
+            final var bearbeiteLaengsverkehrToMap = (BearbeiteLaengsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final de.muenchen.dave.domain.Laengsverkehr laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(bearbeiteLaengsverkehrToMap);
+            zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
+        } else if (Zaehlart.QU.equals(zaehlart)) {
+            final var bearbeiteQuerungsverkehrToMap = (BearbeiteQuerungsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final de.muenchen.dave.domain.Querungsverkehr querungsverkehrForZeitintervall = this
+                    .createQuerungsverkehrForZeitintervall(bearbeiteQuerungsverkehrToMap);
+            zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
+        } else {
+            // alle anderen Zählarten
+            final var bearbeiteVerkehrsbeziehungToMap = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
+            final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(
+                    zaehlart,
+                    bearbeiteVerkehrsbeziehungToMap);
+            zeitintervall.setVerkehrsbeziehung(verkehrsbeziehungForZeitintervall);
+        }
+
         return zeitintervall;
     }
 
     /**
-     * Diese Methode gibt die {@link Fahrbeziehung} der {@link Zaehlung} zurück, welche durch die
-     * {@link BearbeiteFahrbeziehungDTO} repräsentiert wird.
+     * Diese Methode gibt die {@link Bewegungsbeziehung} der {@link Zaehlung} zurück, welche durch die
+     * {@link BearbeiteVerkehrsbeziehungDTO} repräsentiert wird.
      *
-     * @param zaehlung aus der die {@link Fahrbeziehung} geholt und zurückgegeben werden soll.
-     * @param fahrbeziehungDto welche die Basis zum Suchen der {@link Fahrbeziehung} darstellt.
-     * @return die gefundene {@link Fahrbeziehung}.
+     * @param zaehlung aus der die {@link Bewegungsbeziehung} geholt und zurückgegeben werden soll.
+     * @param bearbeiteBewegungsbeziehung welche die Basis zum Suchen der {@link Bewegungsbeziehung}
+     *            darstellt.
+     * @return die gefundene {@link Bewegungsbeziehung}.
      */
-    public Optional<Fahrbeziehung> getFromBearbeiteFahrbeziehungDto(final Zaehlung zaehlung,
-            final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
-        return zaehlung.getFahrbeziehungen().stream()
-                .filter(fahrbeziehung -> this.isSameFahrbeziehung(fahrbeziehungDto, fahrbeziehung))
+    public Optional<Bewegungsbeziehung> getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(
+            final Zaehlung zaehlung,
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung) {
+
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        return getAllBewegungsbeziehungenFromZaehlung(zaehlung)
+                .stream()
+                .filter(bewegungsbeziehung -> this.isSameBewegungsbeziehung(zaehlart, bearbeiteBewegungsbeziehung, bewegungsbeziehung))
                 .findFirst();
     }
 
     /**
-     * Diese Methode prüft ob die beiden Fahrbeziehungsobjekte in den Parametern die selbe Fahrbeziehung
-     * einer Kreuzung oder eines Kreisverkehrs
-     * repräsentieren.
+     * Diese Methode prüft ob die beiden Bewegungsbeziehungsobjekte in den Parametern
+     * die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentieren.
      *
-     * @param fahrbeziehungDto zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @param fahrbeziehung zur Prüfung auf repräsentation der selben Fahrbeziehung.
-     * @return true falls die selbe Fahrbeziehung einer Kreuzung oder eines Kreisverkehrs repräsentiert
-     *         wird.
+     * @param bearbeiteBewegungsbeziehung zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
+     * @param bewegungsbeziehung zur Prüfung auf repräsentation der selben Bewegungsbeziehung.
+     * @return true falls die selbe Bewegungsbeziehung einer Kreuzung oder eines Kreisverkehrs
+     *         repräsentiert wird.
      */
-    public boolean isSameFahrbeziehung(final BearbeiteFahrbeziehungDTO fahrbeziehungDto,
-            final Fahrbeziehung fahrbeziehung) {
-        return Objects.equals(fahrbeziehungDto.getIsKreuzung(), fahrbeziehung.getIsKreuzung())
-                // Kreuzung
-                && Objects.equals(fahrbeziehungDto.getVon(), fahrbeziehung.getVon())
-                && Objects.equals(fahrbeziehungDto.getNach(), fahrbeziehung.getNach())
-                // Kreisverkehr
-                && Objects.equals(fahrbeziehungDto.getKnotenarm(), fahrbeziehung.getKnotenarm())
-                && Objects.equals(fahrbeziehungDto.getHinein(), fahrbeziehung.getHinein())
-                && Objects.equals(fahrbeziehungDto.getHeraus(), fahrbeziehung.getHeraus())
-                && Objects.equals(fahrbeziehungDto.getVorbei(), fahrbeziehung.getVorbei());
+    public boolean isSameBewegungsbeziehung(
+            final Zaehlart zaehlart,
+            final BearbeiteBewegungsbeziehungDTO bearbeiteBewegungsbeziehung,
+            final Bewegungsbeziehung bewegungsbeziehung) {
+        if (Zaehlart.QU.equals(zaehlart)) {
+            final var bearbeiteQuerungsverkehr = (BearbeiteQuerungsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final var verkehrsbeziehung = (Querungsverkehr) bewegungsbeziehung;
+            return Objects.equals(bearbeiteQuerungsverkehr.getRichtung(), verkehrsbeziehung.getRichtung())
+                    && Objects.equals(bearbeiteQuerungsverkehr.getKnotenarm(), verkehrsbeziehung.getKnotenarm());
+        } else if (Zaehlart.FJS.equals(zaehlart)) {
+            final var bearbeiteLaengsverkehr = (BearbeiteLaengsverkehrDTO) bearbeiteBewegungsbeziehung;
+            final var laengsverkehr = (Laengsverkehr) bewegungsbeziehung;
+            return Objects.equals(bearbeiteLaengsverkehr.getRichtung(), laengsverkehr.getRichtung())
+                    && Objects.equals(bearbeiteLaengsverkehr.getStrassenseite(), laengsverkehr.getStrassenseite())
+                    && Objects.equals(bearbeiteLaengsverkehr.getKnotenarm(), laengsverkehr.getKnotenarm());
+        } else {
+            // alle anderen Zählarten
+            final var bearbeiteVerkehrsbeziehung = (BearbeiteVerkehrsbeziehungDTO) bearbeiteBewegungsbeziehung;
+            final var verkehrsbeziehung = (Verkehrsbeziehung) bewegungsbeziehung;
+            return Objects.equals(bearbeiteVerkehrsbeziehung.getIsKreuzung(), verkehrsbeziehung.getIsKreuzung())
+                    // Kreuzung
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getVon(), verkehrsbeziehung.getVon())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getNach(), verkehrsbeziehung.getNach())
+            // Kreisverkehr
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getKnotenarm(), verkehrsbeziehung.getKnotenarm())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getHinein(), verkehrsbeziehung.getHinein())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getHeraus(), verkehrsbeziehung.getHeraus())
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getVorbei(), verkehrsbeziehung.getVorbei())
+            // Strassenseite für Zählart QJS
+                    && Objects.equals(bearbeiteVerkehrsbeziehung.getStrassenseite(), verkehrsbeziehung.getStrassenseite());
+        }
     }
 
     /**
@@ -249,29 +248,67 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
     }
 
     /**
-     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      * {@link Zeitintervall}.
      *
-     * @param fahrbeziehungDto aus dem die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an
-     *            einen {@link Zeitintervall} erstellt werden soll.
-     * @return die {@link de.muenchen.dave.domain.Fahrbeziehung} zum Anfügen an einen
+     * @param zaehlart zur Unterscheidung ob {@link Zaehlart#QU} oder eine andere Zählart für
+     *            Verkehrsbeziehungen.
+     * @param bearbeiteVerkehrsbeziehung aus dem die {@link de.muenchen.dave.domain.Verkehrsbeziehung}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Verkehrsbeziehung} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Fahrbeziehung mapToFahrbeziehungForZeitintervall(final BearbeiteFahrbeziehungDTO fahrbeziehungDto) {
-        final de.muenchen.dave.domain.Fahrbeziehung fahrbeziehung = new de.muenchen.dave.domain.Fahrbeziehung();
-        if (BooleanUtils.isTrue(fahrbeziehungDto.getIsKreuzung())) {
-            fahrbeziehung.setVon(fahrbeziehungDto.getVon());
-            fahrbeziehung.setNach(fahrbeziehungDto.getNach());
+    public de.muenchen.dave.domain.Verkehrsbeziehung createVerkehrsbeziehungForZeitintervall(
+            final Zaehlart zaehlart,
+            final BearbeiteVerkehrsbeziehungDTO bearbeiteVerkehrsbeziehung) {
+        final var verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
+        if (BooleanUtils.isTrue(bearbeiteVerkehrsbeziehung.getIsKreuzung()) || Zaehlart.QU.equals(zaehlart)) {
+            verkehrsbeziehung.setVon(bearbeiteVerkehrsbeziehung.getVon());
+            verkehrsbeziehung.setNach(bearbeiteVerkehrsbeziehung.getNach());
+            verkehrsbeziehung.setStrassenseite(bearbeiteVerkehrsbeziehung.getStrassenseite());
         } else {
-            fahrbeziehung.setVon(fahrbeziehungDto.getKnotenarm());
-            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(fahrbeziehungDto);
+            verkehrsbeziehung.setVon(bearbeiteVerkehrsbeziehung.getKnotenarm());
+            final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional = FahrbewegungKreisverkehr.createEnumFrom(bearbeiteVerkehrsbeziehung);
             if (fahrbewegungKreisverkehrOptional.isPresent()) {
-                fahrbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
+                verkehrsbeziehung.setFahrbewegungKreisverkehr(fahrbewegungKreisverkehrOptional.get());
             } else {
-                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", fahrbeziehungDto);
+                log.error("Attribute für Kreisverkehr sind nicht korrekt gesetzt: {}", bearbeiteVerkehrsbeziehung);
             }
         }
-        return fahrbeziehung;
+        return verkehrsbeziehung;
+    }
+
+    /**
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen
+     * an einen {@link Zeitintervall}.
+     *
+     * @param bearbeiteQuerungsverkehr aus dem die {@link de.muenchen.dave.domain.Querungsverkehr}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
+     */
+    public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final BearbeiteQuerungsverkehrDTO bearbeiteQuerungsverkehr) {
+        final var querungsverkehr = new de.muenchen.dave.domain.Querungsverkehr();
+        querungsverkehr.setRichtung(bearbeiteQuerungsverkehr.getRichtung());
+        querungsverkehr.setKnotenarm(bearbeiteQuerungsverkehr.getKnotenarm());
+        return querungsverkehr;
+    }
+
+    /**
+     * Diese Methode erstellt die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen
+     * an einen {@link Zeitintervall}.
+     *
+     * @param bearbeiteLaengsverkehr aus dem die {@link de.muenchen.dave.domain.Laengsverkehr}
+     *            zum Anfügen an einen {@link Zeitintervall} erstellt werden soll.
+     * @return die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen an einen
+     *         {@link Zeitintervall}
+     */
+    public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final BearbeiteLaengsverkehrDTO bearbeiteLaengsverkehr) {
+        final var laengsverkehr = new de.muenchen.dave.domain.Laengsverkehr();
+        laengsverkehr.setRichtung(bearbeiteLaengsverkehr.getRichtung());
+        laengsverkehr.setStrassenseite(bearbeiteLaengsverkehr.getStrassenseite());
+        laengsverkehr.setKnotenarm(bearbeiteLaengsverkehr.getKnotenarm());
+        return laengsverkehr;
     }
 
     /**
@@ -343,4 +380,5 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         backendIdDto.setId(zaehlungId);
         return backendIdDto;
     }
+
 }

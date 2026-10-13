@@ -48,6 +48,8 @@ public class MessstelleReceiver {
     /**
      * Diese Methode lädt regelmäßig alle relevanten Messstellen aus MobidaM.
      * Der Zyklus kann in der application-xxx.yml mittels einer Property geändert werden.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      */
     @Scheduled(cron = "${dave.messstelle.cron}")
     @SchedulerLock(name = "loadMessstellenCron", lockAtMostFor = "${dave.messstelle.shedlock}", lockAtLeastFor = "${dave.messstelle.shedlock}")
@@ -87,6 +89,8 @@ public class MessstelleReceiver {
     /**
      * Die Methode legt für die im Parameter gegebenen Messstelle eine neuen Messstelle an.
      * Nach erfolgreichem Anlegen wird eine Infomail bezüglich der neuen Messstelle versandt.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      *
      * @param dto für Messstelle zum anlegen.
      */
@@ -94,7 +98,7 @@ public class MessstelleReceiver {
         log.info("#createMessstelleCron");
         Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
-        newMessstelle = messstelleIndexService.saveMessstelle(newMessstelle);
+        newMessstelle = messstelleIndexService.saveMessstelleWithDetectors(newMessstelle);
         this.sendMailForUpdatedOrChangedMessstelle(
                 newMessstelle.getId(),
                 newMessstelle.getMstId(),
@@ -106,6 +110,8 @@ public class MessstelleReceiver {
      * Die Methode aktualisiert eine bereits gespeicherte Messstelle.
      * Nach erfolgreichen Anlegen und der Feststellung einer Statusänderung
      * wird eine Infomail bezüglich der Aktualisierung versandt.
+     * Die Messquerschnitte einer Messstelle welche keine Anzahl an Detektoren definiert haben,
+     * werden verworfen und somit nicht mitgespeichert.
      *
      * @param existingMessstelle als bereits gespeicherte Messstelle.
      * @param dto der Messstelle mit den zu aktualisierenden Daten.
@@ -122,7 +128,7 @@ public class MessstelleReceiver {
         final var updatedMessquerschnitte = updateMessquerschnitteOfMessstelle(toSave.getMessquerschnitte(), dto.getMessquerschnitte());
         toSave.setMessquerschnitte(updatedMessquerschnitte);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
-        final Messstelle updated = messstelleIndexService.saveMessstelle(toSave);
+        final Messstelle updated = messstelleIndexService.saveMessstelleWithDetectors(toSave);
         final var statusMessstelleNeu = updated.getStatus();
         if (statusMessstelleAlt != statusMessstelleNeu) {
             this.sendMailForUpdatedOrChangedMessstelle(
@@ -133,6 +139,15 @@ public class MessstelleReceiver {
         }
     }
 
+    /**
+     * Aktualisiert die Messquerschnitte einer Messstelle anhand der übergebenen DTOs.
+     * Existierende Messquerschnitte werden bei gleicher mqId aktualisiert, nicht vorhandene
+     * werden neu angelegt. Bei leerer oder null-DTO-Liste bleibt die Eingabeliste unverändert.
+     *
+     * @param messquerschnitte die vorhandenen Messquerschnitte (wird modifiziert)
+     * @param messquerschnitteDto die DTOs mit den aktuellen Messquerschnittsdaten
+     * @return die aktualisierte Liste der Messquerschnitte
+     */
     protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(
             final List<Messquerschnitt> messquerschnitte,
             final List<MessquerschnittDto> messquerschnitteDto) {

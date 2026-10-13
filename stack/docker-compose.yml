@@ -2,7 +2,8 @@ name: dave-stack
 
 services:
   setup:
-    image: elasticsearch:${STACK_VERSION}
+    container_name: setup
+    image: docker.io/library/elasticsearch:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/elasticsearch/config/certs
     user: "0"
@@ -51,10 +52,11 @@ services:
       retries: 120
 
   elastic:
+    container_name: elastic
     depends_on:
       setup:
         condition: service_healthy
-    image: elasticsearch:${STACK_VERSION}
+    image: docker.io/library/elasticsearch:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/elasticsearch/config/certs
       - elastic-data:/usr/share/elasticsearch/data
@@ -94,10 +96,11 @@ services:
       retries: 120
 
   kibana:
+    container_name: kibana
     depends_on:
       elastic:
         condition: service_healthy
-    image: kibana:${STACK_VERSION}
+    image: docker.io/library/kibana:${STACK_VERSION}
     volumes:
       - elastic-certs:/usr/share/kibana/config/certs
       - kibana-data:/usr/share/kibana/data
@@ -121,6 +124,7 @@ services:
       retries: 120
 
   postgres:
+    container_name: postgres
     image: postgres:16.6-alpine3.21
     environment:
       - POSTGRES_DB=dave-db
@@ -141,6 +145,7 @@ services:
 
   # see https://event-driven.io/en/automatically_connect_pgadmin_to_database/
   pg-admin:
+    container_name: pg-admin
     image: dpage/pgadmin4:8.14
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
@@ -161,6 +166,39 @@ services:
       - './pgadmin/pgpass:/pgadmin4/pgpass'
     user: root # see https://github.com/pgadmin-org/pgadmin4/issues/6257
     entrypoint: /bin/sh -c "chmod 600 /pgadmin4/pgpass; /entrypoint.sh;" # see https://www.postgresql.org/docs/current/libpq-pgpass.html#LIBPQ-PGPASS (last paragraph)
+
+  dave-backend:
+    container_name: dave-backend
+    profiles: [sample-stack]
+    image: ghcr.io/it-at-m/dave-backend/dave-backend:latest
+    environment:
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTICSEARCH_HTTPCACERTIFICATE=${ELASTICSEARCH_CERT_FINGERPRINT}
+      - SPRING_PROFILES_ACTIVE=docker,no-security,debugging,sample
+      - SSO_BASE_URL=http://sso.de
+    ports:
+      - "50001:50001"
+    pull_policy: always
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://dave-backend:50001/actuator/health | grep -q '\"status\":\"UP\"'", ]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  dave-frontend:
+    container_name: dave-frontend
+    profiles: [sample-stack]
+    depends_on:
+      dave-backend:
+        condition: service_healthy
+    image: ghcr.io/it-at-m/dave-frontend/dave-frontend:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,no-security
+      - SSO_BASE_URL=http://sso.de
+    ports:
+      - "8082:8082"
+    pull_policy: always
 
 volumes:
   pg_data:

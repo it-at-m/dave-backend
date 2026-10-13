@@ -10,8 +10,10 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
+import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
@@ -21,15 +23,18 @@ import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class AuswertungSpitzenstundeService {
 
     private static final String EXCEPTION_NO_SPITZENSTUNDE = "Keine Spitzenstunde vorhanden";
@@ -40,14 +45,9 @@ public class AuswertungSpitzenstundeService {
 
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
 
-    public AuswertungSpitzenstundeService(final ZeitintervallRepository zeitintervallRepository,
-            final ZaehlstelleIndexService indexService,
-            final LadeZaehldatumMapper ladeZaehldatumMapper) {
-        this.zeitintervallRepository = zeitintervallRepository;
-        this.indexService = indexService;
-        this.ladeZaehldatumMapper = ladeZaehldatumMapper;
+    private final LadeZaehldatenService ladeZaehldatenService;
 
-    }
+    private final ZaehlungMapper zaehlungMapper;
 
     /**
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
@@ -112,7 +112,7 @@ public class AuswertungSpitzenstundeService {
      *            darf.
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
      *            Kreisverkehr extrahiert werden sollen, anderfalls false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
@@ -120,73 +120,98 @@ public class AuswertungSpitzenstundeService {
      * @throws DataNotFoundException falls keine Spitzenstunde für den gewählten Zeitblock gefunden
      *             wurde.
      */
-    public List<LadeAuswertungSpitzenstundeDTO> getSpitzenstunden(final Zaehlung zaehlung,
+    public List<LadeAuswertungSpitzenstundeDTO> getSpitzenstunden(
+            final Zaehlung zaehlung,
             final Zeitblock zeitblock,
             final String zeitauswahl,
             final boolean kreisverkehr) throws IncorrectZeitauswahlException, DataNotFoundException {
-        final TypeZeitintervall typeSpitzenstunde = getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
-        return extractSpitzenstundenAllFahrbeziehungen(
-                zaehlung.getId(),
+
+        return extractSpitzenstundenAllVerkehrsbeziehungen(
+                zaehlung,
                 zeitblock,
-                typeSpitzenstunde,
+                zeitauswahl,
                 kreisverkehr).stream()
-                .map(spStdFahrbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdFahrbeziehung, zaehlung.getPkwEinheit()))
+                .map(spStdVerkehrsbeziehung -> mapToAuswertungSpitzenstundeDTO(spStdVerkehrsbeziehung, zaehlung.getPkwEinheit()))
                 .collect(Collectors.toList());
     }
 
     /**
      * Die Methode zur Ausführung der Spitzenstundenauswertung.
      *
-     * @param zaehlungId ID der Zaehlung
-     * @param zeitblock für welchen die Spitzentundeauswertung gemacht werden soll.
-     * @param typeSpitzenstunde welche die Ausprägung {@link TypeZeitintervall#SPITZENSTUNDE_KFZ},
-     *            {@link TypeZeitintervall#SPITZENSTUNDE_RAD} oder
-     *            {@link TypeZeitintervall#SPITZENSTUNDE_FUSS} haben darf.
+     * @param zaehlung die Zaehlung
+     * @param zeitblock für welchen die Spitzenstundenauswertung gemacht werden soll.
+     * @param zeitauswahl für welchen die Spitzenstundenauswertung gemacht werden soll
      * @param kreisverkehr hat Ausprägung true falls die Zeitintervalle der Spitzenstunde für einen
-     *            Kreisverkehr extrahiert werden sollen, anderfalls
-     *            false.
-     * @return die Liste der einzelnen Fahrbeziehungen der Spitzenstunde.
+     *            Kreisverkehr extrahiert werden sollen, anderfalls false.
+     * @return die Liste der einzelnen Verkehrsbeziehungen der Spitzenstunde.
      * @throws DataNotFoundException falls keine Spitzenstunde gefunden wurde.
      */
-    public List<Zeitintervall> extractSpitzenstundenAllFahrbeziehungen(final String zaehlungId,
+    public List<Zeitintervall> extractSpitzenstundenAllVerkehrsbeziehungen(
+            final Zaehlung zaehlung,
             final Zeitblock zeitblock,
-            final TypeZeitintervall typeSpitzenstunde,
-            final boolean kreisverkehr) throws DataNotFoundException {
-        final Integer sortingIndex = getSortingIndex(zeitblock, typeSpitzenstunde);
-        // Extrahieren der Spitzenstunde der Zählung über alle Fahrbeziehungen.
-        final Zeitintervall spitzenstunde = zeitintervallRepository.findByZaehlungIdAndTypeAndFahrbeziehungVonNullAndFahrbeziehungNachNullAndSortingIndex(
-                UUID.fromString(zaehlungId),
-                typeSpitzenstunde,
-                sortingIndex).orElseThrow(() -> new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE));
-        // Extrahieren der Zeitintervalle je Fahrbeziehung welche die Spitzstunde ausmachen.
-        final List<Zeitintervall> spitzenstundeZeitintevalle;
-        if (kreisverkehr) {
-            spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
-                            UUID.fromString(zaehlungId),
+            final String zeitauswahl,
+            final boolean kreisverkehr) throws DataNotFoundException, IncorrectZeitauswahlException {
+
+        // Setup data extraction
+        final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
+        final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
+        final var options = new OptionsDTO();
+        options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
+        options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
+        options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
+        options.setZeitblock(zeitblock);
+        options.setZeitauswahl(zeitauswahl);
+        options.setIntervall(zaehldatenIntervall);
+        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+
+        // Extrahieren der Spitzenstunde der Zählung über alle Verkehrsbeziehungen.
+        final var extractedSpitzenstunde = ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
+                UUID.fromString(zaehlung.getId()),
+                zaehlart,
+                zaehlung.getKreisverkehr(),
+                options);
+
+        // Spitzenstunde alle nach alle
+        final Zeitintervall spitzenstunde;
+        try {
+            spitzenstunde = extractedSpitzenstunde.getLast();
+        } catch (final NoSuchElementException exception) {
+            throw new DataNotFoundException(EXCEPTION_NO_SPITZENSTUNDE);
+        }
+
+        // Extrahieren der Zeitintervalle je Verkehrsbeziehung welche die Spitzstunde ausmachen.
+        final List<Zeitintervall> spitzenstundeZeitintervalle;
+        final var isZaehlartQjsFjSOrQu = Set.of(Zaehlart.QJS, Zaehlart.FJS, Zaehlart.QU).contains(zaehlart);
+        if (kreisverkehr && !isZaehlartQjsFjSOrQu) {
+            spitzenstundeZeitintervalle = zeitintervallRepository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungFahrbewegungKreisverkehrAndTypeOrderBySortingIndexAsc(
+                            UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
                             FahrbewegungKreisverkehr.HINEIN,
-                            TypeZeitintervall.STUNDE_VIERTEL);
+                            zaehldatenIntervall.getTypeZeitintervall());
         } else {
-            spitzenstundeZeitintevalle = zeitintervallRepository
-                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndFahrbeziehungVonNotNullAndFahrbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
-                            UUID.fromString(zaehlungId),
+            spitzenstundeZeitintervalle = zeitintervallRepository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonNotNullAndVerkehrsbeziehungNachNotNullAndTypeOrderBySortingIndexAsc(
+                            UUID.fromString(zaehlung.getId()),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
-                            TypeZeitintervall.STUNDE_VIERTEL);
+                            zaehldatenIntervall.getTypeZeitintervall());
         }
-        // Erstellen der aggregierten Spitzenstunde je Fahrbeziehung
-        // aus den vorherigen vier Zeitintervallen je Fahrbeziehung.
-        return ZeitintervallGleitendeSpitzenstundeUtil.getGleitendeSpitzenstunden(spitzenstundeZeitintevalle)
+
+        return ZeitintervallGleitendeSpitzenstundeUtil
+                .getGleitendeSpitzenstundenForEachBewegungsbeziehung(
+                        UUID.fromString(zaehlung.getId()),
+                        zeitblock,
+                        zaehlart,
+                        spitzenstundeZeitintervalle,
+                        Set.of(typeSpitzenstunde))
                 .stream()
-                .filter(zeitintervall -> zeitintervall.getType().equals(typeSpitzenstunde))
-                .filter(zeitintervall -> zeitintervall.getSortingIndex().equals(sortingIndex))
                 .peek(zeitintervall -> {
                     zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
                     zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -205,8 +230,8 @@ public class AuswertungSpitzenstundeService {
                 new OptionsDTO());
         final LadeAuswertungSpitzenstundeDTO ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
                 .ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(ladeZaehldatumDTO);
-        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getFahrbeziehung().getVon());
-        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getFahrbeziehung().getNach());
+        ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getVerkehrsbeziehung().getVon());
+        ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getVerkehrsbeziehung().getNach());
         return ladeZaehldatumWithDirectionDTO;
     }
 
@@ -220,13 +245,14 @@ public class AuswertungSpitzenstundeService {
      * @param typeSpitzenstunde als {@link TypeZeitintervall}
      * @return der Sortierindex welcher auch im {@link Zeitintervall} der Spitzenstunde hinterlegt ist.
      */
-    public int getSortingIndex(final Zeitblock zeitblock,
+    public int getSortingIndex(
+            final Zeitblock zeitblock,
             final TypeZeitintervall typeSpitzenstunde) {
         // Erforderlich um mit Util-Methoden den SortingIndex zu ermitteln
         final Zeitintervall dummyZeitintervallForIndexCreation = new Zeitintervall();
         dummyZeitintervallForIndexCreation.setStartUhrzeit(zeitblock.getStart().plusMinutes(15));
         dummyZeitintervallForIndexCreation.setEndeUhrzeit(zeitblock.getStart().plusMinutes(30));
-        final Integer sortingIndex;
+        final int sortingIndex;
         if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_KFZ)) {
             sortingIndex = ZeitintervallGleitendeSpitzenstundeUtil.getSortingIndexKfz(dummyZeitintervallForIndexCreation, zeitblock);
         } else if (typeSpitzenstunde.equals(TypeZeitintervall.SPITZENSTUNDE_RAD)) {
@@ -237,32 +263,6 @@ public class AuswertungSpitzenstundeService {
             sortingIndex = -1;
         }
         return sortingIndex;
-    }
-
-    /**
-     * @param zeitauswahl welche die Ausprägung
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *            {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} haben
-     *            darf.
-     * @return den {@link TypeZeitintervall} welcher der Zeitauswahl entspricht.
-     * @throws IncorrectZeitauswahlException sobald die Zeitauswahl nicht vom Typ
-     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ},
-     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
-     *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
-     */
-    public TypeZeitintervall getRelevantTypeZeitintervallFromZeitauswahl(final String zeitauswahl) throws IncorrectZeitauswahlException {
-        final TypeZeitintervall typeSpitzenstunde;
-        if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)) {
-            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
-        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)) {
-            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
-        } else if (StringUtils.equals(zeitauswahl, LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS)) {
-            typeSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
-        } else {
-            throw new IncorrectZeitauswahlException();
-        }
-        return typeSpitzenstunde;
     }
 
 }

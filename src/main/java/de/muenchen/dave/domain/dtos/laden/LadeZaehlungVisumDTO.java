@@ -24,6 +24,6 @@ public class LadeZaehlungVisumDTO {
 
     CoordinateUtil.PositionUTM punktUtm;
 
-    List<FahrbeziehungVisumDTO> fahrbeziehungen;
+    List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungen;
 
 }

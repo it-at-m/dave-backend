@@ -3,14 +3,12 @@ package de.muenchen.dave.services.pdfgenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
-import de.muenchen.dave.domain.pdf.assets.BaseAsset;
-import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
-import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
-import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
+import de.muenchen.dave.domain.pdf.assets.*;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
@@ -50,6 +48,8 @@ public class ReportService {
     private final ProcessZaehldatenService processZaehldatenService;
     private final ZaehlstelleIndexService indexService;
     private final LadeZaehldatumMapper ladeZaehldatumMapper;
+    private final ReportLogoService reportLogoService;
+
     private Mustache textAssetMustache;
     private Mustache imageAssetMustache;
     private Mustache heading1AssetMustache;
@@ -70,12 +70,15 @@ public class ReportService {
             final FillPdfBeanService fillPdfBeanService,
             final ProcessZaehldatenService processZaehldatenService,
             final ZaehlstelleIndexService indexService,
-            final LadeZaehldatumMapper ladeZaehldatumMapper) {
+            final LadeZaehldatumMapper ladeZaehldatumMapper,
+            final ReportLogoService reportLogoService) {
         this.fillPdfBeanService = fillPdfBeanService;
         this.generatePdfService = generatePdfService;
         this.processZaehldatenService = processZaehldatenService;
         this.indexService = indexService;
         this.ladeZaehldatumMapper = ladeZaehldatumMapper;
+        this.reportLogoService = reportLogoService;
+
     }
 
     public byte[] generateReportPdf(final List<BaseAsset> assetList, final String department) throws IOException {
@@ -127,8 +130,10 @@ public class ReportService {
 
         assetList.forEach(asset -> {
             if (asset.getType().equals(AssetType.TEXT)) {
+                this.generatePdfService.sanitizeAllowedHtml((TextAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.textAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.IMAGE)) {
+                this.generatePdfService.sanitizeImageUri((ImageAsset) asset);
                 sb.append(this.generatePdfService.getHtml(this.imageAssetMustache, asset));
             } else if (asset.getType().equals(AssetType.PAGEBREAK)) {
                 sb.append(this.generatePdfService.getHtml(this.pagebreakAssetMustache, asset));
@@ -175,8 +180,10 @@ public class ReportService {
                     zaehlungskenngroessenAsset.setPrintFuss(zaehlung.getKategorien().contains(Fahrzeug.FUSS));
                     zaehlungskenngroessenAsset.setPrintRad(zaehlung.getKategorien().contains(Fahrzeug.RAD));
                     zaehlungskenngroessenAsset.setPrintKfz(zaehlung.getKategorien().contains(Fahrzeug.KFZ));
-                    final List<ZaehlungskenngroessenData> data = this.ladeZaehldatumMapper.ladeZaehldatumDtoListToZaehlungskenngroessenDataList(
-                            this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung).getZaehldaten());
+
+                    final LadeZaehldatenTableDTO zaehldatenForZaehlungskenngroessen = this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung);
+                    final List<ZaehlungskenngroessenData> data = this.ladeZaehldatumMapper
+                            .ladeZaehldatumDtoListToZaehlungskenngroessenDataList(zaehldatenForZaehlungskenngroessen.getZaehldaten());
 
                     // Sortiert anhand Type durch den in ZaehlungskenngroessenData definierten compareTo
                     Collections.sort(data);
