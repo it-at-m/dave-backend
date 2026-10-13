@@ -18,8 +18,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Diese Klasse generiert die {@link Zeitintervall}e für eine KI-Vorhersage entsprechend den
- * Verkehrsbeziehungen.
+ * Ordnet KI-Vorhersagen den Bewegungsbeziehungen zu und ueberfuehrt sie in persistierbare
+ * {@link Zeitintervall}e.
+ *
+ * <p>
+ * Die Reihenfolge der Gruppen und der Vorhersagen muss erhalten bleiben, da sie die einzige
+ * Zuordnung zwischen einer ONNX-Ergebniszeile und einer Bewegungsbeziehung darstellt.
+ * </p>
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ZeitintervallKIUtil {

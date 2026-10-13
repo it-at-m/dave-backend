@@ -7,12 +7,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 
 /**
  * The central class for configuration of all security aspects.
@@ -43,32 +43,25 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-spitzenstunde"),
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-zaehlstellen-koordinate"),
-                                AntPathRequestMatcher.antMatcher("/lade-auswertung-visum"),
                                 // allow access to /actuator/info
-                                AntPathRequestMatcher.antMatcher("/actuator/info"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/info"),
                                 // allow access to /actuator/health for OpenShift Health Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health"),
                                 // allow access to /actuator/health/liveness for OpenShift Liveness Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health/liveness"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health/liveness"),
                                 // allow access to /actuator/health/readiness for OpenShift Readiness Check
-                                AntPathRequestMatcher.antMatcher("/actuator/health/readiness"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/health/readiness"),
+                                // allow access to open-api endpoints
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/v3/api-docs"),
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/v3/api-docs.yaml"),
+                                // allow access to swagger-ui
+                                PathPatternRequestMatcher.withDefaults().matcher("/swagger-ui/**"),
                                 // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
-                                AntPathRequestMatcher.antMatcher("/actuator/metrics"),
-                                // h2-console
-                                AntPathRequestMatcher.antMatcher("/h2-console/**"))
-                        .permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher("/**"))
+                                PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, "/actuator/metrics"))
+                        .permitAll())
+                .authorizeHttpRequests((requests) -> requests
+                        .anyRequest()
                         .authenticated())
-                .headers(httpSecurityHeadersConfigurer ->
-                // support frames for same-origin (e.g. h2-console)
-                httpSecurityHeadersConfigurer.frameOptions(
-                        HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .csrf(httpSecurityCsrfConfigurer ->
-                // exclude csrf for h2-console
-                httpSecurityCsrfConfigurer.ignoringRequestMatchers(
-                        AntPathRequestMatcher.antMatcher("/h2-console/**")))
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(jwt ->
                 // Verwenden eines CustomConverters um die Rechte vom UserInfoEndpunkt zu extrahieren.
                 jwt.jwtAuthenticationConverter(customJwtAuthenticationConverter)));

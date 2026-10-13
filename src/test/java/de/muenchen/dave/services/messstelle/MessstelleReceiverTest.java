@@ -14,6 +14,7 @@ import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public class MessstelleReceiverTest {
     private EmailSendService emailSendService;
 
     @Mock
+    private SanitizationService sanitizationService;
+
+    @Mock
     private MessstelleApi messstelleApi;
 
     private MessstelleReceiverMapper messstelleReceiverMapper;
@@ -69,6 +73,7 @@ public class MessstelleReceiverTest {
                 stadtbezirkMapper,
                 lageplanService,
                 emailSendService,
+                sanitizationService,
                 messstelleApi,
                 messstelleReceiverMapper);
     }

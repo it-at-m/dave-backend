@@ -21,7 +21,9 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.services.security.AuthorizationService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,12 +52,20 @@ public abstract class ZaehlungPersistierungsService {
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
+    protected final SanitizationService sanitizationService;
+
+    protected final AuthorizationService authorizationService;
+
     public ZaehlungPersistierungsService(final ZaehlstelleIndexService indexService,
             final ZeitintervallPersistierungsService zeitintervallPersistierungsService,
-            final ZeitintervallMapper zeitintervallMapper) {
+            final ZeitintervallMapper zeitintervallMapper,
+            final SanitizationService sanitizationService,
+            final AuthorizationService authorizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsService = zeitintervallPersistierungsService;
         this.zeitintervallMapper = zeitintervallMapper;
+        this.sanitizationService = sanitizationService;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -65,16 +76,21 @@ public abstract class ZaehlungPersistierungsService {
      * @throws BrokenInfrastructureException Beim Speichern der Zaehlstelle
      * @throws DataNotFoundException Beim Laden der Zaehlstelle
      * @throws PlausibilityException Beim Pruefen der Daten
+     * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
-    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto) throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
+    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto)
+            throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
+
+        // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
+        authorizationService.assertCanModifyZaehlung(updateStatusDto.getZaehlungId());
 
         for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equalsIgnoreCase(updateStatusDto.getZaehlungId())) {
                 zaehlung.setStatus(updateStatusDto.getStatus());
                 // WIrd eine Zaehlung beauftragt, so wird die dienstleiserkennung gespeichert
                 if (zaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
-                    zaehlung.setDienstleisterkennung(updateStatusDto.getDienstleisterkennung());
+                    zaehlung.setDienstleisterkennung(sanitizationService.sanitizeAllowedHtml(updateStatusDto.getDienstleisterkennung()));
                 } else if (zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())) {
                     // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(

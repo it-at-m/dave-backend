@@ -54,6 +54,10 @@ public class MessstelleController {
         }
     }
 
+    @PreAuthorize(
+        "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
+                "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
+    )
     @GetMapping(value = "/info", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoByMstId(
