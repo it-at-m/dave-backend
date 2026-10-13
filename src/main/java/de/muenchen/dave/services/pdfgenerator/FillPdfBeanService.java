@@ -705,7 +705,8 @@ public class FillPdfBeanService {
 
         fillBasicPdf(diagrammPdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        diagrammPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        diagrammPdf
+                .setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         if (zaehlung.getKreisverkehr()) {
             diagrammPdf.setBelastungsplanKreisverkehr(chartAsBase64Png);
         } else {
@@ -754,7 +755,7 @@ public class FillPdfBeanService {
 
         fillBasicPdf(gangliniePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
@@ -776,6 +777,7 @@ public class FillPdfBeanService {
             if (LadeZaehldatenService.STUNDE.equals(lzDto.getType())
                     || LadeZaehldatenService.GESAMT.equals(lzDto.getType())
                     || LadeZaehldatenService.TAGESWERT.equals(lzDto.getType())
+                    || LadeZaehldatenService.isSpitzenstundeType(lzDto.getType())
                     //                    Blocksumme nur anzeigen, wenn im Frontend ein Block ausgewählt wurde und es keine andere Gesamtsumme gibt.
                     || (LadeZaehldatenService.BLOCK.equals(lzDto.getType())
                             && options.getZeitblock().getTypeZeitintervall() == TypeZeitintervall.BLOCK)) {
@@ -1129,7 +1131,8 @@ public class FillPdfBeanService {
 
         fillBasicPdf(datentabellePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        datentabellePdf.setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + this.getCorrectZaehlartString(zaehlung));
+        datentabellePdf
+                .setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
 
@@ -1339,16 +1342,5 @@ public class FillPdfBeanService {
             activeTabsAnteile++;
         }
         return activeTabsAnteile;
-    }
-
-    /**
-     * @param zaehlung als {@link Zaehlung}
-     * @return die {@link Zaehlart} der {@link Zaehlung} als String oder {@link StringUtils#EMPTY} falls
-     *         {@link Zaehlart#N}.
-     */
-    public String getCorrectZaehlartString(final Zaehlung zaehlung) {
-        return Zaehlart.N.toString().equals(zaehlung.getZaehlart())
-                ? StringUtils.EMPTY
-                : zaehlung.getZaehlart();
     }
 }

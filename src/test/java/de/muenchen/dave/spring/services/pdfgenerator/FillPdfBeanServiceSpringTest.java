@@ -26,6 +26,7 @@ import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
+import de.muenchen.dave.domain.pdf.helper.GanglinieTableColumn;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
@@ -43,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -288,6 +288,33 @@ public class FillPdfBeanServiceSpringTest {
     }
 
     @Test
+    public void fillGangliniePdfIncludesSpitzenstunde() throws DataNotFoundException {
+        final Zaehlung zaehlung = getZaehlung();
+        final OptionsDTO options = getChosenOptionsDTO();
+        options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
+        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
+        ladeZaehldatenTableDTO.getZaehldaten().add(getLadeZaehldatumDTO(
+                LadeZaehldatenService.SPITZENSTUNDE_TAG_KFZ, LocalTime.of(7, 15), LocalTime.of(8, 15),
+                100, 5, 2, 3, 4, 10, 0, 130));
+
+        when(this.indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(getZaehlstelle(zaehlung));
+        when(this.indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
+        when(this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(MOCKABLE_ZAEHLUNG_ID), options)).thenReturn(ladeZaehldatenTableDTO);
+
+        final GangliniePdf gangliniePdf = new GangliniePdf();
+        this.fillPdfBeanService.fillGangliniePdf(gangliniePdf, MOCKABLE_ZAEHLUNG_ID, options, "Chart", "Übersicht", DEPARTMENT);
+
+        final GanglinieTableColumn spitzenstunde = gangliniePdf.getGanglinieTables().stream()
+                .flatMap(table -> table.getGanglinieTableColumns().stream())
+                .filter(column -> "114".equals(column.getKfz()))
+                .findFirst().orElseThrow();
+        assertThat(spitzenstunde.getUhrzeit(), is("7 - 8"));
+        assertThat(spitzenstunde.getKfz(), is("114"));
+        assertThat(spitzenstunde.getPkw(), is("100"));
+        assertThat(spitzenstunde.getLkw(), is("5"));
+    }
+
+    @Test
     public void fillDatentabellePdf() throws DataNotFoundException {
         this.init();
         final OptionsDTO options = getChosenOptionsDTO();
@@ -337,22 +364,6 @@ public class FillPdfBeanServiceSpringTest {
         options.setZeitblock(Zeitblock.ZB_06_10);
         actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(MOCKABLE_ZAEHLUNG_ID, options);
         assertThat(actualChartTitle, is("Spitzenstunde KFZ (Block 6 - 10 Uhr)"));
-    }
-
-    @Test
-    void getCorrectZaehlartString() {
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.toString());
-        String result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is(StringUtils.EMPTY));
-
-        zaehlung.setZaehlart(Zaehlart.Q.toString());
-        result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is("Q"));
-
-        zaehlung.setZaehlart(Zaehlart.Q_.toString());
-        result = this.fillPdfBeanService.getCorrectZaehlartString(zaehlung);
-        assertThat(result, is("Q_"));
     }
 
     @Test

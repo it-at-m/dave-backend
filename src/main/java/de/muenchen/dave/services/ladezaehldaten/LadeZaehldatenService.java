@@ -141,7 +141,7 @@ public class LadeZaehldatenService {
         // Hier wird entscheiden, ob für das gegebene Zeitintervall statt eines normalen Intervall-Datensatzes (LadeZaehldatumDTO)
         // ein Tageswert-Datensatz (LadeZaehldatumTageswertDTO) erzeugt werden soll.
         // Das ist notwendig, weil bei einem Zeitintervall vom Typ GESAMT (also Tages-/Summenintervall)
-        // und falls die Zählung nicht 24 Stunden dauerte, der im Zeitintervall gespeicherte Hochrechnungswert
+        // und einer Zähldauer von weniger als 24h, der im Zeitintervall gespeicherte Hochrechnungswert
         // als Tageswert verwendet werden muss — statt der rohen Intervalldaten.
         if (isZeitintervallForTageswert(zeitintervall, options)) {
             final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
@@ -159,11 +159,9 @@ public class LadeZaehldatenService {
                             BigDecimal.ZERO).setScale(0, RoundingMode.HALF_UP));
 
             ladeZaehldatumTageswert.setFahrradfahrer(
-                    Objects.requireNonNullElse(
-                            zeitintervall.getHochrechnung().getHochrechnungRad(),
-                            0));
-            ladeZaehldatumTageswert.setFussgaenger(
-                    0);
+                    zeitintervall.getHochrechnung().getHochrechnungRad());
+            // Beim Fussverkehrs wird keine Hochrechnung durchgeführt.
+            ladeZaehldatumTageswert.setFussgaenger(null);
             ladeZaehldatumTageswert.setType(TAGESWERT);
             ladeZaehldatum = ladeZaehldatumTageswert;
         } else {
@@ -313,6 +311,17 @@ public class LadeZaehldatenService {
             fahrbewegungKreisverkehr = null;
         }
         return fahrbewegungKreisverkehr;
+    }
+
+    /**
+     * Prüft, ob der übergebene Typ eine Spitzenstunde (Tag oder Block) bezeichnet.
+     *
+     * @param type Zu prüfender Typ als String
+     * @return {@code true}, wenn er eine Spitzenstunde bezeichnet
+     */
+    public static boolean isSpitzenstundeType(final String type) {
+        return StringUtils.isNotEmpty(type) &&
+                (type.startsWith(SPITZENSTUNDE_TAG) || type.startsWith(SPITZENSTUNDE_BLOCK));
     }
 
     /**
