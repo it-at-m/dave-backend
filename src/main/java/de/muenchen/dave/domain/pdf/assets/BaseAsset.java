@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.pdf.MustacheBean;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
@@ -24,5 +25,8 @@ import lombok.Data;
 )
 @Data
 public class BaseAsset implements MustacheBean {
+    @NotNull
     private AssetType type;
+    @NotNull
+    private Long id;
 }
