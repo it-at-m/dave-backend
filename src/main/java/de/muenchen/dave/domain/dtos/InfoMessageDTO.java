@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.dtos;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.UUID;
 import lombok.Data;
 
 @Data

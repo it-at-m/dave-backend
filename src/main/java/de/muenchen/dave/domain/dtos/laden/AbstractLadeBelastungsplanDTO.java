@@ -2,10 +2,9 @@ package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data

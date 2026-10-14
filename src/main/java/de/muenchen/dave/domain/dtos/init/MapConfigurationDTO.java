@@ -1,8 +1,7 @@
 package de.muenchen.dave.domain.dtos.init;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

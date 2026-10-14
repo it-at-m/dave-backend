@@ -1,11 +1,10 @@
 package de.muenchen.dave.domain.dtos.laden;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

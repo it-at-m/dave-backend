@@ -3,14 +3,13 @@ package de.muenchen.dave.domain.enums;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatRequestDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;

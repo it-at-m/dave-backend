@@ -1,8 +1,7 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import java.io.Serializable;
-
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data

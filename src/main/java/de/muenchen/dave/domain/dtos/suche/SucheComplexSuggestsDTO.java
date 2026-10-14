@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos.suche;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data

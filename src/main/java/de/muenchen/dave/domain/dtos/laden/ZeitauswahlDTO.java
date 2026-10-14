@@ -1,10 +1,9 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Zeitblock;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**

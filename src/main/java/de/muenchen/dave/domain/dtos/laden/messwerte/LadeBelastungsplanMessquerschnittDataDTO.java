@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden.messwerte;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
