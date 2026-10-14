@@ -665,18 +665,6 @@ public class ZaehlstelleIndexService {
         return zaehlstellen;
     }
 
-    public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessagesExternal() {
-        final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.DIENSTLEISTER.getParticipantId());
-        zaehlstellen.forEach(zaehlstelle -> {
-            final var filteredZaehlungen = zaehlstelle.getZaehlungen()
-                    .stream()
-                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesDienstleister)
-                    .collect(Collectors.toList());
-            zaehlstelle.setZaehlungen(filteredZaehlungen);
-        });
-        return zaehlstellen;
-    }
-
     /**
      * Sucht alle Zählstellen mit ungelesenen Nachrichten für einen bestimmten Participant und gibt
      * diese zurück
