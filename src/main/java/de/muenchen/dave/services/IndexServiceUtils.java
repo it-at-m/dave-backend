@@ -1,6 +1,5 @@
 package de.muenchen.dave.services;
 
-import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
@@ -36,12 +35,6 @@ public final class IndexServiceUtils {
 
     private static final String KREUZUNGSNAME_REPLACEMENT_NAME_DIVIDER = " - ";
 
-    private static final String HTML_BREAK = "<br/>";
-
-    public static List<String> splitStrings(String s) {
-        return Splitter.on(",").omitEmptyStrings().trimResults().splitToList(s);
-    }
-
     /**
      * Ermittelt die Jahreszeit für ein Datum.
      *
@@ -68,16 +61,6 @@ public final class IndexServiceUtils {
 
         log.error("Local Date with more than 12 month?!!?");
         return "";
-    }
-
-    /**
-     * Erstellt eine Liste von Jahren aus allen Zählungen.
-     *
-     * @param zs Zaehlungen
-     * @return Liste mit Jahren
-     */
-    public static List<Integer> getZaehljahre(List<Zaehlung> zs) {
-        return zs.stream().map(z -> Integer.parseInt(z.getJahr())).collect(Collectors.toList());
     }
 
     /**

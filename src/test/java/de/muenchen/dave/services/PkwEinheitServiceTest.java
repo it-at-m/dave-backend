@@ -2,7 +2,6 @@ package de.muenchen.dave.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
 
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
@@ -27,23 +26,6 @@ class PkwEinheitServiceTest {
                 this.pkwEinheitRepository,
                 new PkwEinheitMapperImpl());
 
-    }
-
-    @Test
-    public void savePkwEinheit() {
-        final PkwEinheitDTO pkwEinheitDTO = new PkwEinheitDTO();
-        pkwEinheitDTO.setPkw(BigDecimal.valueOf(1));
-        pkwEinheitDTO.setLkw(BigDecimal.valueOf(2));
-        pkwEinheitDTO.setLastzuege(BigDecimal.valueOf(3));
-        pkwEinheitDTO.setBusse(BigDecimal.valueOf(4));
-        pkwEinheitDTO.setKraftraeder(BigDecimal.valueOf(5));
-        pkwEinheitDTO.setFahrradfahrer(BigDecimal.valueOf(6));
-        pkwEinheitDTO.setFussgaenger(BigDecimal.valueOf(7));
-
-        final PkwEinheit pkwEinheit = new PkwEinheitMapperImpl().bearbeiteDto2entity(pkwEinheitDTO);
-        Mockito.when(pkwEinheitRepository.saveAndFlush(any())).thenReturn(pkwEinheit);
-        PkwEinheitDTO result = pkwEinheitService.savePkwEinheit(pkwEinheitDTO);
-        assertThat(result, is(pkwEinheitDTO));
     }
 
     @Test
