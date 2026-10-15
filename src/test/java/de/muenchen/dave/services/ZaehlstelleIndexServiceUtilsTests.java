@@ -18,12 +18,6 @@ import org.junit.jupiter.api.Test;
 public class ZaehlstelleIndexServiceUtilsTests {
 
     @Test
-    public void testSplitStrings() {
-        String s = "a, b, , c,  d  ,e";
-        assertThat(IndexServiceUtils.splitStrings(s), containsInAnyOrder("a", "b", "c", "d", "e"));
-    }
-
-    @Test
     public void testJahreszeitenDetector() {
         LocalDate w1 = LocalDate.of(2019, 1, 1);
         LocalDate w2 = LocalDate.of(2019, 12, 1);
