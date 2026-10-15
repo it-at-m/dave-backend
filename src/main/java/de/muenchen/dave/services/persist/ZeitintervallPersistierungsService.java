@@ -16,6 +16,7 @@ import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -112,23 +113,28 @@ public class ZeitintervallPersistierungsService {
             // Die Gruppierung bestimmt zugleich die Zuordnung einer Modellzeile zu einer Bewegungsbeziehung.
             final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
                     .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
-            try {
-                final List<KIPredictionResult> predictionResults = hochrechnungsService
-                        .calculateRadhochrechnung(zaehldauer, groupedZeitintervalleByBewegungsbeziehung);
-                if (!predictionResults.isEmpty()) {
-                    final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
-                            .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                    final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
-                            .createKIZeitintervalleForTagessummeFromKIPredictionResults(
-                                    predictionResults,
-                                    firstZeitintervallForEachBewegungsbeziehung);
-                    kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
-                    ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+            final Optional<Zaehldauer> modelZaehldauer = determineModelZaehldauer(
+                    zaehldauer,
+                    groupedZeitintervalleByBewegungsbeziehung);
+            if (modelZaehldauer.isPresent()) {
+                try {
+                    final List<KIPredictionResult> predictionResults = hochrechnungsService
+                            .calculateRadhochrechnung(modelZaehldauer.get(), groupedZeitintervalleByBewegungsbeziehung);
+                    if (!predictionResults.isEmpty()) {
+                        final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                                .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
+                        final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
+                                .createKIZeitintervalleForTagessummeFromKIPredictionResults(
+                                        predictionResults,
+                                        firstZeitintervallForEachBewegungsbeziehung);
+                        kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
+                        ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+                    }
+                } catch (final PredictionFailedException exception) {
+                    final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"
+                            + exception.getMessage();
+                    log.error(message, exception);
                 }
-            } catch (final PredictionFailedException exception) {
-                final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"
-                        + exception.getMessage();
-                log.error(message, exception);
             }
         }
 
@@ -159,10 +165,8 @@ public class ZeitintervallPersistierungsService {
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
         // überprüfen, ob alle Zeitintervalle vorhanden sind
         if (numberOfIntervalle == 0 || numberOfIntervalle == zeitintervalle.size()) {
-            final var kiAufbereitungNecessary = List
-                    .of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
-                    .contains(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
             final var zaehldauer = Zaehldauer.valueOf(zaehlung.getZaehldauer());
+            final var kiAufbereitungNecessary = !Zaehldauer.DAUER_24_STUNDEN.equals(zaehldauer);
             aufbereitenUndPersistieren(zaehldauer, zeitintervalle, kiAufbereitungNecessary);
         } else {
             throw new PlausibilityException("Die Anzahl der übermittelten Zeitintervalle stimmt nicht mit den erwarteten überein");
@@ -183,6 +187,78 @@ public class ZeitintervallPersistierungsService {
     public void deleteZeitintervalleForCorrection(final String zaehlungId) {
         zeitintervallRepository.deleteAllByZaehlungId(UUID.fromString(zaehlungId));
         zeitintervallRepository.flush();
+    }
+
+    /**
+     * Ermittelt ob eine Sonderzähldauer alle Inervalle beinhaltet um hochgerechnet werden zu können.
+     */
+    private Optional<Zaehldauer> determineModelZaehldauer(
+            final Zaehldauer zaehldauer,
+            final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung) {
+        if (List.of(Zaehldauer.DAUER_2_X_4_STUNDEN, Zaehldauer.DAUER_13_STUNDEN, Zaehldauer.DAUER_16_STUNDEN)
+                .contains(zaehldauer)) {
+            return Optional.of(zaehldauer);
+        }
+        if (!Zaehldauer.SONSTIGE.equals(zaehldauer)) {
+            return Optional.empty();
+        }
+
+        // Reihenfolge wichtig! Modellzähldauern vom umfassendsten zum kleinsten
+        final List<Zaehldauer> possibleModelZaehldauerList = List.of(
+                Zaehldauer.DAUER_16_STUNDEN,
+                Zaehldauer.DAUER_13_STUNDEN,
+                Zaehldauer.DAUER_2_X_4_STUNDEN);
+
+        // Modellzähldauern der Reihenfolge prüfen, das erste das passt wird zurückgegeben
+        for (final Zaehldauer modelZaehldauer : possibleModelZaehldauerList) {
+            if (allBewegungsbeziehungenHaveCompleteModelInput(
+                    modelZaehldauer,
+                    groupedZeitintervalleByBewegungsbeziehung)) {
+                return Optional.of(modelZaehldauer);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Prüft, ob jede Bewegungsbeziehung alle für das Modell benötigten Viertelstunden enthält.
+     */
+    private boolean allBewegungsbeziehungenHaveCompleteModelInput(
+            final Zaehldauer modelZaehldauer,
+            final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung) {
+        for (final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung : groupedZeitintervalleByBewegungsbeziehung) {
+            if (!hasCompleteModelInput(modelZaehldauer, zeitintervalleJeBewegungsbeziehung)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Prüft die Anzahl der für das Modell relevanten Viertelstunden einer Bewegungsbeziehung.
+     */
+    private boolean hasCompleteModelInput(
+            final Zaehldauer modelZaehldauer,
+            final List<Zeitintervall> zeitintervalleJeBewegungsbeziehung) {
+        int anzahlModellintervalle = 0;
+        for (final Zeitintervall zeitintervall : zeitintervalleJeBewegungsbeziehung) {
+            if (isInModelInputZeitblock(modelZaehldauer, zeitintervall)) {
+                anzahlModellintervalle++;
+            }
+        }
+        return anzahlModellintervalle == modelZaehldauer.getAnzahlZeitintervalle();
+    }
+
+    /**
+     * Prüft, ob ein Zeitintervall vollständig innerhalb eines Modellzeitblocks liegt.
+     */
+    private boolean isInModelInputZeitblock(final Zaehldauer modelZaehldauer, final Zeitintervall zeitintervall) {
+        for (final Zeitblock zeitblock : modelZaehldauer.getModelInputZeitbloecke()) {
+            if (ZeitintervallBaseUtil.isZeitintervallWithinZeitblock(zeitintervall, zeitblock)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
