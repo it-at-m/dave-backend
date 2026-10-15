@@ -1,16 +1,22 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import jakarta.validation.constraints.NotNull;
+import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import jakarta.validation.constraints.NotNull;
+
 
 @Data
 public class LadeZaehldatenZeitreiheDTO implements Serializable {
     @NotNull
     private List<String> datum = new ArrayList<>();
+    @NotNull
+    private List<String> fehlendeWerteMeldung = new ArrayList<>();
+    @NotNull
+    private List<List<Fahrzeug>> tageswertNichtVorhanden = new ArrayList<>();
     @NotNull
     private List<BigDecimal> kfz = new ArrayList<>();
     @NotNull

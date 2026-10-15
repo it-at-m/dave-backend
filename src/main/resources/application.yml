@@ -22,10 +22,12 @@ server:
 springdoc:
   api-docs:
     enabled: true
+    version: openapi_3_0
   swagger-ui:
     enabled: true
     csrf:
-      enabled: 'true'
+      enabled: true
+  show-actuator: true
 
 # Config for spring actuator endpoints
 management:
@@ -120,7 +122,7 @@ dave:
         input-schema: REINE_FAHRZEUGWERTE
   zaehlstelle:
     automatic-number-assignment: true
-    link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/src/de/documentation-csv-for-upload.md
+    link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/de/documentation-csv-for-upload.md
 
   stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
 

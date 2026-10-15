@@ -47,6 +47,8 @@ public class ProcessZaehldatenZeitreiheService {
      * Bewegungsbeziehung besitzt.
      * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
      * Zaehlung übereinstimmen.
+     * Für alle anderen Zählarten gilt: wenn Fußverkehr ausgewählt ist und es sich nicht um einen
+     * Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der aktiven Zählung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
@@ -58,6 +60,9 @@ public class ProcessZaehldatenZeitreiheService {
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
         if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
+        } else if (options.getFussverkehr() && !zaehlung.getKreisverkehr() && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
+            // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
+            return false;
         }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
@@ -276,7 +281,12 @@ public class ProcessZaehldatenZeitreiheService {
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
                     List<Zeitintervall> zeitintervalle = List.of();
-                    if (checkBewegungsbeziehung(zaehlung, options, currentZaehlung)) {
+                    boolean hasValidBewegungsbeziehungen = checkBewegungsbeziehung(zaehlung, options, currentZaehlung);
+                    // wenn checkBewegungsbeziehung bei einer Standard-Zählung (nicht QU, QJS oder FJS) false liefert,
+                    // handelt es sich um eine Zählung mit selektiertem Fussverkehr und nicht vorhandenen Verkehrsbeziehungen:
+                    boolean isFussSelectedAndVerkehrsbeziehungNotPresent = (!hasValidBewegungsbeziehungen
+                            && !List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart()));
+                    if (hasValidBewegungsbeziehungen || isFussSelectedAndVerkehrsbeziehungNotPresent) {
                         // Setzen der Zähldauer anhand der aktuellen Zählung nötig, da es ansonsten zu einem Fehler kommt wenn die Basiszählung,
                         // auf der die Optionen basieren, eine 24-Std.-Zählung ist, diese allerdings mit 2x4-Std.-Zählungen verglichen wird
                         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
@@ -290,15 +300,33 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getKreisverkehr(),
                                 options,
                                 Set.of(options.getZeitblock().getTypeZeitintervall()));
+
+                        if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
+                            // Fußgänger auf null setzen, da nicht alle Verkehrsbeziehungen übereinstimmen
+                            zeitintervalle.forEach(zi -> zi.setFussgaenger(null));
+                        }
                     }
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
+                        final Zeitintervall zeitintervall = zeitintervalle.getFirst();
                         final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
 
-                        final String suffix = getSuffix(options, zaehlung.getKategorien());
+                        // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
+                        final String missingValuesMessage;
 
-                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + suffix);
+                        if (isFussSelectedAndVerkehrsbeziehungNotPresent) {
+                            missingValuesMessage = String.format(NICHT_VORH, VERKEHRSBEZIEHUNG);
+                        } else {
+                            missingValuesMessage = getMissingValuesMessage(options, zaehlung.getKategorien());
+                        }
+
+                        ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(missingValuesMessage);
+                        ladeZaehldatenZeitreihe.getDatum().add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+
+                        // ProZaehlung ein Array mit Fahrzeugkategorien füllen, für die es KEINEN Tageswert gibt (da es nicht hochgerechnet werden konnte)
+                        ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(
+                                getNichtVorhandeneTageswerte(options, zeitintervall, zaehlung.getKategorien()));
 
                         fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                     } else {
@@ -307,7 +335,9 @@ public class ProcessZaehldatenZeitreiheService {
                             final var ladeZaehldatum = getEmptyLadeZaehldatumDTO();
 
                             ladeZaehldatenZeitreihe.getDatum()
-                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY) + String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                                    .add(zaehlung.getDatum().format(FillPdfBeanService.DDMMYYYY));
+                            ladeZaehldatenZeitreihe.getFehlendeWerteMeldung().add(String.format(NICHT_VORH, VERKEHRSBEZIEHUNG));
+                            ladeZaehldatenZeitreihe.getTageswertNichtVorhanden().add(new ArrayList<>());
                             fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreihe, ladeZaehldatum, zaehlung.getKategorien());
                         }
                     }
@@ -316,13 +346,41 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     /**
-     * Ermittelt Suffix für nicht vorhandene Verkehrsarten.
+     * Überprüft, ob zwei {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben.
+     *
+     * @param zaehlung das erste {@link Zaehlung}-Objekt zum Vergleich
+     * @param currentZaehlung das zweite {@link Zaehlung}-Objekt zum Vergleich
+     * @return true, wenn beide {@link Zaehlung}-Objekte gleiche Verkehrsbeziehungen haben, andernfalls
+     *         false
+     */
+    private static boolean hasEqualVerkehrsbeziehungen(final Zaehlung zaehlung, final Zaehlung currentZaehlung) {
+        return collectVerkehrsbeziehungKeys(currentZaehlung.getVerkehrsbeziehungen()).equals(collectVerkehrsbeziehungKeys(zaehlung.getVerkehrsbeziehungen()));
+    }
+
+    /**
+     * Liefert ein Set von Schlüsselpaaren (von, nach) aus den übergebenen
+     * Verkehrsbeziehungen.
+     *
+     * @param verkehrsbeziehungen Liste der Verkehrsbeziehungen; {@code null} ergibt ein leeres Set
+     * @return Set von 2‑elementigen Listen [von, nach]
+     */
+    private static Set<?> collectVerkehrsbeziehungKeys(final List<Verkehrsbeziehung> verkehrsbeziehungen) {
+        return verkehrsbeziehungen != null
+                ? verkehrsbeziehungen
+                        .stream()
+                        .map(vb -> Arrays.asList(vb.getVon(), vb.getNach()))
+                        .collect(Collectors.toSet())
+                : Collections.emptySet();
+    }
+
+    /**
+     * Ermittelt Nachricht für nicht vorhandene Verkehrsarten.
      *
      * @param options Filteroptionen fürs Auslesen der gewählten Fahrzeugkategorien
      * @param kategorien beauftragte Fahrzeugkategorien
-     * @return Suffix
+     * @return Nicht-vorhanden-Nachricht
      */
-    private static String getSuffix(final OptionsDTO options, final List<Fahrzeug> kategorien) {
+    private static String getMissingValuesMessage(final OptionsDTO options, final List<Fahrzeug> kategorien) {
         int missing = 0;
         if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
             missing++;
@@ -430,5 +488,37 @@ public class ProcessZaehldatenZeitreiheService {
                                 zaehlung.getId()).getHours().contains(options.getZeitblock())
                         ||
                         options.getZeitblock().equals(Zeitblock.ZB_00_24));
+    }
+
+    // Ermittelt für die Fahrzeugkategorien RAD und FUSS ob der Tageswert fehlt bzw. nicht hochgerechnet werden konnte.
+    private static List<Fahrzeug> getNichtVorhandeneTageswerte(
+            final OptionsDTO options,
+            final Zeitintervall zeitintervall,
+            final List<Fahrzeug> kategorien) {
+        final List<Fahrzeug> result = new ArrayList<>();
+
+        final boolean isTageswert = Zeitauswahl.TAGESWERT.getCapitalizedName()
+                .equals(options.getZeitauswahl());
+
+        if (!isTageswert) {
+            return result;
+        }
+
+        // Rad hinzufügen, wenn kein Tageswert vorhanden ist
+        final boolean radExists = kategorien.contains(Fahrzeug.RAD);
+        final boolean radMissingTageswert = !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer())
+                && zeitintervall.getHochrechnung().getHochrechnungRad() == null;
+
+        if (options.getRadverkehr() && radExists && radMissingTageswert) {
+            result.add(Fahrzeug.RAD);
+        }
+
+        // Fuß immer hinzufügen wenn es gezählt wurde und wenn Tageswert ausgewählt ist, da für Fuß keine Hochrechnung existiert.
+        final boolean fussExists = kategorien.contains(Fahrzeug.FUSS);
+        if (!Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer()) && fussExists) {
+            result.add(Fahrzeug.FUSS);
+        }
+
+        return result;
     }
 }
