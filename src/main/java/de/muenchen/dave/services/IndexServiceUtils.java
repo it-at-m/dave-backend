@@ -64,16 +64,6 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Erstellt eine Liste von Jahren aus allen Zählungen.
-     *
-     * @param zs Zaehlungen
-     * @return Liste mit Jahren
-     */
-    public static List<Integer> getZaehljahre(List<Zaehlung> zs) {
-        return zs.stream().map(z -> Integer.parseInt(z.getJahr())).collect(Collectors.toList());
-    }
-
-    /**
      * Holt die neuste Zählung aus der Liste.
      *
      * @param zs Zaehlungen
