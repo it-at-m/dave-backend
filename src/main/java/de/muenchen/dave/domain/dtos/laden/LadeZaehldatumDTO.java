@@ -86,4 +86,10 @@ public class LadeZaehldatumDTO implements Serializable {
         return CalculationUtil.calculateAnteilGueterverkehrAnKfzProzent(this);
     }
 
+    @JsonGetter
+    @NotNull
+    public BigDecimal getGesamt() {
+        return CalculationUtil.getGesamt(this);
+    }
+
 }

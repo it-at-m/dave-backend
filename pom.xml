@@ -693,7 +693,7 @@
 
                             <globalProperties>
                                 <supportingFiles>
-                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java,ExceptionProvider.java
                                 </supportingFiles>
                             </globalProperties>
                         </configuration>

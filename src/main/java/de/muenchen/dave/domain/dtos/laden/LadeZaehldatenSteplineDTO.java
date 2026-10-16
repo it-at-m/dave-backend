@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class LadeZaehldatenSteplineDTO implements Serializable {
@@ -14,6 +15,7 @@ public class LadeZaehldatenSteplineDTO implements Serializable {
     private Integer rangeMax;
     @NotNull
     private Integer rangeMaxPercent;
+    @Getter(onMethod_ = {@NotNull}) // NotNull alleine reicht nicht
     @NotNull
     private List<String> xAxisDataFirstChart;
     private List<String> xAxisDataSecondChart;
