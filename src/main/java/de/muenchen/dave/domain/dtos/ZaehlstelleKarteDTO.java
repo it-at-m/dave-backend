@@ -1,9 +1,8 @@
 package de.muenchen.dave.domain.dtos;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

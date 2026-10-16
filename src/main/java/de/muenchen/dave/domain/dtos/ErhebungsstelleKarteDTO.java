@@ -1,17 +1,18 @@
 package de.muenchen.dave.domain.dtos;
 
-import java.io.Serializable;
-
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
 
 @Data
-@Schema(oneOf = {
-        de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO.class,
-        de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO.class
-})
+@Schema(
+        oneOf = {
+                de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO.class,
+                de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO.class
+        }
+)
 public class ErhebungsstelleKarteDTO implements Serializable {
 
     @NotNull
@@ -25,7 +26,7 @@ public class ErhebungsstelleKarteDTO implements Serializable {
     @NotNull
     private Double latitude;
     @NotNull
-    @Schema(oneOf = {MessstelleTooltipDTO.class, ZaehlstelleTooltipDTO.class})
+    @Schema(oneOf = { MessstelleTooltipDTO.class, ZaehlstelleTooltipDTO.class })
     private ErhebungsstelleTooltipDTO tooltip;
     @NotNull
     private Boolean sichtbarDatenportal;

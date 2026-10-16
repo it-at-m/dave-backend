@@ -15,7 +15,7 @@ public class LadeZaehldatenSteplineDTO implements Serializable {
     private Integer rangeMax;
     @NotNull
     private Integer rangeMaxPercent;
-    @Getter(onMethod_ = {@NotNull}) // NotNull alleine reicht nicht
+    @Getter(onMethod_ = { @NotNull }) // NotNull alleine reicht nicht
     @NotNull
     private List<String> xAxisDataFirstChart;
     private List<String> xAxisDataSecondChart;

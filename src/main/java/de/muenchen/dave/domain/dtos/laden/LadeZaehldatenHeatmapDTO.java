@@ -15,7 +15,7 @@ public class LadeZaehldatenHeatmapDTO implements Serializable {
     private Integer rangeMin;
     @NotNull
     private Integer rangeMax;
-    @Getter(onMethod_ = {@NotNull}) // NotNull alleine reicht nicht
+    @Getter(onMethod_ = { @NotNull }) // NotNull alleine reicht nicht
     @NotNull
     private List<String> xAxisDataFirstChart;
     private List<String> xAxisDataSecondChart;

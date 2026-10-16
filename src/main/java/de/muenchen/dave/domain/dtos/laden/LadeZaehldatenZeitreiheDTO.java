@@ -1,13 +1,12 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
-import jakarta.validation.constraints.NotNull;
-
 
 @Data
 public class LadeZaehldatenZeitreiheDTO implements Serializable {

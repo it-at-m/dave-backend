@@ -2,10 +2,10 @@ package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
-
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import lombok.Data;
+import lombok.Getter;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
 @JsonSubTypes(
@@ -18,9 +18,9 @@ public class StepLineSeriesEntryBaseDTO implements Serializable {
 
     @NotNull
     private String name;
-    @NotNull
+    @Getter(onMethod_ = { @NotNull })
     private Integer xAxisIndex;
-    @NotNull
+    @Getter(onMethod_ = { @NotNull })
     private Integer yAxisIndex;
 
 }
