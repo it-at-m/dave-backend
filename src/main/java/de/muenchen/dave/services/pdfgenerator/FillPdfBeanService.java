@@ -706,7 +706,11 @@ public class FillPdfBeanService {
         fillBasicPdf(diagrammPdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
         diagrammPdf
-                .setDocumentTitle(BELASTUNGSPLAN_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+                .setDocumentTitle(
+                        BELASTUNGSPLAN_TITLE_ZAEHLSTELLE
+                                + zaehlstelle.getNummer()
+                                + StringUtils.SPACE
+                                + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         if (zaehlung.getKreisverkehr()) {
             diagrammPdf.setBelastungsplanKreisverkehr(chartAsBase64Png);
         } else {
@@ -755,7 +759,11 @@ public class FillPdfBeanService {
 
         fillBasicPdf(gangliniePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
-        gangliniePdf.setDocumentTitle(GANGLINIE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+        gangliniePdf.setDocumentTitle(
+                GANGLINIE_TITLE_ZAEHLSTELLE
+                        + zaehlstelle.getNummer()
+                        + StringUtils.SPACE
+                        + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         gangliniePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
@@ -1134,7 +1142,11 @@ public class FillPdfBeanService {
         fillBasicPdf(datentabellePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
         datentabellePdf
-                .setDocumentTitle(DATENTABELLE_TITLE_ZAEHLSTELLE + zaehlstelle.getNummer() + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+                .setDocumentTitle(
+                        DATENTABELLE_TITLE_ZAEHLSTELLE
+                                + zaehlstelle.getNummer()
+                                + StringUtils.SPACE
+                                + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
