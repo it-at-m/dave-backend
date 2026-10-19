@@ -1,8 +1,7 @@
 package de.muenchen.dave.domain.dtos;
 
-import java.util.UUID;
-
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.Data;
 
 // Definition of getter, setter, ...
