@@ -13,7 +13,9 @@ public class InfoMessageDTO {
     private UUID id;
     @NotNull
     private String content;
+    @NotNull
     private LocalDate gueltigVon;
+    @NotNull
     private LocalDate gueltigBis;
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean gueltig;
