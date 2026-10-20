@@ -15,11 +15,11 @@ import lombok.RequiredArgsConstructor;
 public class BelastungsplanQuDataDTO extends AbstractBelastungsplanDataDTO {
 
     @NotNull
-    private List<KnotenarmValue> valuesKnotenarme;
+    private List<QuKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
-    public static class KnotenarmValue implements Serializable {
+    public static class QuKnotenarmValue implements Serializable {
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int knotenarm;
         @NotNull

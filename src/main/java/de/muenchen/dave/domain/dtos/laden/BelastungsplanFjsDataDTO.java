@@ -16,11 +16,11 @@ import lombok.RequiredArgsConstructor;
 public class BelastungsplanFjsDataDTO extends AbstractBelastungsplanDataDTO {
 
     @NotNull
-    private List<KnotenarmValue> valuesKnotenarme;
+    private List<FjsKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
-    public static class KnotenarmValue implements Serializable {
+    public static class FjsKnotenarmValue implements Serializable {
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int knotenarm;
         @NotNull
