@@ -166,14 +166,13 @@ public class ZeitintervallPersistierungsService {
 
     /**
      * Ermittelt die KI-hochgerechneten Zeitintervalle fuer die Tagessummen, sofern die Zaehlungsdauer
-     * durch ein
-     * Hochrechnungsmodell unterstützt wird, und fuegt die Hochrechnung in die summierten Zeitbloecke
-     * ein.
+     * durch ein Hochrechnungsmodell unterstützt wird, und fuegt die Hochrechnung in
+     * die summierten Zeitbloecke ein.
      *
      * @param zaehldauer die Dauer der Zaehlung
      * @param zeitintervalle die Zeitintervalle der Zaehlung
-     * @param summierteZeitbloecke die summierten Zeitbloecke, in die die KI-Hochrechnung uebernommen
-     *            wird
+     * @param summierteZeitbloecke die summierten Zeitbloecke,
+     *            in die die KI-Hochrechnung übernommen wird
      * @return die erzeugten KI-Zeitintervalle fuer die Tagessummen
      */
     private List<Zeitintervall> determineKiZeitintervalle(
