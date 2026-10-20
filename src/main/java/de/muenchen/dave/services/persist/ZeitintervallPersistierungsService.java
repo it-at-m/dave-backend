@@ -110,32 +110,7 @@ public class ZeitintervallPersistierungsService {
          */
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
         if (kiAufbereitung) {
-            // Die Gruppierung bestimmt zugleich die Zuordnung einer Modellzeile zu einer Bewegungsbeziehung.
-            final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
-                    .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
-            final Optional<Zaehldauer> modelZaehldauer = determineModelZaehldauer(
-                    zaehldauer,
-                    groupedZeitintervalleByBewegungsbeziehung);
-            if (modelZaehldauer.isPresent()) {
-                try {
-                    final List<KIPredictionResult> predictionResults = hochrechnungsService
-                            .calculateRadhochrechnung(modelZaehldauer.get(), groupedZeitintervalleByBewegungsbeziehung);
-                    if (!predictionResults.isEmpty()) {
-                        final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
-                                .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                        final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
-                                .createKIZeitintervalleForTagessummeFromKIPredictionResults(
-                                        predictionResults,
-                                        firstZeitintervallForEachBewegungsbeziehung);
-                        kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
-                        ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
-                    }
-                } catch (final PredictionFailedException exception) {
-                    final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"
-                            + exception.getMessage();
-                    log.error(message, exception);
-                }
-            }
+            kiZeitintervalle.addAll(determineKiZeitintervalle(zaehldauer, zeitintervalle, summierteZeitbloecke));
         }
 
         final var allZeitintervalle = new ArrayList<Zeitintervall>();
@@ -187,6 +162,54 @@ public class ZeitintervallPersistierungsService {
     public void deleteZeitintervalleForCorrection(final String zaehlungId) {
         zeitintervallRepository.deleteAllByZaehlungId(UUID.fromString(zaehlungId));
         zeitintervallRepository.flush();
+    }
+
+    /**
+     * Ermittelt die KI-hochgerechneten Zeitintervalle fuer die Tagessummen, sofern die Zaehlungsdauer
+     * durch ein
+     * Hochrechnungsmodell unterstützt wird, und fuegt die Hochrechnung in die summierten Zeitbloecke
+     * ein.
+     *
+     * @param zaehldauer die Dauer der Zaehlung
+     * @param zeitintervalle die Zeitintervalle der Zaehlung
+     * @param summierteZeitbloecke die summierten Zeitbloecke, in die die KI-Hochrechnung uebernommen
+     *            wird
+     * @return die erzeugten KI-Zeitintervalle fuer die Tagessummen
+     */
+    private List<Zeitintervall> determineKiZeitintervalle(
+            final Zaehldauer zaehldauer,
+            final List<Zeitintervall> zeitintervalle,
+            final List<Zeitintervall> summierteZeitbloecke) {
+        final var kiZeitintervalle = new ArrayList<Zeitintervall>();
+
+        // Die Gruppierung bestimmt zugleich die Zuordnung einer Modellzeile zu einer Bewegungsbeziehung.
+        final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
+                .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
+        final Optional<Zaehldauer> modelZaehldauer = determineModelZaehldauer(
+                zaehldauer,
+                groupedZeitintervalleByBewegungsbeziehung);
+        if (modelZaehldauer.isPresent()) {
+            try {
+                final List<KIPredictionResult> predictionResults = hochrechnungsService
+                        .calculateRadhochrechnung(modelZaehldauer.get(), groupedZeitintervalleByBewegungsbeziehung);
+                if (!predictionResults.isEmpty()) {
+                    final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                            .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
+                    final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
+                            .createKIZeitintervalleForTagessummeFromKIPredictionResults(
+                                    predictionResults,
+                                    firstZeitintervallForEachBewegungsbeziehung);
+                    kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
+                    ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+                }
+            } catch (final PredictionFailedException exception) {
+                final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"
+                        + exception.getMessage();
+                log.error(message, exception);
+            }
+        }
+
+        return kiZeitintervalle;
     }
 
     /**
