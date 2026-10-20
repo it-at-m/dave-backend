@@ -231,7 +231,7 @@ public class ZeitintervallPersistierungsService {
                 return false;
             }
         }
-        return true;
+        return !groupedZeitintervalleByBewegungsbeziehung.isEmpty();
     }
 
     /**
