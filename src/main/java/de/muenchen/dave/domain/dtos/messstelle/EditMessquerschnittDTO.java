@@ -1,6 +1,8 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
 import java.io.Serializable;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +16,7 @@ public class EditMessquerschnittDTO implements Serializable {
     private Double latitude;
     private String strassenname;
     private String lageMessquerschnitt;
+    @NotNull
     private String fahrtrichtung;
     private Integer anzahlFahrspuren;
     private String fahrzeugklasse;

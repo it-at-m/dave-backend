@@ -2,10 +2,9 @@ package de.muenchen.dave.domain.dtos.messstelle;
 
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.Verkehrsart;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
