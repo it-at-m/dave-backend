@@ -27,7 +27,6 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
-import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -316,32 +314,6 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         laengsverkehr.setStrassenseite(bearbeiteLaengsverkehr.getStrassenseite());
         laengsverkehr.setKnotenarm(bearbeiteLaengsverkehr.getKnotenarm());
         return laengsverkehr;
-    }
-
-    /**
-     * Die Methode ermittelt die Koordinate für die Zaehlung auf Basis der im ersten Parameter
-     * übergebenen Distanz.
-     *
-     * @param radiusDistanceCheck Der Radius für die Prüfung der Distanz.
-     * @param zaehlstelle Die {@link Zaehlstelle} zur Prüfung des Abstands zur {@link Zaehlung}.
-     * @param zaehlung Die {@link Zaehlung} zur Prüfung des Abstands zur {@link Zaehlstelle}.
-     * @return die Koordinate der {@link Zaehlstelle}, falls die Koordinate der {@link Zaehlung} sich
-     *         innerhalb des durch den Radius definierten Umkreis um die
-     *         {@link Zaehlstelle} befindet. Ansonsten wird die Koordinate der {@link Zaehlung}
-     *         zurückgegeben.
-     */
-    public GeoPoint getKoordinateZaehlstelleWhenZaehlungWithinDistance(final double radiusDistanceCheck,
-            final Zaehlstelle zaehlstelle,
-            final Zaehlung zaehlung) {
-        GeoPoint position = zaehlung.getPunkt();
-        if (CoordinateUtil.arePositionsWithinGivenDistance(
-                radiusDistanceCheck,
-                zaehlstelle.getPunkt(),
-                zaehlung.getPunkt())) {
-            log.debug("Die Koordinate der Zaehlstelle wird verwendet.");
-            position = zaehlstelle.getPunkt();
-        }
-        return position;
     }
 
     /**

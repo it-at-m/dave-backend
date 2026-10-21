@@ -3,7 +3,6 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.enums.Rounding;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,20 +15,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @AllArgsConstructor
 public class RoundingService {
-
-    public void roundToNearest(final LadeMesswerteDTO messwert, final int nearestValueToRound) {
-        messwert.setPkw(roundIfNotNullOrZero(messwert.getPkw(), nearestValueToRound));
-        messwert.setLkw(roundIfNotNullOrZero(messwert.getLkw(), nearestValueToRound));
-        messwert.setLfw(roundIfNotNullOrZero(messwert.getLfw(), nearestValueToRound));
-        messwert.setLastzuege(roundIfNotNullOrZero(messwert.getLastzuege(), nearestValueToRound));
-        messwert.setBusse(roundIfNotNullOrZero(messwert.getBusse(), nearestValueToRound));
-        messwert.setKraftraeder(roundIfNotNullOrZero(messwert.getKraftraeder(), nearestValueToRound));
-        messwert.setFahrradfahrer(roundIfNotNullOrZero(messwert.getFahrradfahrer(), nearestValueToRound));
-        messwert.setFussgaenger(roundIfNotNullOrZero(messwert.getFussgaenger(), nearestValueToRound));
-        messwert.setKfz(roundIfNotNullOrZero(messwert.getKfz(), nearestValueToRound));
-        messwert.setSchwerverkehr(roundIfNotNullOrZero(messwert.getSchwerverkehr(), nearestValueToRound));
-        messwert.setGueterverkehr(roundIfNotNullOrZero(messwert.getGueterverkehr(), nearestValueToRound));
-    }
 
     /**
      * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound"

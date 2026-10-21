@@ -15,22 +15,11 @@ public class PkwEinheitService {
 
     private final PkwEinheitMapper pkwEinheitMapper;
 
-    public PkwEinheitService(final PkwEinheitRepository pkwEinheitRepository,
+    public PkwEinheitService(
+            final PkwEinheitRepository pkwEinheitRepository,
             final PkwEinheitMapper pkwEinheitMapper) {
         this.pkwEinheitRepository = pkwEinheitRepository;
         this.pkwEinheitMapper = pkwEinheitMapper;
-    }
-
-    /**
-     * Diese Methode speichert eine {@link PkwEinheit} in der Relationalen Datenbank.
-     *
-     * @param pkwEinheitDto zu speicherndes DTO
-     * @return die gespeicherte {@link PkwEinheit} als {@link PkwEinheitDTO}.
-     */
-    public PkwEinheitDTO savePkwEinheit(final PkwEinheitDTO pkwEinheitDto) {
-        PkwEinheit pkwEinheit = pkwEinheitMapper.bearbeiteDto2entity(pkwEinheitDto);
-        pkwEinheit = pkwEinheitRepository.saveAndFlush(pkwEinheit);
-        return pkwEinheitMapper.entity2bearbeiteDto(pkwEinheit);
     }
 
     /**

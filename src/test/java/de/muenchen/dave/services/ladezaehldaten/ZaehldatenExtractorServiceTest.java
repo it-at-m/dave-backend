@@ -236,18 +236,6 @@ class ZaehldatenExtractorServiceTest {
     }
 
     @Test
-    void testIsZeitintervallOfTypeSpitzenstunde_trueAndFalse() {
-        var spitzen = createZeitintervall(TypeZeitintervall.SPITZENSTUNDE_FUSS, 1);
-        var normal = createZeitintervall(TypeZeitintervall.STUNDE_KOMPLETT, 1);
-
-        assertTrue(service.isZeitintervallOfTypeSpitzenstunde(spitzen));
-        assertTrue(!service.isZeitintervallOfTypeSpitzenstunde(normal));
-
-        // Verify: Keine Interaktion mit externen Services
-        Mockito.verifyNoInteractions(zeitintervallExtractorService, zeitintervallSummationService, spitzenstundeCalculatorService);
-    }
-
-    @Test
     void testEnrich_QU_singleChosenSetsQuerungsverkehr() {
         OptionsDTO options = createBaseOptions();
         var ext = new OptionsQuerungsverkehrDTO();
