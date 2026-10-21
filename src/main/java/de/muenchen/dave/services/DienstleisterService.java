@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.Dienstleister;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.mapper.DienstleisterMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.DienstleisterRepository;
 import java.util.Collections;
 import java.util.List;
@@ -65,15 +64,6 @@ public class DienstleisterService {
             return dienstleister.get().getEmailAddresses();
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    public DienstleisterDTO loadDienstleisterByKennung(final String dienstleisterkennung) throws DataNotFoundException {
-        final Optional<Dienstleister> dienstleister = this.dienstleisterRepository.findByKennung(dienstleisterkennung);
-        if (dienstleister.isPresent()) {
-            return this.dienstleisterMapper.bean2Dto(dienstleister.get());
-        } else {
-            throw new DataNotFoundException(String.format("Der Dienstleister mit Kennung %s existiert nicht", dienstleisterkennung));
         }
     }
 

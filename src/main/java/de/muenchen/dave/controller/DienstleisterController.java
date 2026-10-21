@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,7 +24,6 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/dienstleister")
 public class DienstleisterController {
 
-    private static final String REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG = "kennung";
     private final DienstleisterService dienstleisterService;
 
     public DienstleisterController(final DienstleisterService dienstleisterService) {
@@ -47,25 +45,6 @@ public class DienstleisterController {
         } catch (final Exception e) {
             log.error("Unerwarteter Fehler im DienstleisterController beim Speichern des Dienstleisters: {}", dienstleisterDTO, e);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Speichern des Dienstleisters aufgetreten.");
-        }
-    }
-
-    /**
-     * Rest-Endpunkt zum Laden eines Dienstleister (für das Admin-Portal).
-     *
-     * @param dienstleisterkennung Kennung des Dienstleisters
-     * @return Der gespeicherte Dienstleister als DTO
-     */
-    @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    @GetMapping(value = "/getByDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DienstleisterDTO> getDienstleisterByKennung(
-            @RequestParam(value = REQUEST_PARAMETER_DIENSTLEISTER_KENNUNG) @NotNull final String dienstleisterkennung) {
-        log.debug("Dienstleister laden: {}", dienstleisterkennung);
-        try {
-            return ResponseEntity.ok(this.dienstleisterService.loadDienstleisterByKennung(dienstleisterkennung));
-        } catch (final Exception e) {
-            log.error("Unerwarteter Fehler im DienstleisterController beim Laden des Dienstleisters mit Kennung: {}", dienstleisterkennung, e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Es ist ein unerwarteter Fehler beim Laden des Dienstleisters aufgetreten.");
         }
     }
 
