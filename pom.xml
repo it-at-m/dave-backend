@@ -320,7 +320,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.1</version>
+            <version>2.14.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -645,11 +645,13 @@
                                 <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
                                 <dateLibrary>java8-localdatetime</dateLibrary>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useSpringBoot4>false</useSpringBoot4>
                             </configOptions>
 
                             <globalProperties>
                                 <supportingFiles>
-                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java
+                                    ApiClient.java,JavaTimeFormatter.java,Authentication.java,OAuth.java,ApiKeyAuth.java,HttpBasicAuth.java,HttpBearerAuth.java,RFC3339DateFormat.java,ExceptionProvider.java
                                 </supportingFiles>
                             </globalProperties>
                         </configuration>
@@ -689,6 +691,8 @@
                                 <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
                                 <dateLibrary>java8-localdatetime</dateLibrary>
                                 <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useSpringBoot4>false</useSpringBoot4>
                             </configOptions>
 
                             <globalProperties>
