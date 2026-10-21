@@ -28,10 +28,8 @@ public class MessstelleOptionsDTO implements Serializable {
     @NotEmpty
     private String zeitauswahl;
 
-    @NotNull
     private Zeitblock zeitblock;
 
-    @NotNull
     private TagesTyp tagesTyp;
 
     @NotNull
