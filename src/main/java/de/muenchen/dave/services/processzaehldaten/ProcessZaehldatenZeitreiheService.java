@@ -61,10 +61,11 @@ public class ProcessZaehldatenZeitreiheService {
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
         if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
-        } else if (options.getFussverkehr() && zaehlung.getKategorien().contains(Fahrzeug.FUSS) && !zaehlung.getKreisverkehr() && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
-            // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
-            return false;
-        }
+        } else if (options.getFussverkehr() && zaehlung.getKategorien().contains(Fahrzeug.FUSS) && !zaehlung.getKreisverkehr()
+                && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
+                    // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
+                    return false;
+                }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
