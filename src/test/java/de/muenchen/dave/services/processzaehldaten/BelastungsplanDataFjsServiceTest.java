@@ -143,8 +143,8 @@ public class BelastungsplanDataFjsServiceTest {
     }
 
     private void assertLaengsverkehr(List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> values, int knotenarm, Himmelsrichtung strassenseite,
-                                     Bewegungsrichtung richtung,
-                                     int expectedValue) {
+            Bewegungsrichtung richtung,
+            int expectedValue) {
         BelastungsplanFjsDataDTO.FjsKnotenarmValue fjsKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
         BelastungsplanFjsDataDTO.StrassenseiteValue strassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == strassenseite).findFirst().orElseThrow();
