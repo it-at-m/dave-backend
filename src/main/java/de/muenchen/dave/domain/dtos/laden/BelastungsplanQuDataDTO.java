@@ -14,12 +14,17 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class BelastungsplanQuDataDTO extends AbstractBelastungsplanDataDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private List<QuKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
     public static class QuKnotenarmValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int knotenarm;
         @NotNull
@@ -31,6 +36,8 @@ public class BelastungsplanQuDataDTO extends AbstractBelastungsplanDataDTO {
     @Data
     @RequiredArgsConstructor
     public static class QuerungsverkehrValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @NotNull
         private final Himmelsrichtung richtung;
         @NotNull

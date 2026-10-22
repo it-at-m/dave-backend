@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public abstract class AbstractBelastungsplanDataDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private String label;
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)

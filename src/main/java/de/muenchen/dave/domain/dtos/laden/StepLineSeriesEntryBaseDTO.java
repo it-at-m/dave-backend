@@ -16,6 +16,9 @@ import lombok.Getter;
 @Data
 public class StepLineSeriesEntryBaseDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private String name;
     @Getter(onMethod_ = { @NotNull })

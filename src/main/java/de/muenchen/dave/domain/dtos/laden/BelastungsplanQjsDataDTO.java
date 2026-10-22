@@ -14,16 +14,21 @@ import lombok.RequiredArgsConstructor;
 @Data
 public class BelastungsplanQjsDataDTO extends AbstractBelastungsplanDataDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private BigDecimal sumAll;
     @NotNull
-    private List<StrassenseiteValue> valuesStrassenseite;
+    private List<QjsStrassenseiteValue> valuesStrassenseite;
     @NotNull
     private List<VerkehrsbeziehungValue> valuesVerkehrsbeziehungen;
 
     @Data
     @RequiredArgsConstructor
     public static class VerkehrsbeziehungValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int von;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
@@ -36,7 +41,9 @@ public class BelastungsplanQjsDataDTO extends AbstractBelastungsplanDataDTO {
 
     @Data
     @RequiredArgsConstructor
-    public static class StrassenseiteValue implements Serializable {
+    public static class QjsStrassenseiteValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @NotNull
         private final Himmelsrichtung strassenseite;
         @NotNull

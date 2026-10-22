@@ -7,6 +7,9 @@ import lombok.Data;
 @Data
 public class LadeProcessedZaehldatenDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     LadeZaehldatenTableDTO zaehldatenTable;
     @NotNull

@@ -146,9 +146,9 @@ public class BelastungsplanDataFjsServiceTest {
             Bewegungsrichtung richtung,
             int expectedValue) {
         BelastungsplanFjsDataDTO.FjsKnotenarmValue fjsKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.StrassenseiteValue strassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
+        BelastungsplanFjsDataDTO.FjsStrassenseiteValue fjsStrassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == strassenseite).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.LaengsverkehrValue laengsverkehrValue = strassenseiteValue.getValuesLaengsverkehre().stream()
+        BelastungsplanFjsDataDTO.LaengsverkehrValue laengsverkehrValue = fjsStrassenseiteValue.getValuesLaengsverkehre().stream()
                 .filter(lv -> lv.getRichtung() == richtung).findFirst().orElseThrow();
         assertThat(laengsverkehrValue.getValue(), is(BigDecimal.valueOf(expectedValue)));
     }

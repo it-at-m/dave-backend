@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ZaehlstelleKarteDTO extends ErhebungsstelleKarteDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private String letzteZaehlungId;
     @NotNull

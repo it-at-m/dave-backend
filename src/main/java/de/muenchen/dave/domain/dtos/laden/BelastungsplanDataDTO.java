@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 @Data
 public class BelastungsplanDataDTO extends AbstractBelastungsplanDataDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private BigDecimal[][] values;
 

@@ -19,6 +19,9 @@ import lombok.Data;
 )
 public abstract class AbstractLadeBelastungsplanDTO<T> implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private String[] streets;
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)

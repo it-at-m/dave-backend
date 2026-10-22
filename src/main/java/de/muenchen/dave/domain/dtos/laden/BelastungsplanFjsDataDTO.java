@@ -15,23 +15,30 @@ import lombok.RequiredArgsConstructor;
 @Data
 public class BelastungsplanFjsDataDTO extends AbstractBelastungsplanDataDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private List<FjsKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
     public static class FjsKnotenarmValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int knotenarm;
         @NotNull
         private BigDecimal sumKnotenarm;
         @NotNull
-        private final List<StrassenseiteValue> valuesStrassenseiten;
+        private final List<FjsStrassenseiteValue> valuesStrassenseiten;
     }
 
     @Data
     @RequiredArgsConstructor
-    public static class StrassenseiteValue implements Serializable {
+    public static class FjsStrassenseiteValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @NotNull
         private final Himmelsrichtung strassenseite;
         @NotNull
@@ -43,6 +50,8 @@ public class BelastungsplanFjsDataDTO extends AbstractBelastungsplanDataDTO {
     @Data
     @RequiredArgsConstructor
     public static class LaengsverkehrValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         @NotNull
         private final Bewegungsrichtung richtung;
         @NotNull

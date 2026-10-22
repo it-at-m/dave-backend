@@ -10,6 +10,9 @@ import lombok.Data;
 
 @Data
 public class LadeZaehldatenZeitreiheDTO implements Serializable {
+
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
     @NotNull
     private List<String> datum = new ArrayList<>();
     @NotNull

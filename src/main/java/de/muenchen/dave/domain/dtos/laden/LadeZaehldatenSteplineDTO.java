@@ -9,6 +9,9 @@ import lombok.Getter;
 @Data
 public class LadeZaehldatenSteplineDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private List<String> legend;
     @NotNull

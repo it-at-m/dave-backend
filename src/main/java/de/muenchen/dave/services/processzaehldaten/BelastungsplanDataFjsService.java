@@ -102,10 +102,10 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
                     belastungsplanData.getValuesKnotenarme().add(kv);
                     return kv;
                 });
-        final BelastungsplanFjsDataDTO.StrassenseiteValue seiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
+        final BelastungsplanFjsDataDTO.FjsStrassenseiteValue seiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == laengsverkehr.getStrassenseite()).findFirst()
                 .orElseGet(() -> {
-                    final var sv = new BelastungsplanFjsDataDTO.StrassenseiteValue(laengsverkehr.getStrassenseite(), new ArrayList<>());
+                    final var sv = new BelastungsplanFjsDataDTO.FjsStrassenseiteValue(laengsverkehr.getStrassenseite(), new ArrayList<>());
                     fjsKnotenarmValue.getValuesStrassenseiten().add(sv);
                     return sv;
                 });

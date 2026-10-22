@@ -17,6 +17,9 @@ import lombok.Data;
 @Data
 public class LadeZaehldatumDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     /**
      * Der Typ leitet sich aus der Typsetzung in der Methode
      * {@link LadeZaehldatenService#mapToZaehldatum} ab.
@@ -24,7 +27,6 @@ public class LadeZaehldatumDTO implements Serializable {
      * 60-Minütigen-Intervall handelt.
      *
      */
-    @NotNull
     private String type;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)

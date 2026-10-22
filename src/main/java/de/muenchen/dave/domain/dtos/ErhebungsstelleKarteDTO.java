@@ -15,6 +15,9 @@ import lombok.Data;
 )
 public class ErhebungsstelleKarteDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     private String id;
     @NotNull

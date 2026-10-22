@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class LeseZaehlstelleDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     @NotNull
     String id;
     @NotNull
