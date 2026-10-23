@@ -10,7 +10,6 @@ import lombok.Data;
 @Data
 public class LadeProcessedMesswerteDTO implements Serializable {
 
-    @NotNull
     TagesTyp tagesTyp;
     @NotNull
     LadeMesswerteListenausgabeDTO zaehldatenTable;
