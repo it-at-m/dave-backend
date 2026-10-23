@@ -7,4 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class LadeBelastungsplanDTO extends AbstractLadeBelastungsplanDTO<BelastungsplanDataDTO> {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 }

@@ -1,11 +1,13 @@
 package de.muenchen.dave.domain.enums;
 
 import de.muenchen.dave.geodateneai.gen.model.MesswertRequestDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum ZaehldatenIntervall {
 
     STUNDE_VIERTEL(1, 15, MesswertRequestDto.IntervalInMinutesEnum.INTERVAL_15, TypeZeitintervall.STUNDE_VIERTEL),

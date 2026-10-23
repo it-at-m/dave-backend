@@ -95,18 +95,18 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
             final Laengsverkehr laengsverkehr,
             final BigDecimal value,
             final BelastungsplanFjsDataDTO belastungsplanData) {
-        final BelastungsplanFjsDataDTO.KnotenarmValue knotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
+        final BelastungsplanFjsDataDTO.FjsKnotenarmValue fjsKnotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
                 .filter(kn -> Objects.equals(kn.getKnotenarm(), laengsverkehr.getKnotenarm())).findFirst()
                 .orElseGet(() -> {
-                    final var kv = new BelastungsplanFjsDataDTO.KnotenarmValue(laengsverkehr.getKnotenarm(), new ArrayList<>());
+                    final var kv = new BelastungsplanFjsDataDTO.FjsKnotenarmValue(laengsverkehr.getKnotenarm(), new ArrayList<>());
                     belastungsplanData.getValuesKnotenarme().add(kv);
                     return kv;
                 });
-        final BelastungsplanFjsDataDTO.StrassenseiteValue seiteValue = knotenarmValue.getValuesStrassenseiten().stream()
+        final BelastungsplanFjsDataDTO.FjsStrassenseiteValue seiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == laengsverkehr.getStrassenseite()).findFirst()
                 .orElseGet(() -> {
-                    final var sv = new BelastungsplanFjsDataDTO.StrassenseiteValue(laengsverkehr.getStrassenseite(), new ArrayList<>());
-                    knotenarmValue.getValuesStrassenseiten().add(sv);
+                    final var sv = new BelastungsplanFjsDataDTO.FjsStrassenseiteValue(laengsverkehr.getStrassenseite(), new ArrayList<>());
+                    fjsKnotenarmValue.getValuesStrassenseiten().add(sv);
                     return sv;
                 });
         Optional<BelastungsplanFjsDataDTO.LaengsverkehrValue> laengsverkehrValue = seiteValue.getValuesLaengsverkehre().stream()
@@ -123,10 +123,10 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
                 seiteValue.setSumStrassenseite(seiteValue.getSumStrassenseite().add(value));
             }
             // Summiere Knotenarm
-            if (knotenarmValue.getSumKnotenarm() == null) {
-                knotenarmValue.setSumKnotenarm(value);
+            if (fjsKnotenarmValue.getSumKnotenarm() == null) {
+                fjsKnotenarmValue.setSumKnotenarm(value);
             } else {
-                knotenarmValue.setSumKnotenarm(knotenarmValue.getSumKnotenarm().add(value));
+                fjsKnotenarmValue.setSumKnotenarm(fjsKnotenarmValue.getSumKnotenarm().add(value));
             }
         }
     }
