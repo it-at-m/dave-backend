@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 public class InfoMessageDTO {
 
-    @NotNull
     private UUID id;
     @NotNull
     private String content;
