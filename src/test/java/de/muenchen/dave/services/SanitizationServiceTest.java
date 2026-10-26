@@ -60,16 +60,16 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlungDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
-        bearbeiteZaehlungDTO.setZaehlart(Zaehlart.N.toString());
+        bearbeiteZaehlungDTO.setZaehlart("N");
         bearbeiteZaehlungDTO.setProjektNummer(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setProjektName(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setKreuzungsname(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setZaehlsituation(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setZaehlsituationErweitert(ALLOWED_HTML_1);
-        bearbeiteZaehlungDTO.setWetter(Wetter.CLOUDY.toString());
-        bearbeiteZaehlungDTO.setStatus(Status.INSTRUCTED.toString());
-        bearbeiteZaehlungDTO.setQuelle(Quelle.MANUALLY.toString());
-        bearbeiteZaehlungDTO.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.toString());
+        bearbeiteZaehlungDTO.setWetter("CLOUDY");
+        bearbeiteZaehlungDTO.setStatus("INSTRUCTED");
+        bearbeiteZaehlungDTO.setQuelle("MANUALLY");
+        bearbeiteZaehlungDTO.setZaehldauer("DAUER_24_STUNDEN");
         bearbeiteZaehlungDTO.setSchulZeiten(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setKommentar(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setDienstleisterkennung(ALLOWED_HTML_1);
@@ -146,13 +146,13 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlstelleDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.toString());
+        bearbeiteZaehlstelleDTO.setStadtbezirk("Moosach");
         bearbeiteZaehlstelleDTO.setKommentar(ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1, ALLOWED_HTML_2));
 
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
 
-        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.toString()));
+        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.getBezeichnung()));
         assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(ALLOWED_HTML_2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(ALLOWED_HTML_1));
