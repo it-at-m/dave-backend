@@ -6,10 +6,9 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data

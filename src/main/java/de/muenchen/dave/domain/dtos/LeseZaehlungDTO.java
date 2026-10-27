@@ -7,11 +7,10 @@ import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data

@@ -3,10 +3,9 @@ package de.muenchen.dave.domain.dtos.external;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
