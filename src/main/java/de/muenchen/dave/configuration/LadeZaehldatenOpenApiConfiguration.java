@@ -15,6 +15,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+/**
+ * Ergänzt die automatisch erzeugte OpenAPI-Spezifikation für das Laden
+ * verarbeiteter Zähldaten um die konkrete Response und die polymorphe
+ * Belastungsplan-Struktur.
+ *
+ * <p>
+ * Die Struktur wird im Java-Modell durch Generics und Jackson-Subtypen
+ * abgebildet. Diese Informationen werden von Springdoc jedoch nicht so in die
+ * OpenAPI-Spezifikation übernommen, dass der TypeScript-Generator die vier
+ * Belastungsplan-Varianten samt ihren konkreten {@code value}-Datentypen und
+ * dem Discriminator {@code belastungsplanTyp} erkennen kann. Diese
+ * Konfiguration beschreibt die Schemas und die {@code oneOf}-Beziehungen daher
+ * explizit.
+ * </p>
+ *
+ * <p>
+ * Ohne diese Ergänzung würde der generierte TypeScript-Client die Response
+ * von {@code /lade-zaehldaten-processed} nur unvollständig oder als nicht
+ * näher typisiertes Objekt abbilden. Insbesondere gingen die konkreten
+ * Belastungsplan-Varianten und ihre typsichere Unterscheidung verloren.
+ * </p>
+ */
 public class LadeZaehldatenOpenApiConfiguration {
 
     private static final String PROCESSED_ZAEHLDATEN_PATH = "/lade-zaehldaten-processed";
