@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -42,8 +43,8 @@ public class HochrechnungsfaktorService {
         hofaEntity.setKfz(hofaDto.getKfz());
         hofaEntity.setSv(hofaDto.getSv());
         hofaEntity.setGv(hofaDto.getGv());
-        hofaEntity.setActive(hofaDto.isActive());
-        hofaEntity.setDefaultFaktor(hofaDto.isDefaultFaktor());
+        hofaEntity.setActive(BooleanUtils.isTrue(hofaDto.getActive()));
+        hofaEntity.setDefaultFaktor(BooleanUtils.isTrue(hofaDto.getDefaultFaktor()));
         return hofaEntity;
     }
 

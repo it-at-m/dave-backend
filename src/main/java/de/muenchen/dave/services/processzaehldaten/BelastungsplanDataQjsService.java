@@ -88,12 +88,12 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
                     verkehrsbeziehung.getStrassenseite(), currentValue);
             belastungsplanData.getValuesVerkehrsbeziehungen().add(value);
 
-            Optional<BelastungsplanQjsDataDTO.StrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
+            Optional<BelastungsplanQjsDataDTO.QjsStrassenseiteValue> valueStrassenseite = belastungsplanData.getValuesStrassenseite().stream()
                     .filter(bez -> bez.getStrassenseite() == verkehrsbeziehung.getStrassenseite()).findFirst();
             if (valueStrassenseite.isPresent()) {
                 valueStrassenseite.get().setValue(valueStrassenseite.get().getValue().add(currentValue));
             } else {
-                BelastungsplanQjsDataDTO.StrassenseiteValue valueStrassenseite2 = new BelastungsplanQjsDataDTO.StrassenseiteValue(
+                BelastungsplanQjsDataDTO.QjsStrassenseiteValue valueStrassenseite2 = new BelastungsplanQjsDataDTO.QjsStrassenseiteValue(
                         verkehrsbeziehung.getStrassenseite());
                 valueStrassenseite2.setValue(currentValue);
                 belastungsplanData.getValuesStrassenseite().add(valueStrassenseite2);

@@ -7,4 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class LadeBelastungsplanQjsDTO extends AbstractLadeBelastungsplanDTO<BelastungsplanQjsDataDTO> {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 }

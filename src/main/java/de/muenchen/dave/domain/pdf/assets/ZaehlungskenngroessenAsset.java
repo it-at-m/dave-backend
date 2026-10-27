@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ZaehlungskenngroessenAsset extends BaseAsset {
+    private String text;
     private String zaehlungId;
     private List<ZaehlungskenngroessenData> zaehldaten;
     private boolean printFuss;
