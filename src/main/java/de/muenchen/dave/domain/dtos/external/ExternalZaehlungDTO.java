@@ -5,6 +5,8 @@ import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
@@ -25,8 +27,10 @@ public class ExternalZaehlungDTO {
 
     String kreuzungsname;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean sonderzaehlung;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean kreisverkehr;
 
     List<Fahrzeug> kategorien;
@@ -35,6 +39,7 @@ public class ExternalZaehlungDTO {
 
     String zaehlsituationErweitert;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int zaehlIntervall;
 
     String wetter;
@@ -67,6 +72,7 @@ public class ExternalZaehlungDTO {
 
     String zaehlstelleKommentar;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean unreadMessagesDienstleister;
 
     String dienstleisterkennung;

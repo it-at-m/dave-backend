@@ -18,6 +18,7 @@ public class InfoMessageDTO {
     private LocalDate gueltigBis;
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean gueltig;
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean aktiv;
 
 }

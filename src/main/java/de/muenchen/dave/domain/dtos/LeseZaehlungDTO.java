@@ -10,6 +10,8 @@ import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
@@ -22,6 +24,7 @@ public class LeseZaehlungDTO implements Serializable {
 
     Date datum;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int jahr;
 
     String monat;
@@ -55,6 +58,7 @@ public class LeseZaehlungDTO implements Serializable {
 
     String zaehlsituationErweitert;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int zaehlIntervall;
 
     String wetter;

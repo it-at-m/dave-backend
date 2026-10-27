@@ -1,36 +1,36 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import lombok.Data;
 
 @Data
 public class FahrzeugOptionsDTO implements Serializable {
 
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean kraftfahrzeugverkehr;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean schwerverkehr;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean gueterverkehr;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean schwerverkehrsanteilProzent;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean gueterverkehrsanteilProzent;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean radverkehr;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean fussverkehr;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean lastkraftwagen;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean lastzuege;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean busse;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean kraftraeder;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean personenkraftwagen;
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean lieferwagen;
 }
