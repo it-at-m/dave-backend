@@ -288,6 +288,20 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
+        <!-- Elasticsearch Migration -->
+        <!-- Hibernate Spatial für PostGIS Unterstützung -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+        </dependency>
+
+        <!-- JTS (Java Topology Suite) für geometrische Operationen -->
+        <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+            <version>1.19.0</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
