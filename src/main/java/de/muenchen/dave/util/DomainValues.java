@@ -29,7 +29,7 @@ public final class DomainValues {
         } else if (StringUtils.equals(wetter, "SNOWY")) {
             return "Schnee";
         } else {
-            return "Keine Angabe";
+            return StringUtils.EMPTY;
         }
     }
 
@@ -45,7 +45,7 @@ public final class DomainValues {
         } else if (StringUtils.equals(zaehldauer, "SONSTIGE")) {
             return "Sonstige";
         } else {
-            return "Keine Angabe";
+            return StringUtils.EMPTY;
         }
     }
 

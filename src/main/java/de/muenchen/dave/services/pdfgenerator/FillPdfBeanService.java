@@ -148,7 +148,11 @@ public class FillPdfBeanService {
      * @param zaehlstelle Zählstelle aus dem Frontend.
      * @param department Organisationseinheit des Benutzers
      */
-    protected static void fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+    protected static void fillBasicPdf(
+            final BasicPdf basicPdf,
+            final Zaehlung zaehlung,
+            final String kreuzungsname,
+            final Zaehlstelle zaehlstelle,
             final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
@@ -156,8 +160,12 @@ public class FillPdfBeanService {
 
     }
 
-    protected static void fillBasicPdf(final BasicMessstellePdf basicPdf,
-            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+    protected static void fillBasicPdf(
+            final BasicMessstellePdf basicPdf,
+            final Messstelle messstelle,
+            final String department,
+            final MessstelleOptionsDTO optionsDTO,
+            final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
 
@@ -192,8 +200,10 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
-            final String kreuzungsname, final Zaehlung zaehlung) {
+    protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(
+            final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
+            final String kreuzungsname,
+            final Zaehlung zaehlung) {
         zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
         zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(zaehlung.getZaehldauer()));
@@ -204,8 +214,11 @@ public class FillPdfBeanService {
         return zaehlstelleninformationen;
     }
 
-    protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+    protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(
+            final MessstelleninformationenPdfComponent messstelleninformationen,
+            final Messstelle messstelle,
+            final MessstelleOptionsDTO optionsDTO,
+            final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
