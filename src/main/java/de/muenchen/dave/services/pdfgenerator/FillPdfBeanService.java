@@ -62,6 +62,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -148,7 +149,11 @@ public class FillPdfBeanService {
      * @param zaehlstelle Zählstelle aus dem Frontend.
      * @param department Organisationseinheit des Benutzers
      */
-    protected static void fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+    protected static void fillBasicPdf(
+            final BasicPdf basicPdf,
+            final Zaehlung zaehlung,
+            final String kreuzungsname,
+            final Zaehlstelle zaehlstelle,
             final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
@@ -156,8 +161,12 @@ public class FillPdfBeanService {
 
     }
 
-    protected static void fillBasicPdf(final BasicMessstellePdf basicPdf,
-            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+    protected static void fillBasicPdf(
+            final BasicMessstellePdf basicPdf,
+            final Messstelle messstelle,
+            final String department,
+            final MessstelleOptionsDTO optionsDTO,
+            final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
 
@@ -192,23 +201,31 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
-            final String kreuzungsname, final Zaehlung zaehlung) {
-        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
+    protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(
+            final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
+            final String kreuzungsname,
+            final Zaehlung zaehlung) {
+        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), StringUtils.EMPTY));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
         zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(zaehlung.getZaehldauer()));
         zaehlstelleninformationen.setKreuzungsname(kreuzungsname);
         zaehlstelleninformationen.setWetter(DomainValues.getWetterValue(zaehlung.getWetter()));
-        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), KEINE_DATEN_VORHANDEN));
-        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), KEINE_DATEN_VORHANDEN));
+        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), StringUtils.EMPTY));
+        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), StringUtils.EMPTY));
         return zaehlstelleninformationen;
     }
 
-    protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+    protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(
+            final MessstelleninformationenPdfComponent messstelleninformationen,
+            final Messstelle messstelle,
+            final MessstelleOptionsDTO optionsDTO,
+            final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
-        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), StringUtils.EMPTY));
+        final var selectedFahrzeuge = Objects.isNull(messstelle.getDetektierteVerkehrsart())
+                ? StringUtils.EMPTY
+                : messstelle.getDetektierteVerkehrsart().name();
+        messstelleninformationen.setSelectedFahrzeuge(selectedFahrzeuge);
         messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
@@ -216,7 +233,7 @@ public class FillPdfBeanService {
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
             messstelleninformationen.setWochentagNeeded(true);
             messstelleninformationen
-                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
+                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, StringUtils.EMPTY));
         } else {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
@@ -323,7 +340,8 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    protected static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen,
+    protected static ZusatzinformationenPdfComponent fillZusatzinformationen(
+            final ZusatzinformationenPdfComponent zusatzinformationen,
             final Zaehlstelle zaehlstelle,
             final Zaehlung zaehlung) {
         zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(zaehlstelle.getKommentar()));
