@@ -8,11 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public final class DomainValues {
 
-    public static final String MIN_X_KOORDINATE = "674118";
-    public static final String MAX_X_KOORDINATE = "706515";
-    public static final String MIN_Y_KOORDINATE = "5318905";
-    public static final String MAX_Y_KOORDINATE = "5348049";
-
     public static String getWetterValue(String wetter) {
         if (StringUtils.equals(wetter, "SUNNY")) {
             return "Sonnig";
