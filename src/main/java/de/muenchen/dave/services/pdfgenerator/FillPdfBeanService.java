@@ -204,13 +204,13 @@ public class FillPdfBeanService {
             final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
             final String kreuzungsname,
             final Zaehlung zaehlung) {
-        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
+        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), StringUtils.EMPTY));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
         zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(zaehlung.getZaehldauer()));
         zaehlstelleninformationen.setKreuzungsname(kreuzungsname);
         zaehlstelleninformationen.setWetter(DomainValues.getWetterValue(zaehlung.getWetter()));
-        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), KEINE_DATEN_VORHANDEN));
-        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), KEINE_DATEN_VORHANDEN));
+        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), StringUtils.EMPTY));
+        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), StringUtils.EMPTY));
         return zaehlstelleninformationen;
     }
 
@@ -220,8 +220,8 @@ public class FillPdfBeanService {
             final MessstelleOptionsDTO optionsDTO,
             final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
-        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), StringUtils.EMPTY));
+        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), StringUtils.EMPTY));
         messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
@@ -229,7 +229,7 @@ public class FillPdfBeanService {
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
             messstelleninformationen.setWochentagNeeded(true);
             messstelleninformationen
-                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
+                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, StringUtils.EMPTY));
         } else {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
@@ -336,7 +336,8 @@ public class FillPdfBeanService {
      * @param zaehlung
      * @return
      */
-    protected static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen,
+    protected static ZusatzinformationenPdfComponent fillZusatzinformationen(
+            final ZusatzinformationenPdfComponent zusatzinformationen,
             final Zaehlstelle zaehlstelle,
             final Zaehlung zaehlung) {
         zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(zaehlstelle.getKommentar()));
