@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.dtos.laden.messwerte;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -10,15 +11,14 @@ import lombok.Data;
 public class LadeProcessedMesswerteDTO implements Serializable {
 
     TagesTyp tagesTyp;
-
+    @NotNull
     LadeMesswerteListenausgabeDTO zaehldatenTable;
-
+    @NotNull
     LadeZaehldatenSteplineDTO zaehldatenStepline;
-
+    @NotNull
     LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
-
+    @NotNull
     BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitte;
-
     private Long requestedMeasuringDays;
     private Integer includedMeasuringDays;
 }

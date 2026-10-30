@@ -1,6 +1,8 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,23 +14,39 @@ import lombok.RequiredArgsConstructor;
 @Data
 public class BelastungsplanQjsDataDTO extends AbstractBelastungsplanDataDTO {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
+    @NotNull
     private BigDecimal sumAll;
-    private List<StrassenseiteValue> valuesStrassenseite;
+    @NotNull
+    private List<QjsStrassenseiteValue> valuesStrassenseite;
+    @NotNull
     private List<VerkehrsbeziehungValue> valuesVerkehrsbeziehungen;
 
     @Data
     @RequiredArgsConstructor
     public static class VerkehrsbeziehungValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int von;
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private final int nach;
+        @NotNull
         private final Himmelsrichtung strassenseite;
+        @NotNull
         private final BigDecimal value;
     }
 
     @Data
     @RequiredArgsConstructor
-    public static class StrassenseiteValue implements Serializable {
+    public static class QjsStrassenseiteValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+        @NotNull
         private final Himmelsrichtung strassenseite;
+        @NotNull
         private BigDecimal value;
     }
 }

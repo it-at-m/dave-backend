@@ -77,7 +77,7 @@ public class GeneratePdfController {
      * @return ResponseEntity of type byte-Array
      */
     @PostMapping(value = "/zaehlung")
-    public ResponseEntity<byte[]> generatePdf(
+    public ResponseEntity<byte[]> generateZaehlungPdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String zaehlungId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String charttype,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
@@ -125,7 +125,7 @@ public class GeneratePdfController {
      * @return ResponseEntity of type byte-Array
      */
     @PostMapping(value = "/messstelle")
-    public ResponseEntity<byte[]> generatePdf(
+    public ResponseEntity<byte[]> generateMessstellePdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,

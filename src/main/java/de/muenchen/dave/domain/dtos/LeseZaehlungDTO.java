@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -15,10 +16,14 @@ import lombok.Data;
 @Data
 public class LeseZaehlungDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     String id;
 
     Date datum;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int jahr;
 
     String monat;
@@ -52,6 +57,7 @@ public class LeseZaehlungDTO implements Serializable {
 
     String zaehlsituationErweitert;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int zaehlIntervall;
 
     String wetter;
