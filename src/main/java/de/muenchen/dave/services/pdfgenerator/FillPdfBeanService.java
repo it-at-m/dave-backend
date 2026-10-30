@@ -56,14 +56,7 @@ import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -221,7 +214,10 @@ public class FillPdfBeanService {
             final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), StringUtils.EMPTY));
-        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), StringUtils.EMPTY));
+        final var selectedFahrzeuge = Objects.isNull(messstelle.getDetektierteVerkehrsart())
+                ? StringUtils.EMPTY
+                : messstelle.getDetektierteVerkehrsart().name();
+        messstelleninformationen.setSelectedFahrzeuge(selectedFahrzeuge);
         messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
