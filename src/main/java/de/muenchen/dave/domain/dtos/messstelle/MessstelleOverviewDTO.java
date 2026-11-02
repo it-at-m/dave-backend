@@ -1,11 +1,13 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.Data;
 
 @Data
 public class MessstelleOverviewDTO implements Serializable {
     private String id;
+    @NotNull
     private String mstId;
     private String name;
     private String status;

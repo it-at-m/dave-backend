@@ -1,6 +1,7 @@
 package de.muenchen.dave.domain.dtos.laden;
 
 import de.muenchen.dave.domain.enums.Zeitblock;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 import lombok.Data;
@@ -14,11 +15,13 @@ public class ZeitauswahlDTO implements Serializable {
     /**
      * Die möglichen Zeitblöcke
      */
+    @NotNull
     Set<Zeitblock> blocks;
 
     /**
      * Die möglichen Stunden
      */
+    @NotNull
     Set<Zeitblock> hours;
 
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Data;
@@ -20,8 +21,10 @@ public class BearbeiteZaehlungDTO {
 
     GeoPoint punkt;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     double lat;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     double lng;
 
     String tagesTyp;
@@ -36,8 +39,10 @@ public class BearbeiteZaehlungDTO {
 
     String kreuzungsname;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean sonderzaehlung;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean kreisverkehr;
 
     List<Fahrzeug> kategorien;
@@ -46,6 +51,7 @@ public class BearbeiteZaehlungDTO {
 
     String zaehlsituationErweitert;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int zaehlIntervall;
 
     String wetter;
@@ -75,6 +81,7 @@ public class BearbeiteZaehlungDTO {
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
     List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean unreadMessagesMobilitaetsreferat;
 
     String dienstleisterkennung;
