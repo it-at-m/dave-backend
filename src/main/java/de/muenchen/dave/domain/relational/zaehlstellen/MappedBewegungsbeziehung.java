@@ -1,9 +1,16 @@
-package de.muenchen.dave.domain.espgmigration.zaehlstellen;
+package de.muenchen.dave.domain.relational.zaehlstellen;
 
 import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Gemeinsame Basis Klasse fuer Leangsverkehr, Querverkehr und Verkehrbeziehungen.
@@ -19,20 +26,10 @@ import lombok.*;
 @EqualsAndHashCode
 public abstract class MappedBewegungsbeziehung extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zaehlung_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private ZaehlungEntity zaehlung;
-
-    /*
-     @TODO : Kompatibilität des ES mit dem PG Hochrechnungfaktor abgleichen
-    */
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hochrechnungsfaktor_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Hochrechnungsfaktor hochrechnungsfaktor;
-
 
 }

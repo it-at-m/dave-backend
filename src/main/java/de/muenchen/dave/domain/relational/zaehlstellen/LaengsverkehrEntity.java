@@ -1,4 +1,4 @@
-package de.muenchen.dave.domain.espgmigration.zaehlstellen;
+package de.muenchen.dave.domain.relational.zaehlstellen;
 
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;

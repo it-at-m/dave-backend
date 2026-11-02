@@ -1,6 +1,6 @@
-package de.muenchen.dave.domain.espgmigration.repositories;
+package de.muenchen.dave.repositories.relationaldb;
 
-import de.muenchen.dave.domain.espgmigration.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

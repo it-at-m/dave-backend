@@ -1,7 +1,6 @@
-package de.muenchen.dave.domain.espgmigration.zaehlstellen;
+package de.muenchen.dave.domain.relational.zaehlstellen;
 
 import de.muenchen.dave.domain.BaseEntity;
-
 import de.muenchen.dave.domain.enums.Quelle;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.TagesTyp;
@@ -13,9 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
@@ -26,7 +23,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.locationtech.jts.geom.Point;
 
 /**
  * Entity-Klasse für Zählungen (Migration von Elasticsearch zu PostgreSQL).
@@ -39,12 +35,6 @@ import org.locationtech.jts.geom.Point;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class ZaehlungEntity extends BaseEntity {
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zaehlstelle_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private ZaehlstelleEntity zaehlstelleEntity;
 
     @Column(name = "datum")
     private LocalDate datum;
@@ -62,16 +52,10 @@ public class ZaehlungEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Zaehlart zaehlart;
 
-    /*
-          @TODO : Offen ob ggf. einfach
-
-            private Double point_latitude;
-            private Double point_longitude;
-
-           Fuer den Typ Point sind neue Dependencies in der pom.xml
-    */
-    @Column(name = "punkt", columnDefinition = "GEOGRAPHY(POINT, 4326)")
-    private Point punkt;
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
 
     @Column(name = "tages_typ")
     @Enumerated(EnumType.STRING)
@@ -135,27 +119,32 @@ public class ZaehlungEntity extends BaseEntity {
     @Column(name = "dienstleisterkennung")
     private String dienstleisterkennung;
 
-    @Column(name = "suchwoerter")
-    private String suchwoerter;
+    @Column(name = "suchwoerter", columnDefinition = "text[]")
+    private List<String> suchwoerter;
 
-    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
+    private List<String> customSuchwoerter;
+
+    @Column(name = "geographie", columnDefinition = "text[]")
+    private List<String> geographie;
+
+    @Column(name = "kategorien", columnDefinition = "text[]")
+    private List<String> kategorien;
+
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
     private List<KnotenarmEntity> knotenarme = new ArrayList<>();
 
-    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
     private List<LaengsverkehrEntity> laengsverkehre = new ArrayList<>();
 
-    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
     private List<QuerungsverkehrEntity> querungsverkehre = new ArrayList<>();
 
-    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
     private List<VerkehrsbeziehungEntity> verkehrsbeziehungen = new ArrayList<>();
 
 /*

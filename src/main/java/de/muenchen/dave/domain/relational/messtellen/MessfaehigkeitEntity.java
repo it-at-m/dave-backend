@@ -1,4 +1,4 @@
-package de.muenchen.dave.domain.espgmigration.messtellen;
+package de.muenchen.dave.domain.relational.messtellen;
 
 import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
@@ -7,8 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.EqualsAndHashCode;
@@ -28,12 +26,6 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class MessfaehigkeitEntity extends BaseEntity {
-
-    @ManyToOne
-    @JoinColumn(name = "messstelle_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private MessstelleEntity messstelle;
 
     @Column(name = "gueltig_ab")
     private LocalDate gueltigAb;

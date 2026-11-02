@@ -1,11 +1,10 @@
-package de.muenchen.dave.domain.espgmigration.zaehlstellen;
+package de.muenchen.dave.domain.relational.zaehlstellen;
 
 import de.muenchen.dave.domain.BaseEntity;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.locationtech.jts.geom.Point;
 
 /**
  * Entity-Klasse für Zählstellen (Migration von Elasticsearch zu PostgreSQL).
@@ -41,16 +39,10 @@ public class ZaehlstelleEntity extends BaseEntity {
     @Column(name = "kommentar")
     private String kommentar;
 
-    /*
-       @TODO : Offen ob ggf. einfach
-
-         private Double point_latitude;
-         private Double point_longitude;
-
-        Fuer den Typ Point sind neue Dependencies in der pom.xml
-    */
-    @Column(name = "punkt", columnDefinition = "GEOGRAPHY(POINT, 4326)")
-    private Point punkt;
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
 
     @Column(name = "letzte_zaehlung_monat_nummer")
     private Integer letzteZaehlungMonatNummer;
@@ -67,15 +59,14 @@ public class ZaehlstelleEntity extends BaseEntity {
     @Column(name = "sichtbar_datenportal")
     private Boolean sichtbarDatenportal = false;
 
-    @Column(name = "suchwoerter")
-    private String suchwoerter;
+    @Column(name = "suchwoerter", columnDefinition = "text[]")
+    private List<String> suchwoerter;
 
-    @Column(name = "custom_suchwoerter")
-    private String customSuchwoerter;
+    @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
+    private List<String> customSuchwoerter;
 
-    @OneToMany(mappedBy = "zaehlstelle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="zaehlstelle_id", referencedColumnName = "id")
     private List<ZaehlungEntity> zaehlungen = new ArrayList<>();
 
 }

@@ -1,4 +1,4 @@
-package de.muenchen.dave.domain.espgmigration.zaehlstellen;
+package de.muenchen.dave.domain.relational.zaehlstellen;
 
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import jakarta.persistence.Column;
