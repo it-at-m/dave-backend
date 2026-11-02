@@ -46,7 +46,7 @@ class V17MigrateZaehlstellenIntegrationTest {
     static void setUpDatabase() {
         dataSource = new DriverManagerDataSource(
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
-        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle_dummy.sql"))
+        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_erhebungsstelle_dummy.sql"))
                 .execute(dataSource);
     }
 

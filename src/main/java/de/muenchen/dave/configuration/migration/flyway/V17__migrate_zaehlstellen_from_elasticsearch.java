@@ -393,7 +393,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         private String schulZeiten;
         private String suchwoerter;
         private String customSuchwoerter;
-//        private String pkwEinheit;
+        //        private String pkwEinheit;
         private String geographie;
         private Boolean unreadMessagesMobilitaetsreferat;
         private Boolean unreadMessagesDienstleister;
