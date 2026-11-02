@@ -47,8 +47,9 @@ public class ProcessZaehldatenZeitreiheService {
      * Bewegungsbeziehung besitzt.
      * Für die Zählarten QU, FJS, QJS gilt: alle Bewegungsbeziehungen/Pfeile müssen mit der aktiven
      * Zaehlung übereinstimmen.
-     * Für alle anderen Zählarten gilt: wenn Fußverkehr ausgewählt ist und es sich nicht um einen
-     * Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der aktiven Zählung übereinstimmen.
+     * Für alle anderen Zählarten gilt: wenn Fußverkehr ausgewählt (und für die Zählung beauftragt)
+     * ist und es sich nicht um einen Kreisverkehr handelt, müssen alle Verkehrsbeziehungen mit der
+     * aktiven Zählung übereinstimmen.
      *
      * @param zaehlung Zählung die überprüft werden soll
      * @param options Optionen aus dem Frontend
@@ -60,10 +61,11 @@ public class ProcessZaehldatenZeitreiheService {
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
         if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
             return hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung);
-        } else if (options.getFussverkehr() && !zaehlung.getKreisverkehr() && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
-            // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
-            return false;
-        }
+        } else if (options.getFussverkehr() && zaehlung.getKategorien().contains(Fahrzeug.FUSS) && !zaehlung.getKreisverkehr()
+                && !hasEqualVerkehrsbeziehungen(zaehlung, currentZaehlung)) {
+                    // Wenn Fußverkehr ausgewählt ist, müssen die Verkehrsbeziehungen identisch sein
+                    return false;
+                }
 
         final List<Verkehrsbeziehung> verkehrsbeziehungList;
         if (zaehlung.getKreisverkehr()) {
