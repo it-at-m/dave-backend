@@ -137,7 +137,7 @@ create table zaehlung (
                                    kreisverkehr boolean,
                                    latitude float(53),
                                    longitude float(53),
-                                   monat varchar(2),
+                                   monat varchar(255),
                                    sichtbar_datenportal boolean,
                                    sonderzaehlung boolean,
                                    unread_messages_dienstleister boolean,

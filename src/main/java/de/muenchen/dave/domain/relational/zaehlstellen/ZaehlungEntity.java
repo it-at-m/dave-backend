@@ -42,7 +42,7 @@ public class ZaehlungEntity extends BaseEntity {
     @Column(name = "jahr", length = 4)
     private String jahr;
 
-    @Column(name = "monat", length = 2)
+    @Column(name = "monat")
     private String monat;
 
     @Column(name = "jahreszeit")
