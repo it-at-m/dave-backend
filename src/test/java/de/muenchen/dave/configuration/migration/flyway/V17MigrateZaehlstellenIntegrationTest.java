@@ -1,5 +1,9 @@
 package de.muenchen.dave.configuration.migration.flyway;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
@@ -27,10 +31,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @Testcontainers
 class V17MigrateZaehlstellenIntegrationTest {
 
@@ -46,6 +46,8 @@ class V17MigrateZaehlstellenIntegrationTest {
     static void setUpDatabase() {
         dataSource = new DriverManagerDataSource(
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__dave-Initialisierung.sql"))
+                .execute(dataSource);
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle_messstelle.sql"))
                 .execute(dataSource);
     }
@@ -57,12 +59,15 @@ class V17MigrateZaehlstellenIntegrationTest {
         zaehlstelle.setNummer("Z-100");
         zaehlstelle.setStadtbezirk("Altstadt-Lehel");
         zaehlstelle.setPunkt(new GeoPoint(48.137154, 11.576124));
+        zaehlstelle.setSuchwoerter(List.of("zentrum", "innenstadt"));
 
         final var zaehlung = new de.muenchen.dave.domain.elasticsearch.Zaehlung();
         zaehlung.setId("22222222-2222-2222-2222-222222222222");
         zaehlung.setDatum(LocalDate.of(2025, 5, 20));
-        zaehlung.setZaehlart("Knotenpunktzählung");
+        zaehlung.setZaehlart("N");
         zaehlung.setPunkt(new GeoPoint(48.1372, 11.5762));
+        zaehlung.setSuchwoerter(List.of("verkehr", "knoten"));
+        zaehlung.setGeographie(List.of("München"));
         zaehlung.setKategorien(List.of(Fahrzeug.KFZ));
 
         final var knotenarm = new Knotenarm();
@@ -111,14 +116,13 @@ class V17MigrateZaehlstellenIntegrationTest {
             final var context = mock(Context.class);
             when(context.getConnection()).thenReturn(connection);
 
-            new V17__migrate_zaehlstellen_from_elasticsearch(index, new com.fasterxml.jackson.databind.ObjectMapper())
-                    .migrate(context);
+            new V17__migrate_zaehlstellen_from_elasticsearch(index).migrate(context);
         }
 
         try (Connection connection = dataSource.getConnection();
                 var statement = connection.prepareStatement(
                         "SELECT z.nummer, za.datum, za.latitude, za.longitude, "
-//                                + "(SELECT count(*) FROM kategorie WHERE zaehlung_id = za.id) AS kategorien_count, "
+                                + "cardinality(za.kategorien) AS kategorien_count, "
                                 + "(SELECT count(*) FROM knotenarm WHERE zaehlung_id = za.id) AS knotenarme_count, "
                                 + "(SELECT strassenname FROM knotenarm WHERE zaehlung_id = za.id) AS strassenname, "
                                 + "(SELECT count(*) FROM laengsverkehr WHERE zaehlung_id = za.id) AS laengsverkehr_count, "

@@ -1,13 +1,14 @@
 package de.muenchen.dave.configuration.migration.flyway;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,9 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
 
     private static final String INSERT_ZAEHLSTELLE_SQL = """
             INSERT INTO zaehlstelle (
-                id,
+                 id,
+                 created_time,
+                version,
                 nummer,
                 stadtbezirk,
                 stadtbezirk_nummer,
@@ -59,6 +62,8 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 custom_suchwoerter
             ) VALUES (
                 :id,
+                :createdTime,
+                :version,
                 :nummer,
                 :stadtbezirk,
                 :stadtbezirkNummer,
@@ -70,82 +75,78 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 :letzteZaehlungJahr,
                 :grundLetzteZaehlung,
                 :sichtbarDatenportal,
-                CAST(:suchwoerter AS jsonb),
-                CAST(:customSuchwoerter AS jsonb)
+                CAST(ARRAY[:suchwoerter] AS text[]),
+                CAST(ARRAY[:customSuchwoerter] AS text[])
             )
             """;
 
     private static final String INSERT_ZAEHLUNG_SQL = """
             INSERT INTO zaehlung (
-                id, zaehlstelle_id, datum, jahr, monat, jahreszeit, zaehlart,
+                 id, created_time, version, zaehlstelle_id, datum, jahr, monat, jahreszeit, zaehlart,
                 latitude, longitude, tages_typ, projekt_nummer, projekt_name,
                 kreuzungsname, sonderzaehlung, kreisverkehr, status,
                 zaehlsituation, zaehlsituation_erweitert, zaehl_intervall, wetter,
                 zaehldauer, quelle, kommentar, schul_zeiten, suchwoerter,
-                custom_suchwoerter, geographie,
+                 custom_suchwoerter, geographie, kategorien,
                 unread_messages_mobilitaetsreferat, unread_messages_dienstleister,
                 dienstleisterkennung
             ) VALUES (
-                :id, :zaehlstelleId, :datum, :jahr, :monat, :jahreszeit, :zaehlart,
+                :id, :createdTime, :version, :zaehlstelleId, :datum, :jahr, :monat, :jahreszeit, :zaehlart,
                 :latitude, :longitude, :tagesTyp, :projektNummer, :projektName,
                 :kreuzungsname, :sonderzaehlung, :kreisverkehr, :status,
                 :zaehlsituation, :zaehlsituationErweitert, :zaehlIntervall, :wetter,
-                :zaehldauer, :quelle, :kommentar, :schulZeiten, CAST(:suchwoerter AS jsonb),
-                 CAST(:customSuchwoerter AS jsonb), CAST(:geographie AS jsonb),
+                :zaehldauer, :quelle, :kommentar, :schulZeiten, CAST(ARRAY[:suchwoerter] AS text[]),
+                  CAST(ARRAY[:customSuchwoerter] AS text[]), CAST(ARRAY[:geographie] AS text[]), ARRAY[:kategorien],
                  :unreadMessagesMobilitaetsreferat,
                 :unreadMessagesDienstleister, :dienstleisterkennung
             )
             """;
 
-    private static final String INSERT_KATEGORIE_SQL = """
-            INSERT INTO kategorie (zaehlung_id, wert) VALUES (:zaehlungId, :wert)
-            ON CONFLICT DO NOTHING
-            """;
-
     private static final String INSERT_KNOTENARM_SQL = """
-            INSERT INTO knotenarm (zaehlung_id, nummer, strassenname, filename)
-            VALUES (:zaehlungId, :nummer, :strassenname, :filename)
+            INSERT INTO knotenarm (id, created_time, version, zaehlung_id, nummer, strassenname, filename)
+            VALUES (:id, :createdTime, :version, :zaehlungId, :nummer, :strassenname, :filename)
             """;
 
     private static final String INSERT_LAENGSVERKEHR_SQL = """
             INSERT INTO laengsverkehr (
-                id, zaehlung_id, knotenarm, richtung, strassenseite,
-                hochrechnungsfaktor_matrix, hochrechnungsfaktor_kfz,
-                hochrechnungsfaktor_sv, hochrechnungsfaktor_gv, hochrechnungsfaktor_active
+                id, created_time, version, zaehlung_id, hochrechnungsfaktor_id, knotenarm, richtung, strassenseite
             ) VALUES (
-                :id, :zaehlungId, :knotenarm, :richtung, :strassenseite,
-                :matrix, :kfz, :sv, :gv, :active
+                :id, :createdTime, :version, :zaehlungId, :hochrechnungsfaktorId, :knotenarm, :richtung, :strassenseite
             )
             """;
 
     private static final String INSERT_QUERUNGSVERKEHR_SQL = """
             INSERT INTO querungsverkehr (
-                id, zaehlung_id, knotenarm, richtung,
-                hochrechnungsfaktor_matrix, hochrechnungsfaktor_kfz,
-                hochrechnungsfaktor_sv, hochrechnungsfaktor_gv, hochrechnungsfaktor_active
+                id, created_time, version, zaehlung_id, hochrechnungsfaktor_id, knotenarm, richtung
             ) VALUES (
-                :id, :zaehlungId, :knotenarm, :richtung,
-                :matrix, :kfz, :sv, :gv, :active
+                :id, :createdTime, :version, :zaehlungId, :hochrechnungsfaktorId, :knotenarm, :richtung
             )
             """;
 
     private static final String INSERT_VERKEHRSBEZIEHUNG_SQL = """
             INSERT INTO verkehrsbeziehung (
-                id, zaehlung_id, is_kreuzung, von, nach, knotenarm, hinein, heraus, vorbei,
+                id, created_time, version, zaehlung_id, is_kreuzung, von, nach, knotenarm, hinein, heraus, vorbei,
                 strassenseite, vonknotvonstrnr, nachknotvonstrnr, von_strnr,
                 vonknotennachstrnr, nachknotnachstrnr, nach_strnr,
-                hochrechnungsfaktor_matrix, hochrechnungsfaktor_kfz,
-                hochrechnungsfaktor_sv, hochrechnungsfaktor_gv, hochrechnungsfaktor_active
+                 hochrechnungsfaktor_id
             ) VALUES (
-                :id, :zaehlungId, :isKreuzung, :von, :nach, :knotenarm, :hinein, :heraus, :vorbei,
-                :strassenseite, :vonknotvonstrnr, :nachknotvonstrnr, :vonStrnr,
-                :vonknotennachstrnr, :nachknotnachstrnr, :nachStrnr,
-                :matrix, :kfz, :sv, :gv, :active
-            )
+                :id, :createdTime, :version, :zaehlungId, :isKreuzung, :von, :nach, :knotenarm, :hinein, :heraus, :vorbei,
+                 :strassenseite, :vonknotvonstrnr, :nachknotvonstrnr, :vonStrnr,
+                 :vonknotennachstrnr, :nachknotnachstrnr, :nachStrnr,
+                 :hochrechnungsfaktorId
+             )
             """;
 
+    private static final String INSERT_HOCHRECHNUNGSFAKTOR_SQL = """
+            INSERT INTO hochrechnungsfaktor (
+                id, created_time, version, matrix, kfz, sv, gv, active, default_faktor
+            ) VALUES (
+                :id, :createdTime, :version, :matrix, :kfz, :sv, :gv, :active, :defaultFaktor
+            )
+            """;
+    private static final Long INITIAL_VERSION = 0L;
+
     private final ZaehlstelleIndex zaehlstelleIndex;
-    private final ObjectMapper objectMapper;
 
     @Override
     public void migrate(final Context context) throws SQLException {
@@ -153,17 +154,18 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         final var jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         Page<Zaehlstelle> page;
         int pageNumber = 0;
+        final Map<String, HochrechnungsfaktorImport> hochrechnungsfaktoren = new LinkedHashMap<>();
 
         do {
             page = zaehlstelleIndex.findAll(PageRequest.of(pageNumber, PAGE_SIZE));
 
             final var zaehlstellenParameters = new ArrayList<SqlParameterSource>();
             final var zaehlungenParameters = new ArrayList<SqlParameterSource>();
-            final var kategorienParameters = new ArrayList<SqlParameterSource>();
             final var knotenarmeParameters = new ArrayList<SqlParameterSource>();
             final var laengsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var querungsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var verkehrsbeziehungenParameters = new ArrayList<SqlParameterSource>();
+            final var neueHochrechnungsfaktoren = new ArrayList<HochrechnungsfaktorImport>();
 
             for (final Zaehlstelle zaehlstelle : page.getContent()) {
                 zaehlstellenParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlstelle)));
@@ -171,11 +173,6 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 for (final var zaehlung : zaehlstelle.getZaehlungen()) {
                     zaehlungenParameters.add(
                             new BeanPropertySqlParameterSource(createImportObject(zaehlstelle, zaehlung)));
-                    if (zaehlung.getKategorien() != null) {
-                        for (final var kategorie : zaehlung.getKategorien()) {
-                            kategorienParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, kategorie)));
-                        }
-                    }
                     if (zaehlung.getKnotenarme() != null) {
                         for (final var knotenarm : zaehlung.getKnotenarme()) {
                             knotenarmeParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, knotenarm)));
@@ -183,17 +180,29 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                     }
                     if (zaehlung.getLaengsverkehr() != null) {
                         for (final var laengsverkehr : zaehlung.getLaengsverkehr()) {
-                            laengsverkehrParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, laengsverkehr)));
+                            final var faktor = laengsverkehr.getHochrechnungsfaktor();
+                            final var faktorId = registerHochrechnungsfaktor(
+                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            laengsverkehrParameters.add(new BeanPropertySqlParameterSource(
+                                    createImportObject(zaehlung, laengsverkehr, faktorId)));
                         }
                     }
                     if (zaehlung.getQuerungsverkehr() != null) {
                         for (final var querungsverkehr : zaehlung.getQuerungsverkehr()) {
-                            querungsverkehrParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, querungsverkehr)));
+                            final var faktor = querungsverkehr.getHochrechnungsfaktor();
+                            final var faktorId = registerHochrechnungsfaktor(
+                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            querungsverkehrParameters.add(new BeanPropertySqlParameterSource(
+                                    createImportObject(zaehlung, querungsverkehr, faktorId)));
                         }
                     }
                     if (zaehlung.getVerkehrsbeziehungen() != null) {
                         for (final var verkehrsbeziehung : zaehlung.getVerkehrsbeziehungen()) {
-                            verkehrsbeziehungenParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, verkehrsbeziehung)));
+                            final var faktor = verkehrsbeziehung.getHochrechnungsfaktor();
+                            final var faktorId = registerHochrechnungsfaktor(
+                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            verkehrsbeziehungenParameters.add(new BeanPropertySqlParameterSource(
+                                    createImportObject(zaehlung, verkehrsbeziehung, faktorId)));
                         }
                     }
                 }
@@ -203,13 +212,16 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                     INSERT_ZAEHLSTELLE_SQL, zaehlstellenParameters.toArray(SqlParameterSource[]::new));
 
             jdbcTemplate.batchUpdate(INSERT_ZAEHLUNG_SQL, zaehlungenParameters.toArray(SqlParameterSource[]::new));
-            jdbcTemplate.batchUpdate(INSERT_KATEGORIE_SQL, kategorienParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_KNOTENARM_SQL, knotenarmeParameters.toArray(SqlParameterSource[]::new));
+            jdbcTemplate.batchUpdate(
+                    INSERT_HOCHRECHNUNGSFAKTOR_SQL,
+                    neueHochrechnungsfaktoren.stream()
+                            .map(BeanPropertySqlParameterSource::new)
+                            .toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_LAENGSVERKEHR_SQL, laengsverkehrParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_QUERUNGSVERKEHR_SQL, querungsverkehrParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(
                     INSERT_VERKEHRSBEZIEHUNG_SQL, verkehrsbeziehungenParameters.toArray(SqlParameterSource[]::new));
-
             pageNumber++;
         } while (page.hasNext());
 
@@ -220,7 +232,9 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         final var punkt = source.getPunkt();
 
         var target = ZaehlstelleImport.builder()
-                .id(source.getId())
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
                 .nummer(source.getNummer())
                 .stadtbezirk(source.getStadtbezirk())
                 .stadtbezirkNummer(source.getStadtbezirkNummer())
@@ -231,8 +245,8 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 .letzteZaehlungMonat(source.getLetzteZaehlungMonat())
                 .letzteZaehlungJahr(source.getLetzteZaehlungJahr())
                 .grundLetzteZaehlung(source.getGrundLetzteZaehlung())
-                .suchwoerter(toJson(source.getSuchwoerter()))
-                .customSuchwoerter(toJson(source.getCustomSuchwoerter()))
+                .suchwoerter(source.getSuchwoerter())
+                .customSuchwoerter(source.getCustomSuchwoerter())
                 .sichtbarDatenportal(source.getSichtbarDatenportal())
                 .build();
         return target;
@@ -241,8 +255,10 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
     private ZaehlungImport createImportObject(final Zaehlstelle zaehlstelle, final de.muenchen.dave.domain.elasticsearch.Zaehlung source) {
         final var punkt = source.getPunkt();
         var target = ZaehlungImport.builder()
-                .id(source.getId())
-                .zaehlstelleId(zaehlstelle.getId())
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .zaehlstelleId(UUID.fromString(zaehlstelle.getId()))
                 .datum(source.getDatum())
                 .jahr(source.getJahr())
                 .monat(source.getMonat())
@@ -265,9 +281,12 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 .quelle(source.getQuelle())
                 .kommentar(source.getKommentar())
                 .schulZeiten(source.getSchulZeiten())
-                .suchwoerter(toJson(source.getSuchwoerter()))
-                .customSuchwoerter(toJson(source.getCustomSuchwoerter()))
-                .geographie(toJson(source.getGeographie()))
+                .suchwoerter(source.getSuchwoerter())
+                .customSuchwoerter(source.getCustomSuchwoerter())
+                .geographie(source.getGeographie())
+                .kategorien(source.getKategorien() == null
+                        ? null
+                        : source.getKategorien().stream().map(Enum::name).toList())
                 .unreadMessagesMobilitaetsreferat(source.getUnreadMessagesMobilitaetsreferat())
                 .unreadMessagesDienstleister(source.getUnreadMessagesDienstleister())
                 .dienstleisterkennung(source.getDienstleisterkennung())
@@ -275,68 +294,101 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         return target;
     }
 
-    private KategorieImport createImportObject(
-            final de.muenchen.dave.domain.elasticsearch.Zaehlung zaehlung, final de.muenchen.dave.domain.enums.Fahrzeug source) {
-        var target = KategorieImport.builder().zaehlungId(zaehlung.getId()).wert(source.name()).build();
-        return target;
-    }
-
     private KnotenarmImport createImportObject(
             final de.muenchen.dave.domain.elasticsearch.Zaehlung zaehlung,
             final de.muenchen.dave.domain.elasticsearch.Knotenarm source) {
-        var target = KnotenarmImport.builder().zaehlungId(zaehlung.getId()).nummer(source.getNummer())
-                .strassenname(source.getStrassenname()).filename(source.getFilename()).build();
+        var target = KnotenarmImport.builder()
+                .id(UUID.randomUUID())
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .nummer(source.getNummer())
+                .strassenname(source.getStrassenname())
+                .filename(source.getFilename())
+                .zaehlungId(UUID.fromString(zaehlung.getId()))
+                .build();
         return target;
     }
 
     private LaengsverkehrImport createImportObject(
             final de.muenchen.dave.domain.elasticsearch.Zaehlung zaehlung,
-            final de.muenchen.dave.domain.elasticsearch.Laengsverkehr source) {
-        final var faktor = source.getHochrechnungsfaktor();
-        var target = LaengsverkehrImport.builder().id(source.getId()).zaehlungId(zaehlung.getId()).knotenarm(source.getKnotenarm())
+            final de.muenchen.dave.domain.elasticsearch.Laengsverkehr source,
+            final UUID hochrechnungsfaktorId) {
+        return LaengsverkehrImport.builder()
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .zaehlungId(UUID.fromString(zaehlung.getId()))
+                .hochrechnungsfaktorId(hochrechnungsfaktorId)
+                .knotenarm(source.getKnotenarm())
                 .richtung(source.getRichtung() == null ? null : source.getRichtung().name())
                 .strassenseite(source.getStrassenseite() == null ? null : source.getStrassenseite().name())
-                .matrix(faktor == null ? null : faktor.getMatrix()).kfz(faktor == null ? null : faktor.getKfz())
-                .sv(faktor == null ? null : faktor.getSv()).gv(faktor == null ? null : faktor.getGv())
-                .active(faktor != null && faktor.isActive()).build();
-        return target;
+                .build();
     }
 
     private QuerungsverkehrImport createImportObject(
             final de.muenchen.dave.domain.elasticsearch.Zaehlung zaehlung,
-            final de.muenchen.dave.domain.elasticsearch.Querungsverkehr source) {
-        final var faktor = source.getHochrechnungsfaktor();
-        var target = QuerungsverkehrImport.builder().id(source.getId()).zaehlungId(zaehlung.getId()).knotenarm(source.getKnotenarm())
+            final de.muenchen.dave.domain.elasticsearch.Querungsverkehr source,
+            final UUID hochrechnungsfaktorId) {
+        return QuerungsverkehrImport.builder()
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .zaehlungId(UUID.fromString(zaehlung.getId()))
+                .hochrechnungsfaktorId(hochrechnungsfaktorId)
+                .knotenarm(source.getKnotenarm())
                 .richtung(source.getRichtung() == null ? null : source.getRichtung().name())
-                .matrix(faktor == null ? null : faktor.getMatrix()).kfz(faktor == null ? null : faktor.getKfz())
-                .sv(faktor == null ? null : faktor.getSv()).gv(faktor == null ? null : faktor.getGv())
-                .active(faktor != null && faktor.isActive()).build();
-        return target;
+                .build();
     }
 
     private VerkehrsbeziehungImport createImportObject(
             final de.muenchen.dave.domain.elasticsearch.Zaehlung zaehlung,
-            final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung source) {
-        final var faktor = source.getHochrechnungsfaktor();
-        var target = VerkehrsbeziehungImport.builder().id(source.getId()).zaehlungId(zaehlung.getId())
+            final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung source,
+            final UUID hochrechnungsfaktorId) {
+        var target = VerkehrsbeziehungImport.builder()
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .zaehlungId(UUID.fromString(zaehlung.getId()))
+                .hochrechnungsfaktorId(hochrechnungsfaktorId)
                 .isKreuzung(source.getIsKreuzung()).von(source.getVon()).nach(source.getNach()).knotenarm(source.getKnotenarm())
                 .hinein(source.getHinein()).heraus(source.getHeraus()).vorbei(source.getVorbei())
                 .strassenseite(source.getStrassenseite() == null ? null : source.getStrassenseite().name())
                 .vonknotvonstrnr(source.getVonknotvonstrnr()).nachknotvonstrnr(source.getNachknotvonstrnr())
                 .vonStrnr(source.getVon_strnr()).vonknotennachstrnr(source.getVonknotennachstrnr())
                 .nachknotnachstrnr(source.getNachknotnachstrnr()).nachStrnr(source.getNach_strnr())
-                .matrix(faktor == null ? null : faktor.getMatrix()).kfz(faktor == null ? null : faktor.getKfz())
-                .sv(faktor == null ? null : faktor.getSv()).gv(faktor == null ? null : faktor.getGv())
-                .active(faktor != null && faktor.isActive()).build();
+                .build();
         return target;
     }
 
-    private String toJson(final Object source) {
-        try {
-            return objectMapper.writeValueAsString(source == null ? List.of() : source);
-        } catch (final JsonProcessingException e) {
-            throw new IllegalStateException("Elasticsearchdaten konnten nicht als JSON serialisiert werden", e);
+    private UUID registerHochrechnungsfaktor(
+            final de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor source,
+            final Map<String, HochrechnungsfaktorImport> hochrechnungsfaktoren,
+            final List<HochrechnungsfaktorImport> neueHochrechnungsfaktoren) {
+        if (source == null) {
+            return null;
         }
+        final var importObject = hochrechnungsfaktoren.computeIfAbsent(
+                source.getMatrix(), key -> createImportObject(source));
+        if (!neueHochrechnungsfaktoren.contains(importObject)) {
+            neueHochrechnungsfaktoren.add(importObject);
+        }
+        return importObject.getId();
+    }
+
+    private HochrechnungsfaktorImport createImportObject(
+            final de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor source) {
+        var target = HochrechnungsfaktorImport.builder()
+                .id(UUID.randomUUID())
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .matrix(source.getMatrix())
+                .kfz(source.getKfz())
+                .sv(source.getSv())
+                .gv(source.getGv())
+                .active(source.isActive())
+                .defaultFaktor(false) // TODO: prüfen, ob false ok
+                .build();
+        return target;
     }
 
     /**
@@ -348,7 +400,9 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
     @Builder
     @Getter
     private static class ZaehlstelleImport {
-        private String id;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
         private String nummer;
         private String stadtbezirk;
         private Integer stadtbezirkNummer;
@@ -360,15 +414,16 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         private Integer letzteZaehlungJahr;
         private String grundLetzteZaehlung;
         private Boolean sichtbarDatenportal;
-        private String suchwoerter;
-        private String customSuchwoerter;
+        private List<String> suchwoerter;
+        private List<String> customSuchwoerter;
     }
 
     @Builder
     @Getter
     private static class ZaehlungImport {
-        private String id;
-        private String zaehlstelleId;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
         private java.time.LocalDate datum;
         private String jahr;
         private String monat;
@@ -385,34 +440,32 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         private String status;
         private String zaehlsituation;
         private String zaehlsituationErweitert;
-        private int zaehlIntervall;
+        private Integer zaehlIntervall;
         private String wetter;
         private String zaehldauer;
         private String quelle;
         private String kommentar;
         private String schulZeiten;
-        private String suchwoerter;
-        private String customSuchwoerter;
-        //        private String pkwEinheit;
-        private String geographie;
+        private Boolean sichtbarDatenportal;
         private Boolean unreadMessagesMobilitaetsreferat;
         private Boolean unreadMessagesDienstleister;
         private String dienstleisterkennung;
-    }
+        private List<String> suchwoerter;
+        private List<String> customSuchwoerter;
+        private List<String> geographie;
+        private List<String> kategorien;
+        private UUID zaehlstelleId;
 
-    @Builder
-    @Getter
-    private static class KategorieImport {
-        private String zaehlungId;
-        private String wert;
     }
 
     @Builder
     @Getter
     private static class KnotenarmImport {
-        private String zaehlungId;
-        private int nummer;
-        @JsonProperty("Strassenname")
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID zaehlungId;
+        private Integer nummer;
         private String strassenname;
         private String filename;
     }
@@ -420,40 +473,36 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
     @Builder
     @Getter
     private static class LaengsverkehrImport {
-        private String id;
-        private String zaehlungId;
-        private HochrechnungsfaktorImport hochrechnungsfaktor;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID hochrechnungsfaktorId;
         private Integer knotenarm;
         private String richtung;
         private String strassenseite;
-        private String matrix;
-        private Double kfz;
-        private Double sv;
-        private Double gv;
-        private boolean active;
+        private UUID zaehlungId;
     }
 
     @Builder
     @Getter
     private static class QuerungsverkehrImport {
-        private String id;
-        private String zaehlungId;
-        private HochrechnungsfaktorImport hochrechnungsfaktor;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID zaehlungId;
+        private UUID hochrechnungsfaktorId;
         private Integer knotenarm;
         private String richtung;
-        private String matrix;
-        private Double kfz;
-        private Double sv;
-        private Double gv;
-        private boolean active;
     }
 
     @Builder
     @Getter
     private static class VerkehrsbeziehungImport {
-        private String id;
-        private String zaehlungId;
-        private HochrechnungsfaktorImport hochrechnungsfaktor;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID zaehlungId;
+        private UUID hochrechnungsfaktorId;
         private Boolean isKreuzung;
         private Integer von;
         private Integer nach;
@@ -468,21 +517,20 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         private String vonknotennachstrnr;
         private String nachknotnachstrnr;
         private String nachStrnr;
-        private String matrix;
-        private Double kfz;
-        private Double sv;
-        private Double gv;
-        private boolean active;
     }
 
     @Builder
     @Getter
     private static class HochrechnungsfaktorImport {
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
         private String matrix;
         private Double kfz;
         private Double sv;
         private Double gv;
         private boolean active;
+        private boolean defaultFaktor;
     }
 
 }

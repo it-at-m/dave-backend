@@ -154,6 +154,4 @@ public class ZaehlungEntity extends BaseEntity {
 //    @ToString.Exclude
 //    @EqualsAndHashCode.Exclude
 //    private List<PkwEinheitEntity> pkwEinheiten = new ArrayList<>();
-
-
 }
