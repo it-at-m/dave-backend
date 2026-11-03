@@ -4,6 +4,7 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.flywaydb.core.api.migration.Context;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -41,8 +43,8 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
                 :id, :createdTime, :version, :mstId, :name, :status, :realisierungsdatum, :abbaudatum, :stadtbezirkNummer,
                 :bemerkung, :fahrzeugklasse, :detektierteVerkehrsart, :hersteller,
                 :datumLetztePlausibleMessung, :latitude, :longitude, :sichtbarDatenportal,
-                :geprueft, :kommentar, :standort, CAST(ARRAY[:suchwoerter] AS text[]),
-                CAST(ARRAY[:customSuchwoerter] AS text[]), :lageplanVorhanden
+                :geprueft, :kommentar, :standort, CAST(:suchwoerter AS text[]),
+                CAST(:customSuchwoerter AS text[]), :lageplanVorhanden
             )
             """;
 
@@ -81,7 +83,7 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
             final var messfaehigkeiten = new ArrayList<SqlParameterSource>();
 
             for (final var messstelle : page.getContent()) {
-                messstellen.add(new BeanPropertySqlParameterSource(createMessstelleImport(messstelle)));
+                messstellen.add(createMessstelleParameterSource(messstelle, context.getConnection()));
                 for (final var messquerschnitt : nullSafe(messstelle.getMessquerschnitte())) {
                     messquerschnitte.add(new BeanPropertySqlParameterSource(
                             createMessquerschnittImport(messstelle, messquerschnitt)));
@@ -129,6 +131,39 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
                 .lageplanVorhanden(source.getLageplanVorhanden())
                 .build();
         return target;
+    }
+
+    private MapSqlParameterSource createMessstelleParameterSource(
+            final Messstelle source, final Connection connection) throws SQLException {
+        final var importObject = createMessstelleImport(source);
+        return new MapSqlParameterSource()
+                .addValue("id", importObject.getId())
+                .addValue("createdTime", importObject.getCreatedTime())
+                .addValue("version", importObject.getVersion())
+                .addValue("mstId", importObject.getMstId())
+                .addValue("name", importObject.getName())
+                .addValue("status", importObject.getStatus())
+                .addValue("realisierungsdatum", importObject.getRealisierungsdatum())
+                .addValue("abbaudatum", importObject.getAbbaudatum())
+                .addValue("stadtbezirkNummer", importObject.getStadtbezirkNummer())
+                .addValue("bemerkung", importObject.getBemerkung())
+                .addValue("fahrzeugklasse", importObject.getFahrzeugklasse())
+                .addValue("detektierteVerkehrsart", importObject.getDetektierteVerkehrsart())
+                .addValue("hersteller", importObject.getHersteller())
+                .addValue("datumLetztePlausibleMessung", importObject.getDatumLetztePlausibleMessung())
+                .addValue("latitude", importObject.getLatitude())
+                .addValue("longitude", importObject.getLongitude())
+                .addValue("sichtbarDatenportal", importObject.getSichtbarDatenportal())
+                .addValue("geprueft", importObject.getGeprueft())
+                .addValue("kommentar", importObject.getKommentar())
+                .addValue("standort", importObject.getStandort())
+                .addValue("suchwoerter", createTextArray(connection, importObject.getSuchwoerter()))
+                .addValue("customSuchwoerter", createTextArray(connection, importObject.getCustomSuchwoerter()))
+                .addValue("lageplanVorhanden", importObject.getLageplanVorhanden());
+    }
+
+    private java.sql.Array createTextArray(final Connection connection, final List<String> values) throws SQLException {
+        return values == null ? null : connection.createArrayOf("text", values.toArray());
     }
 
     private MessquerschnittImport createMessquerschnittImport(
