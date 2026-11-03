@@ -131,27 +131,27 @@ public class ZaehlungEntity extends BaseEntity {
     @Column(name = "kategorien", columnDefinition = "text[]")
     private List<String> kategorien;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<KnotenarmEntity> knotenarme = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<LaengsverkehrEntity> laengsverkehre = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<QuerungsverkehrEntity> querungsverkehre = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="zaehlung_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<VerkehrsbeziehungEntity> verkehrsbeziehungen = new ArrayList<>();
 
-/*
-    Hinweis : Es gibt nur eine Entity in der Tabelle pkweinheit.
- */
-//    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-//    @ToString.Exclude
-//    @EqualsAndHashCode.Exclude
-//    private List<PkwEinheitEntity> pkwEinheiten = new ArrayList<>();
+    /*
+     * Hinweis : Es gibt nur eine Entity in der Tabelle pkweinheit.
+     */
+    //    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    //    @ToString.Exclude
+    //    @EqualsAndHashCode.Exclude
+    //    private List<PkwEinheitEntity> pkwEinheiten = new ArrayList<>();
 }

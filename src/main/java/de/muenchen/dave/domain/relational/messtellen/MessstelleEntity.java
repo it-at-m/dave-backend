@@ -23,7 +23,7 @@ import lombok.ToString;
 
 /**
  * Entity-Klasse für Messstellen (Detektor) (Migration von Elasticsearch zu PostgreSQL).
-  */
+ */
 @Entity
 @Table(name = "messstelle")
 @Getter
@@ -96,12 +96,12 @@ public class MessstelleEntity extends BaseEntity {
     @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
     private List<String> customSuchwoerter;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="messstelle_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "messstelle_id", referencedColumnName = "id")
     private List<MessquerschnittEntity> messquerschnitte = new ArrayList<>();
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="messstelle_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "messstelle_id", referencedColumnName = "id")
     private List<MessfaehigkeitEntity> messfaehigkeiten = new ArrayList<>();
 
 }

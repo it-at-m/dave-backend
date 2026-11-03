@@ -65,8 +65,8 @@ public class ZaehlstelleEntity extends BaseEntity {
     @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
     private List<String> customSuchwoerter;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
-    @JoinColumn(name="zaehlstelle_id", referencedColumnName = "id")
+    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @JoinColumn(name = "zaehlstelle_id", referencedColumnName = "id")
     private List<ZaehlungEntity> zaehlungen = new ArrayList<>();
 
 }
