@@ -58,8 +58,7 @@ public class ZaehlungEntity extends BaseEntity {
     private Double longitude;
 
     @Column(name = "tages_typ")
-    @Enumerated(EnumType.STRING)
-    private TagesTyp tagesTyp;
+    private String tagesTyp;
 
     @Column(name = "projekt_nummer")
     private String projektNummer;
