@@ -1,14 +1,14 @@
 package de.muenchen.dave.configuration.migration.flyway;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -33,39 +33,39 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
 
     private static final String INSERT_MESSSTELLE_SQL = """
             INSERT INTO messstelle (
-                id, mst_id, name, status, realisierungsdatum, abbaudatum, stadtbezirk_nummer,
+                id, created_time, version, mst_id, name, status, realisierungsdatum, abbaudatum, stadtbezirk_nummer,
                 bemerkung, fahrzeugklasse, detektierte_verkehrsart, hersteller,
                 datum_letzte_plausible_messung, latitude, longitude, sichtbar_datenportal,
                 geprueft, kommentar, standort, suchwoerter, custom_suchwoerter, lageplan_vorhanden
             ) VALUES (
-                :id, :mstId, :name, :status, :realisierungsdatum, :abbaudatum, :stadtbezirkNummer,
+                :id, :createdTime, :version, :mstId, :name, :status, :realisierungsdatum, :abbaudatum, :stadtbezirkNummer,
                 :bemerkung, :fahrzeugklasse, :detektierteVerkehrsart, :hersteller,
                 :datumLetztePlausibleMessung, :latitude, :longitude, :sichtbarDatenportal,
-                :geprueft, :kommentar, :standort, CAST(:suchwoerter AS jsonb),
-                CAST(:customSuchwoerter AS jsonb), :lageplanVorhanden
+                :geprueft, :kommentar, :standort, CAST(ARRAY[:suchwoerter] AS text[]),
+                CAST(ARRAY[:customSuchwoerter] AS text[]), :lageplanVorhanden
             )
             """;
 
     private static final String INSERT_MESSQUERSCHNITT_SQL = """
             INSERT INTO messquerschnitt (
-                id, messstelle_id, mq_id, latitude, longitude, strassenname,
+                id, created_time, version, messstelle_id, mq_id, latitude, longitude, strassenname,
                 lage_messquerschnitt, fahrtrichtung, anzahl_fahrspuren, anzahl_detektoren, standort
             ) VALUES (
-                :id, :messstelleId, :mqId, :latitude, :longitude, :strassenname,
+                :id, :createdTime, :version, :messstelleId, :mqId, :latitude, :longitude, :strassenname,
                 :lageMessquerschnitt, :fahrtrichtung, :anzahlFahrspuren, :anzahlDetektoren, :standort
             )
             """;
 
     private static final String INSERT_MESSFAEHIGKEIT_SQL = """
             INSERT INTO messfaehigkeit (
-                id, messstelle_id, gueltig_ab, gueltig_bis, fahrzeugklasse, intervall
+                id, created_time, version, messstelle_id, gueltig_ab, gueltig_bis, fahrzeugklasse, intervall
             ) VALUES (
-                :id, :messstelleId, :gueltigAb, :gueltigBis, :fahrzeugklasse, :intervall
+                :id, :createdTime, :version, :messstelleId, :gueltigAb, :gueltigBis, :fahrzeugklasse, :intervall
             )
             """;
 
     private final MessstelleIndex messstelleIndex;
-    private final ObjectMapper objectMapper;
+    private static final Long INITIAL_VERSION = 0L;
 
     @Override
     public void migrate(final Context context) throws SQLException {
@@ -104,7 +104,9 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
     private MessstelleImport createMessstelleImport(final Messstelle source) {
         final var punkt = source.getPunkt();
         var target = MessstelleImport.builder()
-                .id(source.getId())
+                .id(UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
                 .mstId(source.getMstId())
                 .name(source.getName())
                 .status(enumName(source.getStatus()))
@@ -122,8 +124,8 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
                 .geprueft(source.getGeprueft())
                 .kommentar(source.getKommentar())
                 .standort(source.getStandort())
-                .suchwoerter(toJson(source.getSuchwoerter()))
-                .customSuchwoerter(toJson(source.getCustomSuchwoerter()))
+                .suchwoerter(source.getSuchwoerter())
+                .customSuchwoerter(source.getCustomSuchwoerter())
                 .lageplanVorhanden(source.getLageplanVorhanden())
                 .build();
         return target;
@@ -133,8 +135,10 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
             final Messstelle messstelle, final Messquerschnitt source) {
         final var punkt = source.getPunkt();
         var target = MessquerschnittImport.builder()
-                .id(source.getId() == null ? java.util.UUID.randomUUID().toString() : source.getId())
-                .messstelleId(messstelle.getId()).mqId(source.getMqId())
+                .id(source.getId() == null ? UUID.randomUUID() : UUID.fromString(source.getId()))
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .messstelleId(UUID.fromString(messstelle.getId())).mqId(source.getMqId())
                 .latitude(punkt == null ? null : punkt.getLat()).longitude(punkt == null ? null : punkt.getLon())
                 .strassenname(source.getStrassenname()).lageMessquerschnitt(source.getLageMessquerschnitt())
                 .fahrtrichtung(source.getFahrtrichtung()).anzahlFahrspuren(source.getAnzahlFahrspuren())
@@ -145,7 +149,10 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
     private MessfaehigkeitImport createMessfaehigkeitImport(
             final Messstelle messstelle, final Messfaehigkeit source) {
         var target = MessfaehigkeitImport.builder()
-                .id(java.util.UUID.randomUUID().toString()).messstelleId(messstelle.getId())
+                .id(UUID.randomUUID())
+                .createdTime(LocalDateTime.now())
+                .version(INITIAL_VERSION)
+                .messstelleId(UUID.fromString(messstelle.getId()))
                 .gueltigAb(source.getGueltigAb()).gueltigBis(source.getGueltigBis())
                 .fahrzeugklasse(enumName(source.getFahrzeugklasse())).intervall(enumName(source.getIntervall())).build();
         return target;
@@ -159,18 +166,12 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
         return value == null ? null : value.name();
     }
 
-    private String toJson(final Object source) {
-        try {
-            return objectMapper.writeValueAsString(source == null ? List.of() : source);
-        } catch (final JsonProcessingException e) {
-            throw new IllegalStateException("Elasticsearchdaten konnten nicht als JSON serialisiert werden", e);
-        }
-    }
-
     @Builder
     @Getter
     private static class MessstelleImport {
-        private String id;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
         private String mstId;
         private String name;
         private String status;
@@ -189,15 +190,17 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
         private Boolean lageplanVorhanden;
         private String kommentar;
         private String standort;
-        private String suchwoerter;
-        private String customSuchwoerter;
+        private List<String> suchwoerter;
+        private List<String> customSuchwoerter;
     }
 
     @Builder
     @Getter
     private static class MessquerschnittImport {
-        private String id;
-        private String messstelleId;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID messstelleId;
         private String mqId;
         private String strassenname;
         private String lageMessquerschnitt;
@@ -212,8 +215,10 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
     @Builder
     @Getter
     private static class MessfaehigkeitImport {
-        private String id;
-        private String messstelleId;
+        private UUID id;
+        private LocalDateTime createdTime;
+        private Long version;
+        private UUID messstelleId;
         private String fahrzeugklasse;
         private String intervall;
         private java.time.LocalDate gueltigAb;
