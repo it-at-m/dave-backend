@@ -32,6 +32,4 @@ public interface EmailAddressRepository extends JpaRepository<EmailAddress, UUID
 
     List<EmailAddress> findAll(final Sort sort);
 
-    Optional<EmailAddress> findByParticipantId(int participantId);
-
 }

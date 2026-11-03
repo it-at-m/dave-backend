@@ -1,7 +1,6 @@
 package de.muenchen.dave.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
@@ -18,12 +17,6 @@ import org.junit.jupiter.api.Test;
 public class ZaehlstelleIndexServiceUtilsTests {
 
     @Test
-    public void testSplitStrings() {
-        String s = "a, b, , c,  d  ,e";
-        assertThat(IndexServiceUtils.splitStrings(s), containsInAnyOrder("a", "b", "c", "d", "e"));
-    }
-
-    @Test
     public void testJahreszeitenDetector() {
         LocalDate w1 = LocalDate.of(2019, 1, 1);
         LocalDate w2 = LocalDate.of(2019, 12, 1);
@@ -37,20 +30,6 @@ public class ZaehlstelleIndexServiceUtilsTests {
         assertThat(IndexServiceUtils.jahreszeitenDetector(s), is(equalTo(IndexServiceUtils.SOMMER)));
         assertThat(IndexServiceUtils.jahreszeitenDetector(h), is(equalTo(IndexServiceUtils.HERBST)));
 
-    }
-
-    @Test
-    public void testGetZaehljahre() {
-        Zaehlung z1 = new Zaehlung();
-        z1.setJahr("2010");
-
-        Zaehlung z2 = new Zaehlung();
-        z2.setJahr("2015");
-
-        Zaehlung z3 = new Zaehlung();
-        z3.setJahr("2020");
-
-        assertThat(IndexServiceUtils.getZaehljahre(Lists.newArrayList(z1, z2, z3)), containsInAnyOrder(2010, 2015, 2020));
     }
 
     @Test

@@ -4,7 +4,6 @@ import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +18,6 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -515,21 +513,6 @@ class LadeZaehldatenServiceSpringTest {
         chosenOptions.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         result = LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, chosenOptions);
         assertThat(result, is(false));
-    }
-
-    @Test
-    public void createFahrbewegungKreisverkehr() {
-        // Kreuzung
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(1, 2, false), is(nullValue()));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(null, null, false), is(nullValue()));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(1, null, false), is(nullValue()));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(null, 2, false), is(nullValue()));
-
-        // Kreisverkehr
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(1, 2, true), is(nullValue()));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(null, null, true), is(nullValue()));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(1, null, true), is(FahrbewegungKreisverkehr.HINEIN));
-        assertThat(LadeZaehldatenService.createFahrbewegungKreisverkehr(null, 2, true), is(FahrbewegungKreisverkehr.HERAUS));
     }
 
     @Test

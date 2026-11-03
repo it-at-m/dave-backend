@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -29,7 +28,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -273,44 +271,6 @@ public class LadeZaehldatenService {
             final OptionsDTO options) {
         return TypeZeitintervall.GESAMT.equals(zeitintervall.getType())
                 && !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer());
-    }
-
-    /**
-     * Diese Methode erzeugt auf Basis der gewählten Verkehrsbeziehung sowie Bezeichners für Kreuzung
-     * und
-     * Kreisverkehr die für die Datenextraktion relevante
-     * {@link FahrbewegungKreisverkehr}.
-     *
-     * @param von als Startknotenarm.
-     * @param nach als Zielknotenarm
-     * @param isKreisverkehr bezeichner ob erzeugung für Kreuzung oder Kreisverkehr.
-     * @return null falls es sich um eine Kreuzung oder um einen Kreisverkehr mit
-     *         Verkehrsbeziehungsauswahl
-     *         "alle nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HINEIN} falls es sich um eine Verkehrsbeziehungsauswahl
-     *         mit
-     *         "X nach alle" handelt.
-     *         {@link FahrbewegungKreisverkehr#HERAUS} falls es sich um eine Verkehrsbeziehungsauswahl
-     *         mit
-     *         "alle nach X" handelt.
-     */
-    public static FahrbewegungKreisverkehr createFahrbewegungKreisverkehr(
-            final Integer von,
-            final Integer nach,
-            final Boolean isKreisverkehr) {
-        final FahrbewegungKreisverkehr fahrbewegungKreisverkehr;
-        if (isKreisverkehr) {
-            if (ObjectUtils.isNotEmpty(von) && ObjectUtils.isEmpty(nach)) {
-                fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HINEIN;
-            } else if (ObjectUtils.isEmpty(von) && ObjectUtils.isNotEmpty(nach)) {
-                fahrbewegungKreisverkehr = FahrbewegungKreisverkehr.HERAUS;
-            } else {
-                fahrbewegungKreisverkehr = null;
-            }
-        } else {
-            fahrbewegungKreisverkehr = null;
-        }
-        return fahrbewegungKreisverkehr;
     }
 
     /**

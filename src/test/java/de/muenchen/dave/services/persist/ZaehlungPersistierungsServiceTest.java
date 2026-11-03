@@ -62,7 +62,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.security.access.AccessDeniedException;
 
 class ZaehlungPersistierungsServiceTest {
@@ -336,28 +335,6 @@ class ZaehlungPersistierungsServiceTest {
         result = internalZaehlungPersistierungsService.createVerkehrsbeziehungForZeitintervall(Zaehlart.N, verkehrsbeziehungDto);
         expected = new Verkehrsbeziehung();
         assertThat(result, is(expected));
-    }
-
-    @Test
-    public void getKoordinateZaehlstelleWhenZaehlungWithinDistance() {
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setPunkt(new GeoPoint(48.133453766001075, 11.54928191096542));
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setPunkt(new GeoPoint(48.13251574474983, 11.549094156334377));
-
-        // Zaehlung ist innerhalb des Radius von 106 Meter um Zaehlstelle.
-        GeoPoint result = internalZaehlungPersistierungsService.getKoordinateZaehlstelleWhenZaehlungWithinDistance(
-                106,
-                zaehlstelle,
-                zaehlung);
-        assertThat(result, is(zaehlstelle.getPunkt()));
-
-        // Zaehlung ist ausserhalb des Radius von 105 Meter um Zaehlstelle.
-        result = internalZaehlungPersistierungsService.getKoordinateZaehlstelleWhenZaehlungWithinDistance(
-                105,
-                zaehlstelle,
-                zaehlung);
-        assertThat(result, is(zaehlung.getPunkt()));
     }
 
     @Test

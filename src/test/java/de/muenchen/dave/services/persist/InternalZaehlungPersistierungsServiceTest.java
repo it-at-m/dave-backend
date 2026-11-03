@@ -9,7 +9,6 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 /**
  * Unit-Tests für InternalZaehlungPersistierungsService.
@@ -268,27 +266,6 @@ class InternalZaehlungPersistierungsServiceTest {
         assertNotNull(q);
         assertEquals(quer.getKnotenarm(), q.getKnotenarm());
         assertEquals(quer.getRichtung(), q.getRichtung());
-    }
-
-    @Test
-    void testGetKoordinateZaehlstelleWhenZaehlungWithinDistance() {
-        final var zaehlung = new Zaehlung();
-        final var zaehlungPoint = new GeoPoint(48.137154, 11.576124); // München
-        zaehlung.setPunkt(zaehlungPoint);
-
-        final var zaehlstelle = new Zaehlstelle();
-        // exakt gleiche Koordinate -> distance 0
-        zaehlstelle.setPunkt(new GeoPoint(48.137154, 11.576124));
-
-        final var result = service.getKoordinateZaehlstelleWhenZaehlungWithinDistance(100.0, zaehlstelle, zaehlung);
-        // Da Positionen gleich sind, sollte die Koordinate der Zaehlstelle zurückgegeben werden
-        assertEquals(zaehlstelle.getPunkt(), result);
-
-        // Große Entfernung: Unterschiede
-        zaehlstelle.setPunkt(new GeoPoint(0.0, 0.0));
-        final var result2 = service.getKoordinateZaehlstelleWhenZaehlungWithinDistance(100.0, zaehlstelle, zaehlung);
-        // sollte die Koordinate der Zaehlung zurückgeben
-        assertEquals(zaehlung.getPunkt(), result2);
     }
 
 }

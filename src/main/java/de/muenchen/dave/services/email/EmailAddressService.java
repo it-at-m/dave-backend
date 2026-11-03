@@ -26,26 +26,6 @@ public class EmailAddressService {
     }
 
     /**
-     * Lädt eine Email-Adresse zu einer Participant ID. Falls sie noch nicht existiert, wird eine neues
-     * EmailAddressDTO mit leerem Wert für die Email-Adresse
-     * zurückgegeben.
-     *
-     * @param participantId Die ID des Participants
-     * @return geladenes EmailAddressDTO
-     */
-    public EmailAddressDTO loadEmailAddressByParticipantId(final int participantId) {
-        final Optional<EmailAddress> optionalEmailAddress = this.emailAddressRepository.findByParticipantId(participantId);
-        if (optionalEmailAddress.isPresent()) {
-            return this.emailAddressMapper.bean2Dto(optionalEmailAddress.get());
-        } else {
-            final EmailAddress emptyEmailAddress = new EmailAddress();
-            emptyEmailAddress.setEmailAddress("");
-            emptyEmailAddress.setParticipantId(participantId);
-            return this.emailAddressMapper.bean2Dto(emptyEmailAddress);
-        }
-    }
-
-    /**
      * Erneuert den String Email-Adresse anhand der UUID des übergebenen EmailAddressDTOs.
      *
      * @param emailAddressDTO Das zu erneuernde EmailAddressDTO

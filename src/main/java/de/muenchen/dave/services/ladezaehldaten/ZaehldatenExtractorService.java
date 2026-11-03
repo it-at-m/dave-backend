@@ -162,18 +162,6 @@ public class ZaehldatenExtractorService {
     }
 
     /**
-     * Überprüft, ob ein Zeitinterval ein Spitzenstunden-Typ ist.
-     *
-     * @param zeitintervall das Zeitintervall zu überprüfen
-     * @return {@code true}, wenn das Zeitintervall ein Spitzenstunden-Typ ist, andernfalls
-     *         {@code false}
-     */
-    protected boolean isZeitintervallOfTypeSpitzenstunde(final Zeitintervall zeitintervall) {
-        final var typesSpitzenstunde = Set.of(TypeZeitintervall.SPITZENSTUNDE_KFZ, TypeZeitintervall.SPITZENSTUNDE_RAD, TypeZeitintervall.SPITZENSTUNDE_FUSS);
-        return CollectionUtils.containsAny(typesSpitzenstunde, zeitintervall.getType());
-    }
-
-    /**
      * Ergänzt ein Zeitinterval um die entsprechende Bewegungsbeziehung.
      *
      * @param zeitintervall das Zeitintervall zu ergänzen
