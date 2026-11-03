@@ -2,6 +2,7 @@ package de.muenchen.dave.configuration.migration.flyway;
 
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.flywaydb.core.api.migration.Context;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
@@ -75,8 +77,8 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 :letzteZaehlungJahr,
                 :grundLetzteZaehlung,
                 :sichtbarDatenportal,
-                CAST(ARRAY[:suchwoerter] AS text[]),
-                CAST(ARRAY[:customSuchwoerter] AS text[])
+                 CAST(:suchwoerter AS text[]),
+                 CAST(:customSuchwoerter AS text[])
             )
             """;
 
@@ -95,8 +97,8 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 :latitude, :longitude, :tagesTyp, :projektNummer, :projektName,
                 :kreuzungsname, :sonderzaehlung, :kreisverkehr, :status,
                 :zaehlsituation, :zaehlsituationErweitert, :zaehlIntervall, :wetter,
-                :zaehldauer, :quelle, :kommentar, :schulZeiten, CAST(ARRAY[:suchwoerter] AS text[]),
-                  CAST(ARRAY[:customSuchwoerter] AS text[]), CAST(ARRAY[:geographie] AS text[]), ARRAY[:kategorien],
+                :zaehldauer, :quelle, :kommentar, :schulZeiten, CAST(:suchwoerter AS text[]),
+                  CAST(:customSuchwoerter AS text[]), CAST(:geographie AS text[]), CAST(:kategorien AS text[]),
                  :unreadMessagesMobilitaetsreferat,
                 :unreadMessagesDienstleister, :dienstleisterkennung
             )
@@ -168,11 +170,11 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
             final var neueHochrechnungsfaktoren = new ArrayList<HochrechnungsfaktorImport>();
 
             for (final Zaehlstelle zaehlstelle : page.getContent()) {
-                zaehlstellenParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlstelle)));
+                zaehlstellenParameters.add(createZaehlstelleParameterSource(zaehlstelle, context.getConnection()));
 
                 for (final var zaehlung : zaehlstelle.getZaehlungen()) {
-                    zaehlungenParameters.add(
-                            new BeanPropertySqlParameterSource(createImportObject(zaehlstelle, zaehlung)));
+                    zaehlungenParameters.add(createZaehlungParameterSource(
+                            zaehlstelle, zaehlung, context.getConnection()));
                     if (zaehlung.getKnotenarme() != null) {
                         for (final var knotenarm : zaehlung.getKnotenarme()) {
                             knotenarmeParameters.add(new BeanPropertySqlParameterSource(createImportObject(zaehlung, knotenarm)));
@@ -250,6 +252,73 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 .sichtbarDatenportal(source.getSichtbarDatenportal())
                 .build();
         return target;
+    }
+
+    private MapSqlParameterSource createZaehlstelleParameterSource(
+            final Zaehlstelle source, final Connection connection) throws SQLException {
+        final var importObject = createImportObject(source);
+        return new MapSqlParameterSource()
+                .addValue("id", importObject.getId())
+                .addValue("createdTime", importObject.getCreatedTime())
+                .addValue("version", importObject.getVersion())
+                .addValue("nummer", importObject.getNummer())
+                .addValue("stadtbezirk", importObject.getStadtbezirk())
+                .addValue("stadtbezirkNummer", importObject.getStadtbezirkNummer())
+                .addValue("kommentar", importObject.getKommentar())
+                .addValue("latitude", importObject.getLatitude())
+                .addValue("longitude", importObject.getLongitude())
+                .addValue("letzteZaehlungMonatNummer", importObject.getLetzteZaehlungMonatNummer())
+                .addValue("letzteZaehlungMonat", importObject.getLetzteZaehlungMonat())
+                .addValue("letzteZaehlungJahr", importObject.getLetzteZaehlungJahr())
+                .addValue("grundLetzteZaehlung", importObject.getGrundLetzteZaehlung())
+                .addValue("sichtbarDatenportal", importObject.getSichtbarDatenportal())
+                .addValue("suchwoerter", createTextArray(connection, importObject.getSuchwoerter()))
+                .addValue("customSuchwoerter", createTextArray(connection, importObject.getCustomSuchwoerter()));
+    }
+
+    private java.sql.Array createTextArray(final Connection connection, final List<String> values) throws SQLException {
+        return values == null ? null : connection.createArrayOf("text", values.toArray());
+    }
+
+    private MapSqlParameterSource createZaehlungParameterSource(
+            final Zaehlstelle zaehlstelle,
+            final de.muenchen.dave.domain.elasticsearch.Zaehlung source,
+            final Connection connection) throws SQLException {
+        final var importObject = createImportObject(zaehlstelle, source);
+        return new MapSqlParameterSource()
+                .addValue("id", importObject.getId())
+                .addValue("createdTime", importObject.getCreatedTime())
+                .addValue("version", importObject.getVersion())
+                .addValue("zaehlstelleId", importObject.getZaehlstelleId())
+                .addValue("datum", importObject.getDatum())
+                .addValue("jahr", importObject.getJahr())
+                .addValue("monat", importObject.getMonat())
+                .addValue("jahreszeit", importObject.getJahreszeit())
+                .addValue("zaehlart", importObject.getZaehlart())
+                .addValue("latitude", importObject.getLatitude())
+                .addValue("longitude", importObject.getLongitude())
+                .addValue("tagesTyp", importObject.getTagesTyp())
+                .addValue("projektNummer", importObject.getProjektNummer())
+                .addValue("projektName", importObject.getProjektName())
+                .addValue("kreuzungsname", importObject.getKreuzungsname())
+                .addValue("sonderzaehlung", importObject.getSonderzaehlung())
+                .addValue("kreisverkehr", importObject.getKreisverkehr())
+                .addValue("status", importObject.getStatus())
+                .addValue("zaehlsituation", importObject.getZaehlsituation())
+                .addValue("zaehlsituationErweitert", importObject.getZaehlsituationErweitert())
+                .addValue("zaehlIntervall", importObject.getZaehlIntervall())
+                .addValue("wetter", importObject.getWetter())
+                .addValue("zaehldauer", importObject.getZaehldauer())
+                .addValue("quelle", importObject.getQuelle())
+                .addValue("kommentar", importObject.getKommentar())
+                .addValue("schulZeiten", importObject.getSchulZeiten())
+                .addValue("suchwoerter", createTextArray(connection, importObject.getSuchwoerter()))
+                .addValue("customSuchwoerter", createTextArray(connection, importObject.getCustomSuchwoerter()))
+                .addValue("geographie", createTextArray(connection, importObject.getGeographie()))
+                .addValue("kategorien", createTextArray(connection, importObject.getKategorien()))
+                .addValue("unreadMessagesMobilitaetsreferat", importObject.getUnreadMessagesMobilitaetsreferat())
+                .addValue("unreadMessagesDienstleister", importObject.getUnreadMessagesDienstleister())
+                .addValue("dienstleisterkennung", importObject.getDienstleisterkennung());
     }
 
     private ZaehlungImport createImportObject(final Zaehlstelle zaehlstelle, final de.muenchen.dave.domain.elasticsearch.Zaehlung source) {
