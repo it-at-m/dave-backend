@@ -157,7 +157,7 @@ create table zaehlung (
                                    quelle varchar(255) check (quelle in ('MANUALLY','DETECTOR','RADAR','VIDEO')),
                                    schul_zeiten varchar(255),
                                    status varchar(255) check (status in ('CREATED','INSTRUCTED','COUNTING','ACCOMPLISHED','CORRECTION','ACTIVE','INACTIVE')),
-                                   tages_typ varchar(255) check (tages_typ in ('UNSPECIFIED','WERKTAG_DI_MI_DO','WERKTAG_MO_FR','SAMSTAG','SONNTAG_FEIERTAG','WERKTAG_FERIEN','MO_SO')),
+                                   tages_typ varchar(255) check (tages_typ in ('Werktag','Wochenende')),
                                    wetter varchar(255) check (wetter in ('SUNNY','SUNNY_COLD','CLOUDY','RAINY','CONTINUOUS_RAINY','FOGGY','SNOWY','NO_INFORMATION')),
                                    zaehlart varchar(255) check (zaehlart in ('N','H','Q','Q_','QB','QH','QI','QS','QT','QR','R','QJS','FJS','QU','T','TK')),
                                    zaehldauer varchar(255) check (zaehldauer in ('DAUER_2_X_4_STUNDEN','DAUER_24_STUNDEN','DAUER_16_STUNDEN','DAUER_13_STUNDEN','SONSTIGE')),

@@ -37,7 +37,7 @@ public class Zaehlung {
     GeoPoint punkt;
 
     /**
-     * Wochenende, Wochentag, Feiertag
+     * Wochenende, Werktag
      */
     @Field(type = FieldType.Text)
     String tagesTyp;
