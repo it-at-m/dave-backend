@@ -1,0 +1,124 @@
+package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
+
+import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenHeatmapService;
+import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenSteplineService;
+import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ProcessZaehldatenService {
+
+    private final LadeZaehldatenService ladeZaehldatenService;
+
+    private final ProcessZaehldatenSteplineService processZaehldatenSteplineService;
+
+    private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService;
+
+    private final ProcessZaehldatenBelastungsplanService processZaehldatenBelastungsplanService;
+
+    private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
+
+    /**
+     * Diese Methode gibt die Zaehldaten in aufbereiter Form zur Darstellung in der Listenausgabe, in
+     * der Heatmap und im Stepline-Diagramm zurück.
+     * <p>
+     * Die Aufbereitung der Zaehldaten wird so durchgeführt, damit die Daten im Frontend nur noch an die
+     * entsprechende Komponente übergeben werden müssen.
+     *
+     * @param zaehlungId Die Id der Zaehlung.
+     * @param options Die durch den User im Frontend gewählten Optionen.
+     * @return Die aufbereiteten Zaehldaten zur Darstellung in der Listenausgabe, in der Heatmap und im
+     *         Stepline-Diagramm.
+     * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
+     */
+    @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
+    public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
+            final OptionsDTO options) throws DataNotFoundException {
+        log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
+
+        log.debug("Lade Zaehldaten for Table");
+        final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
+        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
+                UUID.fromString(zaehlungId),
+                options);
+        processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
+
+        log.debug("Process Zaehldaten Stepline");
+        processedZaehldaten.setZaehldatenStepline(
+                processZaehldatenSteplineService.ladeProcessedZaehldatenStepline(
+                        ladeZaehldatenTable,
+                        options));
+
+        log.debug("Process Zaehldaten Heatmap");
+        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
+                ladeZaehldatenTable,
+                options);
+        processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
+
+        log.debug("Process Zaehldaten Belastungsplan");
+        final AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
+                zaehlungId,
+                options);
+        processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
+
+        log.debug("Process Zaehldaten Zeitreihe");
+        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
+                zaehlungId,
+                options);
+        processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
+
+        return processedZaehldaten;
+    }
+
+    /**
+     * Liefert die Zählungskenngrößen einer Zählung. Hier sollen die Werte für KFZ, GV, SV, Rad und Fuss
+     * (jeweils sofern vorhanden) für folgende Zeitblöcke
+     * geholt werden:
+     * - Spitzenstunden KFZ (sofern vorhanden)
+     * - Spitzenstunden RAD (sofern vorhanden)
+     * - Spitzenstunden FUSS (sofern vorhanden)
+     * - Alle Zeitblöcke (0 - 6, 6 - 10, ...)
+     * - Gesamt- (bei 24-Std-Zhlg) oder Tageswert
+     *
+     * @param zaehlung Die Zählung von der die Zählungskenngrößen geholt werden soll
+     * @return LadeZaehldatenTableDTO mit den für die Zählungskenngrößen benötigten Werten
+     * @throws DataNotFoundException Wenn die Zählung nicht geladen werden kann
+     */
+    public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
+        log.debug("Lade Zaehlungskenngroessen");
+
+        final LadeZaehldatenTableDTO zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
+                UUID.fromString(zaehlung.getId()),
+                ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung));
+
+        // Entfernen der Intervalle aus den Zähldaten
+        final List<LadeZaehldatumDTO> zaehldatenWithoutIntervals = zaehldatenFuerZaehlungskenngroessen
+                .getZaehldaten()
+                .stream()
+                .filter(ladeZaehldatum -> Objects.nonNull(ladeZaehldatum.getType()))
+                .toList();
+        zaehldatenFuerZaehlungskenngroessen.setZaehldaten(zaehldatenWithoutIntervals);
+
+        return zaehldatenFuerZaehlungskenngroessen;
+
+    }
+}
