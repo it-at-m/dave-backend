@@ -78,32 +78,35 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
 
         do {
             page = messstelleIndex.findAll(PageRequest.of(pageNumber, PAGE_SIZE));
-            final var messstellen = new ArrayList<SqlParameterSource>();
-            final var messquerschnitte = new ArrayList<SqlParameterSource>();
-            final var messfaehigkeiten = new ArrayList<SqlParameterSource>();
+
+            final var messstellenParameters = new ArrayList<SqlParameterSource>();
+            final var messquerschnitteParameters = new ArrayList<SqlParameterSource>();
+            final var messfaehigkeitenParameters = new ArrayList<SqlParameterSource>();
 
             for (final var messstelle : page.getContent()) {
-                messstellen.add(createMessstelleParameterSource(messstelle, context.getConnection()));
+                log.info("Migration der Messstelle {}", messstelle.getMstId());
+                messstellenParameters.add(createMessstelleParameterSource(messstelle, context.getConnection()));
+
                 for (final var messquerschnitt : nullSafe(messstelle.getMessquerschnitte())) {
-                    messquerschnitte.add(new BeanPropertySqlParameterSource(
-                            createMessquerschnittImport(messstelle, messquerschnitt)));
+                    messquerschnitteParameters.add(new BeanPropertySqlParameterSource(
+                            createImportObject(messstelle, messquerschnitt)));
                 }
                 for (final var messfaehigkeit : nullSafe(messstelle.getMessfaehigkeiten())) {
-                    messfaehigkeiten.add(new BeanPropertySqlParameterSource(
-                            createMessfaehigkeitImport(messstelle, messfaehigkeit)));
+                    messfaehigkeitenParameters.add(new BeanPropertySqlParameterSource(
+                            createImportObject(messstelle, messfaehigkeit)));
                 }
             }
 
-            jdbcTemplate.batchUpdate(INSERT_MESSSTELLE_SQL, messstellen.toArray(SqlParameterSource[]::new));
-            jdbcTemplate.batchUpdate(INSERT_MESSQUERSCHNITT_SQL, messquerschnitte.toArray(SqlParameterSource[]::new));
-            jdbcTemplate.batchUpdate(INSERT_MESSFAEHIGKEIT_SQL, messfaehigkeiten.toArray(SqlParameterSource[]::new));
+            jdbcTemplate.batchUpdate(INSERT_MESSSTELLE_SQL, messstellenParameters.toArray(SqlParameterSource[]::new));
+            jdbcTemplate.batchUpdate(INSERT_MESSQUERSCHNITT_SQL, messquerschnitteParameters.toArray(SqlParameterSource[]::new));
+            jdbcTemplate.batchUpdate(INSERT_MESSFAEHIGKEIT_SQL, messfaehigkeitenParameters.toArray(SqlParameterSource[]::new));
             pageNumber++;
         } while (page.hasNext());
 
         log.info("Messstellen wurden nach PostgreSQL migriert");
     }
 
-    private MessstelleImport createMessstelleImport(final Messstelle source) {
+    private MessstelleImport createImportObject(final Messstelle source) {
         final var punkt = source.getPunkt();
         var target = MessstelleImport.builder()
                 .id(UUID.fromString(source.getId()))
@@ -135,7 +138,7 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
 
     private MapSqlParameterSource createMessstelleParameterSource(
             final Messstelle source, final Connection connection) throws SQLException {
-        final var importObject = createMessstelleImport(source);
+        final MessstelleImport importObject = createImportObject(source);
         return new MapSqlParameterSource()
                 .addValue("id", importObject.getId())
                 .addValue("createdTime", importObject.getCreatedTime())
@@ -163,10 +166,10 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
     }
 
     private java.sql.Array createTextArray(final Connection connection, final List<String> values) throws SQLException {
-        return values == null ? null : connection.createArrayOf("text", values.toArray());
+        return (values == null || values.isEmpty()) ? null : connection.createArrayOf("text", values.toArray());
     }
 
-    private MessquerschnittImport createMessquerschnittImport(
+    private MessquerschnittImport createImportObject(
             final Messstelle messstelle, final Messquerschnitt source) {
         final var punkt = source.getPunkt();
         var target = MessquerschnittImport.builder()
@@ -181,7 +184,7 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
         return target;
     }
 
-    private MessfaehigkeitImport createMessfaehigkeitImport(
+    private MessfaehigkeitImport createImportObject(
             final Messstelle messstelle, final Messfaehigkeit source) {
         var target = MessfaehigkeitImport.builder()
                 .id(UUID.randomUUID())
