@@ -72,7 +72,7 @@ public class BelastungsplanDataFjsServiceTest {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataFjsService()
                 .buildBelastungsplanDataMap(zaehldatenJeLaengsverkehr, zaehlung);
 
-        List<BelastungsplanFjsDataDTO.KnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+        List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeFuss);
         assertEquals(2, valuesKnotenarmeFuss.size());
@@ -86,7 +86,7 @@ public class BelastungsplanDataFjsServiceTest {
         assertLaengsverkehr(valuesKnotenarmeFuss, 2, Himmelsrichtung.N, Bewegungsrichtung.EIN, 7);
         assertLaengsverkehr(valuesKnotenarmeFuss, 4, Himmelsrichtung.N, Bewegungsrichtung.EIN, 70);
 
-        List<BelastungsplanFjsDataDTO.KnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+        List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeRad);
         assertEquals(2, valuesKnotenarmeRad.size());
@@ -142,13 +142,13 @@ public class BelastungsplanDataFjsServiceTest {
                 value1.getValuesKnotenarme().getFirst().getValuesStrassenseiten().getFirst().getValuesLaengsverkehre().getFirst().getValue());
     }
 
-    private void assertLaengsverkehr(List<BelastungsplanFjsDataDTO.KnotenarmValue> values, int knotenarm, Himmelsrichtung strassenseite,
+    private void assertLaengsverkehr(List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> values, int knotenarm, Himmelsrichtung strassenseite,
             Bewegungsrichtung richtung,
             int expectedValue) {
-        BelastungsplanFjsDataDTO.KnotenarmValue knotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.StrassenseiteValue strassenseiteValue = knotenarmValue.getValuesStrassenseiten().stream()
+        BelastungsplanFjsDataDTO.FjsKnotenarmValue fjsKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
+        BelastungsplanFjsDataDTO.FjsStrassenseiteValue fjsStrassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == strassenseite).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.LaengsverkehrValue laengsverkehrValue = strassenseiteValue.getValuesLaengsverkehre().stream()
+        BelastungsplanFjsDataDTO.LaengsverkehrValue laengsverkehrValue = fjsStrassenseiteValue.getValuesLaengsverkehre().stream()
                 .filter(lv -> lv.getRichtung() == richtung).findFirst().orElseThrow();
         assertThat(laengsverkehrValue.getValue(), is(BigDecimal.valueOf(expectedValue)));
     }

@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class HochrechnungsfaktorDTO {
 
     Long entityVersion;
 
+    @NotNull
     String matrix;
 
     Double kfz;
@@ -18,8 +20,10 @@ public class HochrechnungsfaktorDTO {
 
     Double gv;
 
-    boolean active;
+    @NotNull
+    Boolean active;
 
-    boolean defaultFaktor;
+    @NotNull
+    Boolean defaultFaktor;
 
 }
