@@ -156,8 +156,8 @@ class V17MigrateZaehlstellenIntegrationTest {
         zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         final var index = mock(ZaehlstelleIndex.class);
-        when(index.findAll(PageRequest.of(0, 1)))
-                .thenReturn(new PageImpl<>(List.of(zaehlstelle), PageRequest.of(0, 1), 1));
+        when(index.findAll(PageRequest.of(0, 500)))
+                .thenReturn(new PageImpl<>(List.of(zaehlstelle), PageRequest.of(0, 500), 1));
 
         try (Connection connection = dataSource.getConnection();
                 var statement = connection.prepareStatement(

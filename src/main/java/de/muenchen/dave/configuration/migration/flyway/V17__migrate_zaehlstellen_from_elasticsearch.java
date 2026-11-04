@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 public class V17__migrate_zaehlstellen_from_elasticsearch
         extends BaseJavaMigration {
 
-    private static final int PAGE_SIZE = 1; // TODO: 500
+    private static final int PAGE_SIZE = 500;
 
     private static final String INSERT_ZAEHLSTELLE_SQL = """
             INSERT INTO zaehlstelle (
@@ -167,9 +167,11 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
             final var querungsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var verkehrsbeziehungenParameters = new ArrayList<SqlParameterSource>();
             for (final Zaehlstelle zaehlstelle : page.getContent()) {
+                log.info("Migration der Zählstelle {}", zaehlstelle.getNummer());
                 zaehlstellenParameters.add(createZaehlstelleParameterSource(zaehlstelle, context.getConnection()));
 
                 for (final var zaehlung : zaehlstelle.getZaehlungen()) {
+                    log.info("Migration der Zählung {} - {}", zaehlung.getId(), zaehlung.getProjektNummer());
                     zaehlungenParameters.add(createZaehlungParameterSource(
                             zaehlstelle, zaehlung, context.getConnection()));
                     if (zaehlung.getKnotenarme() != null) {
@@ -245,7 +247,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
 
     private MapSqlParameterSource createZaehlstelleParameterSource(
             final Zaehlstelle source, final Connection connection) throws SQLException {
-        final var importObject = createImportObject(source);
+        final ZaehlstelleImport importObject = createImportObject(source);
         return new MapSqlParameterSource()
                 .addValue("id", importObject.getId())
                 .addValue("createdTime", importObject.getCreatedTime())
@@ -266,14 +268,14 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
     }
 
     private java.sql.Array createTextArray(final Connection connection, final List<String> values) throws SQLException {
-        return values == null ? null : connection.createArrayOf("text", values.toArray());
+        return (values == null || values.isEmpty()) ? null : connection.createArrayOf("text", values.toArray());
     }
 
     private MapSqlParameterSource createZaehlungParameterSource(
             final Zaehlstelle zaehlstelle,
             final de.muenchen.dave.domain.elasticsearch.Zaehlung source,
             final Connection connection) throws SQLException {
-        final var importObject = createImportObject(zaehlstelle, source);
+        final ZaehlungImport importObject = createImportObject(zaehlstelle, source);
         return new MapSqlParameterSource()
                 .addValue("id", importObject.getId())
                 .addValue("createdTime", importObject.getCreatedTime())
