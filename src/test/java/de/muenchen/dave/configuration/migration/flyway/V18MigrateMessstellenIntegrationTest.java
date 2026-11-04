@@ -108,6 +108,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messstelle WHERE id = '11111111-1111-1111-1111-111111111111'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getString("id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getString("mst_id")).isEqualTo("M-100");
                 assertThat(resultSet.getString("name")).isEqualTo("Testmessstelle");
                 assertThat(resultSet.getString("status")).isEqualTo("IN_BESTAND");
@@ -142,6 +143,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messquerschnitt WHERE id = '22222222-2222-2222-2222-222222222222'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getString("id")).isEqualTo("22222222-2222-2222-2222-222222222222");
                 assertThat(resultSet.getString("messstelle_id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getString("mq_id")).isEqualTo("MQ-100");
                 assertThat(resultSet.getDouble("latitude")).isEqualTo(48.1372);
@@ -163,6 +165,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messfaehigkeit WHERE messstelle_id = '11111111-1111-1111-1111-111111111111'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getObject("id")).isNotNull();
                 assertThat(resultSet.getString("messstelle_id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getDate("gueltig_ab")).isEqualTo(Date.valueOf("2024-01-01"));
                 assertThat(resultSet.getDate("gueltig_bis")).isEqualTo(Date.valueOf("2024-12-31"));
