@@ -166,11 +166,12 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
             final var laengsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var querungsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var verkehrsbeziehungenParameters = new ArrayList<SqlParameterSource>();
+
             for (final Zaehlstelle zaehlstelle : page.getContent()) {
                 log.info("Migration der Zählstelle {}", zaehlstelle.getNummer());
                 zaehlstellenParameters.add(createZaehlstelleParameterSource(zaehlstelle, context.getConnection()));
 
-                for (final var zaehlung : zaehlstelle.getZaehlungen()) {
+                for (final var zaehlung : nullSafe(zaehlstelle.getZaehlungen())) {
                     log.info("Migration der Zählung {} - {}", zaehlung.getId(), zaehlung.getProjektNummer());
                     zaehlungenParameters.add(createZaehlungParameterSource(
                             zaehlstelle, zaehlung, context.getConnection()));
@@ -346,12 +347,20 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                 .geographie(source.getGeographie())
                 .kategorien(source.getKategorien() == null
                         ? null
-                        : source.getKategorien().stream().map(Enum::name).toList())
+                        : source.getKategorien().stream().map(this::enumName).toList())
                 .unreadMessagesMobilitaetsreferat(source.getUnreadMessagesMobilitaetsreferat())
                 .unreadMessagesDienstleister(source.getUnreadMessagesDienstleister())
                 .dienstleisterkennung(source.getDienstleisterkennung())
                 .build();
         return target;
+    }
+
+    private String enumName(final Enum<?> value) {
+        return value == null ? null : value.name();
+    }
+
+    private <T> List<T> nullSafe(final List<T> source) {
+        return source == null ? List.of() : source;
     }
 
     private KnotenarmImport createImportObject(
