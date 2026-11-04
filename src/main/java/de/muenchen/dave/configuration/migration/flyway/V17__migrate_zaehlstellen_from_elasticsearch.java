@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -42,7 +43,7 @@ import org.springframework.stereotype.Component;
 public class V17__migrate_zaehlstellen_from_elasticsearch
         extends BaseJavaMigration {
 
-    private static final int PAGE_SIZE = 500;
+    private static final int PAGE_SIZE = 1; // TODO: 500
 
     private static final String INSERT_ZAEHLSTELLE_SQL = """
             INSERT INTO zaehlstelle (
@@ -139,12 +140,10 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
              )
             """;
 
-    private static final String INSERT_HOCHRECHNUNGSFAKTOR_SQL = """
-            INSERT INTO hochrechnungsfaktor (
-                id, created_time, version, matrix, kfz, sv, gv, active, default_faktor
-            ) VALUES (
-                :id, :createdTime, :version, :matrix, :kfz, :sv, :gv, :active, :defaultFaktor
-            )
+    private static final String FIND_HOCHRECHNUNGSFAKTOR_ID_SQL = """
+            SELECT id
+            FROM hochrechnungsfaktor
+            WHERE matrix = :matrix
             """;
     private static final Long INITIAL_VERSION = 0L;
 
@@ -156,7 +155,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         final var jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         Page<Zaehlstelle> page;
         int pageNumber = 0;
-        final Map<String, HochrechnungsfaktorImport> hochrechnungsfaktoren = new LinkedHashMap<>();
+        final Map<String, UUID> hochrechnungsfaktoren = new HashMap<>();
 
         do {
             page = zaehlstelleIndex.findAll(PageRequest.of(pageNumber, PAGE_SIZE));
@@ -167,8 +166,6 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
             final var laengsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var querungsverkehrParameters = new ArrayList<SqlParameterSource>();
             final var verkehrsbeziehungenParameters = new ArrayList<SqlParameterSource>();
-            final var neueHochrechnungsfaktoren = new ArrayList<HochrechnungsfaktorImport>();
-
             for (final Zaehlstelle zaehlstelle : page.getContent()) {
                 zaehlstellenParameters.add(createZaehlstelleParameterSource(zaehlstelle, context.getConnection()));
 
@@ -183,8 +180,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                     if (zaehlung.getLaengsverkehr() != null) {
                         for (final var laengsverkehr : zaehlung.getLaengsverkehr()) {
                             final var faktor = laengsverkehr.getHochrechnungsfaktor();
-                            final var faktorId = registerHochrechnungsfaktor(
-                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            final var faktorId = findHochrechnungsfaktorId(faktor, hochrechnungsfaktoren, jdbcTemplate);
                             laengsverkehrParameters.add(new BeanPropertySqlParameterSource(
                                     createImportObject(zaehlung, laengsverkehr, faktorId)));
                         }
@@ -192,8 +188,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                     if (zaehlung.getQuerungsverkehr() != null) {
                         for (final var querungsverkehr : zaehlung.getQuerungsverkehr()) {
                             final var faktor = querungsverkehr.getHochrechnungsfaktor();
-                            final var faktorId = registerHochrechnungsfaktor(
-                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            final var faktorId = findHochrechnungsfaktorId(faktor, hochrechnungsfaktoren, jdbcTemplate);
                             querungsverkehrParameters.add(new BeanPropertySqlParameterSource(
                                     createImportObject(zaehlung, querungsverkehr, faktorId)));
                         }
@@ -201,8 +196,7 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
                     if (zaehlung.getVerkehrsbeziehungen() != null) {
                         for (final var verkehrsbeziehung : zaehlung.getVerkehrsbeziehungen()) {
                             final var faktor = verkehrsbeziehung.getHochrechnungsfaktor();
-                            final var faktorId = registerHochrechnungsfaktor(
-                                    faktor, hochrechnungsfaktoren, neueHochrechnungsfaktoren);
+                            final var faktorId = findHochrechnungsfaktorId(faktor, hochrechnungsfaktoren, jdbcTemplate);
                             verkehrsbeziehungenParameters.add(new BeanPropertySqlParameterSource(
                                     createImportObject(zaehlung, verkehrsbeziehung, faktorId)));
                         }
@@ -215,11 +209,6 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
 
             jdbcTemplate.batchUpdate(INSERT_ZAEHLUNG_SQL, zaehlungenParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_KNOTENARM_SQL, knotenarmeParameters.toArray(SqlParameterSource[]::new));
-            jdbcTemplate.batchUpdate(
-                    INSERT_HOCHRECHNUNGSFAKTOR_SQL,
-                    neueHochrechnungsfaktoren.stream()
-                            .map(BeanPropertySqlParameterSource::new)
-                            .toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_LAENGSVERKEHR_SQL, laengsverkehrParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(INSERT_QUERUNGSVERKEHR_SQL, querungsverkehrParameters.toArray(SqlParameterSource[]::new));
             jdbcTemplate.batchUpdate(
@@ -429,35 +418,34 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         return target;
     }
 
-    private UUID registerHochrechnungsfaktor(
+    private UUID findHochrechnungsfaktorId(
             final de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor source,
-            final Map<String, HochrechnungsfaktorImport> hochrechnungsfaktoren,
-            final List<HochrechnungsfaktorImport> neueHochrechnungsfaktoren) {
+            final Map<String, UUID> hochrechnungsfaktoren,
+            final NamedParameterJdbcTemplate jdbcTemplate) {
         if (source == null) {
             return null;
         }
-        final var importObject = hochrechnungsfaktoren.computeIfAbsent(
-                source.getMatrix(), key -> createImportObject(source));
-        if (!neueHochrechnungsfaktoren.contains(importObject)) {
-            neueHochrechnungsfaktoren.add(importObject);
+        if (hochrechnungsfaktoren.containsKey(source.getMatrix())) {
+            return hochrechnungsfaktoren.get(source.getMatrix());
         }
-        return importObject.getId();
-    }
 
-    private HochrechnungsfaktorImport createImportObject(
-            final de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor source) {
-        var target = HochrechnungsfaktorImport.builder()
-                .id(UUID.randomUUID())
-                .createdTime(LocalDateTime.now())
-                .version(INITIAL_VERSION)
-                .matrix(source.getMatrix())
-                .kfz(source.getKfz())
-                .sv(source.getSv())
-                .gv(source.getGv())
-                .active(source.isActive())
-                .defaultFaktor(false) // TODO: prüfen, ob false ok
-                .build();
-        return target;
+        final String faktorIdAsString;
+        try {
+            faktorIdAsString = jdbcTemplate.queryForObject(
+                    FIND_HOCHRECHNUNGSFAKTOR_ID_SQL,
+                    new MapSqlParameterSource("matrix", source.getMatrix()),
+                    String.class);
+        } catch (final EmptyResultDataAccessException exception) {
+            throw new IllegalStateException(
+                    "Kein Hochrechnungsfaktor für Matrix '" + source.getMatrix() + "' gefunden", exception);
+        }
+        if (faktorIdAsString == null) {
+            throw new IllegalStateException(
+                    "Kein Hochrechnungsfaktor für Matrix '" + source.getMatrix() + "' gefunden");
+        }
+        final UUID faktorId = UUID.fromString(faktorIdAsString);
+        hochrechnungsfaktoren.put(source.getMatrix(), faktorId);
+        return faktorId;
     }
 
     /**
@@ -586,20 +574,6 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
         private String vonknotennachstrnr;
         private String nachknotnachstrnr;
         private String nachStrnr;
-    }
-
-    @Builder
-    @Getter
-    private static class HochrechnungsfaktorImport {
-        private UUID id;
-        private LocalDateTime createdTime;
-        private Long version;
-        private String matrix;
-        private Double kfz;
-        private Double sv;
-        private Double gv;
-        private boolean active;
-        private boolean defaultFaktor;
     }
 
 }

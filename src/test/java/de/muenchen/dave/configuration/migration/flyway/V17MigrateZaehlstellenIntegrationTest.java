@@ -119,7 +119,14 @@ class V17MigrateZaehlstellenIntegrationTest {
         laengsverkehr.setRichtung(Bewegungsrichtung.EIN);
         laengsverkehr.setStrassenseite(Himmelsrichtung.N);
         laengsverkehr.setHochrechnungsfaktor(faktor);
-        zaehlung.setLaengsverkehr(List.of(laengsverkehr));
+
+        final var zweiterLaengsverkehr = new Laengsverkehr();
+        zweiterLaengsverkehr.setId("33333333-3333-3333-3333-333333333334");
+        zweiterLaengsverkehr.setKnotenarm(2);
+        zweiterLaengsverkehr.setRichtung(Bewegungsrichtung.AUS);
+        zweiterLaengsverkehr.setStrassenseite(Himmelsrichtung.S);
+        zweiterLaengsverkehr.setHochrechnungsfaktor(faktor);
+        zaehlung.setLaengsverkehr(List.of(laengsverkehr, zweiterLaengsverkehr));
 
         final var querungsverkehr = new Querungsverkehr();
         querungsverkehr.setId("44444444-4444-4444-4444-444444444444");
@@ -149,8 +156,22 @@ class V17MigrateZaehlstellenIntegrationTest {
         zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         final var index = mock(ZaehlstelleIndex.class);
-        when(index.findAll(PageRequest.of(0, 500)))
-                .thenReturn(new PageImpl<>(List.of(zaehlstelle), PageRequest.of(0, 500), 1));
+        when(index.findAll(PageRequest.of(0, 1)))
+                .thenReturn(new PageImpl<>(List.of(zaehlstelle), PageRequest.of(0, 1), 1));
+
+        try (Connection connection = dataSource.getConnection();
+                var statement = connection.prepareStatement(
+                        "INSERT INTO hochrechnungsfaktor "
+                                + "(id, created_time, version, matrix, kfz, sv, gv, active, default_faktor) "
+                                + "VALUES (?, CURRENT_TIMESTAMP, 0, ?, ?, ?, ?, ?, false)")) {
+            statement.setObject(1, "66666666-6666-6666-6666-666666666666");
+            statement.setString(2, "MATRIX-1");
+            statement.setDouble(3, 1.1);
+            statement.setDouble(4, 1.2);
+            statement.setDouble(5, 1.3);
+            statement.setBoolean(6, true);
+            statement.executeUpdate();
+        }
 
         try (Connection connection = dataSource.getConnection()) {
             final var context = mock(Context.class);
@@ -253,6 +274,15 @@ class V17MigrateZaehlstellenIntegrationTest {
                 assertThat(resultSet.getString("hochrechnungsfaktor_id")).isNotNull();
                 assertThat(resultSet.getObject("created_time")).isNotNull();
                 assertThat(resultSet.getLong("version")).isZero();
+            }
+        }
+
+        try (Connection connection = dataSource.getConnection();
+                var statement = connection.prepareStatement(
+                        "SELECT count(*) FROM laengsverkehr WHERE zaehlung_id = '22222222-2222-2222-2222-222222222222'")) {
+            try (var resultSet = statement.executeQuery()) {
+                assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getLong(1)).isEqualTo(2);
             }
         }
 

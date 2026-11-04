@@ -5,8 +5,8 @@ import de.muenchen.dave.domain.Hochrechnungsfaktor;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.OneToOne;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +26,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 public abstract class MappedBewegungsbeziehung extends BaseEntity {
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "hochrechnungsfaktor_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

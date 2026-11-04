@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.relational.zaehlstellen;
 import de.muenchen.dave.domain.BaseEntity;
 import de.muenchen.dave.domain.enums.Quelle;
 import de.muenchen.dave.domain.enums.Status;
-import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zaehldauer;
