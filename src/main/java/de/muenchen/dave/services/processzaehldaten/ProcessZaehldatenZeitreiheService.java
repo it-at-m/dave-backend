@@ -456,7 +456,7 @@ public class ProcessZaehldatenZeitreiheService {
      * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
      * Gewählte Zählungen müssen alle der folgenden Kriterien
      * erfüllen:
-     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (inkl.)
+     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (exkl. Datum der Basiszählung; Basiszählung ist im Ergebnis enthalten)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
@@ -473,13 +473,13 @@ public class ProcessZaehldatenZeitreiheService {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
 
-        // Zählungen sortieren und nach Datum filtern (Zählung muss nach oder am OldestDate und vor oder am CurrentDate stattgefunden haben)
+        // Zählungen sortieren und nach Datum filtern (Zählung muss nach oder am OldestDate und vor CurrentDate stattgefunden haben)
         return zaehlstelle.getZaehlungen()
                 .stream()
                 .sorted(Comparator.comparing(Zaehlung::getDatum))
                 .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
                 .filter(zaehlung -> zaehlung.getDatum().isAfter(oldestDateToSearchFor) || zaehlung.getDatum().isEqual(oldestDateToSearchFor))
-                .filter(zaehlung -> zaehlung.getDatum().isBefore(currentDate) || zaehlung.getDatum().isEqual(currentDate))
+                .filter(zaehlung -> zaehlung.getDatum().isBefore(currentDate) || zaehlung.getId().equals(currentZaehlung.getId()))
                 .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
                 .filter(zaehlung -> zaehlung.getSonderzaehlung().equals(currentZaehlung.getSonderzaehlung()))
                 .filter(zaehlung -> this.zeitauswahlService.determinePossibleZeitauswahl(
