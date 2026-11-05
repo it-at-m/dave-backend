@@ -52,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
@@ -234,8 +235,7 @@ public class SucheService {
         final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstelle(query, searchAndFilterOptions, false);
         return searchResult
                 .stream()
-                .filter(erhebungsstelleKarteDTO -> ObjectUtils.isEmpty(erhebungsstelleKarteDTO.getSichtbarDatenportal())
-                        || erhebungsstelleKarteDTO.getSichtbarDatenportal())
+                .filter(erhebungsstelleKarteDTO -> BooleanUtils.isNotFalse(erhebungsstelleKarteDTO.getSichtbarDatenportal()))
                 .collect(Collectors.toSet());
     }
 
