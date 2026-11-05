@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigration {
+public class V19__migrate_messstellen_from_elasticsearch extends BaseJavaMigration {
 
     private static final int PAGE_SIZE = 500;
 
@@ -85,6 +85,8 @@ public class V18__migrate_messstellen_from_elasticsearch extends BaseJavaMigrati
 
             for (final var messstelle : page.getContent()) {
                 log.info("Migration der Messstelle {}", messstelle.getMstId());
+                if ("5884601b-0c1e-433a-ac02-4e72572c1a8c".equalsIgnoreCase(messstelle.getId()))
+                    System.out.println("5884601b-0c1e-433a-ac02-4e72572c1a8c");
                 messstellenParameters.add(createMessstelleParameterSource(messstelle, context.getConnection()));
 
                 for (final var messquerschnitt : nullSafe(messstelle.getMessquerschnitte())) {

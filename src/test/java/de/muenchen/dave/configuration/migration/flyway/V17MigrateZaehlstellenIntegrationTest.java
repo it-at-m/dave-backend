@@ -48,7 +48,7 @@ class V17MigrateZaehlstellenIntegrationTest {
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__dave-Initialisierung.sql"))
                 .execute(dataSource);
-        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle_messstelle.sql"))
+        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle.sql"))
                 .execute(dataSource);
     }
 
