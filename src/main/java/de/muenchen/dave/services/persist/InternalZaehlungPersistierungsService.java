@@ -27,10 +27,9 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.geo.CoordinateUtil;
 import jakarta.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -96,7 +95,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         }
 
         // Fahrzeugkategorien und -klassen setzen
-        zaehlungDto.setKategorien(getFahrzeugklassen(zaehlungDto.getKategorien()));
+        zaehlungDto.setKategorien(getFahrzeugklassen(new HashSet<>(zaehlungDto.getKategorien())));
 
         final Zaehlung zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {
