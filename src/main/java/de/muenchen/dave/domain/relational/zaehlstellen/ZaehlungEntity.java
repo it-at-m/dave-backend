@@ -22,6 +22,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Entity-Klasse für Zählungen (Migration von Elasticsearch zu PostgreSQL).
@@ -36,6 +38,7 @@ import lombok.ToString;
 public class ZaehlungEntity extends BaseEntity {
 
     @Column(name = "datum")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate datum;
 
     @Column(name = "jahr", length = 4)
