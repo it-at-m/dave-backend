@@ -405,16 +405,10 @@ public class SucheService {
                 .filter(Zaehlstelle::getSichtbarDatenportal)
                 .forEach(zaehlstelle -> zaehlstelle.setZaehlungen(
                         zaehlstelle.getZaehlungen().stream()
-                                // Alle Zaehlung mit einem Status != ACTIVE werden ausgefilter
-                                .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
+                                // Alle Zaehlung mit einem Status != ACTIVE werden ausgefilter falls der Nutzer kein Admin ist.
+                                .filter(zaehlung -> isAdmin || zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
                                 // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
-                                .filter(zaehlung -> {
-                                    if (isAnwender) {
-                                        return !zaehlung.getSonderzaehlung();
-                                    } else {
-                                        return true;
-                                    }
-                                })
+                                .filter(zaehlung -> !isAnwender || !zaehlung.getSonderzaehlung())
                                 .collect(Collectors.toList())));
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
