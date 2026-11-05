@@ -638,7 +638,7 @@ class ZaehlungPersistierungsServiceTest {
         // Fall: Bereits alle Fahrzeugklassen in kategorien enthalten -> Werden nicht erneut hinzugefügt
         kategorien = new HashSet<>(
                 Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD,
-                    Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT));
+                        Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT));
         result = externalZaehlungPersistierungsService.getFahrzeugklassen(kategorien);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
         assertThat(result.size(), is(expected.size()));
