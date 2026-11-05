@@ -5,11 +5,8 @@ import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -269,7 +266,9 @@ public class V17__migrate_zaehlstellen_from_elasticsearch
     }
 
     private java.sql.Array createTextArray(final Connection connection, final List<String> values) throws SQLException {
-        return (values == null || values.isEmpty()) ? null : connection.createArrayOf("text", values.toArray());
+        return (values == null || values.isEmpty())
+                ? null
+                : connection.createArrayOf("text", values.stream().distinct().toArray());
     }
 
     private MapSqlParameterSource createZaehlungParameterSource(
