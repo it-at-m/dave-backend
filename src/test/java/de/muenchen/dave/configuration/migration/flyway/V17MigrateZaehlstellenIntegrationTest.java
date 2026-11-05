@@ -34,6 +34,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class V17MigrateZaehlstellenIntegrationTest {
 
+    @SuppressWarnings("resource")
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("dave")
@@ -95,7 +96,7 @@ class V17MigrateZaehlstellenIntegrationTest {
         zaehlung.setSuchwoerter(List.of("verkehr", "knoten"));
         zaehlung.setCustomSuchwoerter(List.of("test"));
         zaehlung.setGeographie(List.of("München"));
-        zaehlung.setKategorien(List.of(Fahrzeug.KFZ));
+        zaehlung.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.KFZ));
         zaehlung.setUnreadMessagesMobilitaetsreferat(true);
         zaehlung.setUnreadMessagesDienstleister(false);
         zaehlung.setDienstleisterkennung("DL-42");
