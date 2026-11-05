@@ -35,7 +35,6 @@ import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -179,7 +178,8 @@ public class SucheService {
             // Zählstellen
             final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdminportal).stream()
+            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdminportal)
+                    .stream()
                     .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
                     .collect(Collectors.toList());
 
@@ -217,49 +217,56 @@ public class SucheService {
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#sucheErhebungsstelle} alle nicht sichtbaren
-     * Zaehl-/Messstellen aus dem zurückgegebenen Set.
+     * Sucht Erhebungsstellen für das Datenportal.
      * <p>
-     * Gibt alle sichtbaren Zähl-/Messstellen zurück. Eine Zähl-/Messstelle gilt als unsichtbar sobald
-     * das Attribut "sichtbarDatenportal" false ist.
+     * Fachadmins erhalten auch Erhebungsstellen, deren Attribut {@code sichtbarDatenportal} auf
+     * {@code false} gesetzt ist. Für alle anderen Benutzer werden diese aus dem Ergebnis entfernt.
      *
      * @param query Suchquery
      * @param searchAndFilterOptions Filteroptionen
      * @return passende Zaehl-/Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelleSichtbarDatenportal(
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1, @securityContextInformationExtractorService.isFachadmin()}")
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellen(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
-        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstelle(query, searchAndFilterOptions, false);
-        return searchResult
-                .stream()
-                .filter(erhebungsstelleKarteDTO -> BooleanUtils.isNotFalse(erhebungsstelleKarteDTO.getSichtbarDatenportal()))
-                .collect(Collectors.toSet());
+        final boolean isAdmin = securityContextInformationExtractorService.isFachadmin();
+        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellen(query, searchAndFilterOptions, isAdmin);
+        if (isAdmin) {
+            return searchResult;
+        } else {
+            return searchResult
+                    .stream()
+                    .filter(erhebungsstelleKarteDTO -> BooleanUtils.isNotFalse(erhebungsstelleKarteDTO.getSichtbarDatenportal()))
+                    .collect(Collectors.toSet());
+        }
     }
 
     /**
-     * Sucht alle freigegebenen Zähl-/Messstellen und gibt diese an die DTO-Erstellung weiter.
+     * Sucht Erhebungsstellen für das Adminportal.
+     * <p>
+     * Bei einer Anfrage durch einen Fachadmin werden Zählstellen und ihre Zählungen ungefiltert
+     * zurückgegeben. Andernfalls gelten die Sichtbarkeits- und Statusfilter des Datenportals.
      *
-     * @param query Eine Suchquery zur Suche von Zähl-/Messstellen. Bei leerer Suchquery sollen alle
-     *            Zähl-/Messstellen gefunden werden.
+     * @param query Suchanfrage; bei einer leeren Suchanfrage werden alle Erhebungsstellen
+     *            berücksichtigt
      * @param searchAndFilterOptions Filteroptionen
-     * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
-     * @return Set von befüllten ErhebungsstellenDTOs der gesuchten Zähl-/Messstellen
+     * @param isAdmin gibt an, ob die Anfrage aus dem Adminportal stammt
+     * @return passende Erhebungsstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstelle(
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellen(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
-            final boolean isAdminportal) {
+            final boolean isAdmin) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
             searchResult.addAll(sucheMessstelle(query, searchAndFilterOptions));
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
-            searchResult.addAll(sucheZaehlstelle(query, searchAndFilterOptions, isAdminportal));
+            searchResult.addAll(sucheZaehlstelle(query, isAdmin));
         }
         return searchResult;
     }
@@ -268,11 +275,10 @@ public class SucheService {
      * Gibt alle Zählstellen zurück, die auf die Query passen.
      *
      * @param query Eine Suchquery
-     * @param searchAndFilterOptions Filteroptionen
-     * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions, final boolean isAdminportal) {
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final boolean isAdmin) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -280,25 +286,22 @@ public class SucheService {
         } else {
             if (this.isDatumsbereichSuche(query)) {
                 final String[] words = query.split(StringUtils.SPACE);
-                final LocalDate afterDate = this.getLocalDateOfString(words[1]);
-                final LocalDate beforeDate = this.getLocalDateOfString(words[3]);
-                log.debug("Date between '{}' and '{}'", afterDate, beforeDate);
-                // Alle Aktive Zählungen laden
-                // Alle Zählstellen suchen, die Zählungen im Bereich haben
-                final Set<Zaehlstelle> relevantZaelstellen = new HashSet<>();
-                this.zaehlstelleIndex.findAll().forEach(zaehlstelle -> zaehlstelle.getZaehlungen().forEach(zaehlung -> {
-                    if (this.isDateEqualOrAfter(zaehlung.getDatum(), afterDate) && this.isDateEqualOrBefore(zaehlung.getDatum(), beforeDate)) {
-                        relevantZaelstellen.add(zaehlstelle);
-                    }
-                }));
-                zaehlstellen = new ArrayList<>(relevantZaelstellen);
+                final LocalDate startDate = this.getLocalDateOfString(words[1]);
+                final LocalDate endDate = this.getLocalDateOfString(words[3]);
+                // Extraktion aller Zählstellen welche Zählungen im Zeitraum gegeben in der Suchquery besitzen.
+                zaehlstellen = this.zaehlstelleIndex.findAll()
+                        .stream()
+                        .filter(zaehlstelle -> zaehlstelle.getZaehlungen()
+                                .stream()
+                                .anyMatch(zaehlung -> this.isDateEqualOrAfter(zaehlung.getDatum(), startDate)
+                                        && this.isDateEqualOrBefore(zaehlung.getDatum(), endDate)))
+                        .toList();
             } else {
                 final String q = this.createQueryString(query);
-                log.debug("#sucheZaehlstelle '{}', filter '{}'", q, searchAndFilterOptions);
                 zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, pageable).toList();
             }
         }
-        return this.getZaehlstelleKarteDTOS(zaehlstellen, isAdminportal);
+        return this.getZaehlstelleKarteDTOS(zaehlstellen, isAdmin);
     }
 
     /**
@@ -385,13 +388,13 @@ public class SucheService {
      * entfernt.
      *
      * @param zaehlstellen zu filtern
-     * @param noFilter Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return Liste mit erlaubten Záhlstellen
      */
-    private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean noFilter) {
+    private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean isAdmin) {
 
         // Für das Adminportal wird nichts gefiltert => Fachadmin ist angemeldet
-        if (noFilter && securityContextInformationExtractorService.isFachadmin()) {
+        if (isAdmin && securityContextInformationExtractorService.isFachadmin()) {
             return zaehlstellen;
         }
 
@@ -424,13 +427,13 @@ public class SucheService {
      * liefert diese zurück
      *
      * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
-    private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean isAdminportal) {
+    private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean isAdmin) {
         final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
 
-        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isAdminportal)) {
+        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isAdmin)) {
             Zaehlung letzeZaehlung = null;
             if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
                 letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());

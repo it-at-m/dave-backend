@@ -75,8 +75,7 @@ public class SucheController {
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelleSichtbarDatenportal(query,
-                    searchAndFilterOptions);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstellen(query, searchAndFilterOptions);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
@@ -93,7 +92,7 @@ public class SucheController {
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstelle(query, searchAndFilterOptions, true);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellenForMap = this.sucheService.sucheErhebungsstellen(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(erhebungsstellenForMap, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);

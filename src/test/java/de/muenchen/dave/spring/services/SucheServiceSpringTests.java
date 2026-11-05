@@ -11,6 +11,8 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -31,6 +33,7 @@ import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.SucheService;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -77,6 +80,26 @@ public class SucheServiceSpringTests {
     private ElasticsearchOperations elasticsearchOperations;
     @MockitoBean
     private ElasticsearchClient elasticsearchClient;
+    @MockitoBean
+    private SecurityContextInformationExtractorService securityContextInformationExtractorService;
+
+    @Test
+    public void testSucheErhebungsstellenCachesResultsByFachadminRole() {
+        Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
+
+        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        searchAndFilterOptions.setSearchInZaehlstellen(true);
+        when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of(this.createSampleData().get(0))));
+
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
+        this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions);
+
+        clearInvocations(zaehlstelleIndex);
+        when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
+        this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions);
+
+        verify(zaehlstelleIndex).suggestSearch(any(), any());
+    }
 
     @Test
     @WithMockUser(roles = { "FACHADMIN" })
@@ -158,7 +181,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptions, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -196,7 +219,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstelle("Z01", searchAndFilterOptions, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions, false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
