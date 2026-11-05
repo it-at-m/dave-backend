@@ -432,7 +432,8 @@ public class ZaehlstelleIndexService {
                                 return leseZaehlungDTO.getStatus().equalsIgnoreCase(Status.ACTIVE.name());
                             }
                         })
-                        .peek(leseZaehlungDTO -> leseZaehlungDTO.setKategorien(leseZaehlungDTO.getKategorien().stream().distinct().toList()))
+                        .peek(leseZaehlungDTO -> leseZaehlungDTO
+                                .setKategorien(CollectionUtils.emptyIfNull(leseZaehlungDTO.getKategorien()).stream().distinct().toList()))
                         .collect(Collectors.toList()));
 
         // Die Zeitauswahl wird hier in die Zählungen geschrieben
