@@ -456,7 +456,8 @@ public class ProcessZaehldatenZeitreiheService {
      * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
      * Gewählte Zählungen müssen alle der folgenden Kriterien
      * erfüllen:
-     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (exkl. Datum der Basiszählung; Basiszählung ist im Ergebnis enthalten)
+     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (exkl.
+     * Datum der Basiszählung; Basiszählung ist im Ergebnis enthalten)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
