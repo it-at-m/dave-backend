@@ -32,6 +32,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class V19MigrateMessstellenIntegrationTest {
 
+    @SuppressWarnings("resource")
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("dave")
@@ -46,7 +47,7 @@ class V19MigrateMessstellenIntegrationTest {
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__dave-Initialisierung.sql"))
                 .execute(dataSource);
-        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle.sql"))
+        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V18__create_messstelle.sql"))
                 .execute(dataSource);
     }
 
