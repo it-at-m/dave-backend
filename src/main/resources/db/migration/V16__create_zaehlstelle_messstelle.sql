@@ -64,7 +64,7 @@ create table messstelle (
                                    realisierungsdatum date,
                                    version bigint,
                                    id varchar(36) not null,
-                                   bemerkung varchar(255),
+                                   bemerkung varchar(1000),
                                    detektierte_verkehrsart varchar(255) check (detektierte_verkehrsart in ('KFZ','RAD','UNBEKANNT')),
                                    fahrzeugklasse varchar(255) check (fahrzeugklasse in ('RAD','SUMME_KFZ','ZWEI_PLUS_EINS','ACHT_PLUS_EINS')),
                                    hersteller varchar(255),
