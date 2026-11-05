@@ -162,13 +162,13 @@ public class SucheService {
      *
      * @param query Suchquery
      * @param searchAndFilterOptions Filteroptionen
-     * @param isAdminportal Ist true, wenn die Anfrage vom Adminportal kommt, sonst false
+     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return DTO mit alle Suchvorschlaegen
      */
     public SucheComplexSuggestsDTO getComplexSuggest(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
-            final boolean isAdminportal) {
+            final boolean isAdmin) {
         final String q = this.createQueryString(query);
         log.debug("query '{}'", q);
 
@@ -178,7 +178,7 @@ public class SucheService {
             // Zählstellen
             final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdminportal)
+            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdmin)
                     .stream()
                     .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
                     .collect(Collectors.toList());
@@ -252,7 +252,7 @@ public class SucheService {
      * @param query Suchanfrage; bei einer leeren Suchanfrage werden alle Erhebungsstellen
      *            berücksichtigt
      * @param searchAndFilterOptions Filteroptionen
-     * @param isAdmin gibt an, ob die Anfrage aus dem Adminportal stammt
+     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return passende Erhebungsstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
@@ -407,8 +407,8 @@ public class SucheService {
                         zaehlstelle.getZaehlungen().stream()
                                 // Zählungen im Status ACTIVE dürfen alle sehen.
                                 // Fachadmins dürfen zusätzlich Zählungen im Status ACCOMPLISHED sehen.
-                                .filter(zaehlung -> (isAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name()))
-                                        || zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
+                                .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())
+                                        || (isAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())))
                                 // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
                                 .filter(zaehlung -> !isAnwender || !zaehlung.getSonderzaehlung())
                                 .collect(Collectors.toList())));
