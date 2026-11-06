@@ -90,11 +90,11 @@ public class SucheService {
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     /**
-     * Diese Methode ermittelt aus den im Parameter übergebenen {@link Zaehlung}en, die nach Koordinaten
-     * gruppierten Zaehlarten.
+     * Bündelt die Kürzel bekannter Zählarten der Zählungen nach deren Koordinaten für die Kartendarstellung.
+     * Zählungen mit unbekannter Zählart werden ignoriert.
      *
-     * @param zaehlungen zum ermitteln nach Koordinate gruppierten Zählarten.
-     * @return die nach Koordinaten gruppierten Zaehlarten.
+     * @param zaehlungen zu verarbeitende Zählungen
+     * @return Zählarten, gruppiert nach Koordinaten
      */
     public static Set<ZaehlartenKarteDTO> mapZaehlungenToZaehlartenKarte(final List<Zaehlung> zaehlungen) {
         final Set<ZaehlartenKarteDTO> zaehlartenKarteSet = new HashSet<>();
@@ -122,13 +122,12 @@ public class SucheService {
     }
 
     /**
-     * Die Methode filtert vom Ergebnis {@link SucheService#getComplexSuggest} alle nicht sichtbaren
-     * Zaehl-/Messstellen- und Zaehlungssuggests aus dem
-     * zurückgegebenen Objekt.
+     * Ermittelt Suchvorschläge für das Datenportal und entfernt alle explizit als nicht sichtbar markierten
+     * Zählstellen-, Zählungs- und Messstellenvorschläge.
      *
      * @param query Suchquery
      * @param searchAndFilterOptions Filteroptionen
-     * @return DTO mit alle Suchvorschlaegen
+     * @return sichtbare Suchvorschläge
      */
     public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(
             final String query,
