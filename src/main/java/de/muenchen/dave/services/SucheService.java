@@ -259,7 +259,7 @@ public class SucheService {
      *            false
      * @return passende Erhebungsstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
+    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2, @securityContextInformationExtractorService.isFachadmin()}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
