@@ -327,10 +327,11 @@ public class SucheService {
     }
 
     /**
-     * Erstellt eine Liste an Messstellen für die Kartendarstellung, die der Query Query passen.
+     * Sucht Messstellen für die Karte, filtert sie nach Verkehrsart und wandelt sie in Karten-DTOs um.
      *
-     * @param query Eine Suchquery
-     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     * @param query Suchanfrage; bei leerer Anfrage werden alle Messstellen berücksichtigt
+     * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
+     * @return Karten-DTOs der passenden Messstellen
      */
     private Set<MessstelleKarteDTO> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         final List<Messstelle> messstellen;
