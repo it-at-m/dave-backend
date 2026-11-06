@@ -275,12 +275,12 @@ public class SucheService {
     }
 
     /**
-     * Gibt alle Zählstellen für die Kartendarstellung zurück, die auf die Query passen.
+     * Sucht Zählstellen für die Karte per Volltext oder Datumsbereich und filtert ihre Zählungen abhängig
+     * von Portal und Benutzerrolle.
      *
-     * @param query Eine Suchquery
-     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
-     *            false
-     * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
+     * @param query Suchanfrage; bei leerer Anfrage werden alle Zählstellen berücksichtigt
+     * @param isForAdminportal ob die Anfrage vom Adminportal stammt
+     * @return Karten-DTOs der passenden Zählstellen
      */
     private Set<ZaehlstelleKarteDTO> sucheZaehlstellenForKarte(final String query, final boolean isForAdminportal) {
         final List<Zaehlstelle> zaehlstellen;
@@ -309,10 +309,11 @@ public class SucheService {
     }
 
     /**
-     * Erstellt eine Liste an Suchvorschlägen für die Messstellen, die auf die Query passen.
+     * Ermittelt bis zu drei Messstellenvorschläge, filtert sie nach Verkehrsart und wandelt sie in Suggest-DTOs um.
      *
-     * @param query Eine Suchquery
-     * @return Ein Set von befüllten SucheMessstelleSuggestDTOs
+     * @param query Suchanfrage
+     * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
+     * @return passende Messstellenvorschläge
      */
     private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
@@ -425,13 +426,12 @@ public class SucheService {
     }
 
     /**
-     * Befüllt ZaehlstelleKarteDTOs mit den entsprechenden Daten zum Anzeigen auf einer Karte und
-     * liefert diese zurück
+     * Filtert Zählstellen und ihre Zählungen abhängig von Portal und Benutzerrolle und ergänzt die Karten-DTOs
+     * um Tooltip, letzte Zählung und Zählarten.
      *
-     * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
-     *            false
-     * @return Ein Set von befüllten ZaehlstelleKarteDTOs
+     * @param zaehlstellen zu filternde Zählstellen
+     * @param isForAdminportal ob die Anfrage vom Adminportal stammt
+     * @return Karten-DTOs der erlaubten Zählstellen
      */
     private Set<ZaehlstelleKarteDTO> filterZaehlstellenKarte(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
         final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
