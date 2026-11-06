@@ -181,7 +181,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions,
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
                 false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
@@ -220,7 +220,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions,
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
                 false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));

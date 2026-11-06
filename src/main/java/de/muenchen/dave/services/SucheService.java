@@ -232,7 +232,7 @@ public class SucheService {
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
         final boolean isAdmin = securityContextInformationExtractorService.isFachadmin();
-        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions, isAdmin);
+        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, isAdmin);
         if (isAdmin) {
             return searchResult;
         } else {
@@ -256,7 +256,7 @@ public class SucheService {
      * @return passende Erhebungsstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarteDatenportal(
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
             final boolean isAdmin) {
