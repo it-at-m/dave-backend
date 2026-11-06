@@ -162,13 +162,14 @@ public class SucheService {
      *
      * @param query Suchquery
      * @param searchAndFilterOptions Filteroptionen
-     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
+     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
+     *            false
      * @return DTO mit alle Suchvorschlaegen
      */
     public SucheComplexSuggestsDTO getComplexSuggest(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
-            final boolean isAdmin) {
+            final boolean isForAdminportal) {
         final String q = this.createQueryString(query);
         log.debug("query '{}'", q);
 
@@ -178,7 +179,7 @@ public class SucheService {
             // Zählstellen
             final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isAdmin)
+            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isForAdminportal)
                     .stream()
                     .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
                     .collect(Collectors.toList());
@@ -231,9 +232,9 @@ public class SucheService {
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
-        final boolean isAdmin = securityContextInformationExtractorService.isFachadmin();
-        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, isAdmin);
-        if (isAdmin) {
+        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, false);
+        final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
+        if (isRoleAdmin) {
             return searchResult;
         } else {
             return searchResult
@@ -252,14 +253,15 @@ public class SucheService {
      * @param query Suchanfrage; bei einer leeren Suchanfrage werden alle Erhebungsstellen
      *            berücksichtigt
      * @param searchAndFilterOptions Filteroptionen
-     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
+     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
+     *            false
      * @return passende Erhebungsstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
-            final boolean isAdmin) {
+            final boolean isForAdminportal) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
@@ -267,7 +269,7 @@ public class SucheService {
             searchResult.addAll(messstellen);
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
-            final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstellenForKarte(query, isAdmin);
+            final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstellenForKarte(query, isForAdminportal);
             searchResult.addAll(zaehlstellen);
         }
         return searchResult;
@@ -277,10 +279,11 @@ public class SucheService {
      * Gibt alle Zählstellen für die Kartendarstellung zurück, die auf die Query passen.
      *
      * @param query Eine Suchquery
-     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
+     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
+     *            false
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ZaehlstelleKarteDTO> sucheZaehlstellenForKarte(final String query, final boolean isAdmin) {
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstellenForKarte(final String query, final boolean isForAdminportal) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -303,7 +306,7 @@ public class SucheService {
                 zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, pageable).toList();
             }
         }
-        return this.getZaehlstelleKarteDTOS(zaehlstellen, isAdmin);
+        return this.filterZaehlstellenKarte(zaehlstellen, isForAdminportal);
     }
 
     /**
@@ -390,17 +393,20 @@ public class SucheService {
      * entfernt.
      *
      * @param zaehlstellen zu filtern
-     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
+     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
+     *            false
      * @return Liste mit erlaubten Záhlstellen
      */
-    private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean isAdmin) {
+    private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
+
+        final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
 
         // Für das Adminportal wird nichts gefiltert => Fachadmin ist angemeldet
-        if (isAdmin && securityContextInformationExtractorService.isFachadmin()) {
+        if (isForAdminportal && isRoleAdmin) {
             return zaehlstellen;
         }
 
-        final boolean isAnwender = securityContextInformationExtractorService.isAnwender();
+        final boolean isRoleAnwender = securityContextInformationExtractorService.isAnwender();
 
         // Nur die Sichtbaren Zaehlstellen durchsuchen
         zaehlstellen.stream()
@@ -410,9 +416,9 @@ public class SucheService {
                                 // Zählungen im Status ACTIVE dürfen alle sehen.
                                 // Fachadmins dürfen zusätzlich Zählungen im Status ACCOMPLISHED sehen.
                                 .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())
-                                        || (isAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())))
+                                        || (isRoleAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())))
                                 // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
-                                .filter(zaehlung -> !isAnwender || !zaehlung.getSonderzaehlung())
+                                .filter(zaehlung -> !isRoleAnwender || !zaehlung.getSonderzaehlung())
                                 .collect(Collectors.toList())));
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
@@ -425,13 +431,14 @@ public class SucheService {
      * liefert diese zurück
      *
      * @param zaehlstellen Zaehlstellen, die in ZaehlstelleKarteDTOs umgewandelt werden sollen
-     * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
+     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
+     *            false
      * @return Ein Set von befüllten ZaehlstelleKarteDTOs
      */
-    private Set<ZaehlstelleKarteDTO> getZaehlstelleKarteDTOS(final List<Zaehlstelle> zaehlstellen, final boolean isAdmin) {
+    private Set<ZaehlstelleKarteDTO> filterZaehlstellenKarte(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
         final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
 
-        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isAdmin)) {
+        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isForAdminportal)) {
             Zaehlung letzeZaehlung = null;
             if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
                 letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());

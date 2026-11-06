@@ -92,7 +92,9 @@ public class SucheController {
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarte(query, searchAndFilterOptions,
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarte(
+                    query,
+                    searchAndFilterOptions,
                     true);
             return new ResponseEntity<>(erhebungsstellen, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
