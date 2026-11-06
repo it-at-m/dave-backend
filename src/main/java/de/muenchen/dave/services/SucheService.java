@@ -36,6 +36,7 @@ import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -90,7 +91,8 @@ public class SucheService {
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 
     /**
-     * Bündelt die Kürzel bekannter Zählarten der Zählungen nach deren Koordinaten für die Kartendarstellung.
+     * Bündelt die Kürzel bekannter Zählarten der Zählungen nach deren Koordinaten für die
+     * Kartendarstellung.
      * Zählungen mit unbekannter Zählart werden ignoriert.
      *
      * @param zaehlungen zu verarbeitende Zählungen
@@ -122,7 +124,8 @@ public class SucheService {
     }
 
     /**
-     * Ermittelt Suchvorschläge für das Datenportal und entfernt alle explizit als nicht sichtbar markierten
+     * Ermittelt Suchvorschläge für das Datenportal und entfernt alle explizit als nicht sichtbar
+     * markierten
      * Zählstellen-, Zählungs- und Messstellenvorschläge.
      *
      * @param query Suchquery
@@ -275,7 +278,8 @@ public class SucheService {
     }
 
     /**
-     * Sucht Zählstellen für die Karte per Volltext oder Datumsbereich und filtert ihre Zählungen abhängig
+     * Sucht Zählstellen für die Karte per Volltext oder Datumsbereich und filtert ihre Zählungen
+     * abhängig
      * von Portal und Benutzerrolle.
      *
      * @param query Suchanfrage; bei leerer Anfrage werden alle Zählstellen berücksichtigt
@@ -309,7 +313,8 @@ public class SucheService {
     }
 
     /**
-     * Ermittelt bis zu drei Messstellenvorschläge, filtert sie nach Verkehrsart und wandelt sie in Suggest-DTOs um.
+     * Ermittelt bis zu drei Messstellenvorschläge, filtert sie nach Verkehrsart und wandelt sie in
+     * Suggest-DTOs um.
      *
      * @param query Suchanfrage
      * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
@@ -414,8 +419,7 @@ public class SucheService {
                         zaehlstelle.getZaehlungen().stream()
                                 // Zählungen im Status ACTIVE dürfen alle sehen.
                                 // Fachadmins dürfen zusätzlich Zählungen im Status ACCOMPLISHED sehen.
-                                .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())
-                                        || (isRoleAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())))
+                                .filter(zaehlung -> isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin))
                                 // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
                                 .filter(zaehlung -> !isRoleAnwender || !zaehlung.getSonderzaehlung())
                                 .collect(Collectors.toList())));
@@ -426,7 +430,8 @@ public class SucheService {
     }
 
     /**
-     * Filtert Zählstellen und ihre Zählungen abhängig von Portal und Benutzerrolle und ergänzt die Karten-DTOs
+     * Filtert Zählstellen und ihre Zählungen abhängig von Portal und Benutzerrolle und ergänzt die
+     * Karten-DTOs
      * um Tooltip, letzte Zählung und Zählarten.
      *
      * @param zaehlstellen zu filternde Zählstellen
@@ -437,28 +442,24 @@ public class SucheService {
         final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
 
         for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isForAdminportal)) {
-            Zaehlung letzeZaehlung = null;
-            if (CollectionUtils.isNotEmpty(zaehlstelle.getZaehlungen())) {
-                letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());
-            }
+            final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
+            final Zaehlung letzeZaehlung = getNeuesteErlaubteZaehlung(zaehlstelle.getZaehlungen(), isRoleAdmin);
 
             final String stadtbezirk = zaehlstelle.getStadtbezirk();
             final Integer stadtbezirksnummer = zaehlstelle.getStadtbezirkNummer();
             final String nummer = zaehlstelle.getNummer();
-            final String kreuzungsname = letzeZaehlung == null ? "" : letzeZaehlung.getKreuzungsname();
+            final String kreuzungsname = Objects.isNull(letzeZaehlung) ? "" : letzeZaehlung.getKreuzungsname();
             final Integer anzahlZaehlungen = CollectionUtils.isEmpty(zaehlstelle.getZaehlungen())
                     ? 0
                     : zaehlstelle.getZaehlungen().size();
-            final String datumLetzteZaehlung = zaehlstelle.getLetzteZaehlungMonat()
+            final String monatJahrLetzteZaehlung = letzeZaehlung.getMonat()
                     + StringUtils.SPACE
-                    + zaehlstelle.getLetzteZaehlungJahr();
+                    + letzeZaehlung.getJahr();
 
             final ZaehlstelleKarteDTO zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
 
-            zaehlstelleKarteDTO.setLetzteZaehlungId(
-                    letzeZaehlung == null
-                            ? ""
-                            : letzeZaehlung.getId());
+            final String letzteZaehlungId = Objects.isNull(letzeZaehlung) ? "" : letzeZaehlung.getId();
+            zaehlstelleKarteDTO.setLetzteZaehlungId(letzteZaehlungId);
 
             zaehlstelleKarteDTO.setTooltip(
                     sucheMapper.createZaehlstelleTooltip(
@@ -466,7 +467,7 @@ public class SucheService {
                             stadtbezirksnummer,
                             nummer,
                             anzahlZaehlungen,
-                            datumLetzteZaehlung,
+                            monatJahrLetzteZaehlung,
                             kreuzungsname));
 
             zaehlstelleKarteDTO.setZaehlartenKarte(
@@ -697,6 +698,33 @@ public class SucheService {
         } else {
             return word;
         }
+    }
+
+    /**
+     * Ermittelt die nach Datum neueste Zählung mit einem für die Benutzerrolle erlaubten Status.
+     *
+     * @param zaehlungen zu prüfende Zählungen; darf {@code null} sein
+     * @param isRoleAdmin ob der Benutzer Fachadmin ist
+     * @return neueste erlaubte Zählung oder {@code null}, wenn keine vorhanden ist
+     */
+    public static Zaehlung getNeuesteErlaubteZaehlung(final List<Zaehlung> zaehlungen, final boolean isRoleAdmin) {
+        return CollectionUtils.emptyIfNull(zaehlungen)
+                .stream()
+                .filter(zaehlung -> isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin))
+                .max(Comparator.comparing(Zaehlung::getDatum))
+                .orElse(null);
+    }
+
+    /**
+     * Erlaubt {@code ACTIVE} für alle Benutzer und zusätzlich {@code ACCOMPLISHED} für Fachadmins.
+     *
+     * @param zaehlung zu prüfende Zählung
+     * @param isRoleAdmin ob der Benutzer Fachadmin ist
+     * @return {@code true}, wenn der Status für die Benutzerrolle erlaubt ist
+     */
+    public static boolean isZaehlungsstatusErlaubt(final Zaehlung zaehlung, final boolean isRoleAdmin) {
+        return zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())
+                || (isRoleAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name()));
     }
 
 }
