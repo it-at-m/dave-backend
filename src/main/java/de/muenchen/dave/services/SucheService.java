@@ -386,16 +386,14 @@ public class SucheService {
     }
 
     /**
-     * Es dürfen im Datenportal nur Zählungen angezeigt werden, die ACTIVE sind. Alle anderen werden
-     * hier ausgefiltert. Desweiteren darf ein normaler Anwender
-     * keine Sonderzählungen sehen, diese werden ebenfalls ausgefiltert. Wenn eine Zählstelle nach dem
-     * Filtern keine Zählungen mehr enthält, so wird dies auch
-     * entfernt.
+     * Filtert Zählungen abhängig von Portal und Benutzerrolle und entfernt Zählstellen ohne Zählungen.
+     * Fachadmins im Adminportal erhalten alle Zählungen.
+     * Andernfalls sind nur Zählungen im Status ACTIVE sichtbar;
+     * Fachadmins sehen Zählungen im Status ACCOMPLISHED und Anwender keine Sonderzählungen.
      *
-     * @param zaehlstellen zu filtern
-     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
-     *            false
-     * @return Liste mit erlaubten Záhlstellen
+     * @param zaehlstellen zu filternde Zählstellen
+     * @param isForAdminportal ob die Anfrage vom Adminportal stammt
+     * @return Zählstellen mit erlaubten Zählungen
      */
     private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
 
