@@ -71,11 +71,11 @@ public class SucheController {
 
     @PostMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMapDatenportal(
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstellenForKarteDatenportal(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellen(query, searchAndFilterOptions);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions);
             return new ResponseEntity<>(erhebungsstellen, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
@@ -92,7 +92,8 @@ public class SucheController {
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellen(query, searchAndFilterOptions, true);
+            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions,
+                    true);
             return new ResponseEntity<>(erhebungsstellen, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);

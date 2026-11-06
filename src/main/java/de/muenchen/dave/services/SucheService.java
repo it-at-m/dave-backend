@@ -227,12 +227,12 @@ public class SucheService {
      * @return passende Zaehl-/Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1, @securityContextInformationExtractorService.isFachadmin()}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellen(
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarteDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
         final boolean isAdmin = securityContextInformationExtractorService.isFachadmin();
-        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellen(query, searchAndFilterOptions, isAdmin);
+        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions, isAdmin);
         if (isAdmin) {
             return searchResult;
         } else {
@@ -256,29 +256,31 @@ public class SucheService {
      * @return passende Erhebungsstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2}")
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellen(
+    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarteDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
             final boolean isAdmin) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
-            searchResult.addAll(sucheMessstelle(query, searchAndFilterOptions));
+            final Set<MessstelleKarteDTO> messstellen = sucheMessstellenForKarte(query, searchAndFilterOptions);
+            searchResult.addAll(messstellen);
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
-            searchResult.addAll(sucheZaehlstelle(query, isAdmin));
+            final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstellenForKarte(query, isAdmin);
+            searchResult.addAll(zaehlstellen);
         }
         return searchResult;
     }
 
     /**
-     * Gibt alle Zählstellen zurück, die auf die Query passen.
+     * Gibt alle Zählstellen für die Kartendarstellung zurück, die auf die Query passen.
      *
      * @param query Eine Suchquery
      * @param isAdmin Ist true, wenn die Anfrage durch einen Admin ausgeführt wird, sonst false
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<ZaehlstelleKarteDTO> sucheZaehlstelle(final String query, final boolean isAdmin) {
+    private Set<ZaehlstelleKarteDTO> sucheZaehlstellenForKarte(final String query, final boolean isAdmin) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -322,12 +324,12 @@ public class SucheService {
     }
 
     /**
-     * Erstellt eine Liste an Messstellen, die auf die Query passen.
+     * Erstellt eine Liste an Messstellen für die Kartendarstellung, die der Query Query passen.
      *
      * @param query Eine Suchquery
      * @return Ein Set von befüllten ErhebungsstelleKarteDTOs
      */
-    private Set<MessstelleKarteDTO> sucheMessstelle(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    private Set<MessstelleKarteDTO> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {

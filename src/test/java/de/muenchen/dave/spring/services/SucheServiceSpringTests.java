@@ -92,11 +92,11 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of(this.createSampleData().get(0))));
 
         when(securityContextInformationExtractorService.isFachadmin()).thenReturn(true);
-        this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions);
+        this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions);
 
         clearInvocations(zaehlstelleIndex);
         when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
-        this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions);
+        this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions);
 
         verify(zaehlstelleIndex).suggestSearch(any(), any());
     }
@@ -181,7 +181,8 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions,
+                false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
@@ -219,7 +220,8 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellen("Z01", searchAndFilterOptions, false);
+        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarteDatenportal("Z01", searchAndFilterOptions,
+                false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
         assertThat(erhebungsstelleKarteDTOS.size(), is(1));
