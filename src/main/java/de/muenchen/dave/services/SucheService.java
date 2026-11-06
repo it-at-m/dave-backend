@@ -408,7 +408,7 @@ public class SucheService {
 
         final boolean isRoleAnwender = securityContextInformationExtractorService.isAnwender();
 
-        // Nur die Sichtbaren Zaehlstellen durchsuchen
+        // Nur die sichtbaren Zaehlstellen durchsuchen
         zaehlstellen.stream()
                 .filter(Zaehlstelle::getSichtbarDatenportal)
                 .forEach(zaehlstelle -> zaehlstelle.setZaehlungen(
