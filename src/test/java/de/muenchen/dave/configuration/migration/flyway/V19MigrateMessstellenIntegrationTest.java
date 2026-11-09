@@ -30,8 +30,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-class V18MigrateMessstellenIntegrationTest {
+class V19MigrateMessstellenIntegrationTest {
 
+    @SuppressWarnings("resource")
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("dave")
@@ -46,7 +47,7 @@ class V18MigrateMessstellenIntegrationTest {
                 POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
         new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__dave-Initialisierung.sql"))
                 .execute(dataSource);
-        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V16__create_zaehlstelle_messstelle.sql"))
+        new ResourceDatabasePopulator(new ClassPathResource("db/migration/V18__create_messstelle.sql"))
                 .execute(dataSource);
     }
 
@@ -100,7 +101,7 @@ class V18MigrateMessstellenIntegrationTest {
         try (Connection connection = dataSource.getConnection()) {
             final var context = mock(Context.class);
             when(context.getConnection()).thenReturn(connection);
-            new V18__migrate_messstellen_from_elasticsearch(index).migrate(context);
+            new V19__migrate_messstellen_from_elasticsearch(index).migrate(context);
         }
 
         try (Connection connection = dataSource.getConnection();
@@ -108,6 +109,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messstelle WHERE id = '11111111-1111-1111-1111-111111111111'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getString("id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getString("mst_id")).isEqualTo("M-100");
                 assertThat(resultSet.getString("name")).isEqualTo("Testmessstelle");
                 assertThat(resultSet.getString("status")).isEqualTo("IN_BESTAND");
@@ -142,6 +144,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messquerschnitt WHERE id = '22222222-2222-2222-2222-222222222222'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getString("id")).isEqualTo("22222222-2222-2222-2222-222222222222");
                 assertThat(resultSet.getString("messstelle_id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getString("mq_id")).isEqualTo("MQ-100");
                 assertThat(resultSet.getDouble("latitude")).isEqualTo(48.1372);
@@ -163,6 +166,7 @@ class V18MigrateMessstellenIntegrationTest {
                         "SELECT * FROM messfaehigkeit WHERE messstelle_id = '11111111-1111-1111-1111-111111111111'")) {
             try (var resultSet = statement.executeQuery()) {
                 assertThat(resultSet.next()).isTrue();
+                assertThat(resultSet.getObject("id")).isNotNull();
                 assertThat(resultSet.getString("messstelle_id")).isEqualTo("11111111-1111-1111-1111-111111111111");
                 assertThat(resultSet.getDate("gueltig_ab")).isEqualTo(Date.valueOf("2024-01-01"));
                 assertThat(resultSet.getDate("gueltig_bis")).isEqualTo(Date.valueOf("2024-12-31"));

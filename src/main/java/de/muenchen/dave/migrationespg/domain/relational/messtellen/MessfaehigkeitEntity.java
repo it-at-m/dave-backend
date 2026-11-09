@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Entity-Klasse für Messfähigkeit (Migration von Elasticsearch zu PostgreSQL).
@@ -28,9 +30,11 @@ import lombok.ToString;
 public class MessfaehigkeitEntity extends BaseEntity {
 
     @Column(name = "gueltig_ab")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate gueltigAb;
 
     @Column(name = "gueltig_bis")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate gueltigBis;
 
     @Column(name = "fahrzeugklasse")

@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Entity-Klasse für Messstellen (Detektor) (Migration von Elasticsearch zu PostgreSQL).
@@ -44,9 +46,11 @@ public class MessstelleEntity extends BaseEntity {
     private MessstelleStatus status;
 
     @Column(name = "realisierungsdatum")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate realisierungsdatum;
 
     @Column(name = "abbaudatum")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate abbaudatum;
 
     @Column(name = "stadtbezirk_nummer")
@@ -67,6 +71,7 @@ public class MessstelleEntity extends BaseEntity {
     private String hersteller;
 
     @Column(name = "datum_letzte_plausible_messung")
+    @JdbcTypeCode(SqlTypes.DATE)
     private LocalDate datumLetztePlausibleMessung;
 
     @Column
