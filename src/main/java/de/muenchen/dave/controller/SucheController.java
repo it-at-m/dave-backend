@@ -88,7 +88,7 @@ public class SucheController {
 
     @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForMap(
+    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForKarte(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
