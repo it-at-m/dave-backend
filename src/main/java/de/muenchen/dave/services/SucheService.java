@@ -723,8 +723,9 @@ public class SucheService {
      * @return {@code true}, wenn der Status für die Benutzerrolle erlaubt ist
      */
     public static boolean isZaehlungsstatusErlaubt(final Zaehlung zaehlung, final boolean isRoleAdmin) {
-        return zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name())
-                || (isRoleAdmin && zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name()));
+        final var zaehlungStatus = zaehlung.getStatus();
+        return Status.ACTIVE.name().equalsIgnoreCase(zaehlungStatus)
+                || (isRoleAdmin && Status.ACCOMPLISHED.name().equalsIgnoreCase(zaehlungStatus));
     }
 
 }
