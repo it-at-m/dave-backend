@@ -29,7 +29,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ZaehlstelleMapper {
 
-    BearbeiteZaehlstelleDTO bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkService stadtbezirkService);
+    BearbeiteZaehlstelleDTO bean2bearbeiteDto(Zaehlstelle bean);
 
     @Mapping(target = "zaehlungen", ignore = true)
     LadeZaehlstelleVisumDTO bean2ladeVisumDto(Zaehlstelle bean);

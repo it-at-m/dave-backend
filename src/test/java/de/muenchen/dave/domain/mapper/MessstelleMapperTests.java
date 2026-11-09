@@ -66,10 +66,7 @@ class MessstelleMapperTests {
         tooltip.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());
         tooltip.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart().name());
 
-        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
-        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
-
-        Assertions.assertThat(this.mapper.bean2readDto(bean, stadtbezirkService))
+        Assertions.assertThat(this.mapper.bean2readDto(bean))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
@@ -104,10 +101,7 @@ class MessstelleMapperTests {
         expected.setMessfaehigkeiten(this.mapper.messfaehigkeitBean2EditMessfaehigkeitDto(bean.getMessfaehigkeiten()));
         expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
-        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
-        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
-
-        Assertions.assertThat(this.mapper.bean2editDto(bean, stadtbezirkService))
+        Assertions.assertThat(this.mapper.bean2editDto(bean))
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expected);

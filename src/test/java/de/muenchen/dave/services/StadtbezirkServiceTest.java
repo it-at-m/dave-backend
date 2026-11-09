@@ -12,6 +12,8 @@ import de.muenchen.dave.domain.StadtbezirkViertelEntity;
 import de.muenchen.dave.domain.dtos.StadtbezirkAndViertelDTO;
 import de.muenchen.dave.domain.dtos.StadtbezirkDTO;
 import de.muenchen.dave.domain.dtos.StadtbezirkViertelDTO;
+import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
+import de.muenchen.dave.domain.dtos.init.TenantConfigurationDTO;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.StadtbezirkViertelMapper;
 import de.muenchen.dave.repositories.relationaldb.StadtbezirkRepository;
@@ -34,7 +36,11 @@ class StadtbezirkServiceTest {
         stadtbezirkViertelRepository = mock(StadtbezirkViertelRepository.class);
         stadtbezirkMapper = mock(StadtbezirkMapper.class);
         stadtbezirkViertelMapper = mock(StadtbezirkViertelMapper.class);
-        stadtbezirkService = new StadtbezirkService(stadtbezirkRepository, stadtbezirkViertelRepository, stadtbezirkMapper, stadtbezirkViertelMapper);
+        ConfigurationService configurationService = mock(ConfigurationService.class);
+        final var configuration = new ConfigurationDTO(null, new TenantConfigurationDTO("München", null, null));
+        when(configurationService.getConfiguration()).thenReturn(configuration);
+        stadtbezirkService = new StadtbezirkService(stadtbezirkRepository, stadtbezirkViertelRepository, stadtbezirkMapper, stadtbezirkViertelMapper,
+                configurationService);
     }
 
     @Test
@@ -75,17 +81,18 @@ class StadtbezirkServiceTest {
     }
 
     @Test
-    void testFindStadtbezirkByNummer_returnsMappedStadtbezirk() {
+    void testFindStadtbezirkByStadtAndNummer_returnsMappedStadtbezirk() {
+        final String stadt = "München";
         final Integer nummer = 1;
         final StadtbezirkEntity entity = new StadtbezirkEntity();
         final StadtbezirkDTO expected = new StadtbezirkDTO();
-        when(stadtbezirkRepository.findByNummer(nummer)).thenReturn(entity);
+        when(stadtbezirkRepository.findByStadtAndNummer(stadt, nummer)).thenReturn(entity);
         when(stadtbezirkMapper.entity2Dto(entity)).thenReturn(expected);
 
-        final StadtbezirkDTO result = stadtbezirkService.findStadtbezirkByNummer(nummer);
+        final StadtbezirkDTO result = stadtbezirkService.findStadtbezirkByStadtAndNummer(stadt, nummer);
 
         assertThat(result, sameInstance(expected));
-        verify(stadtbezirkRepository).findByNummer(nummer);
+        verify(stadtbezirkRepository).findByStadtAndNummer(stadt, nummer);
         verify(stadtbezirkMapper).entity2Dto(entity);
     }
 
@@ -95,15 +102,16 @@ class StadtbezirkServiceTest {
         final StadtbezirkEntity entity = new StadtbezirkEntity();
         final StadtbezirkDTO stadtbezirk = new StadtbezirkDTO();
         stadtbezirk.setName("Altstadt-Lehel");
-        when(stadtbezirkRepository.findByNummer(nummer)).thenReturn(entity);
+        when(stadtbezirkRepository.findByStadtAndNummer("München", nummer)).thenReturn(entity);
         when(stadtbezirkMapper.entity2Dto(entity)).thenReturn(stadtbezirk);
 
         assertThat(stadtbezirkService.getStadtbezirkName(nummer), is("Altstadt-Lehel"));
+        verify(stadtbezirkRepository).findByStadtAndNummer("München", nummer);
     }
 
     @Test
     void testGetStadtbezirkName_stadtbezirkDoesNotExist() {
-        when(stadtbezirkRepository.findByNummer(99)).thenReturn(null);
+        when(stadtbezirkRepository.findByStadtAndNummer("München", 99)).thenReturn(null);
         when(stadtbezirkMapper.entity2Dto(null)).thenReturn(null);
 
         assertThat(stadtbezirkService.getStadtbezirkName(99), is("Unbekannt"));

@@ -9,6 +9,6 @@ public interface StadtbezirkRepository extends JpaRepository<StadtbezirkEntity, 
 
     List<StadtbezirkEntity> findByStadt(String stadt);
 
-    StadtbezirkEntity findByNummer(Integer nummer);
+    StadtbezirkEntity findByStadtAndNummer(String stadt, Integer nummer);
 
 }

@@ -446,7 +446,7 @@ public class ZaehlstelleIndexService {
     }
 
     public BearbeiteZaehlstelleDTO readEditZaehlstelleDTO(final String zaehlstelleId) throws DataNotFoundException {
-        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId), stadtbezirkService);
+        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId));
     }
 
     /**

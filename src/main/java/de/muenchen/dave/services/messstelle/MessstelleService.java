@@ -51,12 +51,12 @@ public class MessstelleService {
 
     public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
         final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
-        return messstelleMapper.bean2readDto(messstelle, stadtbezirkService);
+        return messstelleMapper.bean2readDto(messstelle);
     }
 
     public ReadMessstelleInfoDTO readMessstelleInfoByMstId(final String mstId) {
         final Messstelle byIdOrThrowException = messstelleIndexService.findByMstIdOrThrowException(mstId);
-        return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkService);
+        return messstelleMapper.bean2readDto(byIdOrThrowException);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
@@ -71,7 +71,7 @@ public class MessstelleService {
                         .stream()
                         .sorted(Comparator.comparing(Messquerschnitt::getMqId))
                         .collect(Collectors.toList()));
-        return messstelleMapper.bean2editDto(messstelle, stadtbezirkService);
+        return messstelleMapper.bean2editDto(messstelle);
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
@@ -87,7 +87,7 @@ public class MessstelleService {
 
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
-        return messstelleMapper.bean2overviewDto(messstellen, stadtbezirkService);
+        return messstelleMapper.bean2overviewDto(messstellen);
     }
 
     public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {

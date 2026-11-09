@@ -37,7 +37,7 @@ public interface MessstelleMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
 
-    ReadMessstelleInfoDTO bean2readDto(Messstelle bean, @Context StadtbezirkService stadtbezirkService);
+    ReadMessstelleInfoDTO bean2readDto(Messstelle bean);
 
     @AfterMapping
     default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean) {
@@ -46,7 +46,7 @@ public interface MessstelleMapper {
         dto.setStadtbezirkNummer(bean.getStadtbezirkNummer());
     }
 
-    EditMessstelleDTO bean2editDto(Messstelle bean, @Context StadtbezirkService stadtbezirkService);
+    EditMessstelleDTO bean2editDto(Messstelle bean);
 
     @AfterMapping
     default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean) {
@@ -131,9 +131,9 @@ public interface MessstelleMapper {
         dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
 
-    MessstelleOverviewDTO bean2overviewDto(Messstelle bean, @Context StadtbezirkService stadtbezirkService);
+    MessstelleOverviewDTO bean2overviewDto(Messstelle bean);
 
-    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean, @Context StadtbezirkService stadtbezirkService);
+    List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean);
 
     @AfterMapping
     default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean) {

@@ -65,10 +65,8 @@ public class ZaehlstelleMapperTests {
     @Test
     public void testBean2BearbeiteDto() {
         Zaehlstelle bean = ZaehlstelleRandomFactory.getOne();
-        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
-        Mockito.when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
 
-        final BearbeiteZaehlstelleDTO dto = this.mapper.bean2bearbeiteDto(bean, stadtbezirkService);
+        final BearbeiteZaehlstelleDTO dto = this.mapper.bean2bearbeiteDto(bean);
 
         assertThat(dto, hasProperty("nummer", equalTo(bean.getNummer())));
         assertThat(dto, hasProperty("stadtbezirkNummer", equalTo(bean.getStadtbezirkNummer())));
