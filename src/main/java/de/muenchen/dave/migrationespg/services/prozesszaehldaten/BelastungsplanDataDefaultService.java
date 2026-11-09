@@ -1,5 +1,6 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -7,10 +8,8 @@ import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
-import de.muenchen.dave.services.processzaehldaten.MappingUtil;
-import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.CalculationUtil;
 import java.math.BigDecimal;
@@ -27,10 +26,11 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
             final OptionsDTO options,
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
+            final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
-        Map<Verkehrsbeziehung, de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
-                .mapVerkehrsbeziehungen(options, zaehlung, zeitintervalle);
+        Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
+                .mapVerkehrsbeziehungen(options, pkwEinheit, zeitintervalle);
 
         var ladeBelastungsplan = new LadeBelastungsplanDTO();
         ladeBelastungsplan.setStreets(new String[8]);
@@ -75,7 +75,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV));
 
-        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplanSum);
+        markKIHochrechnung(String.valueOf(zaehlung.getZaehldauer()), options.getZeitauswahl(), ladeBelastungsplanSum);
 
         return ladeBelastungsplanSum;
     }
@@ -90,7 +90,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      */
     public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);

@@ -1,7 +1,7 @@
 package de.muenchen.dave.migrationespg.services;
 
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Status;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -67,10 +67,10 @@ public final class IndexServiceUtils {
      * Holt die neuste Zählung aus der Liste.
      *
      * @param zs Zaehlungen
-     * @return aktuellste Zaehlung
+     * @return aktuellste ZaehlungEntity
      */
-    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zs) {
-        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).max(Comparator.comparing(Zaehlung::getDatum))
+    public static ZaehlungEntity getLetzteAktiveZaehlung(final List<ZaehlungEntity> zs) {
+        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus().name())).max(Comparator.comparing(ZaehlungEntity::getDatum))
                 .orElseGet(() -> {
                     log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
                     return null;
@@ -96,19 +96,19 @@ public final class IndexServiceUtils {
     }
 
     /**
-     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der Zaehlung falls
+     * Diese Methode erstellt den Kreuzungsnamen konkateniert aus den Straßennamen der ZaehlungEntity falls
      * kein expliziter Kreuzungsname gesetzt ist.
      *
      * @param kreuzungsname welcher gegebenenfalls durch die konkatenierten Straßennamen ersetzt wird.
      * @param zaehlung zur Extraktion der Straßennamen.
      * @return den Kreuzungsname oder die Straßennamen falls vorher kein Kreuzungsname gesetzt.
      */
-    public static String createKreuzungsname(final String kreuzungsname, final Zaehlung zaehlung) {
+    public static String createKreuzungsname(final String kreuzungsname, final ZaehlungEntity zaehlung) {
         String newKreuzungsname = kreuzungsname;
         if (StringUtils.isEmpty(kreuzungsname) && CollectionUtils.isNotEmpty(zaehlung.getKnotenarme())) {
             newKreuzungsname = zaehlung.getKnotenarme().stream()
-                    .sorted(Comparator.comparingInt(Knotenarm::getNummer))
-                    .map(Knotenarm::getStrassenname)
+                    .sorted(Comparator.comparingInt(KnotenarmEntity::getNummer))
+                    .map(KnotenarmEntity::getStrassenname)
                     .distinct()
                     .collect(Collectors.joining(KREUZUNGSNAME_REPLACEMENT_NAME_DIVIDER));
         }

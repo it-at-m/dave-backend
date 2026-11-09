@@ -3,14 +3,13 @@ package de.muenchen.dave.migrationespg.services;
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.mapper.ChatMessageMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import java.time.LocalDateTime;
@@ -35,7 +34,7 @@ public class ChatMessageService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatMessageMapper chatMessageMapper;
-    private final de.muenchen.dave.services.ZaehlstelleIndexService indexService;
+    private final ZaehlstelleIndexService indexService;
     private final EmailSendService emailSendService;
     private final AuthorizationService authorizationService;
 
@@ -61,7 +60,7 @@ public class ChatMessageService {
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die
-     *             {@link Zaehlung} zu speichern
+     *             {@link ZaehlungEntity} zu speichern
      */
     public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO)
             throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
@@ -71,7 +70,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = chatMessageMapper.dto2bean(chatMessageDTO);
         chatMessage = chatMessageRepository.saveAndFlush(chatMessage);
 
-        final Zaehlung zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId().toString());
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId().toString());
         if (chatMessage.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId() ||
                 SEND_EMAIL_TO_EXTERNAL_FOR_STATUS.contains(zaehlung.getStatus())) {
             emailSendService.sendEmailForChatMessage(chatMessage);
@@ -90,7 +89,7 @@ public class ChatMessageService {
      * @return Alle geladenen {@link ChatMessageDTO}s.
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die
-     *             {@link Zaehlung} zu laden
+     *             {@link ZaehlungEntity} zu laden
      */
     public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu lesen

@@ -1,8 +1,8 @@
 package de.muenchen.dave.migrationespg.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.repositories.relationaldb.ZaehlstellenIndexRepository;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataSampleRunner implements CommandLineRunner {
 
-    private final ZaehlstelleIndex zaehlstelleIndex;
+    private final ZaehlstellenIndexRepository zaehlstelleIndex;
 
     @Override
     public void run(String... args) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         InputStream stream = this.getClass().getResourceAsStream("/data/sample-data.json");
-        Zaehlstelle zaehlstelle = objectMapper.readValue(stream, Zaehlstelle.class);
+        ZaehlstelleEntity zaehlstelle = objectMapper.readValue(stream, ZaehlstelleEntity.class);
         zaehlstelleIndex.save(zaehlstelle);
     }
 }

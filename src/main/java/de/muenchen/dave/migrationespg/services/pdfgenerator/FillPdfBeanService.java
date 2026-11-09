@@ -13,11 +13,11 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -47,9 +47,9 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePd
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.services.messstelle.MessstelleService;
+import de.muenchen.dave.migrationespg.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.util.DomainValues;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
@@ -148,7 +148,7 @@ public class FillPdfBeanService {
      * @param zaehlstelle Zählstelle aus dem Frontend.
      * @param department Organisationseinheit des Benutzers
      */
-    protected static void fillBasicPdf(final BasicPdf basicPdf, final Zaehlung zaehlung, final String kreuzungsname, final Zaehlstelle zaehlstelle,
+    protected static void fillBasicPdf(final BasicPdf basicPdf, final ZaehlungEntity zaehlung, final String kreuzungsname, final ZaehlstelleEntity zaehlstelle,
             final String department) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setZusatzinformationen(fillZusatzinformationen(basicPdf.getZusatzinformationen(), zaehlstelle, zaehlung));
@@ -157,7 +157,7 @@ public class FillPdfBeanService {
     }
 
     protected static void fillBasicPdf(final BasicMessstellePdf basicPdf,
-            final Messstelle messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+                                       final MessstelleEntity messstelle, final String department, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
 
@@ -174,7 +174,7 @@ public class FillPdfBeanService {
      */
     protected static void fillBasicPdfGesamtauswertung(
             final BasicMessstellePdf basicPdf,
-            final Messstelle messstelle,
+            final MessstelleEntity messstelle,
             final String department,
             final MessstelleAuswertungOptionsDTO optionsDTO,
             final boolean isSingleMessstelle) {
@@ -193,19 +193,19 @@ public class FillPdfBeanService {
      * @return
      */
     protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
-            final String kreuzungsname, final Zaehlung zaehlung) {
+            final String kreuzungsname, final ZaehlungEntity zaehlung) {
         zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
-        zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(zaehlung.getZaehldauer()));
+        zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(String.valueOf(zaehlung.getZaehldauer())));
         zaehlstelleninformationen.setKreuzungsname(kreuzungsname);
-        zaehlstelleninformationen.setWetter(DomainValues.getWetterValue(zaehlung.getWetter()));
+        zaehlstelleninformationen.setWetter(DomainValues.getWetterValue(String.valueOf(zaehlung.getWetter())));
         zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), KEINE_DATEN_VORHANDEN));
         zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), KEINE_DATEN_VORHANDEN));
         return zaehlstelleninformationen;
     }
 
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
+            final MessstelleEntity messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
         messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
@@ -230,14 +230,14 @@ public class FillPdfBeanService {
      * Befuellt die Messstelleinformationen mit den ausgewerteten Daten.
      *
      * @param messstelleninformationen PDF-Komponente der Messstelleninformationen
-     * @param messstelle ausewertet Messstelle
+     * @param messstelle ausewertet MessstelleEntity
      * @param optionsDTO Ausgewählte Option der Auswertung
-     * @param isSingleMessstelle flag, ob nur eine Messstelle auswertet wurde
+     * @param isSingleMessstelle flag, ob nur eine MessstelleEntity auswertet wurde
      * @return
      */
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationenGesamtauswertung(
             final MessstelleninformationenPdfComponent messstelleninformationen,
-            final Messstelle messstelle,
+            final MessstelleEntity messstelle,
             final MessstelleAuswertungOptionsDTO optionsDTO,
             final boolean isSingleMessstelle) {
         messstelleninformationen.setStandortNeeded(isSingleMessstelle);
@@ -324,8 +324,8 @@ public class FillPdfBeanService {
      * @return
      */
     protected static ZusatzinformationenPdfComponent fillZusatzinformationen(final ZusatzinformationenPdfComponent zusatzinformationen,
-            final Zaehlstelle zaehlstelle,
-            final Zaehlung zaehlung) {
+            final ZaehlstelleEntity zaehlstelle,
+            final ZaehlungEntity zaehlung) {
         zusatzinformationen.setIstKommentarVorhandenZaehlstelle(StringUtils.isNotEmpty(zaehlstelle.getKommentar()));
         zusatzinformationen.setIstKommentarVorhandenZaehlung(StringUtils.isNotEmpty(zaehlung.getKommentar()));
         zusatzinformationen
@@ -352,13 +352,13 @@ public class FillPdfBeanService {
      * @param zaehlung Die im Frontend gewählte Zählung
      * @return chartTitle als String
      */
-    static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
+    static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final ZaehlungEntity zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
-        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        final var zaehlart = zaehlung.getZaehlart();
         if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
             if ((options.getChosenVerkehrsbeziehungen() != null && options.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size()) ||
-                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size()) ||
-                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size())) {
+                    (options.getChosenLaengsverkehre() != null && options.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehre().size()) ||
+                    (options.getChosenQuerungsverkehre() != null && options.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehre().size())) {
                 chartTitle.append(CHART_TITLE_ZAEHLSTELLE_TEILAUSWAHL);
             } else {
                 chartTitle.append(CHART_TITLE_GESAMTE_ZAEHLSTELLE);
@@ -370,7 +370,7 @@ public class FillPdfBeanService {
                 chartTitle.append(CHART_TITLE_ZULAUF);
             }
             if (options.getVonKnotenarm() != null) {
-                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                for (final KnotenarmEntity knotenarm : zaehlung.getKnotenarme()) {
                     if (knotenarm.getNummer() == (options.getVonKnotenarm())) {
                         if (!zaehlung.getKreisverkehr()) {
                             chartTitle.append(CHART_TITLE_VON);
@@ -386,7 +386,7 @@ public class FillPdfBeanService {
                 }
             }
             if (options.getNachKnotenarm() != null) {
-                for (final Knotenarm knotenarm : zaehlung.getKnotenarme()) {
+                for (final KnotenarmEntity knotenarm : zaehlung.getKnotenarme()) {
                     if (knotenarm.getNummer() == (options.getNachKnotenarm())) {
                         chartTitle.append(CHART_TITLE_NACH);
                         chartTitle.append(StringUtils.SPACE);
@@ -402,12 +402,12 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    protected static List<DatatableTitle> createChartTitleAsList(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+    protected static List<DatatableTitle> createChartTitleAsList(final MessstelleOptionsDTO options, final MessstelleEntity messstelle) {
         final List<DatatableTitle> titles = new ArrayList<>();
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             titles.add(new DatatableTitle(CHART_TITLE_GESAMTE_MESSSTELLE, "no_margin_top", "negativ_margin_bottom"));
         } else {
-            messstelle.getMessquerschnitte().stream().sorted(Comparator.comparing(Messquerschnitt::getMqId))
+            messstelle.getMessquerschnitte().stream().sorted(Comparator.comparing(MessquerschnittEntity::getMqId))
                     .filter(messquerschnitt -> options.getMessquerschnittIds().contains(messquerschnitt.getMqId()))
                     .forEach(messquerschnitt -> {
                         final StringBuilder chartTitle = new StringBuilder();
@@ -430,7 +430,7 @@ public class FillPdfBeanService {
         return titles;
     }
 
-    protected static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleOptionsDTO options, final MessstelleEntity messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
@@ -452,7 +452,7 @@ public class FillPdfBeanService {
         return chartTitle.toString().trim();
     }
 
-    protected static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final MessstelleEntity messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessstelleAuswertungIds().size() > 1) {
             chartTitle.append(CHART_TITLE_MEHRERE_MESSSTELLE);
@@ -502,18 +502,18 @@ public class FillPdfBeanService {
      * Überprüft, ob die schematische Übersicht beim Export dargestellt werden soll.
      *
      * @param optionsDTO Options aus dem Frontend
-     * @param zaehlung Die zu exportierende {@link Zaehlung}
+     * @param zaehlung Die zu exportierende {@link ZaehlungEntity}
      * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt
      *         sind.
      */
-    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final Zaehlung zaehlung) {
-        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final ZaehlungEntity zaehlung) {
+        final var zaehlart = zaehlung.getZaehlart();
         if (Zaehlart.QJS.equals(zaehlart)) {
             return optionsDTO.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size();
         } else if (Zaehlart.FJS.equals(zaehlart)) {
-            return optionsDTO.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehr().size();
+            return optionsDTO.getChosenLaengsverkehre().size() != zaehlung.getLaengsverkehre().size();
         } else if (Zaehlart.QU.equals(zaehlart)) {
-            return optionsDTO.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehr().size();
+            return optionsDTO.getChosenQuerungsverkehre().size() != zaehlung.getQuerungsverkehre().size();
         }
         return optionsDTO.getVonKnotenarm() != null || optionsDTO.getNachKnotenarm() != null;
     }
@@ -583,7 +583,7 @@ public class FillPdfBeanService {
      * | Spitzenstunde | Spitzenstunde 07:30 - 08:30 Uhr (Block 6 - 10 Uhr) |
      * ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
      *
-     * @param zaehlungId ID der Zaehlung
+     * @param zaehlungId ID der ZaehlungEntity
      * @param optionsDTO als {@link OptionsDTO}
      * @return Chart-Title as String
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
@@ -696,12 +696,12 @@ public class FillPdfBeanService {
      * @param options Die im Frontend ausgewählten Optionen.
      * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
      * @param department Organisationseinheit des Benutzers
-     * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
+     * @throws DataNotFoundException wenn keine ZaehlstelleEntity oder ZaehlungEntity gefunden wurde
      */
     public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
+        final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
 
         fillBasicPdf(diagrammPdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
@@ -710,7 +710,7 @@ public class FillPdfBeanService {
                         BELASTUNGSPLAN_TITLE_ZAEHLSTELLE
                                 + zaehlstelle.getNummer()
                                 + StringUtils.SPACE
-                                + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+                                + DomainValues.getCorrectZaehlartString(String.valueOf(zaehlung.getZaehlart())));
         if (zaehlung.getKreisverkehr()) {
             diagrammPdf.setBelastungsplanKreisverkehr(chartAsBase64Png);
         } else {
@@ -728,7 +728,7 @@ public class FillPdfBeanService {
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String department) {
-        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final MessstelleEntity messstelle = this.messstelleService.getMessstelle(messstelleId);
         fillBasicPdf(belastungsplanPdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 
         belastungsplanPdf.setDocumentTitle(BELASTUNGSPLAN_TITLE_MESSSTELLE + messstelle.getMstId());
@@ -749,13 +749,13 @@ public class FillPdfBeanService {
      * @param chartAsBase64Png Der Graph aus dem Frontend als Base64-PNG
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
      * @param department Organisationseinheit des Benutzers
-     * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
+     * @throws DataNotFoundException wenn keine ZaehlstelleEntity oder ZaehlungEntity gefunden wurde
      */
     public void fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
+        final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
 
         fillBasicPdf(gangliniePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
@@ -763,7 +763,7 @@ public class FillPdfBeanService {
                 GANGLINIE_TITLE_ZAEHLSTELLE
                         + zaehlstelle.getNummer()
                         + StringUtils.SPACE
-                        + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+                        + DomainValues.getCorrectZaehlartString(String.valueOf(zaehlung.getZaehlart())));
         gangliniePdf.setChart(chartAsBase64Png);
         gangliniePdf.setChartTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         gangliniePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
@@ -862,7 +862,7 @@ public class FillPdfBeanService {
             final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
-        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final MessstelleEntity messstelle = this.messstelleService.getMessstelle(messstelleId);
 
         fillBasicPdf(gangliniePdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 
@@ -982,7 +982,7 @@ public class FillPdfBeanService {
         final Optional<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTO = messstelleAuswertungIdDTOS.stream()
                 .findFirst();
         if (messstelleAuswertungIdDTO.isPresent()) {
-            final Messstelle messstelle = this.messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.get().getMstId());
+            final MessstelleEntity messstelle = this.messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.get().getMstId());
             fillBasicPdfGesamtauswertung(gesamtauswertungPdf, messstelle, department, options, messstelleAuswertungIdDTOS.size() == 1);
 
             final boolean hasMultipleMessstellen = messstelleAuswertungIdDTOS.size() > 1;
@@ -1131,13 +1131,13 @@ public class FillPdfBeanService {
      * @param options Die im Frontend ausgewählten Optionen.
      * @param schematischeUebersichtAsBase64Png Die schematische Uebersicht als Base64-PNG
      * @param department Organisationseinheit des Benutzers
-     * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung gefunden wurde
+     * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity gefunden wurde
      */
     public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
             final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
+        final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
 
         fillBasicPdf(datentabellePdf, zaehlung, zaehlung.getKreuzungsname(), zaehlstelle, department);
 
@@ -1146,7 +1146,7 @@ public class FillPdfBeanService {
                         DATENTABELLE_TITLE_ZAEHLSTELLE
                                 + zaehlstelle.getNummer()
                                 + StringUtils.SPACE
-                                + DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart()));
+                                + DomainValues.getCorrectZaehlartString(String.valueOf(zaehlung.getZaehlart())));
 
         datentabellePdf.setTableTitle(createChartTitleVerkehrsbeziehung(options, zaehlung));
         datentabellePdf.setZeitauswahl(createChartTitleZeitauswahl(zaehlungId, options));
@@ -1166,7 +1166,7 @@ public class FillPdfBeanService {
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
-        final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
+        final MessstelleEntity messstelle = this.messstelleService.getMessstelle(messstelleId);
 
         fillBasicPdf(datentabellePdf, messstelle, department, options, messwerte.getTagesTyp().getBeschreibung());
 

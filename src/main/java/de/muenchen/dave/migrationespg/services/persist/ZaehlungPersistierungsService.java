@@ -10,9 +10,9 @@ import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -22,8 +22,7 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.services.SanitizationService;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
-import de.muenchen.dave.services.persist.ZeitintervallPersistierungsService;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
@@ -34,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -73,33 +73,33 @@ public abstract class ZaehlungPersistierungsService {
      * Methode zum Aktualiseren des Status einer Zählung
      *
      * @param updateStatusDto enthält die Id und den neuen Status
-     * @return Id der aktualiserten Zaehlung
-     * @throws BrokenInfrastructureException Beim Speichern der Zaehlstelle
-     * @throws DataNotFoundException Beim Laden der Zaehlstelle
+     * @return Id der aktualiserten ZaehlungEntity
+     * @throws BrokenInfrastructureException Beim Speichern der ZaehlstelleEntity
+     * @throws DataNotFoundException Beim Laden der ZaehlstelleEntity
      * @throws PlausibilityException Beim Pruefen der Daten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
     public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto)
             throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
-        final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
+        final ZaehlstelleEntity zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten
         authorizationService.assertCanModifyZaehlung(updateStatusDto.getZaehlungId());
 
-        for (final Zaehlung zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
-            if (zaehlung.getId().equalsIgnoreCase(updateStatusDto.getZaehlungId())) {
-                zaehlung.setStatus(updateStatusDto.getStatus());
-                // WIrd eine Zaehlung beauftragt, so wird die dienstleiserkennung gespeichert
-                if (zaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
+        for (final ZaehlungEntity zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
+            if (zaehlung.getId().equals(UUID.fromString(updateStatusDto.getZaehlungId()))) {
+                zaehlung.setStatus(Status.valueOf(updateStatusDto.getStatus()));
+                // WIrd eine ZaehlungEntity beauftragt, so wird die dienstleiserkennung gespeichert
+                if (zaehlung.getStatus().equals(Status.INSTRUCTED)) {
                     zaehlung.setDienstleisterkennung(sanitizationService.sanitizeAllowedHtml(updateStatusDto.getDienstleisterkennung()));
-                } else if (zaehlung.getStatus().equalsIgnoreCase(Status.ACCOMPLISHED.name())) {
-                    // Wird eine Zaehlung abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
+                } else if (zaehlung.getStatus().equals(Status.ACCOMPLISHED)) {
+                    // Wird eine ZaehlungEntity abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsService.aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(
                             zaehlung,
                             this.getNumberOfNecessaryZeitintervalle(zaehlung));
-                } else if (zaehlung.getStatus().equalsIgnoreCase(Status.CORRECTION.name())) {
-                    // Wird eine Zaehlung korrigert, dann alle Zeitintervalle zu den Verkehrsbeziehungen löschen, die keine bewegungsbeziehungId enthalten
-                    this.zeitintervallPersistierungsService.deleteZeitintervalleForCorrection(zaehlung.getId());
+                } else if (zaehlung.getStatus().equals(Status.CORRECTION)) {
+                    // Wird eine ZaehlungEntity korrigert, dann alle Zeitintervalle zu den Verkehrsbeziehungen löschen, die keine bewegungsbeziehungId enthalten
+                    this.zeitintervallPersistierungsService.deleteZeitintervalleForCorrection(String.valueOf(zaehlung.getId()));
                     // Alle Filenames aus den Knotenarmen löschen
                     zaehlung.getKnotenarme().forEach(arm -> arm.setFilename(""));
                 }
@@ -115,11 +115,11 @@ public abstract class ZaehlungPersistierungsService {
         return backendIdDto;
     }
 
-    public int getNumberOfNecessaryZeitintervalle(final Zaehlung zaehlung) {
-        final int intervalCount = Zaehldauer.valueOf(zaehlung.getZaehldauer()).getAnzahlZeitintervalle();
+    public int getNumberOfNecessaryZeitintervalle(final ZaehlungEntity zaehlung) {
+        final int intervalCount = zaehlung.getZaehldauer().getAnzahlZeitintervalle();
         final int totalRelationships = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()).size()
-                + CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehr()).size()
-                + CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehr()).size();
+                + CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehre()).size()
+                + CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehre()).size();
         return intervalCount * totalRelationships;
     }
 
@@ -174,7 +174,7 @@ public abstract class ZaehlungPersistierungsService {
      * @param zeitintervalle zur Ermittlung der Fahrzeugklassen und Fahrzeugkategorien.
      * @return die Fahrzeugklassen und Fahrzeugkategorien abhängig von den {@link Zeitintervall}en.
      */
-    public List<Fahrzeug> getFahrzeugKategorienAndFahrzeugklassen(final List<Zeitintervall> zeitintervalle) {
+    public List<String> getFahrzeugKategorienAndFahrzeugklassen(final List<Zeitintervall> zeitintervalle) {
         final Set<Fahrzeug> fahrzeugkategorien = new HashSet<>();
         zeitintervalle.forEach(zeitintervall -> {
             if (ObjectUtils.isNotEmpty(zeitintervall.getPkw())) {
@@ -199,7 +199,9 @@ public abstract class ZaehlungPersistierungsService {
                 fahrzeugkategorien.add(Fahrzeug.FUSS);
             }
         });
-        return getFahrzeugklassen(new ArrayList<>(fahrzeugkategorien));
+        return getFahrzeugklassen(new ArrayList<>(fahrzeugkategorien)).stream()
+                .map(Fahrzeug::name)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -233,7 +235,7 @@ public abstract class ZaehlungPersistierungsService {
 
     public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)
             throws BrokenInfrastructureException, DataNotFoundException {
-        final Zaehlung zaehlung = this.indexService.getZaehlung(updateStatusDto.getZaehlungId());
+        final ZaehlungEntity zaehlung = this.indexService.getZaehlung(updateStatusDto.getZaehlungId());
         // Wenn Das Datum der Zählung <= LocalDate.now() ist, dann Status ändern
         if (zaehlung.getDatum().isBefore(LocalDate.now()) || zaehlung.getDatum().isEqual(LocalDate.now())) {
             this.indexService.updateStatusOfZaehlung(updateStatusDto.getZaehlungId(), newStatus);
@@ -256,8 +258,8 @@ public abstract class ZaehlungPersistierungsService {
                 .collect(Collectors.toList());
     }
 
-    public List<Bewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final Zaehlung zaehlung) {
-        return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
+    public List<? extends MappedBewegungsbeziehung> getAllBewegungsbeziehungenFromZaehlung(final ZaehlungEntity zaehlung) {
+        return Stream.of(zaehlung.getLaengsverkehre(), zaehlung.getQuerungsverkehre(), zaehlung.getVerkehrsbeziehungen())
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)

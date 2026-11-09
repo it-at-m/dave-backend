@@ -1,4 +1,4 @@
-package de.muenchen.dave.migrationespg.services;
+package de.muenchen.dave.migrationespg.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
@@ -6,15 +6,14 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
-import de.muenchen.dave.services.CustomSuggestIndexService;
-import de.muenchen.dave.services.SanitizationService;
-import de.muenchen.dave.services.messstelle.MessstelleIndexService;
+import de.muenchen.dave.migrationespg.domain.mapper.detektor.MessstelleMapper;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessfaehigkeitEntity;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.migrationespg.services.CustomSuggestIndexService;
+import de.muenchen.dave.migrationespg.services.SanitizationService;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -42,11 +41,11 @@ public class MessstelleService {
     private final StadtbezirkMapper stadtbezirkMapper;
     private final SanitizationService sanitizationService;
 
-    public Messstelle getMessstelle(final String messstelleId) {
+    public MessstelleEntity getMessstelle(final String messstelleId) {
         return messstelleIndexService.findByIdOrThrowException(messstelleId);
     }
 
-    public Messstelle getMessstelleByMstId(final String mstId) {
+    public MessstelleEntity getMessstelleByMstId(final String mstId) {
         return messstelleIndexService.findByMstIdOrThrowException(mstId);
     }
 
@@ -56,60 +55,60 @@ public class MessstelleService {
     }
 
     public ReadMessstelleInfoDTO readMessstelleInfoByMstId(final String mstId) {
-        final Messstelle byIdOrThrowException = messstelleIndexService.findByMstIdOrThrowException(mstId);
+        final MessstelleEntity byIdOrThrowException = messstelleIndexService.findByMstIdOrThrowException(mstId);
         return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
     }
 
     public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
-        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final MessstelleEntity messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         messstelle.setMessfaehigkeiten(
                 messstelle.getMessfaehigkeiten()
                         .stream()
-                        .sorted(Comparator.comparing(Messfaehigkeit::getGueltigAb).reversed())
+                        .sorted(Comparator.comparing(MessfaehigkeitEntity::getGueltigAb).reversed())
                         .collect(Collectors.toList()));
         messstelle.setMessquerschnitte(
                 messstelle.getMessquerschnitte()
                         .stream()
-                        .sorted(Comparator.comparing(Messquerschnitt::getMqId))
+                        .sorted(Comparator.comparing(MessquerschnittEntity::getMqId))
                         .collect(Collectors.toList()));
         return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
     public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
-        final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
-        final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
+        final MessstelleEntity actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
+        final MessstelleEntity aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         sanitizationService.sanitizeMessstelle(aktualisiert);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
-        final Messstelle messstelle = messstelleIndexService.saveMessstelle(aktualisiert);
+        final MessstelleEntity messstelle = messstelleIndexService.saveMessstelle(aktualisiert);
         final BackendIdDTO backendIdDTO = new BackendIdDTO();
-        backendIdDTO.setId(messstelle.getId());
+        backendIdDTO.setId(String.valueOf(messstelle.getId()));
         return backendIdDTO;
     }
 
     public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
-        final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
+        final List<MessstelleEntity> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen, stadtbezirkMapper);
     }
 
     public Set<String> getMessquerschnittIdsByMessstelleId(final String messstelleId) {
-        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final MessstelleEntity messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         final Set<String> result = new HashSet<>();
         messstelle.getMessquerschnitte().forEach(messquerschnitt -> result.add(messquerschnitt.getMqId()));
         return result;
     }
 
     public boolean isKfzMessstelle(final String messstelleId) {
-        final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
+        final MessstelleEntity messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return Verkehrsart.KFZ.equals(messstelle.getDetektierteVerkehrsart());
     }
 
     public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
-        final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
-        final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
+        final List<MessstelleEntity> messstellen = messstelleIndexService.findAllVisibleMessstellen();
+        final List<MessstelleEntity> sorted = messstellen.stream().sorted(Comparator.comparing(MessstelleEntity::getMstId)).collect(Collectors.toList());
         return messstelleMapper.bean2auswertungDto(sorted);
     }
 
-    public Optional<Messquerschnitt> getOptionalOfMessquerschnittByMstId(final String mstId, final String mqId) {
+    public Optional<MessquerschnittEntity> getOptionalOfMessquerschnittByMstId(final String mstId, final String mqId) {
         return messstelleIndexService.findByMstIdOrThrowException(mstId).getMessquerschnitte().stream()
                 .filter(messquerschnitt -> mqId.equalsIgnoreCase(messquerschnitt.getMqId())).findFirst();
     }

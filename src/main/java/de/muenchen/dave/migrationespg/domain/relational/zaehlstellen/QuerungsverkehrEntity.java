@@ -1,6 +1,5 @@
-package de.muenchen.dave.domain.relational.zaehlstellen;
+package de.muenchen.dave.migrationespg.domain.relational.zaehlstellen;
 
-import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,26 +13,22 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Entity-Klasse für Längsverkehr (Migration von Elasticsearch zu PostgreSQL).
+ * Entity-Klasse für Querungsverkehr (Migration von Elasticsearch zu PostgreSQL).
  */
 @Entity
-@Table(name = "laengsverkehr")
+@Table(name = "querungsverkehr")
 @Getter
 @Setter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class LaengsverkehrEntity extends MappedBewegungsbeziehung {
+public class QuerungsverkehrEntity extends MappedBewegungsbeziehung {
 
     @Column(name = "knotenarm")
     private Integer knotenarm;
 
     @Column(name = "richtung")
     @Enumerated(EnumType.STRING)
-    private Bewegungsrichtung richtung;
-
-    @Column(name = "strassenseite")
-    @Enumerated(EnumType.STRING)
-    private Himmelsrichtung strassenseite;
+    private Himmelsrichtung richtung;
 
 }

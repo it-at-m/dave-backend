@@ -2,19 +2,18 @@ package de.muenchen.dave.migrationespg.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapper;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTableRow;
-import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
+import de.muenchen.dave.migrationespg.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.ZeitauswahlService;
-import de.muenchen.dave.migrationespg.services.pdfgenerator.FillPdfBeanService;
-import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenZeitreiheService;
+import de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenZeitreiheService;
 import de.muenchen.dave.util.DomainValues;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -57,20 +56,20 @@ public class FillZeitreihePdfBeanService {
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Im Frontend ausgewählte Zählung
      */
-    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung) {
+    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final ZaehlungEntity zaehlung) {
         // Knotenarme nach Nummer sortieren und setzen
-        final List<Knotenarm> knotenarmList = zaehlung.getKnotenarme()
+        final List<KnotenarmEntity> knotenarmList = zaehlung.getKnotenarme()
                 .stream()
-                .sorted(Comparator.comparing(Knotenarm::getNummer))
+                .sorted(Comparator.comparing(KnotenarmEntity::getNummer))
                 .collect(Collectors.toList());
         zeitreihePdf.getZaehlstelleninformationenZeitreihe().setKnotenarme(knotenarmList);
 
-        // Prüfen, ob irgendein Knotenarm im Platznamen vorkommt
+        // Prüfen, ob irgendein KnotenarmEntity im Platznamen vorkommt
         boolean platzVorhanden = knotenarmList
                 .stream()
                 .anyMatch(knotenarm -> !zaehlung.getKreuzungsname().contains(knotenarm.getStrassenname()));
 
-        // Wenn kein Knotenarm im Platz vorkommt => Platz setzen
+        // Wenn kein KnotenarmEntity im Platz vorkommt => Platz setzen
         if (platzVorhanden) {
             zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatzVorhanden(true);
             zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatz(zaehlung.getKreuzungsname());
@@ -88,12 +87,12 @@ public class FillZeitreihePdfBeanService {
      * @param options Optionen aus dem Frontend
      * @param department OU des Benutzers
      * @return Die befüllte ZeitreihePdf
-     * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung/Zaehldaten gefunden wurden
+     * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity/Zaehldaten gefunden wurden
      */
     public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final String zaehlungId, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
+        final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
 
         zeitreihePdf.setDocumentTitle(
                 String.format(
@@ -101,7 +100,7 @@ public class FillZeitreihePdfBeanService {
                         DOCUMENT_TITLE_PREFIX,
                         zaehlstelle.getNummer(),
                         StringUtils.SPACE,
-                        DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart())));
+                        DomainValues.getCorrectZaehlartString(String.valueOf(zaehlung.getZaehlart()))));
         zeitreihePdf.setChart(chartAsBase64Png);
         zeitreihePdf.setSchematischeUebersichtNeeded(de.muenchen.dave.migrationespg.services.pdfgenerator.FillPdfBeanService.getSchematischeUebersichtNeeded(options, zaehlung));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
@@ -172,8 +171,8 @@ public class FillZeitreihePdfBeanService {
      * @param options Optionen aus dem Frontend
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      */
-    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung, final OptionsDTO options,
-            final Zaehlstelle zaehlstelle) {
+    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final ZaehlungEntity zaehlung, final OptionsDTO options,
+            final ZaehlstelleEntity zaehlstelle) {
         final List<ZusatzinformationenZeitreihePdfComponent> zusatzinformationenZeitreihePdfComponentList = new ArrayList<>();
 
         if (StringUtils.isNotEmpty(zaehlstelle.getKommentar())) {

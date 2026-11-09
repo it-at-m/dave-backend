@@ -1,20 +1,19 @@
-package de.muenchen.dave.migrationespg.services;
+package de.muenchen.dave.migrationespg.services.messstelle;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
-import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
-import de.muenchen.dave.services.CustomSuggestIndexService;
-import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.migrationespg.domain.mapper.detektor.MessstelleReceiverMapper;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.migrationespg.services.CustomSuggestIndexService;
+import de.muenchen.dave.migrationespg.services.SanitizationService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
-import de.muenchen.dave.services.messstelle.MessstelleIndexService;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import java.util.List;
 import java.util.Objects;
@@ -100,12 +99,12 @@ public class MessstelleReceiver {
      */
     protected void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
+        MessstelleEntity newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
         sanitizationService.sanitizeMessstelle(newMessstelle);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         newMessstelle = messstelleIndexService.saveMessstelleWithDetectors(newMessstelle);
         this.sendMailForUpdatedOrChangedMessstelle(
-                newMessstelle.getId(),
+                newMessstelle.getId().toString(),
                 newMessstelle.getMstId(),
                 null, // neue Messstellen besitzen keinen alten Status
                 newMessstelle.getStatus());
@@ -119,12 +118,12 @@ public class MessstelleReceiver {
      * werden verworfen und somit nicht mitgespeichert.
      *
      * @param existingMessstelle als bereits gespeicherte Messstelle.
-     * @param dto der Messstelle mit den zu aktualisierenden Daten.
+     * @param dto der MessstelleEntity mit den zu aktualisierenden Daten.
      */
-    protected void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
+    protected void updateMessstelle(final MessstelleEntity existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();
-        final Messstelle toSave = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
+        final MessstelleEntity toSave = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
         try {
             toSave.setLageplanVorhanden(lageplanService.lageplanVorhanden(toSave.getMstId()));
         } catch (final Exception exception) {
@@ -134,11 +133,11 @@ public class MessstelleReceiver {
         toSave.setMessquerschnitte(updatedMessquerschnitte);
         sanitizationService.sanitizeMessstelle(toSave);
         customSuggestIndexService.updateSuggestionsForMessstelle(toSave);
-        final Messstelle updated = messstelleIndexService.saveMessstelleWithDetectors(toSave);
+        final MessstelleEntity updated = messstelleIndexService.saveMessstelleWithDetectors(toSave);
         final var statusMessstelleNeu = updated.getStatus();
         if (statusMessstelleAlt != statusMessstelleNeu) {
             this.sendMailForUpdatedOrChangedMessstelle(
-                    updated.getId(),
+                    updated.getId().toString(),
                     updated.getMstId(),
                     statusMessstelleAlt,
                     statusMessstelleNeu);
@@ -154,8 +153,8 @@ public class MessstelleReceiver {
      * @param messquerschnitteDto die DTOs mit den aktuellen Messquerschnittsdaten
      * @return die aktualisierte Liste der Messquerschnitte
      */
-    protected List<Messquerschnitt> updateMessquerschnitteOfMessstelle(
-            final List<Messquerschnitt> messquerschnitte,
+    protected List<MessquerschnittEntity> updateMessquerschnitteOfMessstelle(
+            final List<MessquerschnittEntity> messquerschnitte,
             final List<MessquerschnittDto> messquerschnitteDto) {
         if (CollectionUtils.isNotEmpty(messquerschnitteDto)) {
             messquerschnitteDto.forEach(messquerschnittDto -> {

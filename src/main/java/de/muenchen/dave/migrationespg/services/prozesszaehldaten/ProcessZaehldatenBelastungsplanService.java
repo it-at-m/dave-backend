@@ -1,6 +1,7 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -8,17 +9,15 @@ import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.migrationespg.repositories.relationaldb.ZaehlstellenIndexRepository;
+import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
-import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
-import de.muenchen.dave.services.processzaehldaten.BelastungsplanDataServiceFactory;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
@@ -45,11 +44,13 @@ public class ProcessZaehldatenBelastungsplanService {
 
     private final ZeitintervallRepository zeitintervallRepository;
 
-    private final ZaehlstelleIndex zaehlstelleIndex;
+    private final ZaehlstellenIndexRepository zaehlstelleIndex;
 
     private final LadeZaehldatenService ladeZaehldatenService;
 
     private final BelastungsplanDataServiceFactory belastungsplanDataServiceFactory;
+
+    private final PkwEinheit pkwEinheit;
 
     /**
      * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
@@ -117,10 +118,10 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Ansprungsmethode, die unterscheidet, ob Differenzdaten berechnet werden müssen oder nicht
      *
-     * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung} und {@link Zeitintervall}e.
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity} und {@link Zeitintervall}e.
      * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Belastungsplan.
-     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung}
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity}
      *             * nicht aus den DBs extrahiert werden kann.
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
@@ -128,17 +129,17 @@ public class ProcessZaehldatenBelastungsplanService {
             final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
-        // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
-        final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
-        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        // überprüfung, ob ZaehlungEntity exisitert. Wenn nicht -> DataNotFoundException
+        final ZaehlungEntity zaehlung = findByZaehlungenId(zaehlungId);
+        final var zaehlart = zaehlung.getZaehlart();
         if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
                 && options.getVergleichszaehlungsId() != null) {
             if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
                 throw new UnsupportedOperationException("Differenzdatenvergleich nicht implementiert für Zählarten QJS, FJS und QU");
             }
-            // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
+            // überprüfung, ob ZaehlungEntity exisitert. Wenn nicht -> DataNotFoundException
             findByZaehlungenId(options.getVergleichszaehlungsId());
-            log.info("ladeDifferenzdatenBelastungsplan für Zaehlung {} aufgerufen", options.getVergleichszaehlungsId());
+            log.info("ladeDifferenzdatenBelastungsplan für ZaehlungEntity {} aufgerufen", options.getVergleichszaehlungsId());
             return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
         } else {
             return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
@@ -159,25 +160,25 @@ public class ProcessZaehldatenBelastungsplanService {
      * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die
      * erste Dimension stellt die von Knotenarme dar. In der
      * zweiten Dimesion werden alle nach Knotenarme vorgehalten. Die im Array hinterlegten Werte
-     * entsprechen somit den Verkehr fließend von einem Knotenarm zu
-     * einem anderen oder den selben Knotenarm.
+     * entsprechen somit den Verkehr fließend von einem KnotenarmEntity zu
+     * einem anderen oder den selben KnotenarmEntity.
      *
-     * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung} und {@link Zeitintervall}e.
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity} und {@link Zeitintervall}e.
      * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Belastungsplan.
-     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
      *             den DBs extrahiert werden kann.
      */
     public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
-        final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
+        final ZaehlungEntity zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(zaehlung, options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, options.getZeitblock());
         }
-        return belastungsplanDataServiceFactory.getBelastungsplanDataService(zaehlung).buildLadeBelastungsplanDTO(options, zaehlung,
+        return belastungsplanDataServiceFactory.getBelastungsplanDataService(zaehlung).buildLadeBelastungsplanDTO(options, zaehlung, this.pkwEinheit,
                 zeitintervalle);
     }
 
@@ -195,14 +196,14 @@ public class ProcessZaehldatenBelastungsplanService {
             final OptionsDTO options) throws DataNotFoundException {
         final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
 
-        // Fuer die zweite Zaehlung muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
+        // Fuer die zweite ZaehlungEntity muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
         // der Vergleich auch klappt. Dies ist noetig, wenn zwei Zaehlungen mit unterschiedlicher Dauer verglichen
         // werden (Es macht aber nichts, wenn man den Wert immer neu setzt).
-        // Stimmt die Zaehldauer aus den Options nicht mit der Zaehldauer aus der Zaehlung ueberein, so
+        // Stimmt die Zaehldauer aus den Options nicht mit der Zaehldauer aus der ZaehlungEntity ueberein, so
         // liefert die Methode LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options) ein falsches
         // Ergebnis zurueck.
-        final Zaehlung zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
-        options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
+        final ZaehlungEntity zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
+        options.setZaehldauer(zaehlung.getZaehldauer());
 
         final LadeBelastungsplanDTO vergleichsBelastungsplan = castLadeBelastungsplanDTO(
                 ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(),
@@ -237,7 +238,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @return der {@link Zeitintervall} der Spitzenstunde.
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
             final OptionsDTO options) {
         final TypeZeitintervall chosenSpitzenstunde;
         if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
@@ -247,9 +248,9 @@ public class ProcessZaehldatenBelastungsplanService {
         } else {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
         }
-        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        final var zaehlart = zaehlung.getZaehlart();
         final List<Zeitintervall> spitzenstunden = ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 zaehlart,
                 zaehlung.getKreisverkehr(),
                 options);
@@ -273,7 +274,7 @@ public class ProcessZaehldatenBelastungsplanService {
              */
             final List<Zeitintervall> zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung = zeitintervallRepository
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
-                            UUID.fromString(zaehlung.getId()),
+                            zaehlung.getId(),
                             spitzenstunde.getStartUhrzeit(),
                             spitzenstunde.getEndeUhrzeit(),
                             // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
@@ -287,7 +288,7 @@ public class ProcessZaehldatenBelastungsplanService {
              */
             return ZeitintervallGleitendeSpitzenstundeUtil
                     .getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
-                            UUID.fromString(zaehlung.getId()),
+                            zaehlung.getId(),
                             options.getZeitblock(),
                             zaehlart,
                             zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung,
@@ -319,19 +320,19 @@ public class ProcessZaehldatenBelastungsplanService {
     }
 
     /**
-     * Auf Basis der Zaehlungs-Id im Parameter wird die Zaehlung aus der DB extrahiert.
+     * Auf Basis der Zaehlungs-Id im Parameter wird die ZaehlungEntity aus der DB extrahiert.
      *
-     * @param zaehlungId Die Zaehlungs-ID für die {@link Zaehlung}.
-     * @return die {@link Zaehlung} zur Zaehlungs-ID.
-     * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity}.
+     * @return die {@link ZaehlungEntity} zur Zaehlungs-ID.
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
      *             den DBs extrahiert werden kann.
      */
-    public Zaehlung findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
-        final Optional<Zaehlstelle> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(zaehlungId);
+    public ZaehlungEntity findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
+        final Optional<ZaehlstelleEntity> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(zaehlungId);
         if (zaehlstelleOptional.isEmpty()) {
             throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
         }
-        final Optional<Zaehlung> zaehlungOptional = zaehlstelleOptional.get().getZaehlungen().stream()
+        final Optional<ZaehlungEntity> zaehlungOptional = zaehlstelleOptional.get().getZaehlungen().stream()
                 .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(zaehlungId))
                 .findFirst();
         if (zaehlungOptional.isEmpty()) {

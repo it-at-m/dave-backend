@@ -1,9 +1,9 @@
 package de.muenchen.dave.migrationespg.services;
 
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -28,10 +28,10 @@ public class CustomSuggestIndexService {
     /**
      * Erzeugt für eine konkrete Zählstelle ein Set an Vorschlägen.
      *
-     * @param zaehlstelle neue zu verschlagwortende Zaehlstelle
+     * @param zaehlstelle neue zu verschlagwortende ZaehlstelleEntity
      */
-    public void createSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
-        final String suggestId = zaehlstelle.getId();
+    public void createSuggestionsForZaehlstelle(final ZaehlstelleEntity zaehlstelle) {
+        final String suggestId = String.valueOf(zaehlstelle.getId());
         // In den Suchwörtern stehen alle Suggestions für die Zählstelle
         if (CollectionUtils.isNotEmpty(zaehlstelle.getSuchwoerter())) {
             this.createSuggestionsFromSuchwoerter(zaehlstelle.getSuchwoerter(), suggestId);
@@ -41,10 +41,10 @@ public class CustomSuggestIndexService {
     /**
      * Erzeugt für eine konkrete Zählung ein Set an Vorschlägen.
      *
-     * @param zaehlung neue zu verschlagwortende Zaehlung
+     * @param zaehlung neue zu verschlagwortende ZaehlungEntity
      */
-    public void createSuggestionsForZaehlung(final Zaehlung zaehlung) {
-        final String suggestId = zaehlung.getId();
+    public void createSuggestionsForZaehlung(final ZaehlungEntity zaehlung) {
+        final String suggestId = String.valueOf(zaehlung.getId());
         // In den Suchwörtern stehen alle Suggestions für die Zählung
         this.createSuggestionsFromSuchwoerter(zaehlung.getSuchwoerter(), suggestId);
     }
@@ -54,8 +54,8 @@ public class CustomSuggestIndexService {
      *
      * @param messstelle neue zu verschlagwortende Messstelle
      */
-    public void createSuggestionsForMessstelle(final Messstelle messstelle) {
-        final String suggestId = messstelle.getId();
+    public void createSuggestionsForMessstelle(final MessstelleEntity messstelle) {
+        final String suggestId = String.valueOf(messstelle.getId());
         // In den Suchwörtern stehen alle Suggestions für die Zählstelle
         if (CollectionUtils.isNotEmpty(messstelle.getSuchwoerter())) {
             this.createSuggestionsFromSuchwoerter(messstelle.getSuchwoerter(), suggestId);
@@ -65,20 +65,20 @@ public class CustomSuggestIndexService {
     /**
      * Aktualisiert für eine konkrete Zählung ein Set an Vorschlägen.
      *
-     * @param zaehlung neue zu verschlagwortende Zaehlung
+     * @param zaehlung neue zu verschlagwortende ZaehlungEntity
      */
-    public void updateSuggestionsForZaehlung(final Zaehlung zaehlung) {
-        this.deleteAllSuggestionsByFkid(zaehlung.getId());
+    public void updateSuggestionsForZaehlung(final ZaehlungEntity zaehlung) {
+        this.deleteAllSuggestionsByFkid(String.valueOf(zaehlung.getId()));
         this.createSuggestionsForZaehlung(zaehlung);
     }
 
     /**
      * Aktualistiert für eine konkrete Zählung ein Set an Vorschlägen.
      *
-     * @param zaehlstelle neue zu verschlagwortende Zaehlung
+     * @param zaehlstelle neue zu verschlagwortende ZaehlungEntity
      */
-    public void updateSuggestionsForZaehlstelle(final Zaehlstelle zaehlstelle) {
-        this.deleteAllSuggestionsByFkid(zaehlstelle.getId());
+    public void updateSuggestionsForZaehlstelle(final ZaehlstelleEntity zaehlstelle) {
+        this.deleteAllSuggestionsByFkid(String.valueOf(zaehlstelle.getId()));
         this.createSuggestionsForZaehlstelle(zaehlstelle);
     }
 
@@ -87,8 +87,8 @@ public class CustomSuggestIndexService {
      *
      * @param messstelle neue zu verschlagwortende Messstelle
      */
-    public void updateSuggestionsForMessstelle(final Messstelle messstelle) {
-        this.deleteAllSuggestionsByFkid(messstelle.getId());
+    public void updateSuggestionsForMessstelle(final MessstelleEntity messstelle) {
+        this.deleteAllSuggestionsByFkid(String.valueOf(messstelle.getId()));
         this.createSuggestionsForMessstelle(messstelle);
     }
 

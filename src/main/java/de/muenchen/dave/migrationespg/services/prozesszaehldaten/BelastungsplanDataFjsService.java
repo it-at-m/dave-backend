@@ -1,6 +1,7 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
 import de.muenchen.dave.domain.Laengsverkehr;
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
@@ -8,7 +9,8 @@ import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanFjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,11 +29,12 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
             final OptionsDTO options,
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
+            final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
-        Map<Laengsverkehr, de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil.mapLaengsverkehre(
+        Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil.mapLaengsverkehre(
                 options,
-                zaehlung, zeitintervalle);
+                pkwEinheit, zeitintervalle);
 
         var ladeBelastungsplan = new LadeBelastungsplanFjsDTO();
         ladeBelastungsplan.setStreets(new String[8]);
@@ -46,13 +49,13 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
         } else if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
-        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplan);
+        markKIHochrechnung(String.valueOf(zaehlung.getZaehldauer()), options.getZeitauswahl(), ladeBelastungsplan);
         return ladeBelastungsplan;
     }
 
     public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             Map<Laengsverkehr, de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeLaengsverkehr,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
@@ -87,9 +90,9 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
     }
 
     /**
-     * Setzt den Zählwert anhand des {@link Laengsverkehr} an die richtige Stelle des
+     * Setzt den Zählwert anhand des {@link LaengsverkehrEntity} an die richtige Stelle des
      * {@link BelastungsplanFjsDataDTO}
-     * und addiert ihn zur Summe von entsprechender Strassenseite und Knotenarm.
+     * und addiert ihn zur Summe von entsprechender Strassenseite und KnotenarmEntity.
      */
     private void addValueAndSum(
             final Laengsverkehr laengsverkehr,
@@ -122,7 +125,7 @@ public class BelastungsplanDataFjsService extends AbstractBelastungsplanDataServ
             } else {
                 seiteValue.setSumStrassenseite(seiteValue.getSumStrassenseite().add(value));
             }
-            // Summiere Knotenarm
+            // Summiere KnotenarmEntity
             if (fjsKnotenarmValue.getSumKnotenarm() == null) {
                 fjsKnotenarmValue.setSumKnotenarm(value);
             } else {

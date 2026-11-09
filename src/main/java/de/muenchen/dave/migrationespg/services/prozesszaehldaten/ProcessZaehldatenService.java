@@ -8,12 +8,12 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenHeatmapService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenSteplineService;
-import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import de.muenchen.dave.migrationespg.util.ZaehldatenProcessingUtil;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -44,7 +44,7 @@ public class ProcessZaehldatenService {
      * Die Aufbereitung der Zaehldaten wird so durchgeführt, damit die Daten im Frontend nur noch an die
      * entsprechende Komponente übergeben werden müssen.
      *
-     * @param zaehlungId Die Id der Zaehlung.
+     * @param zaehlungId Die Id der ZaehlungEntity.
      * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbereiteten Zaehldaten zur Darstellung in der Listenausgabe, in der Heatmap und im
      *         Stepline-Diagramm.
@@ -103,11 +103,11 @@ public class ProcessZaehldatenService {
      * @return LadeZaehldatenTableDTO mit den für die Zählungskenngrößen benötigten Werten
      * @throws DataNotFoundException Wenn die Zählung nicht geladen werden kann
      */
-    public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
+    public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final ZaehlungEntity zaehlung) throws DataNotFoundException {
         log.debug("Lade Zaehlungskenngroessen");
 
         final LadeZaehldatenTableDTO zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung));
 
         // Entfernen der Intervalle aus den Zähldaten

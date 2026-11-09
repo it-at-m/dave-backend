@@ -1,4 +1,4 @@
-package de.muenchen.dave.domain.relational.messtellen;
+package de.muenchen.dave.migrationespg.domain.relational.messtellen;
 
 import de.muenchen.dave.domain.BaseEntity;
 import jakarta.persistence.Column;

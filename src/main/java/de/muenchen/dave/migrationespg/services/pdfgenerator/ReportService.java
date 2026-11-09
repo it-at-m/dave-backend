@@ -4,7 +4,7 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
@@ -19,11 +19,10 @@ import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.SanitizationService;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
-import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
 import de.muenchen.dave.services.pdfgenerator.ReportLogoService;
-import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
+import de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenService;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Collections;
@@ -187,7 +186,7 @@ public class ReportService {
             } else if (asset.getType().equals(AssetType.ZAEHLUNGSKENNGROESSEN)) {
                 final ZaehlungskenngroessenAsset zaehlungskenngroessenAsset = (ZaehlungskenngroessenAsset) asset;
                 try {
-                    final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungskenngroessenAsset.getZaehlungId());
+                    final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungskenngroessenAsset.getZaehlungId());
                     zaehlungskenngroessenAsset.setPrintFuss(zaehlung.getKategorien().contains(Fahrzeug.FUSS));
                     zaehlungskenngroessenAsset.setPrintRad(zaehlung.getKategorien().contains(Fahrzeug.RAD));
                     zaehlungskenngroessenAsset.setPrintKfz(zaehlung.getKategorien().contains(Fahrzeug.KFZ));

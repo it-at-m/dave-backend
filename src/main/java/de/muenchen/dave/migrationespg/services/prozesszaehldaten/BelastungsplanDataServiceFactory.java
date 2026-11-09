@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class BelastungsplanDataServiceFactory {
     private final BelastungsplanDataFjsService belastungsplanDataFjsService;
     private final BelastungsplanDataQuService belastungsplanDataQuService;
 
-    public IBelastungsplanDataService getBelastungsplanDataService(Zaehlung zaehlung) {
+    public IBelastungsplanDataService getBelastungsplanDataService(ZaehlungEntity zaehlung) {
         if (Zaehlart.QJS.name().equals(zaehlung.getZaehlart())) {
             return belastungsplanDataQjsService;
         } else if (Zaehlart.FJS.name().equals(zaehlung.getZaehlart())) {
