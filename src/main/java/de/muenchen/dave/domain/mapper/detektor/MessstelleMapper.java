@@ -40,19 +40,19 @@ public interface MessstelleMapper {
     ReadMessstelleInfoDTO bean2readDto(Messstelle bean, @Context StadtbezirkService stadtbezirkService);
 
     @AfterMapping
-    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean, @Context StadtbezirkService stadtbezirkService) {
+    default void bean2readDtoAfterMapping(@MappingTarget ReadMessstelleInfoDTO dto, Messstelle bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setStadtbezirk(stadtbezirkService.getStadtbezirkName(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirkNummer(bean.getStadtbezirkNummer());
     }
 
     EditMessstelleDTO bean2editDto(Messstelle bean, @Context StadtbezirkService stadtbezirkService);
 
     @AfterMapping
-    default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean, @Context StadtbezirkService stadtbezirkService) {
+    default void bean2editDtoAfterMapping(@MappingTarget EditMessstelleDTO dto, Messstelle bean) {
         dto.setLatitude(bean.getPunkt().getLat());
         dto.setLongitude(bean.getPunkt().getLon());
-        dto.setStadtbezirk(stadtbezirkService.getStadtbezirkName(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirkNummer(bean.getStadtbezirkNummer());
     }
 
     @Mapping(target = "id", ignore = true)
@@ -136,9 +136,9 @@ public interface MessstelleMapper {
     List<MessstelleOverviewDTO> bean2overviewDto(List<Messstelle> bean, @Context StadtbezirkService stadtbezirkService);
 
     @AfterMapping
-    default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean, @Context StadtbezirkService stadtbezirkService) {
+    default void bean2overviewDtoAftermapping(@MappingTarget MessstelleOverviewDTO dto, Messstelle bean) {
         dto.setStadtbezirkNummer(String.valueOf(bean.getStadtbezirkNummer()));
-        dto.setStadtbezirk(stadtbezirkService.getStadtbezirkName(bean.getStadtbezirkNummer()));
+        dto.setStadtbezirkNummer(String.valueOf(bean.getStadtbezirkNummer()));
     }
 
     List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);

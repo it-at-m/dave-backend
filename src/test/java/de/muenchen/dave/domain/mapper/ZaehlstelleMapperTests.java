@@ -97,7 +97,6 @@ public class ZaehlstelleMapperTests {
         // Check Zählstelle
         assertThat(dto.getId(), is(equalTo(bean.getId())));
         assertThat(dto.getNummer(), is(equalTo(bean.getNummer())));
-        assertThat(dto.getStadtbezirk(), is(equalTo(bean.getStadtbezirk())));
         assertThat(dto.getStadtbezirkNummer(), is(equalTo(bean.getStadtbezirkNummer())));
         assertThat(dto.getLat(), is(equalTo(bean.getPunkt().getLat())));
         assertThat(dto.getLng(), is(equalTo(bean.getPunkt().getLon())));

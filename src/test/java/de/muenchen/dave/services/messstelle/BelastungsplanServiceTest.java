@@ -299,7 +299,6 @@ class BelastungsplanServiceTest {
         readMessstelleInfoDTO.setId("123");
         readMessstelleInfoDTO.setMstId("13");
         readMessstelleInfoDTO.setStandort("Hauptstraße 1");
-        readMessstelleInfoDTO.setStadtbezirk("Mitte");
         readMessstelleInfoDTO.setStadtbezirkNummer(1);
         readMessstelleInfoDTO.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         readMessstelleInfoDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ);

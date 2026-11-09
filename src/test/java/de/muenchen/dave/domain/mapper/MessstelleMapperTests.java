@@ -43,7 +43,6 @@ class MessstelleMapperTests {
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk("Schwabing-West");
         expected.setLongitude(bean.getPunkt().getLon());
         expected.setLatitude(bean.getPunkt().getLat());
         expected.setStandort(bean.getStandort());
@@ -61,7 +60,6 @@ class MessstelleMapperTests {
         final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
         tooltip.setMstId(bean.getMstId());
         tooltip.setStandort(bean.getStandort());
-        tooltip.setStadtbezirk("Schwabing-West");
         tooltip.setStadtbezirknummer(bean.getStadtbezirkNummer());
         tooltip.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         tooltip.setAbbaudatum(bean.getAbbaudatum().toString());
@@ -88,7 +86,6 @@ class MessstelleMapperTests {
         expected.setStatus(bean.getStatus().toString());
         expected.setBemerkung(bean.getBemerkung());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
-        expected.setStadtbezirk("Schwabing-West");
         expected.setRealisierungsdatum(bean.getRealisierungsdatum().toString());
         expected.setAbbaudatum(bean.getAbbaudatum().toString());
         expected.setDatumLetztePlausibleMessung(bean.getDatumLetztePlausibleMessung().toString());

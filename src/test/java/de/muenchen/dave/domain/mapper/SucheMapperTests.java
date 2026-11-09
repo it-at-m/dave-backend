@@ -32,7 +32,6 @@ class SucheMapperTests {
         final MessstelleTooltipDTO expected = new MessstelleTooltipDTO();
         expected.setMstId(messstelle.getMstId());
         expected.setStandort(messstelle.getStandort());
-        expected.setStadtbezirk("Schwabing-Neuhausen");
         expected.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
         expected.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
         expected.setAbbaudatum(messstelle.getAbbaudatum().toString());
@@ -89,18 +88,16 @@ class SucheMapperTests {
 
     @Test
     void testCreateZaehlstelleTooltip() {
-        final String stadtbezirk = "stadtbezirk";
         final Integer stadtbezirknummer = 1;
         final String nummer = "123456";
         final Integer anzahlZaehlungen = 12;
         final String datumLetzteZaehlung = "2024-02-16";
         final String kreuzungsname = "kreuzungsname";
-        final ZaehlstelleTooltipDTO actual = mapper.createZaehlstelleTooltip(stadtbezirk, stadtbezirknummer, nummer, anzahlZaehlungen,
+        final ZaehlstelleTooltipDTO actual = mapper.createZaehlstelleTooltip(stadtbezirknummer, nummer, anzahlZaehlungen,
                 datumLetzteZaehlung, kreuzungsname);
 
         final ZaehlstelleTooltipDTO expected = new ZaehlstelleTooltipDTO();
         expected.setZaehlstellennnummer(nummer);
-        expected.setStadtbezirk(stadtbezirk);
         expected.setStadtbezirknummer(stadtbezirknummer);
         expected.setAnzahlZaehlungen(anzahlZaehlungen);
         expected.setDatumLetzteZaehlung(datumLetzteZaehlung);

@@ -435,7 +435,6 @@ public class SucheService {
                 letzeZaehlung = IndexServiceUtils.getLetzteAktiveZaehlung(zaehlstelle.getZaehlungen());
             }
 
-            final String stadtbezirk = zaehlstelle.getStadtbezirk();
             final Integer stadtbezirksnummer = zaehlstelle.getStadtbezirkNummer();
             final String nummer = zaehlstelle.getNummer();
             final String kreuzungsname = letzeZaehlung == null ? "" : letzeZaehlung.getKreuzungsname();
@@ -455,7 +454,6 @@ public class SucheService {
 
             zaehlstelleKarteDTO.setTooltip(
                     sucheMapper.createZaehlstelleTooltip(
-                            stadtbezirk,
                             stadtbezirksnummer,
                             nummer,
                             anzahlZaehlungen,

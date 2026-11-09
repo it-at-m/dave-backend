@@ -49,7 +49,6 @@ class MessstelleServiceTest {
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
         Mockito.reset(messstelleIndexService, customSuggestIndexService, stadtbezirkService);
-        //        when(stadtbezirkService.bezeichnungOf(anyInt())).thenReturn("MyHood");
         messstelleService = new MessstelleService(
                 messstelleIndexService,
                 customSuggestIndexService,

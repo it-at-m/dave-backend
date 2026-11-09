@@ -532,8 +532,8 @@ public class ZaehlstelleIndexService {
                         if (ObjectUtils.isNotEmpty(zaehlstelle.getPunkt()) && zaehlstelle.getPunkt().getLat() > 0 && zaehlstelle.getPunkt().getLon() > 0) {
                             zaehlung.setZaehlstellePunkt(zaehlstelle.getPunkt());
                         }
-                        if (StringUtils.isNotEmpty(zaehlstelle.getStadtbezirk())) {
-                            zaehlung.setZaehlstelleStadtbezirk(zaehlstelle.getStadtbezirk());
+                        if (zaehlstelle.getStadtbezirkNummer() != null) {
+                            zaehlung.setZaehlstelleStadtbezirkNummer(zaehlstelle.getStadtbezirkNummer());
                         }
                         zaehlungen.add(zaehlung);
                     }
@@ -596,8 +596,8 @@ public class ZaehlstelleIndexService {
                         if (StringUtils.isNotEmpty(zaehlstelle.getId())) {
                             openZaehlungDTO.setZaehlstellenId(zaehlstelle.getId());
                         }
-                        if (StringUtils.isNotEmpty(zaehlstelle.getStadtbezirk())) {
-                            openZaehlungDTO.setStadtbezirk(zaehlstelle.getStadtbezirk());
+                        if (zaehlstelle.getStadtbezirkNummer() != null) {
+                            openZaehlungDTO.setStadtbezirkNummer(zaehlstelle.getStadtbezirkNummer());
                         }
                         zaehlungen.add(openZaehlungDTO);
                     }

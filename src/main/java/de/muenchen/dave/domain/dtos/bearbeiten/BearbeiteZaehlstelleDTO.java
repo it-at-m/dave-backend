@@ -11,9 +11,7 @@ public class BearbeiteZaehlstelleDTO {
 
     String nummer;
 
-    int stadtbezirkNummer;
-
-    String stadtbezirk;
+    Integer stadtbezirkNummer;
 
     GeoPoint punkt;
 

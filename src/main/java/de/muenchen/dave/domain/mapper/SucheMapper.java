@@ -43,9 +43,7 @@ public interface SucheMapper {
     @AfterMapping
     default void messstelleToMessstelleTooltipDTOAfterMapping(
             @MappingTarget final MessstelleTooltipDTO dto,
-            final Messstelle bean,
-            @Context final StadtbezirkService stadtbezirkService) {
-        dto.setStadtbezirk(stadtbezirkService.getStadtbezirkName(bean.getStadtbezirkNummer()));
+            final Messstelle bean) {
         dto.setStadtbezirknummer(bean.getStadtbezirkNummer());
 
         final var realisierungsdatum = ObjectUtils.isNotEmpty(bean.getRealisierungsdatum())
@@ -68,7 +66,6 @@ public interface SucheMapper {
      * Erstellt ein TooltipDTO für die Metainformationen einer Zählstelle. Das DTO wird im Frontend als
      * MouseOver bei einem Marker in der Karte angezeigt.
      *
-     * @param stadtbezirk Stadtbezirksname
      * @param stadtbezirknummer Stadtbezirksnummer als Long
      * @param nummer Zaehlstellennummer
      * @param anzahlZaehlungen Anzahl der einer Zählstelle zugehörigen Zählungen als Integer
@@ -77,7 +74,6 @@ public interface SucheMapper {
      * @return TooltipDTO mit allen benötigten Feldern
      */
     default ZaehlstelleTooltipDTO createZaehlstelleTooltip(
-            final String stadtbezirk,
             final Integer stadtbezirknummer,
             final String nummer,
             final Integer anzahlZaehlungen,
@@ -86,7 +82,6 @@ public interface SucheMapper {
         final ZaehlstelleTooltipDTO zaehlstelleTooltipDTO = new ZaehlstelleTooltipDTO();
         zaehlstelleTooltipDTO.setKreuzungsname(kreuzungsname);
         zaehlstelleTooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
-        zaehlstelleTooltipDTO.setStadtbezirk(stadtbezirk);
         zaehlstelleTooltipDTO.setStadtbezirknummer(stadtbezirknummer);
         zaehlstelleTooltipDTO.setZaehlstellennnummer(nummer);
         zaehlstelleTooltipDTO.setDatumLetzteZaehlung(datumLetzteZaehlung);

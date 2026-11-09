@@ -124,20 +124,6 @@ public class SanitizationService {
     }
 
     /**
-     * Validiert, dass der übergebene {@link String} ein gültiger Wert des Enums {@link Stadtbezirk}
-     * ist. Ist der Wert ungültig, wird eine {@link IllegalArgumentException} geworfen.
-     *
-     * @param stadtbezirk Zu validierender Stadtbezirk als {@link String}
-     */
-    public void validateStadtbezirk(final String stadtbezirk) {
-        if (stadtbezirk == null) return;
-        List<String> allowedStadtbezirke = Arrays.stream(Stadtbezirk.values()).map(Stadtbezirk::getBezeichnung).toList();
-        if (!allowedStadtbezirke.contains(stadtbezirk)) {
-            throw new IllegalArgumentException("Ungültiger Stadtbezirk: " + stadtbezirk);
-        }
-    }
-
-    /**
      * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlungDTO}. Unerwünschter
      * HTML-Code wird entfernt.
      *
@@ -182,7 +168,6 @@ public class SanitizationService {
      */
     public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO) {
         if (bearbeiteZaehlstelleDTO == null) return;
-        validateStadtbezirk(bearbeiteZaehlstelleDTO.getStadtbezirk());
         bearbeiteZaehlstelleDTO.setKommentar(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getKommentar()));
 
         if (bearbeiteZaehlstelleDTO.getCustomSuchwoerter() != null) {
