@@ -247,17 +247,18 @@ public class SucheService {
     }
 
     /**
-     * Sucht Erhebungsstellen für das Adminportal.
-     * <p>
-     * Bei einer Anfrage durch einen Fachadmin werden Zählstellen und ihre Zählungen ungefiltert
-     * zurückgegeben. Andernfalls gelten die Sichtbarkeits- und Statusfilter des Datenportals.
+     * Sucht Zähl- und Messstellen für die Karte gemäß den Such- und Filteroptionen.
+     * Fachadmins im Adminportal erhalten Zählstellen und ihre Zählungen ungefiltert. Andernfalls
+     * werden die Zählungen abhängig von der Benutzerrolle gefiltert und Zählstellen ohne Zählungen
+     * entfernt. Messstellen werden nach der ausgewählten Verkehrsart gefiltert.
      *
      * @param query Suchanfrage; bei einer leeren Suchanfrage werden alle Erhebungsstellen
      *            berücksichtigt
-     * @param searchAndFilterOptions Filteroptionen
-     * @param isForAdminportal Ist true, wenn die Anfrage für das Adminportal ausgeführt wird, sonst
-     *            false
-     * @return passende Erhebungsstellen
+     * @param searchAndFilterOptions Auswahl der zu durchsuchenden Erhebungsstellenarten und
+     *            Verkehrsarten der Messstellen
+     * @param isForAdminportal {@code true}, wenn die Anfrage für das Adminportal ausgeführt wird,
+     *            sonst {@code false}
+     * @return Karten-DTOs der passenden Zähl- und Messstellen
      */
     @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2, @securityContextInformationExtractorService.isFachadmin()}")
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
