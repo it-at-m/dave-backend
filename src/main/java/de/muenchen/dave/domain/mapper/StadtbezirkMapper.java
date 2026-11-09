@@ -1,22 +1,16 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.configuration.StadtbezirkMapperConfig;
-import jakarta.annotation.Resource;
-import java.util.Map;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
+import de.muenchen.dave.domain.StadtbezirkEntity;
+import de.muenchen.dave.domain.dtos.StadtbezirkDTO;
+import java.util.List;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 
-@Component
-@RequiredArgsConstructor
-@Slf4j
-public class StadtbezirkMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+public interface StadtbezirkMapper {
 
-    @Resource(name = StadtbezirkMapperConfig.BEAN_STADTBEZIRK_MAPPING_PROPERTIES)
-    private Map<String, String> stadtbezirkeMap;
+    StadtbezirkDTO entity2Dto(StadtbezirkEntity entity);
 
-    public String bezeichnungOf(@NonNull Integer stadtbezirkNummer) {
-        return stadtbezirkeMap.getOrDefault(stadtbezirkNummer.toString(), "Unbekannt");
-    }
+    List<StadtbezirkDTO> entities2Dtos(List<StadtbezirkEntity> entities);
+
 }

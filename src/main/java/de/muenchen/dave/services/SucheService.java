@@ -24,7 +24,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.SucheMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
@@ -81,7 +80,7 @@ public class SucheService {
 
     private final SucheMapper sucheMapper;
 
-    private final StadtbezirkMapper stadtbezirkMapper;
+    private final StadtbezirkService stadtbezirkService;
 
     private final ElasticsearchClient elasticsearchClient;
 
@@ -337,7 +336,7 @@ public class SucheService {
         final var filteredMessstellen = messstellen.stream().filter(
                 messstelle -> CollectionUtils.emptyIfNull(searchAndFilterOptions.getMessstelleVerkehrsart()).contains(messstelle.getDetektierteVerkehrsart()))
                 .toList();
-        return sucheMapper.messstelleToMessstelleKarteDTO(filteredMessstellen, stadtbezirkMapper);
+        return sucheMapper.messstelleToMessstelleKarteDTO(filteredMessstellen, stadtbezirkService);
     }
 
     private boolean isDateEqualOrAfter(final LocalDate datum, final LocalDate datumAfter) {

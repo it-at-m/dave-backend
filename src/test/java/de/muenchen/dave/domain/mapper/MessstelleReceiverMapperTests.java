@@ -15,6 +15,7 @@ import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.services.StadtbezirkService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,8 +45,8 @@ class MessstelleReceiverMapperTests {
     void testCreateMessstelle() {
         final MessstelleDto dto = MessstelleRandomFactory.getMessstelleDto();
 
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
         final Messstelle expected = new Messstelle();
         expected.setMstId(dto.getMstId());
         expected.setName(dto.getName());
@@ -86,7 +87,7 @@ class MessstelleReceiverMapperTests {
             expected.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
-        final Messstelle messstelle = this.mapper.createMessstelle(dto, stadtbezirkMapper);
+        final Messstelle messstelle = this.mapper.createMessstelle(dto, stadtbezirkService);
         Assertions.assertThat(messstelle)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -178,9 +179,9 @@ class MessstelleReceiverMapperTests {
             expected.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
-        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
+        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkService);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -191,10 +192,10 @@ class MessstelleReceiverMapperTests {
     @Test
     void statusMapping() {
         final MessstelleDto messstelleDto = MessstelleRandomFactory.getMessstelleDto();
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-West");
         messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        final Messstelle messstelle = mapper.createMessstelle(messstelleDto, stadtbezirkMapper);
+        final Messstelle messstelle = mapper.createMessstelle(messstelleDto, stadtbezirkService);
         Assertions.assertThat(messstelle.getStatus()).isEqualTo(MessstelleStatus.IN_BESTAND);
     }
 }

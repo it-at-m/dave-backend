@@ -7,8 +7,8 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.services.IndexServiceUtils;
+import de.muenchen.dave.services.StadtbezirkService;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -161,10 +161,10 @@ public final class SuchwortUtil {
         return knotenarmeSuchworte;
     }
 
-    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, final StadtbezirkMapper stadtbezirkMapper) {
+    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, final StadtbezirkService stadtbezirkService) {
         final Set<String> suchwoerter = new HashSet<>();
         if (ObjectUtils.isNotEmpty(bean.getStadtbezirkNummer())) {
-            final String stadtbezirk = stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer());
+            final String stadtbezirk = stadtbezirkService.getStadtbezirkName(bean.getStadtbezirkNummer());
             final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(stadtbezirk));
             suchwoerter.addAll(stadtbezirke);
             if (CollectionUtils.isNotEmpty(stadtbezirke) && stadtbezirke.size() > 1) {

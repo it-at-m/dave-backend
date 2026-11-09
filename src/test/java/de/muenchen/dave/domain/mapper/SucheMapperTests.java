@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.services.StadtbezirkService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,9 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleTooltipDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
-        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkMapper);
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-Neuhausen");
+        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkService);
 
         final MessstelleTooltipDTO expected = new MessstelleTooltipDTO();
         expected.setMstId(messstelle.getMstId());
@@ -47,9 +48,9 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleKarteDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
-        final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkMapper);
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-Neuhausen");
+        final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkService);
         final MessstelleKarteDTO expected = new MessstelleKarteDTO();
         expected.setId(messstelle.getId());
         expected.setFachId(messstelle.getMstId());

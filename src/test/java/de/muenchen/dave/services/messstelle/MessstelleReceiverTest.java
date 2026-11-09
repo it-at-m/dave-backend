@@ -5,7 +5,6 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapperImpl;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.VerkehrsartMapperImpl;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
@@ -15,6 +14,7 @@ import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.services.StadtbezirkService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.ArrayList;
@@ -43,7 +43,8 @@ public class MessstelleReceiverTest {
     @Mock
     private CustomSuggestIndexService customSuggestIndexService;
 
-    private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+    @Mock
+    private StadtbezirkService stadtbezirkService;
 
     @Mock
     private LageplanService lageplanService;
@@ -66,11 +67,11 @@ public class MessstelleReceiverTest {
         messstelleReceiverMapper = new MessstelleReceiverMapperImpl();
         FieldUtils.writeField(messstelleReceiverMapper, "fahrzeugklassenMapper", new FahrzeugklassenMapperImpl(), true);
         FieldUtils.writeField(messstelleReceiverMapper, "verkehrsartMapper", new VerkehrsartMapperImpl(), true);
-        Mockito.reset(messstelleIndexService, customSuggestIndexService, lageplanService, emailSendService, messstelleApi);
+        Mockito.reset(messstelleIndexService, customSuggestIndexService, stadtbezirkService, lageplanService, emailSendService, messstelleApi);
         messstelleReceiver = new MessstelleReceiver(
                 messstelleIndexService,
                 customSuggestIndexService,
-                stadtbezirkMapper,
+                stadtbezirkService,
                 lageplanService,
                 emailSendService,
                 sanitizationService,
@@ -130,7 +131,7 @@ public class MessstelleReceiverTest {
 
         final var messstelleReceiverMapperSpy = Mockito.spy(this.messstelleReceiverMapper);
 
-        Mockito.when(messstelleReceiverMapperSpy.createMessstelle(messstelleDto1, stadtbezirkMapper)).thenReturn(messstelle1);
+        Mockito.when(messstelleReceiverMapperSpy.createMessstelle(messstelleDto1, stadtbezirkService)).thenReturn(messstelle1);
 
         final var messstelle1Saved = new Messstelle();
         messstelle1Saved.setId("1234");
@@ -142,7 +143,7 @@ public class MessstelleReceiverTest {
 
         messstelleReceiverSpy.createMessstelle(messstelleDto1);
 
-        Mockito.verify(messstelleReceiverMapperSpy, Mockito.times(1)).createMessstelle(messstelleDto1, stadtbezirkMapper);
+        Mockito.verify(messstelleReceiverMapperSpy, Mockito.times(1)).createMessstelle(messstelleDto1, stadtbezirkService);
 
         Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(Mockito.any(Messstelle.class));
 
