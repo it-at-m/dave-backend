@@ -444,20 +444,21 @@ public class SucheService {
             final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
             final Zaehlung letzeZaehlung = getNeuesteErlaubteZaehlung(zaehlstelle.getZaehlungen(), isRoleAdmin);
 
+            String kreuzungsname = StringUtils.EMPTY;
+            String monatJahrLetzteZaehlung = StringUtils.EMPTY;
+            String letzteZaehlungId = StringUtils.EMPTY;
+            if (!Objects.isNull(letzeZaehlung)) {
+                kreuzungsname = letzeZaehlung.getKreuzungsname();
+                monatJahrLetzteZaehlung = letzeZaehlung.getMonat() + StringUtils.SPACE + letzeZaehlung.getJahr();
+                letzteZaehlungId = letzeZaehlung.getId();
+            }
+
             final String stadtbezirk = zaehlstelle.getStadtbezirk();
             final Integer stadtbezirksnummer = zaehlstelle.getStadtbezirkNummer();
             final String nummer = zaehlstelle.getNummer();
-            final String kreuzungsname = Objects.isNull(letzeZaehlung) ? "" : letzeZaehlung.getKreuzungsname();
-            final Integer anzahlZaehlungen = CollectionUtils.isEmpty(zaehlstelle.getZaehlungen())
-                    ? 0
-                    : zaehlstelle.getZaehlungen().size();
-            final String monatJahrLetzteZaehlung = Objects.isNull(letzeZaehlung)
-                    ? ""
-                    : letzeZaehlung.getMonat() + StringUtils.SPACE + letzeZaehlung.getJahr();
+            final Integer anzahlZaehlungen = CollectionUtils.emptyIfNull(zaehlstelle.getZaehlungen()).size();
 
             final ZaehlstelleKarteDTO zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
-
-            final String letzteZaehlungId = Objects.isNull(letzeZaehlung) ? "" : letzeZaehlung.getId();
             zaehlstelleKarteDTO.setLetzteZaehlungId(letzteZaehlungId);
 
             zaehlstelleKarteDTO.setTooltip(
