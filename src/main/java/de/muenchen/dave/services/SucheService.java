@@ -451,9 +451,9 @@ public class SucheService {
             final Integer anzahlZaehlungen = CollectionUtils.isEmpty(zaehlstelle.getZaehlungen())
                     ? 0
                     : zaehlstelle.getZaehlungen().size();
-            final String monatJahrLetzteZaehlung = letzeZaehlung.getMonat()
-                    + StringUtils.SPACE
-                    + letzeZaehlung.getJahr();
+            final String monatJahrLetzteZaehlung = Objects.isNull(letzeZaehlung)
+                    ? ""
+                    : letzeZaehlung.getMonat() + StringUtils.SPACE + letzeZaehlung.getJahr();
 
             final ZaehlstelleKarteDTO zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
 
