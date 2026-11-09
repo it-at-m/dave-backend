@@ -430,8 +430,8 @@ public class SucheService {
     }
 
     /**
-     * Filtert Zählstellen und ihre Zählungen abhängig von Portal und Benutzerrolle und ergänzt die
-     * Karten-DTOs um Tooltip, letzte Zählung und Zählarten.
+     * Filtert Zählstellen und ihre Zählungen abhängig von Portal und Benutzerrolle
+     * und ergänzt die Karten-DTOs um Tooltip, letzte Zählung und Zählarten.
      *
      * @param zaehlstellen zu filternde Zählstellen
      * @param isForAdminportal ob die Anfrage vom Adminportal stammt
