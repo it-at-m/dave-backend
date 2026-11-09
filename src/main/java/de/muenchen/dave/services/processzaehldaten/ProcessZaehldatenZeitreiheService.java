@@ -167,11 +167,11 @@ public class ProcessZaehldatenZeitreiheService {
      * aktuellen Zählung.
      *
      * @param zaehlstelle Im Frontend gewählte Zählstelle
-     * @param currentDate Datum der aktuell im Frontend gewählten Zählung
+     * @param currentZaehlungId Id der aktuell im Frontend gewählten Zählung
      * @param options Optionen aus dem Frontend
      * @return ältestes Datum
      */
-    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {
+    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final String currentZaehlungId, final OptionsDTO options) {
         LocalDate oldestDate;
 
         if (options.getIdVergleichszaehlungZeitreihe() != null) {
@@ -185,10 +185,12 @@ public class ProcessZaehldatenZeitreiheService {
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
-                    .filter(zaehlung -> currentDate.equals(zaehlung.getDatum()))
+                    .filter(zaehlung -> currentZaehlungId.equals(zaehlung.getId()))
                     .findFirst()
                     .get();
-            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
+            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream()
+                    .filter(zaehlung -> !zaehlung.getDatum().equals(currentZaehlung.getDatum()) || zaehlung.getId().equals(currentZaehlungId))
+                    .sorted(Comparator.comparing(Zaehlung::getDatum))
                     // Bei QJS, FJS und QU müssen neben der Zählart auch noch alle Bewegungsbeziehungen übereinstimmen
                     .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart())
                             && hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung))
@@ -472,7 +474,7 @@ public class ProcessZaehldatenZeitreiheService {
             final Zaehlung currentZaehlung,
             final OptionsDTO options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
-        final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
+        final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentZaehlung.getId(), options);
 
         // Zählungen sortieren und nach Datum filtern (Zählung muss nach oder am OldestDate und vor CurrentDate stattgefunden haben)
         return zaehlstelle.getZaehlungen()
