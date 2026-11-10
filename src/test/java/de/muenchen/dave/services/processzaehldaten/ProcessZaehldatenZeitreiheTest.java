@@ -24,10 +24,12 @@ public class ProcessZaehldatenZeitreiheTest {
     private static final LocalDate DATE2 = LocalDate.of(2016, 8, 8);
     private static final LocalDate DATE3 = LocalDate.of(2020, 4, 3);
     private static final LocalDate DATE4 = LocalDate.of(2024, 1, 11);
+    private static final LocalDate DATE5 = LocalDate.of(2024, 1, 11);
     private static final String ID1 = "1234";
     private static final String ID2 = "5678";
     private static final String ID3 = "90ab";
     private static final String ID4 = "42cd";
+    private static final String ID5 = "51fa";
 
     private static Zaehlstelle getZaehlstelleWithZaehlungen() {
 
@@ -51,11 +53,17 @@ public class ProcessZaehldatenZeitreiheTest {
         zaehlung4.setDatum(DATE4);
         zaehlung4.setZaehlart(Zaehlart.N.name());
 
+        Zaehlung zaehlung5 = new Zaehlung();
+        zaehlung5.setId(ID5);
+        zaehlung5.setDatum(DATE5);
+        zaehlung5.setZaehlart(Zaehlart.N.name());
+
         List<Zaehlung> zaehlungList = new ArrayList<>();
         zaehlungList.add(zaehlung1);
         zaehlungList.add(zaehlung2);
         zaehlungList.add(zaehlung3);
         zaehlungList.add(zaehlung4);
+        zaehlungList.add(zaehlung5);
 
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         zaehlstelle.setZaehlungen(zaehlungList);
@@ -68,17 +76,18 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlstelle zaehlstelle = getZaehlstelleWithZaehlungen();
         OptionsDTO options = new OptionsDTO();
 
-        LocalDate currentDate = DATE4;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID4, options),
+                is(DATE1));
+
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID5, options),
                 is(DATE1));
 
         options.setIdVergleichszaehlungZeitreihe(ID2);
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID4, options),
                 is(DATE2));
 
         options.setIdVergleichszaehlungZeitreihe(null);
-        currentDate = DATE2;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID2, options),
                 is(DATE1));
     }
 

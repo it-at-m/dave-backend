@@ -167,11 +167,11 @@ public class ProcessZaehldatenZeitreiheService {
      * aktuellen Zählung.
      *
      * @param zaehlstelle Im Frontend gewählte Zählstelle
-     * @param currentDate Datum der aktuell im Frontend gewählten Zählung
+     * @param currentZaehlungId Id der aktuell im Frontend gewählten Zählung
      * @param options Optionen aus dem Frontend
      * @return ältestes Datum
      */
-    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final LocalDate currentDate, final OptionsDTO options) {
+    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final String currentZaehlungId, final OptionsDTO options) {
         LocalDate oldestDate;
 
         if (options.getIdVergleichszaehlungZeitreihe() != null) {
@@ -185,10 +185,12 @@ public class ProcessZaehldatenZeitreiheService {
             // Aktuell ausgewählte Zählung laden, index innerhalb der sortierten Liste bestimmen und mit 2 subtrahieren
             // um den Index der drittletzten Zählung zu erhalten
             final Zaehlung currentZaehlung = zaehlstelle.getZaehlungen().stream()
-                    .filter(zaehlung -> currentDate.equals(zaehlung.getDatum()))
+                    .filter(zaehlung -> currentZaehlungId.equals(zaehlung.getId()))
                     .findFirst()
                     .get();
-            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream().sorted(Comparator.comparing(Zaehlung::getDatum))
+            final List<Zaehlung> filteredZaehlungen = zaehlstelle.getZaehlungen().stream()
+                    .filter(zaehlung -> !zaehlung.getDatum().equals(currentZaehlung.getDatum()) || zaehlung.getId().equals(currentZaehlungId))
+                    .sorted(Comparator.comparing(Zaehlung::getDatum))
                     // Bei QJS, FJS und QU müssen neben der Zählart auch noch alle Bewegungsbeziehungen übereinstimmen
                     .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart())
                             && hasEqualBewegungsbeziehungenInCaseOfFjsQjsQu(zaehlung, currentZaehlung))
@@ -456,7 +458,8 @@ public class ProcessZaehldatenZeitreiheService {
      * anhand der aktuellen Zählung und der in den Optionen gewählten Vergleichszählung gefiltert.
      * Gewählte Zählungen müssen alle der folgenden Kriterien
      * erfüllen:
-     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (inkl.)
+     * - Zähldatum muss zwischen dem Datum der Basiszählung und der Vergleichszählung liegen (exkl.
+     * Datum der Basiszählung; Basiszählung ist im Ergebnis enthalten)
      * - Zählart muss identisch sein
      * - Gewählter Zeitblock muss in beiden Zählungen vorhanden sein
      * - Wenn Basiszählung eine Sonderzählung müssen andere Zählungen ebenfalls Sonderzählungen sein
@@ -471,15 +474,15 @@ public class ProcessZaehldatenZeitreiheService {
             final Zaehlung currentZaehlung,
             final OptionsDTO options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
-        final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentDate, options);
+        final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentZaehlung.getId(), options);
 
-        // Zählungen sortieren und nach Datum filtern (Zählung muss nach oder am OldestDate und vor oder am CurrentDate stattgefunden haben)
+        // Zählungen sortieren und nach Datum filtern (Zählung muss nach oder am OldestDate und vor CurrentDate stattgefunden haben)
         return zaehlstelle.getZaehlungen()
                 .stream()
                 .sorted(Comparator.comparing(Zaehlung::getDatum))
                 .filter(zaehlung -> zaehlung.getStatus().equalsIgnoreCase(Status.ACTIVE.name()))
                 .filter(zaehlung -> zaehlung.getDatum().isAfter(oldestDateToSearchFor) || zaehlung.getDatum().isEqual(oldestDateToSearchFor))
-                .filter(zaehlung -> zaehlung.getDatum().isBefore(currentDate) || zaehlung.getDatum().isEqual(currentDate))
+                .filter(zaehlung -> zaehlung.getDatum().isBefore(currentDate) || zaehlung.getId().equals(currentZaehlung.getId()))
                 .filter(zaehlung -> zaehlung.getZaehlart().equals(currentZaehlung.getZaehlart()))
                 .filter(zaehlung -> zaehlung.getSonderzaehlung().equals(currentZaehlung.getSonderzaehlung()))
                 .filter(zaehlung -> this.zeitauswahlService.determinePossibleZeitauswahl(
