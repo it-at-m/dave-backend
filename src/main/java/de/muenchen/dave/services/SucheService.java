@@ -181,7 +181,8 @@ public class SucheService {
             // Zählstellen
             final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this.filterZaehlungen(zaehlstellen.toList(), isForAdminportal)
+            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this
+                    .filterZaehlungenForEachZaehlstelle(zaehlstellen.toList(), isForAdminportal)
                     .stream()
                     .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
                     .collect(Collectors.toList());
@@ -402,7 +403,7 @@ public class SucheService {
      * @param isForAdminportal ob die Anfrage vom Adminportal stammt
      * @return Zählstellen mit erlaubten Zählungen
      */
-    private List<Zaehlstelle> filterZaehlungen(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
+    private List<Zaehlstelle> filterZaehlungenForEachZaehlstelle(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
 
         final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
 
@@ -441,7 +442,7 @@ public class SucheService {
     private Set<ZaehlstelleKarteDTO> filterZaehlstellenKarte(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
         final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
 
-        for (final Zaehlstelle zaehlstelle : this.filterZaehlungen(zaehlstellen, isForAdminportal)) {
+        for (final Zaehlstelle zaehlstelle : this.filterZaehlungenForEachZaehlstelle(zaehlstellen, isForAdminportal)) {
             final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
             final Zaehlung letzeZaehlung = getNeuesteErlaubteZaehlung(zaehlstelle.getZaehlungen(), isRoleAdmin);
 
