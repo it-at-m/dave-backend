@@ -9,8 +9,9 @@ import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
+
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class ZaehlstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
 
-    private final ZaehlstelleIndexService indexService;
+    private final ZaehlstelleIndexServiceMig indexService;
 
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 

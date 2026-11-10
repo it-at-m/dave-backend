@@ -3,10 +3,11 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.services.ChatMessageService;
+import de.muenchen.dave.migrationespg.services.ChatMessageServiceMig;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,16 +25,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/chat-message")
 public class ChatMessageController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlungId";
     private static final String CALLING_PARTICIPANT_ID = "callingParticipantId";
-    private final ChatMessageService chatMessageService;
-
-    public ChatMessageController(final ChatMessageService chatMessageService) {
-        this.chatMessageService = chatMessageService;
-    }
+    private final ChatMessageServiceMig chatMessageService;
 
     /**
      * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und

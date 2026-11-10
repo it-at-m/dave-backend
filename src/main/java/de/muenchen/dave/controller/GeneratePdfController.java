@@ -7,6 +7,8 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.services.pdfgenerator.GeneratePdfServiceMig;
+import de.muenchen.dave.migrationespg.services.pdfgenerator.ReportServiceMig;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
 import de.muenchen.dave.services.pdfgenerator.ReportService;
 import jakarta.validation.Valid;
@@ -14,6 +16,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Slf4j
 @RestController
 @RequestMapping("/generate-pdf")
+@RequiredArgsConstructor
 @PreAuthorize(
     "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
             "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
@@ -54,14 +58,8 @@ public class GeneratePdfController {
 
     private static final String FEHLER_PDF_ERSTELLUNG = "Es ist ein unerwarteter Fehler beim Erstellen der PDF-Datei aufgetreten.";
 
-    private final GeneratePdfService generatePdfService;
-    private final ReportService reportService;
-
-    public GeneratePdfController(final GeneratePdfService generatePdfService,
-            final ReportService reportService) {
-        this.generatePdfService = generatePdfService;
-        this.reportService = reportService;
-    }
+    private final GeneratePdfServiceMig generatePdfService;
+    private final ReportServiceMig reportService;
 
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine PDF als byte[] zurück

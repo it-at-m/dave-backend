@@ -2,7 +2,7 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.migrationespg.services.messstelle.MesswerteServiceMig;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ public class MesswerteMessquerschnittController {
 
     private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelle_id";
 
-    private final MesswerteService messwerteService;
+    private final MesswerteServiceMig messwerteService;
 
     /**
      * Rest-Endpunkt zur Bereitstellung der Daten einer Messstelle für das Gangliniendiagramm, die

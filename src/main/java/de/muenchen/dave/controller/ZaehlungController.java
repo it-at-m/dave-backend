@@ -10,6 +10,9 @@ import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.migrationespg.services.ChatMessageServiceMig;
+import de.muenchen.dave.migrationespg.services.persist.ExternalZaehlungPersistierungsServiceMig;
+import de.muenchen.dave.migrationespg.services.persist.InternalZaehlungPersistierungsServiceMig;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
@@ -41,11 +44,11 @@ public class ZaehlungController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";
 
-    private final InternalZaehlungPersistierungsService internalZaehlungPersistierungsService;
+    private final InternalZaehlungPersistierungsServiceMig internalZaehlungPersistierungsService;
 
-    private final ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService;
+    private final ExternalZaehlungPersistierungsServiceMig externalZaehlungPersistierungsService;
 
-    private final ChatMessageService chatMessageService;
+    private final ChatMessageServiceMig chatMessageService;
 
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 

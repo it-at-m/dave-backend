@@ -10,7 +10,7 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenService;
+import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
 import de.muenchen.dave.services.messstelle.RoundingService;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -32,22 +32,22 @@ public final class MappingUtil {
     /**
      * Baut aus einer Liste von {@link Zeitintervall} eine Zuordnung (Map) von
      * {@link Verkehrsbeziehung} auf
-     * {@link de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     * {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}.
      * <p>
      *
      * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
      * @param pkwEinheit Die pkwEinheit, deren Einheit für die Umwandlung der Zeitintervalle verwendet wird.
      * @param zeitintervalle Die Liste der zu verarbeitenden Zeitintervalle.
      * @return Eine Map von {@link Verkehrsbeziehung} auf
-     *         {@link de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}. Nur
+     *         {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}. Nur
      *         Zeitintervalle,
      *         die die Bedingung für Verkehrsbeziehungen erfüllen, werden berücksichtigt.
      */
-    public static Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapVerkehrsbeziehungen(
+    public static Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> mapVerkehrsbeziehungen(
             final OptionsDTO options,
             final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
-        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
+        final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
         for (Zeitintervall zeitintervall : zeitintervalle) {
             // Filter-Bedingung
@@ -62,7 +62,7 @@ public final class MappingUtil {
     /**
      * Baut aus einer Liste von {@link Zeitintervall} eine Zuordnung (Map) von
      * {@link LaengsverkehrEntity} auf
-     * {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     * {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}.
      * <p>
      *
      * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
@@ -70,11 +70,11 @@ public final class MappingUtil {
      * @param zeitintervalle Die Liste der zu verarbeitenden Zeitintervalle.
      *
      * @return Eine Map von {@link LaengsverkehrEntity} auf
-     *         {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}. Nur
+     *         {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}. Nur
      *         Zeitintervalle,
      *         die die Bedingung für Längsverkehre erfüllen, werden berücksichtigt.
      */
-    public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapLaengsverkehre(
+    public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> mapLaengsverkehre(
             final OptionsDTO options,
             final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
@@ -83,7 +83,7 @@ public final class MappingUtil {
                 .sorted(Comparator.comparingInt(z -> z.getLaengsverkehr().getKnotenarm()))
                 .toList();
 
-        final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
+        final Map<Laengsverkehr, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
         for (Zeitintervall zi : laengsverkehrIntervalle) {
             calculateZaehldatum(zi, options, pkwEinheit, ladeZaehldatumBelastungsplan, Zeitintervall::getLaengsverkehr, Laengsverkehr::getKnotenarm);
@@ -94,7 +94,7 @@ public final class MappingUtil {
     /**
      * Baut aus einer Liste von {@link Zeitintervall} eine Zuordnung (Map) von
      * {@link QuerungsverkehrEntity} auf
-     * {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     * {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}.
      * <p>
      *
      * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
@@ -102,11 +102,11 @@ public final class MappingUtil {
      * @param zeitintervalle Die Liste der zu verarbeitenden Zeitintervalle.
      *
      * @return Eine Map von {@link QuerungsverkehrEntity} auf
-     *         {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}. Nur
+     *         {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}. Nur
      *         Zeitintervalle,
      *         die die Bedingungen für Querungsverkehre erfüllen, werden berücksichtigt.
      */
-    public static Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapQuerungsverkehre(
+    public static Map<Querungsverkehr, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> mapQuerungsverkehre(
             final OptionsDTO options,
             final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
@@ -115,7 +115,7 @@ public final class MappingUtil {
                 .sorted(Comparator.comparingInt(z -> z.getQuerungsverkehr().getKnotenarm()))
                 .toList();
 
-        final Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
+        final Map<Querungsverkehr, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
 
         for (Zeitintervall zi : querungsverkehrIntervalle) {
             calculateZaehldatum(zi, options, pkwEinheit, ladeZaehldatumBelastungsplan, Zeitintervall::getQuerungsverkehr, Querungsverkehr::getKnotenarm);
@@ -135,7 +135,7 @@ public final class MappingUtil {
      * @param options Konfigurations- und Optionsdaten, z. B. ob gerundet werden soll.
      * @param pkwEinheit Die Zählung, deren Einheit für die Umwandlung der Zeitintervalle verwendet wird.
      * @param ladeZaehldatumBelastungsplan Die zu befüllende Map von {@link Bewegungsbeziehung} auf
-     *            {@link ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum}.
+     *            {@link ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum}.
      * @param keyExtractor Funktion zur Ermittlung der Bewegungsbeziehung aus dem Zeitintervall.
      * @param knotenarmExtractor Funktion zur Ermittlung des Knotenarms aus der
      *            {@link Bewegungsbeziehung} bei
@@ -145,18 +145,18 @@ public final class MappingUtil {
             Zeitintervall zi,
             OptionsDTO options,
             PkwEinheit pkwEinheit,
-            Map<T, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan,
+            Map<T, ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan,
             Function<Zeitintervall, T> keyExtractor,
             Function<T, Integer> knotenarmExtractor) {
         // Schlüssel bestimmen
         final T key = keyExtractor.apply(zi);
         try {
             // Zwischenergebnisse in lokalen Variablen
-            final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
-            final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, pkwEinheit, options);
+            final boolean isTageswert = LadeZaehldatenServiceMig.isZeitintervallForTageswert(zi, options);
+            final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenServiceMig.mapToZaehldatum(zi, pkwEinheit, options);
             final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
 
-            final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
+            final ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum(
                     isTageswert, roundedZaehldatum);
 
             // Konfliktbehandlung

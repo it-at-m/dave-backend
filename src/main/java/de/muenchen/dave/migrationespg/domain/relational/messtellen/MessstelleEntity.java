@@ -109,4 +109,6 @@ public class MessstelleEntity extends BaseEntity {
     @JoinColumn(name = "messstelle_id", referencedColumnName = "id")
     private List<MessfaehigkeitEntity> messfaehigkeiten = new ArrayList<>();
 
+
+
 }

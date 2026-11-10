@@ -1,0 +1,385 @@
+package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
+
+import de.muenchen.dave.configuration.CachingConfiguration;
+import de.muenchen.dave.domain.PkwEinheit;
+import de.muenchen.dave.domain.Verkehrsbeziehung;
+import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.enums.TypeZeitintervall;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.migrationespg.repositories.relationaldb.ZaehlstellenIndexRepository;
+import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
+import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.util.BelastungsplanCalculator;
+import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
+import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class ProcessZaehldatenBelastungsplanServiceMig {
+
+    private final ZeitintervallRepository zeitintervallRepository;
+
+    private final ZaehlstellenIndexRepository zaehlstelleIndex;
+
+    private final LadeZaehldatenServiceMig ladeZaehldatenServiceMig;
+
+    private final BelastungsplanDataServiceFactoryMig belastungsplanDataServiceFactoryMig;
+
+    private final PkwEinheit pkwEinheit;
+
+    /**
+     * Subtrahiert alle BigDecimal[][] des vergleichsBelastungsplans von den BigDecimal[][] des
+     * basisBelastungsplan. Außerdem werden in den
+     * Differenzwert-LadeBelastgunsplanDTO die Straßennamen von, wobei die Namen vom basisBelastungsplan
+     * Prio1 haben, die vom vergleichsBelastungsplan Prio2 und
+     * als default null.
+     *
+     * @param basisBelastungsplan Minuend-LadeBelastungsplanDTO
+     * @param vergleichsBelastungsplan Subtrahend-LadeBelastungsplanDTO
+     * @return Differenzwert-LadeBelastungsplanDTO
+     */
+    public static LadeBelastungsplanDTO calculateDifferenzdatenDTO(final LadeBelastungsplanDTO basisBelastungsplan,
+            final LadeBelastungsplanDTO vergleichsBelastungsplan) {
+
+        final LadeBelastungsplanDTO differenzBelastungsplanDTO = new LadeBelastungsplanDTO();
+        if (basisBelastungsplan.getValue1().isFilled()) {
+            differenzBelastungsplanDTO.setValue1(
+                    calculateDifferenzBelastungsplanData(
+                            basisBelastungsplan.getValue1(),
+                            vergleichsBelastungsplan.getValue1()));
+        } else {
+            differenzBelastungsplanDTO.setValue1(basisBelastungsplan.getValue1());
+        }
+        if (basisBelastungsplan.getValue2().isFilled()) {
+            differenzBelastungsplanDTO.setValue2(
+                    calculateDifferenzBelastungsplanData(
+                            basisBelastungsplan.getValue2(),
+                            vergleichsBelastungsplan.getValue2()));
+        } else {
+            differenzBelastungsplanDTO.setValue2(basisBelastungsplan.getValue2());
+        }
+        if (basisBelastungsplan.getValue3().isFilled()) {
+            differenzBelastungsplanDTO.setValue3(
+                    calculateDifferenzBelastungsplanData(
+                            basisBelastungsplan.getValue3(),
+                            vergleichsBelastungsplan.getValue3()));
+        } else {
+            differenzBelastungsplanDTO.setValue3(basisBelastungsplan.getValue3());
+        }
+
+        differenzBelastungsplanDTO.setKreisverkehr(basisBelastungsplan.isKreisverkehr());
+
+        final String[] streets = new String[8];
+
+        for (int i = 0; i < 8; i++) {
+            if (basisBelastungsplan.getStreets()[i] != null) {
+                streets[i] = basisBelastungsplan.getStreets()[i];
+            } else if (vergleichsBelastungsplan.getStreets()[i] != null) {
+                streets[i] = vergleichsBelastungsplan.getStreets()[i];
+            }
+        }
+
+        differenzBelastungsplanDTO.setStreets(streets);
+
+        return differenzBelastungsplanDTO;
+    }
+
+    public static boolean containsSortingIndexForCompleteDay(final Zeitintervall zeitintervall) {
+        return zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_KFZ)
+                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD)
+                || zeitintervall.getSortingIndex().equals(ZeitintervallSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_FUSS);
+    }
+
+    /**
+     * Ansprungsmethode, die unterscheidet, ob Differenzdaten berechnet werden müssen oder nicht
+     *
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity} und {@link Zeitintervall}e.
+     * @param options Die durch den User im Frontend gewählten Optionen.
+     * @return Die aufbreiteten Daten für das Belastungsplan.
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity}
+     *             * nicht aus den DBs extrahiert werden kann.
+     */
+    @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
+    public AbstractLadeBelastungsplanDTO<?> getBelastungsplanDTO(
+            final String zaehlungId,
+            final OptionsDTO options) throws DataNotFoundException {
+        log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
+        // überprüfung, ob ZaehlungEntity exisitert. Wenn nicht -> DataNotFoundException
+        final ZaehlungEntity zaehlung = findByZaehlungenId(zaehlungId);
+        final var zaehlart = zaehlung.getZaehlart();
+        if (BooleanUtils.isTrue(options.getDifferenzdatenDarstellen())
+                && options.getVergleichszaehlungsId() != null) {
+            if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
+                throw new UnsupportedOperationException("Differenzdatenvergleich nicht implementiert für Zählarten QJS, FJS und QU");
+            }
+            // überprüfung, ob ZaehlungEntity exisitert. Wenn nicht -> DataNotFoundException
+            findByZaehlungenId(options.getVergleichszaehlungsId());
+            log.info("ladeDifferenzdatenBelastungsplan für ZaehlungEntity {} aufgerufen", options.getVergleichszaehlungsId());
+            return this.getDifferenzdatenBelastungsplanDTO(zaehlungId, options);
+        } else {
+            return this.ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
+        }
+    }
+
+    /**
+     * Diese Methode führt die Datenaufbereitung für den Belastungsplan durch.
+     * <p>
+     * Als Basis zur Datenaufbereitung wird bei {@link OptionsDTO}#getZeitauswahl() vom Typ
+     * {@link LadeZaehldatenServiceMig#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} die
+     * Spitzenstunde des {@link OptionsDTO}#getZeitblock() verwendet. Ist der {@link Zeitblock#ZB_00_24}
+     * gewählt, so wird die Spitzenstunde des Tages verwendet.
+     * Ist bei {@link OptionsDTO}#getZeitauswahl() der Wert
+     * {@link LadeZaehldatenServiceMig#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
+     * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Verkehrsbeziehung}.
+     * <p>
+     * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die
+     * erste Dimension stellt die von Knotenarme dar. In der
+     * zweiten Dimesion werden alle nach Knotenarme vorgehalten. Die im Array hinterlegten Werte
+     * entsprechen somit den Verkehr fließend von einem KnotenarmEntity zu
+     * einem anderen oder den selben KnotenarmEntity.
+     *
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity} und {@link Zeitintervall}e.
+     * @param options Die durch den User im Frontend gewählten Optionen.
+     * @return Die aufbreiteten Daten für das Belastungsplan.
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
+     *             den DBs extrahiert werden kann.
+     */
+    public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
+            final OptionsDTO options) throws DataNotFoundException {
+        final ZaehlungEntity zaehlung = findByZaehlungenId(zaehlungId);
+        final List<Zeitintervall> zeitintervalle;
+        if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenServiceMig.ZEITAUSWAHL_SPITZENSTUNDE)) {
+            zeitintervalle = extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(zaehlung, options);
+        } else {
+            zeitintervalle = extractZeitintervalle(zaehlungId, options.getZeitblock());
+        }
+        return belastungsplanDataServiceFactoryMig.getBelastungsplanDataService(zaehlung).buildLadeBelastungsplanDTO(options, zaehlung, this.pkwEinheit,
+                zeitintervalle);
+    }
+
+    /**
+     * Lädt zwei zu vergleichende Zählungen als LadeBelastungsplanDTO, subtrahiert diese voneinander und
+     * gibt den daraus resultierenden LadeBelastungsplanDTO
+     * zurück.
+     *
+     * @param zaehlungId ID f. Basis-Belastungsplan
+     * @param options Optionen, in denen die ID für den Vergleichs-Belastungsplan vorhanden ist
+     * @return Differenzbelastungsplan
+     * @throws DataNotFoundException beim Laden der Zaehldaten aus der DB
+     */
+    public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
+            final OptionsDTO options) throws DataNotFoundException {
+        final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
+
+        // Fuer die zweite ZaehlungEntity muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
+        // der Vergleich auch klappt. Dies ist noetig, wenn zwei Zaehlungen mit unterschiedlicher Dauer verglichen
+        // werden (Es macht aber nichts, wenn man den Wert immer neu setzt).
+        // Stimmt die Zaehldauer aus den Options nicht mit der Zaehldauer aus der ZaehlungEntity ueberein, so
+        // liefert die Methode LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, options) ein falsches
+        // Ergebnis zurueck.
+        final ZaehlungEntity zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
+        options.setZaehldauer(zaehlung.getZaehldauer());
+
+        final LadeBelastungsplanDTO vergleichsBelastungsplan = castLadeBelastungsplanDTO(
+                ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(),
+                        options));
+
+        return calculateDifferenzdatenDTO(basisBelastungsplan, vergleichsBelastungsplan);
+    }
+
+    public List<Zeitintervall> extractZeitintervalle(
+            final String zaehlungId,
+            final Zeitblock zeitblock) {
+        return zeitintervallRepository
+                .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                        UUID.fromString(zaehlungId),
+                        zeitblock.getStart(),
+                        zeitblock.getEnd(),
+                        Set.of(zeitblock.getTypeZeitintervall()));
+    }
+
+    /**
+     * Diese Methode extrahiert je Bewegungsbeziehung die Zeitintervalle für die Zeitauswahl bezüglich
+     * Spitzenstunde.
+     * <p>
+     * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert.
+     * Diese Spitzenstunde dient mit der
+     * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als
+     * Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
+     * Zeitintervalle je Bewegungsbeziehung.
+     *
+     * @param zaehlung zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
+     * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
+     * @return der {@link Zeitintervall} der Spitzenstunde.
+     */
+    public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(
+            final ZaehlungEntity zaehlung,
+            final OptionsDTO options) {
+        final TypeZeitintervall chosenSpitzenstunde;
+        if (LadeZaehldatenServiceMig.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
+            chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;
+        } else if (LadeZaehldatenServiceMig.ZEITAUSWAHL_SPITZENSTUNDE_RAD.equals(options.getZeitauswahl())) {
+            chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_RAD;
+        } else {
+            chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_FUSS;
+        }
+        final var zaehlart = zaehlung.getZaehlart();
+        final List<Zeitintervall> spitzenstunden = ladeZaehldatenServiceMig.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
+                zaehlung.getId(),
+                zaehlart,
+                zaehlung.getKreisverkehr(),
+                options);
+        if (!spitzenstunden.isEmpty()) {
+
+            /*
+             * Wenn als Zeitblock der gesamte Tag gewählt wurde, liefert die Abfrage
+             * alle Spitzenstunden (für einzelne Zeitblöcke und die Tages‑Spitzenstunde).
+             * Für den Belastungsplan wird daraus die zuletzt in der Liste stehende
+             * Spitzenstunde (die Tages‑Spitzenstunde) verwendet.
+             *
+             * Wird ein bestimmter Teilzeitblock gewählt (nicht der gesamte Tag),
+             * enthält die Liste nur die relevante Spitzenstunde für diesen Block.
+             * Auch diese einzelne Spitzenstunde wird aus dem Ende der Liste entnommen.
+             */
+            final Zeitintervall spitzenstunde = spitzenstunden.getLast();
+
+            /*
+             * Extrahiert die 15‑minütigen Zeitintervalle, die zusammen die Spitzenstunde bilden,
+             * jeweils für jede Bewegungsbeziehung.
+             */
+            final List<Zeitintervall> zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung = zeitintervallRepository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                            zaehlung.getId(),
+                            spitzenstunde.getStartUhrzeit(),
+                            spitzenstunde.getEndeUhrzeit(),
+                            // Spitzenstunden werden immer auf Basis der 15-Minuten-Intervalle ermittelt.
+                            Set.of(TypeZeitintervall.STUNDE_VIERTEL));
+
+            /*
+             * Auf Grundlage der zuvor ermittelten 15‑minütigen Zeitintervalle,
+             * die zusammen die Spitzenstunde bilden,
+             * wird für jede Bewegungsbeziehung die zugehörige Spitzenstunde ermittelt.
+             * Die gefundenen Zeitintervalle werden anschließend angepasst (Start/Ende) und gefiltert.
+             */
+            return ZeitintervallGleitendeSpitzenstundeUtil
+                    .getGleitendeSpitzenstundenForEachBewegungsbeziehungForZeitblock(
+                            zaehlung.getId(),
+                            options.getZeitblock(),
+                            zaehlart,
+                            zeitintervalle15MinSpitzenstundeJeBewegungsbeziehung,
+                            Set.of(chosenSpitzenstunde))
+                    .stream()
+                    .peek(zeitintervall -> {
+                        zeitintervall.setStartUhrzeit(spitzenstunde.getStartUhrzeit());
+                        zeitintervall.setEndeUhrzeit(spitzenstunde.getEndeUhrzeit());
+                    })
+                    .filter(zeitintervall -> {
+                        /*
+                         * Erforderlich, da in Klasse {@link ZeitintervallSortingIndexUtil} immer jeweils für
+                         * alle Zeitblöcke eine Berechnung der Spitzenstunde durchgeführt wird.
+                         */
+                        final var zeitbloeckeContainingSpitzenstundeTag = Set.of(
+                                Zeitblock.ZB_00_24,
+                                Zeitblock.ZB_06_22,
+                                Zeitblock.ZB_06_19);
+                        if (zeitbloeckeContainingSpitzenstundeTag.contains(options.getZeitblock())) {
+                            return containsSortingIndexForCompleteDay(zeitintervall);
+                        } else {
+                            return !containsSortingIndexForCompleteDay(zeitintervall);
+                        }
+                    })
+                    .toList();
+        } else {
+            return List.of();
+        }
+    }
+
+    /**
+     * Auf Basis der Zaehlungs-Id im Parameter wird die ZaehlungEntity aus der DB extrahiert.
+     *
+     * @param zaehlungId Die Zaehlungs-ID für die {@link ZaehlungEntity}.
+     * @return die {@link ZaehlungEntity} zur Zaehlungs-ID.
+     * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
+     *             den DBs extrahiert werden kann.
+     */
+    public ZaehlungEntity findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
+        final Optional<ZaehlstelleEntity> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId));
+        if (zaehlstelleOptional.isEmpty()) {
+            throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
+        }
+        final Optional<ZaehlungEntity> zaehlungOptional = zaehlstelleOptional.get().getZaehlungen().stream()
+                .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(zaehlungId))
+                .findFirst();
+        if (zaehlungOptional.isEmpty()) {
+            throw new DataNotFoundException("Die Zählung " + zaehlungId + " wurde nicht gefunden");
+        }
+        return zaehlungOptional.get();
+    }
+
+    /**
+     * Erzeugt aus den beiden zu vergleichenden BelastungsplanDataDTO-Objekten ein
+     * Belastungsplandata-Objekt
+     *
+     * @param basis Basis BelastungsplanDataDTO
+     * @param vergleich Vergleich BelastungsplanDataDTO
+     * @return Differenz BelastungsplanDataDTO
+     */
+    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
+        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        belastungsplanData.setLabel(basis.getLabel());
+        belastungsplanData.setFilled(basis.isFilled());
+        belastungsplanData.setPercent(basis.isPercent());
+        belastungsplanData.setValues(BelastungsplanCalculator.subtractMatrice(basis.getValues(), vergleich.getValues()));
+
+        belastungsplanData.setSum(BelastungsplanCalculator.subtractSums(basis.getSum(), vergleich.getSum()));
+        belastungsplanData.setSumIn(BelastungsplanCalculator.subtractSums(basis.getSumIn(), vergleich.getSumIn()));
+        belastungsplanData.setSumOut(BelastungsplanCalculator.subtractSums(basis.getSumOut(), vergleich.getSumOut()));
+
+        return belastungsplanData;
+    }
+
+    private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
+        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
+            throw new IllegalStateException("Fehlhafter Datentyp der Belastungsplandaten: " + ladeBelastungsplanDTO.getClass());
+        return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    @ToString
+    public static class TupelTageswertZaehldatum {
+
+        private Boolean isTageswert;
+
+        private LadeZaehldatumDTO ladeZaehldatum;
+
+    }
+
+}

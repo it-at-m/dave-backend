@@ -4,6 +4,8 @@ import de.muenchen.dave.domain.dtos.CsvDTO;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.services.GenerateCsvServiceMig;
+import de.muenchen.dave.migrationespg.services.messstelle.GenerateCsvMstServiceMig;
 import de.muenchen.dave.services.GenerateCsvService;
 import de.muenchen.dave.services.messstelle.GenerateCsvMstService;
 import jakarta.validation.Valid;
@@ -34,8 +36,8 @@ public class GenerateCsvController {
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";
     private static final String REQUEST_PARAMETER_MESSSTELLE_ID = "messstelle_id";
 
-    private final GenerateCsvService generateCsvService;
-    private final GenerateCsvMstService generateCsvServiceMst;
+    private final GenerateCsvServiceMig generateCsvService;
+    private final GenerateCsvMstServiceMig generateCsvServiceMst;
 
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine CSV als String zurück.

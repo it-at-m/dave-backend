@@ -95,7 +95,7 @@ create table zaehlung (
                                    dienstleisterkennung varchar(255),
                                    jahreszeit varchar(255),
                                    kommentar varchar(255),
-                                   kreuzungsname varchar(255),
+                                   kreuzungsname text,
                                    projekt_name varchar(255),
                                    projekt_nummer varchar(255),
                                    quelle varchar(255) check (quelle in ('MANUALLY','DETECTOR','RADAR','VIDEO')),

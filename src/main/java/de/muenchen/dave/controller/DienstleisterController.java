@@ -1,10 +1,12 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
+import de.muenchen.dave.migrationespg.services.DienstleisterServiceMig;
 import de.muenchen.dave.services.DienstleisterService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,14 +23,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/dienstleister")
 public class DienstleisterController {
 
-    private final DienstleisterService dienstleisterService;
-
-    public DienstleisterController(final DienstleisterService dienstleisterService) {
-        this.dienstleisterService = dienstleisterService;
-    }
+    private final DienstleisterServiceMig dienstleisterService;
 
     /**
      * Rest-Endpunkt für das Speichern eines Dienstleister (für das Admin-Portal).
