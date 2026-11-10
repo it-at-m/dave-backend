@@ -731,14 +731,15 @@ public class SucheService {
     }
 
     /**
-     * Schließt Sonderzählungen nur für Benutzer mit der Rolle Anwender aus.
+     * Benutzer mit der Rolle Anwender dürfen keine Sonderzählungen sehen, alle anderen schon.
+     * Ein {@code null}-Kennzeichen gilt als keine Sonderzählung.
      *
      * @param zaehlung zu prüfende Zählung
      * @param isRoleAnwender ob der Benutzer Anwender ist
      * @return {@code true}, wenn die Zählung hinsichtlich Sonderzählungen erlaubt ist
      */
     public static boolean isSonderzaehlungErlaubt(final Zaehlung zaehlung, final boolean isRoleAnwender) {
-        return !isRoleAnwender || BooleanUtils.isNotTrue(zaehlung.getSonderzaehlung());
+        return !(isRoleAnwender && BooleanUtils.isTrue(zaehlung.getSonderzaehlung()));
     }
 
 }

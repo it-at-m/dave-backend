@@ -287,22 +287,22 @@ public class SucheServiceTest {
         assertThat(SucheService.isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin), is(expected));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] Anwender={0}, Sonderzählung={1}, erlaubt={2}")
     @CsvSource(
-        {
-                "false, false, true",
-                "false, true, true",
-                "true, false, true",
-                "true, true, false",
-                ", false, true",
-                ", true, true"
-        }
+            value = {
+                    "true, true, false",
+                    "true, false, true",
+                    "true, NULL, true",
+                    "false, true, true",
+                    "false, false, true",
+                    "false, NULL, true"
+            }, nullValues = "NULL"
     )
-    public void testIsSonderzaehlungErlaubt(final Boolean sonderzaehlung, final boolean isRoleAnwender, final boolean expected) {
+    public void testIsSonderzaehlungErlaubt(final boolean isRoleAnwender, final Boolean sonderzaehlung, final boolean expectedErlaubt) {
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setSonderzaehlung(sonderzaehlung);
 
-        assertThat(SucheService.isSonderzaehlungErlaubt(zaehlung, isRoleAnwender), is(expected));
+        assertThat(SucheService.isSonderzaehlungErlaubt(zaehlung, isRoleAnwender), is(expectedErlaubt));
     }
 
     private static Zaehlung createZaehlung(final Status status, final LocalDate datum) {
