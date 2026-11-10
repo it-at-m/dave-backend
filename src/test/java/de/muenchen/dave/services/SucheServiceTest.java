@@ -287,6 +287,24 @@ public class SucheServiceTest {
         assertThat(SucheService.isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin), is(expected));
     }
 
+    @ParameterizedTest
+    @CsvSource(
+        {
+                "false, false, true",
+                "false, true, true",
+                "true, false, true",
+                "true, true, false",
+                ", false, true",
+                ", true, true"
+        }
+    )
+    public void testIsSonderzaehlungErlaubt(final Boolean sonderzaehlung, final boolean isRoleAnwender, final boolean expected) {
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setSonderzaehlung(sonderzaehlung);
+
+        assertThat(SucheService.isSonderzaehlungErlaubt(zaehlung, isRoleAnwender), is(expected));
+    }
+
     private static Zaehlung createZaehlung(final Status status, final LocalDate datum) {
         final Zaehlung zaehlung = new Zaehlung();
         zaehlung.setStatus(status.name());

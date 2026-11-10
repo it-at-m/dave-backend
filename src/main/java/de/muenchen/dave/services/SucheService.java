@@ -423,7 +423,7 @@ public class SucheService {
                                 // Fachadmins dürfen zusätzlich Zählungen im Status ACCOMPLISHED sehen.
                                 .filter(zaehlung -> isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin))
                                 // Alle Zaehlungen ausfiltern, die Sonderzaehlungen sind, wenn es sich um einen Anwender handelt
-                                .filter(zaehlung -> !isRoleAnwender || !zaehlung.getSonderzaehlung())
+                                .filter(zaehlung -> isSonderzaehlungErlaubt(zaehlung, isRoleAnwender))
                                 .collect(Collectors.toList())));
         // Alle Zählstelle ausfiltern, die keine Zaehlungen mehr enthalten
         return zaehlstellen.stream()
@@ -728,6 +728,17 @@ public class SucheService {
         final var zaehlungStatus = zaehlung.getStatus();
         return Status.ACTIVE.name().equalsIgnoreCase(zaehlungStatus)
                 || (isRoleAdmin && Status.ACCOMPLISHED.name().equalsIgnoreCase(zaehlungStatus));
+    }
+
+    /**
+     * Schließt Sonderzählungen nur für Benutzer mit der Rolle Anwender aus.
+     *
+     * @param zaehlung zu prüfende Zählung
+     * @param isRoleAnwender ob der Benutzer Anwender ist
+     * @return {@code true}, wenn die Zählung hinsichtlich Sonderzählungen erlaubt ist
+     */
+    public static boolean isSonderzaehlungErlaubt(final Zaehlung zaehlung, final boolean isRoleAnwender) {
+        return !isRoleAnwender || BooleanUtils.isNotTrue(zaehlung.getSonderzaehlung());
     }
 
 }
