@@ -14,6 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 /**
  * Entity-Klasse für Zählstellen (Migration von Elasticsearch zu PostgreSQL).
@@ -64,6 +67,11 @@ public class ZaehlstelleEntity extends BaseEntity {
 
     @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
     private List<String> customSuchwoerter;
+
+    @JdbcTypeCode(SqlTypes.OTHER)
+    @Column(name = "suchwoerter_neu", columnDefinition = "tsvector")
+    @ColumnTransformer(write = "to_tsvector('simple'::regconfig, ?)")
+    private String suchwoerterNeu;
 
     @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinColumn(name = "zaehlstelle_id", referencedColumnName = "id")
