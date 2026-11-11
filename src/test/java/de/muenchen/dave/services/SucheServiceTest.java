@@ -3,11 +3,14 @@ package de.muenchen.dave.services;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.time.LocalDate;
@@ -20,10 +23,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Slf4j
-public class SucheServiceTests {
+public class SucheServiceTest {
 
     private final SucheService service = new SucheService(
             null,
@@ -186,6 +192,124 @@ public class SucheServiceTests {
         // Test mit falschem Text
         Optional<Zaehlung> optionalZaehlung5 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foobar Bla");
         assertThat(optionalZaehlung5.isPresent(), is(false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungOhneZaehlungen(final boolean isRoleAdmin) {
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(null, isRoleAdmin), is(nullValue()));
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(), isRoleAdmin), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungOhneErlaubtenStatus(final boolean isRoleAdmin) {
+        final List<Zaehlung> zaehlungen = List.of(
+                createZaehlung(Status.CREATED, LocalDate.of(2025, 1, 1)),
+                createZaehlung(Status.INACTIVE, LocalDate.of(2025, 2, 1)));
+
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(zaehlungen, isRoleAdmin), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungMitEinzelnerAktiverZaehlung(final boolean isRoleAdmin) {
+        final Zaehlung zaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
+
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(zaehlung), isRoleAdmin), is(sameInstance(zaehlung)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungMitEinzelnerAbgeschlossenerZaehlung(final boolean isRoleAdmin) {
+        final Zaehlung zaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
+
+        if (isRoleAdmin) {
+            assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(zaehlung), true), is(sameInstance(zaehlung)));
+        } else {
+            assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(zaehlung), false), is(nullValue()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungAusUnsortierterListe(final boolean isRoleAdmin) {
+        final Zaehlung aeltereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
+        final Zaehlung neuereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
+        final Zaehlung abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 3, 1));
+        final Zaehlung inaktiveZaehlung = createZaehlung(Status.INACTIVE, LocalDate.of(2025, 4, 1));
+        final List<Zaehlung> zaehlungen = List.of(
+                neuereAktiveZaehlung, inaktiveZaehlung, aeltereAktiveZaehlung, abgeschlosseneZaehlung);
+        final Zaehlung expected = isRoleAdmin ? abgeschlosseneZaehlung : neuereAktiveZaehlung;
+
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(zaehlungen, isRoleAdmin), is(sameInstance(expected)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    public void testGetNeuesteErlaubteZaehlungBevorzugtNeuereAktiveZaehlung(final boolean isRoleAdmin) {
+        final Zaehlung abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
+        final Zaehlung aktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
+
+        assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(aktiveZaehlung, abgeschlosseneZaehlung), isRoleAdmin),
+                is(sameInstance(aktiveZaehlung)));
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        {
+                "ACTIVE, false, true",
+                "ACTIVE, true, true",
+                "ACCOMPLISHED, false, false",
+                "ACCOMPLISHED, true, true",
+                "CREATED, false, false",
+                "CREATED, true, false",
+                "INSTRUCTED, false, false",
+                "INSTRUCTED, true, false",
+                "COUNTING, false, false",
+                "COUNTING, true, false",
+                "CORRECTION, false, false",
+                "CORRECTION, true, false",
+                "INACTIVE, false, false",
+                "INACTIVE, true, false",
+                "active, false, true",
+                "aCtIvE, true, true",
+                "accomplished, false, false",
+                "aCcOmPlIsHeD, true, true",
+                "UNKNOWN, false, false",
+                "UNKNOWN, true, false"
+        }
+    )
+    public void testIsZaehlungsstatusErlaubt(final String status, final boolean isRoleAdmin, final boolean expected) {
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setStatus(status);
+
+        assertThat(SucheService.isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin), is(expected));
+    }
+
+    @ParameterizedTest(name = "[{index}] Anwender={0}, Sonderzählung={1}, erlaubt={2}")
+    @CsvSource(
+            value = {
+                    "true, true, false",
+                    "true, false, true",
+                    "true, NULL, true",
+                    "false, true, true",
+                    "false, false, true",
+                    "false, NULL, true"
+            }, nullValues = "NULL"
+    )
+    public void testIsSonderzaehlungErlaubt(final boolean isRoleAnwender, final Boolean sonderzaehlung, final boolean expectedErlaubt) {
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setSonderzaehlung(sonderzaehlung);
+
+        assertThat(SucheService.isSonderzaehlungErlaubt(zaehlung, isRoleAnwender), is(expectedErlaubt));
+    }
+
+    private static Zaehlung createZaehlung(final Status status, final LocalDate datum) {
+        final Zaehlung zaehlung = new Zaehlung();
+        zaehlung.setStatus(status.name());
+        zaehlung.setDatum(datum);
+        return zaehlung;
     }
 
 }
