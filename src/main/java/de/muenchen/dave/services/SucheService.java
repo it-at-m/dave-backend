@@ -230,7 +230,13 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen
      * @return passende Zaehl-/Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{#p0, #p1, @securityContextInformationExtractorService.isFachadmin()}")
+    @Cacheable(
+            value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL, key = "{" +
+                    "#p0, " +
+                    "#p1, " +
+                    "@securityContextInformationExtractorService.isFachadmin(), " +
+                    "@securityContextInformationExtractorService.isAnwender()}"
+    )
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarteDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
@@ -261,7 +267,14 @@ public class SucheService {
      *            sonst {@code false}
      * @return Karten-DTOs der passenden Zähl- und Messstellen
      */
-    @Cacheable(value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{#p0, #p1, #p2, @securityContextInformationExtractorService.isFachadmin()}")
+    @Cacheable(
+            value = CachingConfiguration.SUCHE_ERHEBUNGSSTELLE, key = "{" +
+                    "#p0, " +
+                    "#p1, " +
+                    "#p2, " +
+                    "@securityContextInformationExtractorService.isFachadmin(), " +
+                    "@securityContextInformationExtractorService.isAnwender()}"
+    )
     public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
