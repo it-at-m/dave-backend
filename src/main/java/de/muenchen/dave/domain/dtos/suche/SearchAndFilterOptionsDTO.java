@@ -15,4 +15,5 @@ public class SearchAndFilterOptionsDTO {
     private boolean searchInZaehlstellen;
     @NotNull
     private List<Verkehrsart> messstelleVerkehrsart;
+    // TODO: extend
 }
