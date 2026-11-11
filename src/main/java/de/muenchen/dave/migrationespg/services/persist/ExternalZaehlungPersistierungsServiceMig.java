@@ -5,12 +5,12 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.LaengsverkehrEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.QuerungsverkehrEntity;
@@ -22,9 +22,9 @@ import de.muenchen.dave.migrationespg.domain.mapper.KnotenarmMapperMig;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
-import de.muenchen.dave.services.security.AuthorizationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +47,7 @@ public class ExternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
             final ZeitintervallMapper zeitintervallMapper,
             final KnotenarmMapperMig knotenarmMapperMig,
             final SanitizationService sanitizationService,
-            final AuthorizationService authorizationService) {
+            final AuthorizationServiceMig authorizationService) {
         super(indexService, zeitintervallPersistierungsServiceMig, zeitintervallMapper, sanitizationService, authorizationService);
         this.knotenarmMapperMig = knotenarmMapperMig;
     }
@@ -69,7 +69,7 @@ public class ExternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
 
         final ZaehlstelleEntity zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(zaehlungDto.getId());
         for (final ZaehlungEntity zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
-            if (zaehlung.getId().equals(UUID.fromString(zaehlungDto.getId()))) {
+            if (zaehlung.getId().equals(zaehlungDto.getId())) {
                 // Datum, Zählart, Wetter, Zaehlsituation und ZaehlsituationErweitert koennen vom Dienstleister berarbeitet werden.
                 zaehlung.setDatum(zaehlungDto.getDatum());
                 zaehlung.setZaehlart(Zaehlart.valueOf(zaehlungDto.getZaehlart()));

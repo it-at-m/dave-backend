@@ -1,20 +1,19 @@
 package de.muenchen.dave.migrationespg.services.ladezaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
-import de.muenchen.dave.domain.PkwEinheit;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
-import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.migrationespg.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import java.math.BigDecimal;
@@ -55,12 +54,12 @@ public class LadeZaehldatenServiceMig {
     private static final Set<Integer> SPITZENSTUNDEN_BLOCK_SORTING_INDEX = new HashSet<>();
 
     private final ZaehlstelleIndexServiceMig indexService;
-    private final ZaehldatenExtractorService zaehldatenExtractorService;
+    private final ZaehldatenExtractorServiceMig zaehldatenExtractorService;
         private final PkwEinheit pkwEinheit;
 
     public LadeZaehldatenServiceMig(
             final ZaehlstelleIndexServiceMig indexService,
-            final ZaehldatenExtractorService zaehldatenExtractorService,
+            final ZaehldatenExtractorServiceMig zaehldatenExtractorService,
             final PkwEinheit pkwEinheit) {
         this.indexService = indexService;
         this.zaehldatenExtractorService = zaehldatenExtractorService;
@@ -306,7 +305,7 @@ public class LadeZaehldatenServiceMig {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
         final List<Zeitintervall> zeitintervalle;
-        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId.toString());
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
         final var zaehlart = zaehlung.getZaehlart();
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);

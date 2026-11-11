@@ -1,24 +1,24 @@
 package de.muenchen.dave.migrationespg.services.pdfgenerator;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
+import de.muenchen.dave.migrationespg.domain.mapper.ZeitreiheTableOptionsMapperMig;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
-import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapper;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTableRow;
 import de.muenchen.dave.migrationespg.domain.pdf.templates.ZeitreihePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
-import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenZeitreiheServiceMig;
 import de.muenchen.dave.util.DomainValues;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,14 +32,14 @@ public class FillZeitreihePdfBeanServiceMig {
     public static final DateTimeFormatter ZUSATZINFORMATIONEN_ZEITREIHE_DATETIMEFORMATTER_MMMM_YYYY = DateTimeFormatter.ofPattern("MMMM yyyy:");
     private final ZaehlstelleIndexServiceMig indexService;
     private final ProcessZaehldatenZeitreiheServiceMig processZaehldatenZeitreiheServiceMig;
-    private final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
+    private final ZeitreiheTableOptionsMapperMig zeitreiheTableOptionsMapperMig;
 
     public FillZeitreihePdfBeanServiceMig(final ZaehlstelleIndexServiceMig indexService,
                                           final ProcessZaehldatenZeitreiheServiceMig processZaehldatenZeitreiheServiceMig,
-                                          final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper) {
+                                          final ZeitreiheTableOptionsMapperMig zeitreiheTableOptionsMapperMig) {
         this.indexService = indexService;
         this.processZaehldatenZeitreiheServiceMig = processZaehldatenZeitreiheServiceMig;
-        this.zeitreiheTableOptionsMapper = zeitreiheTableOptionsMapper;
+        this.zeitreiheTableOptionsMapperMig = zeitreiheTableOptionsMapperMig;
     }
 
     /**
@@ -86,8 +86,8 @@ public class FillZeitreihePdfBeanServiceMig {
      * @return Die befüllte ZeitreihePdf
      * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity/Zaehldaten gefunden wurden
      */
-    public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final String zaehlungId, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
+    public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final UUID zaehlungId, final String chartAsBase64Png,
+                                         final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
         final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
 
@@ -103,7 +103,7 @@ public class FillZeitreihePdfBeanServiceMig {
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
         final ZeitreiheTable zeitreiheTable = new ZeitreiheTable();
-        zeitreiheTableOptionsMapper.options2zeitreiheTable(zeitreiheTable, options);
+        zeitreiheTableOptionsMapperMig.options2zeitreiheTable(zeitreiheTable, options);
         zeitreiheTable.setZeitreiheTableRows(getZeitreiheTableDataForPdf(zaehlungId, options));
         zeitreihePdf.setZeitreiheTable(zeitreiheTable);
 
@@ -123,7 +123,7 @@ public class FillZeitreihePdfBeanServiceMig {
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
-    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDTO options) throws DataNotFoundException {
+    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final UUID zaehlungId, final OptionsDTO options) throws DataNotFoundException {
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheServiceMig.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {

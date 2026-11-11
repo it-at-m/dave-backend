@@ -1,7 +1,7 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
@@ -49,14 +49,14 @@ public class ProcessZaehldatenServiceMig {
      * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
-    public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
+    public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final UUID zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
 
         log.debug("Lade Zaehldaten for Table");
         final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
         final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
-                UUID.fromString(zaehlungId),
+                zaehlungId,
                 options);
         processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
 

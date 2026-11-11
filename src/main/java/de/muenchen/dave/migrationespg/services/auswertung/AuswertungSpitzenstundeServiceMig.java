@@ -2,7 +2,7 @@ package de.muenchen.dave.migrationespg.services.auswertung;
 
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -76,7 +76,7 @@ public class AuswertungSpitzenstundeServiceMig {
             final Zeitblock zeitblock,
             final String zeitauswahl) throws DataNotFoundException, IncorrectZeitauswahlException {
         final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlstellenNummer, zaehlart, zaehldatum);
-        final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(String.valueOf(zaehlung.getId()));
+        final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlung.getId());
         final List<LadeAuswertungSpitzenstundeDTO> ladeAuswertungSpitzenstunden = getSpitzenstunden(
                 zaehlung,
                 zeitblock,

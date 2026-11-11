@@ -3,12 +3,12 @@ package de.muenchen.dave.migrationespg.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
@@ -21,9 +21,9 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
-import de.muenchen.dave.services.security.AuthorizationService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -55,13 +54,13 @@ public abstract class ZaehlungPersistierungsServiceMig {
 
     protected final SanitizationService sanitizationService;
 
-    protected final AuthorizationService authorizationService;
+    protected final AuthorizationServiceMig authorizationService;
 
     public ZaehlungPersistierungsServiceMig(final ZaehlstelleIndexServiceMig indexService,
                                             final ZeitintervallPersistierungsServiceMig zeitintervallPersistierungsServiceMig,
                                             final ZeitintervallMapper zeitintervallMapper,
                                             final SanitizationService sanitizationService,
-                                            final AuthorizationService authorizationService) {
+                                            final AuthorizationServiceMig authorizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsServiceMig = zeitintervallPersistierungsServiceMig;
         this.zeitintervallMapper = zeitintervallMapper;
@@ -87,7 +86,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
         authorizationService.assertCanModifyZaehlung(updateStatusDto.getZaehlungId());
 
         for (final ZaehlungEntity zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
-            if (zaehlung.getId().equals(UUID.fromString(updateStatusDto.getZaehlungId()))) {
+            if (zaehlung.getId().equals(updateStatusDto.getZaehlungId())) {
                 zaehlung.setStatus(Status.valueOf(updateStatusDto.getStatus()));
                 // WIrd eine ZaehlungEntity beauftragt, so wird die dienstleiserkennung gespeichert
                 if (zaehlung.getStatus().equals(Status.INSTRUCTED)) {

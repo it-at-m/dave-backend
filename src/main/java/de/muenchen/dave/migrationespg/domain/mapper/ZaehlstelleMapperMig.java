@@ -3,7 +3,7 @@ package de.muenchen.dave.migrationespg.domain.mapper;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;

@@ -3,7 +3,6 @@ package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -13,13 +12,14 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.VerkehrsbeziehungEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
+import de.muenchen.dave.migrationespg.services.ladezaehldaten.ZaehldatenExtractorServiceMig;
 import de.muenchen.dave.services.ZeitauswahlService;
-import de.muenchen.dave.services.ladezaehldaten.ZaehldatenExtractorService;
 import de.muenchen.dave.services.pdfgenerator.FillPdfBeanService;
 import de.muenchen.dave.util.ChartLegendUtil;
 import java.math.BigDecimal;
@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class ProcessZaehldatenZeitreiheServiceMig {
     public static final String MEHRERE_VERKEHRSARTEN = "mehrere Verkehrsarten";
     public static final String NICHT_VORH = "\n(%s nicht vorh.)";
 
-    private final ZaehldatenExtractorService zaehldatenExtractorService;
+    private final ZaehldatenExtractorServiceMig zaehldatenExtractorService;
 
     private final ZaehlstelleIndexServiceMig indexService;
 
@@ -284,7 +285,7 @@ public class ProcessZaehldatenZeitreiheServiceMig {
      * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDTO options)
+    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final UUID currentZaehlungId, final OptionsDTO options)
             throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));
         final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);

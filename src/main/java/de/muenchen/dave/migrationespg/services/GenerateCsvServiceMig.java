@@ -3,7 +3,7 @@ package de.muenchen.dave.migrationespg.services;
 
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.CsvDTO;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
@@ -48,8 +48,8 @@ public class GenerateCsvServiceMig {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDTO generateDatentabelleCsv(String zaehlungId, OptionsDTO options) throws DataNotFoundException {
-        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options).getZaehldaten();
+    public CsvDTO generateDatentabelleCsv(UUID zaehlungId, OptionsDTO options) throws DataNotFoundException {
+        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(zaehlungId, options).getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()
@@ -355,7 +355,7 @@ public class GenerateCsvServiceMig {
      * @return CsvMetaObject mit der Zählstelle und der Zählung
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvMetaObject getCsvMetaObject(final String zaehlungId) throws DataNotFoundException {
+    public CsvMetaObject getCsvMetaObject(final UUID zaehlungId) throws DataNotFoundException {
         final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
         final CsvMetaObject metaObject = new CsvMetaObject();

@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.services.pdfgenerator;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -24,7 +24,7 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.DatentabellePdfZaehldatumMapper;
-import de.muenchen.dave.domain.mapper.DiagrammPdfOptionsMapper;
+import de.muenchen.dave.migrationespg.domain.mapper.DiagrammPdfOptionsMapperMig;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
@@ -48,6 +48,7 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
+import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.migrationespg.services.messstelle.MessstelleServiceMig;
 import de.muenchen.dave.services.messstelle.MesswerteService;
@@ -115,8 +116,8 @@ public class FillPdfBeanServiceMig {
     public static final String VERKEHRSART_TEXT_MEHRZAHL = "Verkehrsarten";
 
     private final ZaehlstelleIndexServiceMig indexService;
-    private final LadeZaehldatenService ladeZaehldatenService;
-    private final DiagrammPdfOptionsMapper diagrammPdfOptionsMapper;
+    private final LadeZaehldatenServiceMig ladeZaehldatenService;
+    private final DiagrammPdfOptionsMapperMig diagrammPdfOptionsMapperMig;
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
     private final MessstelleServiceMig messstelleServiceMig;
@@ -588,7 +589,7 @@ public class FillPdfBeanServiceMig {
      * @return Chart-Title as String
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
      */
-    public String createChartTitleZeitauswahl(final String zaehlungId, final OptionsDTO optionsDTO) throws DataNotFoundException {
+    public String createChartTitleZeitauswahl(final UUID zaehlungId, final OptionsDTO optionsDTO) throws DataNotFoundException {
         final StringBuilder chartTitle = new StringBuilder();
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
@@ -608,7 +609,7 @@ public class FillPdfBeanServiceMig {
                         chartTitle.append(StringUtils.SPACE);
 
                         // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
-                        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId),
+                        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(zaehlungId,
                                 optionsDTO);
                         final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
 
@@ -698,7 +699,7 @@ public class FillPdfBeanServiceMig {
      * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine ZaehlstelleEntity oder ZaehlungEntity gefunden wurde
      */
-    public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
+    public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final UUID zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
         final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
@@ -751,7 +752,7 @@ public class FillPdfBeanServiceMig {
      * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine ZaehlstelleEntity oder ZaehlungEntity gefunden wurde
      */
-    public void fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
+    public void fillGangliniePdf(final GangliniePdf gangliniePdf, final UUID zaehlungId,
             final OptionsDTO options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
         final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
@@ -770,7 +771,7 @@ public class FillPdfBeanServiceMig {
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
+        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(zaehlungId, options);
         final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
         final List<GanglinieTable> gtList = new ArrayList<>();
 
@@ -779,7 +780,7 @@ public class FillPdfBeanServiceMig {
         GanglinieTable gt = new GanglinieTable();
 
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-        this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options);
+        this.diagrammPdfOptionsMapperMig.options2gangliniePdf(gangliniePdf, options);
 
         for (final LadeZaehldatumDTO lzDto : ladeZaehldatumDTOS) {
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
@@ -881,7 +882,7 @@ public class FillPdfBeanServiceMig {
         GanglinieTable gt = new GanglinieTable();
 
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-        this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
+        this.diagrammPdfOptionsMapperMig.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
         for (final LadeMesswerteDTO messwert : messwerteDataTable) {
 
@@ -995,7 +996,7 @@ public class FillPdfBeanServiceMig {
             gesamtauswertungPdf.setChart(chartAsBase64Png);
 
             // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
-            this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
+            this.diagrammPdfOptionsMapperMig.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
             final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
@@ -1133,7 +1134,7 @@ public class FillPdfBeanServiceMig {
      * @param department Organisationseinheit des Benutzers
      * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity gefunden wurde
      */
-    public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
+    public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final UUID zaehlungId,
             final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
             final String department) throws DataNotFoundException {
         final ZaehlstelleEntity zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
@@ -1193,8 +1194,8 @@ public class FillPdfBeanServiceMig {
      * @return Befülltes Objekt vom Typ {@link DatentabellePdfZaehldaten}.
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
      */
-    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final OptionsDTO options, final String zaehlungId) throws DataNotFoundException {
-        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final OptionsDTO options, final UUID zaehlungId) throws DataNotFoundException {
+        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(zaehlungId, options);
         final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden

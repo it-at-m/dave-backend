@@ -12,6 +12,7 @@ import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.services.email.EmailAddressService;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -65,7 +66,7 @@ public class EmailSendServiceMig {
         String link = "";
 
         // Zählung und Zählstelle werden für zusätzliche Informationen für den Inhalt der EMail benötigt
-        final String zaehlungId = message.getZaehlungId().toString();
+        final UUID zaehlungId = message.getZaehlungId();
         final ZaehlungEntity zaehlung;
         final ZaehlstelleEntity zaehlstelle;
         try {

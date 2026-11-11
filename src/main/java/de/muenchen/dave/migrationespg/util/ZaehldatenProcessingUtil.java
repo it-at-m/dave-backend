@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.util;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;

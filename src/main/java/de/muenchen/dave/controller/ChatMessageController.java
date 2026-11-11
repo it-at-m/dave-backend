@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.migrationespg.services.ChatMessageServiceMig;
@@ -100,7 +100,7 @@ public class ChatMessageController {
             @RequestParam(value = CALLING_PARTICIPANT_ID) final Integer participantId) {
         log.debug("Update der unread Messages in Zählung {} für Participant {}", zaehlungId, participantId);
         try {
-            chatMessageService.updateUnreadMessages(zaehlungId, participantId);
+            chatMessageService.updateUnreadMessages(UUID.fromString(zaehlungId), participantId);
             return ResponseEntity.noContent().build();
         } catch (BrokenInfrastructureException brokenInfrastructureException) {
             log.error("Fehler im ChatMessageController, UnreadMessages Status konnte nicht gesetzt werden: {}", zaehlungId, brokenInfrastructureException);

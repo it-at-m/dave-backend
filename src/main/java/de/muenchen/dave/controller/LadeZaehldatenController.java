@@ -1,12 +1,13 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenServiceMig;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class LadeZaehldatenController {
         try {
             log.info("ladeZaehldatenProcessed für Zaehlung {} aufgerufen", zaehlungId);
             final LadeProcessedZaehldatenDTO processedZaehldaten = processZaehldatenService.ladeProcessedZaehldaten(
-                    zaehlungId,
+                    UUID.fromString(zaehlungId),
                     options);
             log.info("laden der Daten abgeschlossen.");
             log.debug("Zähldaten: {}", processedZaehldaten.toString());

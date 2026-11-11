@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -9,13 +9,12 @@ import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.pdfgenerator.GeneratePdfServiceMig;
 import de.muenchen.dave.migrationespg.services.pdfgenerator.ReportServiceMig;
-import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
-import de.muenchen.dave.services.pdfgenerator.ReportService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -87,13 +86,13 @@ public class GeneratePdfController {
         try {
             final byte[] pdf;
             if (TYPE_BELASTUNGSPLAN.equalsIgnoreCase(charttype)) {
-                pdf = generatePdfService.generateBelastungsplanPdf(zaehlungId, options, chartAsBase64Png, department);
+                pdf = generatePdfService.generateBelastungsplanPdf(UUID.fromString(zaehlungId), options, chartAsBase64Png, department);
             } else if (TYPE_GANGLINIE.equalsIgnoreCase(charttype)) {
-                pdf = generatePdfService.generateGangliniePdf(zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
+                pdf = generatePdfService.generateGangliniePdf(UUID.fromString(zaehlungId), options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
             } else if (TYPE_DATENTABELLE.equalsIgnoreCase(charttype)) {
-                pdf = generatePdfService.generateDatentabellePdf(zaehlungId, options, schematischeUebersichtAsBase64Png, department);
+                pdf = generatePdfService.generateDatentabellePdf(UUID.fromString(zaehlungId), options, schematischeUebersichtAsBase64Png, department);
             } else if (TYPE_ZEITREIHE.equalsIgnoreCase(charttype)) {
-                pdf = generatePdfService.generateZeitreihePdf(zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
+                pdf = generatePdfService.generateZeitreihePdf(UUID.fromString(zaehlungId), options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
             } else {
                 throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, charttype + " nicht implementiert.");
             }

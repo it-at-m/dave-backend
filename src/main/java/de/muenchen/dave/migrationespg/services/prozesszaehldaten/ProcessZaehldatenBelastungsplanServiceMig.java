@@ -4,7 +4,7 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
@@ -126,7 +126,7 @@ public class ProcessZaehldatenBelastungsplanServiceMig {
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
     public AbstractLadeBelastungsplanDTO<?> getBelastungsplanDTO(
-            final String zaehlungId,
+            final UUID zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
         // überprüfung, ob ZaehlungEntity exisitert. Wenn nicht -> DataNotFoundException
@@ -169,7 +169,7 @@ public class ProcessZaehldatenBelastungsplanServiceMig {
      * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
      *             den DBs extrahiert werden kann.
      */
-    public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
+    public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final UUID zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         final ZaehlungEntity zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
@@ -192,7 +192,7 @@ public class ProcessZaehldatenBelastungsplanServiceMig {
      * @return Differenzbelastungsplan
      * @throws DataNotFoundException beim Laden der Zaehldaten aus der DB
      */
-    public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
+    public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final UUID zaehlungId,
             final OptionsDTO options) throws DataNotFoundException {
         final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
 
@@ -213,11 +213,11 @@ public class ProcessZaehldatenBelastungsplanServiceMig {
     }
 
     public List<Zeitintervall> extractZeitintervalle(
-            final String zaehlungId,
+            final UUID zaehlungId,
             final Zeitblock zeitblock) {
         return zeitintervallRepository
                 .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
-                        UUID.fromString(zaehlungId),
+                        zaehlungId,
                         zeitblock.getStart(),
                         zeitblock.getEnd(),
                         Set.of(zeitblock.getTypeZeitintervall()));
@@ -327,8 +327,8 @@ public class ProcessZaehldatenBelastungsplanServiceMig {
      * @throws DataNotFoundException falls die {@link ZaehlstelleEntity} oder die {@link ZaehlungEntity} nicht aus
      *             den DBs extrahiert werden kann.
      */
-    public ZaehlungEntity findByZaehlungenId(final String zaehlungId) throws DataNotFoundException {
-        final Optional<ZaehlstelleEntity> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId));
+    public ZaehlungEntity findByZaehlungenId(final UUID zaehlungId) throws DataNotFoundException {
+        final Optional<ZaehlstelleEntity> zaehlstelleOptional = zaehlstelleIndex.findByZaehlungenId(zaehlungId);
         if (zaehlstelleOptional.isEmpty()) {
             throw new DataNotFoundException("Die Zählstelle für Zählung " + zaehlungId + " wurde nicht gefunden");
         }

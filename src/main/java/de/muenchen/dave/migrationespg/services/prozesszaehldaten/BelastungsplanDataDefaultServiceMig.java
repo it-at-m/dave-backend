@@ -3,7 +3,7 @@ package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;

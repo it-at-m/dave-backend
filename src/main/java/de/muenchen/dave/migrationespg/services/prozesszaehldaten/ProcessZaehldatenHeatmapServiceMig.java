@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;

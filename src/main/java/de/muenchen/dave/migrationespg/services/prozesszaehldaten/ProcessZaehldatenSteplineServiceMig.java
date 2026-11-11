@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.services.prozesszaehldaten;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;

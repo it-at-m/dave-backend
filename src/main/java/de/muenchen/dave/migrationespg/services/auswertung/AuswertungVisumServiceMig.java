@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.services.auswertung;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
@@ -16,7 +16,6 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
 import de.muenchen.dave.migrationespg.util.ZaehldatenProcessingUtil;
 import de.muenchen.dave.migrationespg.repositories.relationaldb.ZaehlstellenIndexRepository;
-import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

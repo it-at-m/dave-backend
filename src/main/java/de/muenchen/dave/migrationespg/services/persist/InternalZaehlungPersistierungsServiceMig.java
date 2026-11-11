@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
@@ -26,14 +26,15 @@ import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
-import de.muenchen.dave.services.security.AuthorizationService;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -55,7 +56,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
             final ZeitintervallMapper zeitintervallMapper,
             final PkwEinheitMapper pkwEinheitMapper,
             final SanitizationService sanitizationService,
-            final AuthorizationService authorizationService) {
+            final AuthorizationServiceMig authorizationService) {
         super(indexService, zeitintervallPersistierungsServiceMig, zeitintervallMapper, sanitizationService, authorizationService);
         this.pkwEinheitMapper = pkwEinheitMapper;
         this.pkwEinheitRepository = pkwEinheitRepository;
@@ -120,7 +121,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
 
         // Rückgabe der ZaehlungsId
         final var backendIdDto = new BackendIdDTO();
-        backendIdDto.setId(String.valueOf(zaehlung.getId()));
+        backendIdDto.setId(zaehlung.getId());
         return backendIdDto;
     }
 
@@ -344,7 +345,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
         return this.indexService.getOpenZaehlungen();
     }
 
-    public BackendIdDTO updateDienstleisterkennung(final String zaehlungId, final DienstleisterDTO dienstleisterDTO)
+    public BackendIdDTO updateDienstleisterkennung(final UUID zaehlungId, final DienstleisterDTO dienstleisterDTO)
             throws DataNotFoundException, BrokenInfrastructureException {
         final BackendIdDTO backendIdDto = new BackendIdDTO();
 

@@ -8,9 +8,10 @@ import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.Laengsverke
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.QuerungsverkehrEntity;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
+import de.muenchen.dave.migrationespg.services.messstelle.RoundingServiceMig;
 import de.muenchen.dave.services.messstelle.RoundingService;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -154,7 +155,7 @@ public final class MappingUtil {
             // Zwischenergebnisse in lokalen Variablen
             final boolean isTageswert = LadeZaehldatenServiceMig.isZeitintervallForTageswert(zi, options);
             final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenServiceMig.mapToZaehldatum(zi, pkwEinheit, options);
-            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
+            final LadeZaehldatumDTO roundedZaehldatum = RoundingServiceMig.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
 
             final ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanServiceMig.TupelTageswertZaehldatum(
                     isTageswert, roundedZaehldatum);

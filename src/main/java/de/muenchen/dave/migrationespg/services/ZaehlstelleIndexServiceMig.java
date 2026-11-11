@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
@@ -298,9 +298,9 @@ public class ZaehlstelleIndexServiceMig {
      * @param status boolean
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public void setUnreadMessagesInZaehlungForParticipant(final String zaehlungId, final Participant participant, final Boolean status)
+    public void setUnreadMessagesInZaehlungForParticipant(final UUID zaehlungId, final Participant participant, final Boolean status)
             throws BrokenInfrastructureException {
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId));
+        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findByZaehlungenId((zaehlungId));
         if (zsto.isPresent()) {
             final ZaehlstelleEntity zst = zsto.get();
             for (final ZaehlungEntity zaehlung : zst.getZaehlungen()) {
@@ -385,16 +385,18 @@ public class ZaehlstelleIndexServiceMig {
                 .orElseThrow(() -> new DataNotFoundException("Die gesuchte Zählstelle wurde nicht gefunden."));
     }
 
-    public ZaehlstelleEntity getZaehlstelleByZaehlungId(final String id) throws DataNotFoundException {
-        return this.zaehlstelleIndex.findByZaehlungenId(UUID.fromString(id))
+    public ZaehlstelleEntity getZaehlstelleByZaehlungId(final UUID id) throws DataNotFoundException {
+        return this.zaehlstelleIndex.findByZaehlungenId(id)
                 .orElseThrow(() -> new DataNotFoundException("Die gesuchte Zählstelle wurde nicht gefunden."));
     }
 
-    private ZaehlungEntity ladeZaehlung(final String zaehlungId) throws DataNotFoundException {
-        final ZaehlstelleEntity zaehlstelle = this.zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId))
-                .orElseThrow(() -> new DataNotFoundException("ZaehlstelleEntity not found"));
+    private ZaehlungEntity ladeZaehlung(final UUID gesuchteZaehlungId) throws DataNotFoundException {
+     final ZaehlstelleEntity zaehlstelle =
+                this.zaehlstelleIndex.findByZaehlungenId(gesuchteZaehlungId)
+                        .orElseThrow(() -> new DataNotFoundException("ZaehlstelleEntity not found"));
+
         return zaehlstelle.getZaehlungen().stream()
-                .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(UUID.fromString(zaehlungId)))
+                .filter(zaehlungToCheck -> zaehlungToCheck.getId().equals(gesuchteZaehlungId))
                 .findFirst()
                 .orElseThrow(() -> new DataNotFoundException("ZaehlungEntity not found"));
     }
@@ -411,7 +413,7 @@ public class ZaehlstelleIndexServiceMig {
                 .orElseThrow(() -> new DataNotFoundException("ZaehlungEntity not found"));
     }
 
-    public ZaehlungEntity getZaehlung(final String zaehlungId) throws DataNotFoundException {
+    public ZaehlungEntity getZaehlung(final UUID zaehlungId) throws DataNotFoundException {
         return this.ladeZaehlung(zaehlungId);
     }
 
@@ -688,11 +690,11 @@ public class ZaehlstelleIndexServiceMig {
         return this.getZaehlungenForExternal(kennung, false).size() > 0;
     }
 
-    public void updateStatusOfZaehlung(final String zaehlungId, final Status newStatus) throws BrokenInfrastructureException {
-        final Optional<ZaehlstelleEntity> zaehlstelle = this.zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId));
+    public void updateStatusOfZaehlung(final UUID zaehlungId, final Status newStatus) throws BrokenInfrastructureException {
+        final Optional<ZaehlstelleEntity> zaehlstelle = this.zaehlstelleIndex.findByZaehlungenId(zaehlungId);
         if (zaehlstelle.isPresent()) {
             for (final ZaehlungEntity zaehlung : zaehlstelle.get().getZaehlungen()) {
-                if (zaehlung.getId().equals(UUID.fromString(zaehlungId))) {
+                if (zaehlung.getId().equals(zaehlungId)) {
                     this.updateStatusOfZaehlung(zaehlung, newStatus, zaehlstelle.get());
                 }
             }

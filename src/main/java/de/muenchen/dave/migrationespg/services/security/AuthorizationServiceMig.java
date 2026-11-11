@@ -4,6 +4,7 @@ import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEnt
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
+import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class AuthorizationServiceMig {
      * @param zaehlungId der {@link ZaehlungEntity}, welche bearbeitet werden soll
      * @return {@code true}, wenn Username und Dienstleisterkennung übereinstimmen
      */
-    private boolean matchesDienstleisterkennung(String zaehlungId) throws DataNotFoundException {
+    private boolean matchesDienstleisterkennung(UUID zaehlungId) throws DataNotFoundException {
         final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
         final String dienstleisterkennung = zaehlung.getDienstleisterkennung();
         final String currentUser = securityContextInformationExtractorService.getAuthenticatedUsername();
@@ -46,7 +47,7 @@ public class AuthorizationServiceMig {
      * @throws AccessDeniedException wenn der Nutzer nicht FACHADMIN ist und die Dienstleisterkennung
      *             nicht übereinstimmt
      */
-    private void assertCanAccessZaehlung(final String zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
+    private void assertCanAccessZaehlung(final UUID zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
         if (securityContextInformationExtractorService.isFachadmin()) {
             return;
         }
@@ -62,7 +63,7 @@ public class AuthorizationServiceMig {
      * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, die {@link ZaehlungEntity} zu
      *             bearbeiten
      */
-    public void assertCanModifyZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+    public void assertCanModifyZaehlung(final UUID zaehlungId) throws DataNotFoundException, AccessDeniedException {
         assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
     }
 
@@ -76,7 +77,7 @@ public class AuthorizationServiceMig {
      *             {@link de.muenchen.dave.domain.ChatMessage} für
      *             die {@link ZaehlungEntity} zu lesen/senden
      */
-    public void assertCanReadAndWriteMessagesForZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+    public void assertCanReadAndWriteMessagesForZaehlung(final UUID zaehlungId) throws DataNotFoundException, AccessDeniedException {
         assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden.");
     }
 }

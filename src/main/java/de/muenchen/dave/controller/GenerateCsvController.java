@@ -1,16 +1,15 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.CsvDTO;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.migrationespg.services.GenerateCsvServiceMig;
 import de.muenchen.dave.migrationespg.services.messstelle.GenerateCsvMstServiceMig;
-import de.muenchen.dave.services.GenerateCsvService;
-import de.muenchen.dave.services.messstelle.GenerateCsvMstService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -52,7 +51,7 @@ public class GenerateCsvController {
             @Valid @RequestBody @NotNull final OptionsDTO options) {
         try {
             log.info("GenerateCSV für Zaehlung {} aufgerufen", zaehlungId);
-            final CsvDTO dto = generateCsvService.generateDatentabelleCsv(zaehlungId, options);
+            final CsvDTO dto = generateCsvService.generateDatentabelleCsv(UUID.fromString(zaehlungId), options);
             log.info("CSV wurde erstellt");
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (final DataNotFoundException exception) {
