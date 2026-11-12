@@ -44,6 +44,7 @@ public class GeneratePdfController {
     private static final String HTTP_HEADER_ATTACHMENT = "attachment";
     private static final String HTTP_HEADER_FILENAME = "davePdf.pdf";
     private static final String REQUEST_PART_DEPARTMENT = "department";
+    private static final String REQUEST_PART_ASSETS = "assets";
     private static final String REQUEST_PART_OPTIONS = "options";
     private static final String REQUEST_PART_MESSWERTE = "messswerte";
     private static final String REQUEST_PART_AUSWERTUNG = "auswertung";
@@ -76,7 +77,7 @@ public class GeneratePdfController {
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
-    @PostMapping(value = "/zaehlung")
+    @PostMapping(value = "/zaehlung", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generateZaehlungPdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String zaehlungId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String charttype,
@@ -124,7 +125,7 @@ public class GeneratePdfController {
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
-    @PostMapping(value = "/messstelle")
+    @PostMapping(value = "/messstelle", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generateMessstellePdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
@@ -160,14 +161,14 @@ public class GeneratePdfController {
     }
 
     /**
-     * Generiert einen PDF-Report aus den gelieferten Assets
+     * Generiert einen PDF-Report aus den als JSON-Array gelieferten Assets
      *
      * @param assetList Assets für den Report
      * @param department Organisationseinheit des Benutzers
      * @return PDF-Datei
      */
-    @PostMapping(value = "/report")
-    public ResponseEntity<byte[]> generatePdfReport(@RequestPart(value = "assets") @NotNull final List<BaseAsset> assetList,
+    @PostMapping(value = "/report", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> generatePdfReport(@RequestPart(value = REQUEST_PART_ASSETS) @NotNull final List<BaseAsset> assetList,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department) {
         try {
             final byte[] pdf;
@@ -189,7 +190,7 @@ public class GeneratePdfController {
      * @param department Organisationseinheit des Benutzers
      * @return PDF-Datei als byte[]
      */
-    @PostMapping(value = "/auswertung")
+    @PostMapping(value = "/auswertung", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generatePdfAuswertung(
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDTO options,
