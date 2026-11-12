@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -66,15 +67,15 @@ public final class IndexServiceUtilsMig {
     /**
      * Holt die neuste Zählung aus der Liste.
      *
-     * @param zs Zaehlungen
+     * @param zaehlungen
      * @return aktuellste ZaehlungEntity
      */
-    public static ZaehlungEntity getLetzteAktiveZaehlung(final List<ZaehlungEntity> zs) {
-        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus().name())).max(Comparator.comparing(ZaehlungEntity::getDatum))
-                .orElseGet(() -> {
-                    log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
-                    return null;
-                });
+    public static ZaehlungEntity getLetzteAktiveZaehlung(final List<ZaehlungEntity> zaehlungen) {
+        return CollectionUtils.emptyIfNull(zaehlungen)
+                .stream()
+                .filter(zaehlung -> Objects.equals(zaehlung.getStatus(),  Status.ACTIVE))
+                .max(Comparator.comparing(ZaehlungEntity::getDatum))
+                .orElse(null);
     }
 
     /**

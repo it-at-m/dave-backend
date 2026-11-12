@@ -7,8 +7,6 @@ import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
@@ -18,18 +16,20 @@ import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.migrationespg.domain.mapper.ZaehlstelleMapperMig;
 import de.muenchen.dave.migrationespg.domain.mapper.ZaehlungMapperMig;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.migrationespg.repositories.relationaldb.ZaehlstellenIndexRepository;
-import de.muenchen.dave.services.ChatMessageService;
 import de.muenchen.dave.services.ZeitauswahlService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,7 +55,7 @@ public class ZaehlstelleIndexServiceMig {
     private final ZaehlungMapperMig zaehlungMapperMig;
     private final ZaehlstelleMapperMig zaehlstelleMapperMig;
     private final ZeitauswahlService zeitauswahlService;
-    private final ChatMessageService messageService;
+    private final ChatMessageServiceMig messageService;
     private final StadtbezirkMapper stadtbezirkMapper;
     private final SanitizationServiceMig sanitizationServiceMig;
     @Value(value = "${elasticsearch.host}")
@@ -70,7 +70,7 @@ public class ZaehlstelleIndexServiceMig {
                                       final ZaehlungMapperMig zaehlungMapperMig,
                                       final ZaehlstellenIndexRepository zaehlstelleIndex,
                                       // @Lazy prevents circular dependency
-                                      @Lazy final ChatMessageService messageService,
+                                      @Lazy final ChatMessageServiceMig messageService,
                                       final StadtbezirkMapper stadtbezirkMapper,
                                       final SanitizationServiceMig sanitizationServiceMig) {
         this.zeitauswahlService = zeitauswahlService;
@@ -178,7 +178,7 @@ public class ZaehlstelleIndexServiceMig {
     public ZaehlungEntity erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final ZaehlungEntity zaehlung = this.zaehlungMapperMig.bearbeiteDto2bean(zdto);
         // Set ZaehlungEntity ID
-        if (StringUtils.isEmpty(zaehlung.getId() != null ? zaehlung.getId().toString() : null)) {
+        if (zaehlung.getId() == null) {
             zaehlung.setId(UUID.randomUUID());
         }
 
@@ -217,7 +217,7 @@ public class ZaehlstelleIndexServiceMig {
     public ZaehlungEntity erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final ZaehlungEntity zaehlung = this.zaehlungMapperMig.bearbeiteDto2bean(zdto);
         // Set ZaehlungEntity ID
-        if (StringUtils.isEmpty(zaehlung.getId() != null ? zaehlung.getId().toString() : null)) {
+        if (zaehlung.getId() == null) {
             zaehlung.setId(UUID.randomUUID());
         }
 
@@ -227,7 +227,7 @@ public class ZaehlstelleIndexServiceMig {
                 CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehre()),
                 CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehre()))
                 .flatMap(Collection::stream)
-                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId() != null ? bewegungsbeziehung.getId().toString() : null))
+                .filter(bewegungsbeziehung -> bewegungsbeziehung.getId() == null)
                 .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID()));
 
         // Zählstelle erneuern
@@ -439,6 +439,8 @@ public class ZaehlstelleIndexServiceMig {
                                 return leseZaehlungDTO.getStatus().equalsIgnoreCase(Status.ACTIVE.name());
                             }
                         })
+                        .peek(leseZaehlungDTO -> leseZaehlungDTO
+                                .setKategorien(CollectionUtils.emptyIfNull(leseZaehlungDTO.getKategorien()).stream().distinct().toList()))
                         .collect(Collectors.toList()));
 
         // Die Zeitauswahl wird hier in die Zählungen geschrieben
@@ -594,7 +596,7 @@ public class ZaehlstelleIndexServiceMig {
                         if (StringUtils.isNotEmpty(zaehlstelle.getNummer())) {
                             openZaehlungDTO.setZaehlstellenNummer(zaehlstelle.getNummer());
                         }
-                        if (StringUtils.isNotEmpty(zaehlstelle.getId().toString())) {
+                        if (zaehlstelle.getId() != null) {
                             openZaehlungDTO.setZaehlstellenId(zaehlstelle.getId().toString());
                         }
                         if (StringUtils.isNotEmpty(zaehlstelle.getStadtbezirk())) {
@@ -635,7 +637,7 @@ public class ZaehlstelleIndexServiceMig {
         final List<ZaehlstelleEntity> allByZaehlungenStatusInstructed = this.zaehlstelleIndex.findAllByZaehlungenStatus(Status.INSTRUCTED);
         for (final ZaehlstelleEntity zaehlstelle : allByZaehlungenStatusInstructed) {
             for (final ZaehlungEntity zaehlung : zaehlstelle.getZaehlungen()) {
-                if (zaehlung.getStatus().equals(Status.INSTRUCTED)) {
+                if (Objects.equals(zaehlung.getStatus(), Status.INSTRUCTED)) {
                     // Wenn Das Datum der Zählung <= LocalDate.now() ist, dann Status auf COUNTING ändern
                     if (zaehlung.getDatum().isBefore(LocalDate.now()) || zaehlung.getDatum().isEqual(LocalDate.now())) {
                         this.updateStatusOfZaehlung(zaehlung, Status.COUNTING, zaehlstelle);
@@ -649,8 +651,8 @@ public class ZaehlstelleIndexServiceMig {
         zaehlung.setStatus(newStatus);
         this.erneuereZaehlung(zaehlung, String.valueOf(zaehlstelle.getId()));
         final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
-        updateStatusDTO.setStatus(zaehlung.getStatus().name());
-        this.messageService.saveUpdateMessageForZaehlungStatus(String.valueOf(zaehlung.getId()), updateStatusDTO);
+        updateStatusDTO.setStatus(zaehlung.getStatus());
+        this.messageService.saveUpdateMessageForZaehlungStatus(zaehlung.getId(), updateStatusDTO);
     }
 
     public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages() {

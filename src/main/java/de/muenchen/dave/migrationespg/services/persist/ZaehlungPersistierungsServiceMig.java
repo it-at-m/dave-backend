@@ -87,16 +87,16 @@ public abstract class ZaehlungPersistierungsServiceMig {
 
         for (final ZaehlungEntity zaehlung : zaehlstelleByZaehlungId.getZaehlungen()) {
             if (zaehlung.getId().equals(updateStatusDto.getZaehlungId())) {
-                zaehlung.setStatus(Status.valueOf(updateStatusDto.getStatus()));
+                zaehlung.setStatus(updateStatusDto.getStatus());
                 // WIrd eine ZaehlungEntity beauftragt, so wird die dienstleiserkennung gespeichert
-                if (zaehlung.getStatus().equals(Status.INSTRUCTED)) {
+                if (Objects.equals(zaehlung.getStatus(), Status.INSTRUCTED)) {
                     zaehlung.setDienstleisterkennung(sanitizationService.sanitizeAllowedHtml(updateStatusDto.getDienstleisterkennung()));
-                } else if (zaehlung.getStatus().equals(Status.ACCOMPLISHED)) {
+                } else if (Objects.equals(zaehlung.getStatus(), Status.ACCOMPLISHED)) {
                     // Wird eine ZaehlungEntity abgeschlossen, dann die Zeitintervalle auslesen und alle Werte berechnen
                     this.zeitintervallPersistierungsServiceMig.aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(
                             zaehlung,
                             this.getNumberOfNecessaryZeitintervalle(zaehlung));
-                } else if (zaehlung.getStatus().equals(Status.CORRECTION)) {
+                } else if (Objects.equals(zaehlung.getStatus(), Status.CORRECTION)) {
                     // Wird eine ZaehlungEntity korrigert, dann alle Zeitintervalle zu den Verkehrsbeziehungen löschen, die keine bewegungsbeziehungId enthalten
                     this.zeitintervallPersistierungsServiceMig.deleteZeitintervalleForCorrection(String.valueOf(zaehlung.getId()));
                     // Alle Filenames aus den Knotenarmen löschen

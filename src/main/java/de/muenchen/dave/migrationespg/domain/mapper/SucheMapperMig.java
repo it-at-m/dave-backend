@@ -1,6 +1,6 @@
 package de.muenchen.dave.migrationespg.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;

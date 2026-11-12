@@ -54,12 +54,12 @@ public class AuswertungVisumServiceMig {
     }
 
     public static boolean isZaehlartRelevant(final ZaehlungEntity zaehlung) {
-        return !Zaehlart.QJS.name().equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.name().equals(zaehlung.getZaehlart())
-                && !Zaehlart.QU.name().equals(zaehlung.getZaehlart());
+        return !Zaehlart.QJS.equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.equals(zaehlung.getZaehlart())
+                && !Zaehlart.QU.equals(zaehlung.getZaehlart());
     }
 
     public static boolean isZaehlungActive(final ZaehlungEntity zaehlung) {
-        return Status.ACTIVE.toString().equals(zaehlung.getStatus());
+        return Status.ACTIVE.equals(zaehlung.getStatus());
     }
 
     /**

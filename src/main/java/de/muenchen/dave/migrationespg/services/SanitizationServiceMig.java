@@ -140,7 +140,7 @@ public class SanitizationServiceMig {
      */
     public void validateStadtbezirk(final String stadtbezirk) {
         if (stadtbezirk == null) return;
-        List<String> allowedStadtbezirke = Arrays.stream(Stadtbezirk.values()).map(Stadtbezirk::toString).toList();
+        List<String> allowedStadtbezirke = Arrays.stream(Stadtbezirk.values()).map(Stadtbezirk::getBezeichnung).toList();
         if (!allowedStadtbezirke.contains(stadtbezirk)) {
             throw new IllegalArgumentException("Ungültiger Stadtbezirk: " + stadtbezirk);
         }

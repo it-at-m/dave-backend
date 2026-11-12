@@ -49,7 +49,7 @@ public interface MessstelleReceiverMapperMig {
     @AfterMapping
     default void dto2EntityAfterMapping(@MappingTarget MessstelleEntity bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
 
-        if (StringUtils.isEmpty(bean.getId() != null ? bean.getId().toString() : null)) {
+        if (bean.getId() == null) {
             bean.setId(UUID.randomUUID());
         }
 
@@ -92,7 +92,7 @@ public interface MessstelleReceiverMapperMig {
 
     @AfterMapping
     default void createMessquerschnittAfterMapping(@MappingTarget MessquerschnittEntity bean, MessquerschnittDto dto) {
-        if (StringUtils.isEmpty(bean.getId() != null ? bean.getId().toString() : null)) {
+        if (bean.getId() == null) {
             bean.setId(UUID.randomUUID());
         }
     }

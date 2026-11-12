@@ -16,6 +16,7 @@ import de.muenchen.dave.migrationespg.services.persist.InternalZaehlungPersistie
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -143,7 +144,7 @@ public class ZaehlungController {
             final BackendIdDTO backendIdDto = this.externalZaehlungPersistierungsService.updateStatus(updateZaehlung);
             this.chatMessageService.saveUpdateMessageForZaehlungStatus(backendIdDto.getId(), updateZaehlung);
             // Wenn eine Zaehlung beauftragt wird, deren Zaehldatum bereits in der Vergangeheit liegt, so wird der Status gleich auf COUNTING gesetzt
-            if (updateZaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
+            if (Objects.equals(updateZaehlung.getStatus(), Status.INSTRUCTED)) {
                 this.externalZaehlungPersistierungsService.updateStatusIfDateIsInThePast(updateZaehlung, Status.COUNTING);
             }
             log.debug("Der Status wurde erfolgreich aktualisiert");

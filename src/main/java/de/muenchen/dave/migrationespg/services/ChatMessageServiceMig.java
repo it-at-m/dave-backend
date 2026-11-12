@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -103,22 +104,22 @@ public class ChatMessageServiceMig {
         final ChatMessage message = new ChatMessage();
         message.setZaehlungId(zaehlungId);
         boolean sendEmail = false;
-        if (Status.CREATED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        if (Objects.equals(Status.CREATED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde angelegt.");
-        } else if (Status.INSTRUCTED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.INSTRUCTED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde beauftragt.");
             sendEmail = true;
-        } else if (Status.COUNTING.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.COUNTING, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wird durchgeführt.");
-        } else if (Status.ACCOMPLISHED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.ACCOMPLISHED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde abgeschlossen.");
             sendEmail = true;
-        } else if (Status.CORRECTION.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.CORRECTION, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung soll korrigiert werden.");
             sendEmail = true;
-        } else if (Status.ACTIVE.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.ACTIVE, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde freigegeben.");
-        } else if (Status.INACTIVE.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.INACTIVE, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde deaktiviert.");
         } else {
             // Nichts tun, wenn kein passender Status dabei

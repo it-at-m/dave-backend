@@ -1,5 +1,6 @@
 package de.muenchen.dave.migrationespg.domain.dtos.bearbeiten;
 
+import de.muenchen.dave.domain.enums.Status;
 import java.util.UUID;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ public class UpdateStatusDTO {
 
     private UUID zaehlungId;
 
-    private String status;
+    private Status status;
 
     private String dienstleisterkennung;
 

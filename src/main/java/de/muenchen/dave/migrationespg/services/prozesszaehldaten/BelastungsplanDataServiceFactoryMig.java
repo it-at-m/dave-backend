@@ -15,11 +15,11 @@ public class BelastungsplanDataServiceFactoryMig {
     private final BelastungsplanDataQuServiceMig belastungsplanDataQuServiceMig;
 
     public IBelastungsplanDataService getBelastungsplanDataService(ZaehlungEntity zaehlung) {
-        if (Zaehlart.QJS.name().equals(zaehlung.getZaehlart())) {
+        if (Zaehlart.QJS.equals(zaehlung.getZaehlart())) {
             return belastungsplanDataQjsServiceMig;
-        } else if (Zaehlart.FJS.name().equals(zaehlung.getZaehlart())) {
+        } else if (Zaehlart.FJS.equals(zaehlung.getZaehlart())) {
             return belastungsplanDataFjsServiceMig;
-        } else if (Zaehlart.QU.name().equals(zaehlung.getZaehlart())) {
+        } else if (Zaehlart.QU.equals(zaehlung.getZaehlart())) {
             return belastungsplanDataQuServiceMig;
         }
         return belastungsplanDataDefaultServiceMig;

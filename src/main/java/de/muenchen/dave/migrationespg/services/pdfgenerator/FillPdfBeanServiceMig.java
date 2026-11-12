@@ -1,6 +1,5 @@
 package de.muenchen.dave.migrationespg.services.pdfgenerator;
 
-import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -13,18 +12,12 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessquerschnittEntity;
-import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.DatentabellePdfZaehldatumMapper;
-import de.muenchen.dave.migrationespg.domain.mapper.DiagrammPdfOptionsMapperMig;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
@@ -47,11 +40,18 @@ import de.muenchen.dave.domain.pdf.templates.messstelle.DatentabelleMessstellePd
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
+import de.muenchen.dave.migrationespg.domain.mapper.DiagrammPdfOptionsMapperMig;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.migrationespg.domain.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
-import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.migrationespg.services.messstelle.MessstelleServiceMig;
-import de.muenchen.dave.services.messstelle.MesswerteService;
+import de.muenchen.dave.migrationespg.services.messstelle.MesswerteServiceMig;
+import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.DomainValues;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import de.muenchen.dave.util.messstelle.MesswerteBaseUtil;
@@ -121,7 +121,7 @@ public class FillPdfBeanServiceMig {
     private final DatentabellePdfZaehldatumMapper datentabellePdfZaehldatumMapper;
 
     private final MessstelleServiceMig messstelleServiceMig;
-    private final MesswerteService messwerteService;
+    private final MesswerteServiceMig messwerteService;
 
     /**
      * Befüllt die PDF-Bean mit den Footer Daten
@@ -195,21 +195,21 @@ public class FillPdfBeanServiceMig {
      */
     protected static ZaehlstelleninformationenPdfComponent fillZaehlstelleninformationen(final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen,
             final String kreuzungsname, final ZaehlungEntity zaehlung) {
-        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), KEINE_DATEN_VORHANDEN));
+        zaehlstelleninformationen.setProjektname(StringUtils.defaultIfEmpty(zaehlung.getProjektName(), StringUtils.EMPTY));
         zaehlstelleninformationen.setZaehldatum(zaehlung.getDatum().format(DDMMYYYY));
         zaehlstelleninformationen.setZaehldauer(DomainValues.getZaehldauerValue(String.valueOf(zaehlung.getZaehldauer())));
         zaehlstelleninformationen.setKreuzungsname(kreuzungsname);
         zaehlstelleninformationen.setWetter(DomainValues.getWetterValue(String.valueOf(zaehlung.getWetter())));
-        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), KEINE_DATEN_VORHANDEN));
-        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), KEINE_DATEN_VORHANDEN));
+        zaehlstelleninformationen.setZaehlsituation(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituation(), StringUtils.EMPTY));
+        zaehlstelleninformationen.setZaehlsituationErweitert(StringUtils.defaultIfEmpty(zaehlung.getZaehlsituationErweitert(), StringUtils.EMPTY));
         return zaehlstelleninformationen;
     }
 
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(final MessstelleninformationenPdfComponent messstelleninformationen,
             final MessstelleEntity messstelle, final MessstelleOptionsDTO optionsDTO, final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
-        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), KEINE_DATEN_VORHANDEN));
-        messstelleninformationen.setSelectedFahrzeuge(StringUtils.defaultIfEmpty(messstelle.getDetektierteVerkehrsart().name(), KEINE_DATEN_VORHANDEN));
+        messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), StringUtils.EMPTY));
+        messstelleninformationen.setSelectedFahrzeuge(messstelle.getDetektierteVerkehrsart() != null? messstelle.getDetektierteVerkehrsart().name() : StringUtils.EMPTY);
         messstelleninformationen.setVerkehrsartText(VERKEHRSART_TEXT);
         if (!optionsDTO.getZeitraum().getFirst().isEqual(optionsDTO.getZeitraum().getLast())) {
             optionsDTO.getZeitraum().sort(LocalDate::compareTo);
@@ -217,7 +217,7 @@ public class FillPdfBeanServiceMig {
                     String.format("%s - %s", optionsDTO.getZeitraum().get(0).format(DDMMYYYY), optionsDTO.getZeitraum().get(1).format(DDMMYYYY)));
             messstelleninformationen.setWochentagNeeded(true);
             messstelleninformationen
-                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, KEINE_DATEN_VORHANDEN));
+                    .setWochentag(StringUtils.defaultIfEmpty(tagesTyp, StringUtils.EMPTY));
         } else {
             messstelleninformationen.setMesszeitraum(optionsDTO.getZeitraum().getFirst().format(DDMMYYYY));
             messstelleninformationen.setWochentagNeeded(false);
