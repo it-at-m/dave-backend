@@ -585,8 +585,8 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void setSeriesIndexForChart() {
-        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryBaseDTO();
-        final StepLineSeriesEntryBaseDTO seriesEntrySecondChart = new StepLineSeriesEntryBaseDTO();
+        final StepLineSeriesEntryBaseDTO seriesEntryFirstChart = new StepLineSeriesEntryIntegerDTO();
+        final StepLineSeriesEntryBaseDTO seriesEntrySecondChart = new StepLineSeriesEntryIntegerDTO();
 
         ProcessZaehldatenSteplineService
                 .setSeriesIndexForChart(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT, seriesEntryFirstChart, seriesEntrySecondChart);
