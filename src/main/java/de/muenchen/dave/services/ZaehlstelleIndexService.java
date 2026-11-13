@@ -16,7 +16,6 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -55,7 +54,7 @@ public class ZaehlstelleIndexService {
     private final ZaehlstelleMapper zaehlstelleMapper;
     private final ZeitauswahlService zeitauswahlService;
     private final ChatMessageService messageService;
-    private final StadtbezirkMapper stadtbezirkMapper;
+    private final StadtbezirkService stadtbezirkService;
     private final SanitizationService sanitizationService;
     @Value(value = "${elasticsearch.host}")
     private String elasticsearchHost;
@@ -70,7 +69,7 @@ public class ZaehlstelleIndexService {
             final ZaehlstelleIndex zaehlstelleIndex,
             // @Lazy prevents circular dependency
             @Lazy final ChatMessageService messageService,
-            final StadtbezirkMapper stadtbezirkMapper,
+            final StadtbezirkService stadtbezirkService,
             final SanitizationService sanitizationService) {
         this.zeitauswahlService = zeitauswahlService;
         this.zaehlstelleMapper = zaehlstelleMapper;
@@ -78,7 +77,7 @@ public class ZaehlstelleIndexService {
         this.zaehlungMapper = zaehlungMapper;
         this.zaehlstelleIndex = zaehlstelleIndex;
         this.messageService = messageService;
-        this.stadtbezirkMapper = stadtbezirkMapper;
+        this.stadtbezirkService = stadtbezirkService;
         this.sanitizationService = sanitizationService;
     }
 
@@ -127,7 +126,7 @@ public class ZaehlstelleIndexService {
      */
     public String erstelleZaehlstelle(final BearbeiteZaehlstelleDTO zdto) throws BrokenInfrastructureException {
 
-        final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
+        final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkService);
         zaehlstelle.setId(UUID.randomUUID().toString());
         zaehlstelle.setZaehlungen(new ArrayList<>());
         customSuggestIndexService.createSuggestionsForZaehlstelle(zaehlstelle);
@@ -150,7 +149,7 @@ public class ZaehlstelleIndexService {
             throws BrokenInfrastructureException, DataNotFoundException {
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
-            final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
+            final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkService);
             // ID muss erhalten bleiben
             zaehlstelle.setId(zaehlstelleId);
             // Die Zählungen müssen erhalten bleiben
@@ -449,7 +448,7 @@ public class ZaehlstelleIndexService {
     }
 
     public BearbeiteZaehlstelleDTO readEditZaehlstelleDTO(final String zaehlstelleId) throws DataNotFoundException {
-        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId), stadtbezirkMapper);
+        return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId));
     }
 
     /**
@@ -535,8 +534,8 @@ public class ZaehlstelleIndexService {
                         if (ObjectUtils.isNotEmpty(zaehlstelle.getPunkt()) && zaehlstelle.getPunkt().getLat() > 0 && zaehlstelle.getPunkt().getLon() > 0) {
                             zaehlung.setZaehlstellePunkt(zaehlstelle.getPunkt());
                         }
-                        if (StringUtils.isNotEmpty(zaehlstelle.getStadtbezirk())) {
-                            zaehlung.setZaehlstelleStadtbezirk(zaehlstelle.getStadtbezirk());
+                        if (zaehlstelle.getStadtbezirkNummer() != null) {
+                            zaehlung.setZaehlstelleStadtbezirkNummer(zaehlstelle.getStadtbezirkNummer());
                         }
                         zaehlungen.add(zaehlung);
                     }
@@ -599,8 +598,8 @@ public class ZaehlstelleIndexService {
                         if (StringUtils.isNotEmpty(zaehlstelle.getId())) {
                             openZaehlungDTO.setZaehlstellenId(zaehlstelle.getId());
                         }
-                        if (StringUtils.isNotEmpty(zaehlstelle.getStadtbezirk())) {
-                            openZaehlungDTO.setStadtbezirk(zaehlstelle.getStadtbezirk());
+                        if (zaehlstelle.getStadtbezirkNummer() != null) {
+                            openZaehlungDTO.setStadtbezirkNummer(zaehlstelle.getStadtbezirkNummer());
                         }
                         zaehlungen.add(openZaehlungDTO);
                     }

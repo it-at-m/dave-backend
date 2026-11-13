@@ -19,6 +19,7 @@ public class ConfigurationService {
 
     public ConfigurationService(
             @Value("${dave.zaehlstelle.automatic-number-assignment:true}") final boolean zaehlstelleAutomaticNumberAssignment,
+            @Value("${dave.tenant.city:}") final String city,
             @Value("${dave.tenant.datenportal-header:Datenportal}") final String datenportalHeader,
             @Value("${dave.zaehlstelle.link-documentation-csv-file-for-upload-zaehlung}") final String linkDocumentationCsvFileForUploadZaehlung,
             MapConfigProperties mapProperties) {
@@ -31,7 +32,7 @@ public class ConfigurationService {
                 mapProperties.getCenterZoom(),
                 mapProperties.getBaseLayers(),
                 mapProperties.getOverlayLayers());
-        final var tenantConfiguration = new TenantConfigurationDTO(datenportalHeader, mapConfiguration);
+        final var tenantConfiguration = new TenantConfigurationDTO(city, datenportalHeader, mapConfiguration);
         this.configuration = new ConfigurationDTO(zaehlstelleConfig, tenantConfiguration);
     }
 

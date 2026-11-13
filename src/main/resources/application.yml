@@ -124,9 +124,8 @@ dave:
     automatic-number-assignment: true
     link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/de/documentation-csv-for-upload.md
 
-  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
-
   tenant:
+    city: <YOUR-CITY>
     datenportal-header: Datenportal
     map:
       center:

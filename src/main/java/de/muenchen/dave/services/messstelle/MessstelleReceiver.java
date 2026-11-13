@@ -4,7 +4,6 @@ import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
@@ -12,6 +11,7 @@ import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.services.StadtbezirkService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.List;
@@ -40,7 +40,7 @@ public class MessstelleReceiver {
 
     private final MessstelleIndexService messstelleIndexService;
     private final CustomSuggestIndexService customSuggestIndexService;
-    private final StadtbezirkMapper stadtbezirkMapper;
+    private final StadtbezirkService stadtbezirkService;
     private final LageplanService lageplanService;
     private final EmailSendService emailSendService;
     private final SanitizationService sanitizationService;
@@ -98,7 +98,7 @@ public class MessstelleReceiver {
      */
     protected void createMessstelle(final MessstelleDto dto) {
         log.info("#createMessstelleCron");
-        Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkMapper);
+        Messstelle newMessstelle = messstelleReceiverMapper.createMessstelle(dto, stadtbezirkService);
         sanitizationService.sanitizeMessstelle(newMessstelle);
         customSuggestIndexService.createSuggestionsForMessstelle(newMessstelle);
         newMessstelle = messstelleIndexService.saveMessstelleWithDetectors(newMessstelle);
@@ -122,7 +122,7 @@ public class MessstelleReceiver {
     protected void updateMessstelle(final Messstelle existingMessstelle, final MessstelleDto dto) {
         log.info("#updateMessstelleCron");
         final var statusMessstelleAlt = existingMessstelle.getStatus();
-        final Messstelle toSave = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkMapper);
+        final Messstelle toSave = messstelleReceiverMapper.updateMessstelle(existingMessstelle, dto, stadtbezirkService);
         try {
             toSave.setLageplanVorhanden(lageplanService.lageplanVorhanden(toSave.getMstId()));
         } catch (final Exception exception) {
@@ -160,7 +160,7 @@ public class MessstelleReceiver {
                 final AtomicBoolean messquerschnittDtoDoesNotExist = new AtomicBoolean(true);
                 messquerschnitte.forEach(messquerschnitt -> {
                     if (messquerschnitt.getMqId().equalsIgnoreCase(messquerschnittDto.getMqId())) {
-                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto, stadtbezirkMapper);
+                        messstelleReceiverMapper.updateMessquerschnitt(messquerschnitt, messquerschnittDto, stadtbezirkService);
                         messquerschnittDtoDoesNotExist.set(false);
                     }
                 });
