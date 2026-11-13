@@ -19,7 +19,7 @@ public class ConfigurationService {
 
     public ConfigurationService(
             @Value("${dave.zaehlstelle.automatic-number-assignment:true}") final boolean zaehlstelleAutomaticNumberAssignment,
-            @Value("${dave.tenant.city:München}") final String city,
+            @Value("${dave.tenant.city:}") final String city,
             @Value("${dave.tenant.datenportal-header:Datenportal}") final String datenportalHeader,
             @Value("${dave.zaehlstelle.link-documentation-csv-file-for-upload-zaehlung}") final String linkDocumentationCsvFileForUploadZaehlung,
             MapConfigProperties mapProperties) {

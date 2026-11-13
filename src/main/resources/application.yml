@@ -125,7 +125,7 @@ dave:
     link-documentation-csv-file-for-upload-zaehlung: https://github.com/it-at-m/dave/blob/main/docs/de/documentation-csv-for-upload.md
 
   tenant:
-    city: München
+    city: <YOUR-CITY>
     datenportal-header: Datenportal
     map:
       center:

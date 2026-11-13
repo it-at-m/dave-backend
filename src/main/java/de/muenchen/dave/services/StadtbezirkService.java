@@ -27,15 +27,15 @@ public class StadtbezirkService {
     private final StadtbezirkViertelMapper stadtbezirkViertelMapper;
     private final ConfigurationService configurationService;
 
-    public List<StadtbezirkViertelDTO> findStadtbezirkViertelByStadt(final String stadt) {
+    public List<StadtbezirkViertelDTO> getStadtbezirkViertelByStadt(final String stadt) {
         return stadtbezirkViertelMapper.entities2Dtos(stadtbezirkViertelRepository.findAllByStadtbezirk_Stadt(stadt));
     }
 
-    public List<StadtbezirkDTO> findStadtbezirkByStadt(final String stadt) {
+    public List<StadtbezirkDTO> getStadtbezirkByStadt(final String stadt) {
         return stadtbezirkMapper.entities2Dtos(stadtbezirkRepository.findByStadt(stadt));
     }
 
-    public StadtbezirkDTO findStadtbezirkByStadtAndNummer(final String stadt, final Integer stadtbezirkNummer) {
+    public StadtbezirkDTO getStadtbezirkByStadtAndNummer(final String stadt, final Integer stadtbezirkNummer) {
         return stadtbezirkMapper.entity2Dto(stadtbezirkRepository.findByStadtAndNummer(stadt, stadtbezirkNummer));
     }
 
@@ -45,16 +45,17 @@ public class StadtbezirkService {
     )
     public String getStadtbezirkName(final Integer stadtbezirkNummer) {
         final String stadt = configurationService.getConfiguration().getTenant().getCity();
-        final StadtbezirkDTO stadtbezirk = findStadtbezirkByStadtAndNummer(stadt, stadtbezirkNummer);
+        final StadtbezirkDTO stadtbezirk = getStadtbezirkByStadtAndNummer(stadt, stadtbezirkNummer);
         return stadtbezirk != null ? stadtbezirk.getName() : "Unbekannt";
     }
 
-    public StadtbezirkAndViertelDTO findStadtbezirkeAndViertelByStadt(final String stadt) {
+    public StadtbezirkAndViertelDTO getStadtbezirkeAndViertel() {
+        final String city = configurationService.getConfiguration().getTenant().getCity();
         var dto = new StadtbezirkAndViertelDTO();
-        List<StadtbezirkDTO> stadtbezirke = findStadtbezirkByStadt(stadt);
+        List<StadtbezirkDTO> stadtbezirke = getStadtbezirkByStadt(city);
         dto.setStadtbezirke(stadtbezirke);
 
-        List<StadtbezirkViertelDTO> stadtviertel = findStadtbezirkViertelByStadt(stadt);
+        List<StadtbezirkViertelDTO> stadtviertel = getStadtbezirkViertelByStadt(city);
         dto.setStadtbezirkViertel(stadtviertel);
         return dto;
     }
