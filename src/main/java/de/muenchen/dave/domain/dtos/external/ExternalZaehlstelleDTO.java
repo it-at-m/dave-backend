@@ -11,7 +11,7 @@ public class ExternalZaehlstelleDTO {
 
     String nummer;
 
-    String stadtbezirk;
+    Integer stadtbezirkNummer;
 
     GeoPoint punkt;
 

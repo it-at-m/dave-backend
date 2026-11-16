@@ -2,21 +2,20 @@ package de.muenchen.dave.services.messstelle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.services.StadtbezirkService;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,19 +41,19 @@ class MessstelleServiceTest {
 
     private final MessstelleMapper messstelleMapper = new MessstelleMapperImpl();
 
-    private final StadtbezirkMapper stadtbezirkMapper = new StadtbezirkMapper();
+    @Mock
+    private StadtbezirkService stadtbezirkService;
 
     private MessstelleService messstelleService;
 
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        Mockito.reset(messstelleIndexService, customSuggestIndexService);
-        FieldUtils.writeField(stadtbezirkMapper, "stadtbezirkeMap", new HashMap<String, String>(), true);
+        Mockito.reset(messstelleIndexService, customSuggestIndexService, stadtbezirkService);
         messstelleService = new MessstelleService(
                 messstelleIndexService,
                 customSuggestIndexService,
                 messstelleMapper,
-                stadtbezirkMapper,
+                stadtbezirkService,
                 sanitizationService);
     }
 
@@ -89,7 +88,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",
@@ -140,7 +139,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",
@@ -197,7 +196,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",
@@ -254,7 +253,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",
@@ -317,7 +316,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",
@@ -368,7 +367,7 @@ class MessstelleServiceTest {
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 5, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        Mockito.when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
+        when(messstelleIndexService.findByMstIdOrThrowException("1234")).thenReturn(messstelle);
 
         final var result = messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 "1234",

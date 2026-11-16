@@ -11,6 +11,7 @@ import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.services.StadtbezirkService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,14 +25,13 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleTooltipDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
-        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkMapper);
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-Neuhausen");
+        final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkService);
 
         final MessstelleTooltipDTO expected = new MessstelleTooltipDTO();
         expected.setMstId(messstelle.getMstId());
         expected.setStandort(messstelle.getStandort());
-        expected.setStadtbezirk("Schwabing-Neuhausen");
         expected.setStadtbezirknummer(messstelle.getStadtbezirkNummer());
         expected.setRealisierungsdatum(messstelle.getRealisierungsdatum().toString());
         expected.setAbbaudatum(messstelle.getAbbaudatum().toString());
@@ -47,9 +47,9 @@ class SucheMapperTests {
     @Test
     void testMessstelleToMessstelleKarteDTO() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
-        when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
-        final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkMapper);
+        final StadtbezirkService stadtbezirkService = Mockito.mock(StadtbezirkService.class);
+        when(stadtbezirkService.getStadtbezirkName(any())).thenReturn("Schwabing-Neuhausen");
+        final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkService);
         final MessstelleKarteDTO expected = new MessstelleKarteDTO();
         expected.setId(messstelle.getId());
         expected.setFachId(messstelle.getMstId());
@@ -88,18 +88,16 @@ class SucheMapperTests {
 
     @Test
     void testCreateZaehlstelleTooltip() {
-        final String stadtbezirk = "stadtbezirk";
         final Integer stadtbezirknummer = 1;
         final String nummer = "123456";
         final Integer anzahlZaehlungen = 12;
         final String datumLetzteZaehlung = "2024-02-16";
         final String kreuzungsname = "kreuzungsname";
-        final ZaehlstelleTooltipDTO actual = mapper.createZaehlstelleTooltip(stadtbezirk, stadtbezirknummer, nummer, anzahlZaehlungen,
+        final ZaehlstelleTooltipDTO actual = mapper.createZaehlstelleTooltip(stadtbezirknummer, nummer, anzahlZaehlungen,
                 datumLetzteZaehlung, kreuzungsname);
 
         final ZaehlstelleTooltipDTO expected = new ZaehlstelleTooltipDTO();
         expected.setZaehlstellennnummer(nummer);
-        expected.setStadtbezirk(stadtbezirk);
         expected.setStadtbezirknummer(stadtbezirknummer);
         expected.setAnzahlZaehlungen(anzahlZaehlungen);
         expected.setDatumLetzteZaehlung(datumLetzteZaehlung);

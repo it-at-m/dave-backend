@@ -13,7 +13,7 @@ public class OpenZaehlungDTO implements Serializable {
 
     String zaehlstellenId;
 
-    String stadtbezirk;
+    Integer stadtbezirkNummer;
 
     Date datum;
 

@@ -7,8 +7,6 @@ public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
 
     private String zaehlstellennnummer;
 
-    private String stadtbezirk;
-
     private Integer stadtbezirknummer;
 
     private Integer anzahlZaehlungen;
