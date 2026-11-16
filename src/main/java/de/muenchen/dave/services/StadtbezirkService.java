@@ -9,15 +9,11 @@ import de.muenchen.dave.domain.mapper.StadtbezirkViertelMapper;
 import de.muenchen.dave.repositories.relationaldb.StadtbezirkRepository;
 import de.muenchen.dave.repositories.relationaldb.StadtbezirkViertelRepository;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
-@Getter
 @RequiredArgsConstructor
 public class StadtbezirkService {
 
