@@ -77,8 +77,9 @@ dave:
     #    disabled
     cron: "-"
     shedlock: 1m
-  stadtbezirk-mapping-config-url: ${STADTBEZIRK_MAPPING_CONFIG_URL:classpath:/config/stadtbezirke.properties}
+
   tenant:
+    city: München
     map:
       baseLayers:
         - base-url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"

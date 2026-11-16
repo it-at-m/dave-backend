@@ -84,7 +84,6 @@ public class AuswertungSpitzenstundeService {
         // Anreichern mit Zählungs- und Zählstellenattributen
         ladeAuswertungSpitzenstunden.forEach(ladeAuswertungSpitzenstunde -> {
             ladeAuswertungSpitzenstunde.setNummerZaehlstelle(zaehlstelle.getNummer());
-            ladeAuswertungSpitzenstunde.setStadtbezirk(zaehlstelle.getStadtbezirk());
             ladeAuswertungSpitzenstunde.setStadtbezirkNummer(zaehlstelle.getStadtbezirkNummer());
             ladeAuswertungSpitzenstunde.setDatum(zaehlung.getDatum());
             ladeAuswertungSpitzenstunde.setZaehlart(zaehlung.getZaehlart());
