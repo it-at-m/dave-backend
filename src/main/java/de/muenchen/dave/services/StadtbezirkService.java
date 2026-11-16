@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StadtbezirkService {
 
+    private static final String STADTBEZIRK_UNBEKANNT = "Unbekannt";
+
     private final StadtbezirkRepository stadtbezirkRepository;
     private final StadtbezirkViertelRepository stadtbezirkViertelRepository;
     private final StadtbezirkMapper stadtbezirkMapper;
@@ -45,18 +47,22 @@ public class StadtbezirkService {
     )
     public String getStadtbezirkName(final Integer stadtbezirkNummer) {
         final String stadt = configurationService.getConfiguration().getTenant().getCity();
+        if (stadt == null)
+            return STADTBEZIRK_UNBEKANNT;
         final StadtbezirkDTO stadtbezirk = getStadtbezirkByStadtAndNummer(stadt, stadtbezirkNummer);
-        return stadtbezirk != null ? stadtbezirk.getName() : "Unbekannt";
+        return stadtbezirk != null ? stadtbezirk.getName() : STADTBEZIRK_UNBEKANNT;
     }
 
     public StadtbezirkAndViertelDTO getStadtbezirkeAndViertel() {
-        final String city = configurationService.getConfiguration().getTenant().getCity();
         var dto = new StadtbezirkAndViertelDTO();
-        List<StadtbezirkDTO> stadtbezirke = getStadtbezirkByStadt(city);
-        dto.setStadtbezirke(stadtbezirke);
+        final String city = configurationService.getConfiguration().getTenant().getCity();
+        if (city != null) {
+            List<StadtbezirkDTO> stadtbezirke = getStadtbezirkByStadt(city);
+            dto.setStadtbezirke(stadtbezirke);
 
-        List<StadtbezirkViertelDTO> stadtviertel = getStadtbezirkViertelByStadt(city);
-        dto.setStadtbezirkViertel(stadtviertel);
+            List<StadtbezirkViertelDTO> stadtviertel = getStadtbezirkViertelByStadt(city);
+            dto.setStadtbezirkViertel(stadtviertel);
+        }
         return dto;
     }
 }
