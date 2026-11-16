@@ -52,6 +52,8 @@ public class CachingConfiguration {
     // 60*30 = 1800 = 30m
     @Value("${hazelcast.max-idle-time-seconds.zaehldaten:1800}")
     public int maxIdleTimeSecondsZaehldaten;
+    @Value("${hazelcast.time-to-live-seconds.stadtbezirk-name:7200}")
+    public int timeToLiveSecondsStadtbezirkName;
 
     @Bean
     @Profile({ "local", "docker", "unittest" })
@@ -116,8 +118,10 @@ public class CachingConfiguration {
         config.addMapConfig(this.getMapConfig(READ_ZAEHLSTELLE_DTO, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN, this.maxIdleTimeSecondsZaehldaten));
         config.addMapConfig(this.getMapConfig(AUFFAELLIGETAGE_FOR_MESSSTELLE, this.maxIdleTimeSecondsZaehldaten));
-        // Bezirksnamen sind statische Referenzdaten und laufen nicht ab (maxIdleSeconds = 0).
-        config.addMapConfig(this.getMapConfig(STADTBEZIRK_NAME, 0));
+        // Bezirksnamen laufen nach einer festen Zeit ab, auch wenn sie häufig gelesen werden.
+        final var stadtbezirkNameMapConfig = this.getMapConfig(STADTBEZIRK_NAME, 0);
+        stadtbezirkNameMapConfig.setTimeToLiveSeconds(this.timeToLiveSecondsStadtbezirkName);
+        config.addMapConfig(stadtbezirkNameMapConfig);
     }
 
     private MapConfig getMapConfig(final String name, final int maxIdleTime) {
