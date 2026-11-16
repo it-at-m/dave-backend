@@ -1,13 +1,13 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.StadtbezirkAndViertelDTO;
+import de.muenchen.dave.domain.dtos.GebietseinheitenDTO;
 import de.muenchen.dave.domain.dtos.StadtbezirkDTO;
-import de.muenchen.dave.domain.dtos.StadtbezirkViertelDTO;
+import de.muenchen.dave.domain.dtos.StadtbezirksviertelDTO;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
-import de.muenchen.dave.domain.mapper.StadtbezirkViertelMapper;
+import de.muenchen.dave.domain.mapper.StadtbezirksviertelMapper;
 import de.muenchen.dave.repositories.relationaldb.StadtbezirkRepository;
-import de.muenchen.dave.repositories.relationaldb.StadtbezirkViertelRepository;
+import de.muenchen.dave.repositories.relationaldb.StadtbezirksviertelRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,13 +20,13 @@ public class StadtbezirkService {
     private static final String STADTBEZIRK_UNBEKANNT = "Unbekannt";
 
     private final StadtbezirkRepository stadtbezirkRepository;
-    private final StadtbezirkViertelRepository stadtbezirkViertelRepository;
+    private final StadtbezirksviertelRepository stadtbezirksviertelRepository;
     private final StadtbezirkMapper stadtbezirkMapper;
-    private final StadtbezirkViertelMapper stadtbezirkViertelMapper;
+    private final StadtbezirksviertelMapper stadtbezirksviertelMapper;
     private final ConfigurationService configurationService;
 
-    public List<StadtbezirkViertelDTO> getStadtbezirkViertelByStadt(final String stadt) {
-        return stadtbezirkViertelMapper.entities2Dtos(stadtbezirkViertelRepository.findAllByStadtbezirk_Stadt(stadt));
+    public List<StadtbezirksviertelDTO> getStadtbezirksviertelByStadt(final String stadt) {
+        return stadtbezirksviertelMapper.entities2Dtos(stadtbezirksviertelRepository.findAllByStadtbezirk_Stadt(stadt));
     }
 
     public List<StadtbezirkDTO> getStadtbezirkByStadt(final String stadt) {
@@ -49,15 +49,15 @@ public class StadtbezirkService {
         return stadtbezirk != null ? stadtbezirk.getName() : STADTBEZIRK_UNBEKANNT;
     }
 
-    public StadtbezirkAndViertelDTO getStadtbezirkeAndViertel() {
-        var dto = new StadtbezirkAndViertelDTO();
+    public GebietseinheitenDTO getGebietseinheiten() {
+        var dto = new GebietseinheitenDTO();
         final String city = configurationService.getConfiguration().getTenant().getCity();
         if (city != null) {
             List<StadtbezirkDTO> stadtbezirke = getStadtbezirkByStadt(city);
             dto.setStadtbezirke(stadtbezirke);
 
-            List<StadtbezirkViertelDTO> stadtviertel = getStadtbezirkViertelByStadt(city);
-            dto.setStadtbezirkViertel(stadtviertel);
+            List<StadtbezirksviertelDTO> stadtviertel = getStadtbezirksviertelByStadt(city);
+            dto.setStadtbezirksviertel(stadtviertel);
         }
         return dto;
     }

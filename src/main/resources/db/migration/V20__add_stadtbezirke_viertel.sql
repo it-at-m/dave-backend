@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS stadtbezirk
 );
 
 CREATE INDEX idx_stadtbezirk_stadt ON stadtbezirk (stadt);
+CREATE INDEX idx_stadtbezirk_stadt_nummer ON stadtbezirk (stadt, nummer);
+
 
 CREATE TABLE IF NOT EXISTS stadtbezirk_viertel
 (
@@ -26,3 +28,5 @@ alter table if exists stadtbezirk_viertel
     add constraint FK7abqxhfbfywi9hvrr5odh2i3a
     foreign key (stadtbezirk_id)
     references stadtbezirk;
+
+CREATE INDEX idx_stadtbezirk_viertel_stadtbezirk_id  ON stadtbezirk_viertel USING btree (stadtbezirk_id);

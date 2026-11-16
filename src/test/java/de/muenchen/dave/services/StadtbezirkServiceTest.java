@@ -9,16 +9,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.StadtbezirkEntity;
-import de.muenchen.dave.domain.StadtbezirkViertelEntity;
-import de.muenchen.dave.domain.dtos.StadtbezirkAndViertelDTO;
+import de.muenchen.dave.domain.StadtbezirksviertelEntity;
+import de.muenchen.dave.domain.dtos.GebietseinheitenDTO;
 import de.muenchen.dave.domain.dtos.StadtbezirkDTO;
-import de.muenchen.dave.domain.dtos.StadtbezirkViertelDTO;
+import de.muenchen.dave.domain.dtos.StadtbezirksviertelDTO;
 import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
 import de.muenchen.dave.domain.dtos.init.TenantConfigurationDTO;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
-import de.muenchen.dave.domain.mapper.StadtbezirkViertelMapper;
+import de.muenchen.dave.domain.mapper.StadtbezirksviertelMapper;
 import de.muenchen.dave.repositories.relationaldb.StadtbezirkRepository;
-import de.muenchen.dave.repositories.relationaldb.StadtbezirkViertelRepository;
+import de.muenchen.dave.repositories.relationaldb.StadtbezirksviertelRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,22 +26,22 @@ import org.junit.jupiter.api.Test;
 class StadtbezirkServiceTest {
 
     private StadtbezirkRepository stadtbezirkRepository;
-    private StadtbezirkViertelRepository stadtbezirkViertelRepository;
+    private StadtbezirksviertelRepository stadtbezirksviertelRepository;
     private StadtbezirkMapper stadtbezirkMapper;
-    private StadtbezirkViertelMapper stadtbezirkViertelMapper;
+    private StadtbezirksviertelMapper stadtbezirksviertelMapper;
     private StadtbezirkService stadtbezirkService;
     private TenantConfigurationDTO tenantConfiguration;
 
     @BeforeEach
     void setUp() {
         stadtbezirkRepository = mock(StadtbezirkRepository.class);
-        stadtbezirkViertelRepository = mock(StadtbezirkViertelRepository.class);
+        stadtbezirksviertelRepository = mock(StadtbezirksviertelRepository.class);
         stadtbezirkMapper = mock(StadtbezirkMapper.class);
-        stadtbezirkViertelMapper = mock(StadtbezirkViertelMapper.class);
+        stadtbezirksviertelMapper = mock(StadtbezirksviertelMapper.class);
         ConfigurationService configurationService = mock(ConfigurationService.class);
         tenantConfiguration = new TenantConfigurationDTO("", null, null);
         when(configurationService.getConfiguration()).thenReturn(new ConfigurationDTO(null, tenantConfiguration));
-        stadtbezirkService = new StadtbezirkService(stadtbezirkRepository, stadtbezirkViertelRepository, stadtbezirkMapper, stadtbezirkViertelMapper,
+        stadtbezirkService = new StadtbezirkService(stadtbezirkRepository, stadtbezirksviertelRepository, stadtbezirkMapper, stadtbezirksviertelMapper,
                 configurationService);
     }
 
@@ -62,48 +62,48 @@ class StadtbezirkServiceTest {
     }
 
     @Test
-    void testGetStadtbezirkeAndViertel_returnsMappedStadtbezirkeAndViertel() {
+    void testGetGebietseinheiten_returnsMappedGebietseinheiten() {
         final String stadt = "München";
         final List<StadtbezirkEntity> stadtbezirkEntities = List.of(new StadtbezirkEntity());
         final List<StadtbezirkDTO> stadtbezirkDtos = List.of(new StadtbezirkDTO());
-        final List<StadtbezirkViertelEntity> stadtbezirkViertelEntities = List.of(new StadtbezirkViertelEntity());
-        final List<StadtbezirkViertelDTO> stadtbezirkViertelDtos = List.of(new StadtbezirkViertelDTO());
+        final List<StadtbezirksviertelEntity> stadtbezirksviertelEntities = List.of(new StadtbezirksviertelEntity());
+        final List<StadtbezirksviertelDTO> stadtbezirksviertelDtos = List.of(new StadtbezirksviertelDTO());
         when(stadtbezirkRepository.findByStadt(stadt)).thenReturn(stadtbezirkEntities);
         when(stadtbezirkMapper.entities2Dtos(stadtbezirkEntities)).thenReturn(stadtbezirkDtos);
-        when(stadtbezirkViertelRepository.findAllByStadtbezirk_Stadt(stadt)).thenReturn(stadtbezirkViertelEntities);
-        when(stadtbezirkViertelMapper.entities2Dtos(stadtbezirkViertelEntities)).thenReturn(stadtbezirkViertelDtos);
+        when(stadtbezirksviertelRepository.findAllByStadtbezirk_Stadt(stadt)).thenReturn(stadtbezirksviertelEntities);
+        when(stadtbezirksviertelMapper.entities2Dtos(stadtbezirksviertelEntities)).thenReturn(stadtbezirksviertelDtos);
         tenantConfiguration.setCity(stadt);
 
-        final StadtbezirkAndViertelDTO result = stadtbezirkService.getStadtbezirkeAndViertel();
+        final GebietseinheitenDTO result = stadtbezirkService.getGebietseinheiten();
 
         assertThat(result.getStadtbezirke(), sameInstance(stadtbezirkDtos));
-        assertThat(result.getStadtbezirkViertel(), sameInstance(stadtbezirkViertelDtos));
+        assertThat(result.getStadtbezirksviertel(), sameInstance(stadtbezirksviertelDtos));
         verify(stadtbezirkRepository).findByStadt(stadt);
         verify(stadtbezirkMapper).entities2Dtos(stadtbezirkEntities);
-        verify(stadtbezirkViertelRepository).findAllByStadtbezirk_Stadt(stadt);
-        verify(stadtbezirkViertelMapper).entities2Dtos(stadtbezirkViertelEntities);
+        verify(stadtbezirksviertelRepository).findAllByStadtbezirk_Stadt(stadt);
+        verify(stadtbezirksviertelMapper).entities2Dtos(stadtbezirksviertelEntities);
     }
 
     @Test
-    void testGetStadtbezirkAndViertel_cityNotConfigured() {
+    void testGetGebietseinheiten_cityNotConfigured() {
         final String stadt = "München";
         final List<StadtbezirkEntity> stadtbezirkEntities = List.of(new StadtbezirkEntity());
         final List<StadtbezirkDTO> stadtbezirkDtos = List.of(new StadtbezirkDTO());
-        final List<StadtbezirkViertelEntity> stadtbezirkViertelEntities = List.of(new StadtbezirkViertelEntity());
-        final List<StadtbezirkViertelDTO> stadtbezirkViertelDtos = List.of(new StadtbezirkViertelDTO());
+        final List<StadtbezirksviertelEntity> stadtbezirksviertelEntities = List.of(new StadtbezirksviertelEntity());
+        final List<StadtbezirksviertelDTO> stadtbezirksviertelDtos = List.of(new StadtbezirksviertelDTO());
         when(stadtbezirkRepository.findByStadt(stadt)).thenReturn(stadtbezirkEntities);
         when(stadtbezirkMapper.entities2Dtos(stadtbezirkEntities)).thenReturn(stadtbezirkDtos);
-        when(stadtbezirkViertelRepository.findAllByStadtbezirk_Stadt(stadt)).thenReturn(stadtbezirkViertelEntities);
-        when(stadtbezirkViertelMapper.entities2Dtos(stadtbezirkViertelEntities)).thenReturn(stadtbezirkViertelDtos);
+        when(stadtbezirksviertelRepository.findAllByStadtbezirk_Stadt(stadt)).thenReturn(stadtbezirksviertelEntities);
+        when(stadtbezirksviertelMapper.entities2Dtos(stadtbezirksviertelEntities)).thenReturn(stadtbezirksviertelDtos);
         tenantConfiguration.setCity("");
 
-        StadtbezirkAndViertelDTO result = stadtbezirkService.getStadtbezirkeAndViertel();
+        GebietseinheitenDTO result = stadtbezirkService.getGebietseinheiten();
 
         assertTrue(result.getStadtbezirke().isEmpty());
-        assertTrue(result.getStadtbezirkViertel().isEmpty());
+        assertTrue(result.getStadtbezirksviertel().isEmpty());
 
         verify(stadtbezirkRepository).findByStadt("");
-        verify(stadtbezirkViertelRepository).findAllByStadtbezirk_Stadt("");
+        verify(stadtbezirksviertelRepository).findAllByStadtbezirk_Stadt("");
 
     }
 

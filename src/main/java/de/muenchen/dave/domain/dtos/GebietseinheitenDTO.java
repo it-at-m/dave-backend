@@ -5,12 +5,12 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class StadtbezirkAndViertelDTO {
+public class GebietseinheitenDTO {
 
     @NotNull
     private List<StadtbezirkDTO> stadtbezirke;
 
     @NotNull
-    private List<StadtbezirkViertelDTO> stadtbezirkViertel;
+    private List<StadtbezirksviertelDTO> stadtbezirksviertel;
 
 }

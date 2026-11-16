@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
-public class StadtbezirkViertelDTO {
+public class StadtbezirksviertelDTO {
 
     @NotNull
     private String nummer;

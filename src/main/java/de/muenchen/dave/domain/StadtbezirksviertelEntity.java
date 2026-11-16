@@ -12,7 +12,7 @@ import lombok.*;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "stadtbezirk_viertel")
-public class StadtbezirkViertelEntity extends BaseEntity {
+public class StadtbezirksviertelEntity extends BaseEntity {
 
     @Column(name = "nummer", unique = true, nullable = false, length = 20)
     private String nummer;

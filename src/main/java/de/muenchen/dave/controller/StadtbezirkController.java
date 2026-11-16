@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.StadtbezirkAndViertelDTO;
+import de.muenchen.dave.domain.dtos.GebietseinheitenDTO;
 import de.muenchen.dave.services.StadtbezirkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +26,10 @@ public class StadtbezirkController {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<StadtbezirkAndViertelDTO> getStadtbezirkeAndViertel() {
-        log.debug("#getStadtbezirkeAndViertel");
+    public ResponseEntity<GebietseinheitenDTO> getGebietseinheiten() {
+        log.debug("#getGebietseinheiten");
         try {
-            return ResponseEntity.ok(stadtbezirkService.getStadtbezirkeAndViertel());
+            return ResponseEntity.ok(stadtbezirkService.getGebietseinheiten());
         } catch (Exception ex) {
             log.error("Unerwarteter Fehler im StadtbezirkController beim Laden der Stadtbezirke.", ex);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Es ist ein unerwarteter Fehler beim Laden der Stadtbezirke aufgetreten.");
