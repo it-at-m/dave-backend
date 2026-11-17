@@ -12,5 +12,6 @@ class FahrtrichtungUtilTest {
         Assertions.assertThat(FahrtrichtungUtil.getLongTextOfFahrtrichtung("S")).isNotNull().isEqualTo("Süd");
         Assertions.assertThat(FahrtrichtungUtil.getLongTextOfFahrtrichtung("W")).isNotNull().isEqualTo("West");
         Assertions.assertThat(FahrtrichtungUtil.getLongTextOfFahrtrichtung("Blub")).isNotNull().isEqualTo("Blub");
+        Assertions.assertThat(FahrtrichtungUtil.getLongTextOfFahrtrichtung(null)).isEqualTo("unbekannt");
     }
 }
