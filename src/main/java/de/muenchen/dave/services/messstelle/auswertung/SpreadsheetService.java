@@ -415,6 +415,13 @@ public class SpreadsheetService {
         }
     }
 
+    /**
+     * Serialisiert das Tabellenkalkulationsdokument in ein Byte-Array.
+     *
+     * @param spreadsheetDocument zu serialisierendes ODS-Dokument
+     * @return serialisiertes Dokument als Byte-Array
+     * @throws IOException wenn das Dokument nicht serialisiert werden kann
+     */
     byte[] serializeSpreadsheetDocument(final SpreadsheetDocument spreadsheetDocument) throws IOException {
         try (final var output = new ByteArrayOutputStream()) {
             spreadsheetDocument.save(output);
