@@ -10,24 +10,13 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,17 +28,11 @@ import org.odftoolkit.simple.table.Cell;
 import org.odftoolkit.simple.table.Row;
 import org.odftoolkit.simple.table.Table;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class SpreadsheetService {
-
-    private static final String ODS_SETTINGS_FILE = "settings.xml";
-    private static final String ODS_MANIFEST_FILE = "META-INF/manifest.xml";
-    private static final String ODS_MANIFEST_NAMESPACE = "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0";
 
     private final MessstelleService messstelleService;
 
@@ -70,48 +53,54 @@ public class SpreadsheetService {
 
             // Sheet Gesamt
             final Table gesamtSheet = spreadsheetDocument.getSheetByIndex(0);
-            clearRows(gesamtSheet);
             gesamtSheet.setTableName("Gesamt");
-            addMetaHeaderToRow(getNextRow(gesamtSheet), false);
-            addMetaDataToRow(getNextRow(gesamtSheet), options);
-            addEmptyRowToSheet(gesamtSheet);
-            addDataHeaderToRow(getNextRow(gesamtSheet), options, true);
+
+            // Template dient danach als Vorlage für die Messstellen- und Messquerschnitt-Sheets,
+            // damit diese dieselbe Tabellenstruktur und Formatierung erhalten.
+            final Table sheetTemplate = spreadsheetDocument.appendSheet(gesamtSheet, "Template");
+
+            addMetaHeaderToRow(getRowAtIndex(gesamtSheet, 0), false);
+            addMetaDataToRow(getRowAtIndex(gesamtSheet, 1), options);
+            getRowAtIndex(gesamtSheet, 2);
+            addDataHeaderToRow(getRowAtIndex(gesamtSheet, 3), options, true);
 
             // Füge Daten zum Dokument hinzu.
-            ListUtils.emptyIfNull(auswertungenProMessstelle).forEach(auswertungMessstelle -> {
+            int gesamtRowIndex = 4;
+            for (final AuswertungMessstelle auswertungMessstelle : ListUtils.emptyIfNull(auswertungenProMessstelle)) {
                 // Sheet Messstelle
-                final Table mstSheet = spreadsheetDocument.appendSheet(String.format("Messstelle %s", auswertungMessstelle.getMstId()));
-                clearRows(mstSheet);
-                addMetaHeaderToRow(getNextRow(mstSheet), false);
-                addMetaDataToRow(getNextRow(mstSheet), options);
-                addEmptyRowToSheet(mstSheet);
-                addDataHeaderToRow(getNextRow(mstSheet), options, false);
+                final Table mstSheet = spreadsheetDocument.appendSheet(sheetTemplate, String.format("Messstelle %s", auswertungMessstelle.getMstId()));
+                addMetaHeaderToRow(getRowAtIndex(mstSheet, 0), false);
+                addMetaDataToRow(getRowAtIndex(mstSheet, 1), options);
+                getRowAtIndex(mstSheet, 2);
+                addDataHeaderToRow(getRowAtIndex(mstSheet, 3), options, false);
                 final List<Auswertung> auswertungen = ListUtils.emptyIfNull(auswertungMessstelle.getAuswertungenProZeitraum());
                 addDataToSheet(
                         mstSheet,
                         auswertungen,
                         options.getFahrzeuge());
-                addDataToGesamtSheet(
+                gesamtRowIndex = addDataToGesamtSheet(
                         gesamtSheet,
                         auswertungen,
-                        options.getFahrzeuge());
+                        options.getFahrzeuge(),
+                        gesamtRowIndex);
 
                 auswertungMessstelle.getAuswertungenProMq().forEach((mqId, auswertungenProMessquerschnitt) -> {
-                    final Table mqSheet = spreadsheetDocument.appendSheet(String.format("Messquerschnitt %s", mqId));
-                    clearRows(mqSheet);
+                    final Table mqSheet = spreadsheetDocument.appendSheet(sheetTemplate, String.format("Messquerschnitt %s", mqId));
 
-                    addMetaHeaderToRow(getNextRow(mqSheet), true);
-                    addMetaDataToMessquerschnittRow(getNextRow(mqSheet), options, auswertungMessstelle.getMstId(), mqId);
-                    addEmptyRowToSheet(mqSheet);
-                    addDataHeaderToRow(getNextRow(mqSheet), options, false);
+                    addMetaHeaderToRow(getRowAtIndex(mqSheet, 0), true);
+                    addMetaDataToMessquerschnittRow(getRowAtIndex(mqSheet, 1), options, auswertungMessstelle.getMstId(), mqId);
+                    getRowAtIndex(mqSheet, 2);
+                    addDataHeaderToRow(getRowAtIndex(mqSheet, 3), options, false);
                     addDataToSheet(
                             mqSheet,
                             ListUtils.emptyIfNull(auswertungenProMessquerschnitt),
                             options.getFahrzeuge());
 
                 });
-            });
-
+            }
+            // Das Sheet an Index 1 ist das Hilfs-Template.
+            // Danach folgen erst die eigentlichen Daten-Sheets.
+            spreadsheetDocument.removeSheet(1);
             return serializeSpreadsheetDocument(spreadsheetDocument);
         }
     }
@@ -258,11 +247,15 @@ public class SpreadsheetService {
      * @param auswertungen Liste mit den Daten pro Zeitraum
      * @param fahrzeugOptions bei der Auswertung gewählte Fahrzeugoptionen
      */
-    private void addDataToGesamtSheet(
+    private int addDataToGesamtSheet(
             final Table sheet,
             final List<Auswertung> auswertungen,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
-        auswertungen.forEach(auswertung -> addDataToRow(getNextRow(sheet), auswertung, fahrzeugOptions, true));
+            final FahrzeugOptionsDTO fahrzeugOptions,
+            final int startRowIndex) {
+        for (int rowIndex = 0; rowIndex < auswertungen.size(); rowIndex++) {
+            addDataToRow(getRowAtIndex(sheet, startRowIndex + rowIndex), auswertungen.get(rowIndex), fahrzeugOptions, true);
+        }
+        return startRowIndex + auswertungen.size();
     }
 
     /**
@@ -277,16 +270,9 @@ public class SpreadsheetService {
             final Table sheet,
             final List<Auswertung> auswertungen,
             final FahrzeugOptionsDTO fahrzeugOptions) {
-        auswertungen.forEach(auswertung -> addDataToRow(getNextRow(sheet), auswertung, fahrzeugOptions, false));
-    }
-
-    /**
-     * Erzeugt eine Leerzeile im Arbeitsblatt.
-     *
-     * @param sheet aktuelles Arbeitsblatt
-     */
-    private void addEmptyRowToSheet(final Table sheet) {
-        getNextRow(sheet);
+        for (int rowIndex = 0; rowIndex < auswertungen.size(); rowIndex++) {
+            addDataToRow(getRowAtIndex(sheet, 4 + rowIndex), auswertungen.get(rowIndex), fahrzeugOptions, false);
+        }
     }
 
     /**
@@ -384,21 +370,11 @@ public class SpreadsheetService {
         return row.getTable().getCellByPosition(cellIndex, row.getRowIndex());
     }
 
-    private Row getNextRow(final Table table) {
-        if (table.getRowCount() == 0) {
-            return table.appendRow();
+    private Row getRowAtIndex(final Table table, final int rowIndex) {
+        while (table.getRowCount() <= rowIndex) {
+            table.appendRow();
         }
-        final Row firstRow = table.getRowByIndex(0);
-        if (table.getRowCount() == 1 && firstRow.getCellCount() == 0) {
-            return firstRow;
-        }
-        return table.appendRow();
-    }
-
-    private void clearRows(final Table table) {
-        if (table.getRowCount() > 0) {
-            table.removeRowsByIndex(0, table.getRowCount());
-        }
+        return table.getRowByIndex(rowIndex);
     }
 
     /**
@@ -429,62 +405,10 @@ public class SpreadsheetService {
     byte[] serializeSpreadsheetDocument(final SpreadsheetDocument spreadsheetDocument) throws IOException {
         try (final var output = new ByteArrayOutputStream()) {
             spreadsheetDocument.save(output);
-            return removeUnusedSettingsFile(output.toByteArray());
+            return output.toByteArray();
         } catch (final Exception e) {
             throw new IOException("ODS-Dokument konnte nicht serialisiert werden.", e);
         }
     }
 
-    private byte[] removeUnusedSettingsFile(final byte[] spreadsheet) throws IOException {
-        try (final var zipInput = new ZipInputStream(new ByteArrayInputStream(spreadsheet), StandardCharsets.UTF_8);
-                final var output = new ByteArrayOutputStream();
-                final var zipOutput = new ZipOutputStream(output, StandardCharsets.UTF_8)) {
-            ZipEntry entry;
-            while ((entry = zipInput.getNextEntry()) != null) {
-                byte[] content = zipInput.readAllBytes();
-                if (ODS_SETTINGS_FILE.equals(entry.getName())) {
-                    continue;
-                }
-                if (ODS_MANIFEST_FILE.equals(entry.getName())) {
-                    content = removeSettingsEntryFromManifest(content);
-                }
-
-                final var outputEntry = new ZipEntry(entry.getName());
-                if ("mimetype".equals(entry.getName())) {
-                    outputEntry.setMethod(ZipEntry.STORED);
-                    outputEntry.setSize(content.length);
-                    outputEntry.setCompressedSize(content.length);
-                    final var crc = new CRC32();
-                    crc.update(content);
-                    outputEntry.setCrc(crc.getValue());
-                }
-                zipOutput.putNextEntry(outputEntry);
-                zipOutput.write(content);
-                zipOutput.closeEntry();
-            }
-            zipOutput.finish();
-            return output.toByteArray();
-        }
-    }
-
-    private byte[] removeSettingsEntryFromManifest(final byte[] manifest) throws IOException {
-        try (final var input = new ByteArrayInputStream(manifest); final var output = new ByteArrayOutputStream()) {
-            final var documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilderFactory.setNamespaceAware(true);
-            final var document = documentBuilderFactory.newDocumentBuilder().parse(input);
-            final NodeList fileEntries = document.getElementsByTagNameNS(ODS_MANIFEST_NAMESPACE, "file-entry");
-            for (int index = fileEntries.getLength() - 1; index >= 0; index--) {
-                final Element fileEntry = (Element) fileEntries.item(index);
-                if (ODS_SETTINGS_FILE.equals(fileEntry.getAttributeNS(ODS_MANIFEST_NAMESPACE, "full-path"))) {
-                    fileEntry.getParentNode().removeChild(fileEntry);
-                }
-            }
-            final var transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
-            transformer.transform(new DOMSource(document), new StreamResult(output));
-            return output.toByteArray();
-        } catch (final Exception e) {
-            throw new IOException("ODS-Manifest konnte nicht angepasst werden.", e);
-        }
-    }
 }

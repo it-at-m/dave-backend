@@ -15,6 +15,8 @@ import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +25,11 @@ import java.util.Set;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,10 +50,13 @@ class SpreadsheetServiceTest {
     private MessstelleService messstelleService;
 
     private SpreadsheetService spreadsheetService;
+    private List<SpreadsheetDocument> testDocuments;
 
     private Table createSheet() {
-        try (SpreadsheetDocument doc = SpreadsheetDocument.newSpreadsheetDocument()){
-            Table table = doc.getSheetByIndex(0);
+        try {
+            final SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.newSpreadsheetDocument();
+            testDocuments.add(spreadsheetDocument);
+            final Table table = spreadsheetDocument.getSheetByIndex(0);
             table.removeRowsByIndex(0, table.getRowCount());
             return table;
         } catch (final Exception e) {
@@ -64,7 +71,13 @@ class SpreadsheetServiceTest {
     @BeforeEach
     void beforeEach() {
         spreadsheetService = new SpreadsheetService(messstelleService);
+        testDocuments = new ArrayList<>();
         Mockito.reset(messstelleService);
+    }
+
+    @AfterEach
+    void afterEach() {
+        testDocuments.forEach(SpreadsheetDocument::close);
     }
 
     @Test
@@ -81,17 +94,14 @@ class SpreadsheetServiceTest {
         try (final var zip = new ZipInputStream(new ByteArrayInputStream(spreadsheet), StandardCharsets.UTF_8)) {
             Assertions.assertThat(zip.getNextEntry().getName()).isEqualTo("mimetype");
             Assertions.assertThat(new String(zip.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo(ODS_MIMETYPE);
-            String manifest = null;
+            final List<String> entryNames = new ArrayList<>();
             var entry = zip.getNextEntry();
             while (entry != null) {
-                final byte[] entryContents = zip.readAllBytes();
-                Assertions.assertThat(entry.getName()).isNotEqualTo("settings.xml");
-                if ("META-INF/manifest.xml".equals(entry.getName())) {
-                    manifest = new String(entryContents, StandardCharsets.UTF_8);
-                }
+                zip.readAllBytes();
+                entryNames.add(entry.getName());
                 entry = zip.getNextEntry();
             }
-            Assertions.assertThat(manifest).contains("content.xml").doesNotContain("settings.xml");
+            Assertions.assertThat(entryNames).contains("content.xml", "META-INF/manifest.xml");
         }
 
         final SpreadsheetDocument loadedDocument = SpreadsheetDocument.loadDocument(new ByteArrayInputStream(spreadsheet));
@@ -102,14 +112,18 @@ class SpreadsheetServiceTest {
     }
 
     @Test
-    void createSpreadsheetForMessstellenAsOdsKeepsGesamtStructure() throws Exception {
+    void createSpreadsheetForMessstellenAsOdsKeepsGesamtStructure(@TempDir final Path tempDir) throws Exception {
         final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
         options.setTagesTyp(TagesTyp.MO_SO);
         options.setFahrzeuge(new FahrzeugOptionsDTO());
         options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
 
         final byte[] spreadsheet = spreadsheetService.createSpreadsheetForMessstellen(List.of(), options);
-        final SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.loadDocument(new ByteArrayInputStream(spreadsheet));
+        final Path spreadsheetFile = tempDir.resolve("Gesamtauswertung.ods");
+        Files.write(spreadsheetFile, spreadsheet);
+
+        Assertions.assertThat(Files.size(spreadsheetFile)).isPositive();
+        final SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.loadDocument(spreadsheetFile.toFile());
         final Table gesamtSheet = spreadsheetDocument.getSheetByIndex(0);
 
         Assertions.assertThat(gesamtSheet.getTableName()).isEqualTo("Gesamt");
