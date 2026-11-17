@@ -153,3 +153,19 @@ alter table if exists zaehlung
     add constraint FKggbhqg8htaryltgw2duhjjmvh
     foreign key (zaehlstelle_id)
     references zaehlstelle;
+
+CREATE INDEX index_knotenarm_zaehlung_id ON knotenarm USING btree (zaehlung_id);
+
+CREATE INDEX index_laengsverkehr_zaehlung_id ON laengsverkehr USING btree (zaehlung_id);
+
+CREATE INDEX index_laengsverkehr_hochrechnungsfaktor_id ON laengsverkehr USING btree (hochrechnungsfaktor_id);
+
+CREATE INDEX index_querungsverkehr_zaehlung_id ON querungsverkehr USING btree (zaehlung_id);
+
+CREATE INDEX index_querungsverkehr_hochrechnungsfaktor_id ON querungsverkehr USING btree (hochrechnungsfaktor_id);
+
+CREATE INDEX index_verkehrsbeziehung_zaehlung_id ON verkehrsbeziehung USING btree (zaehlung_id);
+
+CREATE INDEX index_verkehrsbeziehung_hochrechnungsfaktor_id ON verkehrsbeziehung USING btree (hochrechnungsfaktor_id);
+
+CREATE INDEX index_zaehlung_zaehlstelle_id ON zaehlung USING btree (zaehlstelle_id);

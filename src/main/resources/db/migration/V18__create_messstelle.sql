@@ -64,3 +64,7 @@ alter table if exists messquerschnitt
     add constraint FK9ddm78b00ej8g70ogcd54w2h0
     foreign key (messstelle_id)
     references messstelle;
+
+CREATE INDEX index_messfaehigkeit_messstelle_id ON messfaehigkeit USING btree (messstelle_id);
+
+CREATE INDEX index_messquerschnitt_messstelle_id ON messquerschnitt USING btree (messstelle_id);
