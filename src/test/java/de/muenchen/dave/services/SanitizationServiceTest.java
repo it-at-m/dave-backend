@@ -146,13 +146,13 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlstelleDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.toString());
+        bearbeiteZaehlstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.getBezeichnung());
         bearbeiteZaehlstelleDTO.setKommentar(ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1, ALLOWED_HTML_2));
 
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
 
-        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.toString()));
+        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.getBezeichnung()));
         assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(ALLOWED_HTML_2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(ALLOWED_HTML_1));
