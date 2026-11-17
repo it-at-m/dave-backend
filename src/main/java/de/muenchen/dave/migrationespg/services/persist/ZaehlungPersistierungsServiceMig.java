@@ -173,7 +173,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
      * @param zeitintervalle zur Ermittlung der Fahrzeugklassen und Fahrzeugkategorien.
      * @return die Fahrzeugklassen und Fahrzeugkategorien abhängig von den {@link Zeitintervall}en.
      */
-    public List<String> getFahrzeugKategorienAndFahrzeugklassen(final List<Zeitintervall> zeitintervalle) {
+    public Set<String> getFahrzeugKategorienAndFahrzeugklassen(final List<Zeitintervall> zeitintervalle) {
         final Set<Fahrzeug> fahrzeugkategorien = new HashSet<>();
         zeitintervalle.forEach(zeitintervall -> {
             if (ObjectUtils.isNotEmpty(zeitintervall.getPkw())) {
@@ -198,9 +198,9 @@ public abstract class ZaehlungPersistierungsServiceMig {
                 fahrzeugkategorien.add(Fahrzeug.FUSS);
             }
         });
-        return getFahrzeugklassen(new ArrayList<>(fahrzeugkategorien)).stream()
+        return getFahrzeugklassen(new HashSet<>(fahrzeugkategorien)).stream()
                 .map(Fahrzeug::name)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     /**
@@ -209,7 +209,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
      * @param fahrzeugkategorien zur Ermittlung der Fahrzeugklassen.
      * @return die Fahrzeugkategorien und Fahrzeugklassen als gemeinsame Liste.
      */
-    public List<Fahrzeug> getFahrzeugklassen(final List<Fahrzeug> fahrzeugkategorien) {
+    public List<Fahrzeug> getFahrzeugklassen(final Set<Fahrzeug> fahrzeugkategorien) {
         if (fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)) {
             fahrzeugkategorien.add(Fahrzeug.GV);
         }
@@ -229,7 +229,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
                 || fahrzeugkategorien.contains(Fahrzeug.BUS) || fahrzeugkategorien.contains(Fahrzeug.KRAD) || fahrzeugkategorien.contains(Fahrzeug.RAD)) {
             fahrzeugkategorien.add(Fahrzeug.PKW_EINHEIT);
         }
-        return fahrzeugkategorien;
+        return new ArrayList<>(fahrzeugkategorien);
     }
 
     public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)

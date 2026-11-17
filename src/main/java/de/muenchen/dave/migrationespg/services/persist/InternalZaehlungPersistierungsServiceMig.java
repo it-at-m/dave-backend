@@ -31,6 +31,7 @@ import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -104,7 +105,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
         }
 
         // Fahrzeugkategorien und -klassen setzen
-        zaehlungDto.setKategorien(getFahrzeugklassen(zaehlungDto.getKategorien()));
+        zaehlungDto.setKategorien(getFahrzeugklassen(new HashSet<>(zaehlungDto.getKategorien())));
 
         final ZaehlungEntity zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {

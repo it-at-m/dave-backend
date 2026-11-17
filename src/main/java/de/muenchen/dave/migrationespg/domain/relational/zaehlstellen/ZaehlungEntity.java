@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -130,7 +131,7 @@ public class ZaehlungEntity extends BaseEntity {
     private List<String> geographie;
 
     @Column(name = "kategorien", columnDefinition = "text[]")
-    private List<String> kategorien;
+    private Set<String> kategorien;
 
     @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")

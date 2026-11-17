@@ -116,7 +116,7 @@ public class ProcessZaehldatenZeitreiheServiceMig {
             final OptionsDTO options,
             final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
             final LadeZaehldatumDTO ladeZaehldatumDTO,
-            final List<String> kategorien) {
+            final Set<String> kategorien) {
         if (options.getKraftfahrzeugverkehr()) {
             // Wenn Kategorie KFZ nicht vorhanden ist, null liefern statt 0
             ladeZaehldatenZeitreiheDTO.getKfz().add(kategorien.contains(Fahrzeug.KFZ.getName())
@@ -399,7 +399,7 @@ public class ProcessZaehldatenZeitreiheServiceMig {
      * @param kategorien beauftragte Fahrzeugkategorien
      * @return Nicht-vorhanden-Nachricht
      */
-    private static String getMissingValuesMessage(final OptionsDTO options, final List<String> kategorien) {
+    private static String getMissingValuesMessage(final OptionsDTO options, final Set<String> kategorien) {
         int missing = 0;
         if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD.getName())) {
             missing++;
@@ -514,7 +514,7 @@ public class ProcessZaehldatenZeitreiheServiceMig {
     private static List<Fahrzeug> getNichtVorhandeneTageswerte(
             final OptionsDTO options,
             final Zeitintervall zeitintervall,
-            final List<String> kategorien) {
+            final Set<String> kategorien) {
         final List<Fahrzeug> result = new ArrayList<>();
 
         final boolean isTageswert = Zeitauswahl.TAGESWERT.getCapitalizedName()
