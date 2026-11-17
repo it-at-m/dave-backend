@@ -63,7 +63,7 @@ public class BelastungsplanDataQuServiceTest {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQuService()
                 .buildBelastungsplanDataMap(zaehldatenJeQuerungsverkehr, zaehlung);
 
-        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+        List<BelastungsplanQuDataDTO.QuKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeFuss);
         assertEquals(2, valuesKnotenarmeFuss.size());
@@ -71,7 +71,7 @@ public class BelastungsplanDataQuServiceTest {
         assertQuerungsverkehr(valuesKnotenarmeFuss, 2, Himmelsrichtung.O, 7);
         assertQuerungsverkehr(valuesKnotenarmeFuss, 4, Himmelsrichtung.O, 70);
 
-        List<BelastungsplanQuDataDTO.KnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+        List<BelastungsplanQuDataDTO.QuKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.RAD))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeRad);
         assertEquals(2, valuesKnotenarmeRad.size());
@@ -118,9 +118,9 @@ public class BelastungsplanDataQuServiceTest {
         assertEquals(BigDecimal.valueOf(99), value1.getValuesKnotenarme().getFirst().getValuesQuerungsverkehre().getFirst().getValue());
     }
 
-    private void assertQuerungsverkehr(List<BelastungsplanQuDataDTO.KnotenarmValue> values, int knotenarm, Himmelsrichtung richtung, int expectedValue) {
-        BelastungsplanQuDataDTO.KnotenarmValue knotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
-        BelastungsplanQuDataDTO.QuerungsverkehrValue querungsverkehrValue = knotenarmValue.getValuesQuerungsverkehre().stream()
+    private void assertQuerungsverkehr(List<BelastungsplanQuDataDTO.QuKnotenarmValue> values, int knotenarm, Himmelsrichtung richtung, int expectedValue) {
+        BelastungsplanQuDataDTO.QuKnotenarmValue quKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
+        BelastungsplanQuDataDTO.QuerungsverkehrValue querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
                 .filter(qv -> qv.getRichtung() == richtung).findFirst().orElseThrow();
         assertThat(querungsverkehrValue.getValue(), is(BigDecimal.valueOf(expectedValue)));
     }

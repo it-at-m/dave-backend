@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos;
 
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
@@ -12,6 +13,7 @@ public class ChatMessageDTO implements Serializable {
     private String zaehlungId;
     private String content;
     private int participantId;
+    @NotNull
     private LocalDateTime timestamp;
     private String type;
     private boolean uploaded;

@@ -86,25 +86,25 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
             final Querungsverkehr querungsverkehr,
             final BigDecimal value,
             final BelastungsplanQuDataDTO belastungsplanData) {
-        final BelastungsplanQuDataDTO.KnotenarmValue knotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
+        final BelastungsplanQuDataDTO.QuKnotenarmValue quKnotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
                 .filter(kn -> Objects.equals(kn.getKnotenarm(), querungsverkehr.getKnotenarm())).findFirst()
                 .orElseGet(() -> {
-                    final var kv = new BelastungsplanQuDataDTO.KnotenarmValue(querungsverkehr.getKnotenarm(), new ArrayList<>());
+                    final var kv = new BelastungsplanQuDataDTO.QuKnotenarmValue(querungsverkehr.getKnotenarm(), new ArrayList<>());
                     belastungsplanData.getValuesKnotenarme().add(kv);
                     return kv;
                 });
-        Optional<BelastungsplanQuDataDTO.QuerungsverkehrValue> querungsverkehrValue = knotenarmValue.getValuesQuerungsverkehre().stream()
+        Optional<BelastungsplanQuDataDTO.QuerungsverkehrValue> querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
                 .filter(qv -> qv.getRichtung() == querungsverkehr.getRichtung()).findFirst();
         if (querungsverkehrValue.isPresent()) {
             log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         } else {
-            knotenarmValue.getValuesQuerungsverkehre().add(new BelastungsplanQuDataDTO.QuerungsverkehrValue(querungsverkehr.getRichtung(), value));
+            quKnotenarmValue.getValuesQuerungsverkehre().add(new BelastungsplanQuDataDTO.QuerungsverkehrValue(querungsverkehr.getRichtung(), value));
             // Summiere Knotenarm
-            if (knotenarmValue.getSumKnotenarm() == null) {
-                knotenarmValue.setSumKnotenarm(value);
+            if (quKnotenarmValue.getSumKnotenarm() == null) {
+                quKnotenarmValue.setSumKnotenarm(value);
             } else {
-                knotenarmValue.setSumKnotenarm(knotenarmValue.getSumKnotenarm().add(value));
+                quKnotenarmValue.setSumKnotenarm(quKnotenarmValue.getSumKnotenarm().add(value));
             }
         }
     }

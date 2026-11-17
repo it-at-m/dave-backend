@@ -15,6 +15,9 @@ import lombok.Data;
 @Data
 public class LeseZaehlungDTO implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     String id;
 
     Date datum;

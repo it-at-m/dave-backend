@@ -2,6 +2,8 @@ package de.muenchen.dave.domain.dtos.laden;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -17,10 +19,18 @@ import lombok.Data;
 )
 public abstract class AbstractLadeBelastungsplanDTO<T> implements Serializable {
 
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
+    @NotNull
     private String[] streets;
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean kreisverkehr;
 
+    @NotNull
     private T value1;
+    @NotNull
     private T value2;
+    @NotNull
     private T value3;
 }
