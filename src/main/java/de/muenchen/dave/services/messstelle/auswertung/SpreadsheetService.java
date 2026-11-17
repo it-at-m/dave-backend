@@ -34,6 +34,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SpreadsheetService {
 
+    private static final double FIRST_COLUMN_WIDTH = 70;
+
     private final MessstelleService messstelleService;
 
     /**
@@ -78,6 +80,7 @@ public class SpreadsheetService {
                         mstSheet,
                         auswertungen,
                         options.getFahrzeuge());
+                setFirstColumnWidth(mstSheet);
                 gesamtRowIndex = addDataToGesamtSheet(
                         gesamtSheet,
                         auswertungen,
@@ -95,9 +98,11 @@ public class SpreadsheetService {
                             mqSheet,
                             ListUtils.emptyIfNull(auswertungenProMessquerschnitt),
                             options.getFahrzeuge());
+                    setFirstColumnWidth(mqSheet);
 
                 });
             }
+            setFirstColumnWidth(gesamtSheet);
             // Das Sheet an Index 1 ist das Hilfs-Template.
             // Danach folgen erst die eigentlichen Daten-Sheets.
             spreadsheetDocument.removeSheet(1);
@@ -375,6 +380,14 @@ public class SpreadsheetService {
             table.appendRow();
         }
         return table.getRowByIndex(rowIndex);
+    }
+
+    private void setFirstColumnWidth(final Table table) {
+        final var firstColumn = table.getColumnByIndex(0);
+        // Die Spalten können dieselbe automatische Formatvorlage verwenden; erst eine eigene Vorlage
+        // stellt sicher, dass setWidth nicht zugleich die Breite der übrigen Spalten ändert.
+        firstColumn.getOdfElement().getOrCreateUnqiueAutomaticStyle();
+        firstColumn.setWidth(FIRST_COLUMN_WIDTH);
     }
 
     /**

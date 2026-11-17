@@ -132,6 +132,8 @@ class SpreadsheetServiceTest {
         Assertions.assertThat(gesamtSheet.getCellByPosition(1, 3).getStringValue()).isEqualTo("MstId");
         Assertions.assertThat(gesamtSheet.getCellByPosition(2, 3).getStringValue()).isEqualTo("Anzahl relevante Tage");
         Assertions.assertThat(gesamtSheet.getCellByPosition(3, 3).getStringValue()).isEqualTo("Anzahl plausible Tage");
+        Assertions.assertThat(gesamtSheet.getColumnByIndex(0).getWidth()).isBetween(69.9, 70.1);
+        Assertions.assertThat(gesamtSheet.getColumnByIndex(1).getWidth()).isLessThan(60);
         spreadsheetDocument.close();
     }
 
