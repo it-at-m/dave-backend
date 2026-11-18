@@ -1,7 +1,7 @@
 package de.muenchen.dave.migrationespg.services;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.enums.Quelle;
 import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.enums.Status;

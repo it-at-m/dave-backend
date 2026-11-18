@@ -4,8 +4,8 @@ import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.migrationespg.services.ladezaehldaten.LadeZaehldatenServiceMig;
@@ -339,7 +339,7 @@ public class ProcessZaehldatenSteplineServiceMig {
         private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
                 final StepLineSeriesEntryBaseDTO entry,
                 final Boolean isChosen) {
-            if (isChosen.booleanValue()) {
+            if (isChosen) {
                 allEntries.add(entry);
             }
         }
@@ -371,7 +371,5 @@ public class ProcessZaehldatenSteplineServiceMig {
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkwEinheiten, options.getPkwEinheiten());
             return allEntries;
         }
-
     }
-
 }

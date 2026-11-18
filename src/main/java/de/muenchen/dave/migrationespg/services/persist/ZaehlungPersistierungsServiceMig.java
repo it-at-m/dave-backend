@@ -3,16 +3,9 @@ package de.muenchen.dave.migrationespg.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -21,13 +14,19 @@ import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
-import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.migrationespg.services.SanitizationServiceMig;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
+import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -52,14 +51,14 @@ public abstract class ZaehlungPersistierungsServiceMig {
 
     protected final ZeitintervallMapper zeitintervallMapper;
 
-    protected final SanitizationService sanitizationService;
+    protected final SanitizationServiceMig sanitizationService;
 
     protected final AuthorizationServiceMig authorizationService;
 
     public ZaehlungPersistierungsServiceMig(final ZaehlstelleIndexServiceMig indexService,
                                             final ZeitintervallPersistierungsServiceMig zeitintervallPersistierungsServiceMig,
                                             final ZeitintervallMapper zeitintervallMapper,
-                                            final SanitizationService sanitizationService,
+                                            final SanitizationServiceMig sanitizationService,
                                             final AuthorizationServiceMig authorizationService) {
         this.indexService = indexService;
         this.zeitintervallPersistierungsServiceMig = zeitintervallPersistierungsServiceMig;
@@ -209,7 +208,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
      * @param fahrzeugkategorien zur Ermittlung der Fahrzeugklassen.
      * @return die Fahrzeugkategorien und Fahrzeugklassen als gemeinsame Liste.
      */
-    public List<Fahrzeug> getFahrzeugklassen(final Set<Fahrzeug> fahrzeugkategorien) {
+    public Set<Fahrzeug> getFahrzeugklassen(final Set<Fahrzeug> fahrzeugkategorien) {
         if (fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)) {
             fahrzeugkategorien.add(Fahrzeug.GV);
         }
@@ -229,7 +228,7 @@ public abstract class ZaehlungPersistierungsServiceMig {
                 || fahrzeugkategorien.contains(Fahrzeug.BUS) || fahrzeugkategorien.contains(Fahrzeug.KRAD) || fahrzeugkategorien.contains(Fahrzeug.RAD)) {
             fahrzeugkategorien.add(Fahrzeug.PKW_EINHEIT);
         }
-        return new ArrayList<>(fahrzeugkategorien);
+        return new HashSet<>(fahrzeugkategorien);
     }
 
     public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)

@@ -8,28 +8,28 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.LaengsverkehrEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.QuerungsverkehrEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.VerkehrsbeziehungEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.MappedBewegungsbeziehung;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.VerkehrsbeziehungEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.migrationespg.services.SanitizationServiceMig;
+import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
-import de.muenchen.dave.services.SanitizationService;
-import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import jakarta.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +39,6 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,7 +55,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
             final PkwEinheitRepository pkwEinheitRepository,
             final ZeitintervallMapper zeitintervallMapper,
             final PkwEinheitMapper pkwEinheitMapper,
-            final SanitizationService sanitizationService,
+            final SanitizationServiceMig sanitizationService,
             final AuthorizationServiceMig authorizationService) {
         super(indexService, zeitintervallPersistierungsServiceMig, zeitintervallMapper, sanitizationService, authorizationService);
         this.pkwEinheitMapper = pkwEinheitMapper;
@@ -108,7 +107,7 @@ public class InternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
         zaehlungDto.setKategorien(getFahrzeugklassen(new HashSet<>(zaehlungDto.getKategorien())));
 
         final ZaehlungEntity zaehlung;
-        if (StringUtils.isEmpty(zaehlungDto.getId())) {
+        if (zaehlungDto.getId()== null) {
             // createZaehlung
             zaehlung = this.indexService.erstelleZaehlung(
                     zaehlungDto,

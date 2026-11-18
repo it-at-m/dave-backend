@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
@@ -42,7 +42,7 @@ public abstract class ZaehlungMapperMig {
 
     public abstract ZaehlungEntity bearbeiteDto2bean(BearbeiteZaehlungDTO dto);
 
-    abstract BearbeiteZaehlungDTO bean2BearbeiteDto(ZaehlungEntity bean);
+//    abstract BearbeiteZaehlungDTO bean2BearbeiteDto(ZaehlungEntity bean);
 
     public abstract LadeZaehlungVisumDTO bean2ladeVisumDto(ZaehlungEntity bean);
 
@@ -102,32 +102,32 @@ public abstract class ZaehlungMapperMig {
         }
     }
 
-    @AfterMapping
-    public void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, ZaehlungEntity bean) {
-
-        if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
-            final var laengsverkehr = bean.getLaengsverkehre();
-            if (CollectionUtils.isNotEmpty(laengsverkehr)) {
-                dto.setLaengsverkehr(new ArrayList<>());
-                laengsverkehr.forEach(beanLaengsverkehrs -> dto.getLaengsverkehr()
-                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanLaengsverkehrs)));
-            }
-        } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
-            final var querungsverkehr = bean.getQuerungsverkehre();
-            if (CollectionUtils.isNotEmpty(querungsverkehr)) {
-                dto.setQuerungsverkehr(new ArrayList<>());
-                querungsverkehr.forEach(beanQuerungsverkehr -> dto.getQuerungsverkehr()
-                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanQuerungsverkehr)));
-            }
-        } else {
-            final var verkehrsbeziehungen = bean.getVerkehrsbeziehungen();
-            if (CollectionUtils.isNotEmpty(verkehrsbeziehungen)) {
-                dto.setVerkehrsbeziehungen(new ArrayList<>());
-                verkehrsbeziehungen.forEach(beanVerkehrsbeziehung -> dto.getVerkehrsbeziehungen()
-                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanVerkehrsbeziehung)));
-            }
-        }
-    }
+//    @AfterMapping
+//    public void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, ZaehlungEntity bean) {
+//
+//        if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
+//            final var laengsverkehr = bean.getLaengsverkehre();
+//            if (CollectionUtils.isNotEmpty(laengsverkehr)) {
+//                dto.setLaengsverkehr(new ArrayList<>());
+//                laengsverkehr.forEach(beanLaengsverkehrs -> dto.getLaengsverkehr()
+//                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanLaengsverkehrs)));
+//            }
+//        } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
+//            final var querungsverkehr = bean.getQuerungsverkehre();
+//            if (CollectionUtils.isNotEmpty(querungsverkehr)) {
+//                dto.setQuerungsverkehr(new ArrayList<>());
+//                querungsverkehr.forEach(beanQuerungsverkehr -> dto.getQuerungsverkehr()
+//                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanQuerungsverkehr)));
+//            }
+//        } else {
+//            final var verkehrsbeziehungen = bean.getVerkehrsbeziehungen();
+//            if (CollectionUtils.isNotEmpty(verkehrsbeziehungen)) {
+//                dto.setVerkehrsbeziehungen(new ArrayList<>());
+//                verkehrsbeziehungen.forEach(beanVerkehrsbeziehung -> dto.getVerkehrsbeziehungen()
+//                        .add(bewegungsbeziehungMapperMig.bean2Dto(beanVerkehrsbeziehung)));
+//            }
+//        }
+//    }
 
     abstract LadeZaehlungDTO bean2LadeDto(ZaehlungEntity bean);
 

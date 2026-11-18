@@ -5,26 +5,26 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Wetter;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
+import de.muenchen.dave.exceptions.BrokenInfrastructureException;
+import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.mapper.KnotenarmMapperMig;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.LaengsverkehrEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.QuerungsverkehrEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
-import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
-import de.muenchen.dave.domain.enums.Zaehlart;
-import de.muenchen.dave.migrationespg.domain.mapper.KnotenarmMapperMig;
-import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
-import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
-import de.muenchen.dave.services.SanitizationService;
+import de.muenchen.dave.migrationespg.services.SanitizationServiceMig;
 import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
+import de.muenchen.dave.migrationespg.services.security.AuthorizationServiceMig;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +46,7 @@ public class ExternalZaehlungPersistierungsServiceMig extends ZaehlungPersistier
             final ZeitintervallPersistierungsServiceMig zeitintervallPersistierungsServiceMig,
             final ZeitintervallMapper zeitintervallMapper,
             final KnotenarmMapperMig knotenarmMapperMig,
-            final SanitizationService sanitizationService,
+            final SanitizationServiceMig sanitizationService,
             final AuthorizationServiceMig authorizationService) {
         super(indexService, zeitintervallPersistierungsServiceMig, zeitintervallMapper, sanitizationService, authorizationService);
         this.knotenarmMapperMig = knotenarmMapperMig;

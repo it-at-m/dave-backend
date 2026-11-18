@@ -93,11 +93,11 @@ public class BelastungsplanDataDefaultServiceMig extends AbstractBelastungsplanD
             final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
-        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);
-        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV), false);
-        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
-        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
-        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
+        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS.getName()), false);
         final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.SV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
         final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.GV_P,

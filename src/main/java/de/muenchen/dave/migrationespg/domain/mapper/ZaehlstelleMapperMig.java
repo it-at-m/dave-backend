@@ -2,16 +2,17 @@ package de.muenchen.dave.migrationespg.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
-import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.migrationespg.domain.dtos.external.ExternalZaehlstelleDTO;
+import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.migrationespg.domain.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.migrationespg.util.SuchwortUtil;
 import java.util.ArrayList;
@@ -30,6 +31,29 @@ import org.mapstruct.MappingTarget;
 public interface ZaehlstelleMapperMig {
 
     BearbeiteZaehlstelleDTO bean2bearbeiteDto(ZaehlstelleEntity bean, @Context StadtbezirkMapper stadtbezirkMapper);
+
+    @AfterMapping
+    default void toBearbeiteZaehlstelleDTO(@MappingTarget BearbeiteZaehlstelleDTO dto, ZaehlstelleEntity bean) {
+
+        dto.getPunkt().setLat(bean.getLatitude());
+        dto.getPunkt().setLon(bean.getLongitude());
+
+        dto.setLat(bean.getLatitude());
+        dto.setLng(bean.getLongitude());
+
+    }
+
+    @AfterMapping
+    default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, ZaehlungEntity bean) {
+        if (bean.getLatitude() != null) {
+            dto.getPunkt().setLat(bean.getLatitude());
+            dto.setLat(bean.getLatitude());
+        }
+        if (bean.getLongitude() != null) {
+            dto.getPunkt().setLon(bean.getLongitude());
+            dto.setLng(bean.getLongitude());
+        }
+    }
 
     @Mapping(target = "zaehlungen", ignore = true)
     LadeZaehlstelleVisumDTO bean2ladeVisumDto(ZaehlstelleEntity bean);
