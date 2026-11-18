@@ -45,7 +45,7 @@ import org.mapstruct.factory.Mappers;
 class ReportZaehlungskenngroessenTest {
 
     @ParameterizedTest
-    @EnumSource(value = Zaehlart.class, names = { "QJS", "FJS", "QU" })
+    @EnumSource(value = Zaehlart.class, names = { "N", "QJS", "FJS", "QU" })
     void reportAggregiertAlleBewegungsbeziehungen(final Zaehlart zaehlart) throws Exception {
         final var id = UUID.randomUUID();
         final var zaehlung = new Zaehlung();
@@ -58,47 +58,57 @@ class ReportZaehlungskenngroessenTest {
 
         final var repository = mock(ZeitintervallRepository.class);
         switch (zaehlart) {
-            case QJS -> {
-                final var erste = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-                erste.setVon(1);
-                erste.setNach(2);
-                erste.setStrassenseite(Himmelsrichtung.N);
-                final var zweite = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-                zweite.setVon(2);
-                zweite.setNach(1);
-                zweite.setStrassenseite(Himmelsrichtung.S);
-                zaehlung.setVerkehrsbeziehungen(List.of(erste, zweite));
-                when(repository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
-                        any(), any(), any(), anyInt(), anyInt(), any(), any()))
-                        .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(5)));
-            }
-            case FJS -> {
-                final var erste = new de.muenchen.dave.domain.elasticsearch.Laengsverkehr();
-                erste.setKnotenarm(1);
-                erste.setRichtung(Bewegungsrichtung.EIN);
-                erste.setStrassenseite(Himmelsrichtung.N);
-                final var zweite = new de.muenchen.dave.domain.elasticsearch.Laengsverkehr();
-                zweite.setKnotenarm(2);
-                zweite.setRichtung(Bewegungsrichtung.EIN);
-                zweite.setStrassenseite(Himmelsrichtung.N);
-                zaehlung.setLaengsverkehr(List.of(erste, zweite));
-                when(repository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(
-                        any(), any(), any(), anyInt(), any(), any(), any()))
-                        .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(6)));
-            }
-            case QU -> {
-                final var erste = new de.muenchen.dave.domain.elasticsearch.Querungsverkehr();
-                erste.setKnotenarm(1);
-                erste.setRichtung(Himmelsrichtung.N);
-                final var zweite = new de.muenchen.dave.domain.elasticsearch.Querungsverkehr();
-                zweite.setKnotenarm(2);
-                zweite.setRichtung(Himmelsrichtung.N);
-                zaehlung.setQuerungsverkehr(List.of(erste, zweite));
-                when(repository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
-                        any(), any(), any(), anyInt(), any(), any()))
-                        .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(5)));
-            }
-            default -> throw new IllegalArgumentException();
+        case N -> when(repository.findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
+                any(), any(), any(), any())).thenAnswer(invocation -> {
+                    final Set<TypeZeitintervall> types = invocation.getArgument(3);
+                    final var zeitintervalle = new ArrayList<>(intervalle(id, zaehlart, 1, types));
+                    zeitintervalle.addAll(intervalle(id, zaehlart, 2, types));
+                    return zeitintervalle;
+                });
+        case QJS -> {
+            final var erste = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+            erste.setVon(1);
+            erste.setNach(2);
+            erste.setStrassenseite(Himmelsrichtung.N);
+            final var zweite = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+            zweite.setVon(2);
+            zweite.setNach(1);
+            zweite.setStrassenseite(Himmelsrichtung.S);
+            zaehlung.setVerkehrsbeziehungen(List.of(erste, zweite));
+            when(repository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndVerkehrsbeziehungVonAndVerkehrsbeziehungNachAndTypeInAndVerkehrsbeziehungStrassenseiteOrderBySortingIndexAsc(
+                            any(), any(), any(), anyInt(), anyInt(), any(), any()))
+                    .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(5)));
+        }
+        case FJS -> {
+            final var erste = new de.muenchen.dave.domain.elasticsearch.Laengsverkehr();
+            erste.setKnotenarm(1);
+            erste.setRichtung(Bewegungsrichtung.EIN);
+            erste.setStrassenseite(Himmelsrichtung.N);
+            final var zweite = new de.muenchen.dave.domain.elasticsearch.Laengsverkehr();
+            zweite.setKnotenarm(2);
+            zweite.setRichtung(Bewegungsrichtung.EIN);
+            zweite.setStrassenseite(Himmelsrichtung.N);
+            zaehlung.setLaengsverkehr(List.of(erste, zweite));
+            when(repository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndLaengsverkehrKnotenarmAndLaengsverkehrRichtungAndLaengsverkehrStrassenseiteAndTypeInOrderBySortingIndexAsc(
+                            any(), any(), any(), anyInt(), any(), any(), any()))
+                    .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(6)));
+        }
+        case QU -> {
+            final var erste = new de.muenchen.dave.domain.elasticsearch.Querungsverkehr();
+            erste.setKnotenarm(1);
+            erste.setRichtung(Himmelsrichtung.N);
+            final var zweite = new de.muenchen.dave.domain.elasticsearch.Querungsverkehr();
+            zweite.setKnotenarm(2);
+            zweite.setRichtung(Himmelsrichtung.N);
+            zaehlung.setQuerungsverkehr(List.of(erste, zweite));
+            when(repository
+                    .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndQuerungsverkehrKnotenarmAndQuerungsverkehrRichtungAndTypeInOrderBySortingIndexAsc(
+                            any(), any(), any(), anyInt(), any(), any()))
+                    .thenAnswer(invocation -> intervalle(id, zaehlart, invocation.getArgument(3), invocation.getArgument(5)));
+        }
+        default -> throw new IllegalArgumentException();
         }
 
         final var index = mock(ZaehlstelleIndexService.class);
@@ -155,27 +165,29 @@ class ReportZaehlungskenngroessenTest {
         final var interval = Zeitintervall.builder().zaehlungId(id).type(type).startUhrzeit(start).endeUhrzeit(ende)
                 .pkw(value).lkw(value).lastzuege(value).busse(value).kraftraeder(value).fahrradfahrer(value).fussgaenger(value).build();
         switch (zaehlart) {
-            case QJS -> {
-                final var beziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
-                beziehung.setVon(arm);
-                beziehung.setNach(arm == 1 ? 2 : 1);
+        case N, QJS -> {
+            final var beziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
+            beziehung.setVon(arm);
+            beziehung.setNach(arm == 1 ? 2 : 1);
+            if (zaehlart == Zaehlart.QJS) {
                 beziehung.setStrassenseite(arm == 1 ? Himmelsrichtung.N : Himmelsrichtung.S);
-                interval.setVerkehrsbeziehung(beziehung);
             }
-            case FJS -> {
-                final var beziehung = new de.muenchen.dave.domain.Laengsverkehr();
-                beziehung.setKnotenarm(arm);
-                beziehung.setRichtung(Bewegungsrichtung.EIN);
-                beziehung.setStrassenseite(Himmelsrichtung.N);
-                interval.setLaengsverkehr(beziehung);
-            }
-            case QU -> {
-                final var beziehung = new de.muenchen.dave.domain.Querungsverkehr();
-                beziehung.setKnotenarm(arm);
-                beziehung.setRichtung(Himmelsrichtung.N);
-                interval.setQuerungsverkehr(beziehung);
-            }
-            default -> throw new IllegalArgumentException();
+            interval.setVerkehrsbeziehung(beziehung);
+        }
+        case FJS -> {
+            final var beziehung = new de.muenchen.dave.domain.Laengsverkehr();
+            beziehung.setKnotenarm(arm);
+            beziehung.setRichtung(Bewegungsrichtung.EIN);
+            beziehung.setStrassenseite(Himmelsrichtung.N);
+            interval.setLaengsverkehr(beziehung);
+        }
+        case QU -> {
+            final var beziehung = new de.muenchen.dave.domain.Querungsverkehr();
+            beziehung.setKnotenarm(arm);
+            beziehung.setRichtung(Himmelsrichtung.N);
+            interval.setQuerungsverkehr(beziehung);
+        }
+        default -> throw new IllegalArgumentException();
         }
         return interval;
     }
