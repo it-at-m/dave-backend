@@ -4,11 +4,11 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.Zeitraum;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
@@ -100,14 +100,14 @@ class SpreadsheetServiceTest {
         cell = row.getCell(1);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo("alle Messquerschnitte");
 
-        final Messstelle mockedMessstelle = new Messstelle();
+        final MessstelleEntity mockedMessstelle = new MessstelleEntity();
         mockedMessstelle.setMstId("123");
         mockedMessstelle.setMessquerschnitte(new ArrayList<>());
-        final Messquerschnitt messquerschnitt1 = new Messquerschnitt();
+        final MessquerschnittEntity messquerschnitt1 = new MessquerschnittEntity();
         messquerschnitt1.setMqId("12301");
         messquerschnitt1.setFahrtrichtung("W");
         messquerschnitt1.setStandort("Standort MQ1");
-        final Messquerschnitt messquerschnitt2 = new Messquerschnitt();
+        final MessquerschnittEntity messquerschnitt2 = new MessquerschnittEntity();
         messquerschnitt2.setMqId("12302");
         messquerschnitt2.setFahrtrichtung("O");
         messquerschnitt2.setStandort("Standort MQ2");
@@ -157,7 +157,7 @@ class SpreadsheetServiceTest {
         cell = row.getCell(2);
         Assertions.assertThat(cell.getStringCellValue()).isEqualTo(mqId);
 
-        final Messquerschnitt messquerschnitt = new Messquerschnitt();
+        final MessquerschnittEntity messquerschnitt = new MessquerschnittEntity();
         messquerschnitt.setFahrtrichtung("W");
         messquerschnitt.setStandort("Standort MQ");
         messquerschnitt.setMqId(mqId);
@@ -394,7 +394,7 @@ class SpreadsheetServiceTest {
 
     @Test
     void getFormattedStringForMessquerschnitt() {
-        final Messquerschnitt messquerschnitt = new Messquerschnitt();
+        final MessquerschnittEntity messquerschnitt = new MessquerschnittEntity();
         messquerschnitt.setMqId("12301");
         messquerschnitt.setFahrtrichtung("W");
         messquerschnitt.setStandort("Standort MQ");

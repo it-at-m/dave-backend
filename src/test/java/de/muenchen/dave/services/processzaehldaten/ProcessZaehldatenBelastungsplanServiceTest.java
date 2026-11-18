@@ -1,28 +1,18 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.*;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQuDataDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Rounding;
@@ -31,8 +21,10 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.RoundingService;
 import de.muenchen.dave.util.BelastungsplanCalculator;
@@ -41,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +51,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ProcessZaehldatenBelastungsplanServiceTest {
@@ -67,7 +74,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Mock
     private ZeitintervallRepository zeitintervallRepository;
     @Mock
-    private ZaehlstelleIndex zaehlstelleIndex;
+    private ZaehlstellenIndexRepository zaehlstelleIndex;
     @Mock
     private LadeZaehldatenService ladeZaehldatenService;
 
@@ -83,7 +90,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @BeforeEach
     public void beforeEach() throws IllegalAccessException {
-        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService, factory);
+        service = new ProcessZaehldatenBelastungsplanService(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService, factory, new PkwEinheit());
         Mockito.reset(zeitintervallRepository, zaehlstelleIndex, ladeZaehldatenService);
     }
 
@@ -93,12 +100,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithKfzAndRadData() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.KFZ.getName(), Fahrzeug.RAD.getName())));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.N,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -119,12 +126,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithKfzAndFussData() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.KFZ.getName(), Fahrzeug.FUSS.getName())));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.N,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -145,12 +152,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussData() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.N,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -171,12 +178,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussOnlyData() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.FUSS.getName())));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.N,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -197,13 +204,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QJS.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<String>(List.of(Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.QJS);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.QJS,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -224,13 +231,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataFjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of((Fahrzeug.FUSS.getName()))));
+        zaehlung.setZaehlart(Zaehlart.FJS);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.FJS,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -251,13 +258,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQu() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QU.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.QU);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.QU,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -278,13 +285,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QJS.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.QJS);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.QJS,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -306,13 +313,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataFjs() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.FJS.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.FJS);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.FJS,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -334,13 +341,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQu() throws DataNotFoundException {
         OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
-        Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QU.name());
+        ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        ZaehlungEntity zaehlung = createTestZaehlung(new HashSet<>(List.of(Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.QU);
         zaehlstelle.setZaehlungen(List.of(zaehlung));
         when(zaehlstelleIndex.findByZaehlungenId(zaehlung.getId())).thenReturn(Optional.of(zaehlstelle));
         when(ladeZaehldatenService.extractZeitintervalle(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Zaehlart.QU,
                 options.getZeitblock().getStart(),
                 options.getZeitblock().getEnd(),
@@ -367,19 +374,19 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
 
-        doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
-        Zaehlstelle zaehlstelle = new Zaehlstelle();
-        Zaehlung zaehlung1 = new Zaehlung();
-        zaehlung1.setId("zaehlung-1");
-        zaehlung1.setZaehlart(Zaehlart.N.name());
+        doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(any(UUID.class), any(OptionsDTO.class));
+        ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        ZaehlungEntity zaehlung1 = new ZaehlungEntity();
+        zaehlung1.setId(UUID.fromString("zaehlung-1"));
+        zaehlung1.setZaehlart(Zaehlart.N);
         zaehlstelle.getZaehlungen().add(zaehlung1);
-        when(zaehlstelleIndex.findByZaehlungenId("zaehlung-1")).thenReturn(Optional.of((zaehlstelle)));
+        when(zaehlstelleIndex.findByZaehlungenId(UUID.fromString("zaehlung-1"))).thenReturn(Optional.of((zaehlstelle)));
 
-        final var result = serviceSpy.getBelastungsplanDTO("zaehlung-1", options);
+        final var result = serviceSpy.getBelastungsplanDTO(UUID.fromString("zaehlung-1"), options);
 
         assertSame(expected, result);
-        verify(serviceSpy, times(1)).ladeProcessedZaehldatenBelastungsplan(eq("zaehlung-1"), eq(options));
-        verify(serviceSpy, never()).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
+        verify(serviceSpy, times(1)).ladeProcessedZaehldatenBelastungsplan(eq(UUID.fromString("zaehlung-1")), eq(options));
+        verify(serviceSpy, never()).getDifferenzdatenBelastungsplanDTO(any(UUID.class), any(OptionsDTO.class));
     }
 
     /**
@@ -390,27 +397,27 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ProcessZaehldatenBelastungsplanService serviceSpy = Mockito.spy(service);
         final OptionsDTO options = new OptionsDTO();
         options.setDifferenzdatenDarstellen(true);
-        options.setVergleichszaehlungsId("vergleich-1");
+        options.setVergleichszaehlungsId(UUID.fromString("vergleich-1"));
 
         final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
 
-        doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
-        Zaehlstelle zaehlstelle = new Zaehlstelle();
-        Zaehlung zaehlung1 = new Zaehlung();
-        zaehlung1.setId("zaehlung-1");
-        zaehlung1.setZaehlart(Zaehlart.N.name());
+        doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(any(UUID.class), any(OptionsDTO.class));
+        ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        ZaehlungEntity zaehlung1 = new ZaehlungEntity();
+        zaehlung1.setId(UUID.fromString("zaehlung-1"));
+        zaehlung1.setZaehlart(Zaehlart.N);
         zaehlstelle.getZaehlungen().add(zaehlung1);
-        Zaehlung zaehlung2 = new Zaehlung();
-        zaehlung2.setId("vergleich-1");
+        ZaehlungEntity zaehlung2 = new ZaehlungEntity();
+        zaehlung2.setId(UUID.fromString("vergleich-1"));
         zaehlstelle.getZaehlungen().add(zaehlung2);
-        when(zaehlstelleIndex.findByZaehlungenId("zaehlung-1")).thenReturn(Optional.of((zaehlstelle)));
-        when(zaehlstelleIndex.findByZaehlungenId("vergleich-1")).thenReturn(Optional.of((zaehlstelle)));
+        when(zaehlstelleIndex.findByZaehlungenId(UUID.fromString("zaehlung-1"))).thenReturn(Optional.of((zaehlstelle)));
+        when(zaehlstelleIndex.findByZaehlungenId(UUID.fromString("vergleich-1"))).thenReturn(Optional.of((zaehlstelle)));
 
-        final var result = serviceSpy.getBelastungsplanDTO("zaehlung-1", options);
+        final var result = serviceSpy.getBelastungsplanDTO(UUID.fromString("zaehlung-1"), options);
 
         assertSame(expected, result);
-        verify(serviceSpy, times(1)).getDifferenzdatenBelastungsplanDTO(eq("zaehlung-1"), eq(options));
-        verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
+        verify(serviceSpy, times(1)).getDifferenzdatenBelastungsplanDTO(eq(UUID.fromString("zaehlung-1")), eq(options));
+        verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(any(UUID.class), any(OptionsDTO.class));
     }
 
     @Test
@@ -580,9 +587,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     void testExtractZeitintervalleSpitzenstundeForEachBewegungsbeziehung() {
         final UUID zaehlungId = UUID.randomUUID();
-        final Zaehlung zaehlung = Mockito.mock(Zaehlung.class);
-        when(zaehlung.getId()).thenReturn(zaehlungId.toString());
-        when(zaehlung.getZaehlart()).thenReturn(Zaehlart.N.name());
+        final ZaehlungEntity zaehlung = Mockito.mock(ZaehlungEntity.class);
+        when(zaehlung.getId()).thenReturn(zaehlungId);
+        when(zaehlung.getZaehlart()).thenReturn(Zaehlart.N);
         when(zaehlung.getKreisverkehr()).thenReturn(Boolean.FALSE);
 
         final OptionsDTO options = new OptionsDTO();
@@ -662,7 +669,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 { BigDecimal.valueOf(9), BigDecimal.valueOf(11), BigDecimal.valueOf(13), BigDecimal.valueOf(15) } };
     }
 
-    private Zeitintervall createTestZeitintervall(final String zaehlungId, final List<Fahrzeug> fahrzeuge) {
+    private Zeitintervall createTestZeitintervall(final UUID zaehlungId, final List<Fahrzeug> fahrzeuge) {
         Zeitintervall zeitintervall = new Zeitintervall();
         if (fahrzeuge.contains(Fahrzeug.PKW))
             zeitintervall.setPkw(random.nextInt());
@@ -674,7 +681,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
         zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusMinutes(15));
         zeitintervall.setType(TypeZeitintervall.STUNDE_VIERTEL);
-        zeitintervall.setZaehlungId(UUID.fromString(zaehlungId));
+        zeitintervall.setZaehlungId(zaehlungId);
         Verkehrsbeziehung vb = new Verkehrsbeziehung();
         vb.setVon(1);
         vb.setNach(3);
@@ -682,12 +689,11 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         return zeitintervall;
     }
 
-    private Zaehlung createTestZaehlung(final List<Fahrzeug> fahrzeuge) {
-        Zaehlung zaehlung = ZaehlungRandomFactory.getOne();
+    private ZaehlungEntity createTestZaehlung(final Set<String> fahrzeuge) {
+        ZaehlungEntity zaehlung = ZaehlungRandomFactory.getOne();
         zaehlung.setKreisverkehr(false);
         zaehlung.setKategorien(fahrzeuge);
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        zaehlung.setPkwEinheit(new PkwEinheit());
+        zaehlung.setZaehlart(Zaehlart.N);
         return zaehlung;
     }
 

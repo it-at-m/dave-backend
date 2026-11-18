@@ -1,17 +1,17 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import java.time.LocalDate;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 @Slf4j
 public class ZaehlstelleIndexServiceUtilsTests {
@@ -34,38 +34,38 @@ public class ZaehlstelleIndexServiceUtilsTests {
 
     @Test
     public void testGetLetzteAktiveZaehlung() {
-        Zaehlung z1 = new Zaehlung();
+        ZaehlungEntity z1 = new ZaehlungEntity();
         z1.setDatum(LocalDate.of(2010, 1, 1));
-        z1.setStatus(Status.ACTIVE.name());
+        z1.setStatus(Status.ACTIVE);
 
-        Zaehlung z2 = new Zaehlung();
+        ZaehlungEntity z2 = new ZaehlungEntity();
         z2.setDatum(LocalDate.of(2015, 1, 1));
-        z2.setStatus(Status.ACTIVE.name());
+        z2.setStatus(Status.ACTIVE);
 
-        Zaehlung z3 = new Zaehlung();
+        ZaehlungEntity z3 = new ZaehlungEntity();
         z3.setDatum(LocalDate.of(2020, 1, 1));
-        z3.setStatus(Status.ACTIVE.name());
+        z3.setStatus(Status.ACTIVE);
 
         assertThat(IndexServiceUtils.getLetzteAktiveZaehlung(Lists.newArrayList(z1, z2, z3)), is(equalTo(z3)));
 
-        z3.setStatus(Status.INACTIVE.name());
+        z3.setStatus(Status.INACTIVE);
         assertThat(IndexServiceUtils.getLetzteAktiveZaehlung(Lists.newArrayList(z1, z2, z3)), is(equalTo(z2)));
     }
 
     @Test
     public void createKreuzungsname() {
         String kreuzungsname = "";
-        final Zaehlung zaehlung = new Zaehlung();
-        final Knotenarm knotenarm1 = new Knotenarm();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        final KnotenarmEntity knotenarm1 = new KnotenarmEntity();
         knotenarm1.setNummer(1);
         knotenarm1.setStrassenname("strasse1");
-        final Knotenarm knotenarm2 = new Knotenarm();
+        final KnotenarmEntity knotenarm2 = new KnotenarmEntity();
         knotenarm2.setNummer(2);
         knotenarm2.setStrassenname("strasse2");
-        final Knotenarm knotenarm3 = new Knotenarm();
+        final KnotenarmEntity knotenarm3 = new KnotenarmEntity();
         knotenarm3.setNummer(3);
         knotenarm3.setStrassenname("strasse3");
-        final Knotenarm knotenarm4 = new Knotenarm();
+        final KnotenarmEntity knotenarm4 = new KnotenarmEntity();
         knotenarm4.setNummer(4);
         knotenarm4.setStrassenname("strasse2");
         zaehlung.setKnotenarme(Arrays.asList(knotenarm1, knotenarm2, knotenarm3, knotenarm4));

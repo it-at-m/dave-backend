@@ -2,16 +2,25 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.*;
+import de.muenchen.dave.domain.enums.Quelle;
+import de.muenchen.dave.domain.enums.Stadtbezirk;
+import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.enums.Wetter;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import javax.imageio.ImageIO;
 import org.apache.tika.Tika;
 import org.jsoup.Jsoup;
@@ -194,12 +203,12 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} einer {@link Messstelle}. Unerwünschter
+     * Bereinigt die Attribute vom Typ {@link String} einer {@link MessstelleEntity}. Unerwünschter
      * HTML-Code wird entfernt.
      *
-     * @param messstelle Die {@link Messstelle}, deren Attribute bereinigt werden sollen
+     * @param messstelle Die {@link MessstelleEntity}, deren Attribute bereinigt werden sollen
      */
-    public void sanitizeMessstelle(final Messstelle messstelle) {
+    public void sanitizeMessstelle(final MessstelleEntity messstelle) {
         if (messstelle == null) return;
         messstelle.setName(sanitizeAllowedHtml(messstelle.getName()));
         messstelle.setBemerkung(sanitizeAllowedHtml(messstelle.getBemerkung()));
@@ -229,13 +238,13 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link Messquerschnitt}s.
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link MessquerschnittEntity}s.
      * Unerwünschter HTML-Code wird entfernt.
      *
-     * @param messquerschnitt Der {@link Messquerschnitt}, dessen Attribute bereinigt werden
+     * @param messquerschnitt Der {@link MessquerschnittEntity}, dessen Attribute bereinigt werden
      *            sollen
      */
-    public void sanitizeMessquerschnitt(Messquerschnitt messquerschnitt) {
+    public void sanitizeMessquerschnitt(MessquerschnittEntity messquerschnitt) {
         if (messquerschnitt == null) return;
         messquerschnitt.setStrassenname(sanitizeAllowedHtml(messquerschnitt.getStrassenname()));
         messquerschnitt.setLageMessquerschnitt(sanitizeAllowedHtml(messquerschnitt.getLageMessquerschnitt()));

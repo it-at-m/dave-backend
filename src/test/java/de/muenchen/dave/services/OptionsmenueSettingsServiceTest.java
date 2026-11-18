@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.OptionsmenueSettingsMapperImpl;
-import de.muenchen.dave.repositories.relationaldb.OptionsmenueSettingsRepository;
+import de.muenchen.dave.relational.repository.OptionsmenueSettingsRepository;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

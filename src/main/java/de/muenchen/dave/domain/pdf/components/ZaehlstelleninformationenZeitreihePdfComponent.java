@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.pdf.components;
 
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
 import java.util.List;
 import lombok.Data;
 
@@ -11,6 +11,6 @@ public class ZaehlstelleninformationenZeitreihePdfComponent {
 
     private String platz;
 
-    private List<Knotenarm> knotenarme;
+    private List<KnotenarmEntity> knotenarme;
 
 }

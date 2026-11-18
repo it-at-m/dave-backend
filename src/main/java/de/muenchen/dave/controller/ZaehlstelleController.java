@@ -3,15 +3,15 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.migrationespg.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.migrationespg.services.ZaehlstelleIndexServiceMig;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 
+import de.muenchen.dave.services.ZaehlstelleIndexService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class ZaehlstelleController {
 
     private static final String REQUEST_PARAMETER_ID = "id";
 
-    private final ZaehlstelleIndexServiceMig indexService;
+    private final ZaehlstelleIndexService indexService;
 
     private final SecurityContextInformationExtractorService securityContextInformationExtractorService;
 

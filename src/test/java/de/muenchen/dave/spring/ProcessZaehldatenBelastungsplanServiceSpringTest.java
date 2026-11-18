@@ -25,10 +25,12 @@ import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenBelastungsplanService;
 import de.muenchen.dave.util.DaveConstants;
@@ -39,6 +41,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -152,7 +155,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
                 .thenReturn(zeitintervalle);
 
         AbstractLadeBelastungsplanDTO<?> ladeBelastungsplan = processZaehldatenBelastungsplanService
-                .ladeProcessedZaehldatenBelastungsplan(zaehlungId.toString(), options);
+                .ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
 
         assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue1()).getValues()[4][1], is(BigDecimal.valueOf(15)));
         assertThat(((BelastungsplanDataDTO) ladeBelastungsplan.getValue2()).getValues()[4][1], is(BigDecimal.valueOf(9)));
@@ -274,7 +277,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
                 .thenReturn(zeitintervalle);
 
         AbstractLadeBelastungsplanDTO<?> ladeBelastungsplan = processZaehldatenBelastungsplanService
-                .ladeProcessedZaehldatenBelastungsplan(zaehlungId.toString(), options);
+                .ladeProcessedZaehldatenBelastungsplan(zaehlungId, options);
 
         System.err.println(ladeBelastungsplan);
 
@@ -330,17 +333,17 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
         options.setSchwerverkehrsanteilProzent(false);
         options.setGueterverkehrsanteilProzent(false);
 
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setId(zaehlungId.toString());
-        Knotenarm knotenarm2 = new Knotenarm();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setId(zaehlungId);
+        KnotenarmEntity knotenarm2 = new KnotenarmEntity();
         knotenarm2.setNummer(2);
         knotenarm2.setStrassenname("knotenarm_2");
-        Knotenarm knotenarm5 = new Knotenarm();
+        KnotenarmEntity knotenarm5 = new KnotenarmEntity();
         knotenarm5.setNummer(5);
         knotenarm5.setStrassenname("knotenarm_5");
         zaehlung.setKnotenarme(Arrays.asList(knotenarm2, knotenarm5));
-        zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.SV, Fahrzeug.GV, Fahrzeug.SV_P, Fahrzeug.GV_P, Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.N.toString());
+        zaehlung.setKategorien(new HashSet<String>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.SV.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV_P.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.N);
         zaehlung.setKreisverkehr(false);
 
         Zeitintervall spitzenstunde = new Zeitintervall();

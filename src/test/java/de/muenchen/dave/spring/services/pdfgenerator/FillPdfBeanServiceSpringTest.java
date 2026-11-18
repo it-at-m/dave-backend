@@ -1,11 +1,5 @@
 package de.muenchen.dave.spring.services.pdfgenerator;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
-
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import de.muenchen.dave.DaveBackendApplication;
@@ -13,11 +7,9 @@ import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Quelle;
 import de.muenchen.dave.domain.enums.Rounding;
+import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -31,6 +23,9 @@ import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
@@ -50,6 +45,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
+
 /**
  * In dieser Testfile werden einige Objekte mithilfe eines JSON-Strings erstellt, welcher in der
  * Produktion im Debug Mode generiert wurde. Um ein aktuelles JSON
@@ -68,7 +69,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 public class FillPdfBeanServiceSpringTest {
 
-    public static final String MOCKABLE_ZAEHLUNG_ID = "6837e615-ea6e-4e42-9c6f-f9aadde6599f";
+    public static final UUID MOCKABLE_ZAEHLUNG_ID = UUID.fromString("6837e615-ea6e-4e42-9c6f-f9aadde6599f");
     public static final String DEPARTMENT = "TestOU";
 
     @MockitoBean
@@ -89,57 +90,54 @@ public class FillPdfBeanServiceSpringTest {
     @MockitoBean
     private ZaehlstelleIndexService indexService;
 
-    public static Zaehlung getZaehlung() {
-        final Zaehlung zaehlung = new Zaehlung();
+    public static ZaehlungEntity getZaehlung() {
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(MOCKABLE_ZAEHLUNG_ID);
         zaehlung.setDatum(LocalDate.of(2020, 11, 4));
         zaehlung.setJahr("2020");
         zaehlung.setMonat("November");
         zaehlung.setJahreszeit("Herbst");
-        zaehlung.setZaehlart(String.valueOf(Zaehlart.N));
-        zaehlung.setPunkt(null);
+        zaehlung.setZaehlart(Zaehlart.N);
         zaehlung.setTagesTyp(null);
         zaehlung.setProjektNummer("M3213");
         zaehlung.setProjektName("VZ Testinger");
         zaehlung.setSonderzaehlung(false);
         zaehlung.setKategorien(null);
         zaehlung.setKreisverkehr(false);
-        zaehlung.setStatus("ACTIVE");
+        zaehlung.setStatus(Status.ACTIVE);
         zaehlung.setZaehlsituation("Situation normal");
         zaehlung.setZaehlsituationErweitert("Alles in bester Ordnung");
         zaehlung.setZaehlIntervall(15);
-        zaehlung.setWetter(Wetter.CONTINUOUS_RAINY.toString());
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN.toString());
-        zaehlung.setQuelle(Quelle.MANUALLY.toString());
+        zaehlung.setWetter(Wetter.CONTINUOUS_RAINY);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
+        zaehlung.setQuelle(Quelle.MANUALLY);
         zaehlung.setSchulZeiten(null);
         zaehlung.setSuchwoerter(null);
         zaehlung.setVerkehrsbeziehungen(Lists.newArrayList());
         zaehlung.setKreuzungsname("Leopoldstr. - Feilitzschstr. - Herzogstr.");
 
-        final Knotenarm knotenarm1 = new Knotenarm();
+        final KnotenarmEntity knotenarm1 = new KnotenarmEntity();
         knotenarm1.setNummer(1);
         knotenarm1.setStrassenname("Cosimastr.");
-        final Knotenarm knotenarm2 = new Knotenarm();
+        final KnotenarmEntity knotenarm2 = new KnotenarmEntity();
         knotenarm2.setNummer(3);
         knotenarm2.setStrassenname("Cosimastr");
-        final Knotenarm knotenarm3 = new Knotenarm();
+        final KnotenarmEntity knotenarm3 = new KnotenarmEntity();
         knotenarm3.setNummer(4);
         knotenarm3.setStrassenname("Wahnfriedallee");
-        final List<Knotenarm> knotenarmList = new ArrayList<>();
+        final List<KnotenarmEntity> knotenarmList = new ArrayList<>();
         knotenarmList.add(knotenarm1);
         knotenarmList.add(knotenarm2);
         knotenarmList.add(knotenarm3);
 
         zaehlung.setKnotenarme(knotenarmList);
 
-        zaehlung.setPkwEinheit(null);
-
         return zaehlung;
     }
 
-    public static Zaehlstelle getZaehlstelle(final Zaehlung zaehlung) {
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId("abcd-ef12-3456");
+    public static ZaehlstelleEntity getZaehlstelle(final ZaehlungEntity zaehlung) {
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.fromString("abcd-ef12-3456"));
         zaehlstelle.setNummer("133301");
         zaehlstelle.setStadtbezirk("Bogenhausen");
         zaehlstelle.setStadtbezirkNummer(13);
@@ -148,7 +146,7 @@ public class FillPdfBeanServiceSpringTest {
         zaehlstelle.setLetzteZaehlungJahr(2020);
         zaehlstelle.setGrundLetzteZaehlung("Musste mal wieder gemacht werden");
 
-        final List<Zaehlung> zaehlungen = new ArrayList<>();
+        final List<ZaehlungEntity> zaehlungen = new ArrayList<>();
         zaehlungen.add(zaehlung);
         zaehlstelle.setZaehlungen(zaehlungen);
 
@@ -224,14 +222,14 @@ public class FillPdfBeanServiceSpringTest {
     }
 
     private void init() throws DataNotFoundException {
-        final Zaehlung zaehlung = getZaehlung();
-        final Zaehlstelle zaehlstelle = getZaehlstelle(zaehlung);
+        final ZaehlungEntity zaehlung = getZaehlung();
+        final ZaehlstelleEntity zaehlstelle = getZaehlstelle(zaehlung);
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
         final OptionsDTO options = getChosenOptionsDTO();
 
         when(this.indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlstelle);
         when(this.indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
-        when(this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(MOCKABLE_ZAEHLUNG_ID), options)).thenReturn(ladeZaehldatenTableDTO);
+        when(this.ladeZaehldatenService.ladeZaehldaten(MOCKABLE_ZAEHLUNG_ID, options)).thenReturn(ladeZaehldatenTableDTO);
     }
 
     @Test
@@ -289,7 +287,7 @@ public class FillPdfBeanServiceSpringTest {
 
     @Test
     public void fillGangliniePdfIncludesSpitzenstunde() throws DataNotFoundException {
-        final Zaehlung zaehlung = getZaehlung();
+        final ZaehlungEntity zaehlung = getZaehlung();
         final OptionsDTO options = getChosenOptionsDTO();
         options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
@@ -299,7 +297,7 @@ public class FillPdfBeanServiceSpringTest {
 
         when(this.indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(getZaehlstelle(zaehlung));
         when(this.indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
-        when(this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(MOCKABLE_ZAEHLUNG_ID), options)).thenReturn(ladeZaehldatenTableDTO);
+        when(this.ladeZaehldatenService.ladeZaehldaten(MOCKABLE_ZAEHLUNG_ID, options)).thenReturn(ladeZaehldatenTableDTO);
 
         final GangliniePdf gangliniePdf = new GangliniePdf();
         this.fillPdfBeanService.fillGangliniePdf(gangliniePdf, MOCKABLE_ZAEHLUNG_ID, options, "Chart", "Übersicht", DEPARTMENT);
@@ -358,7 +356,7 @@ public class FillPdfBeanServiceSpringTest {
 
         options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
         options.setZeitblock(Zeitblock.ZB_06_10);
-        when(this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(MOCKABLE_ZAEHLUNG_ID), options)).thenReturn(getLadeZaehldatenTableDTO());
+        when(this.ladeZaehldatenService.ladeZaehldaten(MOCKABLE_ZAEHLUNG_ID, options)).thenReturn(getLadeZaehldatenTableDTO());
 
         options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
         options.setZeitblock(Zeitblock.ZB_06_10);

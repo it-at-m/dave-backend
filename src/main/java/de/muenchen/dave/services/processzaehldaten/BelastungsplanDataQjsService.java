@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -8,7 +9,7 @@ import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQjsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,10 +37,11 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
             final OptionsDTO options,
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
+            final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
-                .mapVerkehrsbeziehungen(options, zaehlung, zeitintervalle);
+                .mapVerkehrsbeziehungen(options, pkwEinheit, zeitintervalle);
 
         var ladeBelastungsplan = new LadeBelastungsplanQjsDTO();
         ladeBelastungsplan.setStreets(new String[8]);
@@ -54,13 +56,13 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
         } else if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
-        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplan);
+        markKIHochrechnung(String.valueOf(zaehlung.getZaehldauer()), options.getZeitauswahl(), ladeBelastungsplan);
         return ladeBelastungsplan;
     }
 
     public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {

@@ -3,7 +3,7 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
 import de.muenchen.dave.domain.mapper.OptionsmenueSettingsMapper;
-import de.muenchen.dave.repositories.relationaldb.OptionsmenueSettingsRepository;
+import de.muenchen.dave.relational.repository.OptionsmenueSettingsRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -26,7 +26,7 @@ import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.DaveConstants;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;

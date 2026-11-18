@@ -1,16 +1,13 @@
 package de.muenchen.dave.services.messstelle;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleMapperImpl;
+import de.muenchen.dave.relational.messtellen.MessfaehigkeitEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.SanitizationService;
 import java.time.LocalDate;
@@ -25,7 +22,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -60,29 +59,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle1() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
@@ -111,29 +111,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle2() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
@@ -168,29 +169,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle3() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
@@ -225,29 +227,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle4() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
@@ -288,29 +291,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle5() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));
@@ -339,29 +343,30 @@ class MessstelleServiceTest {
 
     @Test
     void getMessfaehigkeitenForZeitraumForMessstelle6() {
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMstId("1234");
         messstelle.setStadtbezirkNummer(1);
-        messstelle.setPunkt(new GeoPoint(1d, 2d));
+        messstelle.setLatitude(1d);
+        messstelle.setLongitude(2d);
 
-        final var messfaehigkeiten = new ArrayList<Messfaehigkeit>();
+        final var messfaehigkeiten = new ArrayList<MessfaehigkeitEntity>();
         messstelle.setMessfaehigkeiten(messfaehigkeiten);
 
-        var messfaehigkeit = new Messfaehigkeit();
+        var messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 3, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 3, 31));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 4, 1));
         messfaehigkeit.setGueltigBis(LocalDate.of(2024, 4, 30));
         messfaehigkeiten.add(messfaehigkeit);
 
-        messfaehigkeit = new Messfaehigkeit();
+        messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.SUMME_KFZ);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         messfaehigkeit.setGueltigAb(LocalDate.of(2024, 5, 15));

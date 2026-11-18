@@ -2,8 +2,8 @@ package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -11,6 +11,7 @@ import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.mail.Email;
@@ -64,9 +65,9 @@ public class EmailSendService {
         String link = "";
 
         // Zählung und Zählstelle werden für zusätzliche Informationen für den Inhalt der EMail benötigt
-        final String zaehlungId = message.getZaehlungId().toString();
-        final Zaehlung zaehlung;
-        final Zaehlstelle zaehlstelle;
+        final UUID zaehlungId = message.getZaehlungId();
+        final ZaehlungEntity zaehlung;
+        final ZaehlstelleEntity zaehlstelle;
         try {
             zaehlung = this.indexService.getZaehlung(zaehlungId);
             zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);

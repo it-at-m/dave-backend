@@ -1,10 +1,10 @@
 package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
+import de.muenchen.dave.relational.messtellen.MessfaehigkeitEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ public class MessfaehigkeitRandomFactory {
 
     private static final Faker fakerInstance = Faker.instance();
 
-    public static Messfaehigkeit getMessfaehigkeit() {
-        final Messfaehigkeit messfaehigkeit = new Messfaehigkeit();
+    public static MessfaehigkeitEntity getMessfaehigkeit() {
+        final MessfaehigkeitEntity messfaehigkeit = new MessfaehigkeitEntity();
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.values()[ThreadLocalRandom.current().nextInt(Fahrzeugklasse.values().length)]);
         messfaehigkeit.setIntervall(ZaehldatenIntervall.values()[ThreadLocalRandom.current().nextInt(ZaehldatenIntervall.values().length)]);
         messfaehigkeit
@@ -27,8 +27,8 @@ public class MessfaehigkeitRandomFactory {
         return messfaehigkeit;
     }
 
-    public static List<Messfaehigkeit> getSomeMessfaehigkeiten() {
-        final List<Messfaehigkeit> messfaehigkeiten = new ArrayList<>();
+    public static List<MessfaehigkeitEntity> getSomeMessfaehigkeiten() {
+        final List<MessfaehigkeitEntity> messfaehigkeiten = new ArrayList<>();
         messfaehigkeiten.add(getMessfaehigkeit());
         messfaehigkeiten.add(getMessfaehigkeit());
         return messfaehigkeiten;

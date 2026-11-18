@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Hochrechnungsfaktor;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.mapper.HochrechnungsfaktorMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.HochrechnungsfaktorRepository;
+import de.muenchen.dave.relational.repository.HochrechnungsfaktorRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;

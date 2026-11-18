@@ -1,15 +1,16 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.csv.CsvMetaObject;
+
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.CsvDTO;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.DatentabelleCsvZaehldatumMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.domain.csv.CsvMetaObject;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -46,8 +47,8 @@ public class GenerateCsvService {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDTO generateDatentabelleCsv(String zaehlungId, OptionsDTO options) throws DataNotFoundException {
-        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options).getZaehldaten();
+    public CsvDTO generateDatentabelleCsv(UUID zaehlungId, OptionsDTO options) throws DataNotFoundException {
+        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(zaehlungId, options).getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()
@@ -125,16 +126,16 @@ public class GenerateCsvService {
         }
         metaData.append(SEMIKOLON);
         final StringBuilder verkehrsbeziehung = new StringBuilder();
-        final var zaehlart = Zaehlart.valueOf(metaObject.getZaehlung().getZaehlart());
+        final var zaehlart = metaObject.getZaehlung().getZaehlart();
         if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
             // Entscheidung, ob bei Verkehrsbeziehung "Teilauswahl" oder "Alle" angezeigt wird
             if ((options.getChosenVerkehrsbeziehungen() != null
                     && options.getChosenVerkehrsbeziehungen().size() != metaObject.getZaehlung().getVerkehrsbeziehungen().size()) ||
                     (options.getChosenLaengsverkehre() != null
-                            && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehr().size())
+                            && options.getChosenLaengsverkehre().size() != metaObject.getZaehlung().getLaengsverkehre().size())
                     ||
                     (options.getChosenQuerungsverkehre() != null
-                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehr().size())) {
+                            && options.getChosenQuerungsverkehre().size() != metaObject.getZaehlung().getQuerungsverkehre().size())) {
                 verkehrsbeziehung.append("Teilauswahl");
             } else {
                 verkehrsbeziehung.append("Alle");
@@ -353,9 +354,9 @@ public class GenerateCsvService {
      * @return CsvMetaObject mit der Zählstelle und der Zählung
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvMetaObject getCsvMetaObject(final String zaehlungId) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
+    public CsvMetaObject getCsvMetaObject(final UUID zaehlungId) throws DataNotFoundException {
+        final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
         final CsvMetaObject metaObject = new CsvMetaObject();
         metaObject.setZaehlstelle(zaehlstelle);
         metaObject.setZaehlung(zaehlung);

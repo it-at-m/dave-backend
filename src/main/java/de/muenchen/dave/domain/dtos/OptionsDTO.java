@@ -7,6 +7,7 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
@@ -105,7 +106,7 @@ public class OptionsDTO implements Serializable {
     @NotNull
     private Boolean zeitreiheGesamt;
 
-    private String vergleichszaehlungsId;
+    private UUID vergleichszaehlungsId;
 
     private Boolean beideRichtungen;
 

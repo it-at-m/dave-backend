@@ -2,15 +2,17 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,25 +25,46 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ZaehlstelleMapper {
 
-    BearbeiteZaehlstelleDTO bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
-
-    @Mapping(target = "zaehlungen", ignore = true)
-    LadeZaehlstelleVisumDTO bean2ladeVisumDto(Zaehlstelle bean);
-
-    Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    BearbeiteZaehlstelleDTO bean2bearbeiteDto(ZaehlstelleEntity bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
-    default void toZaehlstelle(@MappingTarget Zaehlstelle bean, BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
-        bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
+    default void toBearbeiteZaehlstelleDTO(@MappingTarget BearbeiteZaehlstelleDTO dto, ZaehlstelleEntity bean) {
 
-        if (dto.getPunkt() != null && dto.getPunkt().getLat() > 0 && dto.getPunkt().getLon() > 0) {
-            bean.setPunkt(dto.getPunkt());
+        dto.getPunkt().setLat(bean.getLatitude());
+        dto.getPunkt().setLon(bean.getLongitude());
+
+        dto.setLat(bean.getLatitude());
+        dto.setLng(bean.getLongitude());
+
+    }
+
+    @AfterMapping
+    default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, ZaehlungEntity bean) {
+        if (bean.getLatitude() != null) {
+            dto.getPunkt().setLat(bean.getLatitude());
+            dto.setLat(bean.getLatitude());
         }
+        if (bean.getLongitude() != null) {
+            dto.getPunkt().setLon(bean.getLongitude());
+            dto.setLng(bean.getLongitude());
+        }
+    }
+
+    @Mapping(target = "zaehlungen", ignore = true)
+    LadeZaehlstelleVisumDTO bean2ladeVisumDto(ZaehlstelleEntity bean);
+
+    ZaehlstelleEntity bearbeiteDto2bean(BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
+
+    @AfterMapping
+    default void toZaehlstelle(@MappingTarget ZaehlstelleEntity bean, BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
+
+        bean.setLatitude(dto.getLat());
+        bean.setLongitude(dto.getLng());
+
         bean.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
 
         // Suchworte setzen
@@ -58,33 +81,33 @@ public interface ZaehlstelleMapper {
         }
     }
 
-    SucheZaehlstelleSuggestDTO bean2SucheZaehlstelleSuggestDto(Zaehlstelle bean);
+    SucheZaehlstelleSuggestDTO bean2SucheZaehlstelleSuggestDto(ZaehlstelleEntity bean);
 
     @AfterMapping
-    default void toSucheZaehlstelleSuggestDto(@MappingTarget SucheZaehlstelleSuggestDTO dto, Zaehlstelle bean) {
+    default void toSucheZaehlstelleSuggestDto(@MappingTarget SucheZaehlstelleSuggestDTO dto, ZaehlstelleEntity bean) {
         dto.setText(bean.getNummer() + StringUtils.SPACE + bean.getStadtbezirk());
     }
 
-    LeseZaehlstelleDTO bean2LeseZaehlstelleDto(Zaehlstelle bean);
+    LeseZaehlstelleDTO bean2LeseZaehlstelleDto(ZaehlstelleEntity bean);
 
-    LadeZaehlstelleWithUnreadMessageDTO bean2LadeZaehlstelleWithUnreadMessageDTO(Zaehlstelle bean);
+    LadeZaehlstelleWithUnreadMessageDTO bean2LadeZaehlstelleWithUnreadMessageDTO(ZaehlstelleEntity bean);
 
     @AfterMapping
-    default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDTO dto, Zaehlstelle bean) {
-        dto.setLat(bean.getPunkt().getLat());
-        dto.setLng(bean.getPunkt().getLon());
+    default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDTO dto, ZaehlstelleEntity bean) {
+        dto.setLat(bean.getLatitude());
+        dto.setLng(bean.getLongitude());
     }
 
-    ExternalZaehlstelleDTO bean2ExternalDto(Zaehlstelle bean);
+    ExternalZaehlstelleDTO bean2ExternalDto(ZaehlstelleEntity bean);
 
-    LadeAuswertungZaehlstelleKoordinateDTO bean2LadeAuswertungZaehlstelleKoordinateDto(Zaehlstelle bean);
+    LadeAuswertungZaehlstelleKoordinateDTO bean2LadeAuswertungZaehlstelleKoordinateDto(ZaehlstelleEntity bean);
 
     @AfterMapping
-    default void toLadeAuswertungZaehlstelleKoordinateDto(@MappingTarget LadeAuswertungZaehlstelleKoordinateDTO dto, Zaehlstelle bean) {
-        dto.setLat(bean.getPunkt().getLat());
-        dto.setLng(bean.getPunkt().getLon());
-        final Zaehlung newestZaehlung = bean.getZaehlungen().stream()
-                .max(Comparator.comparing(Zaehlung::getDatum))
+    default void toLadeAuswertungZaehlstelleKoordinateDto(@MappingTarget LadeAuswertungZaehlstelleKoordinateDTO dto, ZaehlstelleEntity bean) {
+        dto.setLat(bean.getLatitude());
+        dto.setLng(bean.getLongitude());
+        final ZaehlungEntity newestZaehlung = bean.getZaehlungen().stream()
+                .max(Comparator.comparing(ZaehlungEntity::getDatum))
                 .orElse(null);
         dto.setLetzteZaehlung(newestZaehlung != null ? newestZaehlung.getDatum() : null);
     }

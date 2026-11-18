@@ -7,7 +7,7 @@ import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapperImpl;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.relational.repository.PkwEinheitRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;

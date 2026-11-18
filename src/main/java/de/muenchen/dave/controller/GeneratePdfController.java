@@ -1,14 +1,14 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.migrationespg.services.pdfgenerator.GeneratePdfServiceMig;
-import de.muenchen.dave.migrationespg.services.pdfgenerator.ReportServiceMig;
+import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
+import de.muenchen.dave.services.pdfgenerator.ReportService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -57,8 +57,8 @@ public class GeneratePdfController {
 
     private static final String FEHLER_PDF_ERSTELLUNG = "Es ist ein unerwarteter Fehler beim Erstellen der PDF-Datei aufgetreten.";
 
-    private final GeneratePdfServiceMig generatePdfService;
-    private final ReportServiceMig reportService;
+    private final GeneratePdfService generatePdfService;
+    private final ReportService reportService;
 
     /**
      * Nimmt Daten aus dem Frontend entgegen und gibt eine PDF als byte[] zurück

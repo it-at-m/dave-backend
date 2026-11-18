@@ -1,17 +1,13 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.*;
+import de.muenchen.dave.domain.enums.Stadtbezirk;
 import de.muenchen.dave.domain.pdf.assets.ImageAsset;
 import de.muenchen.dave.domain.pdf.assets.TextAsset;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,6 +17,10 @@ import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SanitizationServiceTest {
 
@@ -180,7 +180,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeMessstelle_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        Messstelle messstelle = new Messstelle();
+        MessstelleEntity messstelle = new MessstelleEntity();
         messstelle.setName(ALLOWED_HTML_1);
         messstelle.setBemerkung(ALLOWED_HTML_1);
         messstelle.setHersteller(ALLOWED_HTML_1);
@@ -205,7 +205,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeMessstelle_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        Messstelle messstelle = new Messstelle();
+        MessstelleEntity messstelle = new MessstelleEntity();
         messstelle.setName(NOT_ALLOWED_HTML_1);
         messstelle.setBemerkung(NOT_ALLOWED_HTML_2);
         messstelle.setHersteller(NOT_ALLOWED_HTML_4);
@@ -230,7 +230,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeMessquerschnitt_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        Messquerschnitt messquerschnitt = new Messquerschnitt();
+        MessquerschnittEntity messquerschnitt = new MessquerschnittEntity();
         messquerschnitt.setStrassenname(ALLOWED_HTML_1);
         messquerschnitt.setLageMessquerschnitt(ALLOWED_HTML_2);
         messquerschnitt.setFahrtrichtung(ALLOWED_HTML_1);
@@ -247,7 +247,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeMessquerschnitt_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        Messquerschnitt messquerschnitt = new Messquerschnitt();
+        MessquerschnittEntity messquerschnitt = new MessquerschnittEntity();
         messquerschnitt.setStrassenname(NOT_ALLOWED_HTML_1);
         messquerschnitt.setLageMessquerschnitt(NOT_ALLOWED_HTML_2);
         messquerschnitt.setFahrtrichtung(NOT_ALLOWED_HTML_3);

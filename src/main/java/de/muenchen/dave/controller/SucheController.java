@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.migrationespg.services.SucheServiceMig;
+import de.muenchen.dave.services.SucheService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Set;
@@ -31,9 +31,9 @@ public class SucheController {
 
     private static final String REQUEST_PARAMETER_QUERY = "query";
 
-    private final SucheServiceMig sucheService;
+    private final SucheService sucheService;
 
-    public SucheController(final SucheServiceMig sucheService) {
+    public SucheController(final SucheService sucheService) {
         this.sucheService = sucheService;
     }
 

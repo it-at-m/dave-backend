@@ -1,10 +1,5 @@
 package de.muenchen.dave.services.persist;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
@@ -14,15 +9,16 @@ import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -38,6 +34,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit-Tests für die Methode setAdditionalDataToZeitintervall der Klasse
@@ -85,12 +91,12 @@ class ExternalZaehlungPersistierungsServiceTest {
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
         zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusHours(1));
 
-        final var zaehlung = new Zaehlung();
-        final var zaehlungId = UUID.randomUUID().toString();
+        final var zaehlung = new ZaehlungEntity();
+        final var zaehlungId = UUID.randomUUID();
         zaehlung.setId(zaehlungId);
         // FJS führt zur Erzeugung von Laengsverkehr
-        zaehlung.setZaehlart("FJS");
-        zaehlung.setZaehldauer("24h");
+        zaehlung.setZaehlart(Zaehlart.FJS);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
         final var external = new ExternalLaengsverkehrDTO();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
@@ -109,7 +115,7 @@ class ExternalZaehlungPersistierungsServiceTest {
 
         // Überprüfung
         assertNotNull(result);
-        assertEquals(UUID.fromString(zaehlungId), result.getZaehlungId());
+        assertEquals(zaehlungId, result.getZaehlungId());
         assertEquals(UUID.fromString(bewegungsbeziehungId), result.getBewegungsbeziehungId());
         assertSame(hochrechnung, result.getHochrechnung());
 
@@ -127,12 +133,12 @@ class ExternalZaehlungPersistierungsServiceTest {
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
         zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusHours(1));
 
-        final var zaehlung = new Zaehlung();
-        final var zaehlungId = UUID.randomUUID().toString();
+        final var zaehlung = new ZaehlungEntity();
+        final var zaehlungId = UUID.randomUUID();
         zaehlung.setId(zaehlungId);
         // QU führt zur Erzeugung von Querungsverkehr
-        zaehlung.setZaehlart("QU");
-        zaehlung.setZaehldauer("24h");
+        zaehlung.setZaehlart(Zaehlart.QU);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
         final var external = new ExternalQuerungsverkehrDTO();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
@@ -149,7 +155,7 @@ class ExternalZaehlungPersistierungsServiceTest {
 
         // Überprüfung
         assertNotNull(result);
-        assertEquals(UUID.fromString(zaehlungId), result.getZaehlungId());
+        assertEquals(zaehlungId, result.getZaehlungId());
         assertEquals(UUID.fromString(bewegungsbeziehungId), result.getBewegungsbeziehungId());
         assertSame(hochrechnung, result.getHochrechnung());
 
@@ -166,12 +172,12 @@ class ExternalZaehlungPersistierungsServiceTest {
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
         zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusHours(1));
 
-        final var zaehlung = new Zaehlung();
-        final var zaehlungId = UUID.randomUUID().toString();
+        final var zaehlung = new ZaehlungEntity();
+        final var zaehlungId = UUID.randomUUID();
         zaehlung.setId(zaehlungId);
         // Wähle eine Zaehlart, die nicht FJS und nicht QU ist (z.B. "N")
-        zaehlung.setZaehlart("N");
-        zaehlung.setZaehldauer("24h");
+        zaehlung.setZaehlart(Zaehlart.N);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
         final var external = new ExternalVerkehrsbeziehungDTO();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
@@ -191,7 +197,7 @@ class ExternalZaehlungPersistierungsServiceTest {
 
         // Überprüfung
         assertNotNull(result);
-        assertEquals(UUID.fromString(zaehlungId), result.getZaehlungId());
+        assertEquals(zaehlungId, result.getZaehlungId());
         assertEquals(UUID.fromString(bewegungsbeziehungId), result.getBewegungsbeziehungId());
         assertSame(hochrechnung, result.getHochrechnung());
 
@@ -209,12 +215,12 @@ class ExternalZaehlungPersistierungsServiceTest {
         zeitintervall.setStartUhrzeit(LocalDateTime.now());
         zeitintervall.setEndeUhrzeit(LocalDateTime.now().plusHours(1));
 
-        final var zaehlung = new Zaehlung();
-        final var zaehlungId = UUID.randomUUID().toString();
+        final var zaehlung = new ZaehlungEntity();
+        final var zaehlungId = UUID.randomUUID();
         zaehlung.setId(zaehlungId);
         // Wähle eine Zaehlart, die nicht FJS und nicht QU ist (z.B. "N")
-        zaehlung.setZaehlart("N");
-        zaehlung.setZaehldauer("24h");
+        zaehlung.setZaehlart(Zaehlart.N);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
         final var external = new ExternalVerkehrsbeziehungDTO();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
@@ -235,7 +241,7 @@ class ExternalZaehlungPersistierungsServiceTest {
 
         // Überprüfung
         assertNotNull(result);
-        assertEquals(UUID.fromString(zaehlungId), result.getZaehlungId());
+        assertEquals(zaehlungId, result.getZaehlungId());
         assertEquals(UUID.fromString(bewegungsbeziehungId), result.getBewegungsbeziehungId());
         assertSame(hochrechnung, result.getHochrechnung());
 
@@ -400,7 +406,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     void testSaveZaehlung_noBewegungsbeziehungen_callsErneuereOnly() throws Exception {
         // Vorbereitung
         final var dto = new ExternalZaehlungDTO();
-        final var id = UUID.randomUUID().toString();
+        final var id = UUID.randomUUID();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
@@ -410,8 +416,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         dto.setQuerungsverkehr(null);
         dto.setVerkehrsbeziehungen(null);
 
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlstelle.getZaehlungen().add(zaehlung);
 
@@ -439,7 +445,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Vorbereitung
         final var bewegungsId = "b1";
         final var dto = new ExternalZaehlungDTO();
-        final var id = UUID.randomUUID().toString();
+        final var id = UUID.randomUUID();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
@@ -455,8 +461,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         dto.setLaengsverkehr(null);
         dto.setQuerungsverkehr(null);
 
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlstelle.getZaehlungen().add(zaehlung);
 
@@ -498,7 +504,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Vorbereitung
         final var bewegungsId = "b2";
         final var dto = new ExternalZaehlungDTO();
-        final var id = UUID.randomUUID().toString();
+        final var id = UUID.randomUUID();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
@@ -508,8 +514,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         ev.setZeitintervalle(null); // no zeitintervalle
         dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));
 
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlstelle.getZaehlungen().add(zaehlung);
 
@@ -537,7 +543,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         // Vorbereitung
         final var bewegungsId = "b3";
         final var dto = new ExternalZaehlungDTO();
-        final var id = UUID.randomUUID().toString();
+        final var id = UUID.randomUUID();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
@@ -547,8 +553,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         ev.setZeitintervalle(null); // no zeitintervalle
         dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));
 
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDienstleisterkennung("dl1");
         zaehlstelle.getZaehlungen().add(zaehlung);

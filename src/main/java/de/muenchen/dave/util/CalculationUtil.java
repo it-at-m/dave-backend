@@ -1,7 +1,7 @@
 package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
+import de.muenchen.dave.domain.PkwEinheit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import lombok.AccessLevel;

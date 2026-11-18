@@ -7,19 +7,27 @@ import de.muenchen.dave.domain.enums.Fahrzeug;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import lombok.Data;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
 public class BearbeiteZaehlungDTO {
 
-    String id;
+    UUID id;
 
     LocalDate datum;
 
+    /*
+        @TODO : Alle ENUMs vom Typ String in allen DTOs in ihren ENUM TYP konvertieren.
+                Bemerkung : In der DB werden die ENUMs weiterhin als String persistiert.
+     */
     String zaehlart;
 
-    GeoPoint punkt;
+    /*
+      @TODO : Punkt noch zugunsten latitude/longitude auch in den Frontends auflösen
+    */
+    GeoPointDTOAdapter punkt = new GeoPointDTOAdapter();
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     double lat;
@@ -45,7 +53,7 @@ public class BearbeiteZaehlungDTO {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean kreisverkehr;
 
-    List<Fahrzeug> kategorien;
+    Set<Fahrzeug> kategorien;
 
     String zaehlsituation;
 

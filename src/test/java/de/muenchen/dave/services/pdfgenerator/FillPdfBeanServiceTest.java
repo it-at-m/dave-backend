@@ -1,9 +1,5 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
@@ -15,10 +11,14 @@ import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.*;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.domain.enums.*;
+import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
+import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
+import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
+import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.TagesTyp;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.pdf.components.MessstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZaehlstelleninformationenPdfComponent;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenPdfComponent;
@@ -28,6 +28,13 @@ import de.muenchen.dave.domain.pdf.helper.GesamtauswertungTableHeader;
 import de.muenchen.dave.domain.pdf.helper.GesamtauswertungTableRow;
 import de.muenchen.dave.domain.pdf.templates.BasicPdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.BasicMessstellePdf;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,13 +50,17 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+
 class FillPdfBeanServiceTest {
 
     @Test
     public void fillBasicPdf() {
         final BasicPdf basicPdf = new BasicPdf();
-        final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
-        final Zaehlstelle zaehlstelle = FillPdfBeanServiceSpringTest.getZaehlstelle(zaehlung);
+        final ZaehlungEntity zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
+        final ZaehlstelleEntity zaehlstelle = FillPdfBeanServiceSpringTest.getZaehlstelle(zaehlung);
         final String kreuzungsname = "Kreuzungsname";
         final String department = "TestOU";
 
@@ -63,7 +74,7 @@ class FillPdfBeanServiceTest {
     public void fillZaehlstelleninformationen() {
         final ZaehlstelleninformationenPdfComponent zaehlstelleninformationen = new ZaehlstelleninformationenPdfComponent();
         final String kreuzungsname = "Kreuzungsname";
-        final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
+        final ZaehlungEntity zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
 
         FillPdfBeanService.fillZaehlstelleninformationen(zaehlstelleninformationen, kreuzungsname, zaehlung);
         assertThat(zaehlstelleninformationen.getProjektname(), is("VZ Testinger"));
@@ -78,8 +89,8 @@ class FillPdfBeanServiceTest {
     @Test
     public void fillZusatzinformationen() {
         final ZusatzinformationenPdfComponent zusatzinformationenPdfComponent = new ZusatzinformationenPdfComponent();
-        final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
-        final Zaehlstelle zaehlstelle = FillPdfBeanServiceSpringTest.getZaehlstelle(zaehlung);
+        final ZaehlungEntity zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
+        final ZaehlstelleEntity zaehlstelle = FillPdfBeanServiceSpringTest.getZaehlstelle(zaehlung);
 
         FillPdfBeanService.fillZusatzinformationen(zusatzinformationenPdfComponent, zaehlstelle, zaehlung);
         assertThat(zusatzinformationenPdfComponent.isIstKommentarVorhanden(), is(false));
@@ -102,7 +113,7 @@ class FillPdfBeanServiceTest {
     @Test
     public void createChartTitleGanglinieDatentabelle() {
         final OptionsDTO optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
-        final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
+        final ZaehlungEntity zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
 
         assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("Gesamte Zählstelle (Zulauf)"));
 
@@ -117,12 +128,12 @@ class FillPdfBeanServiceTest {
         optionsDTO.setNachKnotenarm(null);
 
         // QJS
-        zaehlung.setZaehlart("QJS");
-        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        zaehlung.setZaehlart(Zaehlart.QJS);
+        final VerkehrsbeziehungEntity vb1 = new VerkehrsbeziehungEntity();
         vb1.setVon(2);
         vb1.setNach(4);
         vb1.setStrassenseite(Himmelsrichtung.N);
-        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb2 = new VerkehrsbeziehungEntity();
         vb2.setVon(2);
         vb2.setNach(4);
         vb2.setStrassenseite(Himmelsrichtung.S);
@@ -142,16 +153,16 @@ class FillPdfBeanServiceTest {
         optionsDTO.setChosenVerkehrsbeziehungen(null);
 
         // FJS
-        zaehlung.setZaehlart("FJS");
-        final Laengsverkehr lv1 = new Laengsverkehr();
+        zaehlung.setZaehlart(Zaehlart.FJS);
+        final LaengsverkehrEntity lv1 = new LaengsverkehrEntity();
         lv1.setKnotenarm(1);
         lv1.setStrassenseite(Himmelsrichtung.W);
         lv1.setRichtung(Bewegungsrichtung.EIN);
-        final Laengsverkehr lv2 = new Laengsverkehr();
+        final LaengsverkehrEntity lv2 = new LaengsverkehrEntity();
         lv2.setKnotenarm(1);
         lv2.setStrassenseite(Himmelsrichtung.O);
         lv2.setRichtung(Bewegungsrichtung.EIN);
-        zaehlung.setLaengsverkehr(List.of(lv1, lv2));
+        zaehlung.setLaengsverkehre(List.of(lv1, lv2));
         final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
         olv1.setKnotenarm(1);
         olv1.setStrassenseite(Himmelsrichtung.W);
@@ -167,14 +178,14 @@ class FillPdfBeanServiceTest {
         optionsDTO.setChosenLaengsverkehre(null);
 
         // QU
-        zaehlung.setZaehlart("QU");
-        final Querungsverkehr qv1 = new Querungsverkehr();
+        zaehlung.setZaehlart(Zaehlart.QU);
+        final QuerungsverkehrEntity qv1 = new QuerungsverkehrEntity();
         qv1.setKnotenarm(2);
         qv1.setRichtung(Himmelsrichtung.N);
-        final Querungsverkehr qv2 = new Querungsverkehr();
+        final QuerungsverkehrEntity qv2 = new QuerungsverkehrEntity();
         qv2.setKnotenarm(2);
         qv2.setRichtung(Himmelsrichtung.S);
-        zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        zaehlung.setQuerungsverkehre(List.of(qv1, qv2));
         final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
         oqv1.setKnotenarm(2);
         oqv1.setRichtung(Himmelsrichtung.N);
@@ -209,11 +220,11 @@ class FillPdfBeanServiceTest {
 
     @Test
     void getSchematischeUebersichtNeeded() {
-        final Zaehlung zaehlung = new Zaehlung();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         final OptionsDTO optionsDTO = new OptionsDTO();
 
         // Standardzählung
-        zaehlung.setZaehlart("N");
+        zaehlung.setZaehlart(Zaehlart.N);
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
         optionsDTO.setVonKnotenarm(1);
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
@@ -221,12 +232,12 @@ class FillPdfBeanServiceTest {
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
 
         // QJS
-        zaehlung.setZaehlart("QJS");
-        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        zaehlung.setZaehlart(Zaehlart.QJS);
+        final VerkehrsbeziehungEntity vb1 = new VerkehrsbeziehungEntity();
         vb1.setVon(2);
         vb1.setNach(4);
         vb1.setStrassenseite(Himmelsrichtung.N);
-        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb2 = new VerkehrsbeziehungEntity();
         vb2.setVon(2);
         vb2.setNach(4);
         vb2.setStrassenseite(Himmelsrichtung.S);
@@ -245,16 +256,16 @@ class FillPdfBeanServiceTest {
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
 
         // FJS
-        zaehlung.setZaehlart("FJS");
-        final Laengsverkehr lv1 = new Laengsverkehr();
+        zaehlung.setZaehlart(Zaehlart.FJS);
+        final LaengsverkehrEntity lv1 = new LaengsverkehrEntity();
         lv1.setKnotenarm(1);
         lv1.setStrassenseite(Himmelsrichtung.W);
         lv1.setRichtung(Bewegungsrichtung.EIN);
-        final Laengsverkehr lv2 = new Laengsverkehr();
+        final LaengsverkehrEntity lv2 = new LaengsverkehrEntity();
         lv2.setKnotenarm(1);
         lv2.setStrassenseite(Himmelsrichtung.O);
         lv2.setRichtung(Bewegungsrichtung.EIN);
-        zaehlung.setLaengsverkehr(List.of(lv1, lv2));
+        zaehlung.setLaengsverkehre(List.of(lv1, lv2));
         final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
         olv1.setKnotenarm(1);
         olv1.setStrassenseite(Himmelsrichtung.W);
@@ -269,14 +280,14 @@ class FillPdfBeanServiceTest {
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(false));
 
         // QU
-        zaehlung.setZaehlart("QU");
-        final Querungsverkehr qv1 = new Querungsverkehr();
+        zaehlung.setZaehlart(Zaehlart.QU);
+        final QuerungsverkehrEntity qv1 = new QuerungsverkehrEntity();
         qv1.setKnotenarm(2);
         qv1.setRichtung(Himmelsrichtung.N);
-        final Querungsverkehr qv2 = new Querungsverkehr();
+        final QuerungsverkehrEntity qv2 = new QuerungsverkehrEntity();
         qv2.setKnotenarm(2);
         qv2.setRichtung(Himmelsrichtung.S);
-        zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        zaehlung.setQuerungsverkehre(List.of(qv1, qv2));
         final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
         oqv1.setKnotenarm(2);
         oqv1.setRichtung(Himmelsrichtung.N);
@@ -293,7 +304,7 @@ class FillPdfBeanServiceTest {
     @Test
     void fillBasicPdf_Messstelle() {
         final var basicPdf = new BasicMessstellePdf();
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final String department = "TestOU";
         final String tagesTyp = TagesTyp.SAMSTAG.name();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
@@ -309,7 +320,7 @@ class FillPdfBeanServiceTest {
     void fillMessstelleninformationen() {
         final DateTimeFormatter DDMMYYYY = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final String tagesTyp = TagesTyp.SAMSTAG.name();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
         final ArrayList<LocalDate> localDates = new ArrayList<>();
@@ -342,7 +353,7 @@ class FillPdfBeanServiceTest {
 
     @Test
     void createChartTitle() {
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
         final Set<String> mqIds = new HashSet<>();
         messstelle.getMessquerschnitte().forEach(messquerschnitt -> mqIds.add(messquerschnitt.getMqId()));
@@ -350,7 +361,7 @@ class FillPdfBeanServiceTest {
 
         assertThat(FillPdfBeanService.createChartTitle(optionsDTO, messstelle), is(FillPdfBeanService.CHART_TITLE_GESAMTE_MESSSTELLE));
 
-        final Messquerschnitt messquerschnitt = messstelle.getMessquerschnitte().getFirst();
+        final MessquerschnittEntity messquerschnitt = messstelle.getMessquerschnitte().getFirst();
         optionsDTO.setMessquerschnittIds(Set.of(messquerschnitt.getMqId()));
         String expectedChartTitle = messquerschnitt.getMqId() +
                 StringUtils.SPACE +
@@ -381,7 +392,7 @@ class FillPdfBeanServiceTest {
     @Test
     void fillMessstelleninformationenGesamtauswertung() {
         MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final MessstelleAuswertungOptionsDTO optionsDTO = new MessstelleAuswertungOptionsDTO();
         optionsDTO.setJahre(List.of(2006, 2007, 2008));
         optionsDTO.setTagesTyp(TagesTyp.SAMSTAG);
@@ -428,16 +439,16 @@ class FillPdfBeanServiceTest {
         final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = new MessstelleAuswertungIdDTO();
         messstelleAuswertungIdDTO.setMstId("123");
         options.setMessstelleAuswertungIds(Set.of(messstelleAuswertungIdDTO, new MessstelleAuswertungIdDTO()));
-        assertThat(FillPdfBeanService.createChartTitle(options, new Messstelle()), is(FillPdfBeanService.CHART_TITLE_MEHRERE_MESSSTELLE));
+        assertThat(FillPdfBeanService.createChartTitle(options, new MessstelleEntity()), is(FillPdfBeanService.CHART_TITLE_MEHRERE_MESSSTELLE));
 
-        final Messstelle messstelle = new Messstelle();
+        final MessstelleEntity messstelle = new MessstelleEntity();
         messstelle.setMessquerschnitte(new ArrayList<>());
         messstelleAuswertungIdDTO.setMqIds(new HashSet<>());
         options.setMessstelleAuswertungIds(Set.of(messstelleAuswertungIdDTO));
         assertThat(FillPdfBeanService.createChartTitle(options, messstelle), is(FillPdfBeanService.CHART_TITLE_GESAMTE_MESSSTELLE));
 
-        final Messquerschnitt messquerschnitt = MessquerschnittRandomFactory.getMessquerschnitt();
-        final Messquerschnitt messquerschnitt1 = MessquerschnittRandomFactory.getMessquerschnitt();
+        final MessquerschnittEntity messquerschnitt = MessquerschnittRandomFactory.getMessquerschnitt();
+        final MessquerschnittEntity messquerschnitt1 = MessquerschnittRandomFactory.getMessquerschnitt();
         messstelle.setMessquerschnitte(List.of(messquerschnitt, messquerschnitt1));
         final Set<String> mqIds = new HashSet<>();
         mqIds.add(messquerschnitt1.getMqId());

@@ -15,7 +15,7 @@ public class StepLineSeriesEntryIntegerDTO extends StepLineSeriesEntryBaseDTO {
     private static final long serialVersionUID = 1L;
 
     @Getter(onMethod_ = { @Schema(name = "yAxisData") })
-    @JsonProperty("yAxisData")
+    @JsonProperty("yaxisData")
     private List<Integer> yAxisData = new ArrayList<>();
 
 }

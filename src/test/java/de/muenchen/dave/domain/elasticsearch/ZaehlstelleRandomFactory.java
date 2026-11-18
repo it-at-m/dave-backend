@@ -5,12 +5,14 @@ import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.IndexServiceUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import java.util.UUID;
 
 public class ZaehlstelleRandomFactory {
     private final static FakeValuesService service = new FakeValuesService(new Locale.Builder().setLanguage("test").build(), new RandomService());
@@ -27,18 +29,19 @@ public class ZaehlstelleRandomFactory {
      *
      * @return
      */
-    public static Zaehlstelle getOne() {
+    public static ZaehlstelleEntity getOne() {
         Map<String, String> x = (Map<String, String>) service.fetch("zaehlstelle.stellen");
-        Zaehlstelle z = new Zaehlstelle();
-        z.setId(Faker.instance().crypto().md5());
+        ZaehlstelleEntity z = new ZaehlstelleEntity();
+        z.setId(UUID.fromString(Faker.instance().crypto().md5()));
         z.setNummer(Faker.instance().number().digits(10));
         z.setStadtbezirk(x.get(BEZIRK));
         z.setStadtbezirkNummer(Ints.tryParse(x.get(BEZIRKNUMMER)));
-        z.setPunkt(new GeoPoint(Doubles.tryParse(x.get(LAT)), Doubles.tryParse(x.get(LNG))));
+        z.setLatitude(Doubles.tryParse(x.get(LAT)));
+        z.setLongitude(Doubles.tryParse(x.get(LNG)));
         // Zaehlungen
-        List<Zaehlung> zls = ZaehlungRandomFactory.getSome();
+        List<ZaehlungEntity> zls = ZaehlungRandomFactory.getSome();
         z.setZaehlungen(zls);
-        Zaehlung zl1 = IndexServiceUtils.getLetzteAktiveZaehlung(zls);
+        ZaehlungEntity zl1 = IndexServiceUtils.getLetzteAktiveZaehlung(zls);
         z.setLetzteZaehlungMonat(zl1.getMonat());
         z.setLetzteZaehlungMonatNummer(zl1.getDatum().getMonthValue());
         z.setGrundLetzteZaehlung(zl1.getZaehlsituation());
@@ -46,8 +49,8 @@ public class ZaehlstelleRandomFactory {
         return z;
     }
 
-    public static List<Zaehlstelle> getSome(int some) {
-        List<Zaehlstelle> zs = new ArrayList<>();
+    public static List<ZaehlstelleEntity> getSome(int some) {
+        List<ZaehlstelleEntity> zs = new ArrayList<>();
 
         for (int i = 0; i < some; i++) {
             zs.add(getOne());
@@ -55,7 +58,7 @@ public class ZaehlstelleRandomFactory {
         return zs;
     }
 
-    public static List<Zaehlstelle> getSomeRandom() {
+    public static List<ZaehlstelleEntity> getSomeRandom() {
         return getSome(Faker.instance().number().numberBetween(1, 10));
     }
 

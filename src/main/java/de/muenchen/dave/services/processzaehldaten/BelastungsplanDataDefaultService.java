@@ -1,5 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -7,7 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.BelastungsplanCalculator;
 import de.muenchen.dave.util.CalculationUtil;
@@ -25,10 +26,11 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
             final OptionsDTO options,
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
+            final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
-                .mapVerkehrsbeziehungen(options, zaehlung, zeitintervalle);
+                .mapVerkehrsbeziehungen(options, pkwEinheit, zeitintervalle);
 
         var ladeBelastungsplan = new LadeBelastungsplanDTO();
         ladeBelastungsplan.setStreets(new String[8]);
@@ -73,7 +75,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
                 (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV));
 
-        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplanSum);
+        markKIHochrechnung(String.valueOf(zaehlung.getZaehldauer()), options.getZeitauswahl(), ladeBelastungsplanSum);
 
         return ladeBelastungsplanSum;
     }
@@ -88,14 +90,14 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      */
     public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
-        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);
-        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV), false);
-        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
-        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
-        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
+        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD.getName()), false);
+        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS.getName()), false);
         final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.SV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
         final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.GV_P,

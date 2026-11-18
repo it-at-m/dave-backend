@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
@@ -13,18 +14,18 @@ import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -57,9 +58,9 @@ public class BelastungsplanDataQjsServiceTest {
 
         zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
 
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setKategorien(Arrays.asList(Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.QJS.toString());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setKategorien(new HashSet<>(Arrays.asList(Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.QJS);
         zaehlung.setKreisverkehr(false);
 
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQjsService()
@@ -89,16 +90,15 @@ public class BelastungsplanDataQjsServiceTest {
         options.setFussverkehr(true);
         options.setRadverkehr(false);
         options.setRounding(Rounding.NONE);
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setKategorien(List.of(Fahrzeug.FUSS));
-        var kn1 = new Knotenarm();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setKategorien(new HashSet<>(Arrays.asList(Fahrzeug.FUSS.getName())));
+        var kn1 = new KnotenarmEntity();
         kn1.setNummer(1);
         kn1.setStrassenname("Eins");
-        var kn3 = new Knotenarm();
+        var kn3 = new KnotenarmEntity();
         kn3.setNummer(3);
         kn3.setStrassenname("Drei");
         zaehlung.setKnotenarme(List.of(kn1, kn3));
-        zaehlung.setPkwEinheit(new PkwEinheit());
         var vb = new Verkehrsbeziehung();
         vb.setVon(1);
         vb.setNach(3);
@@ -111,7 +111,7 @@ public class BelastungsplanDataQjsServiceTest {
         zi1.setEndeUhrzeit(LocalDateTime.now());
         zeitintervalle.add(zi1);
 
-        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
+        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung,new PkwEinheit(), zeitintervalle);
         assertNotNull(data);
         assertEquals("Eins", data.getStreets()[0]);
         assertNull(data.getStreets()[1]);

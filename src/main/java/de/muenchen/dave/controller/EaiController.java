@@ -7,9 +7,6 @@ import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.IncorrectZeitauswahlException;
-import de.muenchen.dave.migrationespg.services.auswertung.AuswertungSpitzenstundeServiceMig;
-import de.muenchen.dave.migrationespg.services.auswertung.AuswertungVisumServiceMig;
-import de.muenchen.dave.migrationespg.services.auswertung.AuswertungZaehlstellenKoordinateServiceMig;
 import de.muenchen.dave.services.auswertung.AuswertungSpitzenstundeService;
 import de.muenchen.dave.services.auswertung.AuswertungVisumService;
 import de.muenchen.dave.services.auswertung.AuswertungZaehlstellenKoordinateService;
@@ -57,11 +54,11 @@ public class EaiController {
 
     private static final String REQUEST_PARAMETER_MONAT = "monat";
 
-    private final AuswertungSpitzenstundeServiceMig auswertungSpitzenstundeService;
+    private final AuswertungSpitzenstundeService auswertungSpitzenstundeService;
 
-    private final AuswertungZaehlstellenKoordinateServiceMig auswertungZaehlstellenKoordinateService;
+    private final AuswertungZaehlstellenKoordinateService auswertungZaehlstellenKoordinateService;
 
-    private final AuswertungVisumServiceMig auswertungVisumService;
+    private final AuswertungVisumService auswertungVisumService;
 
     /**
      * Rest-Endpunkt zur Bereitstellung der Spitzenstundenauswertung.

@@ -1,5 +1,35 @@
 package de.muenchen.dave.spring.services;
 
+import de.muenchen.dave.DaveBackendApplication;
+import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
+import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
+import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
+import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
+import de.muenchen.dave.exceptions.BrokenInfrastructureException;
+import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
+import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.services.ZaehlstelleIndexService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,35 +39,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-
-import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
-import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
-import de.muenchen.dave.domain.enums.Status;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
-import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
-import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.services.ZaehlstelleIndexService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -51,7 +52,7 @@ public class ZaehlstelleIndexServiceSpringTest {
     private ZaehlstelleIndexService service;
 
     @MockitoBean
-    private ZaehlstelleIndex zaehlstelleIndex;
+    private ZaehlstellenIndexRepository zaehlstelleIndex;
 
     @MockitoBean
     private MessstelleIndex messstelleIndex;
@@ -67,25 +68,25 @@ public class ZaehlstelleIndexServiceSpringTest {
 
     @Test
     public void getOpenZaehlungen() throws BrokenInfrastructureException {
-        final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
         zaehlstelle1.setZaehlungen(new ArrayList<>());
-        final Zaehlung zaehlung1 = ZaehlungRandomFactory.getOne();
-        zaehlung1.setStatus(Status.ACCOMPLISHED.name());
+        final ZaehlungEntity zaehlung1 = ZaehlungRandomFactory.getOne();
+        zaehlung1.setStatus(Status.ACCOMPLISHED);
         zaehlstelle1.getZaehlungen().add(zaehlung1);
 
-        final Zaehlstelle zaehlstelle2 = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle2 = ZaehlstelleRandomFactory.getOne();
         zaehlstelle2.setZaehlungen(new ArrayList<>());
-        final Zaehlung zaehlung2 = ZaehlungRandomFactory.getOne();
-        zaehlung2.setStatus(Status.ACTIVE.name());
+        final ZaehlungEntity zaehlung2 = ZaehlungRandomFactory.getOne();
+        zaehlung2.setStatus(Status.ACTIVE);
         zaehlstelle2.getZaehlungen().add(zaehlung2);
 
-        final Zaehlstelle zaehlstelle3 = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle3 = ZaehlstelleRandomFactory.getOne();
         zaehlstelle3.setZaehlungen(new ArrayList<>());
-        final Zaehlung zaehlung3 = ZaehlungRandomFactory.getOne();
-        zaehlung3.setStatus(Status.INSTRUCTED.name());
+        final ZaehlungEntity zaehlung3 = ZaehlungRandomFactory.getOne();
+        zaehlung3.setStatus(Status.INSTRUCTED);
         zaehlstelle3.getZaehlungen().add(zaehlung3);
 
-        final Page<Zaehlstelle> resultFindAllByStatus = new PageImpl<>(Arrays.asList(
+        final Page<ZaehlstelleEntity> resultFindAllByStatus = new PageImpl<>(Arrays.asList(
                 zaehlstelle1,
                 zaehlstelle2,
                 zaehlstelle3));
@@ -96,12 +97,12 @@ public class ZaehlstelleIndexServiceSpringTest {
         assertThat(openZaehlungen.size(), is(2));
 
         openZaehlungen.forEach(openZaehlungDTO -> {
-            if (openZaehlungDTO.getStatus().equalsIgnoreCase(zaehlung1.getStatus())) {
+            if (openZaehlungDTO.getStatus().equalsIgnoreCase(zaehlung1.getStatus().name())) {
                 assertThat(openZaehlungDTO.getProjektName(), is(zaehlung1.getProjektName()));
                 assertThat(openZaehlungDTO.getProjektNummer(), is(zaehlung1.getProjektNummer()));
                 assertThat(openZaehlungDTO.getZaehlstellenNummer(), is(zaehlstelle1.getNummer()));
             }
-            if (openZaehlungDTO.getStatus().equalsIgnoreCase(zaehlung2.getStatus())) {
+            if (openZaehlungDTO.getStatus().equalsIgnoreCase(zaehlung2.getStatus().name())) {
                 assertThat(openZaehlungDTO.getProjektName(), is(zaehlung2.getProjektName()));
                 assertThat(openZaehlungDTO.getProjektNummer(), is(zaehlung2.getProjektNummer()));
                 assertThat(openZaehlungDTO.getZaehlstellenNummer(), is(zaehlstelle2.getNummer()));
@@ -112,21 +113,21 @@ public class ZaehlstelleIndexServiceSpringTest {
     @Test
     public void erstelleZaehlstelle() throws BrokenInfrastructureException {
         final BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
-        final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
 
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing");
         when(zaehlstelleMapper.bearbeiteDto2bean(dto, stadtbezirkMapper)).thenReturn(zaehlstelle1);
         when(zaehlstelleIndex.save(any())).thenReturn(zaehlstelle1);
 
-        String id = this.service.erstelleZaehlstelle(dto);
+        UUID id = this.service.erstelleZaehlstelle(dto);
 
         assertThat(id, is(notNullValue()));
-        assertThat(id.length(), is(36));
+        assertThat(id.toString().length(), is(36));
     }
 
     @Test
     public void getNextZaehlstellennummer() {
-        final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
         zaehlstelle1.setNummer("120105");
         zaehlstelle1.setStadtbezirkNummer(12);
         when(zaehlstelleIndex.findAllByNummerStartsWithAndStadtbezirkNummer("1201", 12)).thenReturn(List.of(zaehlstelle1));

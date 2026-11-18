@@ -4,11 +4,16 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
-import de.muenchen.dave.domain.pdf.assets.*;
+import de.muenchen.dave.domain.pdf.assets.BaseAsset;
+import de.muenchen.dave.domain.pdf.assets.DatatableAsset;
+import de.muenchen.dave.domain.pdf.assets.ImageAsset;
+import de.muenchen.dave.domain.pdf.assets.MessstelleDatatableAsset;
+import de.muenchen.dave.domain.pdf.assets.TextAsset;
+import de.muenchen.dave.domain.pdf.assets.ZaehlungskenngroessenAsset;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.ZaehlungskenngroessenData;
 import de.muenchen.dave.domain.pdf.templates.ReportPdf;
@@ -179,7 +184,7 @@ public class ReportService {
             } else if (asset.getType().equals(AssetType.ZAEHLUNGSKENNGROESSEN)) {
                 final ZaehlungskenngroessenAsset zaehlungskenngroessenAsset = (ZaehlungskenngroessenAsset) asset;
                 try {
-                    final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungskenngroessenAsset.getZaehlungId());
+                    final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungskenngroessenAsset.getZaehlungId());
                     zaehlungskenngroessenAsset.setPrintFuss(zaehlung.getKategorien().contains(Fahrzeug.FUSS));
                     zaehlungskenngroessenAsset.setPrintRad(zaehlung.getKategorien().contains(Fahrzeug.RAD));
                     zaehlungskenngroessenAsset.setPrintKfz(zaehlung.getKategorien().contains(Fahrzeug.KFZ));

@@ -1,18 +1,18 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.util.CalculationUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
@@ -57,11 +57,15 @@ public class LadeZaehldatenService {
 
     private final ZaehldatenExtractorService zaehldatenExtractorService;
 
+    private final PkwEinheit pkwEinheit;
+
     public LadeZaehldatenService(
             final ZaehlstelleIndexService indexService,
-            final ZaehldatenExtractorService zaehldatenExtractorService) {
+            final ZaehldatenExtractorService zaehldatenExtractorService,
+            final PkwEinheit pkwEinheit) {
         this.indexService = indexService;
         this.zaehldatenExtractorService = zaehldatenExtractorService;
+        this.pkwEinheit = pkwEinheit;
         // Kfz
         SPITZENSTUNDEN_BLOCK_SORTING_INDEX
                 .add(ZeitintervallSortingIndexUtil.SORTING_INDEX_ZB_00_06 + ZeitintervallSortingIndexUtil.getSortingIndexSpitzenStundeWithinBlockKfz());
@@ -295,7 +299,7 @@ public class LadeZaehldatenService {
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach
      *            {@link LadeZaehldatumDTO}.
      * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
-     * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
+     * @throws DataNotFoundException wenn keine ZaehlungEntity gefunden wurde
      */
     public LadeZaehldatenTableDTO ladeZaehldaten(
             final UUID zaehlungId,
@@ -303,14 +307,13 @@ public class LadeZaehldatenService {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
         final List<Zeitintervall> zeitintervalle;
-        final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
-        final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
+        final var zaehlart = zaehlung.getZaehlart();
         if (StringUtils.contains(options.getZeitauswahl(), ZEITAUSWAHL_SPITZENSTUNDE)) {
             zeitintervalle = extractZeitintervalleForSpitzenstunde(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         } else {
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         }
-        final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
         List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
                 .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
                 .collect(Collectors.toList());

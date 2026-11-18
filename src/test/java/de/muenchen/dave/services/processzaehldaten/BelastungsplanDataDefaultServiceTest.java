@@ -1,23 +1,24 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class BelastungsplanDataDefaultServiceTest {
 
@@ -56,9 +57,9 @@ public class BelastungsplanDataDefaultServiceTest {
 
         zaehldatenJeVerkehrsbeziehung.put(verkehrsbeziehung, new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(false, ladeZaehldatum));
 
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.SV, Fahrzeug.GV, Fahrzeug.SV_P, Fahrzeug.GV_P, Fahrzeug.RAD, Fahrzeug.FUSS));
-        zaehlung.setZaehlart(Zaehlart.N.toString());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setKategorien(new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.SV.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV_P.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.RAD.getName(), Fahrzeug.FUSS.getName())));
+        zaehlung.setZaehlart(Zaehlart.N);
         zaehlung.setKreisverkehr(false);
 
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataDefaultService()

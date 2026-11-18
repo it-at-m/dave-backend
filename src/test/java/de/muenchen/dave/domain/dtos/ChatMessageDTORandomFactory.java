@@ -9,8 +9,8 @@ public class ChatMessageDTORandomFactory {
 
         final var dto = new ChatMessageDTO();
 
-        dto.setId(UUID.randomUUID().toString());
-        dto.setZaehlungId(UUID.randomUUID().toString());
+        dto.setId(UUID.randomUUID());
+        dto.setZaehlungId(UUID.randomUUID());
         dto.setContent("test");
         dto.setType("text");
         dto.setParticipantId(1);

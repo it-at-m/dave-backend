@@ -3,7 +3,7 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.migrationespg.services.messstelle.auswertung.AuswertungServiceMig;
+import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -30,7 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 )
 public class AuswertungController {
 
-    private final AuswertungServiceMig auswertungService;
+    private final AuswertungService auswertungService;
 
     @GetMapping(value = "/messstelle/getAllVisibleMessstellen")
     public ResponseEntity<List<MessstelleAuswertungDTO>> getAllVisibleMessstellen() {

@@ -9,6 +9,7 @@ import de.muenchen.dave.services.email.ProcessEmailService;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -47,7 +48,7 @@ public class ProcessEmailServiceTest {
     void processCorrectEmail() throws IOException, MessagingException {
         // Email vom Mobilitätsreferat
         final ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
-        chatMessageDTO.setZaehlungId("5ff15a92-7dac-434a-a5a9-a54914c38274");
+        chatMessageDTO.setZaehlungId(UUID.fromString("5ff15a92-7dac-434a-a5a9-a54914c38274"));
         chatMessageDTO.setParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
         chatMessageDTO.setContent("Antwort");
         chatMessageDTO.setType("text");

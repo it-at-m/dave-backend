@@ -2,9 +2,6 @@ package de.muenchen.dave.domain.mapper.detektor;
 
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
@@ -14,6 +11,9 @@ import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
+import de.muenchen.dave.relational.messtellen.MessfaehigkeitEntity;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +22,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Mapper(
         uses = { FahrzeugklassenMapper.class, VerkehrsartMapper.class },
@@ -38,24 +35,21 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 )
 public interface MessstelleReceiverMapper {
 
-    Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    MessstelleEntity createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
-    Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
+    MessquerschnittEntity createMessquerschnitt(MessquerschnittDto dto);
 
-    List<Messquerschnitt> createMessquerschnitte(List<MessquerschnittDto> dto);
+    List<MessquerschnittEntity> createMessquerschnitte(List<MessquerschnittDto> dto);
 
-    Messfaehigkeit createMessfaehigkeit(MessfaehigkeitDto dto);
+    MessfaehigkeitEntity createMessfaehigkeit(MessfaehigkeitDto dto);
 
-    List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
+    List<MessfaehigkeitEntity> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
-    default void dto2EntityAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
-        if (StringUtils.isEmpty(bean.getId())) {
-            bean.setId(UUID.randomUUID().toString());
-        }
+    default void dto2EntityAfterMapping(@MappingTarget MessstelleEntity bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
 
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
-            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
+        if (bean.getId() == null) {
+            bean.setId(UUID.randomUUID());
         }
 
         /*
@@ -96,12 +90,9 @@ public interface MessstelleReceiverMapper {
     }
 
     @AfterMapping
-    default void createMessquerschnittAfterMapping(@MappingTarget Messquerschnitt bean, MessquerschnittDto dto) {
-        if (StringUtils.isEmpty(bean.getId())) {
-            bean.setId(UUID.randomUUID().toString());
-        }
-        if (ObjectUtils.isEmpty(bean.getPunkt()) && dto.getLatitude() != null && dto.getLongitude() != null) {
-            bean.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
+    default void createMessquerschnittAfterMapping(@MappingTarget MessquerschnittEntity bean, MessquerschnittDto dto) {
+        if (bean.getId() == null) {
+            bean.setId(UUID.randomUUID());
         }
     }
 
@@ -115,11 +106,11 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "fahrzeugklasse", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    MessstelleEntity updateMessstelle(@MappingTarget MessstelleEntity existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
-    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    MessquerschnittEntity updateMessquerschnitt(@MappingTarget MessquerschnittEntity existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     default ZaehldatenIntervall map(final MessfaehigkeitDto.IntervallEnum intervall) {
         final ZaehldatenIntervall mappingTarget;

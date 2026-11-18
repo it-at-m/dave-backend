@@ -1,17 +1,11 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.sameInstance;
-
 import com.google.common.collect.Lists;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,7 +20,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.sameInstance;
 
 @Slf4j
 public class SucheServiceTest {
@@ -39,36 +38,38 @@ public class SucheServiceTest {
             null,
             null,
             null,
-            null,
-            null,
             null);
 
     @Test
     public void mapZaehlungenToZaehlartenKarte() {
-        List<Zaehlung> zaehlungen = null;
+        List<ZaehlungEntity> zaehlungen = null;
         assertThat(SucheService.mapZaehlungenToZaehlartenKarte(zaehlungen), is(new HashSet<>()));
 
         zaehlungen = new ArrayList<>();
         assertThat(SucheService.mapZaehlungenToZaehlartenKarte(zaehlungen), is(new HashSet<>()));
 
-        Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.FJS.name());
-        zaehlung.setPunkt(new GeoPoint(1, 2));
+        ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.FJS);
+        zaehlung.setLatitude(1D);
+        zaehlung.setLongitude(2D);
         zaehlungen.add(zaehlung);
 
-        zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.QJS.name());
-        zaehlung.setPunkt(new GeoPoint(3, 4));
+        zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.QJS);
+        zaehlung.setLatitude(3D);
+        zaehlung.setLongitude(4D);
         zaehlungen.add(zaehlung);
 
-        zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        zaehlung.setPunkt(new GeoPoint(3, 4));
+        zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
+        zaehlung.setLatitude(3D);
+        zaehlung.setLongitude(4D);
         zaehlungen.add(zaehlung);
 
-        zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.T.name());
-        zaehlung.setPunkt(new GeoPoint(3, 4));
+        zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.T);
+        zaehlung.setLatitude(3D);
+        zaehlung.setLongitude(4D);
         zaehlungen.add(zaehlung);
 
         Set<ZaehlartenKarteDTO> expected = new HashSet<>();
@@ -135,7 +136,7 @@ public class SucheServiceTest {
 
     @Test
     public void testFilterZaehlung() {
-        Zaehlung z1 = new Zaehlung();
+        ZaehlungEntity z1 = new ZaehlungEntity();
         z1.setDatum(LocalDate.parse("2017-04-03"));
         z1.setProjektName("Foobla");
         z1.setSuchwoerter(new ArrayList<>(SuchwortUtil.generateSuchworteOfZaehlung(z1)));
@@ -155,42 +156,42 @@ public class SucheServiceTest {
 
     @Test
     public void testCheckZaehlstelleForZaehlung() {
-        Zaehlstelle zs1 = new Zaehlstelle();
-        Zaehlung z1 = new Zaehlung();
+        ZaehlstelleEntity zs1 = new ZaehlstelleEntity();
+        ZaehlungEntity z1 = new ZaehlungEntity();
         z1.setDatum(LocalDate.parse("2017-04-03"));
         z1.setProjektName("Foobla");
         z1.setSuchwoerter(new ArrayList<>(SuchwortUtil.generateSuchworteOfZaehlung(z1)));
-        Zaehlung z2 = new Zaehlung();
+        ZaehlungEntity z2 = new ZaehlungEntity();
         z2.setDatum(LocalDate.parse("2014-07-20"));
         z2.setProjektName("foo");
         z2.setSuchwoerter(new ArrayList<>(SuchwortUtil.generateSuchworteOfZaehlung(z2)));
-        Zaehlung z3 = new Zaehlung();
+        ZaehlungEntity z3 = new ZaehlungEntity();
         z3.setDatum(LocalDate.parse("2019-08-04"));
         z3.setProjektName("bar");
         z3.setSuchwoerter(new ArrayList<>(SuchwortUtil.generateSuchworteOfZaehlung(z3)));
         zs1.setZaehlungen(Lists.newArrayList(z1, z2, z3));
 
         // Test mit Datum
-        Optional<Zaehlung> optionalZaehlung1 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg 20 bla");
+        Optional<ZaehlungEntity> optionalZaehlung1 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg 20 bla");
         assertThat(optionalZaehlung1.isPresent(), is(true));
         assertThat(optionalZaehlung1.get(), is(equalTo(z2)));
 
         // Test mit falschem Datum
-        Optional<Zaehlung> optionalZaehlung2 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg 27.03.2018");
+        Optional<ZaehlungEntity> optionalZaehlung2 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg 27.03.2018");
         assertThat(optionalZaehlung2.isPresent(), is(false));
 
         // Test mit "Foo" (groß)
-        Optional<Zaehlung> optionalZaehlung3 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foo Bla");
+        Optional<ZaehlungEntity> optionalZaehlung3 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foo Bla");
         assertThat(optionalZaehlung3.isPresent(), is(true));
         assertThat(optionalZaehlung3.get(), is(equalTo(z1)));
 
         // Test mit "foo" (klein)
-        Optional<Zaehlung> optionalZaehlung4 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg foo Bla");
+        Optional<ZaehlungEntity> optionalZaehlung4 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg foo Bla");
         assertThat(optionalZaehlung4.isPresent(), is(true));
         assertThat(optionalZaehlung4.get(), is(equalTo(z1)));
 
         // Test mit falschem Text
-        Optional<Zaehlung> optionalZaehlung5 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foobar Bla");
+        Optional<ZaehlungEntity> optionalZaehlung5 = this.service.checkZaehlstelleForZaehlung(zs1, "Nymphenburg Foobar Bla");
         assertThat(optionalZaehlung5.isPresent(), is(false));
     }
 
@@ -204,7 +205,7 @@ public class SucheServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     public void testGetNeuesteErlaubteZaehlungOhneErlaubtenStatus(final boolean isRoleAdmin) {
-        final List<Zaehlung> zaehlungen = List.of(
+        final List<ZaehlungEntity> zaehlungen = List.of(
                 createZaehlung(Status.CREATED, LocalDate.of(2025, 1, 1)),
                 createZaehlung(Status.INACTIVE, LocalDate.of(2025, 2, 1)));
 
@@ -214,7 +215,7 @@ public class SucheServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     public void testGetNeuesteErlaubteZaehlungMitEinzelnerAktiverZaehlung(final boolean isRoleAdmin) {
-        final Zaehlung zaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
+        final ZaehlungEntity zaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
 
         assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(zaehlung), isRoleAdmin), is(sameInstance(zaehlung)));
     }
@@ -222,7 +223,7 @@ public class SucheServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     public void testGetNeuesteErlaubteZaehlungMitEinzelnerAbgeschlossenerZaehlung(final boolean isRoleAdmin) {
-        final Zaehlung zaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
+        final ZaehlungEntity zaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
 
         if (isRoleAdmin) {
             assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(zaehlung), true), is(sameInstance(zaehlung)));
@@ -234,13 +235,13 @@ public class SucheServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     public void testGetNeuesteErlaubteZaehlungAusUnsortierterListe(final boolean isRoleAdmin) {
-        final Zaehlung aeltereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
-        final Zaehlung neuereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
-        final Zaehlung abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 3, 1));
-        final Zaehlung inaktiveZaehlung = createZaehlung(Status.INACTIVE, LocalDate.of(2025, 4, 1));
-        final List<Zaehlung> zaehlungen = List.of(
+        final ZaehlungEntity aeltereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 1, 1));
+        final ZaehlungEntity neuereAktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
+        final ZaehlungEntity abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 3, 1));
+        final ZaehlungEntity inaktiveZaehlung = createZaehlung(Status.INACTIVE, LocalDate.of(2025, 4, 1));
+        final List<ZaehlungEntity> zaehlungen = List.of(
                 neuereAktiveZaehlung, inaktiveZaehlung, aeltereAktiveZaehlung, abgeschlosseneZaehlung);
-        final Zaehlung expected = isRoleAdmin ? abgeschlosseneZaehlung : neuereAktiveZaehlung;
+        final ZaehlungEntity expected = isRoleAdmin ? abgeschlosseneZaehlung : neuereAktiveZaehlung;
 
         assertThat(SucheService.getNeuesteErlaubteZaehlung(zaehlungen, isRoleAdmin), is(sameInstance(expected)));
     }
@@ -248,8 +249,8 @@ public class SucheServiceTest {
     @ParameterizedTest
     @ValueSource(booleans = { false, true })
     public void testGetNeuesteErlaubteZaehlungBevorzugtNeuereAktiveZaehlung(final boolean isRoleAdmin) {
-        final Zaehlung abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
-        final Zaehlung aktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
+        final ZaehlungEntity abgeschlosseneZaehlung = createZaehlung(Status.ACCOMPLISHED, LocalDate.of(2025, 1, 1));
+        final ZaehlungEntity aktiveZaehlung = createZaehlung(Status.ACTIVE, LocalDate.of(2025, 2, 1));
 
         assertThat(SucheService.getNeuesteErlaubteZaehlung(List.of(aktiveZaehlung, abgeschlosseneZaehlung), isRoleAdmin),
                 is(sameInstance(aktiveZaehlung)));
@@ -280,8 +281,8 @@ public class SucheServiceTest {
                 "UNKNOWN, true, false"
         }
     )
-    public void testIsZaehlungsstatusErlaubt(final String status, final boolean isRoleAdmin, final boolean expected) {
-        final Zaehlung zaehlung = new Zaehlung();
+    public void testIsZaehlungsstatusErlaubt(final Status status, final boolean isRoleAdmin, final boolean expected) {
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setStatus(status);
 
         assertThat(SucheService.isZaehlungsstatusErlaubt(zaehlung, isRoleAdmin), is(expected));
@@ -299,15 +300,15 @@ public class SucheServiceTest {
             }, nullValues = "NULL"
     )
     public void testIsSonderzaehlungErlaubt(final boolean isRoleAnwender, final Boolean sonderzaehlung, final boolean expectedErlaubt) {
-        final Zaehlung zaehlung = new Zaehlung();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setSonderzaehlung(sonderzaehlung);
 
         assertThat(SucheService.isSonderzaehlungErlaubt(zaehlung, isRoleAnwender), is(expectedErlaubt));
     }
 
-    private static Zaehlung createZaehlung(final Status status, final LocalDate datum) {
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setStatus(status.name());
+    private static ZaehlungEntity createZaehlung(final Status status, final LocalDate datum) {
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setStatus(status);
         zaehlung.setDatum(datum);
         return zaehlung;
     }

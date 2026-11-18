@@ -1,15 +1,15 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class ZaehlstelleIndexServiceTest {
 
@@ -26,23 +26,23 @@ public class ZaehlstelleIndexServiceTest {
     @Test
     public void testUpdateZaehlstelleWithZaehlung() {
 
-        Zaehlstelle zs = new Zaehlstelle();
+        ZaehlstelleEntity zs = new ZaehlstelleEntity();
         zs.setZaehlungen(new ArrayList<>());
 
-        Zaehlung z1 = new Zaehlung();
+        ZaehlungEntity z1 = new ZaehlungEntity();
         z1.setDatum(LocalDate.of(2010, 1, 1));
         z1.setJahr("2010");
-        z1.setStatus(Status.ACTIVE.name());
+        z1.setStatus(Status.ACTIVE);
 
-        Zaehlung z2 = new Zaehlung();
+        ZaehlungEntity z2 = new ZaehlungEntity();
         z2.setDatum(LocalDate.of(2015, 5, 1));
         z2.setJahr("2015");
-        z2.setStatus(Status.ACTIVE.name());
+        z2.setStatus(Status.ACTIVE);
 
-        Zaehlung z3 = new Zaehlung();
+        ZaehlungEntity z3 = new ZaehlungEntity();
         z3.setDatum(LocalDate.of(2020, 7, 1));
         z3.setJahr("2020");
-        z3.setStatus(Status.ACTIVE.name());
+        z3.setStatus(Status.ACTIVE);
 
         // letzte hinzugefügte Zählung ist älter als die vorhande
         this.service.updateZaehlstelleWithZaehlung(zs, z2);

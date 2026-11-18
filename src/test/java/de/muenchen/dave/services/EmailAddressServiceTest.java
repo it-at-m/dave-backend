@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.EmailAddress;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.dtos.EmailAddressDTORandomFactory;
 import de.muenchen.dave.domain.mapper.EmailAddressMapperImpl;
-import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
+import de.muenchen.dave.relational.repository.EmailAddressRepository;
 import de.muenchen.dave.services.email.EmailAddressService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -16,7 +16,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.exceptions.PredictionFailedException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.hochrechnung.HochrechnungsService;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;

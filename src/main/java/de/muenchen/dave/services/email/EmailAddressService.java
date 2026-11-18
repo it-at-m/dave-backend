@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.EmailAddress;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.mapper.EmailAddressMapper;
-import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
+import de.muenchen.dave.relational.repository.EmailAddressRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

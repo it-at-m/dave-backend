@@ -7,7 +7,6 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
@@ -16,6 +15,7 @@ import de.muenchen.dave.domain.mapper.detektor.AuswertungMapperImpl;
 import de.muenchen.dave.domain.model.messstelle.ValidateZeitraumAndTagesTypForMessstelleModel;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatDto;
 import de.muenchen.dave.geodateneai.gen.model.TagesaggregatResponseDto;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.services.messstelle.MesswerteService;
 import de.muenchen.dave.services.messstelle.ValidierungService;
@@ -115,10 +115,10 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        final Messstelle mockedMessstele = new Messstelle();
-        mockedMessstele.setMstId("1234");
-        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
-        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+        final MessstelleEntity mockedMessstelle = new MessstelleEntity();
+        mockedMessstelle.setMstId("1234");
+        mockedMessstelle.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstelle);
 
         Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
                 .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -241,10 +241,10 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        final Messstelle mockedMessstele = new Messstelle();
-        mockedMessstele.setMstId("1234");
-        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
-        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+        final MessstelleEntity mockedMessstelle = new MessstelleEntity();
+        mockedMessstelle.setMstId("1234");
+        mockedMessstelle.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstelle);
 
         Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
                 .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -375,10 +375,10 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        final Messstelle mockedMessstele = new Messstelle();
-        mockedMessstele.setMstId("1234");
-        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.KFZ);
-        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+        final MessstelleEntity mockedMessstelle = new MessstelleEntity();
+        mockedMessstelle.setMstId("1234");
+        mockedMessstelle.setDetektierteVerkehrsart(Verkehrsart.KFZ);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstelle);
 
         Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.KFZ))
                 .thenReturn(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -516,10 +516,10 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        final Messstelle mockedMessstele = new Messstelle();
-        mockedMessstele.setMstId("1234");
-        mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
-        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);
+        final MessstelleEntity mockedMessstelle = new MessstelleEntity();
+        mockedMessstelle.setMstId("1234");
+        mockedMessstelle.setDetektierteVerkehrsart(Verkehrsart.RAD);
+        Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstelle);
 
         Mockito.when(validierungService.getFahrzeugklasseAccordingChoosenFahrzeugoptions(fahrzeugOptions, Verkehrsart.RAD)).thenReturn(Fahrzeugklasse.RAD);
 
@@ -641,7 +641,7 @@ class AuswertungServiceTest {
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle("1234", LocalDate.of(2020, 1, 1), LocalDate.of(2020, 3, 31)))
                 .thenReturn(messfaehigkeiten);
 
-        final Messstelle mockedMessstele = new Messstelle();
+        final MessstelleEntity mockedMessstele = new MessstelleEntity();
         mockedMessstele.setMstId("1234");
         mockedMessstele.setDetektierteVerkehrsart(Verkehrsart.RAD);
         Mockito.when(messstelleService.getMessstelleByMstId("1234")).thenReturn(mockedMessstele);

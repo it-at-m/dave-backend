@@ -3,6 +3,7 @@ package de.muenchen.dave.domain.dtos;
 import jakarta.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +15,7 @@ public class ZaehlstelleKarteDTO extends ErhebungsstelleKarteDTO {
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    private String letzteZaehlungId;
+    private UUID letzteZaehlungId;
     @NotNull
     private Set<ZaehlartenKarteDTO> zaehlartenKarte = new HashSet<>();
 

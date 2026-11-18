@@ -1,8 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
+
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapperImpl;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
@@ -13,6 +12,8 @@ import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.geodateneai.gen.api.MessstelleApi;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.services.CustomSuggestIndexService;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.email.EmailSendService;
@@ -20,6 +21,7 @@ import de.muenchen.dave.services.lageplan.LageplanService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.assertj.core.api.Assertions;
@@ -92,13 +94,13 @@ public class MessstelleReceiverTest {
 
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
-        final var messstelle1 = new Messstelle();
+        final var messstelle1 = new MessstelleEntity();
         messstelle1.setMstId("1");
         Mockito.when(messstelleIndexService.findByMstId("1")).thenReturn(Optional.of(messstelle1));
 
         Mockito.when(messstelleIndexService.findByMstId("2")).thenReturn(Optional.empty());
 
-        final var messstelle3 = new Messstelle();
+        final var messstelle3 = new MessstelleEntity();
         messstelle1.setMstId("3");
         Mockito.when(messstelleIndexService.findByMstId("3")).thenReturn(Optional.of(messstelle3));
 
@@ -124,7 +126,7 @@ public class MessstelleReceiverTest {
         final var messstelleDto1 = new MessstelleDto();
         messstelleDto1.setMstId("1");
 
-        final var messstelle1 = new Messstelle();
+        final var messstelle1 = new MessstelleEntity();
         messstelle1.setMstId("1");
         messstelle1.setStatus(MessstelleStatus.IN_BESTAND);
 
@@ -132,11 +134,11 @@ public class MessstelleReceiverTest {
 
         Mockito.when(messstelleReceiverMapperSpy.createMessstelle(messstelleDto1, stadtbezirkMapper)).thenReturn(messstelle1);
 
-        final var messstelle1Saved = new Messstelle();
-        messstelle1Saved.setId("1234");
+        final var messstelle1Saved = new MessstelleEntity();
+        messstelle1Saved.setId(UUID.fromString("1234"));
         messstelle1Saved.setMstId("1");
         messstelle1Saved.setStatus(MessstelleStatus.IN_BESTAND);
-        Mockito.when(messstelleIndexService.saveMessstelleWithDetectors(Mockito.any(Messstelle.class))).thenReturn(messstelle1Saved);
+        Mockito.when(messstelleIndexService.saveMessstelleWithDetectors(Mockito.any(MessstelleEntity.class))).thenReturn(messstelle1Saved);
 
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
@@ -144,10 +146,10 @@ public class MessstelleReceiverTest {
 
         Mockito.verify(messstelleReceiverMapperSpy, Mockito.times(1)).createMessstelle(messstelleDto1, stadtbezirkMapper);
 
-        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(Mockito.any(Messstelle.class));
+        Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(Mockito.any(MessstelleEntity.class));
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
-                messstelle1Saved.getId(),
+                String.valueOf(messstelle1Saved.getId()),
                 messstelle1Saved.getMstId(),
                 null,
                 messstelle1Saved.getStatus());
@@ -160,15 +162,15 @@ public class MessstelleReceiverTest {
         messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
         messstelleDto.setMessquerschnitte(List.of());
 
-        final var existingMessstelle = new Messstelle();
-        existingMessstelle.setId("1234");
+        final var existingMessstelle = new MessstelleEntity();
+        existingMessstelle.setId(UUID.fromString("1234"));
         existingMessstelle.setMstId("1");
         existingMessstelle.setStatus(MessstelleStatus.IN_PLANUNG);
 
         Mockito.when(lageplanService.lageplanVorhanden("1")).thenReturn(true);
 
-        final var updatedMessstelle = new Messstelle();
-        updatedMessstelle.setId("1234");
+        final var updatedMessstelle = new MessstelleEntity();
+        updatedMessstelle.setId(UUID.fromString("1234"));
         updatedMessstelle.setMstId("1");
         updatedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
         updatedMessstelle.setMessquerschnitte(List.of());
@@ -176,8 +178,8 @@ public class MessstelleReceiverTest {
         updatedMessstelle.setSuchwoerter(List.of("1"));
         updatedMessstelle.setLageplanVorhanden(true);
 
-        final var savedMessstelle = new Messstelle();
-        savedMessstelle.setId("1234");
+        final var savedMessstelle = new MessstelleEntity();
+        savedMessstelle.setId(UUID.fromString("1234"));
         savedMessstelle.setMstId("1");
         savedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
         savedMessstelle.setMessquerschnitte(List.of());
@@ -189,7 +191,7 @@ public class MessstelleReceiverTest {
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
         Mockito.doNothing().when(messstelleReceiverSpy).sendMailForUpdatedOrChangedMessstelle(
-                savedMessstelle.getId(),
+                String.valueOf(savedMessstelle.getId()),
                 savedMessstelle.getMstId(),
                 MessstelleStatus.IN_PLANUNG,
                 MessstelleStatus.IN_BESTAND);
@@ -203,7 +205,7 @@ public class MessstelleReceiverTest {
         Mockito.verify(messstelleIndexService, Mockito.times(1)).saveMessstelleWithDetectors(updatedMessstelle);
 
         Mockito.verify(messstelleReceiverSpy, Mockito.times(1)).sendMailForUpdatedOrChangedMessstelle(
-                savedMessstelle.getId(),
+                String.valueOf(savedMessstelle.getId()),
                 savedMessstelle.getMstId(),
                 MessstelleStatus.IN_PLANUNG,
                 MessstelleStatus.IN_BESTAND);
@@ -216,15 +218,15 @@ public class MessstelleReceiverTest {
         messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
         messstelleDto.setMessquerschnitte(List.of());
 
-        final var existingMessstelle = new Messstelle();
-        existingMessstelle.setId("1234");
+        final var existingMessstelle = new MessstelleEntity();
+        existingMessstelle.setId(UUID.fromString("1234"));
         existingMessstelle.setMstId("1");
         existingMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
 
         Mockito.when(lageplanService.lageplanVorhanden("1")).thenReturn(true);
 
-        final var updatedMessstelle = new Messstelle();
-        updatedMessstelle.setId("1234");
+        final var updatedMessstelle = new MessstelleEntity();
+        updatedMessstelle.setId(UUID.fromString("1234"));
         updatedMessstelle.setMstId("1");
         updatedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
         updatedMessstelle.setMessquerschnitte(List.of());
@@ -232,8 +234,8 @@ public class MessstelleReceiverTest {
         updatedMessstelle.setSuchwoerter(List.of("1"));
         updatedMessstelle.setLageplanVorhanden(true);
 
-        final var savedMessstelle = new Messstelle();
-        savedMessstelle.setId("1234");
+        final var savedMessstelle = new MessstelleEntity();
+        savedMessstelle.setId(UUID.fromString("1234"));
         savedMessstelle.setMstId("1");
         savedMessstelle.setStatus(MessstelleStatus.IN_BESTAND);
         savedMessstelle.setMessquerschnitte(List.of());
@@ -245,7 +247,7 @@ public class MessstelleReceiverTest {
         final var messstelleReceiverSpy = Mockito.spy(this.messstelleReceiver);
 
         Mockito.doNothing().when(messstelleReceiverSpy).sendMailForUpdatedOrChangedMessstelle(
-                savedMessstelle.getId(),
+                String.valueOf(savedMessstelle.getId()),
                 savedMessstelle.getMstId(),
                 MessstelleStatus.IN_PLANUNG,
                 MessstelleStatus.IN_BESTAND);
@@ -267,7 +269,7 @@ public class MessstelleReceiverTest {
 
     @Test
     void updateMessquerschnitteOfMessstelleWithoutCreate() {
-        final List<Messquerschnitt> messquerschnitte = MessquerschnittRandomFactory.getSomeMessquerschnitte();
+        final List<MessquerschnittEntity> messquerschnitte = MessquerschnittRandomFactory.getSomeMessquerschnitte();
 
         final List<MessquerschnittDto> messquerschnitteDto = new ArrayList<>();
         messquerschnitte.forEach(messquerschnitt -> {
@@ -276,15 +278,16 @@ public class MessstelleReceiverTest {
             messquerschnitteDto.add(messquerschnittDto);
         });
 
-        final List<Messquerschnitt> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
+        final List<MessquerschnittEntity> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
         expected.forEach(expectedMessquerschnitt -> messquerschnitte.forEach(messquerschnitt1 -> {
             if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
                 expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
-                expectedMessquerschnitt.setPunkt(messquerschnitt1.getPunkt());
+                expectedMessquerschnitt.setLongitude(messquerschnitt1.getLongitude());
+                expectedMessquerschnitt.setLatitude(messquerschnitt1.getLatitude());
             }
         }));
 
-        final List<Messquerschnitt> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
+        final List<MessquerschnittEntity> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
         Assertions.assertThat(result)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -297,7 +300,7 @@ public class MessstelleReceiverTest {
 
     @Test
     void updateMessquerschnitteOfMessstelleWithCreate() {
-        final List<Messquerschnitt> messquerschnitte = MessquerschnittRandomFactory.getSomeMessquerschnitte();
+        final List<MessquerschnittEntity> messquerschnitte = MessquerschnittRandomFactory.getSomeMessquerschnitte();
 
         final List<MessquerschnittDto> messquerschnitteDto = new ArrayList<>();
         messquerschnitte.forEach(messquerschnitt -> {
@@ -308,15 +311,16 @@ public class MessstelleReceiverTest {
         final MessquerschnittDto addNewMessquerschnitt = MessquerschnittRandomFactory.getMessquerschnittDto();
         messquerschnitteDto.add(addNewMessquerschnitt);
 
-        final List<Messquerschnitt> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
+        final List<MessquerschnittEntity> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
         expected.forEach(expectedMessquerschnitt -> messquerschnitte.forEach(messquerschnitt1 -> {
             if (expectedMessquerschnitt.getMqId().equalsIgnoreCase(messquerschnitt1.getMqId())) {
                 expectedMessquerschnitt.setStandort(messquerschnitt1.getStandort());
-                expectedMessquerschnitt.setPunkt(messquerschnitt1.getPunkt());
+                expectedMessquerschnitt.setLongitude(messquerschnitt1.getLongitude());
+                expectedMessquerschnitt.setLatitude(messquerschnitt1.getLatitude());
             }
         }));
 
-        final List<Messquerschnitt> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
+        final List<MessquerschnittEntity> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
         Assertions.assertThat(result)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -329,13 +333,13 @@ public class MessstelleReceiverTest {
 
     @Test
     void updateMessquerschnitteOfMessstelleOnlyCreate() {
-        final List<Messquerschnitt> messquerschnitte = new ArrayList<>();
+        final List<MessquerschnittEntity> messquerschnitte = new ArrayList<>();
 
         final List<MessquerschnittDto> messquerschnitteDto = MessquerschnittRandomFactory.getSomeMessquerschnittDtos();
 
-        final List<Messquerschnitt> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
+        final List<MessquerschnittEntity> expected = new MessstelleReceiverMapperImpl().createMessquerschnitte(messquerschnitteDto);
 
-        final List<Messquerschnitt> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
+        final List<MessquerschnittEntity> result = messstelleReceiver.updateMessquerschnitteOfMessstelle(messquerschnitte, messquerschnitteDto);
         Assertions.assertThat(result)
                 .isNotNull()
                 .usingRecursiveComparison()

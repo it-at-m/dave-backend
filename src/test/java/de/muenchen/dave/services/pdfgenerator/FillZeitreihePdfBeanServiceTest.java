@@ -1,15 +1,15 @@
 package de.muenchen.dave.services.pdfgenerator;
 
+import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapperImpl;
+import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.is;
-
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapperImpl;
-import de.muenchen.dave.domain.pdf.templates.ZeitreihePdf;
-import de.muenchen.dave.spring.services.pdfgenerator.FillPdfBeanServiceSpringTest;
-import org.junit.jupiter.api.Test;
 
 public class FillZeitreihePdfBeanServiceTest {
 
@@ -18,11 +18,11 @@ public class FillZeitreihePdfBeanServiceTest {
 
     @Test
     void fillZaehlstelleninformationenZeitreihe() {
-        final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
+        final ZaehlungEntity zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
         final ZeitreihePdf zeitreihePdf1 = new ZeitreihePdf();
 
         // Testcase 1
-        Knotenarm knotenarm = new Knotenarm();
+        KnotenarmEntity knotenarm = new KnotenarmEntity();
         knotenarm.setNummer(2);
         knotenarm.setStrassenname("Testingerstraße");
         zaehlung.getKnotenarme().add(knotenarm);

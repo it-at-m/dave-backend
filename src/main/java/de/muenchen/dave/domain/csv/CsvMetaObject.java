@@ -1,13 +1,13 @@
 package de.muenchen.dave.domain.csv;
 
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import lombok.Data;
 
 @Data
 public class CsvMetaObject {
 
-    private Zaehlstelle zaehlstelle;
+    private ZaehlstelleEntity zaehlstelle;
 
-    private Zaehlung zaehlung;
+    private ZaehlungEntity zaehlung;
 }

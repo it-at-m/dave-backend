@@ -13,7 +13,7 @@ import de.muenchen.dave.domain.relationaldb.InfoMessageRandomFactory;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
+import de.muenchen.dave.relational.repository.InfoMessageRepository;
 import de.muenchen.dave.services.InfoMessageService;
 import java.time.LocalDate;
 import java.util.ArrayList;

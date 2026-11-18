@@ -6,13 +6,14 @@ import de.muenchen.dave.domain.enums.Fahrzeug;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
 public class ExternalZaehlungDTO {
 
-    String id;
+    UUID id;
 
     LocalDate datum;
 

@@ -3,7 +3,6 @@ package de.muenchen.dave.controller;
 import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDTO;
-import de.muenchen.dave.migrationespg.services.messstelle.MessstelleOptionsmenuServiceMig;
 import de.muenchen.dave.services.messstelle.MessstelleOptionsmenuService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessstelleOptionsmenuController {
     public static final String REQUEST_PARAM_MESSSTELLE_ID = "mst_id";
 
-    private final MessstelleOptionsmenuServiceMig messstelleOptionsmenuService;
+    private final MessstelleOptionsmenuService messstelleOptionsmenuService;
 
     @GetMapping("/auffaellige-tage")
     public ResponseEntity<AuffaelligeTageDTO> getAuffaelligeTage(

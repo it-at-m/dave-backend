@@ -1,23 +1,14 @@
 package de.muenchen.dave.spring.services.persist;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
+import de.muenchen.dave.relational.repository.MessstellenIndexRepository;
+import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.services.persist.ExternalZaehlungPersistierungsService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +21,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
                 "spring.datasource.url=jdbc:h2:mem:dave;DB_CLOSE_ON_EXIT=FALSE" }
@@ -39,13 +38,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 class ExternalZaehlungPersistierungsServiceSpringTest {
 
     @MockitoBean
-    private CustomSuggestIndex customSuggestIndex;
+    private MessstellenIndexRepository messstelleIndex;
 
     @MockitoBean
-    private MessstelleIndex messstelleIndex;
-
-    @MockitoBean
-    private ZaehlstelleIndex zaehlstelleIndex;
+    private ZaehlstellenIndexRepository zaehlstelleIndex;
 
     @Autowired
     private ExternalZaehlungPersistierungsService externalZaehlungPersistierungsService;
@@ -53,9 +49,9 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
     @Test
     public void getZaehlungenForExternal() throws BrokenInfrastructureException {
 
-        final List<Zaehlstelle> indexResult = new ArrayList<>();
+        final List<ZaehlstelleEntity> indexResult = new ArrayList<>();
 
-        Zaehlstelle zst = ZaehlstelleRandomFactory.getOne();
+        ZaehlstelleEntity zst = ZaehlstelleRandomFactory.getOne();
         zst.setNummer("120105");
         zst.setStadtbezirkNummer(12);
         zst.setZaehlungen(Arrays.asList(
@@ -64,25 +60,25 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
                 ZaehlungRandomFactory.getOne(),
                 ZaehlungRandomFactory.getOne(),
                 ZaehlungRandomFactory.getOne()));
-        zst.getZaehlungen().get(0).setStatus(Status.INSTRUCTED.name());
-        zst.getZaehlungen().get(1).setStatus(Status.ACCOMPLISHED.name());
-        zst.getZaehlungen().get(2).setStatus(Status.CREATED.name());
-        zst.getZaehlungen().get(3).setStatus(Status.ACTIVE.name());
-        zst.getZaehlungen().get(4).setStatus(Status.INACTIVE.name());
+        zst.getZaehlungen().get(0).setStatus(Status.INSTRUCTED);
+        zst.getZaehlungen().get(1).setStatus(Status.ACCOMPLISHED);
+        zst.getZaehlungen().get(2).setStatus(Status.CREATED);
+        zst.getZaehlungen().get(3).setStatus(Status.ACTIVE);
+        zst.getZaehlungen().get(4).setStatus(Status.INACTIVE);
         indexResult.add(zst);
 
         zst = ZaehlstelleRandomFactory.getOne();
         zst.setNummer("120107");
         zst.setStadtbezirkNummer(12);
         zst.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
-        zst.getZaehlungen().get(0).setStatus(Status.CORRECTION.name());
+        zst.getZaehlungen().get(0).setStatus(Status.CORRECTION);
         indexResult.add(zst);
 
         zst = ZaehlstelleRandomFactory.getOne();
         zst.setNummer("120107");
         zst.setStadtbezirkNummer(12);
         zst.setZaehlungen(List.of(ZaehlungRandomFactory.getOne()));
-        zst.getZaehlungen().get(0).setStatus(Status.COUNTING.name());
+        zst.getZaehlungen().get(0).setStatus(Status.COUNTING);
         indexResult.add(zst);
 
         when(this.zaehlstelleIndex.findAllByStatus(anyString(), any())).thenReturn(new PageImpl<>(indexResult));

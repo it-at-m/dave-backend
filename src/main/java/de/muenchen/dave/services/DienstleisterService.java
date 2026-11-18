@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Dienstleister;
 import de.muenchen.dave.domain.dtos.DienstleisterDTO;
 import de.muenchen.dave.domain.mapper.DienstleisterMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
-import de.muenchen.dave.repositories.relationaldb.DienstleisterRepository;
+import de.muenchen.dave.relational.repository.DienstleisterRepository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

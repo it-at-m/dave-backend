@@ -1,13 +1,14 @@
 package de.muenchen.dave.util;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.IndexServiceUtils;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -33,7 +34,7 @@ public final class SuchwortUtil {
 
     public static final String SUCHWORT_KREISVERKEHR = "Kreisverkehr";
 
-    public static Set<String> generateSuchworteOfZaehlstelle(final Zaehlstelle bean) {
+    public static Set<String> generateSuchworteOfZaehlstelle(final ZaehlstelleEntity bean) {
         final Set<String> suchwoerter = new HashSet<>();
         if (StringUtils.isNotEmpty(bean.getStadtbezirk())) {
             final Set<String> stadtbezirke = new HashSet<>(Splitter.on("-").omitEmptyStrings().trimResults().splitToList(bean.getStadtbezirk()));
@@ -45,15 +46,15 @@ public final class SuchwortUtil {
         return suchwoerter;
     }
 
-    public static Set<String> generateSuchworteOfZaehlung(final Zaehlung bean) {
+    public static Set<String> generateSuchworteOfZaehlung(final ZaehlungEntity bean) {
         final Set<String> suchwoerter = new HashSet<>();
 
-        suchwoerter.addAll(getSuchworteOfWetter(bean.getWetter()));
+        suchwoerter.addAll(getSuchworteOfWetter(bean.getWetter().name()));
 
-        suchwoerter.addAll(getSuchworteOfZaehldauer(bean.getZaehldauer()));
+        suchwoerter.addAll(getSuchworteOfZaehldauer(String.valueOf(bean.getZaehldauer())));
 
         // Zaehlart ist in der Geographie enthalten
-        if (ObjectUtils.isNotEmpty(bean.getGeographie())) {
+        if (bean.getGeographie().isEmpty()) {
             suchwoerter.addAll(bean.getGeographie());
         }
         if (StringUtils.isNotEmpty(bean.getJahreszeit())) {
@@ -123,7 +124,7 @@ public final class SuchwortUtil {
         return datumSuchworte;
     }
 
-    public static List<String> getSuchworteOfKnotenarme(final List<Knotenarm> knotenarme) {
+    public static List<String> getSuchworteOfKnotenarme(final List<KnotenarmEntity> knotenarme) {
         final List<String> knotenarmeSuchworte = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(knotenarme)) {
             final Set<String> strassennamen = new HashSet<>();
@@ -161,7 +162,7 @@ public final class SuchwortUtil {
         return knotenarmeSuchworte;
     }
 
-    public static Set<String> generateSuchworteOfMessstelle(final Messstelle bean, final StadtbezirkMapper stadtbezirkMapper) {
+    public static Set<String> generateSuchworteOfMessstelle(final MessstelleEntity bean, final StadtbezirkMapper stadtbezirkMapper) {
         final Set<String> suchwoerter = new HashSet<>();
         if (ObjectUtils.isNotEmpty(bean.getStadtbezirkNummer())) {
             final String stadtbezirk = stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer());

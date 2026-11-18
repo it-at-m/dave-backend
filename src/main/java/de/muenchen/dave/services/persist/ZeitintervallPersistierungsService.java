@@ -2,13 +2,13 @@ package de.muenchen.dave.services.persist;
 
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.PlausibilityException;
 import de.muenchen.dave.exceptions.PredictionFailedException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.hochrechnung.HochrechnungsService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
@@ -133,14 +133,14 @@ public class ZeitintervallPersistierungsService {
 
     @Transactional
     public void aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
             final int numberOfIntervalle) throws PlausibilityException {
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(
-                UUID.fromString(zaehlung.getId()),
+                zaehlung.getId(),
                 Sort.by(Sort.Direction.ASC, "startUhrzeit"));
         // überprüfen, ob alle Zeitintervalle vorhanden sind
         if (numberOfIntervalle == 0 || numberOfIntervalle == zeitintervalle.size()) {
-            final var zaehldauer = Zaehldauer.valueOf(zaehlung.getZaehldauer());
+            final var zaehldauer = zaehlung.getZaehldauer();
             final var kiAufbereitungNecessary = !Zaehldauer.DAUER_24_STUNDEN.equals(zaehldauer);
             aufbereitenUndPersistieren(zaehldauer, zeitintervalle, kiAufbereitungNecessary);
         } else {
@@ -169,8 +169,8 @@ public class ZeitintervallPersistierungsService {
      * durch ein Hochrechnungsmodell unterstützt wird, und fuegt die Hochrechnung in
      * die summierten Zeitbloecke ein.
      *
-     * @param zaehldauer die Dauer der Zaehlung
-     * @param zeitintervalle die Zeitintervalle der Zaehlung
+     * @param zaehldauer die Dauer der ZaehlungEntity
+     * @param zeitintervalle die Zeitintervalle der ZaehlungEntity
      * @param summierteZeitbloecke die summierten Zeitbloecke,
      *            in die die KI-Hochrechnung übernommen wird
      * @return die erzeugten KI-Zeitintervalle fuer die Tagessummen

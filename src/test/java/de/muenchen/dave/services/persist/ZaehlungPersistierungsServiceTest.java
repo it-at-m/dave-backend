@@ -1,19 +1,5 @@
 package de.muenchen.dave.services.persist;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
@@ -29,11 +15,6 @@ import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
-import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Status;
@@ -43,7 +24,14 @@ import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.relational.repository.PkwEinheitRepository;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.MappedBewegungsbeziehung;
+import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -64,6 +52,21 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class ZaehlungPersistierungsServiceTest {
 
@@ -97,20 +100,20 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void setAdditionalDataToZeitintervallInternal() {
         final UUID uuidZaehlung = UUID.randomUUID();
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        zaehlung.setId(uuidZaehlung.toString());
-        final List<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> verkehrsbeziehungen = new ArrayList<>();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
+        zaehlung.setId(uuidZaehlung);
+        final List<VerkehrsbeziehungEntity> verkehrsbeziehungen = new ArrayList<>();
         final UUID uuidVerkehrsbeziehung1 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-        verkehrsbeziehung1.setId(uuidVerkehrsbeziehung1.toString());
+        VerkehrsbeziehungEntity verkehrsbeziehung1 = new VerkehrsbeziehungEntity();
+        verkehrsbeziehung1.setId(uuidVerkehrsbeziehung1);
         verkehrsbeziehung1.setIsKreuzung(true);
         verkehrsbeziehung1.setVon(1);
         verkehrsbeziehung1.setNach(2);
         verkehrsbeziehungen.add(verkehrsbeziehung1);
         final UUID uuidVerkehrsbeziehung2 = UUID.randomUUID();
-        de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung2 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-        verkehrsbeziehung2.setId(uuidVerkehrsbeziehung2.toString());
+        VerkehrsbeziehungEntity verkehrsbeziehung2 = new VerkehrsbeziehungEntity();
+        verkehrsbeziehung2.setId(uuidVerkehrsbeziehung2);
         verkehrsbeziehung2.setIsKreuzung(true);
         verkehrsbeziehung2.setVon(1);
         verkehrsbeziehung2.setNach(5);
@@ -181,15 +184,15 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void getFromBearbeiteVerkehrsbeziehungDto() {
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        final List<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> verkehrsbeziehungen = new ArrayList<>();
-        de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
+        final List<VerkehrsbeziehungEntity> verkehrsbeziehungen = new ArrayList<>();
+        VerkehrsbeziehungEntity verkehrsbeziehung = new VerkehrsbeziehungEntity();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(2);
         verkehrsbeziehungen.add(verkehrsbeziehung);
-        verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        verkehrsbeziehung = new VerkehrsbeziehungEntity();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(5);
@@ -203,28 +206,28 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
 
-        Optional<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> result = internalZaehlungPersistierungsService
+        Optional<? extends MappedBewegungsbeziehung> result = internalZaehlungPersistierungsService
                 .getBewegungsbeziehungFromBearbeiteBewegungsbeziehungDto(
                         zaehlung,
                         verkehrsbeziehungDto);
-        verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        verkehrsbeziehung = new VerkehrsbeziehungEntity();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(2);
-        Optional<de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung> expected = Optional.of(verkehrsbeziehung);
+        Optional<VerkehrsbeziehungEntity> expected = Optional.of(verkehrsbeziehung);
         assertThat(result, is(expected));
     }
 
     @Test
     public void isSameVerkehrsbeziehung() {
         BearbeiteVerkehrsbeziehungDTO verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
-        de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        VerkehrsbeziehungEntity verkehrsbeziehung = new VerkehrsbeziehungEntity();
         boolean result = internalZaehlungPersistierungsService.isSameBewegungsbeziehung(Zaehlart.N, verkehrsbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(true));
 
         verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
         verkehrsbeziehungDto.setIsKreuzung(true);
-        verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        verkehrsbeziehung = new VerkehrsbeziehungEntity();
         result = internalZaehlungPersistierungsService.isSameBewegungsbeziehung(Zaehlart.N, verkehrsbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(false));
 
@@ -232,7 +235,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
-        verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        verkehrsbeziehung = new VerkehrsbeziehungEntity();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(2);
@@ -243,7 +246,7 @@ class ZaehlungPersistierungsServiceTest {
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
-        verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        verkehrsbeziehung = new VerkehrsbeziehungEntity();
         verkehrsbeziehung.setIsKreuzung(true);
         verkehrsbeziehung.setVon(1);
         verkehrsbeziehung.setNach(2);
@@ -551,27 +554,27 @@ class ZaehlungPersistierungsServiceTest {
     public void getFahrzeugKategorienAndFahrzeugklassen() {
         final Zeitintervall zeitintervall = new Zeitintervall();
 
-        List<Fahrzeug> result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        List<Fahrzeug> expected = new ArrayList<>();
+        Set<String> result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
+        Set<String> expected = new HashSet<>();
         assertThat(result, is(expected));
 
         zeitintervall.setPkw(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(List.of(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
         zeitintervall.setLkw(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.SV_P.getName(), Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
         zeitintervall.setLkw(1);
         zeitintervall.setLastzuege(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.GV_P, Fahrzeug.SV_P,
-                Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.LZ.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.SV_P.getName(),
+                Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -579,8 +582,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setLastzuege(1);
         zeitintervall.setBusse(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.GV_P, Fahrzeug.SV_P,
-                Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.LZ.getName(), Fahrzeug.BUS.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.SV_P.getName(),
+                Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -589,8 +592,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setBusse(1);
         zeitintervall.setKraftraeder(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.GV_P,
-                Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.LZ.getName(), Fahrzeug.BUS.getName(), Fahrzeug.KRAD.getName(), Fahrzeug.GV_P.getName(),
+                Fahrzeug.SV_P.getName(), Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -600,8 +603,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setKraftraeder(1);
         zeitintervall.setFahrradfahrer(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD,
-                Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.LZ.getName(), Fahrzeug.BUS.getName(), Fahrzeug.KRAD.getName(), Fahrzeug.RAD.getName(),
+                Fahrzeug.GV_P.getName(), Fahrzeug.SV_P.getName(), Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
 
         zeitintervall.setPkw(1);
@@ -612,8 +615,8 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setFahrradfahrer(1);
         zeitintervall.setFussgaenger(1);
         result = externalZaehlungPersistierungsService.getFahrzeugKategorienAndFahrzeugklassen(Collections.singletonList(zeitintervall));
-        expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD,
-                Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
+        expected = new HashSet<>(Arrays.asList(Fahrzeug.KFZ.getName(), Fahrzeug.PKW.getName(), Fahrzeug.LKW.getName(), Fahrzeug.GV.getName(), Fahrzeug.SV.getName(), Fahrzeug.LZ.getName(), Fahrzeug.BUS.getName(), Fahrzeug.KRAD.getName(), Fahrzeug.RAD.getName(),
+                Fahrzeug.FUSS.getName(), Fahrzeug.GV_P.getName(), Fahrzeug.SV_P.getName(), Fahrzeug.PKW_EINHEIT.getName()));
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
     }
 
@@ -623,7 +626,7 @@ class ZaehlungPersistierungsServiceTest {
                 Arrays.asList(Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD, Fahrzeug.RAD, Fahrzeug.FUSS));
         List<Fahrzeug> expected = Arrays.asList(Fahrzeug.KFZ, Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.GV, Fahrzeug.SV, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD,
                 Fahrzeug.RAD, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.PKW_EINHEIT);
-        List<Fahrzeug> result = externalZaehlungPersistierungsService.getFahrzeugklassen(kategorien);
+        Set<Fahrzeug> result = externalZaehlungPersistierungsService.getFahrzeugklassen(kategorien);
         assertThat(new HashSet<>(result), is(new HashSet<>(expected)));
         assertThat(result.size(), is(expected.size()));
 
@@ -693,27 +696,27 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getAllBewegungsbeziehungenFromZaehlung() {
         // Fall: Alle Listen sind null -> Ergebnis ist leer
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setLaengsverkehr(null);
-        zaehlung.setQuerungsverkehr(null);
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setLaengsverkehre(null);
+        zaehlung.setQuerungsverkehre(null);
         zaehlung.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> result = internalZaehlungPersistierungsService
+        List<? extends MappedBewegungsbeziehung> result = internalZaehlungPersistierungsService
                 .getAllBewegungsbeziehungenFromZaehlung(zaehlung);
-        List<de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung> expected = new ArrayList<>();
+        List<? extends MappedBewegungsbeziehung> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
         // Fall: Gemischte Listen mit konkreten Bewegungsbeziehungen (Laengsverkehr, Querungsverkehr, Verkehrsbeziehung)
-        final Laengsverkehr l = new Laengsverkehr();
+        final LaengsverkehrEntity l = new LaengsverkehrEntity();
         l.setKnotenarm(1);
-        final Querungsverkehr q = new Querungsverkehr();
+        final QuerungsverkehrEntity q = new QuerungsverkehrEntity();
         q.setKnotenarm(2);
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb = new VerkehrsbeziehungEntity();
         vb.setVon(3);
         vb.setNach(4);
 
-        zaehlung.setLaengsverkehr(Arrays.asList(l, null));
-        zaehlung.setQuerungsverkehr(Collections.singletonList(q));
+        zaehlung.setLaengsverkehre(Arrays.asList(l, null));
+        zaehlung.setQuerungsverkehre(Collections.singletonList(q));
         zaehlung.setVerkehrsbeziehungen(Collections.singletonList(vb));
 
         result = internalZaehlungPersistierungsService.getAllBewegungsbeziehungenFromZaehlung(zaehlung);
@@ -723,12 +726,12 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void updateStatus_setToInstructed() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        // Arrange: Mock Zaehlstelle und Zaehlung mit passender ID
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId("zs1");
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setId("z1");
-        zaehlung.setStatus(Status.CREATED.name());
+        // Arrange: Mock ZaehlstelleEntity und ZaehlungEntity mit passender ID
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.fromString("zs1"));
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setId(UUID.fromString("z1"));
+        zaehlung.setStatus(Status.CREATED);
         zaehlung.setDienstleisterkennung("");
         zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
 
@@ -737,7 +740,7 @@ class ZaehlungPersistierungsServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        when(mockIndexService.getZaehlstelleByZaehlungId("z1")).thenReturn(zaehlstelle);
+        when(mockIndexService.getZaehlstelleByZaehlungId(UUID.fromString("z1"))).thenReturn(zaehlstelle);
         when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
@@ -750,8 +753,8 @@ class ZaehlungPersistierungsServiceTest {
                 authorizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
-        dto.setZaehlungId("z1");
-        dto.setStatus(Status.INSTRUCTED.name());
+        dto.setZaehlungId(UUID.fromString("z1"));
+        dto.setStatus(Status.INSTRUCTED);
         dto.setDienstleisterkennung("DLK");
 
         // Act
@@ -763,7 +766,7 @@ class ZaehlungPersistierungsServiceTest {
         assertThat(zaehlung.getDienstleisterkennung(), is("DLK"));
 
         // Verifikation der Mockaufrufe
-        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z1");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId(UUID.fromString("z1"));
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
         verify(mockZeitService, never()).aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(any(), anyInt());
         verify(mockZeitService, never()).deleteZeitintervalleForCorrection(anyString());
@@ -771,13 +774,13 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void updateStatus_setToAccomplished() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        // Arrange: Zaehlung mit Zaehldauer und ohne Verkehrsbeziehungen
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId("zs2");
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setId("z2");
-        zaehlung.setStatus(Status.CREATED.name());
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        // Arrange: ZaehlungEntity mit Zaehldauer und ohne Verkehrsbeziehungen
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.fromString("zs2"));
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setId(UUID.fromString("z2"));
+        zaehlung.setStatus(Status.CREATED);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
@@ -786,7 +789,7 @@ class ZaehlungPersistierungsServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        when(mockIndexService.getZaehlstelleByZaehlungId("z2")).thenReturn(zaehlstelle);
+        when(mockIndexService.getZaehlstelleByZaehlungId(UUID.fromString("z2"))).thenReturn(zaehlstelle);
         when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
@@ -799,8 +802,8 @@ class ZaehlungPersistierungsServiceTest {
                 authorizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
-        dto.setZaehlungId("z2");
-        dto.setStatus(Status.ACCOMPLISHED.name());
+        dto.setZaehlungId(UUID.fromString("z2"));
+        dto.setStatus(Status.ACCOMPLISHED);
 
         // Act
         final BackendIdDTO result = svc.updateStatus(dto);
@@ -812,20 +815,20 @@ class ZaehlungPersistierungsServiceTest {
         // checkZeitintervalleIfPlausible muss aufgerufen werden
         verify(mockZeitService, times(1)).aufbereitenUndPersistierenZeitintervalleWhenNumberOfZeitintervalleIsPlausible(eq(zaehlung), anyInt());
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
-        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z2");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId(UUID.fromString("z2"));
     }
 
     @Test
     public void updateStatus_setToCorrection() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        // Arrange: Zaehlung mit Knotenarmen die Filenames besitzen
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId("zs3");
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setId("z3");
-        zaehlung.setStatus(Status.CREATED.name());
-        final Knotenarm arm1 = new Knotenarm();
+        // Arrange: ZaehlungEntity mit Knotenarmen die Filenames besitzen
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.fromString("zs3"));
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setId(UUID.fromString("z3"));
+        zaehlung.setStatus(Status.CREATED);
+        final KnotenarmEntity arm1 = new KnotenarmEntity();
         arm1.setFilename("file1.jpg");
-        final Knotenarm arm2 = new Knotenarm();
+        final KnotenarmEntity arm2 = new KnotenarmEntity();
         arm2.setFilename("file2.jpg");
         zaehlung.setKnotenarme(java.util.Arrays.asList(arm1, arm2));
         zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
@@ -836,7 +839,7 @@ class ZaehlungPersistierungsServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        when(mockIndexService.getZaehlstelleByZaehlungId("z3")).thenReturn(zaehlstelle);
+        when(mockIndexService.getZaehlstelleByZaehlungId(UUID.fromString("z3"))).thenReturn(zaehlstelle);
         when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
@@ -849,8 +852,8 @@ class ZaehlungPersistierungsServiceTest {
                 authorizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
-        dto.setZaehlungId("z3");
-        dto.setStatus(Status.CORRECTION.name());
+        dto.setZaehlungId(UUID.fromString("z3"));
+        dto.setStatus(Status.CORRECTION);
 
         // Act
         final BackendIdDTO result = svc.updateStatus(dto);
@@ -862,19 +865,19 @@ class ZaehlungPersistierungsServiceTest {
         zaehlung.getKnotenarme().forEach(a -> assertThat(a.getFilename(), is("")));
 
         verify(mockZeitService, times(1)).deleteZeitintervalleForCorrection("z3");
-        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("z3");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId(UUID.fromString("z3"));
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
 
-        // Weiterer Testfall: Keine passende Zaehlung vorhanden -> es wird nichts verändert
+        // Weiterer Testfall: Keine passende ZaehlungEntity vorhanden -> es wird nichts verändert
     }
 
     @Test
     public void updateStatus_noMatchingZaehlung() throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        // Arrange: Zaehlstelle ohne passende Zaehlung
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId("zs4");
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setId("z4");
+        // Arrange: ZaehlstelleEntity ohne passende ZaehlungEntity
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.fromString("zs4"));
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setId(UUID.fromString("z4"));
         zaehlstelle.setZaehlungen(java.util.Arrays.asList(zaehlung));
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
@@ -883,7 +886,7 @@ class ZaehlungPersistierungsServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        when(mockIndexService.getZaehlstelleByZaehlungId("not-existing")).thenReturn(zaehlstelle);
+        when(mockIndexService.getZaehlstelleByZaehlungId(UUID.fromString("not-existing"))).thenReturn(zaehlstelle);
         when(mockSecService.isFachadmin()).thenReturn(true);
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
@@ -896,17 +899,17 @@ class ZaehlungPersistierungsServiceTest {
                 authorizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
-        dto.setZaehlungId("not-existing");
-        dto.setStatus(Status.ACTIVE.name());
+        dto.setZaehlungId(UUID.fromString("not-existing"));
+        dto.setStatus(Status.ACTIVE);
 
         // Act
         final BackendIdDTO result = svc.updateStatus(dto);
 
-        // Assert: Keine Änderung an vorhandener Zaehlung
+        // Assert: Keine Änderung an vorhandener ZaehlungEntity
         assertThat(result.getId(), is("not-existing"));
         assertThat(zaehlung.getStatus(), is((String) null));
 
-        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("not-existing");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId(UUID.fromString("not-existing"));
         verify(mockIndexService, times(1)).erneuereZaehlstelle(zaehlstelle);
         verifyNoMoreInteractions(mockZeitService);
     }
@@ -920,7 +923,7 @@ class ZaehlungPersistierungsServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        when(mockIndexService.getZaehlstelleByZaehlungId("missing")).thenThrow(new DataNotFoundException("not found"));
+        when(mockIndexService.getZaehlstelleByZaehlungId(UUID.fromString("missing"))).thenThrow(new DataNotFoundException("not found"));
 
         final InternalZaehlungPersistierungsService svc = new InternalZaehlungPersistierungsService(
                 mockIndexService,
@@ -932,13 +935,13 @@ class ZaehlungPersistierungsServiceTest {
                 authorizationService);
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
-        dto.setZaehlungId("missing");
-        dto.setStatus(Status.ACTIVE.name());
+        dto.setZaehlungId(UUID.fromString("missing"));
+        dto.setStatus(Status.ACTIVE);
 
         // Act / Assert: Exception wird durchgereicht
         assertThrows(DataNotFoundException.class, () -> svc.updateStatus(dto));
 
-        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId("missing");
+        verify(mockIndexService, times(1)).getZaehlstelleByZaehlungId(UUID.fromString("missing"));
         verifyNoMoreInteractions(mockIndexService);
         verifyNoInteractions(mockZeitService);
     }
@@ -961,9 +964,9 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final var id = UUID.randomUUID().toString();
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var id = UUID.randomUUID();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDienstleisterkennung("dl1");
         zaehlstelle.getZaehlungen().add(zaehlung);
@@ -972,7 +975,7 @@ class ZaehlungPersistierungsServiceTest {
 
         final UpdateStatusDTO dto = new UpdateStatusDTO();
         dto.setZaehlungId(id);
-        dto.setStatus(Status.ACCOMPLISHED.name());
+        dto.setStatus(Status.ACCOMPLISHED);
 
         // Nutzer mit einem anderen Username als der Dienstleisterkennung der Zählung und ohne Rolle Fachadmin setzen
         when(mockSecService.getAuthenticatedUsername()).thenReturn("tester");
@@ -985,12 +988,12 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void getNumberOfNecessaryZeitintervalle_allListsNull_returnsZero() {
-        // Arrange: Zaehlung mit Zaehldauer 24h, aber alle Bewegungsbeziehungslisten null
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        // Arrange: ZaehlungEntity mit Zaehldauer 24h, aber alle Bewegungsbeziehungslisten null
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         zaehlung.setVerkehrsbeziehungen(null);
-        zaehlung.setLaengsverkehr(null);
-        zaehlung.setQuerungsverkehr(null);
+        zaehlung.setLaengsverkehre(null);
+        zaehlung.setQuerungsverkehre(null);
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
@@ -1019,17 +1022,17 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void getNumberOfNecessaryZeitintervalle_multipleRelationshipTypes() {
-        // Arrange: Zaehlung 24h, mit 2 Verkehrsbeziehungen, 1 Laengsverkehr, querungsverkehr null => totalRelationships = 3
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        // Arrange: ZaehlungEntity 24h, mit 2 Verkehrsbeziehungen, 1 Laengsverkehr, querungsverkehr null => totalRelationships = 3
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb2 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb1 = new VerkehrsbeziehungEntity();
+        final VerkehrsbeziehungEntity vb2 = new VerkehrsbeziehungEntity();
         zaehlung.setVerkehrsbeziehungen(Arrays.asList(vb1, vb2));
 
-        final Laengsverkehr l = new Laengsverkehr();
-        zaehlung.setLaengsverkehr(Collections.singletonList(l));
-        zaehlung.setQuerungsverkehr(null);
+        final LaengsverkehrEntity l = new LaengsverkehrEntity();
+        zaehlung.setLaengsverkehre(Collections.singletonList(l));
+        zaehlung.setQuerungsverkehre(null);
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
@@ -1059,20 +1062,20 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getNumberOfNecessaryZeitintervalle_allTypesNonEmpty_2x4h() {
         // Arrange: DAUER_2_X_4_STUNDEN (32 intervals) and three lists each with 2 elements => totalRelationships = 6
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN.name());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
 
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb1 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb2 = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb1 = new VerkehrsbeziehungEntity();
+        final VerkehrsbeziehungEntity vb2 = new VerkehrsbeziehungEntity();
         zaehlung.setVerkehrsbeziehungen(Arrays.asList(vb1, vb2));
 
-        final Laengsverkehr l1 = new Laengsverkehr();
-        final Laengsverkehr l2 = new Laengsverkehr();
-        zaehlung.setLaengsverkehr(Arrays.asList(l1, l2));
+        final LaengsverkehrEntity l1 = new LaengsverkehrEntity();
+        final LaengsverkehrEntity l2 = new LaengsverkehrEntity();
+        zaehlung.setLaengsverkehre(Arrays.asList(l1, l2));
 
-        final Querungsverkehr q1 = new Querungsverkehr();
-        final Querungsverkehr q2 = new Querungsverkehr();
-        zaehlung.setQuerungsverkehr(Arrays.asList(q1, q2));
+        final QuerungsverkehrEntity q1 = new QuerungsverkehrEntity();
+        final QuerungsverkehrEntity q2 = new QuerungsverkehrEntity();
+        zaehlung.setQuerungsverkehre(Arrays.asList(q1, q2));
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
         final ZeitintervallPersistierungsService mockZeitService = Mockito.mock(ZeitintervallPersistierungsService.class);
@@ -1101,9 +1104,9 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getNumberOfNecessaryZeitintervalle_sonstigeReturnsZeroEvenWithRelationships() {
         // Arrange: SONSTIGE has 0 intervals regardless of relationships
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehldauer(Zaehldauer.SONSTIGE.name());
-        final de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung vb = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehldauer(Zaehldauer.SONSTIGE);
+        final VerkehrsbeziehungEntity vb = new VerkehrsbeziehungEntity();
         zaehlung.setVerkehrsbeziehungen(Collections.singletonList(vb));
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
@@ -1133,7 +1136,7 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getNumberOfNecessaryZeitintervalle_nullZaehldauer_throwsException() {
         // Arrange: null zaeldauer should cause NullPointerException when calling valueOf
-        final Zaehlung zaehlung = new Zaehlung();
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setZaehldauer(null);
 
         final ZaehlstelleIndexService mockIndexService = Mockito.mock(ZaehlstelleIndexService.class);
@@ -1175,8 +1178,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final String id = "zp1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zp1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().minusDays(1));
 
@@ -1211,8 +1214,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final String id = "zt1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zt1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now());
 
@@ -1247,8 +1250,8 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final String id = "zf1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zf1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().plusDays(2));
 

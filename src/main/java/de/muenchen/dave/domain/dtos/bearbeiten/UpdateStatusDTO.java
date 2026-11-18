@@ -1,13 +1,15 @@
 package de.muenchen.dave.domain.dtos.bearbeiten;
 
+import de.muenchen.dave.domain.enums.Status;
+import java.util.UUID;
 import lombok.Data;
 
 @Data
 public class UpdateStatusDTO {
 
-    private String zaehlungId;
+    private UUID zaehlungId;
 
-    private String status;
+    private Status status;
 
     private String dienstleisterkennung;
 

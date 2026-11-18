@@ -3,9 +3,9 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
-import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
-import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
+import de.muenchen.dave.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.SubclassExhaustiveStrategy;
@@ -16,15 +16,15 @@ import org.mapstruct.SubclassExhaustiveStrategy;
 )
 public interface BewegungsbeziehungMapper {
 
-    Verkehrsbeziehung dto2Bean(final BearbeiteVerkehrsbeziehungDTO dto);
+    VerkehrsbeziehungEntity dto2Bean(final BearbeiteVerkehrsbeziehungDTO dto);
 
-    BearbeiteVerkehrsbeziehungDTO bean2Dto(final Verkehrsbeziehung bean);
+    BearbeiteVerkehrsbeziehungDTO bean2Dto(final VerkehrsbeziehungEntity bean);
 
-    Laengsverkehr dto2Bean(final BearbeiteLaengsverkehrDTO dto);
+    LaengsverkehrEntity dto2Bean(final BearbeiteLaengsverkehrDTO dto);
 
-    BearbeiteLaengsverkehrDTO bean2Dto(final Laengsverkehr bean);
+    BearbeiteLaengsverkehrDTO bean2Dto(final LaengsverkehrEntity bean);
 
-    Querungsverkehr dto2Bean(final BearbeiteQuerungsverkehrDTO dto);
+    QuerungsverkehrEntity dto2Bean(final BearbeiteQuerungsverkehrDTO dto);
 
-    BearbeiteQuerungsverkehrDTO bean2Dto(final Querungsverkehr bean);
+    BearbeiteQuerungsverkehrDTO bean2Dto(final QuerungsverkehrEntity bean);
 }

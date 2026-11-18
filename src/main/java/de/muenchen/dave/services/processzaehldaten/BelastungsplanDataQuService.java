@@ -1,13 +1,24 @@
 package de.muenchen.dave.services.processzaehldaten;
 
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
-import de.muenchen.dave.domain.dtos.laden.*;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQuDataDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanQuDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,11 +29,12 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
             final OptionsDTO options,
-            final Zaehlung zaehlung,
+            final ZaehlungEntity zaehlung,
+            final PkwEinheit pkwEinheit,
             final List<Zeitintervall> zeitintervalle) {
         Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil.mapQuerungsverkehre(
                 options,
-                zaehlung,
+                pkwEinheit,
                 zeitintervalle);
 
         var ladeBelastungsplan = new LadeBelastungsplanQuDTO();
@@ -38,13 +50,13 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
         } else if (options.getFussverkehr() && belastungsplanData.containsKey(Fahrzeug.FUSS)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
-        markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplan);
+        markKIHochrechnung(String.valueOf(zaehlung.getZaehldauer()), options.getZeitauswahl(), ladeBelastungsplan);
         return ladeBelastungsplan;
     }
 
     public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
             Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeQuerungsverkehr,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
@@ -79,7 +91,7 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
     }
 
     /**
-     * Setzt den Zählwert anhand des {@link Querungsverkehr} an die richtige Stelle des
+     * Setzt den Zählwert anhand des {@link QuerungsverkehrEntity} an die richtige Stelle des
      * {@link BelastungsplanQuDataDTO} und addiert ihn zur Summe des entsprechenden Knotenarms.
      */
     private void addValueAndSum(
@@ -100,7 +112,7 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         } else {
             quKnotenarmValue.getValuesQuerungsverkehre().add(new BelastungsplanQuDataDTO.QuerungsverkehrValue(querungsverkehr.getRichtung(), value));
-            // Summiere Knotenarm
+            // Summiere KnotenarmEntity
             if (quKnotenarmValue.getSumKnotenarm() == null) {
                 quKnotenarmValue.setSumKnotenarm(value);
             } else {

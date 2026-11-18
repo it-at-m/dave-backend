@@ -8,9 +8,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.relational.repository.MessstellenIndexRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +27,7 @@ import org.mockito.quality.Strictness;
 public class MessstelleIndexServiceTest {
 
     @Mock
-    private MessstelleIndex messstelleIndex;
+    private MessstellenIndexRepository messstelleIndex;
 
     private MessstelleIndexService service;
 
@@ -35,14 +35,14 @@ public class MessstelleIndexServiceTest {
     public void setUp() {
         Mockito.reset(messstelleIndex);
         // Standardverhalten: die gespeicherte Messstelle wird 1:1 zurückgegeben
-        when(messstelleIndex.save(any(Messstelle.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(messstelleIndex.save(any(MessstelleEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
         service = new MessstelleIndexService(messstelleIndex);
     }
 
     @Test
     void speichertMessstelle_beiNullerMessquerschnitte_wirdLeereListeGespeichert() {
         // Arrange: Messstelle mit null als Messquerschnitte
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMessquerschnitte(null);
 
         // Act
@@ -50,30 +50,30 @@ public class MessstelleIndexServiceTest {
 
         // Assert: die Liste ist leer und save wurde aufgerufen
         assertThat(result.getMessquerschnitte().isEmpty(), is(true));
-        verify(messstelleIndex, times(1)).save(any(Messstelle.class));
+        verify(messstelleIndex, times(1)).save(any(MessstelleEntity.class));
     }
 
     @Test
     void filtertMessquerschnitteOhneDetektoren_undSpeichertNurMitDetektoren() {
         // Arrange: Messstelle mit drei Messquerschnitten (null, 0, >0)
-        final var mqNull = new Messquerschnitt();
+        final var mqNull = new MessquerschnittEntity();
         mqNull.setMqId("mq-null");
         mqNull.setAnzahlDetektoren(null);
 
-        final var mqZero = new Messquerschnitt();
+        final var mqZero = new MessquerschnittEntity();
         mqZero.setMqId("mq-zero");
         mqZero.setAnzahlDetektoren(0);
 
-        final var mqTwo = new Messquerschnitt();
+        final var mqTwo = new MessquerschnittEntity();
         mqTwo.setMqId("mq-two");
         mqTwo.setAnzahlDetektoren(2);
 
-        final List<Messquerschnitt> list = new ArrayList<>();
+        final List<MessquerschnittEntity> list = new ArrayList<>();
         list.add(mqNull);
         list.add(mqZero);
         list.add(mqTwo);
 
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMessquerschnitte(list);
 
         // Act
@@ -82,25 +82,25 @@ public class MessstelleIndexServiceTest {
         // Assert: nur der Messquerschnitt mit 2 Detektoren bleibt
         assertThat(result.getMessquerschnitte().size(), is(1));
         assertThat(result.getMessquerschnitte().getFirst().getMqId(), is(equalTo("mq-two")));
-        verify(messstelleIndex, times(1)).save(any(Messstelle.class));
+        verify(messstelleIndex, times(1)).save(any(MessstelleEntity.class));
     }
 
     @Test
     void behaltetAlleMessquerschnitte_wennAlleDetektorenMehrAlsNull() {
         // Arrange: Messstelle mit zwei Messquerschnitten (1 und 3 Detektoren)
-        final var mqOne = new Messquerschnitt();
+        final var mqOne = new MessquerschnittEntity();
         mqOne.setMqId("mq-one");
         mqOne.setAnzahlDetektoren(1);
 
-        final var mqThree = new Messquerschnitt();
+        final var mqThree = new MessquerschnittEntity();
         mqThree.setMqId("mq-three");
         mqThree.setAnzahlDetektoren(3);
 
-        final List<Messquerschnitt> list = new ArrayList<>();
+        final List<MessquerschnittEntity> list = new ArrayList<>();
         list.add(mqOne);
         list.add(mqThree);
 
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMessquerschnitte(list);
 
         // Act
@@ -108,25 +108,25 @@ public class MessstelleIndexServiceTest {
 
         // Assert: beide Messquerschnitte bleiben erhalten
         assertThat(result.getMessquerschnitte().size(), is(2));
-        verify(messstelleIndex, times(1)).save(any(Messstelle.class));
+        verify(messstelleIndex, times(1)).save(any(MessstelleEntity.class));
     }
 
     @Test
     void entferntAlleMessquerschnitte_wennKeineDetektorenVorhandenSind() {
         // Arrange: Messstelle mit zwei Messquerschnitten (null und 0)
-        final var mqNull = new Messquerschnitt();
+        final var mqNull = new MessquerschnittEntity();
         mqNull.setMqId("mq-null");
         mqNull.setAnzahlDetektoren(null);
 
-        final var mqZero = new Messquerschnitt();
+        final var mqZero = new MessquerschnittEntity();
         mqZero.setMqId("mq-zero");
         mqZero.setAnzahlDetektoren(0);
 
-        final List<Messquerschnitt> list = new ArrayList<>();
+        final List<MessquerschnittEntity> list = new ArrayList<>();
         list.add(mqNull);
         list.add(mqZero);
 
-        final var messstelle = new Messstelle();
+        final var messstelle = new MessstelleEntity();
         messstelle.setMessquerschnitte(list);
 
         // Act
@@ -134,6 +134,6 @@ public class MessstelleIndexServiceTest {
 
         // Assert: Liste ist leer
         assertThat(result.getMessquerschnitte().isEmpty(), is(true));
-        verify(messstelleIndex, times(1)).save(any(Messstelle.class));
+        verify(messstelleIndex, times(1)).save(any(MessstelleEntity.class));
     }
 }

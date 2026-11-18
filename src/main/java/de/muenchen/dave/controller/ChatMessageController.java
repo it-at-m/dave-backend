@@ -1,9 +1,10 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.migrationespg.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.migrationespg.services.ChatMessageServiceMig;
+
+import de.muenchen.dave.services.ChatMessageService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +32,7 @@ public class ChatMessageController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlungId";
     private static final String CALLING_PARTICIPANT_ID = "callingParticipantId";
-    private final ChatMessageServiceMig chatMessageService;
+    private final ChatMessageService chatMessageService;
 
     /**
      * Rest-Endpunkt für das Laden von Chat Nachrichten zu einer Zählung (für das Upload- und

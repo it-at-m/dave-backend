@@ -6,20 +6,19 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
-import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
+import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
+import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,7 +30,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AuswertungVisumService {
 
-    private final ZaehlstelleIndex zaehlstelleIndex;
+    private final ZaehlstellenIndexRepository zaehlstelleIndex;
 
     private final ZaehlstelleMapper zaehlstelleMapper;
 
@@ -39,7 +38,7 @@ public class AuswertungVisumService {
 
     private final LadeZaehldatenService ladeZaehldatenService;
 
-    public AuswertungVisumService(final ZaehlstelleIndex zaehlstelleIndex,
+    public AuswertungVisumService(final ZaehlstellenIndexRepository zaehlstelleIndex,
             final ZaehlstelleMapper zaehlstelleMapper,
             final ZaehlungMapper zaehlungMapper,
             final LadeZaehldatenService ladeZaehldatenService) {
@@ -49,33 +48,33 @@ public class AuswertungVisumService {
         this.ladeZaehldatenService = ladeZaehldatenService;
     }
 
-    public static boolean isZaehldatumRelevant(final Zaehlung zaehlung, final String jahr, final String monat) {
+    public static boolean isZaehldatumRelevant(final ZaehlungEntity zaehlung, final String jahr, final String monat) {
         return StringUtils.equals(jahr, zaehlung.getJahr())
                 && StringUtils.equals(monat, zaehlung.getMonat());
     }
 
-    public static boolean isZaehlartRelevant(final Zaehlung zaehlung) {
-        return !Zaehlart.QJS.name().equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.name().equals(zaehlung.getZaehlart())
-                && !Zaehlart.QU.name().equals(zaehlung.getZaehlart());
+    public static boolean isZaehlartRelevant(final ZaehlungEntity zaehlung) {
+        return !Zaehlart.QJS.equals(zaehlung.getZaehlart()) && !Zaehlart.FJS.equals(zaehlung.getZaehlart())
+                && !Zaehlart.QU.equals(zaehlung.getZaehlart());
     }
 
-    public static boolean isZaehlungActive(final Zaehlung zaehlung) {
-        return Status.ACTIVE.toString().equals(zaehlung.getStatus());
+    public static boolean isZaehlungActive(final ZaehlungEntity zaehlung) {
+        return Status.ACTIVE.equals(zaehlung.getStatus());
     }
 
     /**
      * Diese Methode erstellt für eine Verkehrsbeziehung folgende Visum-relevanten Objekte.
      * <p>
-     * Für eine Kreuzung wird eine VerkehrsbeziehungVisum für den Von-Knotenarm nach alle Knotenarme und
+     * Für eine Kreuzung wird eine VerkehrsbeziehungVisum für den Von-KnotenarmEntity nach alle Knotenarme und
      * ein
-     * zweite VerkehrsbeziehungVisum für alle Knotenarme zum nach-Knotenarm erstellt.
+     * zweite VerkehrsbeziehungVisum für alle Knotenarme zum nach-KnotenarmEntity erstellt.
      * <p>
      * Für den Kreisverkehr wird nur eine VerkehrsbeziehungVisum erstellt.
      *
      * @param verkehrsbeziehung Verkehrsbeziehung
      * @return die Visum-relevanten Verkehrsbeziehungsobjekte zur Extraktion der Zeitintervalle.
      */
-    public static List<VerkehrsbeziehungVisumDTO> getVerkehrsbeziehungVisum(final Verkehrsbeziehung verkehrsbeziehung, final Zaehlung zaehlung) {
+    public static List<VerkehrsbeziehungVisumDTO> getVerkehrsbeziehungVisum(final VerkehrsbeziehungEntity verkehrsbeziehung, final ZaehlungEntity zaehlung) {
         final var verkehrsbeziehungenVisum = new ArrayList<VerkehrsbeziehungVisumDTO>();
         VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum;
         boolean isKreuzung = verkehrsbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : verkehrsbeziehung.getIsKreuzung();
@@ -103,7 +102,7 @@ public class AuswertungVisumService {
 
     /**
      * Diese Methode erstellt die Optionen zur extraktion der Daten in Methode
-     * {@link AuswertungVisumService#ladeZaehldaten(VerkehrsbeziehungVisumDTO, Zaehlung)}.
+     * {@link AuswertungVisumService#ladeZaehldaten(VerkehrsbeziehungVisumDTO, ZaehlungEntity)}.
      *
      * @param verkehrsbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
      * @param zaehlung zum setzen der Optionen.
@@ -111,7 +110,7 @@ public class AuswertungVisumService {
      */
     public static OptionsDTO createOptions(
             final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setVonKnotenarm(verkehrsbeziehungVisum.getVon());
         options.setNachKnotenarm(verkehrsbeziehungVisum.getNach());
@@ -188,14 +187,14 @@ public class AuswertungVisumService {
      * @param verkehrsbeziehungVisum die für die Datenextraktion relevanten Knotenarme welche die
      *            Verkehrsbeziehung definieren.
      * @param zaehlung für welche die Daten extrahiert werden sollen.
-     * @return die VerkehrsbeziehungVisum mit den Zaehldaten für die Zaehlung der Verkehrsbeziehung.
+     * @return die VerkehrsbeziehungVisum mit den Zaehldaten für die ZaehlungEntity der Verkehrsbeziehung.
      */
     public VerkehrsbeziehungVisumDTO ladeZaehldaten(final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
-            final Zaehlung zaehlung) {
+            final ZaehlungEntity zaehlung) {
         List<LadeZaehldatumDTO> zaehldaten;
         try {
             zaehldaten = ladeZaehldatenService.ladeZaehldaten(
-                    UUID.fromString(zaehlung.getId()),
+                    zaehlung.getId(),
                     createOptions(verkehrsbeziehungVisum, zaehlung)).getZaehldaten();
         } catch (DataNotFoundException dnfe) {
             zaehldaten = new ArrayList<>();

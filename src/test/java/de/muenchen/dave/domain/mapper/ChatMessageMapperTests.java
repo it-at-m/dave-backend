@@ -1,18 +1,17 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
 import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 
 @Slf4j
 public class ChatMessageMapperTests {
@@ -25,8 +24,8 @@ public class ChatMessageMapperTests {
         ChatMessageDTO dto = ChatMessageDTORandomFactory.getOne();
         ChatMessage bean = this.mapper.dto2bean(dto);
 
-        assertThat(bean, hasProperty("id", equalTo(UUID.fromString(dto.getId()))));
-        assertThat(bean, hasProperty("zaehlungId", equalTo(UUID.fromString(dto.getZaehlungId()))));
+        assertThat(bean, hasProperty("id", equalTo(dto.getId())));
+        assertThat(bean, hasProperty("zaehlungId", equalTo(dto.getZaehlungId())));
         assertThat(bean, hasProperty("content", equalTo(dto.getContent())));
         assertThat(bean, hasProperty("type", equalTo(dto.getType())));
         assertThat(bean, hasProperty("participantId", equalTo(dto.getParticipantId())));

@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.ResetAuffaelligkeitenDTO;
-import de.muenchen.dave.migrationespg.services.messstelle.UnauffaelligeTageServiceMig;
+import de.muenchen.dave.services.messstelle.UnauffaelligeTageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
 public class AdministrationController {
 
-    private final UnauffaelligeTageServiceMig unauffaelligeTageService;
+    private final UnauffaelligeTageService unauffaelligeTageService;
 
     @PostMapping(value = "/reset-unauffaelliger-tag")
     @Transactional

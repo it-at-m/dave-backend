@@ -1,20 +1,20 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 class SucheMapperTests {
@@ -23,7 +23,7 @@ class SucheMapperTests {
 
     @Test
     void testMessstelleToMessstelleTooltipDTO() {
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
         final MessstelleTooltipDTO actual = mapper.messstelleToMessstelleTooltipDTO(messstelle, stadtbezirkMapper);
@@ -46,16 +46,16 @@ class SucheMapperTests {
 
     @Test
     void testMessstelleToMessstelleKarteDTO() {
-        final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity messstelle = MessstelleRandomFactory.getMessstelle();
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
         final MessstelleKarteDTO actual = mapper.messstelleToMessstelleKarteDTO(messstelle, stadtbezirkMapper);
         final MessstelleKarteDTO expected = new MessstelleKarteDTO();
-        expected.setId(messstelle.getId());
+        expected.setId(messstelle.getId().toString());
         expected.setFachId(messstelle.getMstId());
         expected.setType("messstelle");
-        expected.setLongitude(messstelle.getPunkt().getLon());
-        expected.setLatitude(messstelle.getPunkt().getLat());
+        expected.setLongitude(messstelle.getLongitude());
+        expected.setLatitude(messstelle.getLatitude());
         expected.setStatus(messstelle.getStatus());
         expected.setSichtbarDatenportal(messstelle.getSichtbarDatenportal());
 
@@ -68,14 +68,14 @@ class SucheMapperTests {
 
     @Test
     void testZaehlstelleToZaehlstelleKarteDTO() {
-        final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
+        final ZaehlstelleEntity zaehlstelle = ZaehlstelleRandomFactory.getOne();
         final ZaehlstelleKarteDTO actual = mapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
         final ZaehlstelleKarteDTO expected = new ZaehlstelleKarteDTO();
-        expected.setId(zaehlstelle.getId());
+        expected.setId(zaehlstelle.getId().toString());
         expected.setFachId(zaehlstelle.getNummer());
         expected.setType("zaehlstelle");
-        expected.setLongitude(zaehlstelle.getPunkt().getLon());
-        expected.setLatitude(zaehlstelle.getPunkt().getLat());
+        expected.setLongitude(zaehlstelle.getLongitude());
+        expected.setLatitude(zaehlstelle.getLatitude());
         expected.setSichtbarDatenportal(zaehlstelle.getSichtbarDatenportal());
 
         Assertions.assertThat(actual)

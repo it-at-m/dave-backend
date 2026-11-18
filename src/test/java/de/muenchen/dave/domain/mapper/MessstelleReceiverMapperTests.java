@@ -1,20 +1,18 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapper;
 import de.muenchen.dave.domain.mapper.detektor.MessstelleReceiverMapperImpl;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.relational.messtellen.MessfaehigkeitEntity;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +25,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 class MessstelleReceiverMapperTests {
@@ -46,7 +47,7 @@ class MessstelleReceiverMapperTests {
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
-        final Messstelle expected = new Messstelle();
+        final MessstelleEntity expected = new MessstelleEntity();
         expected.setMstId(dto.getMstId());
         expected.setName(dto.getName());
         expected.setStatus(MessstelleStatus.valueOf(dto.getStatus().getValue()));
@@ -55,7 +56,8 @@ class MessstelleReceiverMapperTests {
         expected.setStadtbezirkNummer(dto.getStadtbezirkNummer());
         expected.setBemerkung(dto.getBemerkung());
         expected.setDatumLetztePlausibleMessung(dto.getDatumLetztePlausibleMessung());
-        expected.setPunkt(new GeoPoint(dto.getLatitude(), dto.getLongitude()));
+        expected.setLatitude(dto.getLongitude());
+        expected.setLongitude(dto.getLongitude());
         expected.setSichtbarDatenportal(false);
         expected.setGeprueft(false);
         expected.setSuchwoerter(new ArrayList<>());
@@ -74,7 +76,7 @@ class MessstelleReceiverMapperTests {
         expected.setMessquerschnitte(mapper.createMessquerschnitte(dto.getMessquerschnitte()));
         expected.setMessfaehigkeiten(mapper.createMessfaehigkeit(dto.getMessfaehigkeiten()));
 
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(MessfaehigkeitEntity::getFahrzeugklasse)
                 .collect(Collectors.toSet());
         if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
             expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -86,7 +88,7 @@ class MessstelleReceiverMapperTests {
             expected.setFahrzeugklasse(Fahrzeugklasse.RAD);
         }
 
-        final Messstelle messstelle = this.mapper.createMessstelle(dto, stadtbezirkMapper);
+        final MessstelleEntity messstelle = this.mapper.createMessstelle(dto, stadtbezirkMapper);
         Assertions.assertThat(messstelle)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -111,26 +113,26 @@ class MessstelleReceiverMapperTests {
         expected.setAnzahlFahrspuren(dto.getAnzahlFahrspuren());
         expected.setAnzahlDetektoren(dto.getAnzahlDetektoren());
 
-        final Messquerschnitt actual = this.mapper.createMessquerschnitt(dto);
+        final MessquerschnittEntity actual = this.mapper.createMessquerschnitt(dto);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
                 .ignoringFields("id", "punkt")
                 .isEqualTo(expected);
 
-        Assertions.assertThat(actual.getPunkt().getLat()).isEqualTo(dto.getLatitude());
-        Assertions.assertThat(actual.getPunkt().getLon()).isEqualTo(dto.getLongitude());
+        Assertions.assertThat(actual.getLatitude()).isEqualTo(dto.getLatitude());
+        Assertions.assertThat(actual.getLongitude()).isEqualTo(dto.getLongitude());
         Assertions.assertThat(actual.getId())
                 .isNotNull();
     }
 
     @Test
     void testUpdateMessstelle() {
-        final Messstelle bean = MessstelleRandomFactory.getMessstelle();
+        final MessstelleEntity bean = MessstelleRandomFactory.getMessstelle();
 
         final MessstelleDto updatedData = MessstelleRandomFactory.getMessstelleDto();
 
-        final Messstelle expected = new Messstelle();
+        final MessstelleEntity expected = new MessstelleEntity();
         //geandert
         expected.setMstId(updatedData.getMstId());
         expected.setName(updatedData.getName());
@@ -163,10 +165,11 @@ class MessstelleReceiverMapperTests {
         expected.setKommentar(bean.getKommentar());
         expected.setStandort(bean.getStandort());
         expected.setCustomSuchwoerter(bean.getCustomSuchwoerter());
-        expected.setPunkt(bean.getPunkt());
+        expected.setLatitude(bean.getLatitude());
+        expected.setLongitude(bean.getLongitude());
         expected.setMessquerschnitte(bean.getMessquerschnitte());
 
-        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(Messfaehigkeit::getFahrzeugklasse)
+        final Set<Fahrzeugklasse> distinctFahrzeugklassenOfMessfaehigkeiten = expected.getMessfaehigkeiten().stream().map(MessfaehigkeitEntity::getFahrzeugklasse)
                 .collect(Collectors.toSet());
         if (distinctFahrzeugklassenOfMessfaehigkeiten.contains(Fahrzeugklasse.ACHT_PLUS_EINS)) {
             expected.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -180,7 +183,7 @@ class MessstelleReceiverMapperTests {
 
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
-        final Messstelle actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
+        final MessstelleEntity actual = this.mapper.updateMessstelle(bean, updatedData, stadtbezirkMapper);
         Assertions.assertThat(actual)
                 .isNotNull()
                 .usingRecursiveComparison()
@@ -194,7 +197,7 @@ class MessstelleReceiverMapperTests {
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
         messstelleDto.setStatus(MessstelleDto.StatusEnum.IN_BESTAND);
-        final Messstelle messstelle = mapper.createMessstelle(messstelleDto, stadtbezirkMapper);
+        final MessstelleEntity messstelle = mapper.createMessstelle(messstelleDto, stadtbezirkMapper);
         Assertions.assertThat(messstelle.getStatus()).isEqualTo(MessstelleStatus.IN_BESTAND);
     }
 }

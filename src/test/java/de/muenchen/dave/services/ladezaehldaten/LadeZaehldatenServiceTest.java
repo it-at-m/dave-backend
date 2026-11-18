@@ -11,18 +11,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Hochrechnung;
+import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
-import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,29 +43,25 @@ class LadeZaehldatenServiceTest {
     @Mock
     private ZaehldatenExtractorService zaehldatenExtractorService;
 
+    @Mock
+    PkwEinheit pkwEinheit;
+
     private LadeZaehldatenService service;
 
     @BeforeEach
     void setUp() {
-        service = new LadeZaehldatenService(indexService, zaehldatenExtractorService);
+        service = new LadeZaehldatenService(indexService, zaehldatenExtractorService, pkwEinheit);
     }
 
     @Test
     void testLadeZaehldaten_normalPath_mapsToLadeZaehldatum() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        final PkwEinheit pkwEinheit = new PkwEinheit();
-        pkwEinheit.setPkw(BigDecimal.ONE);
-        pkwEinheit.setLkw(BigDecimal.ONE);
-        pkwEinheit.setLastzuege(BigDecimal.ONE);
-        pkwEinheit.setBusse(BigDecimal.ONE);
-        pkwEinheit.setKraftraeder(BigDecimal.ONE);
-        pkwEinheit.setFahrradfahrer(BigDecimal.ONE);
-        zaehlung.setPkwEinheit(pkwEinheit);
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
+
         zaehlung.setKreisverkehr(false);
 
-        when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
+        when(indexService.getZaehlung(eq(zaehlungId))).thenReturn(zaehlung);
 
         final OptionsDTO options = new OptionsDTO();
         options.setZeitauswahl("None");
@@ -99,7 +95,7 @@ class LadeZaehldatenServiceTest {
         // pkwEinheiten = sum of counts * 1 (pkwEinheit values are 1)
         assertEquals(10 + 2 + 1 + 1 + 1 + 5, dto.getPkwEinheiten().intValue());
 
-        verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
+        verify(indexService, times(1)).getZaehlung(eq(zaehlungId));
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);
@@ -108,12 +104,11 @@ class LadeZaehldatenServiceTest {
     @Test
     void testLadeZaehldaten_spitzenstundePath_usesSpitzenstundeExtractorAndMaps() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
-        zaehlung.setPkwEinheit(new PkwEinheit());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
         zaehlung.setKreisverkehr(false);
 
-        when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
+        when(indexService.getZaehlung(eq(zaehlungId))).thenReturn(zaehlung);
 
         final OptionsDTO options = new OptionsDTO();
         options.setZeitauswahl(LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE);
@@ -144,7 +139,7 @@ class LadeZaehldatenServiceTest {
 
         assertEquals(2, result.getZaehldaten().size());
 
-        verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
+        verify(indexService, times(1)).getZaehlung(eq(zaehlungId));
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), eq(Zaehlart.N),
                 eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
@@ -154,14 +149,13 @@ class LadeZaehldatenServiceTest {
     @Test
     void testLadeZaehldaten_tageswertMapping_producesTageswertDto() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setZaehlart(Zaehlart.N.name());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setZaehlart(Zaehlart.N);
         final PkwEinheit pkwEinheit = new PkwEinheit();
         pkwEinheit.setPkw(BigDecimal.ONE);
-        zaehlung.setPkwEinheit(pkwEinheit);
         zaehlung.setKreisverkehr(false);
 
-        when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
+        when(indexService.getZaehlung(eq(zaehlungId))).thenReturn(zaehlung);
 
         final OptionsDTO options = new OptionsDTO();
         options.setZeitauswahl("None");
@@ -196,7 +190,7 @@ class LadeZaehldatenServiceTest {
         assertEquals(new BigDecimal("20"), tageswert.getSchwerverkehr());
         assertEquals(42, tageswert.getFahrradfahrer().intValue());
 
-        verify(indexService, times(1)).getZaehlung(eq(zaehlungId.toString()));
+        verify(indexService, times(1)).getZaehlung(eq(zaehlungId));
         verify(zaehldatenExtractorService, times(1)).extractZeitintervalle(eq(zaehlungId), eq(Zaehlart.N), eq(options.getZeitblock().getStart()),
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet());
         verifyNoMoreInteractions(indexService, zaehldatenExtractorService);

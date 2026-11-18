@@ -2,10 +2,9 @@ package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
-import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import java.math.BigDecimal;
@@ -108,13 +107,13 @@ public final class ZaehldatenProcessingUtil {
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.
      */
-    public static OptionsDTO createHardcodedOptions(final Zaehlung zaehlung) {
+    public static OptionsDTO createHardcodedOptions(final ZaehlungEntity zaehlung) {
         final boolean getKfz = zaehlung.getKategorien().contains(Fahrzeug.KFZ);
         final boolean getRad = zaehlung.getKategorien().contains(Fahrzeug.RAD);
         final boolean getFuss = zaehlung.getKategorien().contains(Fahrzeug.FUSS);
 
         final var options = new OptionsDTO();
-        options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
+        options.setZaehldauer(zaehlung.getZaehldauer());
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());

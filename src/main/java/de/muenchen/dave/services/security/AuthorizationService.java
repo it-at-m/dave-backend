@@ -1,9 +1,10 @@
 package de.muenchen.dave.services.security;
 
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
+import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +23,13 @@ public class AuthorizationService {
 
     /**
      * Überprüft, ob der Username des eingeloggten Nutzers mit der Dienstleisterkennung der
-     * {@link Zaehlung} übereinstimmt.
+     * {@link ZaehlungEntity} übereinstimmt.
      *
-     * @param zaehlungId der {@link Zaehlung}, welche bearbeitet werden soll
+     * @param zaehlungId der {@link ZaehlungEntity}, welche bearbeitet werden soll
      * @return {@code true}, wenn Username und Dienstleisterkennung übereinstimmen
      */
-    private boolean matchesDienstleisterkennung(String zaehlungId) throws DataNotFoundException {
-        final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
+    private boolean matchesDienstleisterkennung(UUID zaehlungId) throws DataNotFoundException {
+        final ZaehlungEntity zaehlung = this.indexService.getZaehlung(zaehlungId);
         final String dienstleisterkennung = zaehlung.getDienstleisterkennung();
         final String currentUser = securityContextInformationExtractorService.getAuthenticatedUsername();
 
@@ -39,14 +40,14 @@ public class AuthorizationService {
 
     /**
      * Überprüft, ob der Nutzer die Rolle FACHADMIN hat oder ob seine Dienstleisterkennung mit der
-     * Dienstleisterkennung der {@link Zaehlung} übereinstimmt.
+     * Dienstleisterkennung der {@link ZaehlungEntity} übereinstimmt.
      *
-     * @param zaehlungId der {@link Zaehlung}
+     * @param zaehlungId der {@link ZaehlungEntity}
      * @param errorMessage für die {@link AccessDeniedException}
      * @throws AccessDeniedException wenn der Nutzer nicht FACHADMIN ist und die Dienstleisterkennung
      *             nicht übereinstimmt
      */
-    private void assertCanAccessZaehlung(final String zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
+    private void assertCanAccessZaehlung(final UUID zaehlungId, final String errorMessage) throws DataNotFoundException, AccessDeniedException {
         if (securityContextInformationExtractorService.isFachadmin()) {
             return;
         }
@@ -56,13 +57,13 @@ public class AuthorizationService {
     }
 
     /**
-     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link Zaehlung} zu bearbeiten.
+     * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link ZaehlungEntity} zu bearbeiten.
      *
-     * @param zaehlungId der {@link Zaehlung}, welche der Nutzer bearbeiten will
-     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, die {@link Zaehlung} zu
+     * @param zaehlungId der {@link ZaehlungEntity}, welche der Nutzer bearbeiten will
+     * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, die {@link ZaehlungEntity} zu
      *             bearbeiten
      */
-    public void assertCanModifyZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+    public void assertCanModifyZaehlung(final UUID zaehlungId) throws DataNotFoundException, AccessDeniedException {
         assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, diese Zählung zu ändern.");
     }
 
@@ -70,13 +71,13 @@ public class AuthorizationService {
      * Stellt sicher, dass der Nutzer berechtigt ist, eine {@link de.muenchen.dave.domain.ChatMessage}
      * zu lesen oder zu senden.
      *
-     * @param zaehlungId der {@link Zaehlung}, für welche der Nutzer eine
+     * @param zaehlungId der {@link ZaehlungEntity}, für welche der Nutzer eine
      *            {@link de.muenchen.dave.domain.ChatMessage} lesen/senden will
      * @throws AccessDeniedException wenn der Nutzer nicht berechtigt ist, eine
      *             {@link de.muenchen.dave.domain.ChatMessage} für
-     *             die {@link Zaehlung} zu lesen/senden
+     *             die {@link ZaehlungEntity} zu lesen/senden
      */
-    public void assertCanReadAndWriteMessagesForZaehlung(final String zaehlungId) throws DataNotFoundException, AccessDeniedException {
+    public void assertCanReadAndWriteMessagesForZaehlung(final UUID zaehlungId) throws DataNotFoundException, AccessDeniedException {
         assertCanAccessZaehlung(zaehlungId, "Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden.");
     }
 }

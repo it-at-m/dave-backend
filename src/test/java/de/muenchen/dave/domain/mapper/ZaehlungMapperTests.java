@@ -1,19 +1,10 @@
 package de.muenchen.dave.domain.mapper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlungDTORandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
-import de.muenchen.dave.domain.enums.Wetter;
-import de.muenchen.dave.domain.enums.Zaehldauer;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.IndexServiceUtils;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
 @Slf4j
 public class ZaehlungMapperTests {
 
@@ -34,7 +32,7 @@ public class ZaehlungMapperTests {
     @Test
     public void testBearbeiteDto2bean() {
         BearbeiteZaehlungDTO dto = BearbeiteZaehlungDTORandomFactory.getOne();
-        Zaehlung bean = this.mapper.bearbeiteDto2bean(dto);
+        ZaehlungEntity bean = this.mapper.bearbeiteDto2bean(dto);
 
         assertThat(bean, hasProperty("datum", equalTo(dto.getDatum())));
         assertThat(bean, hasProperty("zaehlart", equalTo(dto.getZaehlart())));
@@ -51,8 +49,8 @@ public class ZaehlungMapperTests {
         assertThat(bean, hasProperty("zaehldauer", equalTo(dto.getZaehldauer())));
         assertThat(bean, hasProperty("schulZeiten", equalTo(dto.getSchulZeiten())));
         final List<String> expected = new ArrayList<>(dto.getCustomSuchwoerter());
-        expected.addAll(Wetter.valueOf(bean.getWetter()).getSuchwoerter());
-        expected.addAll(Zaehldauer.valueOf(bean.getZaehldauer()).getSuchwoerter());
+        expected.addAll(bean.getWetter().getSuchwoerter());
+        expected.addAll(bean.getZaehldauer().getSuchwoerter());
         expected.addAll(bean.getGeographie());
         expected.add(bean.getJahreszeit());
         expected.add(bean.getProjektName());
@@ -106,7 +104,7 @@ public class ZaehlungMapperTests {
 
     @Test
     public void testBean2SucheZaehlungsSuggestDto() {
-        Zaehlung bean = ZaehlungRandomFactory.getOne();
+        ZaehlungEntity bean = ZaehlungRandomFactory.getOne();
         SucheZaehlungSuggestDTO dto = this.mapper.bean2SucheZaehlungSuggestDto(bean);
 
         assertThat(dto, hasProperty("id", equalTo(bean.getId())));

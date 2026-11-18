@@ -14,7 +14,7 @@ import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.properties.OnnxModelDefinition;
 import de.muenchen.dave.properties.OnnxModelProperties;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.hochrechnung.HochrechnungsService;
 import de.muenchen.dave.services.hochrechnung.OnnxModelRegistry;
 import de.muenchen.dave.services.hochrechnung.ReineFahrzeugwerteEncoder;

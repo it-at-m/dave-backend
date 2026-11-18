@@ -2,12 +2,12 @@ package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.EmailAddressDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.model.MessstelleChangeMessage;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.DienstleisterService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.time.LocalDate;
@@ -66,17 +66,17 @@ class EmailSendServiceTest {
 
         Mockito.when(emailAddressService.loadEmailAddresses()).thenReturn(List.of(emailAdress1, emailAdress2));
 
-        final var zaehlung = new Zaehlung();
-        zaehlung.setId(chatMessage.getZaehlungId().toString());
+        final var zaehlung = new ZaehlungEntity();
+        zaehlung.setId(chatMessage.getZaehlungId());
         zaehlung.setDienstleisterkennung("dienstleisterkennung");
         zaehlung.setDatum(LocalDate.of(2025, 3, 5));
         zaehlung.setProjektName("Projektname");
-        Mockito.when(zaehlstelleIndexService.getZaehlung(chatMessage.getZaehlungId().toString())).thenReturn(zaehlung);
+        Mockito.when(zaehlstelleIndexService.getZaehlung(chatMessage.getZaehlungId())).thenReturn(zaehlung);
 
-        final var zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId(UUID.randomUUID().toString());
+        final var zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.randomUUID());
         zaehlstelle.setNummer("54321");
-        Mockito.when(zaehlstelleIndexService.getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString())).thenReturn(zaehlstelle);
+        Mockito.when(zaehlstelleIndexService.getZaehlstelleByZaehlungId(chatMessage.getZaehlungId())).thenReturn(zaehlstelle);
 
         emailSendServiceSpy.sendEmailForChatMessage(chatMessage);
 
@@ -89,9 +89,9 @@ class EmailSendServiceTest {
 
         Mockito.verify(emailAddressService, Mockito.times(1)).loadEmailAddresses();
 
-        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId().toString());
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId());
 
-        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString());
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId());
 
         Mockito.verifyNoInteractions(dienstleisterService);
     }
@@ -105,20 +105,20 @@ class EmailSendServiceTest {
 
         final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
 
-        final var zaehlung = new Zaehlung();
-        zaehlung.setId(chatMessage.getZaehlungId().toString());
+        final var zaehlung = new ZaehlungEntity();
+        zaehlung.setId(chatMessage.getZaehlungId());
         zaehlung.setDienstleisterkennung("dienstleisterkennung");
         zaehlung.setDatum(LocalDate.of(2025, 3, 5));
         zaehlung.setProjektName("Projektname");
-        Mockito.when(zaehlstelleIndexService.getZaehlung(chatMessage.getZaehlungId().toString())).thenReturn(zaehlung);
+        Mockito.when(zaehlstelleIndexService.getZaehlung(chatMessage.getZaehlungId())).thenReturn(zaehlung);
 
         Mockito.when(dienstleisterService.getDienstleisterEmailAddressByKennung(zaehlung.getDienstleisterkennung()))
                 .thenReturn(List.of("mail1@xxx.yy", "mail2@xxx.yy"));
 
-        final var zaehlstelle = new Zaehlstelle();
-        zaehlstelle.setId(UUID.randomUUID().toString());
+        final var zaehlstelle = new ZaehlstelleEntity();
+        zaehlstelle.setId(UUID.randomUUID());
         zaehlstelle.setNummer("54321");
-        Mockito.when(zaehlstelleIndexService.getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString())).thenReturn(zaehlstelle);
+        Mockito.when(zaehlstelleIndexService.getZaehlstelleByZaehlungId(chatMessage.getZaehlungId())).thenReturn(zaehlstelle);
 
         emailSendServiceSpy.sendEmailForChatMessage(chatMessage);
 
@@ -131,9 +131,9 @@ class EmailSendServiceTest {
 
         Mockito.verifyNoInteractions(emailAddressService);
 
-        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId().toString());
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlung(chatMessage.getZaehlungId());
 
-        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId().toString());
+        Mockito.verify(zaehlstelleIndexService, Mockito.times(1)).getZaehlstelleByZaehlungId(chatMessage.getZaehlungId());
 
         Mockito.verify(dienstleisterService, Mockito.times(1)).getDienstleisterEmailAddressByKennung(zaehlung.getDienstleisterkennung());
     }

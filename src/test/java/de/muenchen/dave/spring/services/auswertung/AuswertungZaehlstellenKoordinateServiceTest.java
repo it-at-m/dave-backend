@@ -1,15 +1,9 @@
 package de.muenchen.dave.spring.services.auswertung;
 
-import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
@@ -22,9 +16,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import static de.muenchen.dave.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(
         classes = { DaveBackendApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
@@ -51,24 +50,26 @@ class AuswertungZaehlstellenKoordinateServiceTest {
 
     @Test
     void getAuswertungZaehlstellenKoordinate() {
-        final List<Zaehlstelle> zaehlstellen = new ArrayList<>();
+        final List<ZaehlstelleEntity> zaehlstellen = new ArrayList<>();
 
-        Zaehlstelle zaehlstelle = new Zaehlstelle();
+        ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
         zaehlstelle.setZaehlungen(new ArrayList<>());
         zaehlstelle.setNummer("654321");
         zaehlstelle.setKommentar("Ein Kommentar");
-        zaehlstelle.setPunkt(new GeoPoint(40.1234567, 9.1234567));
-        Zaehlung zaehlung = new Zaehlung();
+        zaehlstelle.setLatitude(40.1234567);
+        zaehlstelle.setLongitude(9.1234567);
+        ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setDatum(LocalDate.of(2018, 1, 1));
         zaehlstelle.getZaehlungen().add(zaehlung);
         zaehlstellen.add(zaehlstelle);
 
-        zaehlstelle = new Zaehlstelle();
+        zaehlstelle = new ZaehlstelleEntity();
         zaehlstelle.setZaehlungen(new ArrayList<>());
         zaehlstelle.setNummer("123456");
         zaehlstelle.setKommentar("Ein Kommentar");
-        zaehlstelle.setPunkt(new GeoPoint(48.1234567, 10.1234567));
-        zaehlung = new Zaehlung();
+        zaehlstelle.setLatitude(48.1234567);
+        zaehlstelle.setLongitude(10.1234567);
+        zaehlung = new ZaehlungEntity();
         zaehlung.setDatum(LocalDate.of(2019, 1, 1));
         zaehlstelle.getZaehlungen().add(zaehlung);
         zaehlstellen.add(zaehlstelle);

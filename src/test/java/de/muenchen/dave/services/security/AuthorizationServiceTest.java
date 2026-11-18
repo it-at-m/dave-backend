@@ -1,16 +1,19 @@
 package de.muenchen.dave.services.security;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import java.time.LocalDate;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 class AuthorizationServiceTest {
 
@@ -21,8 +24,8 @@ class AuthorizationServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        final String id = "zf1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zf1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().plusDays(2));
         zaehlung.setDienstleisterkennung("dl1");
@@ -43,8 +46,8 @@ class AuthorizationServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        final String id = "zf1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zf1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().plusDays(2));
         zaehlung.setDienstleisterkennung("dl1");
@@ -66,8 +69,8 @@ class AuthorizationServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        final String id = "zf1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zf1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().plusDays(2));
         zaehlung.setDienstleisterkennung("dl1");
@@ -90,8 +93,8 @@ class AuthorizationServiceTest {
         final SecurityContextInformationExtractorService mockSecService = Mockito.mock(SecurityContextInformationExtractorService.class);
         final AuthorizationService authorizationService = new AuthorizationService(mockIndexService, mockSecService);
 
-        final String id = "zf1";
-        final Zaehlung zaehlung = new Zaehlung();
+        final UUID id = UUID.fromString("zf1");
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDatum(LocalDate.now().plusDays(2));
         zaehlung.setDienstleisterkennung("dl1");

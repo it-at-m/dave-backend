@@ -1,9 +1,9 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.migrationespg.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.migrationespg.services.prozesszaehldaten.ProcessZaehldatenServiceMig;
+import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -34,7 +34,7 @@ public class LadeZaehldatenController {
 
     private static final String REQUEST_PARAMETER_ZAEHLUNG_ID = "zaehlung_id";
 
-    private final ProcessZaehldatenServiceMig processZaehldatenService;
+    private final ProcessZaehldatenService processZaehldatenService;
 
     /**
      * Rest-Endpunkt zur Bereitstellung der Daten einer Zaehlung für alle Grafiken.

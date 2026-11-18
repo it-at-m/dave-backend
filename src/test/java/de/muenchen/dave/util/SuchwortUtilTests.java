@@ -3,11 +3,11 @@ package de.muenchen.dave.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehldauer;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.IndexServiceUtils;
 import java.time.LocalDate;
 import java.time.Month;
@@ -24,7 +24,7 @@ public class SuchwortUtilTests {
 
     @Test
     public void testGenerateSuchworteOfZaehlstelle() {
-        final Zaehlstelle zaehlstelle = new Zaehlstelle();
+        final ZaehlstelleEntity zaehlstelle = new ZaehlstelleEntity();
         zaehlstelle.setStadtbezirk("Pasing-Obermenzing");
         final List<String> expected = Arrays.asList("Pasing", "Obermenzing", "Pasing-Obermenzing");
         final Set<String> suchworte = SuchwortUtil.generateSuchworteOfZaehlstelle(zaehlstelle);
@@ -33,19 +33,19 @@ public class SuchwortUtilTests {
 
     @Test
     public void testGenerateSuchworteOfZaehlung() {
-        final Zaehlung zaehlung = new Zaehlung();
-        zaehlung.setWetter(Wetter.CLOUDY.name());
-        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN.name());
+        final ZaehlungEntity zaehlung = new ZaehlungEntity();
+        zaehlung.setWetter(Wetter.CLOUDY);
+        zaehlung.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         final LocalDate datum = LocalDate.of(2000, Month.JANUARY, 1);
         final String datumAsString = datum.format(IndexServiceUtils.DDMMYYYY);
         zaehlung.setDatum(datum);
-        final Knotenarm k1 = new Knotenarm();
+        final KnotenarmEntity k1 = new KnotenarmEntity();
         k1.setNummer(0);
         k1.setStrassenname("Knotenarm 1");
-        final Knotenarm k2 = new Knotenarm();
+        final KnotenarmEntity k2 = new KnotenarmEntity();
         k2.setNummer(1);
         k2.setStrassenname("Knotenarm 2");
-        final List<Knotenarm> knotenarme = Arrays.asList(k1, k2);
+        final List<KnotenarmEntity> knotenarme = Arrays.asList(k1, k2);
         zaehlung.setKnotenarme(knotenarme);
 
         zaehlung.setGeographie(Arrays.asList("QI", "Isar", "Isarschnitt"));
@@ -93,13 +93,13 @@ public class SuchwortUtilTests {
 
     @Test
     public void testGetSuchworteOfKnotenarme() {
-        final Knotenarm k1 = new Knotenarm();
+        final KnotenarmEntity k1 = new KnotenarmEntity();
         k1.setNummer(0);
         k1.setStrassenname("Knotenarm 1");
-        final Knotenarm k2 = new Knotenarm();
+        final KnotenarmEntity k2 = new KnotenarmEntity();
         k2.setNummer(1);
         k2.setStrassenname("Knotenarm 2");
-        final List<Knotenarm> knotenarme = Arrays.asList(k1, k2);
+        final List<KnotenarmEntity> knotenarme = Arrays.asList(k1, k2);
         final List<String> expected = Arrays.asList("Knotenarm 1", "Knotenarm 2", "Querschnitt", "zweiarmig");
         final List<String> suchworte = SuchwortUtil.getSuchworteOfKnotenarme(knotenarme);
         assertThat(suchworte, containsInAnyOrder(expected.toArray(new String[0])));

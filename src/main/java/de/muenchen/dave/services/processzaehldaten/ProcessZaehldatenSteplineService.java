@@ -339,7 +339,7 @@ public class ProcessZaehldatenSteplineService {
         private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
                 final StepLineSeriesEntryBaseDTO entry,
                 final Boolean isChosen) {
-            if (isChosen.booleanValue()) {
+            if (isChosen) {
                 allEntries.add(entry);
             }
         }
@@ -371,7 +371,5 @@ public class ProcessZaehldatenSteplineService {
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkwEinheiten, options.getPkwEinheiten());
             return allEntries;
         }
-
     }
-
 }

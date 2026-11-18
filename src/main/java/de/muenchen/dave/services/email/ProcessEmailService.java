@@ -213,7 +213,7 @@ public class ProcessEmailService {
 
         // ChatMessageDTO erstellen
         final ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
-        chatMessageDTO.setZaehlungId(zaehlungId);
+        chatMessageDTO.setZaehlungId(UUID.fromString(zaehlungId));
         chatMessageDTO.setContent(messageContent);
         chatMessageDTO.setParticipantId(participantId);
         chatMessageDTO.setType(ChatMessageService.MESSAGE_TYPE);

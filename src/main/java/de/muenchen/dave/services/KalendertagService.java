@@ -2,7 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.enums.TagesTyp;
-import de.muenchen.dave.repositories.relationaldb.KalendertagRepository;
+import de.muenchen.dave.relational.repository.KalendertagRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

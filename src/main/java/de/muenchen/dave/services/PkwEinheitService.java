@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
+import de.muenchen.dave.relational.repository.PkwEinheitRepository;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 

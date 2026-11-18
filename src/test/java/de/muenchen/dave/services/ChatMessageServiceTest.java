@@ -1,21 +1,15 @@
 package de.muenchen.dave.services;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.ChatMessageMapperImpl;
 import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
+import de.muenchen.dave.relational.repository.ChatMessageRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.security.SecurityContextInformationExtractorService;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.security.AuthorizationService;
@@ -25,6 +19,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.access.AccessDeniedException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class ChatMessageServiceTest {
 
@@ -65,9 +65,9 @@ public class ChatMessageServiceTest {
 
     @Test
     public void saveChatMessageTest_notAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
-        final var id = UUID.randomUUID().toString();
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var id = UUID.randomUUID();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDienstleisterkennung("dl1");
         zaehlstelle.getZaehlungen().add(zaehlung);
@@ -95,9 +95,9 @@ public class ChatMessageServiceTest {
 
     @Test
     public void loadChatMessageTest_notAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
-        final var id = UUID.randomUUID().toString();
-        final var zaehlstelle = new Zaehlstelle();
-        final var zaehlung = new Zaehlung();
+        final var id = UUID.randomUUID();
+        final var zaehlstelle = new ZaehlstelleEntity();
+        final var zaehlung = new ZaehlungEntity();
         zaehlung.setId(id);
         zaehlung.setDienstleisterkennung("dl1");
         zaehlstelle.getZaehlungen().add(zaehlung);
@@ -107,7 +107,7 @@ public class ChatMessageServiceTest {
         when(securityContextInformationExtractorService.getUserName()).thenReturn("tester");
         when(securityContextInformationExtractorService.isFachadmin()).thenReturn(false);
 
-        AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> chatMessageService.loadChatMessages(UUID.fromString(id)));
+        AccessDeniedException ex = assertThrows(AccessDeniedException.class, () -> chatMessageService.loadChatMessages(id));
         assertThat(ex.getMessage(), is("Der Dienstleister ist nicht berechtigt, Nachrichten für diese Zählung zu lesen oder zu senden."));
     }
 

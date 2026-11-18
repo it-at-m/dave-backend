@@ -2,10 +2,10 @@ package de.muenchen.dave.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.elasticsearch.Knotenarm;
-import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.ZeitreiheTableOptionsMapper;
+import de.muenchen.dave.relational.zaehlstellen.KnotenarmEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.domain.pdf.components.ZusatzinformationenZeitreihePdfComponent;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTable;
 import de.muenchen.dave.domain.pdf.helper.ZeitreiheTableRow;
@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,6 @@ public class FillZeitreihePdfBeanService {
     private final ZaehlstelleIndexService indexService;
     private final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService;
     private final ZeitreiheTableOptionsMapper zeitreiheTableOptionsMapper;
-    private final ZeitauswahlService zeitauswahlService;
 
     public FillZeitreihePdfBeanService(final ZaehlstelleIndexService indexService,
             final ProcessZaehldatenZeitreiheService processZaehldatenZeitreiheService,
@@ -42,7 +42,6 @@ public class FillZeitreihePdfBeanService {
         this.indexService = indexService;
         this.processZaehldatenZeitreiheService = processZaehldatenZeitreiheService;
         this.zeitreiheTableOptionsMapper = zeitreiheTableOptionsMapper;
-        this.zeitauswahlService = zeitauswahlService;
     }
 
     /**
@@ -56,20 +55,20 @@ public class FillZeitreihePdfBeanService {
      * @param zeitreihePdf ZeitreihePdf, die gefüllt werden soll
      * @param zaehlung Im Frontend ausgewählte Zählung
      */
-    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung) {
+    public static void fillZaehlstelleninformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final ZaehlungEntity zaehlung) {
         // Knotenarme nach Nummer sortieren und setzen
-        final List<Knotenarm> knotenarmList = zaehlung.getKnotenarme()
+        final List<KnotenarmEntity> knotenarmList = zaehlung.getKnotenarme()
                 .stream()
-                .sorted(Comparator.comparing(Knotenarm::getNummer))
+                .sorted(Comparator.comparing(KnotenarmEntity::getNummer))
                 .collect(Collectors.toList());
         zeitreihePdf.getZaehlstelleninformationenZeitreihe().setKnotenarme(knotenarmList);
 
-        // Prüfen, ob irgendein Knotenarm im Platznamen vorkommt
+        // Prüfen, ob irgendein KnotenarmEntity im Platznamen vorkommt
         boolean platzVorhanden = knotenarmList
                 .stream()
                 .anyMatch(knotenarm -> !zaehlung.getKreuzungsname().contains(knotenarm.getStrassenname()));
 
-        // Wenn kein Knotenarm im Platz vorkommt => Platz setzen
+        // Wenn kein KnotenarmEntity im Platz vorkommt => Platz setzen
         if (platzVorhanden) {
             zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatzVorhanden(true);
             zeitreihePdf.getZaehlstelleninformationenZeitreihe().setPlatz(zaehlung.getKreuzungsname());
@@ -87,12 +86,12 @@ public class FillZeitreihePdfBeanService {
      * @param options Optionen aus dem Frontend
      * @param department OU des Benutzers
      * @return Die befüllte ZeitreihePdf
-     * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung/Zaehldaten gefunden wurden
+     * @throws DataNotFoundException wenn keine ZaehlstelleEntity/ZaehlungEntity/Zaehldaten gefunden wurden
      */
-    public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final String zaehlungId, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
-        final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
-        final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
+    public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final UUID zaehlungId, final String chartAsBase64Png,
+                                         final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
+        final ZaehlstelleEntity zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(zaehlungId);
 
         zeitreihePdf.setDocumentTitle(
                 String.format(
@@ -100,7 +99,7 @@ public class FillZeitreihePdfBeanService {
                         DOCUMENT_TITLE_PREFIX,
                         zaehlstelle.getNummer(),
                         StringUtils.SPACE,
-                        DomainValues.getCorrectZaehlartString(zaehlung.getZaehlart())));
+                        DomainValues.getCorrectZaehlartString(String.valueOf(zaehlung.getZaehlart()))));
         zeitreihePdf.setChart(chartAsBase64Png);
         zeitreihePdf.setSchematischeUebersichtNeeded(FillPdfBeanService.getSchematischeUebersichtNeeded(options, zaehlung));
         zeitreihePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
@@ -126,7 +125,7 @@ public class FillZeitreihePdfBeanService {
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
-    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDTO options) throws DataNotFoundException {
+    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final UUID zaehlungId, final OptionsDTO options) throws DataNotFoundException {
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {
@@ -171,8 +170,8 @@ public class FillZeitreihePdfBeanService {
      * @param options Optionen aus dem Frontend
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      */
-    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung, final OptionsDTO options,
-            final Zaehlstelle zaehlstelle) {
+    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final ZaehlungEntity zaehlung, final OptionsDTO options,
+            final ZaehlstelleEntity zaehlstelle) {
         final List<ZusatzinformationenZeitreihePdfComponent> zusatzinformationenZeitreihePdfComponentList = new ArrayList<>();
 
         if (StringUtils.isNotEmpty(zaehlstelle.getKommentar())) {

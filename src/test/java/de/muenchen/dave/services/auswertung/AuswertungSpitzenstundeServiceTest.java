@@ -1,22 +1,10 @@
 package de.muenchen.dave.services.auswertung;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -24,7 +12,8 @@ import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeZaehldatumMapper;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.dataimport.ZeitintervallGleitendeSpitzenstundeUtil;
 import java.time.LocalDateTime;
@@ -40,6 +29,17 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AuswertungSpitzenstundeServiceTest {
@@ -59,11 +59,11 @@ class AuswertungSpitzenstundeServiceTest {
     @InjectMocks
     private AuswertungSpitzenstundeService service;
 
-    private Zaehlung zaehlungMock;
+    private ZaehlungEntity zaehlungMock;
 
     @BeforeEach
     void setup() {
-        zaehlungMock = Mockito.mock(Zaehlung.class);
+        zaehlungMock = Mockito.mock(ZaehlungEntity.class);
     }
 
     @Test
@@ -72,8 +72,8 @@ class AuswertungSpitzenstundeServiceTest {
      */
     void extractSpitzenstundenAllVerkehrsbeziehungen_nonKreisverkehr_success() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        when(zaehlungMock.getId()).thenReturn(zaehlungId.toString());
-        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N.name());
+        when(zaehlungMock.getId()).thenReturn(zaehlungId);
+        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N);
         when(zaehlungMock.getKreisverkehr()).thenReturn(Boolean.FALSE);
 
         try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilMock = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {
@@ -138,8 +138,8 @@ class AuswertungSpitzenstundeServiceTest {
      */
     void extractSpitzenstundenAllVerkehrsbeziehungen_kreisverkehr_uses_HINEIN() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        when(zaehlungMock.getId()).thenReturn(zaehlungId.toString());
-        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N.name());
+        when(zaehlungMock.getId()).thenReturn(zaehlungId);
+        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N);
         when(zaehlungMock.getKreisverkehr()).thenReturn(Boolean.TRUE);
 
         try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilMock = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {
@@ -183,8 +183,8 @@ class AuswertungSpitzenstundeServiceTest {
      * Prüft, dass bei fehlender Spitzenstunde eine DataNotFoundException geworfen wird.
      */
     void extractSpitzenstundenAllVerkehrsbeziehungen_noSpitzenstunde_throws() throws Exception {
-        when(zaehlungMock.getId()).thenReturn(UUID.randomUUID().toString());
-        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N.name());
+        when(zaehlungMock.getId()).thenReturn(UUID.randomUUID());
+        when(zaehlungMock.getZaehlart()).thenReturn(Zaehlart.N);
         when(zaehlungMock.getKreisverkehr()).thenReturn(Boolean.FALSE);
 
         try (MockedStatic<ZeitintervallGleitendeSpitzenstundeUtil> utilMock = Mockito.mockStatic(ZeitintervallGleitendeSpitzenstundeUtil.class)) {

@@ -1,24 +1,23 @@
 package de.muenchen.dave.domain.elasticsearch;
 
 import com.github.javafaker.Faker;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
 import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class MessstelleRandomFactory {
     private static final Faker fakerInstance = Faker.instance();
 
-    public static Messstelle getMessstelle() {
-        Messstelle messstelle = new Messstelle();
-        messstelle.setId(UUID.randomUUID().toString());
+    public static MessstelleEntity getMessstelle() {
+        MessstelleEntity messstelle = new MessstelleEntity();
+        messstelle.setId(UUID.randomUUID());
         messstelle.setMstId(fakerInstance.number().digits(10));
         messstelle.setName(fakerInstance.pokemon().name());
         messstelle.setStatus(MessstelleStatus.IN_BESTAND);
@@ -36,7 +35,8 @@ public class MessstelleRandomFactory {
         messstelle.setDatumLetztePlausibleMessung(
                 LocalDate.of(fakerInstance.number().numberBetween(2000, 2020), fakerInstance.number().numberBetween(1, 12), fakerInstance.number()
                         .numberBetween(1, 28)));
-        messstelle.setPunkt(new GeoPoint(fakerInstance.number().randomDouble(5, 0, 5), fakerInstance.number().randomDouble(5, 0, 5)));
+        messstelle.setLatitude(fakerInstance.number().randomDouble(5, 0, 5));
+        messstelle.setLongitude(fakerInstance.number().randomDouble(5, 0, 5));
         messstelle.setSichtbarDatenportal(fakerInstance.bool().bool());
         messstelle.setGeprueft(fakerInstance.bool().bool());
         messstelle.setKommentar(fakerInstance.pokemon().name());

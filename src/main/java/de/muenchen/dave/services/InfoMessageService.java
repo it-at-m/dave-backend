@@ -3,7 +3,7 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.InfoMessage;
 import de.muenchen.dave.domain.dtos.InfoMessageDTO;
 import de.muenchen.dave.domain.mapper.InfoMessageMapper;
-import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
+import de.muenchen.dave.relational.repository.InfoMessageRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

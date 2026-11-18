@@ -15,7 +15,7 @@ import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
 import de.muenchen.dave.repositories.elasticsearch.ZaehlstelleIndex;
-import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
+import de.muenchen.dave.relational.repository.ZeitintervallRepository;
 import de.muenchen.dave.services.ZeitauswahlService;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;

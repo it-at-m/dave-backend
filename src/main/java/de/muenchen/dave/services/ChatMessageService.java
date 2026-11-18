@@ -3,19 +3,20 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
-import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.mapper.ChatMessageMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
-import de.muenchen.dave.repositories.relationaldb.ChatMessageRepository;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.relational.repository.ChatMessageRepository;
 import de.muenchen.dave.services.email.EmailSendService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class ChatMessageService {
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die
-     *             {@link Zaehlung} zu speichern
+     *             {@link ZaehlungEntity} zu speichern
      */
     public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO)
             throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
@@ -70,7 +71,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = chatMessageMapper.dto2bean(chatMessageDTO);
         chatMessage = chatMessageRepository.saveAndFlush(chatMessage);
 
-        final Zaehlung zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId().toString());
+        final ZaehlungEntity zaehlung = indexService.getZaehlung(chatMessage.getZaehlungId());
         if (chatMessage.getParticipantId() == Participant.DIENSTLEISTER.getParticipantId() ||
                 SEND_EMAIL_TO_EXTERNAL_FOR_STATUS.contains(zaehlung.getStatus())) {
             emailSendService.sendEmailForChatMessage(chatMessage);
@@ -89,36 +90,36 @@ public class ChatMessageService {
      * @return Alle geladenen {@link ChatMessageDTO}s.
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die
-     *             {@link Zaehlung} zu laden
+     *             {@link ZaehlungEntity} zu laden
      */
     public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu lesen
-        authorizationService.assertCanReadAndWriteMessagesForZaehlung(zaehlungID.toString());
+        authorizationService.assertCanReadAndWriteMessagesForZaehlung(zaehlungID);
 
         final List<ChatMessage> messages = chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(zaehlungID);
         return chatMessageMapper.beanList2DtoList(messages);
     }
 
-    public void saveUpdateMessageForZaehlungStatus(final String zaehlungId, final UpdateStatusDTO updateStatusDTO) throws BrokenInfrastructureException {
+    public void saveUpdateMessageForZaehlungStatus(final UUID zaehlungId, final UpdateStatusDTO updateStatusDTO) throws BrokenInfrastructureException {
         final ChatMessage message = new ChatMessage();
-        message.setZaehlungId(UUID.fromString(zaehlungId));
+        message.setZaehlungId(zaehlungId);
         boolean sendEmail = false;
-        if (Status.CREATED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        if (Objects.equals(Status.CREATED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde angelegt.");
-        } else if (Status.INSTRUCTED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.INSTRUCTED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde beauftragt.");
             sendEmail = true;
-        } else if (Status.COUNTING.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.COUNTING, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wird durchgeführt.");
-        } else if (Status.ACCOMPLISHED.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.ACCOMPLISHED, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde abgeschlossen.");
             sendEmail = true;
-        } else if (Status.CORRECTION.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.CORRECTION, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung soll korrigiert werden.");
             sendEmail = true;
-        } else if (Status.ACTIVE.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.ACTIVE, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde freigegeben.");
-        } else if (Status.INACTIVE.name().equalsIgnoreCase(updateStatusDTO.getStatus())) {
+        } else if (Objects.equals(Status.INACTIVE, updateStatusDTO.getStatus())) {
             message.setContent("Die Zählung wurde deaktiviert.");
         } else {
             // Nichts tun, wenn kein passender Status dabei
@@ -135,23 +136,23 @@ public class ChatMessageService {
         saveUpdateMessage(message, zaehlungId, participant, sendEmail);
     }
 
-    public void saveUpdateMessageForZaehlungExternal(final String zaehlungId) throws BrokenInfrastructureException {
+    public void saveUpdateMessageForZaehlungExternal(final UUID zaehlungId) throws BrokenInfrastructureException {
         final ChatMessage message = new ChatMessage();
-        message.setZaehlungId(UUID.fromString(zaehlungId));
+        message.setZaehlungId(zaehlungId);
         message.setParticipantId(Participant.DIENSTLEISTER.getParticipantId());
         message.setContent("Die Zählung wurde aktualisiert.");
         saveUpdateMessage(message, zaehlungId, Participant.DIENSTLEISTER, SEND_EMAIL_IF_UPDATE_EXTERNAL_ZAEHLUNG);
     }
 
-    public void saveUpdateMessageForZaehlungInternal(final String zaehlungId) throws BrokenInfrastructureException {
+    public void saveUpdateMessageForZaehlungInternal(final UUID zaehlungId) throws BrokenInfrastructureException {
         final ChatMessage message = new ChatMessage();
-        message.setZaehlungId(UUID.fromString(zaehlungId));
+        message.setZaehlungId(zaehlungId);
         message.setParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
         message.setContent("Die Zählung wurde aktualisiert.");
         saveUpdateMessage(message, zaehlungId, Participant.MOBILITAETSREFERAT, SEND_EMAIL_IF_UPDATE_INTERNAL_ZAEHLUNG);
     }
 
-    public void saveUpdateMessage(final ChatMessage message, final String zaehlungId, final Participant callingParticipant,
+    public void saveUpdateMessage(final ChatMessage message, final UUID zaehlungId, final Participant callingParticipant,
             final boolean sendEmail) throws BrokenInfrastructureException {
         message.setTimestamp(LocalDateTime.now(ChatMessageService.ZONE));
         message.setUploaded(true);
@@ -176,11 +177,11 @@ public class ChatMessageService {
      * @return Liste mit allen Chatnachrichten zu einer Zählung
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      */
-    public List<ChatMessage> updateUnreadMessages(final String zaehlungId, final Integer callingParticipantId) throws BrokenInfrastructureException {
+    public List<ChatMessage> updateUnreadMessages(final UUID zaehlungId, final Integer callingParticipantId) throws BrokenInfrastructureException {
         final Participant participant = (callingParticipantId == Participant.DIENSTLEISTER.getParticipantId()) ? Participant.DIENSTLEISTER
                 : Participant.MOBILITAETSREFERAT;
         indexService.setUnreadMessagesInZaehlungForParticipant(zaehlungId, participant, false);
-        final List<ChatMessage> messages = chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(UUID.fromString(zaehlungId));
+        final List<ChatMessage> messages = chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(zaehlungId);
         messages.stream()
                 .filter(chatMessage -> !chatMessage.getParticipantId().equals(callingParticipantId))
                 .forEach(chatMessage -> chatMessage.setViewed(true));

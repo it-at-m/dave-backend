@@ -1,10 +1,11 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
-import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
+import de.muenchen.dave.relational.repository.MessstellenIndexRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MessstelleIndexService {
 
-    private final MessstelleIndex messstelleIndex;
+    private final MessstellenIndexRepository messstelleIndex;
 
     /**
      * Speichert die übergebene Messstelle, nachdem alle Messquerschnitte
@@ -30,7 +31,7 @@ public class MessstelleIndexService {
      * @param toSave die zu speichernde Messstelle; ihre Messquerschnitte werden ggf. modifiziert
      * @return die gespeicherte Messstelle
      */
-    public Messstelle saveMessstelleWithDetectors(final Messstelle toSave) {
+    public MessstelleEntity saveMessstelleWithDetectors(final MessstelleEntity toSave) {
         final var messquerschnitteWithDetectors = CollectionUtils.emptyIfNull(toSave.getMessquerschnitte())
                 .stream()
                 .filter(messquerschnitt -> ObjectUtils.getIfNull(messquerschnitt.getAnzahlDetektoren(), 0) > 0)
@@ -39,32 +40,32 @@ public class MessstelleIndexService {
         return saveMessstelle(toSave);
     }
 
-    public Messstelle saveMessstelle(final Messstelle toSave) {
+    public MessstelleEntity saveMessstelle(final MessstelleEntity toSave) {
         log.info("#saveMessstelle");
         return messstelleIndex.save(toSave);
     }
 
-    public Optional<Messstelle> findByMstId(final String messstellenNummer) {
+    public Optional<MessstelleEntity> findByMstId(final String messstellenNummer) {
         return messstelleIndex.findByMstId(messstellenNummer);
     }
 
-    public Messstelle findByMstIdOrThrowException(final String messstellenNummer) {
+    public MessstelleEntity findByMstIdOrThrowException(final String messstellenNummer) {
         log.debug("Zugriff auf #findByMstIdOrThrowException");
         return this.messstelleIndex.findByMstId(messstellenNummer)
                 .orElseThrow(() -> new ResourceNotFoundException("Die gesuchte Messstelle wurde nicht gefunden."));
     }
 
-    public Messstelle findByIdOrThrowException(final String messstelleId) {
+    public MessstelleEntity findByIdOrThrowException(final String messstelleId) {
         log.debug("Zugriff auf #findByIdOrThrowException");
-        return this.messstelleIndex.findById(messstelleId)
+        return this.messstelleIndex.findById(UUID.fromString(messstelleId))
                 .orElseThrow(() -> new ResourceNotFoundException("Die gesuchte Messstelle wurde nicht gefunden."));
     }
 
-    public List<Messstelle> findAllMessstellen() {
+    public List<MessstelleEntity> findAllMessstellen() {
         return messstelleIndex.findAll();
     }
 
-    public List<Messstelle> findAllVisibleMessstellen() {
+    public List<MessstelleEntity> findAllVisibleMessstellen() {
         return messstelleIndex.findAllBySichtbarDatenportalIsTrue();
     }
 

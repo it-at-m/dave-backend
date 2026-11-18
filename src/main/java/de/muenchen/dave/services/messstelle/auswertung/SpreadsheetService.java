@@ -5,9 +5,9 @@ import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
-import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
+import de.muenchen.dave.relational.messtellen.MessquerschnittEntity;
+import de.muenchen.dave.relational.messtellen.MessstelleEntity;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.io.ByteArrayOutputStream;
@@ -140,7 +140,7 @@ public class SpreadsheetService {
             if (options.getMessstelleAuswertungIds().size() == 1) {
                 final Optional<MessstelleAuswertungIdDTO> first = options.getMessstelleAuswertungIds().stream().findFirst();
                 final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = first.get();
-                final Messstelle messstelleByMstId = messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.getMstId());
+                final MessstelleEntity messstelleByMstId = messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.getMstId());
                 final List<String> formattedMessquerschnitte = new ArrayList<>();
                 messstelleByMstId.getMessquerschnitte().forEach(messquerschnitt -> {
                     if (messstelleAuswertungIdDTO.getMqIds().contains(messquerschnitt.getMqId())) {
@@ -165,7 +165,7 @@ public class SpreadsheetService {
         int cellIndex = 0;
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), options.getTagesTyp().getBeschreibung());
         addStringToCell(row.createCell(cellIndex++, CellType.STRING), mstId);
-        final Optional<Messquerschnitt> optionalMessquerschnitt = messstelleService.getOptionalOfMessquerschnittByMstId(mstId, mqId);
+        final Optional<MessquerschnittEntity> optionalMessquerschnitt = messstelleService.getOptionalOfMessquerschnittByMstId(mstId, mqId);
         String cellValue = mqId;
         if (optionalMessquerschnitt.isPresent()) {
             cellValue = getFormattedStringForMessquerschnitt(optionalMessquerschnitt.get());
@@ -383,7 +383,7 @@ public class SpreadsheetService {
      * @param messquerschnitt zu formatierender Messquerschnitt
      * @return Messquerschnitt als String
      */
-    protected String getFormattedStringForMessquerschnitt(final Messquerschnitt messquerschnitt) {
+    protected String getFormattedStringForMessquerschnitt(final MessquerschnittEntity messquerschnitt) {
         return String.format("%s - %s - %s", messquerschnitt.getMqId(), FahrtrichtungUtil.getLongTextOfFahrtrichtung(messquerschnitt.getFahrtrichtung()),
                 messquerschnitt.getStandort());
     }

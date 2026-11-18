@@ -11,6 +11,11 @@ import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.*;
+import de.muenchen.dave.relational.zaehlstellen.LaengsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
+import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
+import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
 import de.muenchen.dave.services.GenerateCsvService;
 import de.muenchen.dave.spring.services.csvgenerator.GenerateCsvServiceSpringTest;
 import java.math.BigDecimal;
@@ -123,8 +128,8 @@ class GenerateCsvServiceTest {
     @Test
     public void getMetaData() {
         final String header = csvService.getHeader(GenerateCsvServiceTest.getOptionsDTO());
-        Zaehlung zaehlung = GenerateCsvServiceSpringTest.getZaehlung();
-        Zaehlstelle zaehlstelle = GenerateCsvServiceSpringTest.getZaehlstelle(zaehlung);
+        ZaehlungEntity zaehlung = GenerateCsvServiceSpringTest.getZaehlung();
+        ZaehlstelleEntity zaehlstelle = GenerateCsvServiceSpringTest.getZaehlstelle(zaehlung);
         CsvMetaObject metaObject = new CsvMetaObject();
         metaObject.setZaehlstelle(zaehlstelle);
         metaObject.setZaehlung(zaehlung);
@@ -154,12 +159,12 @@ class GenerateCsvServiceTest {
         options.setNachKnotenarm(null);
 
         // Zählart QjS; Nicht alle Verkehrsbeziehungen
-        zaehlung.setZaehlart(String.valueOf(Zaehlart.QJS));
-        final Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
+        zaehlung.setZaehlart(Zaehlart.QJS);
+        final VerkehrsbeziehungEntity vb1 = new VerkehrsbeziehungEntity();
         vb1.setVon(1);
         vb1.setNach(3);
         vb1.setStrassenseite(Himmelsrichtung.W);
-        final Verkehrsbeziehung vb2 = new Verkehrsbeziehung();
+        final VerkehrsbeziehungEntity vb2 = new VerkehrsbeziehungEntity();
         vb2.setVon(1);
         vb2.setNach(3);
         vb2.setStrassenseite(Himmelsrichtung.O);
@@ -182,16 +187,16 @@ class GenerateCsvServiceTest {
         assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
 
         // Zählart FjS; Nicht alle Verkehrsbeziehungen
-        zaehlung.setZaehlart(String.valueOf(Zaehlart.FJS));
-        final Laengsverkehr lv1 = new Laengsverkehr();
+        zaehlung.setZaehlart(Zaehlart.FJS);
+        final LaengsverkehrEntity lv1 = new LaengsverkehrEntity();
         lv1.setKnotenarm(1);
         lv1.setStrassenseite(Himmelsrichtung.W);
         lv1.setRichtung(Bewegungsrichtung.EIN);
-        final Laengsverkehr lv2 = new Laengsverkehr();
+        final LaengsverkehrEntity lv2 = new LaengsverkehrEntity();
         lv2.setKnotenarm(1);
         lv2.setStrassenseite(Himmelsrichtung.O);
         lv2.setRichtung(Bewegungsrichtung.EIN);
-        zaehlung.setLaengsverkehr(List.of(lv1, lv2));
+        zaehlung.setLaengsverkehre(List.of(lv1, lv2));
         final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
         olv1.setKnotenarm(1);
         olv1.setStrassenseite(Himmelsrichtung.W);
@@ -210,14 +215,14 @@ class GenerateCsvServiceTest {
         assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
 
         // Zählart Qu; Nicht alle Verkehrsbeziehungen
-        zaehlung.setZaehlart(String.valueOf(Zaehlart.QU));
-        final Querungsverkehr qv1 = new Querungsverkehr();
+        zaehlung.setZaehlart(Zaehlart.QU);
+        final QuerungsverkehrEntity qv1 = new QuerungsverkehrEntity();
         qv1.setKnotenarm(4);
         qv1.setRichtung(Himmelsrichtung.N);
-        final Querungsverkehr qv2 = new Querungsverkehr();
+        final QuerungsverkehrEntity qv2 = new QuerungsverkehrEntity();
         qv2.setKnotenarm(4);
         qv2.setRichtung(Himmelsrichtung.S);
-        zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
+        zaehlung.setQuerungsverkehre(List.of(qv1, qv2));
         final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
         oqv1.setKnotenarm(4);
         oqv1.setRichtung(Himmelsrichtung.N);
