@@ -13,11 +13,10 @@ on:
         description: 'Which branch should be built?'
         required: true
         default: 'sprint'
-      APP_PATH: .
       
 env:
   IMAGE_NAME: "dave-backend"
-
+  APP_PATH: .
 jobs:
   set-parameters:
     runs-on: ubuntu-latest
