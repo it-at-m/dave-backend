@@ -17,7 +17,6 @@ public class ChatMessageDTO implements Serializable {
     private String content;
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private int participantId;
-    @NotNull
     private LocalDateTime timestamp;
     @NotNull
     private String type;
