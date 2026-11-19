@@ -96,7 +96,7 @@ public class InfoMessageController {
 
     @PostMapping(value = "/set-all-inactive")
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<?> setAllInfoMessagesInactive() {
+    public ResponseEntity<Void> setAllInfoMessagesInactive() {
         infoMessageService.setAllInfoMessagesInactiveAndDeleteInactiveExceptAllowedInfoMessages();
         return ResponseEntity.noContent().build();
     }
