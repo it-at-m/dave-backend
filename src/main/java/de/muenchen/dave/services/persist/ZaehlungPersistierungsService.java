@@ -198,7 +198,7 @@ public abstract class ZaehlungPersistierungsService {
                 fahrzeugkategorien.add(Fahrzeug.FUSS);
             }
         });
-        return getFahrzeugklassen(new ArrayList<>(fahrzeugkategorien));
+        return getFahrzeugklassen(fahrzeugkategorien);
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class ZaehlungPersistierungsService {
      * @param fahrzeugkategorien zur Ermittlung der Fahrzeugklassen.
      * @return die Fahrzeugkategorien und Fahrzeugklassen als gemeinsame Liste.
      */
-    public List<Fahrzeug> getFahrzeugklassen(final List<Fahrzeug> fahrzeugkategorien) {
+    public List<Fahrzeug> getFahrzeugklassen(final Set<Fahrzeug> fahrzeugkategorien) {
         if (fahrzeugkategorien.contains(Fahrzeug.LKW) || fahrzeugkategorien.contains(Fahrzeug.LZ)) {
             fahrzeugkategorien.add(Fahrzeug.GV);
         }
@@ -227,7 +227,7 @@ public abstract class ZaehlungPersistierungsService {
                 || fahrzeugkategorien.contains(Fahrzeug.BUS) || fahrzeugkategorien.contains(Fahrzeug.KRAD) || fahrzeugkategorien.contains(Fahrzeug.RAD)) {
             fahrzeugkategorien.add(Fahrzeug.PKW_EINHEIT);
         }
-        return fahrzeugkategorien;
+        return new ArrayList<>(fahrzeugkategorien);
     }
 
     public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)

@@ -24,10 +24,12 @@ public class ProcessZaehldatenZeitreiheTest {
     private static final LocalDate DATE2 = LocalDate.of(2016, 8, 8);
     private static final LocalDate DATE3 = LocalDate.of(2020, 4, 3);
     private static final LocalDate DATE4 = LocalDate.of(2024, 1, 11);
+    private static final LocalDate DATE5 = LocalDate.of(2024, 1, 11);
     private static final String ID1 = "1234";
     private static final String ID2 = "5678";
     private static final String ID3 = "90ab";
     private static final String ID4 = "42cd";
+    private static final String ID5 = "51fa";
 
     private static Zaehlstelle getZaehlstelleWithZaehlungen() {
 
@@ -51,11 +53,17 @@ public class ProcessZaehldatenZeitreiheTest {
         zaehlung4.setDatum(DATE4);
         zaehlung4.setZaehlart(Zaehlart.N.name());
 
+        Zaehlung zaehlung5 = new Zaehlung();
+        zaehlung5.setId(ID5);
+        zaehlung5.setDatum(DATE5);
+        zaehlung5.setZaehlart(Zaehlart.N.name());
+
         List<Zaehlung> zaehlungList = new ArrayList<>();
         zaehlungList.add(zaehlung1);
         zaehlungList.add(zaehlung2);
         zaehlungList.add(zaehlung3);
         zaehlungList.add(zaehlung4);
+        zaehlungList.add(zaehlung5);
 
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         zaehlstelle.setZaehlungen(zaehlungList);
@@ -68,17 +76,18 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlstelle zaehlstelle = getZaehlstelleWithZaehlungen();
         OptionsDTO options = new OptionsDTO();
 
-        LocalDate currentDate = DATE4;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID4, options),
+                is(DATE1));
+
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID5, options),
                 is(DATE1));
 
         options.setIdVergleichszaehlungZeitreihe(ID2);
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID4, options),
                 is(DATE2));
 
         options.setIdVergleichszaehlungZeitreihe(null);
-        currentDate = DATE2;
-        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, currentDate, options),
+        assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID2, options),
                 is(DATE1));
     }
 
@@ -426,6 +435,7 @@ public class ProcessZaehldatenZeitreiheTest {
         // setup
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.N.name());
+        zaehlung.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setKreisverkehr(false);
         Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
         vb1.setVon(1);
@@ -438,22 +448,32 @@ public class ProcessZaehldatenZeitreiheTest {
         OptionsDTO options = new OptionsDTO();
         options.setFussverkehr(true);
 
-        // positive case
+        // positive cases
         Zaehlung matchingZaehlung = new Zaehlung();
         matchingZaehlung.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         matchingZaehlung.setKreisverkehr(false);
         matchingZaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, options, zaehlung), is(true));
 
+        Zaehlung nonMatchingZaehlungWithoutFuss = new Zaehlung();
+        nonMatchingZaehlungWithoutFuss.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlungWithoutFuss.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
+        nonMatchingZaehlungWithoutFuss.setKreisverkehr(false);
+        nonMatchingZaehlungWithoutFuss.setVerkehrsbeziehungen(List.of(vb1));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlungWithoutFuss, options, zaehlung), is(true));
+
         // negative cases
         Zaehlung nonMatchingZaehlung1 = new Zaehlung();
         nonMatchingZaehlung1.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung1.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         nonMatchingZaehlung1.setKreisverkehr(false);
         nonMatchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1));
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, options, zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung2 = new Zaehlung();
         nonMatchingZaehlung2.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung2.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         nonMatchingZaehlung2.setKreisverkehr(false);
         Verkehrsbeziehung vb3 = new Verkehrsbeziehung();
         vb3.setVon(1);
@@ -463,6 +483,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
         Zaehlung nonMatchingZaehlung3 = new Zaehlung();
         nonMatchingZaehlung3.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung3.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         nonMatchingZaehlung3.setKreisverkehr(false);
         Verkehrsbeziehung vb4 = new Verkehrsbeziehung();
         vb4.setVon(3);
@@ -472,6 +493,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
         Zaehlung nonMatchingZaehlung4 = new Zaehlung();
         nonMatchingZaehlung4.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung4.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         nonMatchingZaehlung4.setKreisverkehr(false);
         Verkehrsbeziehung vb5 = new Verkehrsbeziehung();
         vb5.setVon(3);
@@ -485,6 +507,7 @@ public class ProcessZaehldatenZeitreiheTest {
         // setup
         Zaehlung zaehlung = new Zaehlung();
         zaehlung.setZaehlart(Zaehlart.N.name());
+        zaehlung.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         zaehlung.setKreisverkehr(false);
         Verkehrsbeziehung vb1 = new Verkehrsbeziehung();
         vb1.setVon(1);
@@ -500,12 +523,14 @@ public class ProcessZaehldatenZeitreiheTest {
         // positive cases
         Zaehlung matchingZaehlung1 = new Zaehlung();
         matchingZaehlung1.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung1.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         matchingZaehlung1.setKreisverkehr(false);
         matchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1, vb2));
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung1, options, zaehlung), is(true));
 
         Zaehlung matchingZaehlung2 = new Zaehlung();
         matchingZaehlung2.setZaehlart(Zaehlart.N.name());
+        matchingZaehlung2.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         matchingZaehlung2.setKreisverkehr(false);
         matchingZaehlung2.setVerkehrsbeziehungen(List.of(vb1));
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung2, options, zaehlung), is(true));
@@ -513,6 +538,7 @@ public class ProcessZaehldatenZeitreiheTest {
         // negative case
         Zaehlung nonMatchingZaehlung = new Zaehlung();
         nonMatchingZaehlung.setZaehlart(Zaehlart.N.name());
+        nonMatchingZaehlung.setKategorien(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         nonMatchingZaehlung.setKreisverkehr(false);
         nonMatchingZaehlung.setVerkehrsbeziehungen(List.of());
         assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung, options, zaehlung), is(false));

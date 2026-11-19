@@ -66,15 +66,15 @@ public final class IndexServiceUtils {
     /**
      * Holt die neuste Zählung aus der Liste.
      *
-     * @param zs Zaehlungen
+     * @param zaehlungen
      * @return aktuellste Zaehlung
      */
-    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zs) {
-        return zs.stream().filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus())).max(Comparator.comparing(Zaehlung::getDatum))
-                .orElseGet(() -> {
-                    log.warn("List of 'Zaehlungen' is empty. I can't give you the last entry");
-                    return null;
-                });
+    public static Zaehlung getLetzteAktiveZaehlung(final List<Zaehlung> zaehlungen) {
+        return CollectionUtils.emptyIfNull(zaehlungen)
+                .stream()
+                .filter(zaehlung -> Status.ACTIVE.name().equalsIgnoreCase(zaehlung.getStatus()))
+                .max(Comparator.comparing(Zaehlung::getDatum))
+                .orElse(null);
     }
 
     /**

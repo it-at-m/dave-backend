@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 public final class FahrtrichtungUtil {
 
     public static String getLongTextOfFahrtrichtung(final String fahrtrichtung) {
+        if (fahrtrichtung == null) {
+            return "unbekannt";
+        }
+
         switch (fahrtrichtung) {
         case "N":
             return "Nord";

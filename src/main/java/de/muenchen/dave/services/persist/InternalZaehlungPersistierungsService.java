@@ -28,6 +28,7 @@ import de.muenchen.dave.services.SanitizationService;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
 import de.muenchen.dave.services.security.AuthorizationService;
 import jakarta.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,7 +102,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         }
 
         // Fahrzeugkategorien und -klassen setzen
-        zaehlungDto.setKategorien(getFahrzeugklassen(zaehlungDto.getKategorien()));
+        zaehlungDto.setKategorien(getFahrzeugklassen(new HashSet<>(zaehlungDto.getKategorien())));
 
         final Zaehlung zaehlung;
         if (StringUtils.isEmpty(zaehlungDto.getId())) {
