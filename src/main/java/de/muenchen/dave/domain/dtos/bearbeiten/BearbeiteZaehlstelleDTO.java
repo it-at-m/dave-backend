@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos.bearbeiten;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Data;
@@ -12,7 +13,7 @@ public class BearbeiteZaehlstelleDTO {
 
     String nummer;
 
-    @NotNull
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int stadtbezirkNummer;
 
     String stadtbezirk;
@@ -20,8 +21,10 @@ public class BearbeiteZaehlstelleDTO {
     @NotNull
     GeoPoint punkt;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     double lat;
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     double lng;
 
     List<String> customSuchwoerter;

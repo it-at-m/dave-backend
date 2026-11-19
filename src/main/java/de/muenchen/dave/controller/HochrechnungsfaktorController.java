@@ -57,7 +57,7 @@ public class HochrechnungsfaktorController {
 
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<?> deleteHochrechnungsfaktor(@PathVariable(value = "id") final UUID id) {
+    public ResponseEntity<Void> deleteHochrechnungsfaktor(@PathVariable(value = "id") final UUID id) {
         hochrechnungsfaktorService.deleteHochrechnungsfaktor(id);
         return ResponseEntity.noContent().build();
     }

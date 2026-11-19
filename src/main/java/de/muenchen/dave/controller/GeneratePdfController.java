@@ -77,7 +77,7 @@ public class GeneratePdfController {
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
-    @PostMapping(value = "/zaehlung", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "/zaehlung")
     public ResponseEntity<byte[]> generateZaehlungPdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String zaehlungId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String charttype,
@@ -125,7 +125,7 @@ public class GeneratePdfController {
      * @param schematischeUebersichtAsBase64Png Die Schematische Übersicht als PNG in Base 64
      * @return ResponseEntity of type byte-Array
      */
-    @PostMapping(value = "/messstelle", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
+    @PostMapping(value = "/messstelle")
     public ResponseEntity<byte[]> generateMessstellePdf(
             @RequestParam(value = REQUEST_PARAMETER_FACH_ID) @NotEmpty final String messstelleId,
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,

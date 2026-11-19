@@ -73,7 +73,7 @@ public class EmailAddressController {
 
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<?> deleteEmailaddress(@PathVariable(value = "id") final UUID id) {
+    public ResponseEntity<Void> deleteEmailaddress(@PathVariable(value = "id") final UUID id) {
         log.debug("E-Mail-Adresse löschen.");
         try {
             this.emailService.deleteEmailAddress(id);
