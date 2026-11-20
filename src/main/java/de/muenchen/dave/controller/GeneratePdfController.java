@@ -57,7 +57,8 @@ public class GeneratePdfController {
     private final GeneratePdfService generatePdfService;
     private final ReportService reportService;
 
-    public GeneratePdfController(final GeneratePdfService generatePdfService,
+    public GeneratePdfController(
+            final GeneratePdfService generatePdfService,
             final ReportService reportService) {
         this.generatePdfService = generatePdfService;
         this.reportService = reportService;
@@ -167,7 +168,8 @@ public class GeneratePdfController {
      * @return PDF-Datei
      */
     @PostMapping(value = "/report")
-    public ResponseEntity<byte[]> generatePdfReport(@RequestPart(value = "assets") @NotNull final List<BaseAsset> assetList,
+    public ResponseEntity<byte[]> generatePdfReport(
+            @RequestPart(value = "assets") @NotNull final List<BaseAsset> assetList,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department) {
         try {
             final byte[] pdf;
