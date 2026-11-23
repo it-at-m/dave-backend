@@ -9,6 +9,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
+import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 public class ProcessZaehldatenService {
 
     private final LadeZaehldatenService ladeZaehldatenService;
+
+    private final ZaehlungMapper zaehlungMapper;
 
     private final ProcessZaehldatenSteplineService processZaehldatenSteplineService;
 
@@ -104,9 +107,13 @@ public class ProcessZaehldatenService {
     public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
         log.debug("Lade Zaehlungskenngroessen");
 
+        final OptionsDTO options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
+        options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
+        options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
+        options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
         final LadeZaehldatenTableDTO zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlung.getId()),
-                ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung));
+                options);
 
         // Entfernen der Intervalle aus den Zähldaten
         final List<LadeZaehldatumDTO> zaehldatenWithoutIntervals = zaehldatenFuerZaehlungskenngroessen
