@@ -95,7 +95,7 @@ public class ZaehlstelleIndexService {
             }
             backendIdDto.setId(this.erstelleZaehlstelle(zaehlstelle));
         } else {
-            backendIdDto.setId(this.erneuereZaehlstelle(zaehlstelle, zaehlstelle.getId()));
+            backendIdDto.setId(this.erneuereZaehlstelle(zaehlstelle, UUID.fromString(zaehlstelle.getId())));
         }
         return backendIdDto;
     }
@@ -146,13 +146,13 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Wenn die Daten nicht geladen werden konnten
      */
-    public UUID erneuereZaehlstelle(final BearbeiteZaehlstelleDTO zdto, final String zaehlstelleId)
+    public UUID erneuereZaehlstelle(final BearbeiteZaehlstelleDTO zdto, final UUID zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(UUID.fromString(zaehlstelleId));
+        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
             final ZaehlstelleEntity zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
             // ID muss erhalten bleiben
-            zaehlstelle.setId(UUID.fromString(zaehlstelleId));
+            zaehlstelle.setId(zaehlstelleId);
             // Die Zählungen müssen erhalten bleiben
             zaehlstelle.setZaehlungen(zsto.get().getZaehlungen());
             this.updateZaehlstelleWithLetzteZaehlung(zaehlstelle);
@@ -174,7 +174,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Bei Ladefehlern
      */
-    public ZaehlungEntity erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public ZaehlungEntity erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final UUID zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final ZaehlungEntity zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set ZaehlungEntity ID
         if (zaehlung.getId() == null) {
@@ -191,7 +191,7 @@ public class ZaehlstelleIndexService {
                 .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID()));
 
         // Zählstelle erneuern
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(UUID.fromString(zaehlstelleId));
+        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
             final ZaehlstelleEntity zaehlstelleUpdated = this.updateZaehlstelleWithZaehlung(zsto.get(), zaehlung);
             customSuggestIndexService.createSuggestionsForZaehlung(zaehlung);
@@ -213,7 +213,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Bei Ladefehlern
      */
-    public ZaehlungEntity erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public ZaehlungEntity erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final UUID zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final ZaehlungEntity zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set ZaehlungEntity ID
         if (zaehlung.getId() == null) {
@@ -230,7 +230,7 @@ public class ZaehlstelleIndexService {
                 .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID()));
 
         // Zählstelle erneuern
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(UUID.fromString(zaehlstelleId));
+        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
             final ZaehlstelleEntity zst = zsto.get();
             for (int index = 0; index < zst.getZaehlungen().size(); index++) {
@@ -262,8 +262,8 @@ public class ZaehlstelleIndexService {
      * @param zaehlstelleId zur Identifikation der {@link ZaehlstelleEntity}.
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public void erneuereZaehlung(final ZaehlungEntity zl, final String zaehlstelleId) throws BrokenInfrastructureException {
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(UUID.fromString(zaehlstelleId));
+    public void erneuereZaehlung(final ZaehlungEntity zl, final UUID zaehlstelleId) throws BrokenInfrastructureException {
+        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
             final ZaehlstelleEntity zst = zsto.get();
             final List<String> persistedSuchwoerter = new ArrayList<>();
@@ -315,15 +315,15 @@ public class ZaehlstelleIndexService {
         }
     }
 
-    public boolean deleteZaehlung(final String zaehlungId) throws DataNotFoundException, BrokenInfrastructureException {
+    public boolean deleteZaehlung(final UUID zaehlungId) throws DataNotFoundException, BrokenInfrastructureException {
         boolean isDeleted = false;
         // ZaehlstelleEntity anhand der ZaehlungEntity laden
-        final Optional<ZaehlstelleEntity> byZaehlungenId = this.zaehlstelleIndex.findByZaehlungenId(UUID.fromString(zaehlungId));
+        final Optional<ZaehlstelleEntity> byZaehlungenId = this.zaehlstelleIndex.findByZaehlungenId(zaehlungId);
 
         if (byZaehlungenId.isPresent()) {
             final ZaehlstelleEntity zaehlstelle = byZaehlungenId.get();
             // Zu löschende Zählung entfernen
-            isDeleted = zaehlstelle.getZaehlungen().removeIf(zaehlung -> zaehlung.getId().equals(UUID.fromString(zaehlungId)));
+            isDeleted = zaehlstelle.getZaehlungen().removeIf(zaehlung -> zaehlung.getId().equals(zaehlungId));
 
             // Alle Vorschläge zur Zählung ebenfalls löschen
             customSuggestIndexService.deleteAllSuggestionsByFkid(zaehlungId);
@@ -648,7 +648,7 @@ public class ZaehlstelleIndexService {
 
     private void updateStatusOfZaehlung(final ZaehlungEntity zaehlung, final Status newStatus, final ZaehlstelleEntity zaehlstelle) throws BrokenInfrastructureException {
         zaehlung.setStatus(newStatus);
-        this.erneuereZaehlung(zaehlung, String.valueOf(zaehlstelle.getId()));
+        this.erneuereZaehlung(zaehlung, zaehlstelle.getId());
         final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
         updateStatusDTO.setStatus(zaehlung.getStatus());
         this.messageService.saveUpdateMessageForZaehlungStatus(zaehlung.getId(), updateStatusDTO);

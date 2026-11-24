@@ -70,7 +70,7 @@ public class ZaehlungController {
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
         log.debug("Zaehlung speichern: {}", zaehlung);
         try {
-            final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlung(zaehlung, zaehlstelleId);
+            final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlung(zaehlung, UUID.fromString(zaehlstelleId));
             this.chatMessageService.saveUpdateMessageForZaehlungInternal(backendIdDto.getId());
             log.debug("Die Zaehlung wurde erfolgreich gespeichert.");
             return ResponseEntity.ok(backendIdDto);
@@ -86,7 +86,7 @@ public class ZaehlungController {
     public ResponseEntity<Boolean> deleteZaehlung(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotNull final String zaehlungId) {
         log.debug("Zaehlung löschen: {}", zaehlungId);
         try {
-            final boolean isDeleted = this.internalZaehlungPersistierungsService.deleteZaehlung(zaehlungId);
+            final boolean isDeleted = this.internalZaehlungPersistierungsService.deleteZaehlung(UUID.fromString(zaehlungId));
             return ResponseEntity.ok(isDeleted);
         } catch (final DataNotFoundException dnfe) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, dnfe.getMessage());

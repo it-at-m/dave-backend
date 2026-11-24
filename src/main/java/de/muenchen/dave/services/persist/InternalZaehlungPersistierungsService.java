@@ -71,7 +71,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws BrokenInfrastructureException beim Loeschen der ZaehlungEntity aus dem Index
      */
     @Transactional
-    public boolean deleteZaehlung(final String zaehlungId) throws DataNotFoundException, BrokenInfrastructureException {
+    public boolean deleteZaehlung(final UUID zaehlungId) throws DataNotFoundException, BrokenInfrastructureException {
         // Zeitintervalle zur Zaehlung löschen
         boolean isDeleted = this.zeitintervallPersistierungsService.deleteZaehlung(zaehlungId);
 
@@ -92,7 +92,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws DataNotFoundException Beim Schreiben in den Index
      */
     @Transactional
-    public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final String zaehlstelleId)
+    public BackendIdDTO saveZaehlung(final BearbeiteZaehlungDTO zaehlungDto, final UUID zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
 
         // Sanitize attributes of zaehlungDto
@@ -356,7 +356,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // updateZaehlung
         this.indexService.erneuereZaehlung(
                 zaehlungToUpdate,
-                String.valueOf(zaehlstelleByZaehlungId.getId()));
+                zaehlstelleByZaehlungId.getId());
 
         // Rückgabe der ZaehlungsId
         backendIdDto.setId(zaehlungId);

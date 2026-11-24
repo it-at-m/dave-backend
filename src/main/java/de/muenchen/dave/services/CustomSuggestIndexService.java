@@ -68,7 +68,7 @@ public class CustomSuggestIndexService {
      * @param zaehlung neue zu verschlagwortende ZaehlungEntity
      */
     public void updateSuggestionsForZaehlung(final ZaehlungEntity zaehlung) {
-        this.deleteAllSuggestionsByFkid(String.valueOf(zaehlung.getId()));
+        this.deleteAllSuggestionsByFkid(zaehlung.getId());
         this.createSuggestionsForZaehlung(zaehlung);
     }
 
@@ -78,7 +78,7 @@ public class CustomSuggestIndexService {
      * @param zaehlstelle neue zu verschlagwortende ZaehlungEntity
      */
     public void updateSuggestionsForZaehlstelle(final ZaehlstelleEntity zaehlstelle) {
-        this.deleteAllSuggestionsByFkid(String.valueOf(zaehlstelle.getId()));
+        this.deleteAllSuggestionsByFkid(zaehlstelle.getId());
         this.createSuggestionsForZaehlstelle(zaehlstelle);
     }
 
@@ -88,7 +88,7 @@ public class CustomSuggestIndexService {
      * @param messstelle neue zu verschlagwortende Messstelle
      */
     public void updateSuggestionsForMessstelle(final MessstelleEntity messstelle) {
-        this.deleteAllSuggestionsByFkid(String.valueOf(messstelle.getId()));
+        this.deleteAllSuggestionsByFkid(messstelle.getId());
         this.createSuggestionsForMessstelle(messstelle);
     }
 
@@ -97,8 +97,8 @@ public class CustomSuggestIndexService {
      *
      * @param suggestFkid Fremdschlüssel
      */
-    public void deleteAllSuggestionsByFkid(final String suggestFkid) {
-        this.customSuggestIndex.deleteAllByFkid(suggestFkid);
+    public void deleteAllSuggestionsByFkid(final UUID suggestFkid) {
+        this.customSuggestIndex.deleteAllByFkid(String.valueOf(suggestFkid));
     }
 
     /**

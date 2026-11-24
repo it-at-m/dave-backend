@@ -47,11 +47,10 @@ public class ZeitintervallPersistierungsService {
         this.hochrechnungsService = hochrechnungsService;
     }
 
-    public boolean deleteZaehlung(final String zaehlungId) {
-        final UUID zaehlungIdAsUUID = UUID.fromString(zaehlungId);
-        zeitintervallRepository.deleteAllByZaehlungId(zaehlungIdAsUUID);
+    public boolean deleteZaehlung(final UUID zaehlungId) {
+        zeitintervallRepository.deleteAllByZaehlungId(zaehlungId);
         zeitintervallRepository.flush();
-        return !zeitintervallRepository.existsByZaehlungId(zaehlungIdAsUUID);
+        return !zeitintervallRepository.existsByZaehlungId(zaehlungId);
     }
 
     /**
