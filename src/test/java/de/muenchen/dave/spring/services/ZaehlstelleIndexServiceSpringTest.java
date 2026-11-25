@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
-import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
+import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -130,7 +130,7 @@ public class ZaehlstelleIndexServiceSpringTest {
         zaehlstelle1.setNummer("120105");
         zaehlstelle1.setStadtbezirkNummer(12);
         when(zaehlstelleIndex.findAllByNummerStartsWithAndStadtbezirkNummer("1201", 12)).thenReturn(List.of(zaehlstelle1));
-        final NextZaehlstellennummerDTO nextCurrentNumber = this.service.getNextZaehlstellennummer("1201", 12);
+        final NextZaehlstellennummerDto nextCurrentNumber = this.service.getNextZaehlstellennummer("1201", 12);
         assertThat(nextCurrentNumber, is(notNullValue()));
         assertThat(nextCurrentNumber.getNummer(), is(equalTo("120106")));
     }

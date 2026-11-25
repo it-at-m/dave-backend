@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class NextZaehlstellennummerDTO {
+public class NextZaehlstellennummerDto {
     @NotNull
     String nummer;
 }

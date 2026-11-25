@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
+import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
@@ -64,10 +64,10 @@ public class ZaehlstelleController {
     @GetMapping(value = "/nextZaehlstellennummer", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<NextZaehlstellennummerDTO> getNextCurrentNumber(@RequestParam(value = REQUEST_PARAMETER_ID) @NotNull final String partOfzaehlstelleId,
+    public ResponseEntity<NextZaehlstellennummerDto> getNextCurrentNumber(@RequestParam(value = REQUEST_PARAMETER_ID) @NotNull final String partOfzaehlstelleId,
             @RequestParam(value = "stadtbezirksnummer") @NotNull final Integer stadtbezirksnummer) {
         try {
-            final NextZaehlstellennummerDTO nextCurrentNumber = this.indexService.getNextZaehlstellennummer(partOfzaehlstelleId, stadtbezirksnummer);
+            final NextZaehlstellennummerDto nextCurrentNumber = this.indexService.getNextZaehlstellennummer(partOfzaehlstelleId, stadtbezirksnummer);
             return ResponseEntity.ok(nextCurrentNumber);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im ZaehlstellenController, Zählstelle konnte nicht gefunden werden. ID: {}", partOfzaehlstelleId, e);

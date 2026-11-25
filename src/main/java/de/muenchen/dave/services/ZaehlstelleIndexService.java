@@ -2,7 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
+import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
@@ -461,9 +461,9 @@ public class ZaehlstelleIndexService {
      * @param stadtbezirksnummer Nummer des Stadtbezirks der Zaehlstelle
      * @return naechste Zaehlstellennummer
      */
-    public NextZaehlstellennummerDTO getNextZaehlstellennummer(final String partOfzaehlstelleId, final Integer stadtbezirksnummer) {
+    public NextZaehlstellennummerDto getNextZaehlstellennummer(final String partOfzaehlstelleId, final Integer stadtbezirksnummer) {
         final List<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.findAllByNummerStartsWithAndStadtbezirkNummer(partOfzaehlstelleId, stadtbezirksnummer);
-        final NextZaehlstellennummerDTO dto = new NextZaehlstellennummerDTO();
+        final NextZaehlstellennummerDto dto = new NextZaehlstellennummerDto();
         if (CollectionUtils.isNotEmpty(zaehlstellen)) {
             final AtomicInteger lastZaehlstellennummer = new AtomicInteger(0);
             zaehlstellen.forEach(zaehlstelle -> {
