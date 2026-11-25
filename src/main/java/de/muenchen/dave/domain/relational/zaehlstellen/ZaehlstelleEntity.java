@@ -68,7 +68,7 @@ public class ZaehlstelleEntity extends BaseEntity {
     @Column(name = "custom_suchwoerter", columnDefinition = "text[]")
     private List<String> customSuchwoerter;
 
-    @JdbcTypeCode(SqlTypes.OTHER)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "suchwoerter_neu", columnDefinition = "tsvector")
     @ColumnTransformer(write = "to_tsvector('simple'::regconfig, ?)")
     private String suchwoerterNeu;
