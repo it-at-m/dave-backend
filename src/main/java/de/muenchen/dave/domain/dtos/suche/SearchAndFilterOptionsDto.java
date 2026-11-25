@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class SearchAndFilterOptionsDTO {
+public class SearchAndFilterOptionsDto {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean searchInMessstellen;

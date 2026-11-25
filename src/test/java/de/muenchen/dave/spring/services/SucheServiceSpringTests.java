@@ -24,8 +24,8 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
-import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
+import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDto;
+import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDto;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -87,7 +87,7 @@ public class SucheServiceSpringTests {
     public void testSucheErhebungsstellenCachesResultsByFachadminRole() {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
-        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        final SearchAndFilterOptionsDto searchAndFilterOptions = new SearchAndFilterOptionsDto();
         searchAndFilterOptions.setSearchInZaehlstellen(true);
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of(this.createSampleData().get(0))));
 
@@ -104,7 +104,7 @@ public class SucheServiceSpringTests {
     @Test
     @WithMockUser(roles = { "FACHADMIN" })
     public void testComplexSuggest() throws IOException {
-        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        final SearchAndFilterOptionsDto searchAndFilterOptions = new SearchAndFilterOptionsDto();
         searchAndFilterOptions.setSearchInZaehlstellen(true);
         searchAndFilterOptions.setSearchInMessstellen(true);
 
@@ -123,7 +123,7 @@ public class SucheServiceSpringTests {
                                 .hits(hitsBuilder -> hitsBuilder.hits(List.of()))));
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        SucheComplexSuggestsDTO dto1 = this.service.getComplexSuggest("Moo", searchAndFilterOptions, false);
+        SucheComplexSuggestsDto dto1 = this.service.getComplexSuggest("Moo", searchAndFilterOptions, false);
         assertThat(dto1.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto1.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01"))));
@@ -134,7 +134,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto2 = this.service.getComplexSuggest("7.", searchAndFilterOptions, false);
+        SucheComplexSuggestsDto dto2 = this.service.getComplexSuggest("7.", searchAndFilterOptions, false);
         assertThat(dto2.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto2.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("01")),
@@ -146,7 +146,7 @@ public class SucheServiceSpringTests {
         resultComplexSuggest = new PageImpl<>(List.of(this.createSampleData().get(2)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto3 = this.service.getComplexSuggest("7. Fo", searchAndFilterOptions, false);
+        SucheComplexSuggestsDto dto3 = this.service.getComplexSuggest("7. Fo", searchAndFilterOptions, false);
         assertThat(dto3.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto3.getZaehlstellenSuggests(), containsInAnyOrder(
                 Matchers.hasProperty("id", is("03"))));
@@ -158,7 +158,7 @@ public class SucheServiceSpringTests {
                 this.createSampleData().get(3)));
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
 
-        SucheComplexSuggestsDTO dto5 = this.service.getComplexSuggest("13.11 Ga", searchAndFilterOptions, false);
+        SucheComplexSuggestsDto dto5 = this.service.getComplexSuggest("13.11 Ga", searchAndFilterOptions, false);
         assertThat(dto5.getZaehlstellenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), is(not(empty())));
         assertThat(dto5.getZaehlungenSuggests(), containsInAnyOrder(
@@ -173,7 +173,7 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
-        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        final SearchAndFilterOptionsDto searchAndFilterOptions = new SearchAndFilterOptionsDto();
         searchAndFilterOptions.setSearchInZaehlstellen(true);
         searchAndFilterOptions.setSearchInMessstellen(true);
 
@@ -212,7 +212,7 @@ public class SucheServiceSpringTests {
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE)).clear();
         Objects.requireNonNull(cacheManager.getCache(CachingConfiguration.SUCHE_ERHEBUNGSSTELLE_DATENPORTAL)).clear();
 
-        final SearchAndFilterOptionsDTO searchAndFilterOptions = new SearchAndFilterOptionsDTO();
+        final SearchAndFilterOptionsDto searchAndFilterOptions = new SearchAndFilterOptionsDto();
         searchAndFilterOptions.setSearchInZaehlstellen(true);
         searchAndFilterOptions.setSearchInMessstellen(true);
 

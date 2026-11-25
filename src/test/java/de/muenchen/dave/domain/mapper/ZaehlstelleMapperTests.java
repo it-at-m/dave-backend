@@ -13,7 +13,7 @@ import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -82,7 +82,7 @@ public class ZaehlstelleMapperTests {
     @Test
     public void testToSucheCounterSuggestDto() {
         Zaehlstelle bean = ZaehlstelleRandomFactory.getOne();
-        SucheZaehlstelleSuggestDTO dto = this.mapper.bean2SucheZaehlstelleSuggestDto(bean);
+        SucheZaehlstelleSuggestDto dto = this.mapper.bean2SucheZaehlstelleSuggestDto(bean);
 
         assertThat(dto, hasProperty("id", equalTo(bean.getId())));
         assertThat(dto, hasProperty("text", equalTo(bean.getNummer() + StringUtils.SPACE + bean.getStadtbezirk())));

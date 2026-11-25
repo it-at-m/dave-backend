@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.util.SuchwortUtil;
@@ -58,10 +58,10 @@ public interface ZaehlstelleMapper {
         }
     }
 
-    SucheZaehlstelleSuggestDTO bean2SucheZaehlstelleSuggestDto(Zaehlstelle bean);
+    SucheZaehlstelleSuggestDto bean2SucheZaehlstelleSuggestDto(Zaehlstelle bean);
 
     @AfterMapping
-    default void toSucheZaehlstelleSuggestDto(@MappingTarget SucheZaehlstelleSuggestDTO dto, Zaehlstelle bean) {
+    default void toSucheZaehlstelleSuggestDto(@MappingTarget SucheZaehlstelleSuggestDto dto, Zaehlstelle bean) {
         dto.setText(bean.getNummer() + StringUtils.SPACE + bean.getStadtbezirk());
     }
 

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class SucheMessstelleSuggestDTO {
+public class SucheZaehlstelleSuggestDto {
 
     @NotNull
     String text;

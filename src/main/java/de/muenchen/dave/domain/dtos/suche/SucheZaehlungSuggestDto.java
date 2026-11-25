@@ -5,15 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class SucheZaehlstelleSuggestDTO {
+public class SucheZaehlungSuggestDto {
 
     @NotNull
     String text;
     @NotNull
     String id;
+    @NotNull
+    String zaehlstelleId;
 
     /**
-     * Zeigt ob Zählstelle im Datenportal sichtbar ist. {@link Zaehlstelle#getSichtbarDatenportal()}
+     * Zeigt ob Zählstelle der Zählung im Datenportal sichtbar ist.
+     * {@link Zaehlstelle#getSichtbarDatenportal()}
      */
     @NotNull
     Boolean sichtbarDatenportal;

@@ -9,7 +9,7 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -124,10 +124,10 @@ public interface MessstelleMapper {
         dto.setLongitude(bean.getPunkt().getLon());
     }
 
-    SucheMessstelleSuggestDTO bean2SucheMessstelleSuggestDto(Messstelle bean);
+    SucheMessstelleSuggestDto bean2SucheMessstelleSuggestDto(Messstelle bean);
 
     @AfterMapping
-    default void toSucheMessstelleSuggestDto(@MappingTarget SucheMessstelleSuggestDTO dto, Messstelle bean) {
+    default void toSucheMessstelleSuggestDto(@MappingTarget SucheMessstelleSuggestDto dto, Messstelle bean) {
         dto.setText(bean.getMstId() + StringUtils.SPACE + bean.getName());
     }
 

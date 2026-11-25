@@ -12,12 +12,12 @@ import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
-import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDto;
+import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDto;
+import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDto;
+import de.muenchen.dave.domain.dtos.suche.SucheWordSuggestDto;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDto;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -132,9 +132,9 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen
      * @return sichtbare Suchvorschläge
      */
-    public SucheComplexSuggestsDTO getComplexSuggestSichtbarDatenportal(
+    public SucheComplexSuggestsDto getComplexSuggestSichtbarDatenportal(
             final String query,
-            final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            final SearchAndFilterOptionsDto searchAndFilterOptions) {
         final var sucheComplexSuggests = this.getComplexSuggest(query, searchAndFilterOptions, false);
         final var zaehlstellenSuggests = ListUtils.emptyIfNull(sucheComplexSuggests.getZaehlstellenSuggests())
                 .stream()
@@ -168,20 +168,20 @@ public class SucheService {
      *            false
      * @return DTO mit alle Suchvorschlaegen
      */
-    public SucheComplexSuggestsDTO getComplexSuggest(
+    public SucheComplexSuggestsDto getComplexSuggest(
             final String query,
-            final SearchAndFilterOptionsDTO searchAndFilterOptions,
+            final SearchAndFilterOptionsDto searchAndFilterOptions,
             final boolean isForAdminportal) {
         final String q = this.createQueryString(query);
         log.debug("query '{}'", q);
 
-        final SucheComplexSuggestsDTO dto = new SucheComplexSuggestsDTO();
+        final SucheComplexSuggestsDto dto = new SucheComplexSuggestsDto();
 
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
             // Zählstellen
             final Page<Zaehlstelle> zaehlstellen = this.zaehlstelleIndex.suggestSearch(q, PageRequest.of(0, 3));
 
-            final List<SucheZaehlstelleSuggestDTO> sucheZaehlstelleSuggestDTOS = this
+            final List<SucheZaehlstelleSuggestDto> sucheZaehlstelleSuggestDTOS = this
                     .filterZaehlungenForEachZaehlstelle(zaehlstellen.toList(), isForAdminportal)
                     .stream()
                     .map(this.zaehlstelleMapper::bean2SucheZaehlstelleSuggestDto)
@@ -191,7 +191,7 @@ public class SucheService {
 
             // Zählungen
             final List<Zaehlung> zaehlungen = this.findZaehlung(zaehlstellen, query);
-            final List<SucheZaehlungSuggestDTO> sucheZaehlungSuggestDtos = zaehlungen.stream()
+            final List<SucheZaehlungSuggestDto> sucheZaehlungSuggestDtos = zaehlungen.stream()
                     .map(this.zaehlungMapper::bean2SucheZaehlungSuggestDto)
                     .collect(Collectors.toList());
 
@@ -239,7 +239,7 @@ public class SucheService {
     )
     public Set<ErhebungsstelleKarteDto> sucheErhebungsstellenForKarteDatenportal(
             final String query,
-            final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            final SearchAndFilterOptionsDto searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
         final Set<ErhebungsstelleKarteDto> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, false);
         final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
@@ -277,7 +277,7 @@ public class SucheService {
     )
     public Set<ErhebungsstelleKarteDto> sucheErhebungsstellenForKarte(
             final String query,
-            final SearchAndFilterOptionsDTO searchAndFilterOptions,
+            final SearchAndFilterOptionsDto searchAndFilterOptions,
             final boolean isForAdminportal) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDto> searchResult = new HashSet<>();
@@ -335,9 +335,9 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
      * @return passende Messstellenvorschläge
      */
-    private List<SucheMessstelleSuggestDTO> getMessstellenSuggest(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    private List<SucheMessstelleSuggestDto> getMessstellenSuggest(final String query, final SearchAndFilterOptionsDto searchAndFilterOptions) {
         final Page<Messstelle> messstellen = this.messstelleIndex.suggestSearch(query, PageRequest.of(0, 3));
-        final List<SucheMessstelleSuggestDTO> sucheMessstelleSuggestDTOS = messstellen.stream()
+        final List<SucheMessstelleSuggestDto> sucheMessstelleSuggestDTOS = messstellen.stream()
                 .filter(messstelle -> CollectionUtils.emptyIfNull(searchAndFilterOptions.getMessstelleVerkehrsart())
                         .contains(messstelle.getDetektierteVerkehrsart()))
                 .map(this.messstelleMapper::bean2SucheMessstelleSuggestDto)
@@ -353,7 +353,7 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
      * @return Karten-DTOs der passenden Messstellen
      */
-    private Set<MessstelleKarteDTO> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    private Set<MessstelleKarteDTO> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDto searchAndFilterOptions) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -504,7 +504,7 @@ public class SucheService {
      * @return Liste an Vorschlaegen
      */
     @SneakyThrows
-    private List<SucheWordSuggestDTO> getSuggestions(final String q) {
+    private List<SucheWordSuggestDto> getSuggestions(final String q) {
         final String[] splittedWords = q.split(StringUtils.SPACE);
         final String query = splittedWords[splittedWords.length - 1];
         final String[] wordsForPrefix = ArrayUtils.subarray(splittedWords, 0, splittedWords.length - 1);
@@ -567,7 +567,7 @@ public class SucheService {
                     return true;
                 })
                 .map(suggestedText -> prefix + suggestedText)
-                .map(SucheWordSuggestDTO::new)
+                .map(SucheWordSuggestDto::new)
                 .toList();
     }
 

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SucheWordSuggestDTO {
+public class SucheWordSuggestDto {
 
     @NotNull
     String text;

@@ -7,7 +7,7 @@ import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
@@ -169,10 +169,10 @@ public interface ZaehlungMapper {
         }
     }
 
-    SucheZaehlungSuggestDTO bean2SucheZaehlungSuggestDto(Zaehlung bean);
+    SucheZaehlungSuggestDto bean2SucheZaehlungSuggestDto(Zaehlung bean);
 
     @AfterMapping
-    default void toSucheZaehlungSuggestDTO(@MappingTarget SucheZaehlungSuggestDTO dto, Zaehlung bean) {
+    default void toSucheZaehlungSuggestDTO(@MappingTarget SucheZaehlungSuggestDto dto, Zaehlung bean) {
         dto.setText(bean.getDatum().format(DATE_TIME_FORMATTER) + StringUtils.SPACE + bean.getProjektName());
     }
 

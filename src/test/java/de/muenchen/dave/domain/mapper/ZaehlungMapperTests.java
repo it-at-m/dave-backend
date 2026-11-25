@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlungDTORandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
-import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
+import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
 import de.muenchen.dave.domain.enums.Wetter;
@@ -107,7 +107,7 @@ public class ZaehlungMapperTests {
     @Test
     public void testBean2SucheZaehlungsSuggestDto() {
         Zaehlung bean = ZaehlungRandomFactory.getOne();
-        SucheZaehlungSuggestDTO dto = this.mapper.bean2SucheZaehlungSuggestDto(bean);
+        SucheZaehlungSuggestDto dto = this.mapper.bean2SucheZaehlungSuggestDto(bean);
 
         assertThat(dto, hasProperty("id", equalTo(bean.getId())));
         assertThat(dto, hasProperty("text",

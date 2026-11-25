@@ -1,8 +1,8 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
-import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
-import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
+import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDto;
+import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.SucheService;
 import jakarta.validation.Valid;
@@ -39,10 +39,10 @@ public class SucheController {
 
     @PostMapping(value = "/suggest-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<SucheComplexSuggestsDTO> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    public ResponseEntity<SucheComplexSuggestsDto> suggestDatenportal(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDto searchAndFilterOptions) {
         try {
-            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggestSichtbarDatenportal(query, searchAndFilterOptions);
+            final SucheComplexSuggestsDto sucheComplexSuggestsDTO = this.sucheService.getComplexSuggestSichtbarDatenportal(query, searchAndFilterOptions);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim suggest der Query: {}", query, e);
@@ -55,10 +55,10 @@ public class SucheController {
 
     @PostMapping(value = "/suggest", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<SucheComplexSuggestsDTO> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+    public ResponseEntity<SucheComplexSuggestsDto> suggest(@RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDto searchAndFilterOptions) {
         try {
-            final SucheComplexSuggestsDTO sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, searchAndFilterOptions, true);
+            final SucheComplexSuggestsDto sucheComplexSuggestsDTO = this.sucheService.getComplexSuggest(query, searchAndFilterOptions, true);
             return new ResponseEntity<>(sucheComplexSuggestsDTO, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim suggest der Query: {}", query, e);
@@ -73,7 +73,7 @@ public class SucheController {
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDto>> searchErhebungsstellenForKarteDatenportal(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDto searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDto> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions);
             return new ResponseEntity<>(erhebungsstellen, HttpStatus.OK);
@@ -90,7 +90,7 @@ public class SucheController {
     @Transactional(readOnly = true)
     public ResponseEntity<Set<ErhebungsstelleKarteDto>> searchErhebungsstelleForKarte(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
-            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
+            @RequestBody @NotNull @Valid final SearchAndFilterOptionsDto searchAndFilterOptions) {
         try {
             final Set<ErhebungsstelleKarteDto> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarte(
                     query,
