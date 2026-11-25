@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.PkwEinheit;
-import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
+import de.muenchen.dave.domain.dtos.PkwEinheitDto;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapperImpl;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
@@ -41,7 +41,7 @@ class PkwEinheitServiceTest {
 
         Mockito.when(pkwEinheitRepository.findTopByOrderByCreatedTimeDesc()).thenReturn(Optional.of(pkwEinheit));
 
-        final PkwEinheitDTO expected = new PkwEinheitDTO();
+        final PkwEinheitDto expected = new PkwEinheitDto();
         expected.setPkw(BigDecimal.valueOf(1));
         expected.setLkw(BigDecimal.valueOf(2));
         expected.setLastzuege(BigDecimal.valueOf(3));
@@ -50,7 +50,7 @@ class PkwEinheitServiceTest {
         expected.setFahrradfahrer(BigDecimal.valueOf(6));
         expected.setFussgaenger(BigDecimal.valueOf(7));
 
-        PkwEinheitDTO result = pkwEinheitService.getLatestPkwEinheiten();
+        PkwEinheitDto result = pkwEinheitService.getLatestPkwEinheiten();
         assertThat(result, is(expected));
     }
 

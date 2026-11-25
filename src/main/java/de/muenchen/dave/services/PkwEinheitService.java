@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.PkwEinheit;
-import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
+import de.muenchen.dave.domain.dtos.PkwEinheitDto;
 import de.muenchen.dave.domain.mapper.PkwEinheitMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.PkwEinheitRepository;
@@ -25,10 +25,10 @@ public class PkwEinheitService {
     /**
      * Diese Methode extrahiert die zuletzt gespeicherte {@link PkwEinheit} und gibt diese zurück.
      *
-     * @return die zuletzte gespeicherte {@link PkwEinheit} als {@link PkwEinheitDTO}.
+     * @return die zuletzte gespeicherte {@link PkwEinheit} als {@link PkwEinheitDto}.
      * @throws DataNotFoundException Bei ladefehlern
      */
-    public PkwEinheitDTO getLatestPkwEinheiten() throws DataNotFoundException {
+    public PkwEinheitDto getLatestPkwEinheiten() throws DataNotFoundException {
         final Optional<PkwEinheit> pkwEinheitOptional = pkwEinheitRepository.findTopByOrderByCreatedTimeDesc();
         return pkwEinheitOptional
                 .map(pkwEinheitMapper::entity2bearbeiteDto)

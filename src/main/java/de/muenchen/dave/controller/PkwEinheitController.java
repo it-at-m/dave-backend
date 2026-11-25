@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
+import de.muenchen.dave.domain.dtos.PkwEinheitDto;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.PkwEinheitService;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class PkwEinheitController {
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
     )
-    public ResponseEntity<PkwEinheitDTO> getLatestPkwEinheiten() {
+    public ResponseEntity<PkwEinheitDto> getLatestPkwEinheiten() {
         try {
             return ResponseEntity.ok(
                     pkwEinheitService.getLatestPkwEinheiten());

@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.dtos.bearbeiten;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.muenchen.dave.configuration.json.EmptyListSerializer;
-import de.muenchen.dave.domain.dtos.PkwEinheitDTO;
+import de.muenchen.dave.domain.dtos.PkwEinheitDto;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -68,7 +68,7 @@ public class BearbeiteZaehlungDTO {
 
     List<String> customSuchwoerter;
 
-    PkwEinheitDTO pkwEinheit;
+    PkwEinheitDto pkwEinheit;
 
     List<BearbeiteKnotenarmDTO> knotenarme;
 
