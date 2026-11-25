@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.domain.mapper.HochrechnungsfaktorMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.repositories.relationaldb.HochrechnungsfaktorRepository;
@@ -37,7 +37,7 @@ public class HochrechnungsfaktorService {
      * @param hofaEntity Bean
      * @return die im zweiten Parameter übergebene Entität mit den fachlichen Daten der DTO.
      */
-    public static Hochrechnungsfaktor setDtoDataToEntity(final HochrechnungsfaktorDTO hofaDto,
+    public static Hochrechnungsfaktor setDtoDataToEntity(final HochrechnungsfaktorDto hofaDto,
             final Hochrechnungsfaktor hofaEntity) {
         hofaEntity.setMatrix(hofaDto.getMatrix());
         hofaEntity.setKfz(hofaDto.getKfz());
@@ -56,10 +56,10 @@ public class HochrechnungsfaktorService {
      * Objekt angelegt.
      *
      * @param hochrechnungsfaktorDTO hochrechnungsfaktorDTO
-     * @return die gespeicherte {@link Hochrechnungsfaktor} als {@link HochrechnungsfaktorDTO}.
+     * @return die gespeicherte {@link Hochrechnungsfaktor} als {@link HochrechnungsfaktorDto}.
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public HochrechnungsfaktorDTO saveHochrechnungsfaktor(final HochrechnungsfaktorDTO hochrechnungsfaktorDTO) throws DataNotFoundException {
+    public HochrechnungsfaktorDto saveHochrechnungsfaktor(final HochrechnungsfaktorDto hochrechnungsfaktorDTO) throws DataNotFoundException {
         Hochrechnungsfaktor hochrechnungsfaktor;
         if (ObjectUtils.isEmpty(hochrechnungsfaktorDTO.getId())) {
             hochrechnungsfaktor = hochrechnungsfaktorMapper.dto2bean(hochrechnungsfaktorDTO);
@@ -75,14 +75,14 @@ public class HochrechnungsfaktorService {
     /**
      * Diese Methode extrahiert die gespeicherten {@link Hochrechnungsfaktor}en und gibt diese zurück.
      *
-     * @return die gespeicherten {@link Hochrechnungsfaktor} als {@link HochrechnungsfaktorDTO}.
+     * @return die gespeicherten {@link Hochrechnungsfaktor} als {@link HochrechnungsfaktorDto}.
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public List<HochrechnungsfaktorDTO> getHochrechnungsfaktoren() throws DataNotFoundException {
+    public List<HochrechnungsfaktorDto> getHochrechnungsfaktoren() throws DataNotFoundException {
         return hochrechnungsfaktorRepository.findAll(Sort.by(SORTING_ATTRIBUTE).descending())
                 .stream()
                 .map(hochrechnungsfaktorMapper::bean2Dto)
-                .sorted(Comparator.comparing(HochrechnungsfaktorDTO::getMatrix))
+                .sorted(Comparator.comparing(HochrechnungsfaktorDto::getMatrix))
                 .collect(Collectors.toList());
     }
 

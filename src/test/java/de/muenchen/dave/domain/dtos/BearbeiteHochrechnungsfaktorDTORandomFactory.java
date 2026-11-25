@@ -4,8 +4,8 @@ import com.github.javafaker.Faker;
 
 public class BearbeiteHochrechnungsfaktorDTORandomFactory {
 
-    public static HochrechnungsfaktorDTO getOne() {
-        HochrechnungsfaktorDTO h = new HochrechnungsfaktorDTO();
+    public static HochrechnungsfaktorDto getOne() {
+        HochrechnungsfaktorDto h = new HochrechnungsfaktorDto();
 
         h.setGv(Faker.instance().number().randomDouble(3, 0, 3));
         h.setKfz(Faker.instance().number().randomDouble(3, 0, 3));

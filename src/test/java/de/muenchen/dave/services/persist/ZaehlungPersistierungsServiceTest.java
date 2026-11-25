@@ -18,7 +18,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
@@ -135,7 +135,7 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        final HochrechnungsfaktorDTO hochrechnungsfaktorDto = new HochrechnungsfaktorDTO();
+        final HochrechnungsfaktorDto hochrechnungsfaktorDto = new HochrechnungsfaktorDto();
         hochrechnungsfaktorDto.setKfz(2.0);
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);
@@ -434,7 +434,7 @@ class ZaehlungPersistierungsServiceTest {
         zeitintervall.setKraftraeder(5);
         zeitintervall.setFahrradfahrer(6);
         zeitintervall.setFussgaenger(7);
-        final HochrechnungsfaktorDTO hochrechnungsfaktorDto = new HochrechnungsfaktorDTO();
+        final HochrechnungsfaktorDto hochrechnungsfaktorDto = new HochrechnungsfaktorDto();
         hochrechnungsfaktorDto.setKfz(2.0);
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);

@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.Hochrechnungsfaktor;
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import org.junit.jupiter.api.Test;
 
 class HochrechnungsfaktorServiceTest {
@@ -12,7 +12,7 @@ class HochrechnungsfaktorServiceTest {
     @Test
     void setDtoDataToEntity() {
         final Hochrechnungsfaktor entity = new Hochrechnungsfaktor();
-        final HochrechnungsfaktorDTO dto = new HochrechnungsfaktorDTO();
+        final HochrechnungsfaktorDto dto = new HochrechnungsfaktorDto();
         dto.setMatrix("MATRIX");
         dto.setKfz(99.9);
         dto.setGv(55.5);

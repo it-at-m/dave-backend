@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.HochrechnungsfaktorService;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ public class HochrechnungsfaktorController {
 
     @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<HochrechnungsfaktorDTO> saveHochrechnungsfaktor(@RequestBody @NotNull final HochrechnungsfaktorDTO hochrechnungsfaktorDTO) {
+    public ResponseEntity<HochrechnungsfaktorDto> saveHochrechnungsfaktor(@RequestBody @NotNull final HochrechnungsfaktorDto hochrechnungsfaktorDTO) {
         try {
             return ResponseEntity.ok(
                     hochrechnungsfaktorService.saveHochrechnungsfaktor(hochrechnungsfaktorDTO));
@@ -46,7 +46,7 @@ public class HochrechnungsfaktorController {
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())"
     )
-    public ResponseEntity<List<HochrechnungsfaktorDTO>> getAllHochrechnungsfaktoren() {
+    public ResponseEntity<List<HochrechnungsfaktorDto>> getAllHochrechnungsfaktoren() {
         try {
             return ResponseEntity.ok(
                     hochrechnungsfaktorService.getHochrechnungsfaktoren());

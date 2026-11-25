@@ -5,7 +5,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class HochrechnungsfaktorDTO {
+public class HochrechnungsfaktorDto {
 
     UUID id;
 

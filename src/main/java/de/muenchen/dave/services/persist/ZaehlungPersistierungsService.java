@@ -2,7 +2,7 @@ package de.muenchen.dave.services.persist;
 
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
@@ -132,7 +132,7 @@ public abstract class ZaehlungPersistierungsService {
      */
     public Hochrechnung createHochrechnung(
             final Zeitintervall zeitintervall,
-            final HochrechnungsfaktorDTO hochrechnungsfaktor,
+            final HochrechnungsfaktorDto hochrechnungsfaktor,
             final String zaehldauer) {
         final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setPkw(zeitintervall.getPkw());
