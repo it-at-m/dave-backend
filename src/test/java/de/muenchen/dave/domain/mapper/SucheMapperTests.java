@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
@@ -94,10 +94,10 @@ class SucheMapperTests {
         final Integer anzahlZaehlungen = 12;
         final String datumLetzteZaehlung = "2024-02-16";
         final String kreuzungsname = "kreuzungsname";
-        final ZaehlstelleTooltipDTO actual = mapper.createZaehlstelleTooltip(stadtbezirk, stadtbezirknummer, nummer, anzahlZaehlungen,
+        final ZaehlstelleTooltipDto actual = mapper.createZaehlstelleTooltip(stadtbezirk, stadtbezirknummer, nummer, anzahlZaehlungen,
                 datumLetzteZaehlung, kreuzungsname);
 
-        final ZaehlstelleTooltipDTO expected = new ZaehlstelleTooltipDTO();
+        final ZaehlstelleTooltipDto expected = new ZaehlstelleTooltipDto();
         expected.setZaehlstellennnummer(nummer);
         expected.setStadtbezirk(stadtbezirk);
         expected.setStadtbezirknummer(stadtbezirknummer);

@@ -5,7 +5,7 @@ import java.io.Serial;
 import lombok.Data;
 
 @Data
-public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDto {
+public class ZaehlstelleTooltipDto implements ErhebungsstelleTooltipDto {
 
     @Serial
     private static final long serialVersionUID = 1L;

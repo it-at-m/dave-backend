@@ -29,7 +29,7 @@ public class ErhebungsstelleKarteDto implements Serializable {
     @NotNull
     private Double latitude;
     @NotNull
-    @Schema(oneOf = { MessstelleTooltipDTO.class, ZaehlstelleTooltipDTO.class })
+    @Schema(oneOf = { MessstelleTooltipDTO.class, ZaehlstelleTooltipDto.class })
     private ErhebungsstelleTooltipDto tooltip;
     @NotNull
     private Boolean sichtbarDatenportal;

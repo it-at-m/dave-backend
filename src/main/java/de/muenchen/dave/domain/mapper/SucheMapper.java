@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -75,14 +75,14 @@ public interface SucheMapper {
      * @param kreuzungsname Kreuzungsname als String
      * @return TooltipDTO mit allen benötigten Feldern
      */
-    default ZaehlstelleTooltipDTO createZaehlstelleTooltip(
+    default ZaehlstelleTooltipDto createZaehlstelleTooltip(
             final String stadtbezirk,
             final Integer stadtbezirknummer,
             final String nummer,
             final Integer anzahlZaehlungen,
             final String datumLetzteZaehlung,
             final String kreuzungsname) {
-        final ZaehlstelleTooltipDTO zaehlstelleTooltipDTO = new ZaehlstelleTooltipDTO();
+        final ZaehlstelleTooltipDto zaehlstelleTooltipDTO = new ZaehlstelleTooltipDto();
         zaehlstelleTooltipDTO.setKreuzungsname(kreuzungsname);
         zaehlstelleTooltipDTO.setAnzahlZaehlungen(anzahlZaehlungen);
         zaehlstelleTooltipDTO.setStadtbezirk(stadtbezirk);
