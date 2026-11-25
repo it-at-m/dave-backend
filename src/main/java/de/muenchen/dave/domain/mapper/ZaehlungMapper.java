@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
@@ -37,14 +37,14 @@ public interface ZaehlungMapper {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DaveConstants.DATE_FORMAT);
 
-    Zaehlung bearbeiteDto2bean(BearbeiteZaehlungDTO dto);
+    Zaehlung bearbeiteDto2bean(BearbeiteZaehlungDto dto);
 
-    BearbeiteZaehlungDTO bean2BearbeiteDto(Zaehlung bean);
+    BearbeiteZaehlungDto bean2BearbeiteDto(Zaehlung bean);
 
     LadeZaehlungVisumDTO bean2ladeVisumDto(Zaehlung bean);
 
     @AfterMapping
-    default void toZaehlung(@MappingTarget Zaehlung bean, BearbeiteZaehlungDTO dto) {
+    default void toZaehlung(@MappingTarget Zaehlung bean, BearbeiteZaehlungDto dto) {
         if (ObjectUtils.isNotEmpty(dto.getDatum())) {
             bean.setJahr(String.valueOf(dto.getDatum().getYear()));
             bean.setMonat(ZaehldatenProcessingUtil.getMonatTextuell(dto.getDatum()));
@@ -103,7 +103,7 @@ public interface ZaehlungMapper {
     }
 
     @AfterMapping
-    default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDTO dto, Zaehlung bean) {
+    default void toBearbeiteZaehlungDTO(@MappingTarget BearbeiteZaehlungDto dto, Zaehlung bean) {
 
         if (Zaehlart.FJS.name().equals(dto.getZaehlart())) {
             final var laengsverkehr = bean.getLaengsverkehr();

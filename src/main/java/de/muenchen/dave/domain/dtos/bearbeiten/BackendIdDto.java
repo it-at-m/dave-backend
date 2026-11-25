@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class BackendIdDTO {
+public class BackendIdDto {
 
     @NotNull
     private String id;

@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.dtos;
 
 import com.github.javafaker.Faker;
 import com.google.common.collect.Lists;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -12,9 +12,9 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class BearbeiteZaehlungDTORandomFactory {
 
-    public static BearbeiteZaehlungDTO getOne() {
+    public static BearbeiteZaehlungDto getOne() {
 
-        BearbeiteZaehlungDTO dto = new BearbeiteZaehlungDTO();
+        BearbeiteZaehlungDto dto = new BearbeiteZaehlungDto();
 
         Faker faker = Faker.instance(new Locale.Builder().setLanguage("test").build());
 

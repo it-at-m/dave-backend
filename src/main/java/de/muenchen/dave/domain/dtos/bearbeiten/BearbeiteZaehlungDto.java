@@ -11,7 +11,7 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
-public class BearbeiteZaehlungDTO {
+public class BearbeiteZaehlungDto {
 
     String id;
 
@@ -70,16 +70,16 @@ public class BearbeiteZaehlungDTO {
 
     PkwEinheitDto pkwEinheit;
 
-    List<BearbeiteKnotenarmDTO> knotenarme;
+    List<BearbeiteKnotenarmDto> knotenarme;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<BearbeiteLaengsverkehrDTO> laengsverkehr;
+    List<BearbeiteLaengsverkehrDto> laengsverkehr;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<BearbeiteQuerungsverkehrDTO> querungsverkehr;
+    List<BearbeiteQuerungsverkehrDto> querungsverkehr;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<BearbeiteVerkehrsbeziehungDTO> verkehrsbeziehungen;
+    List<BearbeiteVerkehrsbeziehungDto> verkehrsbeziehungen;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     boolean unreadMessagesMobilitaetsreferat;

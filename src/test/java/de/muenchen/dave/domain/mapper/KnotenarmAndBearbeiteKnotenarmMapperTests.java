@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
 import de.muenchen.dave.domain.dtos.BearbeiteKnotenarmDTORandomFactory;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.KnotenarmRandomFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class KnotenarmAndBearbeiteKnotenarmMapperTests {
 
     @Test
     public void testDto2bean() {
-        BearbeiteKnotenarmDTO dto = BearbeiteKnotenarmDTORandomFactory.getOne();
+        BearbeiteKnotenarmDto dto = BearbeiteKnotenarmDTORandomFactory.getOne();
         Knotenarm bean = this.mapper.bearbeitenDto2bean(dto);
 
         assertThat(bean, hasProperty("nummer", equalTo(dto.getNummer())));
@@ -28,7 +28,7 @@ public class KnotenarmAndBearbeiteKnotenarmMapperTests {
     @Test
     public void testBean2dto() {
         Knotenarm bean = KnotenarmRandomFactory.getOne();
-        BearbeiteKnotenarmDTO dto = this.mapper.bean2bearbeitenDto(bean);
+        BearbeiteKnotenarmDto dto = this.mapper.bean2bearbeitenDto(bean);
 
         assertThat(dto, hasProperty("nummer", equalTo(bean.getNummer())));
         assertThat(dto, hasProperty("strassenname", equalTo(bean.getStrassenname())));

@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
@@ -74,13 +74,13 @@ public class MessstelleService {
         return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
-    public BackendIdDTO updateMessstelle(final EditMessstelleDTO dto) {
+    public BackendIdDto updateMessstelle(final EditMessstelleDTO dto) {
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         sanitizationService.sanitizeMessstelle(aktualisiert);
         customSuggestIndexService.updateSuggestionsForMessstelle(aktualisiert);
         final Messstelle messstelle = messstelleIndexService.saveMessstelle(aktualisiert);
-        final BackendIdDTO backendIdDTO = new BackendIdDTO();
+        final BackendIdDto backendIdDTO = new BackendIdDto();
         backendIdDTO.setId(messstelle.getId());
         return backendIdDTO;
     }

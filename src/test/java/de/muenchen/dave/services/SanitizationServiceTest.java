@@ -4,9 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.*;
@@ -59,7 +59,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeBearbeiteZaehlungDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
+        BearbeiteZaehlungDto bearbeiteZaehlungDTO = new BearbeiteZaehlungDto();
         bearbeiteZaehlungDTO.setZaehlart("N");
         bearbeiteZaehlungDTO.setProjektNummer(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setProjektName(ALLOWED_HTML_1);
@@ -74,7 +74,7 @@ class SanitizationServiceTest {
         bearbeiteZaehlungDTO.setKommentar(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setDienstleisterkennung(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1));
-        BearbeiteKnotenarmDTO knotenarmDTO = new BearbeiteKnotenarmDTO();
+        BearbeiteKnotenarmDto knotenarmDTO = new BearbeiteKnotenarmDto();
         knotenarmDTO.setStrassenname(ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setKnotenarme(List.of(knotenarmDTO));
 
@@ -97,7 +97,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeBearbeiteZaehlungDto_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
+        BearbeiteZaehlungDto bearbeiteZaehlungDTO = new BearbeiteZaehlungDto();
         bearbeiteZaehlungDTO.setProjektNummer(NOT_ALLOWED_HTML_1);
         bearbeiteZaehlungDTO.setProjektName(NOT_ALLOWED_HTML_2);
         bearbeiteZaehlungDTO.setKreuzungsname(NOT_ALLOWED_HTML_3);
@@ -107,7 +107,7 @@ class SanitizationServiceTest {
         bearbeiteZaehlungDTO.setKommentar(NOT_ALLOWED_HTML_3);
         bearbeiteZaehlungDTO.setDienstleisterkennung(NOT_ALLOWED_HTML_4);
         bearbeiteZaehlungDTO.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_1));
-        BearbeiteKnotenarmDTO knotenarmDTO = new BearbeiteKnotenarmDTO();
+        BearbeiteKnotenarmDto knotenarmDTO = new BearbeiteKnotenarmDto();
         knotenarmDTO.setStrassenname(NOT_ALLOWED_HTML_2);
         bearbeiteZaehlungDTO.setKnotenarme(List.of(knotenarmDTO));
 
@@ -145,7 +145,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeBearbeiteZaehlstelleDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
-        BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
+        BearbeiteZaehlstelleDto bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDto();
         bearbeiteZaehlstelleDTO.setStadtbezirk(Stadtbezirk.MOOSACH.getBezeichnung());
         bearbeiteZaehlstelleDTO.setKommentar(ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1, ALLOWED_HTML_2));
@@ -162,7 +162,7 @@ class SanitizationServiceTest {
     @Test
     void sanitizeBearbeiteZaehlstelleDto_unsafeInputIsRemoved() {
         // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
+        BearbeiteZaehlstelleDto bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDto();
         bearbeiteZaehlstelleDTO.setKommentar(NOT_ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_3, NOT_ALLOWED_HTML_4));
 

@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
@@ -58,7 +58,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
-    public BackendIdDTO saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
+    public BackendIdDto saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
         log.debug("saveZaehlung");
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern
@@ -111,7 +111,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         this.indexService.erneuereZaehlstelle(zaehlstelleByZaehlungId);
 
         // Rückgabe der ZaehlungsId
-        final var backendIdDto = new BackendIdDTO();
+        final var backendIdDto = new BackendIdDto();
         backendIdDto.setId(zaehlungDto.getId());
         return backendIdDto;
     }

@@ -2,8 +2,8 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -86,10 +86,10 @@ public class ZaehlstelleController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDTO> saveZaehlstelle(@RequestBody @NotNull final BearbeiteZaehlstelleDTO zaehlstelle) {
+    public ResponseEntity<BackendIdDto> saveZaehlstelle(@RequestBody @NotNull final BearbeiteZaehlstelleDto zaehlstelle) {
         log.debug("Zaehlstelle speichern: {}", zaehlstelle);
         try {
-            final BackendIdDTO backendIdDTO = this.indexService.speichereZaehlstelle(zaehlstelle);
+            final BackendIdDto backendIdDTO = this.indexService.speichereZaehlstelle(zaehlstelle);
             return ResponseEntity.ok(backendIdDTO);
         } catch (final BrokenInfrastructureException bie) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -103,9 +103,9 @@ public class ZaehlstelleController {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/editZaehlstelle", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BearbeiteZaehlstelleDTO> getEditZaehlstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String zaehlstelleId) {
+    public ResponseEntity<BearbeiteZaehlstelleDto> getEditZaehlstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String zaehlstelleId) {
         try {
-            final BearbeiteZaehlstelleDTO dto = this.indexService.readEditZaehlstelleDTO(zaehlstelleId);
+            final BearbeiteZaehlstelleDto dto = this.indexService.readEditZaehlstelleDTO(zaehlstelleId);
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im ZaehlstellenController, Zählstelle konnte nicht gefunden werden. ID: {}", zaehlstelleId, e);

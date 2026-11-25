@@ -6,9 +6,9 @@ import static org.mockito.Mockito.doReturn;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -92,7 +92,7 @@ class InternalZaehlungPersistierungsServiceTest {
         esLaengs.setStrassenseite(Himmelsrichtung.N);
         zaehlung.setLaengsverkehr(List.of(esLaengs));
 
-        final var bearbeite = new BearbeiteLaengsverkehrDTO();
+        final var bearbeite = new BearbeiteLaengsverkehrDto();
         bearbeite.setKnotenarm(5);
         bearbeite.setRichtung(Bewegungsrichtung.EIN);
         bearbeite.setStrassenseite(Himmelsrichtung.N);
@@ -126,7 +126,7 @@ class InternalZaehlungPersistierungsServiceTest {
         esQ.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(esQ));
 
-        final var bearbeite = new BearbeiteQuerungsverkehrDTO();
+        final var bearbeite = new BearbeiteQuerungsverkehrDto();
         bearbeite.setKnotenarm(2);
         bearbeite.setRichtung(Himmelsrichtung.S);
 
@@ -146,7 +146,7 @@ class InternalZaehlungPersistierungsServiceTest {
         esQ.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(esQ));
 
-        final var bearbeite = new BearbeiteQuerungsverkehrDTO();
+        final var bearbeite = new BearbeiteQuerungsverkehrDto();
         bearbeite.setKnotenarm(99);
         bearbeite.setRichtung(Himmelsrichtung.N);
 
@@ -157,7 +157,7 @@ class InternalZaehlungPersistierungsServiceTest {
     @Test
     void testIsSameBewegungsbeziehung_QU_true_and_false() {
         final var zaehlart = Zaehlart.QU;
-        final var bearbeite = new BearbeiteQuerungsverkehrDTO();
+        final var bearbeite = new BearbeiteQuerungsverkehrDto();
         bearbeite.setKnotenarm(4);
         bearbeite.setRichtung(Himmelsrichtung.NO);
 
@@ -174,7 +174,7 @@ class InternalZaehlungPersistierungsServiceTest {
     @Test
     void testIsSameBewegungsbeziehung_FJS_true_and_false() {
         final var zaehlart = Zaehlart.FJS;
-        final var bearbeite = new BearbeiteLaengsverkehrDTO();
+        final var bearbeite = new BearbeiteLaengsverkehrDto();
         bearbeite.setKnotenarm(6);
         bearbeite.setRichtung(Bewegungsrichtung.EIN);
         bearbeite.setStrassenseite(Himmelsrichtung.O);
@@ -193,7 +193,7 @@ class InternalZaehlungPersistierungsServiceTest {
     @Test
     void testIsSameBewegungsbeziehung_Other_true_and_false() {
         final var zaehlart = Zaehlart.N;
-        final var bearbeite = new BearbeiteVerkehrsbeziehungDTO();
+        final var bearbeite = new BearbeiteVerkehrsbeziehungDto();
         bearbeite.setIsKreuzung(Boolean.TRUE);
         bearbeite.setVon(1);
         bearbeite.setNach(2);
@@ -221,7 +221,7 @@ class InternalZaehlungPersistierungsServiceTest {
 
     @Test
     void testCreateVerkehrsbeziehungForZeitintervall_Kreuzung_and_Kreisverkehr() {
-        final var kreuz = new BearbeiteVerkehrsbeziehungDTO();
+        final var kreuz = new BearbeiteVerkehrsbeziehungDto();
         kreuz.setIsKreuzung(Boolean.TRUE);
         kreuz.setVon(10);
         kreuz.setNach(11);
@@ -233,7 +233,7 @@ class InternalZaehlungPersistierungsServiceTest {
         assertEquals(kreuz.getNach(), resultKreuz.getNach());
         assertEquals(kreuz.getStrassenseite(), resultKreuz.getStrassenseite());
 
-        final var kreis = new BearbeiteVerkehrsbeziehungDTO();
+        final var kreis = new BearbeiteVerkehrsbeziehungDto();
         kreis.setIsKreuzung(Boolean.FALSE);
         kreis.setKnotenarm(77);
         kreis.setHinein(Boolean.TRUE);
@@ -247,7 +247,7 @@ class InternalZaehlungPersistierungsServiceTest {
 
     @Test
     void testCreateLaengsverkehrAndQuerungsverkehrForZeitintervall() {
-        final var laeng = new BearbeiteLaengsverkehrDTO();
+        final var laeng = new BearbeiteLaengsverkehrDto();
         laeng.setKnotenarm(3);
         laeng.setRichtung(Bewegungsrichtung.EIN);
         laeng.setStrassenseite(Himmelsrichtung.NO);
@@ -258,7 +258,7 @@ class InternalZaehlungPersistierungsServiceTest {
         assertEquals(laeng.getRichtung(), l.getRichtung());
         assertEquals(laeng.getStrassenseite(), l.getStrassenseite());
 
-        final var quer = new BearbeiteQuerungsverkehrDTO();
+        final var quer = new BearbeiteQuerungsverkehrDto();
         quer.setKnotenarm(8);
         quer.setRichtung(Himmelsrichtung.S);
 

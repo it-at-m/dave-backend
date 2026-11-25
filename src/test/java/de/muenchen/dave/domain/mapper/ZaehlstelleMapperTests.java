@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.any;
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -35,7 +35,7 @@ public class ZaehlstelleMapperTests {
 
     @Test
     public void testBearbeiteDto2bean() {
-        BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
+        BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         Mockito.when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
         Zaehlstelle bean = this.mapper.bearbeiteDto2bean(dto, stadtbezirkMapper);
@@ -67,7 +67,7 @@ public class ZaehlstelleMapperTests {
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         Mockito.when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
 
-        final BearbeiteZaehlstelleDTO dto = this.mapper.bean2bearbeiteDto(bean, stadtbezirkMapper);
+        final BearbeiteZaehlstelleDto dto = this.mapper.bean2bearbeiteDto(bean, stadtbezirkMapper);
 
         assertThat(dto, hasProperty("nummer", equalTo(bean.getNummer())));
         assertThat(dto, hasProperty("stadtbezirkNummer", equalTo(bean.getStadtbezirkNummer())));

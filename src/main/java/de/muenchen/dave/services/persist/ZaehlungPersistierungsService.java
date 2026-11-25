@@ -3,10 +3,10 @@ package de.muenchen.dave.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -78,7 +78,7 @@ public abstract class ZaehlungPersistierungsService {
      * @throws PlausibilityException Beim Pruefen der Daten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
-    public BackendIdDTO updateStatus(final UpdateStatusDTO updateStatusDto)
+    public BackendIdDto updateStatus(final UpdateStatusDto updateStatusDto)
             throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException, AccessDeniedException {
         final Zaehlstelle zaehlstelleByZaehlungId = this.indexService.getZaehlstelleByZaehlungId(updateStatusDto.getZaehlungId());
 
@@ -107,7 +107,7 @@ public abstract class ZaehlungPersistierungsService {
         }
         this.indexService.erneuereZaehlstelle(zaehlstelleByZaehlungId);
 
-        final BackendIdDTO backendIdDto = new BackendIdDTO();
+        final BackendIdDto backendIdDto = new BackendIdDto();
 
         // Rückgabe der ZaehlungsId
         backendIdDto.setId(updateStatusDto.getZaehlungId());
@@ -230,7 +230,7 @@ public abstract class ZaehlungPersistierungsService {
         return new ArrayList<>(fahrzeugkategorien);
     }
 
-    public void updateStatusIfDateIsInThePast(final UpdateStatusDTO updateStatusDto, final Status newStatus)
+    public void updateStatusIfDateIsInThePast(final UpdateStatusDto updateStatusDto, final Status newStatus)
             throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.indexService.getZaehlung(updateStatusDto.getZaehlungId());
         // Wenn Das Datum der Zählung <= LocalDate.now() ist, dann Status ändern
@@ -247,7 +247,7 @@ public abstract class ZaehlungPersistierungsService {
                 .collect(Collectors.toList());
     }
 
-    public List<BearbeiteBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDTO zaehlung) {
+    public List<BearbeiteBewegungsbeziehungDto> getAllBewegungsbeziehungenFromZaehlung(final BearbeiteZaehlungDto zaehlung) {
         return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)

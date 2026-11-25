@@ -14,7 +14,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -111,7 +111,7 @@ public class ZaehlstelleIndexServiceSpringTest {
 
     @Test
     public void erstelleZaehlstelle() throws BrokenInfrastructureException {
-        final BearbeiteZaehlstelleDTO dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
+        final BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
         final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
 
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing");

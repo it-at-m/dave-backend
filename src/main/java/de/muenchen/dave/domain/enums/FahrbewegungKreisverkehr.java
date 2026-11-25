@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
 import java.util.Optional;
 import org.apache.commons.lang3.BooleanUtils;
@@ -11,7 +11,7 @@ public enum FahrbewegungKreisverkehr {
     HERAUS,
     VORBEI;
 
-    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteVerkehrsbeziehungDTO verkehrsbeziehung) {
+    public static Optional<FahrbewegungKreisverkehr> createEnumFrom(final BearbeiteVerkehrsbeziehungDto verkehrsbeziehung) {
         final Optional<FahrbewegungKreisverkehr> fahrbewegungKreisverkehrOptional;
         if (BooleanUtils.isTrue(verkehrsbeziehung.getHinein())) {
             fahrbewegungKreisverkehrOptional = Optional.of(HINEIN);

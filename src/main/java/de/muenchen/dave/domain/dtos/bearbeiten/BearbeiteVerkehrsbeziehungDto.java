@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class BearbeiteVerkehrsbeziehungDTO extends BearbeiteBewegungsbeziehungDTO {
+public class BearbeiteVerkehrsbeziehungDto extends BearbeiteBewegungsbeziehungDto {
 
     Boolean isKreuzung;
 

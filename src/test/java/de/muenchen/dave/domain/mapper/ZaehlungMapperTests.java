@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlungDTORandomFactory;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
@@ -33,7 +33,7 @@ public class ZaehlungMapperTests {
 
     @Test
     public void testBearbeiteDto2bean() {
-        BearbeiteZaehlungDTO dto = BearbeiteZaehlungDTORandomFactory.getOne();
+        BearbeiteZaehlungDto dto = BearbeiteZaehlungDTORandomFactory.getOne();
         Zaehlung bean = this.mapper.bearbeiteDto2bean(dto);
 
         assertThat(bean, hasProperty("datum", equalTo(dto.getDatum())));
@@ -84,7 +84,7 @@ public class ZaehlungMapperTests {
     @Test
     public void testBean2BearbeiteDto() {
         Zaehlung bean = ZaehlungRandomFactory.getOne();
-        BearbeiteZaehlungDTO dto = this.mapper.bean2BearbeiteDto(bean);
+        BearbeiteZaehlungDto dto = this.mapper.bean2BearbeiteDto(bean);
 
         assertThat(dto, hasProperty("datum", equalTo(bean.getDatum())));
         assertThat(dto, hasProperty("zaehlart", equalTo(bean.getZaehlart())));

@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public abstract class BearbeiteBewegungsbeziehungDTO implements Serializable {
+public abstract class BearbeiteBewegungsbeziehungDto implements Serializable {
 
     private String id;
 

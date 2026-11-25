@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.*;
@@ -138,12 +138,12 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlungDTO}. Unerwünschter
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlungDto}. Unerwünschter
      * HTML-Code wird entfernt.
      *
-     * @param zaehlungDTO Das {@link BearbeiteZaehlungDTO}, dessen Attribute bereinigt werden sollen
+     * @param zaehlungDTO Das {@link BearbeiteZaehlungDto}, dessen Attribute bereinigt werden sollen
      */
-    public void sanitizeBearbeiteZaehlungDto(final BearbeiteZaehlungDTO zaehlungDTO) {
+    public void sanitizeBearbeiteZaehlungDto(final BearbeiteZaehlungDto zaehlungDTO) {
         if (zaehlungDTO == null) return;
         validateZaehlart(zaehlungDTO.getZaehlart());
         zaehlungDTO.setProjektNummer(sanitizeAllowedHtml(zaehlungDTO.getProjektNummer()));
@@ -174,13 +174,13 @@ public class SanitizationService {
     }
 
     /**
-     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlstelleDTO}.
+     * Bereinigt die Attribute vom Typ {@link String} eines {@link BearbeiteZaehlstelleDto}.
      * Unerwünschter HTML-Code wird entfernt.
      *
-     * @param bearbeiteZaehlstelleDTO Das {@link BearbeiteZaehlstelleDTO}, dessen Attribute bereinigt
+     * @param bearbeiteZaehlstelleDTO Das {@link BearbeiteZaehlstelleDto}, dessen Attribute bereinigt
      *            werden sollen
      */
-    public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO) {
+    public void sanitizeBearbeiteZaehlstelleDto(final BearbeiteZaehlstelleDto bearbeiteZaehlstelleDTO) {
         if (bearbeiteZaehlstelleDTO == null) return;
         validateStadtbezirk(bearbeiteZaehlstelleDTO.getStadtbezirk());
         bearbeiteZaehlstelleDTO.setKommentar(sanitizeAllowedHtml(bearbeiteZaehlstelleDTO.getKommentar()));

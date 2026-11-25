@@ -4,10 +4,10 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
@@ -82,9 +82,9 @@ public class ZaehlstelleIndexService {
         this.sanitizationService = sanitizationService;
     }
 
-    public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle)
+    public BackendIdDto speichereZaehlstelle(final BearbeiteZaehlstelleDto zaehlstelle)
             throws BrokenInfrastructureException, DataNotFoundException, PlausibilityException {
-        final var backendIdDto = new BackendIdDTO();
+        final var backendIdDto = new BackendIdDto();
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(zaehlstelle);
         if (StringUtils.isEmpty(zaehlstelle.getId())) {
             final var alreadySavedZaehlstelle = zaehlstelleIndex.findByNummer(zaehlstelle.getNummer());
@@ -125,7 +125,7 @@ public class ZaehlstelleIndexService {
      * @return ID der
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public String erstelleZaehlstelle(final BearbeiteZaehlstelleDTO zdto) throws BrokenInfrastructureException {
+    public String erstelleZaehlstelle(final BearbeiteZaehlstelleDto zdto) throws BrokenInfrastructureException {
 
         final Zaehlstelle zaehlstelle = this.zaehlstelleMapper.bearbeiteDto2bean(zdto, stadtbezirkMapper);
         zaehlstelle.setId(UUID.randomUUID().toString());
@@ -146,7 +146,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Wenn die Daten nicht geladen werden konnten
      */
-    public String erneuereZaehlstelle(final BearbeiteZaehlstelleDTO zdto, final String zaehlstelleId)
+    public String erneuereZaehlstelle(final BearbeiteZaehlstelleDto zdto, final String zaehlstelleId)
             throws BrokenInfrastructureException, DataNotFoundException {
         final Optional<Zaehlstelle> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
         if (zsto.isPresent()) {
@@ -174,7 +174,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Bei Ladefehlern
      */
-    public Zaehlung erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public Zaehlung erstelleZaehlung(final BearbeiteZaehlungDto zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set Zaehlung ID
         if (StringUtils.isEmpty(zaehlung.getId())) {
@@ -213,7 +213,7 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Bei Ladefehlern
      */
-    public Zaehlung erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
+    public Zaehlung erneuereZaehlung(final BearbeiteZaehlungDto zdto, final String zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
         final Zaehlung zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
         // Set Zaehlung ID
         if (StringUtils.isEmpty(zaehlung.getId())) {
@@ -448,7 +448,7 @@ public class ZaehlstelleIndexService {
         return leseZaehlstelleDTO;
     }
 
-    public BearbeiteZaehlstelleDTO readEditZaehlstelleDTO(final String zaehlstelleId) throws DataNotFoundException {
+    public BearbeiteZaehlstelleDto readEditZaehlstelleDTO(final String zaehlstelleId) throws DataNotFoundException {
         return this.zaehlstelleMapper.bean2bearbeiteDto(this.getZaehlstelle(zaehlstelleId), stadtbezirkMapper);
     }
 
@@ -650,7 +650,7 @@ public class ZaehlstelleIndexService {
     private void updateStatusOfZaehlung(final Zaehlung zaehlung, final Status newStatus, final Zaehlstelle zaehlstelle) throws BrokenInfrastructureException {
         zaehlung.setStatus(newStatus.name());
         this.erneuereZaehlung(zaehlung, zaehlstelle.getId());
-        final UpdateStatusDTO updateStatusDTO = new UpdateStatusDTO();
+        final UpdateStatusDto updateStatusDTO = new UpdateStatusDto();
         updateStatusDTO.setStatus(zaehlung.getStatus());
         this.messageService.saveUpdateMessageForZaehlungStatus(zaehlung.getId(), updateStatusDTO);
     }

@@ -5,10 +5,11 @@ import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class BearbeiteZaehlstelleDTORandomFactory {
@@ -23,11 +24,11 @@ public class BearbeiteZaehlstelleDTORandomFactory {
     private final static String STRASSEN = "strassen";
     private final static String GEO = "geo";
 
-    public static BearbeiteZaehlstelleDTO getOne() {
+    public static BearbeiteZaehlstelleDto getOne() {
 
         Map<String, String> x = (Map<String, String>) service.fetch("zaehlstelle.stellen");
 
-        BearbeiteZaehlstelleDTO dto = new BearbeiteZaehlstelleDTO();
+        BearbeiteZaehlstelleDto dto = new BearbeiteZaehlstelleDto();
 
         dto.setNummer(Faker.instance().number().digits(26));
         dto.setStadtbezirkNummer(Ints.tryParse(x.get(BEZIRKNUMMER)));

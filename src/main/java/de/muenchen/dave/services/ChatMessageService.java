@@ -2,7 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.ChatMessage;
 import de.muenchen.dave.domain.dtos.ChatMessageDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
@@ -99,7 +99,7 @@ public class ChatMessageService {
         return chatMessageMapper.beanList2DtoList(messages);
     }
 
-    public void saveUpdateMessageForZaehlungStatus(final String zaehlungId, final UpdateStatusDTO updateStatusDTO) throws BrokenInfrastructureException {
+    public void saveUpdateMessageForZaehlungStatus(final String zaehlungId, final UpdateStatusDto updateStatusDTO) throws BrokenInfrastructureException {
         final ChatMessage message = new ChatMessage();
         message.setZaehlungId(UUID.fromString(zaehlungId));
         boolean sendEmail = false;

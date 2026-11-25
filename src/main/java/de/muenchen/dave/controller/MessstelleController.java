@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
@@ -84,9 +84,9 @@ public class MessstelleController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PatchMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<BackendIdDTO> updateMessstelle(@RequestBody @NotNull final EditMessstelleDTO messstelle) {
+    public ResponseEntity<BackendIdDto> updateMessstelle(@RequestBody @NotNull final EditMessstelleDTO messstelle) {
         log.debug("Messstelle speichern: {}", messstelle);
-        final BackendIdDTO backendIdDTO = this.messstelleService.updateMessstelle(messstelle);
+        final BackendIdDto backendIdDTO = this.messstelleService.updateMessstelle(messstelle);
         return ResponseEntity.ok(backendIdDTO);
     }
 

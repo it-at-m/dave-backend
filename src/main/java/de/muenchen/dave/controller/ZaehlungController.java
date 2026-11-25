@@ -2,9 +2,9 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
@@ -64,11 +64,11 @@ public class ZaehlungController {
 
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<BackendIdDTO> saveZaehlung(@RequestBody @NotNull final BearbeiteZaehlungDTO zaehlung,
+    public ResponseEntity<BackendIdDto> saveZaehlung(@RequestBody @NotNull final BearbeiteZaehlungDto zaehlung,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_ID) @NotNull final String zaehlstelleId) {
         log.debug("Zaehlung speichern: {}", zaehlung);
         try {
-            final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlung(zaehlung, zaehlstelleId);
+            final BackendIdDto backendIdDto = this.internalZaehlungPersistierungsService.saveZaehlung(zaehlung, zaehlstelleId);
             this.chatMessageService.saveUpdateMessageForZaehlungInternal(backendIdDto.getId());
             log.debug("Die Zaehlung wurde erfolgreich gespeichert.");
             return ResponseEntity.ok(backendIdDto);
@@ -114,10 +114,10 @@ public class ZaehlungController {
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/saveExternal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDTO> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDTO zaehlung) {
+    public ResponseEntity<BackendIdDto> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDTO zaehlung) {
         log.debug("Externe Zaehlung speichern: {}", zaehlung);
         try {
-            final BackendIdDTO backendIdDto = this.externalZaehlungPersistierungsService.saveZaehlung(zaehlung);
+            final BackendIdDto backendIdDto = this.externalZaehlungPersistierungsService.saveZaehlung(zaehlung);
             this.chatMessageService.saveUpdateMessageForZaehlungExternal(backendIdDto.getId());
             log.debug("Die externe Zaehlung wurde erfolgreich gespeichert.");
             return ResponseEntity.ok(backendIdDto);
@@ -136,10 +136,10 @@ public class ZaehlungController {
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/updateStatus", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDTO> updateStatus(@RequestBody @NotNull final UpdateStatusDTO updateZaehlung) {
+    public ResponseEntity<BackendIdDto> updateStatus(@RequestBody @NotNull final UpdateStatusDto updateZaehlung) {
         try {
             log.debug("Status aktualisieren: {}", updateZaehlung);
-            final BackendIdDTO backendIdDto = this.externalZaehlungPersistierungsService.updateStatus(updateZaehlung);
+            final BackendIdDto backendIdDto = this.externalZaehlungPersistierungsService.updateStatus(updateZaehlung);
             this.chatMessageService.saveUpdateMessageForZaehlungStatus(backendIdDto.getId(), updateZaehlung);
             // Wenn eine Zaehlung beauftragt wird, deren Zaehldatum bereits in der Vergangeheit liegt, so wird der Status gleich auf COUNTING gesetzt
             if (updateZaehlung.getStatus().equalsIgnoreCase(Status.INSTRUCTED.name())) {
@@ -158,11 +158,11 @@ public class ZaehlungController {
 
     @PostMapping(value = "/updateDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<BackendIdDTO> updateDienstleisterkennung(@RequestBody @NotNull final DienstleisterDto dienstleisterDTO,
+    public ResponseEntity<BackendIdDto> updateDienstleisterkennung(@RequestBody @NotNull final DienstleisterDto dienstleisterDTO,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotNull final String zaehlungId) {
         log.debug("Zaehlung {} Dienstleisterkennung aktualisieren: {}", zaehlungId, dienstleisterDTO);
         try {
-            final BackendIdDTO backendIdDto = this.internalZaehlungPersistierungsService.updateDienstleisterkennung(zaehlungId, dienstleisterDTO);
+            final BackendIdDto backendIdDto = this.internalZaehlungPersistierungsService.updateDienstleisterkennung(zaehlungId, dienstleisterDTO);
             this.chatMessageService.saveUpdateMessageForZaehlungInternal(backendIdDto.getId());
             log.debug("Die Zaehlung wurde erfolgreich aktualisiert.");
             return ResponseEntity.ok(backendIdDto);

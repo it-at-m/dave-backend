@@ -7,7 +7,7 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
-public class BearbeiteZaehlstelleDTO {
+public class BearbeiteZaehlstelleDto {
 
     String id;
 
@@ -29,7 +29,7 @@ public class BearbeiteZaehlstelleDTO {
 
     List<String> customSuchwoerter;
 
-    List<BearbeiteZaehlungDTO> zaehlungen;
+    List<BearbeiteZaehlungDto> zaehlungen;
 
     String kommentar;
 

@@ -19,12 +19,13 @@ import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
@@ -140,7 +141,7 @@ class ZaehlungPersistierungsServiceTest {
         hochrechnungsfaktorDto.setSv(3.0);
         hochrechnungsfaktorDto.setGv(4.0);
 
-        final BearbeiteVerkehrsbeziehungDTO verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDto verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -198,7 +199,7 @@ class ZaehlungPersistierungsServiceTest {
 
         assertThat(zaehlung.getVerkehrsbeziehungen().size(), is(2));
 
-        final BearbeiteVerkehrsbeziehungDTO verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDto verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -217,18 +218,18 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void isSameVerkehrsbeziehung() {
-        BearbeiteVerkehrsbeziehungDTO verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        BearbeiteVerkehrsbeziehungDto verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
         boolean result = internalZaehlungPersistierungsService.isSameBewegungsbeziehung(Zaehlart.N, verkehrsbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(true));
 
-        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehung = new de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung();
         result = internalZaehlungPersistierungsService.isSameBewegungsbeziehung(Zaehlart.N, verkehrsbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(false));
 
-        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -239,7 +240,7 @@ class ZaehlungPersistierungsServiceTest {
         result = internalZaehlungPersistierungsService.isSameBewegungsbeziehung(Zaehlart.N, verkehrsbeziehungDto, verkehrsbeziehung);
         assertThat(result, is(true));
 
-        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -255,7 +256,7 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void mapToVerkehrsbeziehungForZeitintervall() {
-        final BearbeiteVerkehrsbeziehungDTO verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDTO();
+        final BearbeiteVerkehrsbeziehungDto verkehrsbeziehungDto = new BearbeiteVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -666,20 +667,20 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getAllBewegungsbeziehungenFromBearbeiteZaehlung() {
         // Fall: Alle Listen sind null -> Ergebnis ist leer
-        final BearbeiteZaehlungDTO bearbeiteZaehlungDTO = new BearbeiteZaehlungDTO();
+        final BearbeiteZaehlungDto bearbeiteZaehlungDTO = new BearbeiteZaehlungDto();
         bearbeiteZaehlungDTO.setLaengsverkehr(null);
         bearbeiteZaehlungDTO.setQuerungsverkehr(null);
         bearbeiteZaehlungDTO.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> result = internalZaehlungPersistierungsService
+        List<BearbeiteBewegungsbeziehungDto> result = internalZaehlungPersistierungsService
                 .getAllBewegungsbeziehungenFromZaehlung(bearbeiteZaehlungDTO);
-        List<de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO> expected = new ArrayList<>();
+        List<BearbeiteBewegungsbeziehungDto> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
         // Fall: Gemischte Listen mit unterschiedlichen Elementen und null -> nur nicht-null Elemente zurückgeben
-        final BearbeiteLaengsverkehrDTO l1 = new BearbeiteLaengsverkehrDTO();
+        final BearbeiteLaengsverkehrDto l1 = new BearbeiteLaengsverkehrDto();
         l1.setId("bv1");
-        final BearbeiteQuerungsverkehrDTO q2 = new BearbeiteQuerungsverkehrDTO();
+        final BearbeiteQuerungsverkehrDto q2 = new BearbeiteQuerungsverkehrDto();
         q2.setId("bv2");
         bearbeiteZaehlungDTO.setLaengsverkehr(Arrays.asList(l1, null));
         bearbeiteZaehlungDTO.setQuerungsverkehr(Collections.singletonList(q2));
@@ -749,13 +750,13 @@ class ZaehlungPersistierungsServiceTest {
                 new SanitizationService(),
                 authorizationService);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId("z1");
         dto.setStatus(Status.INSTRUCTED.name());
         dto.setDienstleisterkennung("DLK");
 
         // Act
-        final BackendIdDTO result = svc.updateStatus(dto);
+        final BackendIdDto result = svc.updateStatus(dto);
 
         // Assert
         assertThat(result.getId(), is("z1"));
@@ -798,12 +799,12 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId("z2");
         dto.setStatus(Status.ACCOMPLISHED.name());
 
         // Act
-        final BackendIdDTO result = svc.updateStatus(dto);
+        final BackendIdDto result = svc.updateStatus(dto);
 
         // Assert
         assertThat(result.getId(), is("z2"));
@@ -848,12 +849,12 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId("z3");
         dto.setStatus(Status.CORRECTION.name());
 
         // Act
-        final BackendIdDTO result = svc.updateStatus(dto);
+        final BackendIdDto result = svc.updateStatus(dto);
 
         // Assert
         assertThat(result.getId(), is("z3"));
@@ -895,12 +896,12 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId("not-existing");
         dto.setStatus(Status.ACTIVE.name());
 
         // Act
-        final BackendIdDTO result = svc.updateStatus(dto);
+        final BackendIdDto result = svc.updateStatus(dto);
 
         // Assert: Keine Änderung an vorhandener Zaehlung
         assertThat(result.getId(), is("not-existing"));
@@ -931,7 +932,7 @@ class ZaehlungPersistierungsServiceTest {
                 mockSanitizationService,
                 authorizationService);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId("missing");
         dto.setStatus(Status.ACTIVE.name());
 
@@ -970,7 +971,7 @@ class ZaehlungPersistierungsServiceTest {
 
         when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId(id);
         dto.setStatus(Status.ACCOMPLISHED.name());
 
@@ -1182,7 +1183,7 @@ class ZaehlungPersistierungsServiceTest {
 
         when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId(id);
 
         // Act
@@ -1218,7 +1219,7 @@ class ZaehlungPersistierungsServiceTest {
 
         when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId(id);
 
         // Act
@@ -1254,7 +1255,7 @@ class ZaehlungPersistierungsServiceTest {
 
         when(mockIndexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final UpdateStatusDTO dto = new UpdateStatusDTO();
+        final UpdateStatusDto dto = new UpdateStatusDto();
         dto.setZaehlungId(id);
 
         // Act

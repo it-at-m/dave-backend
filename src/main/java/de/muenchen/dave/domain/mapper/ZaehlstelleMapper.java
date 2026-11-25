@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDto;
-import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
@@ -28,15 +28,15 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ZaehlstelleMapper {
 
-    BearbeiteZaehlstelleDTO bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
+    BearbeiteZaehlstelleDto bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "zaehlungen", ignore = true)
     LadeZaehlstelleVisumDTO bean2ladeVisumDto(Zaehlstelle bean);
 
-    Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @AfterMapping
-    default void toZaehlstelle(@MappingTarget Zaehlstelle bean, BearbeiteZaehlstelleDTO dto, @Context StadtbezirkMapper stadtbezirkMapper) {
+    default void toZaehlstelle(@MappingTarget Zaehlstelle bean, BearbeiteZaehlstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
         bean.setPunkt(new GeoPoint(dto.getLat(), dto.getLng()));
 
         if (dto.getPunkt() != null && dto.getPunkt().getLat() > 0 && dto.getPunkt().getLon() > 0) {
