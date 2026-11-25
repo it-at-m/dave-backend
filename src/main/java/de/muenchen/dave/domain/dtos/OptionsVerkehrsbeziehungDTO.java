@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class OptionsVerkehrsbeziehungDTO extends OptionsBewegungsbeziehungDTO {
+public class OptionsVerkehrsbeziehungDTO extends OptionsBewegungsbeziehungDto {
 
     private Integer von;
 
