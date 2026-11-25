@@ -9,7 +9,6 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 public class BearbeiteZaehlstelleDTORandomFactory {
