@@ -115,7 +115,7 @@ public class OptionsDto implements Serializable {
     private Integer nachKnotenarm;
 
     // Für Zaehlart QjS (Querschnitt je Straßenseite für Fuss- und Radverkehr)
-    private List<OptionsVerkehrsbeziehungDTO> chosenVerkehrsbeziehungen;
+    private List<OptionsVerkehrsbeziehungDto> chosenVerkehrsbeziehungen;
 
     // Für Zaehlart FjS
     private List<OptionsLaengsverkehrDto> chosenLaengsverkehre;

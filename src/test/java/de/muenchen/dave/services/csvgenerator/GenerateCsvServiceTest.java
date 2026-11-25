@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.*;
 import de.muenchen.dave.services.GenerateCsvService;
@@ -164,7 +164,7 @@ class GenerateCsvServiceTest {
         vb2.setNach(3);
         vb2.setStrassenseite(Himmelsrichtung.O);
         zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
-        final OptionsVerkehrsbeziehungDTO ovb1 = new OptionsVerkehrsbeziehungDTO();
+        final OptionsVerkehrsbeziehungDto ovb1 = new OptionsVerkehrsbeziehungDto();
         ovb1.setVon(1);
         ovb1.setNach(3);
         ovb1.setStrassenseite(Himmelsrichtung.W);
@@ -173,7 +173,7 @@ class GenerateCsvServiceTest {
         assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
 
         // Zählart QjS; Alle Verkehrsbeziehungen
-        final OptionsVerkehrsbeziehungDTO ovb2 = new OptionsVerkehrsbeziehungDTO();
+        final OptionsVerkehrsbeziehungDto ovb2 = new OptionsVerkehrsbeziehungDto();
         ovb2.setVon(1);
         ovb2.setNach(3);
         ovb2.setStrassenseite(Himmelsrichtung.O);

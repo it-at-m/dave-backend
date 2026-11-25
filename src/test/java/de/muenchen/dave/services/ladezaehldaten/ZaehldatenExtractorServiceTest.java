@@ -9,7 +9,7 @@ import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
+import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
@@ -282,11 +282,11 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_QJS_singleChosenSetsVerkehrsbeziehung() {
         OptionsDto options = createBaseOptions();
-        var ext = new OptionsVerkehrsbeziehungDTO();
+        var ext = new OptionsVerkehrsbeziehungDto();
         ext.setVon(11);
         ext.setNach(12);
         ext.setStrassenseite(Himmelsrichtung.N);
-        LinkedList<OptionsVerkehrsbeziehungDTO> list = new LinkedList<>();
+        LinkedList<OptionsVerkehrsbeziehungDto> list = new LinkedList<>();
         list.add(ext);
         options.setChosenVerkehrsbeziehungen(list);
 
