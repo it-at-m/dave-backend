@@ -4,7 +4,6 @@ import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.domain.dtos.ZeitintervallDto;
 import java.io.Serializable;
 import java.util.List;
-
 import lombok.Data;
 
 @Data

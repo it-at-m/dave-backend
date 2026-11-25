@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 
 import de.muenchen.dave.domain.EmailAddress;
-import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.dtos.EmailAddressDTORandomFactory;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.mapper.EmailAddressMapperImpl;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
 import de.muenchen.dave.services.email.EmailAddressService;

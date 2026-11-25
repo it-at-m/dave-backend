@@ -3,7 +3,6 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.Dienstleister;
 import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import java.util.List;
-
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
