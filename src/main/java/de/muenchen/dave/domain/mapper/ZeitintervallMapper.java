@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.ZeitintervallDTO;
+import de.muenchen.dave.domain.dtos.ZeitintervallDto;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,8 +20,8 @@ import org.mapstruct.MappingConstants;
 public interface ZeitintervallMapper {
 
     /**
-     * Die vorgehaltene {@link ZeitintervallDTO}#getStartUhrzeit() und
-     * {@link ZeitintervallDTO}#getEndeUhrzeit() ist im Format
+     * Die vorgehaltene {@link ZeitintervallDto}#getStartUhrzeit() und
+     * {@link ZeitintervallDto}#getEndeUhrzeit() ist im Format
      * {@link DaveConstants}#ZEITINTERVALL_TIME_FORMAT hinterlegt. Diese Methode erweitert die Uhrzeit
      * um das Datum {@link DaveConstants#DEFAULT_LOCALDATE}
      * damit in der eigentlichen Mappermethode ein Parsing von String nach {@link LocalDateTime}
@@ -30,7 +30,7 @@ public interface ZeitintervallMapper {
      * @param zeitintervalle als Dto.
      */
     @BeforeMapping
-    default void setCorrectDateString(final ZeitintervallDTO zeitintervalle) {
+    default void setCorrectDateString(final ZeitintervallDto zeitintervalle) {
         LocalDateTime time = LocalDateTime.of(
                 DaveConstants.DEFAULT_LOCALDATE,
                 LocalTime.parse(
@@ -45,7 +45,7 @@ public interface ZeitintervallMapper {
         zeitintervalle.setEndeUhrzeit(time.toString());
     }
 
-    Zeitintervall zeitintervallDtoToZeitintervall(final ZeitintervallDTO zeitintervall);
+    Zeitintervall zeitintervallDtoToZeitintervall(final ZeitintervallDto zeitintervall);
 
     List<Zeitintervall> deepCopy(final List<Zeitintervall> zeitintervalle);
 

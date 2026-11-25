@@ -3,7 +3,7 @@ package de.muenchen.dave.domain.dtos;
 import lombok.Data;
 
 @Data
-public class ZeitintervallDTO {
+public class ZeitintervallDto {
 
     private String startUhrzeit;
 

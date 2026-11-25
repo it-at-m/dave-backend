@@ -10,6 +10,7 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
+import de.muenchen.dave.domain.dtos.ZeitintervallDto;
 import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
@@ -448,7 +449,7 @@ class ExternalZaehlungPersistierungsServiceTest {
 
         final var ev = new ExternalVerkehrsbeziehungDTO();
         ev.setId(bewegungsId);
-        final var ziDto = new de.muenchen.dave.domain.dtos.ZeitintervallDTO();
+        final var ziDto = new ZeitintervallDto();
         ziDto.setPkw(2);
         ev.setZeitintervalle(java.util.Collections.singletonList(ziDto));
         dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));
