@@ -3,7 +3,7 @@ package de.muenchen.dave.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -96,7 +96,7 @@ class ZaehldatenProcessingUtilTest {
         zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehldauer("DAUER_2_X_4_STUNDEN");
 
-        final OptionsDTO expected = new OptionsDTO();
+        final OptionsDto expected = new OptionsDto();
         expected.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         expected.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         expected.setZeitblock(Zeitblock.ZB_00_24);

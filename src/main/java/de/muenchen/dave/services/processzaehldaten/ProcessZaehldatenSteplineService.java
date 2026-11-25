@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
@@ -71,12 +71,12 @@ public class ProcessZaehldatenSteplineService {
      *
      * @param ladeZaehldatenStepline Die für ein Diagramm aufbereitete Daten. Die Unterteilung in
      *            Unterdiagramme ist noch nicht durchgeführt.
-     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
+     * @param options Die {@link OptionsDto} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
      *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(
             final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
                 && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
                 && !(StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)
@@ -175,7 +175,7 @@ public class ProcessZaehldatenSteplineService {
      */
     public LadeZaehldatenSteplineDTO ladeProcessedZaehldatenStepline(
             final LadeZaehldatenTableDTO zaehldatenTable,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
 
         final var seriesEntries = new SeriesEntries();
@@ -354,7 +354,7 @@ public class ProcessZaehldatenSteplineService {
          * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
          *         {@link StepLineSeriesEntryBigDecimalDTO}.
          */
-        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final OptionsDTO options) {
+        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final OptionsDto options) {
             final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.getPersonenkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.getLastkraftwagen());

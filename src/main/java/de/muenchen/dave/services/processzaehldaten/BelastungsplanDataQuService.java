@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.*;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class BelastungsplanDataQuService extends AbstractBelastungsplanDataService {
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil.mapQuerungsverkehre(

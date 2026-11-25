@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
@@ -74,7 +74,7 @@ public class ProcessZaehldatenZeitreiheTest {
     @Test
     public void calculateOldestDate() {
         Zaehlstelle zaehlstelle = getZaehlstelleWithZaehlungen();
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
 
         assertThat(ProcessZaehldatenZeitreiheService.calculateOldestDate(zaehlstelle, ID4, options),
                 is(DATE1));
@@ -93,7 +93,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
     @Test
     public void fillLadeZaehldatenZeitreiheDTO() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setKraftfahrzeugverkehr(true);
         options.setSchwerverkehr(true);
         options.setGueterverkehr(true);
@@ -149,7 +149,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
     @Test
     public void fillLadeZaehldatenZeitreiheDTO_missingCategoriesProducesNulls() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setKraftfahrzeugverkehr(true);
         options.setSchwerverkehr(true);
         options.setGueterverkehr(true);
@@ -187,7 +187,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
     @Test
     public void fillLadeZaehldatenZeitreiheDTO_zeitreiheGesamtNullWhenNoKfzOrRad() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
 
         options.setKraftfahrzeugverkehr(false);
         options.setSchwerverkehr(false);
@@ -217,7 +217,7 @@ public class ProcessZaehldatenZeitreiheTest {
 
     @Test
     public void fillLadeZaehldatenZeitreiheDTO_percentPresentButAbsoluteMissing() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setKraftfahrzeugverkehr(false);
         options.setSchwerverkehr(false);
         options.setGueterverkehr(true);
@@ -288,13 +288,13 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlung matchingZaehlung = new Zaehlung();
         matchingZaehlung.setZaehlart(Zaehlart.QU.name());
         matchingZaehlung.setQuerungsverkehr(List.of(qv1, qv2));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDTO(), zaehlung), is(true));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDto(), zaehlung), is(true));
 
         // negative cases
         Zaehlung nonMatchingZaehlung1 = new Zaehlung();
         nonMatchingZaehlung1.setZaehlart(Zaehlart.QU.name());
         nonMatchingZaehlung1.setQuerungsverkehr(List.of(qv1));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung2 = new Zaehlung();
         nonMatchingZaehlung2.setZaehlart(Zaehlart.QU.name());
@@ -302,12 +302,12 @@ public class ProcessZaehldatenZeitreiheTest {
         qv3.setKnotenarm(2);
         qv3.setRichtung(Himmelsrichtung.S);
         nonMatchingZaehlung2.setQuerungsverkehr(List.of(qv3, qv2));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung3 = new Zaehlung();
         nonMatchingZaehlung3.setZaehlart(Zaehlart.QU.name());
         nonMatchingZaehlung3.setQuerungsverkehr(List.of(qv1, qv3));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung4 = new Zaehlung();
         nonMatchingZaehlung4.setZaehlart(Zaehlart.QU.name());
@@ -315,7 +315,7 @@ public class ProcessZaehldatenZeitreiheTest {
         qv4.setKnotenarm(1);
         qv4.setRichtung(Himmelsrichtung.W);
         nonMatchingZaehlung4.setQuerungsverkehr(List.of(qv2, qv4));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDto(), zaehlung), is(false));
 
     }
 
@@ -338,13 +338,13 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlung matchingZaehlung = new Zaehlung();
         matchingZaehlung.setZaehlart(Zaehlart.FJS.name());
         matchingZaehlung.setLaengsverkehr(List.of(l1, l2));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDTO(), zaehlung), is(true));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDto(), zaehlung), is(true));
 
         // negative cases
         Zaehlung nonMatchingZaehlung1 = new Zaehlung();
         nonMatchingZaehlung1.setZaehlart(Zaehlart.FJS.name());
         nonMatchingZaehlung1.setLaengsverkehr(List.of(l1));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung2 = new Zaehlung();
         nonMatchingZaehlung2.setZaehlart(Zaehlart.FJS.name());
@@ -353,7 +353,7 @@ public class ProcessZaehldatenZeitreiheTest {
         l3.setRichtung(Bewegungsrichtung.AUS);
         l3.setStrassenseite(Himmelsrichtung.S);
         nonMatchingZaehlung2.setLaengsverkehr(List.of(l1, l3));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung3 = new Zaehlung();
         nonMatchingZaehlung3.setZaehlart(Zaehlart.FJS.name());
@@ -362,7 +362,7 @@ public class ProcessZaehldatenZeitreiheTest {
         l4.setRichtung(Bewegungsrichtung.EIN);
         l4.setStrassenseite(Himmelsrichtung.S);
         nonMatchingZaehlung3.setLaengsverkehr(List.of(l2, l4));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung4 = new Zaehlung();
         nonMatchingZaehlung4.setZaehlart(Zaehlart.FJS.name());
@@ -371,7 +371,7 @@ public class ProcessZaehldatenZeitreiheTest {
         l5.setRichtung(Bewegungsrichtung.EIN);
         l5.setStrassenseite(Himmelsrichtung.W);
         nonMatchingZaehlung4.setLaengsverkehr(List.of(l1, l5));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDto(), zaehlung), is(false));
 
     }
 
@@ -394,13 +394,13 @@ public class ProcessZaehldatenZeitreiheTest {
         Zaehlung matchingZaehlung = new Zaehlung();
         matchingZaehlung.setZaehlart(Zaehlart.QJS.name());
         matchingZaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDTO(), zaehlung), is(true));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(matchingZaehlung, new OptionsDto(), zaehlung), is(true));
 
         // negative cases
         Zaehlung nonMatchingZaehlung1 = new Zaehlung();
         nonMatchingZaehlung1.setZaehlart(Zaehlart.QJS.name());
         nonMatchingZaehlung1.setVerkehrsbeziehungen(List.of(vb1));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung1, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung2 = new Zaehlung();
         nonMatchingZaehlung2.setZaehlart(Zaehlart.QJS.name());
@@ -409,7 +409,7 @@ public class ProcessZaehldatenZeitreiheTest {
         vb3.setNach(1);
         vb3.setStrassenseite(Himmelsrichtung.N);
         nonMatchingZaehlung2.setVerkehrsbeziehungen(List.of(vb1, vb3));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung2, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung3 = new Zaehlung();
         nonMatchingZaehlung3.setZaehlart(Zaehlart.QJS.name());
@@ -418,7 +418,7 @@ public class ProcessZaehldatenZeitreiheTest {
         vb4.setNach(2);
         vb4.setStrassenseite(Himmelsrichtung.N);
         nonMatchingZaehlung3.setVerkehrsbeziehungen(List.of(vb2, vb4));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung3, new OptionsDto(), zaehlung), is(false));
 
         Zaehlung nonMatchingZaehlung4 = new Zaehlung();
         nonMatchingZaehlung4.setZaehlart(Zaehlart.QJS.name());
@@ -427,7 +427,7 @@ public class ProcessZaehldatenZeitreiheTest {
         vb5.setNach(1);
         vb5.setStrassenseite(Himmelsrichtung.S);
         nonMatchingZaehlung4.setVerkehrsbeziehungen(List.of(vb1, vb5));
-        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDTO(), zaehlung), is(false));
+        assertThat(ProcessZaehldatenZeitreiheService.checkBewegungsbeziehung(nonMatchingZaehlung4, new OptionsDto(), zaehlung), is(false));
     }
 
     @Test
@@ -445,7 +445,7 @@ public class ProcessZaehldatenZeitreiheTest {
         vb2.setNach(1);
         zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
 
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
         options.setFussverkehr(true);
 
         // positive cases
@@ -517,7 +517,7 @@ public class ProcessZaehldatenZeitreiheTest {
         vb2.setNach(1);
         zaehlung.setVerkehrsbeziehungen(List.of(vb1, vb2));
 
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
         options.setFussverkehr(false);
 
         // positive cases

@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.auswertung;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
@@ -109,7 +109,7 @@ public class AuswertungVisumService {
      * @param zaehlung zum setzen der Optionen.
      * @return die Optionen für die Datenextraktion.
      */
-    public static OptionsDTO createOptions(
+    public static OptionsDto createOptions(
             final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
             final Zaehlung zaehlung) {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);

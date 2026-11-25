@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.auswertung;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
@@ -155,7 +155,7 @@ public class AuswertungSpitzenstundeService {
         // Setup data extraction
         final TypeZeitintervall typeSpitzenstunde = ZeitintervallGleitendeSpitzenstundeUtil.getRelevantTypeZeitintervallFromZeitauswahl(zeitauswahl);
         final var zaehldatenIntervall = ZaehldatenIntervall.STUNDE_VIERTEL;
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
         options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
         options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
@@ -227,7 +227,7 @@ public class AuswertungSpitzenstundeService {
         final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(
                 spitzenstunde,
                 pkwEinheit,
-                new OptionsDTO());
+                new OptionsDto());
         final LadeAuswertungSpitzenstundeDTO ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
                 .ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(ladeZaehldatumDTO);
         ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getVerkehrsbeziehung().getVon());

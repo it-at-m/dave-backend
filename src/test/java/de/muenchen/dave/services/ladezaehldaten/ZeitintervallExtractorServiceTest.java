@@ -14,7 +14,7 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
@@ -63,7 +63,7 @@ class ZeitintervallExtractorServiceTest {
         chosen.setRichtung(Bewegungsrichtung.EIN);
         chosen.setStrassenseite(Himmelsrichtung.N);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setChosenLaengsverkehre(List.of(chosen));
 
         final var lv = new Laengsverkehr();
@@ -114,7 +114,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now();
         final var ende = start.plusHours(1);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setChosenLaengsverkehre(null); // bewusst null
 
         final var types = Set.of(TypeZeitintervall.BLOCK);
@@ -140,7 +140,7 @@ class ZeitintervallExtractorServiceTest {
         chosen.setKnotenarm(2);
         chosen.setRichtung(Himmelsrichtung.O);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setChosenQuerungsverkehre(List.of(chosen));
 
         final var qv = new Querungsverkehr();
@@ -191,7 +191,7 @@ class ZeitintervallExtractorServiceTest {
         chosen.setNach(4);
         chosen.setStrassenseite(Himmelsrichtung.S);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setChosenVerkehrsbeziehungen(List.of(chosen));
 
         final var vb = new Verkehrsbeziehung();
@@ -238,7 +238,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(3);
         final var ende = LocalDateTime.now().minusHours(2);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(5);
         options.setNachKnotenarm(null);
 
@@ -285,7 +285,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(4);
         final var ende = LocalDateTime.now().minusHours(3);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(null);
         options.setNachKnotenarm(6);
 
@@ -334,7 +334,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(2);
         final var ende = LocalDateTime.now().minusHours(1);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         // Beide Knotenarme gesetzt führen zum Pfad "an allen Knotenarmen"
         options.setVonKnotenarm(1);
         options.setNachKnotenarm(2);
@@ -381,7 +381,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(6);
         final var ende = LocalDateTime.now().minusHours(5);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(7);
         options.setNachKnotenarm(8);
 
@@ -427,7 +427,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(10);
         final var ende = LocalDateTime.now().minusHours(9);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(9);
         options.setNachKnotenarm(null);
 
@@ -473,7 +473,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(8);
         final var ende = LocalDateTime.now().minusHours(7);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(null);
         options.setNachKnotenarm(10);
 
@@ -518,7 +518,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusHours(5);
         final var ende = LocalDateTime.now().minusHours(4);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setVonKnotenarm(null);
         options.setNachKnotenarm(null);
 

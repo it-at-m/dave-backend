@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
@@ -46,7 +46,7 @@ public class LadeZaehldatenController {
     @Transactional(readOnly = true)
     public ResponseEntity<LadeProcessedZaehldatenDTO> ladeZaehldatenProcessed(
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotEmpty final String zaehlungId,
-            @Valid @RequestBody @NotNull final OptionsDTO options) {
+            @Valid @RequestBody @NotNull final OptionsDto options) {
         try {
             log.info("ladeZaehldatenProcessed für Zaehlung {} aufgerufen", zaehlungId);
             final LadeProcessedZaehldatenDTO processedZaehldaten = processZaehldatenService.ladeProcessedZaehldaten(

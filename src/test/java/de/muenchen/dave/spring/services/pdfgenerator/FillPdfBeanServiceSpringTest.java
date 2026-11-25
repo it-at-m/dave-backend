@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -155,8 +155,8 @@ public class FillPdfBeanServiceSpringTest {
         return zaehlstelle;
     }
 
-    public static OptionsDTO getChosenOptionsDTO() {
-        final OptionsDTO optionsDTO = new OptionsDTO();
+    public static OptionsDto getChosenOptionsDTO() {
+        final OptionsDto optionsDTO = new OptionsDto();
         optionsDTO.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         optionsDTO.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         optionsDTO.setZeitblock(Zeitblock.ZB_00_06);
@@ -227,7 +227,7 @@ public class FillPdfBeanServiceSpringTest {
         final Zaehlung zaehlung = getZaehlung();
         final Zaehlstelle zaehlstelle = getZaehlstelle(zaehlung);
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
 
         when(this.indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlstelle);
         when(this.indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
@@ -238,7 +238,7 @@ public class FillPdfBeanServiceSpringTest {
     public void fillBelastungsplanPdf() throws DataNotFoundException {
         this.init();
 
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
 
         final String chartAsBase64Png = "Hier könnte ihre Reklame stehen!";
         DiagrammPdf diagrammPdf = new DiagrammPdf();
@@ -268,7 +268,7 @@ public class FillPdfBeanServiceSpringTest {
     public void fillGangliniePdf() throws DataNotFoundException {
         this.init();
 
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
         final String chartAsBase64Png = "Hier könnte ihre Reklame stehen!";
         final String schematischeUebersicht = "Übersicht";
         GangliniePdf gangliniePdfActual = new GangliniePdf();
@@ -290,7 +290,7 @@ public class FillPdfBeanServiceSpringTest {
     @Test
     public void fillGangliniePdfIncludesSpitzenstunde() throws DataNotFoundException {
         final Zaehlung zaehlung = getZaehlung();
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
         options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
         ladeZaehldatenTableDTO.getZaehldaten().add(getLadeZaehldatumDTO(
@@ -317,7 +317,7 @@ public class FillPdfBeanServiceSpringTest {
     @Test
     public void fillDatentabellePdf() throws DataNotFoundException {
         this.init();
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
         final String schematischeUebersicht = "Base64 String";
 
         DatentabellePdf datentabellePdfActual = new DatentabellePdf();
@@ -341,7 +341,7 @@ public class FillPdfBeanServiceSpringTest {
     public void createChartTitleBelastungsplan() throws DataNotFoundException {
         this.init();
 
-        final OptionsDTO options = getChosenOptionsDTO();
+        final OptionsDto options = getChosenOptionsDTO();
 
         String actualChartTitle = this.fillPdfBeanService.createChartTitleZeitauswahl(MOCKABLE_ZAEHLUNG_ID, options);
         assertThat(actualChartTitle, is("Tageswert"));

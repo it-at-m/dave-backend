@@ -6,7 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -54,7 +54,7 @@ class FillZeitreihePdfBeanServiceSpringTest {
         zaehlung2.setDatum(LocalDate.of(2009, 4, 3));
         zaehlung3.setDatum(LocalDate.of(2005, 1, 2));
 
-        final OptionsDTO options = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
+        final OptionsDto options = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
         options.setZeitblock(Zeitblock.ZB_06_10);
         final Zaehlstelle zaehlstelle = FillPdfBeanServiceSpringTest.getZaehlstelle(zaehlung1);
         zaehlstelle.getZaehlungen().add(zaehlung2);

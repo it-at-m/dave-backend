@@ -11,7 +11,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
@@ -77,7 +77,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
     @Test
     public void ladeProcessedZaehldatenBelastungsplanKreuzung() throws DataNotFoundException {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
@@ -199,7 +199,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
     @Test
     public void ladeProcessedZaehldatenBelastungsplanKreisverkehr() throws DataNotFoundException {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
@@ -317,7 +317,7 @@ public class ProcessZaehldatenBelastungsplanServiceSpringTest {
     @Test
     void extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung() {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setZeitauswahl(LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ);

@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.ladezaehldaten;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
@@ -125,16 +125,16 @@ public class LadeZaehldatenService {
     /**
      * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach {@link LadeZaehldatumDTO}
      * statt. Beim Mapping werden die Informationen in
-     * {@link OptionsDTO} berücksichtigt.
+     * {@link OptionsDto} berücksichtigt.
      *
      * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDTO}.
      * @param pkwEinheit als {@link PkwEinheit}
-     * @param options die {@link OptionsDTO} zur Berücksichtigung der Art und Weise des Mappings.
+     * @param options die {@link OptionsDto} zur Berücksichtigung der Art und Weise des Mappings.
      * @return das gemappte {@link LadeZaehldatumDTO}.
      */
     public static LadeZaehldatumDTO mapToZaehldatum(final Zeitintervall zeitintervall,
             final PkwEinheit pkwEinheit,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final LadeZaehldatumDTO ladeZaehldatum;
         // Hier wird entscheiden, ob für das gegebene Zeitintervall statt eines normalen Intervall-Datensatzes (LadeZaehldatumDTO)
         // ein Tageswert-Datensatz (LadeZaehldatumTageswertDTO) erzeugt werden soll.
@@ -212,13 +212,13 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * Anhand der im Parameter übergebenen {@link OptionsDTO} werden die {@link TypeZeitintervall}e
+     * Anhand der im Parameter übergebenen {@link OptionsDto} werden die {@link TypeZeitintervall}e
      * ermittelt, um die korrekten {@link Zeitintervall}e aus der Datenbank extrahieren zu können.
      *
      * @param options zur Bestimmung der {@link TypeZeitintervall}e
      * @return {@link TypeZeitintervall}e für eine korrekte Datenextraktion.
      */
-    private static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDTO options) {
+    private static Set<TypeZeitintervall> getTypesAccordingChosenOptions(final OptionsDto options) {
         final Set<TypeZeitintervall> types = new HashSet<>();
         if (ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
             types.add(TypeZeitintervall.SPITZENSTUNDE_KFZ);
@@ -268,7 +268,7 @@ public class LadeZaehldatenService {
     }
 
     public static boolean isZeitintervallForTageswert(final Zeitintervall zeitintervall,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         return TypeZeitintervall.GESAMT.equals(zeitintervall.getType())
                 && !Zaehldauer.DAUER_24_STUNDEN.equals(options.getZaehldauer());
     }
@@ -286,7 +286,7 @@ public class LadeZaehldatenService {
 
     /**
      * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in den
-     * {@link OptionsDTO} vorhandenen Informationen und der
+     * {@link OptionsDto} vorhandenen Informationen und der
      * Zaehlungs-ID. Die aus der Datenbank extrahierten Daten werden anschließend nach
      * {@link LadeZaehldatumDTO} gemappt. Schlussendlich werden alle
      * {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO} zurückgegeben.
@@ -299,7 +299,7 @@ public class LadeZaehldatenService {
      */
     public LadeZaehldatenTableDTO ladeZaehldaten(
             final UUID zaehlungId,
-            final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDto options) throws DataNotFoundException {
 
         final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
         final List<Zeitintervall> zeitintervalle;
@@ -323,7 +323,7 @@ public class LadeZaehldatenService {
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         log.debug("Types according chosen options: {}", types);
         final List<Zeitintervall> extractedZeitintervalle = extractZeitintervalle(
@@ -344,7 +344,7 @@ public class LadeZaehldatenService {
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final Set<TypeZeitintervall> types = getTypesAccordingChosenOptions(options);
         return zaehldatenExtractorService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(
                 zaehlungId,
@@ -361,7 +361,7 @@ public class LadeZaehldatenService {
             final Zaehlart zaehlart,
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
-            final OptionsDTO options,
+            final OptionsDto options,
             final Boolean isKreisverkehr,
             final Set<TypeZeitintervall> types) {
         return zaehldatenExtractorService.extractZeitintervalle(
@@ -387,7 +387,7 @@ public class LadeZaehldatenService {
             final UUID zaehlungId,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final List<Zeitintervall> spitzenstunden = extractZeitintervalleSpitzenstundeFor15MinuteIntervals(zaehlungId, zaehlart, isKreisverkehr, options);
         List<Zeitintervall> extractedZeitintervalle;
         if (!spitzenstunden.isEmpty()) {

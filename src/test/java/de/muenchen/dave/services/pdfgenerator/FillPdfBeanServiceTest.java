@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
@@ -101,7 +101,7 @@ class FillPdfBeanServiceTest {
 
     @Test
     public void createChartTitleGanglinieDatentabelle() {
-        final OptionsDTO optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
+        final OptionsDto optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
         final Zaehlung zaehlung = FillPdfBeanServiceSpringTest.getZaehlung();
 
         assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("Gesamte Zählstelle (Zulauf)"));
@@ -197,7 +197,7 @@ class FillPdfBeanServiceTest {
 
     @Test
     void getTimeblockForChartTitle() {
-        final OptionsDTO optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
+        final OptionsDto optionsDTO = FillPdfBeanServiceSpringTest.getChosenOptionsDTO();
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("0 - 6 Uhr"));
         optionsDTO.setZeitblock(Zeitblock.ZB_10_15);
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("10 - 15 Uhr"));
@@ -210,7 +210,7 @@ class FillPdfBeanServiceTest {
     @Test
     void getSchematischeUebersichtNeeded() {
         final Zaehlung zaehlung = new Zaehlung();
-        final OptionsDTO optionsDTO = new OptionsDTO();
+        final OptionsDto optionsDTO = new OptionsDto();
 
         // Standardzählung
         zaehlung.setZaehlart("N");

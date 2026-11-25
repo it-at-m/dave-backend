@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.dtos.CsvDto;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -138,8 +138,8 @@ public class GenerateCsvServiceSpringTest {
         return zaehlstelle;
     }
 
-    private static OptionsDTO getOptionsDTO() {
-        OptionsDTO optionsDTO = new OptionsDTO();
+    private static OptionsDto getOptionsDTO() {
+        OptionsDto optionsDTO = new OptionsDto();
         optionsDTO.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         optionsDTO.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         optionsDTO.setZeitblock(Zeitblock.ZB_00_06);
@@ -191,7 +191,7 @@ public class GenerateCsvServiceSpringTest {
         final Zaehlung zaehlung = getZaehlung();
         final Zaehlstelle zaehlstelle = getZaehlstelle(zaehlung);
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = getLadeZaehldatenTableDTO();
-        final OptionsDTO options = getOptionsDTO();
+        final OptionsDto options = getOptionsDTO();
 
         when(indexService.getZaehlstelleByZaehlungId(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlstelle);
         when(indexService.getZaehlung(MOCKABLE_ZAEHLUNG_ID)).thenReturn(zaehlung);
@@ -204,7 +204,7 @@ public class GenerateCsvServiceSpringTest {
     @Test
     public void fillDatentabelleCSV() throws DataNotFoundException {
         init();
-        final OptionsDTO options = getOptionsDTO();
+        final OptionsDto options = getOptionsDTO();
 
         final CsvDto csvDTO = generateCsvService.generateDatentabelleCsv(MOCKABLE_ZAEHLUNG_ID, options);
 

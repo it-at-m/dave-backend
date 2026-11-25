@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
@@ -67,7 +67,7 @@ class LadeZaehldatenServiceTest {
 
         when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
 
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitauswahl("None");
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
@@ -115,7 +115,7 @@ class LadeZaehldatenServiceTest {
 
         when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
 
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitauswahl(LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE);
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
@@ -163,7 +163,7 @@ class LadeZaehldatenServiceTest {
 
         when(indexService.getZaehlung(eq(zaehlungId.toString()))).thenReturn(zaehlung);
 
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitauswahl("None");
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
@@ -205,7 +205,7 @@ class LadeZaehldatenServiceTest {
     @Test
     void testExtractZeitintervalleForSpitzenstunde_appendsSpitzenstundeWhenOptionTrue() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setSpitzenstunde(true);
@@ -255,7 +255,7 @@ class LadeZaehldatenServiceTest {
     @Test
     void testExtractZeitintervalleForSpitzenstunde_noAppendingOfSpitzenstundeWhenOptionFalse() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setSpitzenstunde(false);
@@ -305,7 +305,7 @@ class LadeZaehldatenServiceTest {
     @Test
     void testExtractZeitintervalleForSpitzenstunde_noSpitzenstundeAvailable() throws Exception {
         final UUID zaehlungId = UUID.randomUUID();
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setSpitzenstunde(true);

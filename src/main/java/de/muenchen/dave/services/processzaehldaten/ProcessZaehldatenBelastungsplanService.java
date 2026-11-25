@@ -3,7 +3,7 @@ package de.muenchen.dave.services.processzaehldaten;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
@@ -125,7 +125,7 @@ public class ProcessZaehldatenBelastungsplanService {
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
     public AbstractLadeBelastungsplanDTO<?> getBelastungsplanDTO(
             final String zaehlungId,
-            final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDto options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
         // überprüfung, ob Zaehlung exisitert. Wenn nicht -> DataNotFoundException
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
@@ -147,11 +147,11 @@ public class ProcessZaehldatenBelastungsplanService {
     /**
      * Diese Methode führt die Datenaufbereitung für den Belastungsplan durch.
      * <p>
-     * Als Basis zur Datenaufbereitung wird bei {@link OptionsDTO}#getZeitauswahl() vom Typ
+     * Als Basis zur Datenaufbereitung wird bei {@link OptionsDto}#getZeitauswahl() vom Typ
      * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} die
-     * Spitzenstunde des {@link OptionsDTO}#getZeitblock() verwendet. Ist der {@link Zeitblock#ZB_00_24}
+     * Spitzenstunde des {@link OptionsDto}#getZeitblock() verwendet. Ist der {@link Zeitblock#ZB_00_24}
      * gewählt, so wird die Spitzenstunde des Tages verwendet.
-     * Ist bei {@link OptionsDTO}#getZeitauswahl() der Wert
+     * Ist bei {@link OptionsDto}#getZeitauswahl() der Wert
      * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
      * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Verkehrsbeziehung}.
      * <p>
@@ -168,7 +168,7 @@ public class ProcessZaehldatenBelastungsplanService {
      *             den DBs extrahiert werden kann.
      */
     public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
-            final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDto options) throws DataNotFoundException {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
         if (StringUtils.contains(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE)) {
@@ -191,7 +191,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @throws DataNotFoundException beim Laden der Zaehldaten aus der DB
      */
     public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
-            final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDto options) throws DataNotFoundException {
         final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
 
         // Fuer die zweite Zaehlung muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
@@ -225,7 +225,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * Diese Methode extrahiert je Bewegungsbeziehung die Zeitintervalle für die Zeitauswahl bezüglich
      * Spitzenstunde.
      * <p>
-     * Anhand der Informationen in den {@link OptionsDTO} wird die relevante Spitzenstunde extrahiert.
+     * Anhand der Informationen in den {@link OptionsDto} wird die relevante Spitzenstunde extrahiert.
      * Diese Spitzenstunde dient mit der
      * {@link Zeitintervall}#getStartUhrzeit() und der {@link Zeitintervall}#getEndeUhrzeit() als
      * Zeitbasis zur Ermittlung der Summen über die vier 15-minütigen
@@ -237,7 +237,7 @@ public class ProcessZaehldatenBelastungsplanService {
      */
     public List<Zeitintervall> extractZeitintervalleSpitzenstundeForEachBewegungsbeziehung(
             final Zaehlung zaehlung,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final TypeZeitintervall chosenSpitzenstunde;
         if (LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ.equals(options.getZeitauswahl())) {
             chosenSpitzenstunde = TypeZeitintervall.SPITZENSTUNDE_KFZ;

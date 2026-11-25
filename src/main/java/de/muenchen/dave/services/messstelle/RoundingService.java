@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
 import de.muenchen.dave.domain.enums.Rounding;
@@ -21,7 +21,7 @@ public class RoundingService {
      * auf den nächsten Wert welcher im Parameter "nearestValueToRound" angegeben ist.
      * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
-     * Eine Rundung wird durchgeführt sobald {@link OptionsDTO}#getRounding() nicht den Wert NONE
+     * Eine Rundung wird durchgeführt sobald {@link OptionsDto}#getRounding() nicht den Wert NONE
      * besitzt.
      * <p>
      * Es wird kaufmännisch auf- bzw. abgerundet.
@@ -34,7 +34,7 @@ public class RoundingService {
      */
     public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(
             final LadeZaehldatumDTO toRound,
-            final OptionsDTO optionsDto) {
+            final OptionsDto optionsDto) {
         if (optionsDto.getRounding() != null && optionsDto.getRounding() != Rounding.NONE) {
             final int nearestValueToRound = optionsDto.getRounding().getValue();
             final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();

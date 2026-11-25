@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
@@ -35,7 +35,7 @@ public class BelastungsplanDataQjsService extends AbstractBelastungsplanDataServ
     }
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil

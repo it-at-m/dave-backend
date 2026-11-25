@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService {
 
     public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
@@ -275,7 +275,7 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      * @param options die Optionen
      * @return true wenn Differenzdaten angezeigt werden sollen, sonst false.
      */
-    private static boolean isDifferenzdatenDarstellung(final OptionsDTO options) {
+    private static boolean isDifferenzdatenDarstellung(final OptionsDto options) {
         return options.getDifferenzdatenDarstellen() && options.getVergleichszaehlungsId() != null;
     }
 

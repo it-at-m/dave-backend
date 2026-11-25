@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
@@ -66,8 +66,8 @@ class GenerateCsvServiceTest {
         return table;
     }
 
-    private static OptionsDTO getOptionsDTO() {
-        OptionsDTO optionsDTO = new OptionsDTO();
+    private static OptionsDto getOptionsDTO() {
+        OptionsDto optionsDTO = new OptionsDto();
         optionsDTO.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         optionsDTO.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         optionsDTO.setZeitblock(Zeitblock.ZB_00_06);
@@ -128,7 +128,7 @@ class GenerateCsvServiceTest {
         CsvMetaObject metaObject = new CsvMetaObject();
         metaObject.setZaehlstelle(zaehlstelle);
         metaObject.setZaehlung(zaehlung);
-        OptionsDTO options = GenerateCsvServiceTest.getOptionsDTO();
+        OptionsDto options = GenerateCsvServiceTest.getOptionsDTO();
 
         // Zählart N; Alle Verkehrsbeziehungen
         String expected = "133301;N;04.11.2020;Von: Alle - Nach: Alle;;;;;;;;;;;;";

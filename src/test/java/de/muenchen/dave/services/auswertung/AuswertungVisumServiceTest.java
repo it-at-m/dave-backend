@@ -3,7 +3,7 @@ package de.muenchen.dave.services.auswertung;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -142,7 +142,7 @@ class AuswertungVisumServiceTest {
         verkehrsbeziehungVisum.setVon(98);
         verkehrsbeziehungVisum.setNach(99);
 
-        final var expected = new OptionsDTO();
+        final var expected = new OptionsDto();
         expected.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         expected.setIntervall(null);
         expected.setZeitblock(Zeitblock.ZB_00_24);

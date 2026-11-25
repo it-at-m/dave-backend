@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
@@ -85,7 +85,7 @@ public class BelastungsplanDataQjsServiceTest {
 
     @Test
     public void testBuildLadeBelastungsplanDTO() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setFussverkehr(true);
         options.setRadverkehr(false);
         options.setRounding(Rounding.NONE);

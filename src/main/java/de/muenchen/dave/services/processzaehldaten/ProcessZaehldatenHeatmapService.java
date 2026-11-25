@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -90,12 +90,12 @@ public class ProcessZaehldatenHeatmapService {
      *
      * @param ladeZaehldatenHeatmap Die für das Diagramm aufbereitete Daten. Die unterteilung in
      *            Unterdiagramme ist noch nicht durchgeführt.
-     * @param options Die {@link OptionsDTO} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
+     * @param options Die {@link OptionsDto} zur Prüfung auf {@link Zeitblock#ZB_00_24} und
      *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(
             final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
-            final OptionsDTO options) {
+            final OptionsDto options) {
 
         if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
                 && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
@@ -162,7 +162,7 @@ public class ProcessZaehldatenHeatmapService {
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
     public LadeZaehldatenHeatmapDTO ladeProcessedZaehldatenHeatmap(final LadeZaehldatenTableDTO zaehldatenTable,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);

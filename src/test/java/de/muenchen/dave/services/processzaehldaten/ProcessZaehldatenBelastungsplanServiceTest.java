@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.*;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -92,7 +92,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithKfzAndRadData() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.RAD));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
@@ -118,7 +118,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithKfzAndFussData() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.KFZ, Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
@@ -144,7 +144,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussData() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
@@ -170,7 +170,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussOnlyData() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
         zaehlstelle.setZaehlungen(List.of(zaehlung));
@@ -196,7 +196,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQjs() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.QJS.name());
@@ -223,7 +223,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataFjs() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.FJS.name());
@@ -250,7 +250,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithFussDataQu() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.FUSS));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.FUSS));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.QU.name());
@@ -277,7 +277,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQjs() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.RAD));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.QJS.name());
@@ -305,7 +305,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataFjs() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.RAD));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.FJS.name());
@@ -333,7 +333,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
      */
     @Test
     public void testLadeProcessedZaehldatenBelastungsplanWithRadAndFussDataQu() throws DataNotFoundException {
-        OptionsDTO options = createTestOptions(List.of(Fahrzeug.RAD));
+        OptionsDto options = createTestOptions(List.of(Fahrzeug.RAD));
         Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
         Zaehlung zaehlung = createTestZaehlung(List.of(Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehlart(Zaehlart.QU.name());
@@ -362,12 +362,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     void testGetBelastungsplanDTOWhenDifferenzFalse() throws Exception {
         ProcessZaehldatenBelastungsplanService serviceSpy = Mockito.spy(service);
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setDifferenzdatenDarstellen(false);
 
         final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
 
-        doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
+        doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDto.class));
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         Zaehlung zaehlung1 = new Zaehlung();
         zaehlung1.setId("zaehlung-1");
@@ -379,7 +379,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         assertSame(expected, result);
         verify(serviceSpy, times(1)).ladeProcessedZaehldatenBelastungsplan(eq("zaehlung-1"), eq(options));
-        verify(serviceSpy, never()).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
+        verify(serviceSpy, never()).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDto.class));
     }
 
     /**
@@ -388,13 +388,13 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     @Test
     void testGetBelastungsplanDTOWhenDifferenzTrue() throws Exception {
         ProcessZaehldatenBelastungsplanService serviceSpy = Mockito.spy(service);
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setDifferenzdatenDarstellen(true);
         options.setVergleichszaehlungsId("vergleich-1");
 
         final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
 
-        doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDTO.class));
+        doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDto.class));
         Zaehlstelle zaehlstelle = new Zaehlstelle();
         Zaehlung zaehlung1 = new Zaehlung();
         zaehlung1.setId("zaehlung-1");
@@ -410,7 +410,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         assertSame(expected, result);
         verify(serviceSpy, times(1)).getDifferenzdatenBelastungsplanDTO(eq("zaehlung-1"), eq(options));
-        verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDTO.class));
+        verify(serviceSpy, never()).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDto.class));
     }
 
     @Test
@@ -492,7 +492,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     public void testRoundToNearestIfRoundingIsChoosen() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setRounding(Rounding.NONE);
         LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
         ladeZaehldatumDTO.setType("TEST");
@@ -585,7 +585,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         when(zaehlung.getZaehlart()).thenReturn(Zaehlart.N.name());
         when(zaehlung.getKreisverkehr()).thenReturn(Boolean.FALSE);
 
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitauswahl(LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ);
         options.setZeitblock(Zeitblock.ZB_06_10);
 
@@ -596,7 +596,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
             overall.setEndeUhrzeit(LocalDateTime.of(2022, 1, 1, 8, 0));
             spitzenstunden.add(overall);
 
-            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), any(), any(OptionsDTO.class)))
+            when(ladeZaehldatenService.extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), any(), any(OptionsDto.class)))
                     .thenReturn(spitzenstunden);
 
             final List<Zeitintervall> zeitintervalle = List.of(new Zeitintervall());
@@ -628,7 +628,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                             any(), any()),
                     times(1));
             verify(ladeZaehldatenService, times(1)).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(eq(zaehlungId), any(), eq(Boolean.FALSE),
-                    any(OptionsDTO.class));
+                    any(OptionsDto.class));
             verify(zeitintervallRepository, times(1))
                     .findByZaehlungIdAndStartUhrzeitGreaterThanEqualAndEndeUhrzeitLessThanEqualAndTypeInOrderBySortingIndexAsc(
                             eq(zaehlungId), eq(overall.getStartUhrzeit()), eq(overall.getEndeUhrzeit()), eq(Set.of(TypeZeitintervall.STUNDE_VIERTEL)));
@@ -691,8 +691,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         return zaehlung;
     }
 
-    private OptionsDTO createTestOptions(final List<Fahrzeug> fahrzeuge) {
-        OptionsDTO options = new OptionsDTO();
+    private OptionsDto createTestOptions(final List<Fahrzeug> fahrzeuge) {
+        OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_06_19);
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setGueterverkehrsanteilProzent(false);

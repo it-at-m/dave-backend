@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.pdf.assets;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import lombok.Data;
 
@@ -13,7 +13,7 @@ public class DatatableAsset extends BaseAsset {
 
     private String text;
 
-    private OptionsDTO options;
+    private OptionsDto options;
 
     private String zaehlungId;
 

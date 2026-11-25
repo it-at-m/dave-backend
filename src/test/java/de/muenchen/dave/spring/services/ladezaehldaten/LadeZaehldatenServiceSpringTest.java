@@ -11,7 +11,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
@@ -213,7 +213,7 @@ class LadeZaehldatenServiceSpringTest {
 
     @Test
     public void mapToZaehldatum() {
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         Zeitintervall zeitintervall = new Zeitintervall();
         zeitintervall.setType(TypeZeitintervall.GESAMT);
@@ -234,7 +234,7 @@ class LadeZaehldatenServiceSpringTest {
         LadeZaehldatumDTO result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
@@ -257,7 +257,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         LadeZaehldatumDTO expected = new LadeZaehldatumDTO();
@@ -279,7 +279,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         expected.setType(null);
@@ -290,7 +290,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.STUNDE);
@@ -302,7 +302,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.SPITZENSTUNDE_BLOCK_KFZ);
@@ -313,7 +313,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.SPITZENSTUNDE_TAG_KFZ);
@@ -323,7 +323,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "mapToZaehldatum",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDTO.class),
+                ArrayUtils.toArray(Zeitintervall.class, PkwEinheit.class, OptionsDto.class),
                 ArrayUtils.toArray(zeitintervall, pkwEinheit, options),
                 LadeZaehldatumDTO.class);
         expected.setType(LadeZaehldatenService.BLOCK);
@@ -332,13 +332,13 @@ class LadeZaehldatenServiceSpringTest {
 
     @Test
     public void getTypesAccordingChosenOptions() {
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
 
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         Set<TypeZeitintervall> result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         Set<TypeZeitintervall> expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_VIERTEL);
@@ -348,7 +348,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_HALB);
@@ -358,7 +358,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.STUNDE_KOMPLETT);
@@ -372,7 +372,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet();
@@ -386,7 +386,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.SPITZENSTUNDE_KFZ);
@@ -400,7 +400,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(
@@ -416,7 +416,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(
@@ -431,7 +431,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.BLOCK);
@@ -443,7 +443,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.BLOCK_SPEZIAL);
@@ -455,7 +455,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = SetUtils.hashSet(TypeZeitintervall.GESAMT);
@@ -467,7 +467,7 @@ class LadeZaehldatenServiceSpringTest {
         result = TestUtils.privateStaticMethodCall(
                 "getTypesAccordingChosenOptions",
                 LadeZaehldatenService.class,
-                ArrayUtils.toArray(OptionsDTO.class),
+                ArrayUtils.toArray(OptionsDto.class),
                 ArrayUtils.toArray(options),
                 Set.class);
         expected = new HashSet<>();
@@ -478,7 +478,7 @@ class LadeZaehldatenServiceSpringTest {
     @Test
     public void isZeitintervallForTageswert() {
         final Zeitintervall zeitintervall = new Zeitintervall();
-        final OptionsDTO chosenOptions = new OptionsDTO();
+        final OptionsDto chosenOptions = new OptionsDto();
         zeitintervall.setType(TypeZeitintervall.GESAMT);
         chosenOptions.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         boolean result = LadeZaehldatenService.isZeitintervallForTageswert(zeitintervall, chosenOptions);
@@ -526,7 +526,7 @@ class LadeZaehldatenServiceSpringTest {
         zaehlstelle.setZaehlungen(List.of(zaehlung));
 
         when(zaehlstelleIndex.findByZaehlungenId(zaehlungId.toString())).thenReturn(Optional.ofNullable(zaehlstelle));
-        final OptionsDTO chosenOptions = new OptionsDTO();
+        final OptionsDto chosenOptions = new OptionsDto();
         chosenOptions.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         chosenOptions.setZeitblock(Zeitblock.ZB_00_24);
         chosenOptions.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);

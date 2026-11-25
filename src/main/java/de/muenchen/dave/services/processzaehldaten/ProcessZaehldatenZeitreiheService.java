@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
@@ -56,7 +56,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param currentZaehlung die aktuelle Zählung
      * @return true, wenn Check erfolgreich, sonst false
      */
-    static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDTO options, final Zaehlung currentZaehlung) {
+    static boolean checkBewegungsbeziehung(final Zaehlung zaehlung, final OptionsDto options, final Zaehlung currentZaehlung) {
 
         // Im Fall der Zaehlart FJS, QU und QJS müssen die Bewegungsbeziehungen identisch sein
         if (List.of(Zaehlart.QU.toString(), Zaehlart.FJS.toString(), Zaehlart.QJS.toString()).contains(zaehlung.getZaehlart())) {
@@ -98,7 +98,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param kategorien Liste der gezählten Fahrzeugkategorien
      */
     static void fillLadeZaehldatenZeitreiheDTO(
-            final OptionsDTO options,
+            final OptionsDto options,
             final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
             final LadeZaehldatumDTO ladeZaehldatumDTO,
             final List<Fahrzeug> kategorien) {
@@ -171,7 +171,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param options Optionen aus dem Frontend
      * @return ältestes Datum
      */
-    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final String currentZaehlungId, final OptionsDTO options) {
+    static LocalDate calculateOldestDate(final Zaehlstelle zaehlstelle, final String currentZaehlungId, final OptionsDto options) {
         LocalDate oldestDate;
 
         if (options.getIdVergleichszaehlungZeitreihe() != null) {
@@ -274,7 +274,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDTO options)
+    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDto options)
             throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
@@ -384,7 +384,7 @@ public class ProcessZaehldatenZeitreiheService {
      * @param kategorien beauftragte Fahrzeugkategorien
      * @return Nicht-vorhanden-Nachricht
      */
-    private static String getMissingValuesMessage(final OptionsDTO options, final List<Fahrzeug> kategorien) {
+    private static String getMissingValuesMessage(final OptionsDto options, final List<Fahrzeug> kategorien) {
         int missing = 0;
         if (options.getRadverkehr() && !kategorien.contains(Fahrzeug.RAD)) {
             missing++;
@@ -472,7 +472,7 @@ public class ProcessZaehldatenZeitreiheService {
      */
     public Stream<Zaehlung> getFilteredAndSortedZaehlungenForZeitreihe(final Zaehlstelle zaehlstelle,
             final Zaehlung currentZaehlung,
-            final OptionsDTO options) {
+            final OptionsDto options) {
         final LocalDate currentDate = currentZaehlung.getDatum();
         final LocalDate oldestDateToSearchFor = calculateOldestDate(zaehlstelle, currentZaehlung.getId(), options);
 
@@ -497,7 +497,7 @@ public class ProcessZaehldatenZeitreiheService {
 
     // Ermittelt für die Fahrzeugkategorien RAD und FUSS ob der Tageswert fehlt bzw. nicht hochgerechnet werden konnte.
     private static List<Fahrzeug> getNichtVorhandeneTageswerte(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zeitintervall zeitintervall,
             final List<Fahrzeug> kategorien) {
         final List<Fahrzeug> result = new ArrayList<>();

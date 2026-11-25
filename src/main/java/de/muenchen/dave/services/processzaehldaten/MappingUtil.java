@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.*;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -38,7 +38,7 @@ public final class MappingUtil {
      *         die die Bedingung für Verkehrsbeziehungen erfüllen, werden berücksichtigt.
      */
     public static Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapVerkehrsbeziehungen(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = new LinkedHashMap<>();
@@ -69,7 +69,7 @@ public final class MappingUtil {
      *         die die Bedingung für Längsverkehre erfüllen, werden berücksichtigt.
      */
     public static Map<Laengsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapLaengsverkehre(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> laengsverkehrIntervalle = zeitintervalle.stream()
@@ -101,7 +101,7 @@ public final class MappingUtil {
      *         die die Bedingungen für Querungsverkehre erfüllen, werden berücksichtigt.
      */
     public static Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> mapQuerungsverkehre(
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         final List<Zeitintervall> querungsverkehrIntervalle = zeitintervalle.stream()
@@ -137,7 +137,7 @@ public final class MappingUtil {
      */
     private static <T extends Bewegungsbeziehung> void calculateZaehldatum(
             Zeitintervall zi,
-            OptionsDTO options,
+            OptionsDto options,
             Zaehlung zaehlung,
             Map<T, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan,
             Function<Zeitintervall, T> keyExtractor,

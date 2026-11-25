@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
@@ -53,7 +53,7 @@ public class ProcessZaehldatenService {
      */
     @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
     public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
-            final OptionsDTO options) throws DataNotFoundException {
+            final OptionsDto options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
 
         log.debug("Lade Zaehldaten for Table");
@@ -107,7 +107,7 @@ public class ProcessZaehldatenService {
     public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
         log.debug("Lade Zaehlungskenngroessen");
 
-        final OptionsDTO options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
+        final OptionsDto options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
         options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
         options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));

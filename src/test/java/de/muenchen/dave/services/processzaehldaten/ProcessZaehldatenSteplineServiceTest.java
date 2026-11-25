@@ -3,7 +3,7 @@ package de.muenchen.dave.services.processzaehldaten;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -99,7 +99,7 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenSteplineAllDataSingleTable() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         options.setPersonenkraftwagen(true);
@@ -174,7 +174,7 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenSteplineAllDataSplittetTable() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         options.setPersonenkraftwagen(true);
@@ -275,7 +275,7 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenSteplineWithoutPkwEinheitenSplittetTable() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         options.setPersonenkraftwagen(true);
@@ -458,7 +458,7 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenSteplineNoSplitting() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
 
@@ -507,7 +507,7 @@ class ProcessZaehldatenSteplineServiceTest {
 
     @Test
     public void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenSteplineWithSplitting() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
 

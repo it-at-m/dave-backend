@@ -6,7 +6,7 @@ import com.github.mustachejava.MustacheFactory;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
@@ -397,7 +397,7 @@ public class GeneratePdfService {
      * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateBelastungsplanPdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png, final String department)
+    public byte[] generateBelastungsplanPdf(final String zaehlungId, final OptionsDto options, final String chartAsBase64Png, final String department)
             throws IOException, DataNotFoundException {
         final DiagrammPdf diagrammPdf = new DiagrammPdf();
         fillPdfBeanService.fillBelastungsplanPdf(diagrammPdf, zaehlungId, options, chartAsBase64Png, department);
@@ -433,7 +433,7 @@ public class GeneratePdfService {
      * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateGangliniePdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png,
+    public byte[] generateGangliniePdf(final String zaehlungId, final OptionsDto options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final GangliniePdf gangliniePdf = new GangliniePdf();
         fillPdfBeanService.fillGangliniePdf(gangliniePdf, zaehlungId, options, chartAsBase64Png, schematischeUebersichtAsBase64Png, department);
@@ -492,7 +492,7 @@ public class GeneratePdfService {
      * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateZeitreihePdf(final String zaehlungId, final OptionsDTO options, final String chartAsBase64Png,
+    public byte[] generateZeitreihePdf(final String zaehlungId, final OptionsDto options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws IOException, DataNotFoundException {
         final ZeitreihePdf zeitreihePdf = new ZeitreihePdf();
         fillZeitreihePdfBeanService.fillZeitreihePdf(zeitreihePdf, zaehlungId, chartAsBase64Png, schematischeUebersichtAsBase64Png, options, department);
@@ -514,7 +514,7 @@ public class GeneratePdfService {
      * @throws IOException beim Erzeugen des PDF
      * @throws DataNotFoundException wenn keine Daten geladen werden konnten
      */
-    public byte[] generateDatentabellePdf(final String zaehlungId, final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
+    public byte[] generateDatentabellePdf(final String zaehlungId, final OptionsDto options, final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {
         final DatentabellePdf datentabellePdf = new DatentabellePdf();
         fillPdfBeanService.fillDatentabellePdf(datentabellePdf, zaehlungId, options, schematischeUebersichtAsBase64Png, department);

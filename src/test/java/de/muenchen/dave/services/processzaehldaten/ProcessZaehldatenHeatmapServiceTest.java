@@ -3,7 +3,7 @@ package de.muenchen.dave.services.processzaehldaten;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -79,7 +79,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenHeatmap() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setPersonenkraftwagen(true);
         options.setLastkraftwagen(true);
         options.setLastzuege(true);
@@ -161,7 +161,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenHeatmapOnlyPkw() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setPersonenkraftwagen(true);
         options.setLastkraftwagen(false);
         options.setLastzuege(false);
@@ -203,7 +203,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenHeatmapNoneChoosen() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setPersonenkraftwagen(false);
         options.setLastkraftwagen(false);
         options.setLastzuege(false);
@@ -288,7 +288,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     @Test
     public void ladeProcessedZaehldatenHeatmapSplitInTwo() {
-        final OptionsDTO options = new OptionsDTO();
+        final OptionsDto options = new OptionsDto();
         options.setPersonenkraftwagen(true);
         options.setLastkraftwagen(true);
         options.setLastzuege(true);
@@ -406,7 +406,7 @@ class ProcessZaehldatenHeatmapServiceTest {
     @Test
     public void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap() {
 
-        OptionsDTO options = new OptionsDTO();
+        OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);

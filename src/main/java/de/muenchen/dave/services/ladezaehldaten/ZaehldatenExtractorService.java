@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zaehlart;
@@ -62,7 +62,7 @@ public class ZaehldatenExtractorService {
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Boolean isKreisverkehr,
-            final OptionsDTO options,
+            final OptionsDto options,
             final Set<TypeZeitintervall> types) {
 
         // Extrahieren der Zeitintervalle für jede Bewegungsbeziehung
@@ -129,7 +129,7 @@ public class ZaehldatenExtractorService {
             final LocalDateTime startUhrzeit,
             final LocalDateTime endeUhrzeit,
             final Boolean isKreisverkehr,
-            final OptionsDTO options,
+            final OptionsDto options,
             final Set<TypeZeitintervall> types) {
 
         final var optionsForSpitzenstunden = optionsMapper.deepCopy(options);
@@ -172,7 +172,7 @@ public class ZaehldatenExtractorService {
      */
     protected Zeitintervall enrichZeitintervalleByBewegungsbeziehung(
             final Zeitintervall zeitintervall,
-            final OptionsDTO options,
+            final OptionsDto options,
             final Zaehlart zaehlart,
             final Boolean isKreisverkehr) {
 

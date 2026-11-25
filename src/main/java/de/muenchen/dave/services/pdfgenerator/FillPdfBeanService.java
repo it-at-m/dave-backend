@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
@@ -370,7 +370,7 @@ public class FillPdfBeanService {
      * @param zaehlung Die im Frontend gewählte Zählung
      * @return chartTitle als String
      */
-    static String createChartTitleVerkehrsbeziehung(final OptionsDTO options, final Zaehlung zaehlung) {
+    static String createChartTitleVerkehrsbeziehung(final OptionsDto options, final Zaehlung zaehlung) {
         final StringBuilder chartTitle = new StringBuilder();
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.QJS.equals(zaehlart) || Zaehlart.FJS.equals(zaehlart) || Zaehlart.QU.equals(zaehlart)) {
@@ -524,7 +524,7 @@ public class FillPdfBeanService {
      * @return true, wenn nicht alle {@link de.muenchen.dave.domain.Bewegungsbeziehung}en ausgewählt
      *         sind.
      */
-    static boolean getSchematischeUebersichtNeeded(final OptionsDTO optionsDTO, final Zaehlung zaehlung) {
+    static boolean getSchematischeUebersichtNeeded(final OptionsDto optionsDTO, final Zaehlung zaehlung) {
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.QJS.equals(zaehlart)) {
             return optionsDTO.getChosenVerkehrsbeziehungen().size() != zaehlung.getVerkehrsbeziehungen().size();
@@ -542,7 +542,7 @@ public class FillPdfBeanService {
      *
      * @param optionsDTO Options aus dem Frontend
      */
-    protected static String getTimeblockForChartTitle(final OptionsDTO optionsDTO) {
+    protected static String getTimeblockForChartTitle(final OptionsDto optionsDTO) {
         return getTimeblockForChartTitle(optionsDTO.getZeitblock());
     }
 
@@ -602,11 +602,11 @@ public class FillPdfBeanService {
      * ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
      *
      * @param zaehlungId ID der Zaehlung
-     * @param optionsDTO als {@link OptionsDTO}
+     * @param optionsDTO als {@link OptionsDto}
      * @return Chart-Title as String
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
      */
-    public String createChartTitleZeitauswahl(final String zaehlungId, final OptionsDTO optionsDTO) throws DataNotFoundException {
+    public String createChartTitleZeitauswahl(final String zaehlungId, final OptionsDto optionsDTO) throws DataNotFoundException {
         final StringBuilder chartTitle = new StringBuilder();
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             chartTitle.append(Zeitauswahl.TAGESWERT.getCapitalizedName());
@@ -717,7 +717,7 @@ public class FillPdfBeanService {
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public void fillBelastungsplanPdf(final DiagrammPdf diagrammPdf, final String zaehlungId,
-            final OptionsDTO options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
+            final OptionsDto options, final String chartAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
 
@@ -770,7 +770,7 @@ public class FillPdfBeanService {
      * @throws DataNotFoundException wenn keine Zaehlstelle oder Zaehlung gefunden wurde
      */
     public void fillGangliniePdf(final GangliniePdf gangliniePdf, final String zaehlungId,
-            final OptionsDTO options, final String chartAsBase64Png,
+            final OptionsDto options, final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
@@ -1152,7 +1152,7 @@ public class FillPdfBeanService {
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung gefunden wurde
      */
     public void fillDatentabellePdf(final DatentabellePdf datentabellePdf, final String zaehlungId,
-            final OptionsDTO options, final String schematischeUebersichtAsBase64Png,
+            final OptionsDto options, final String schematischeUebersichtAsBase64Png,
             final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = this.indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = this.indexService.getZaehlung(zaehlungId);
@@ -1211,7 +1211,7 @@ public class FillPdfBeanService {
      * @return Befülltes Objekt vom Typ {@link DatentabellePdfZaehldaten}.
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
      */
-    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final OptionsDTO options, final String zaehlungId) throws DataNotFoundException {
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final OptionsDto options, final String zaehlungId) throws DataNotFoundException {
         final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
         final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
 
@@ -1273,7 +1273,7 @@ public class FillPdfBeanService {
         return datentabellePdfZaehldaten;
     }
 
-    private int calcActiveTabsFahrzeugtypen(final OptionsDTO optionsDTO) {
+    private int calcActiveTabsFahrzeugtypen(final OptionsDto optionsDTO) {
         int activeTabsFahrzeugtypen = 0;
         if (optionsDTO.getPersonenkraftwagen()) {
             activeTabsFahrzeugtypen++;
@@ -1328,7 +1328,7 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugtypen;
     }
 
-    private int calcActiveTabsFahrzeugklassen(final OptionsDTO optionsDTO) {
+    private int calcActiveTabsFahrzeugklassen(final OptionsDto optionsDTO) {
         int activeTabsFahrzeugklasse = 0;
         if (optionsDTO.getKraftfahrzeugverkehr()) {
             activeTabsFahrzeugklasse++;
@@ -1356,7 +1356,7 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugklasse;
     }
 
-    private int calcActiveTabsAnteile(final OptionsDTO optionsDTO) {
+    private int calcActiveTabsAnteile(final OptionsDto optionsDTO) {
         int activeTabsAnteile = 0;
         if (optionsDTO.getSchwerverkehrsanteilProzent()) {
             activeTabsAnteile++;

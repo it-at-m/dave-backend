@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.pdfgenerator;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -90,7 +90,7 @@ public class FillZeitreihePdfBeanService {
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung/Zaehldaten gefunden wurden
      */
     public ZeitreihePdf fillZeitreihePdf(final ZeitreihePdf zeitreihePdf, final String zaehlungId, final String chartAsBase64Png,
-            final String schematischeUebersichtAsBase64Png, final OptionsDTO options, final String department) throws DataNotFoundException {
+            final String schematischeUebersichtAsBase64Png, final OptionsDto options, final String department) throws DataNotFoundException {
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlungId);
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId);
 
@@ -126,7 +126,7 @@ public class FillZeitreihePdfBeanService {
      * @return Liste von ZeitreiheTableRows
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
-    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDTO options) throws DataNotFoundException {
+    public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDto options) throws DataNotFoundException {
         final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {
@@ -171,7 +171,7 @@ public class FillZeitreihePdfBeanService {
      * @param options Optionen aus dem Frontend
      * @param zaehlstelle Im Frontend gewählte Zählstelle
      */
-    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung, final OptionsDTO options,
+    public void fillZusatzinformationenZeitreihe(final ZeitreihePdf zeitreihePdf, final Zaehlung zaehlung, final OptionsDto options,
             final Zaehlstelle zaehlstelle) {
         final List<ZusatzinformationenZeitreihePdfComponent> zusatzinformationenZeitreihePdfComponentList = new ArrayList<>();
 

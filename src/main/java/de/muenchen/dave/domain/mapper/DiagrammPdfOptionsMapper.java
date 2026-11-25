@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
@@ -15,7 +15,7 @@ public interface DiagrammPdfOptionsMapper {
 
     // @MappingTarget bewirkt, dass das übergebene GangliniePdf nur "geupdated" wird und kein neues Objekt erzeugt wird.
     @Mapping(target = "zeitauswahl", ignore = true)
-    GangliniePdf options2gangliniePdf(@MappingTarget GangliniePdf gangliniePdf, OptionsDTO dto);
+    GangliniePdf options2gangliniePdf(@MappingTarget GangliniePdf gangliniePdf, OptionsDto dto);
 
     GanglinieMessstellePdf options2gangliniePdf(
             @MappingTarget GanglinieMessstellePdf gangliniePdf, FahrzeugOptionsDTO dto);

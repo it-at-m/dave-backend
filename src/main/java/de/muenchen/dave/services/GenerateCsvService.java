@@ -3,7 +3,7 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.CsvDto;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -46,7 +46,7 @@ public class GenerateCsvService {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDto generateDatentabelleCsv(String zaehlungId, OptionsDTO options) throws DataNotFoundException {
+    public CsvDto generateDatentabelleCsv(String zaehlungId, OptionsDto options) throws DataNotFoundException {
         final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options).getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
@@ -111,7 +111,7 @@ public class GenerateCsvService {
      * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
-    public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDTO options) {
+    public String getMetaData(final CsvMetaObject metaObject, final String header, final OptionsDto options) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
         final StringBuilder metaData = new StringBuilder();
         metaData.append(metaObject.getZaehlstelle().getNummer());
@@ -169,7 +169,7 @@ public class GenerateCsvService {
      * @param dataCsv eine Zeile in der Tabelle
      * @return CSV-Zeile
      */
-    public String getData(final OptionsDTO options, final DatentabelleCsvZaehldatum dataCsv) {
+    public String getData(final OptionsDto options, final DatentabelleCsvZaehldatum dataCsv) {
         final StringBuilder data = new StringBuilder();
         // Zeit
         if (StringUtils.isNotEmpty(dataCsv.getStartUhrzeit())) {
@@ -278,7 +278,7 @@ public class GenerateCsvService {
      * @param options aktuelle Einstellungen
      * @return Header als CSV-Zeile
      */
-    public String getHeader(final OptionsDTO options) {
+    public String getHeader(final OptionsDto options) {
         final StringBuilder header = new StringBuilder();
         // Zeit
         header.append("von");

@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class OptionsDTO implements Serializable {
+public class OptionsDto implements Serializable {
 
     @NotNull
     private Zaehldauer zaehldauer;

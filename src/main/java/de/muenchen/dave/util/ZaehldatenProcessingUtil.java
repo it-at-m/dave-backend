@@ -1,6 +1,6 @@
 package de.muenchen.dave.util;
 
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -108,12 +108,12 @@ public final class ZaehldatenProcessingUtil {
      * @param zaehlung für das Standard-OptionsDTO.
      * @return das Standard-OptionsDTO zur Datenextraktion.
      */
-    public static OptionsDTO createHardcodedOptions(final Zaehlung zaehlung) {
+    public static OptionsDto createHardcodedOptions(final Zaehlung zaehlung) {
         final boolean getKfz = zaehlung.getKategorien().contains(Fahrzeug.KFZ);
         final boolean getRad = zaehlung.getKategorien().contains(Fahrzeug.RAD);
         final boolean getFuss = zaehlung.getKategorien().contains(Fahrzeug.FUSS);
 
-        final var options = new OptionsDTO();
+        final var options = new OptionsDto();
         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
         options.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         options.setZeitblock(Zeitblock.ZB_00_24);

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.OptionsDTO;
+import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
@@ -68,8 +68,8 @@ class ZaehldatenExtractorServiceTest {
                 .build();
     }
 
-    private OptionsDTO createBaseOptions() {
-        OptionsDTO options = new OptionsDTO();
+    private OptionsDto createBaseOptions() {
+        OptionsDto options = new OptionsDto();
         options.setZeitblock(Zeitblock.ZB_06_10);
         options.setZeitauswahl("TEST");
         options.setKraftfahrzeugverkehr(true);
@@ -121,7 +121,7 @@ class ZaehldatenExtractorServiceTest {
         when(zeitintervallSummationService.sumZeitintervelleOverBewegungsbeziehung(Mockito.any())).thenReturn(summed);
 
         // Act
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         options.setVonKnotenarm(1);
         options.setNachKnotenarm(2);
         var result = service.extractZeitintervalle(zaehlungId, Zaehlart.N, LocalDateTime.now(), LocalDateTime.now(), true, options,
@@ -160,7 +160,7 @@ class ZaehldatenExtractorServiceTest {
         Mockito.doReturn(spitzen).when(spy).extractZeitintervalleSpitzenstundeFor15MinuteIntervals(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
                 Mockito.any(), Mockito.any(), Mockito.any());
 
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         options.setZeitblock(Zeitblock.ZB_06_10);
         // Setze von/nach damit die Anreicherung mit Verkehrsbeziehung im else-Branch sichtbar wird
         options.setVonKnotenarm(1);
@@ -203,7 +203,7 @@ class ZaehldatenExtractorServiceTest {
         var spitzen = createZeitintervall(TypeZeitintervall.SPITZENSTUNDE_RAD, 2);
 
         // Mock OptionsMapper.deepCopy to return a copy (we can reuse base options)
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         when(optionsMapper.deepCopy(Mockito.any())).thenReturn(options);
 
         // The extractor returns some map (content is irrelevant for this test)
@@ -237,7 +237,7 @@ class ZaehldatenExtractorServiceTest {
 
     @Test
     void testEnrich_QU_singleChosenSetsQuerungsverkehr() {
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         var ext = new OptionsQuerungsverkehrDTO();
         ext.setKnotenarm(5);
         ext.setRichtung(Himmelsrichtung.N);
@@ -258,7 +258,7 @@ class ZaehldatenExtractorServiceTest {
 
     @Test
     void testEnrich_FJS_singleChosenSetsLaengsverkehr() {
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         var ext = new OptionsLaengsverkehrDTO();
         ext.setKnotenarm(7);
         ext.setRichtung(Bewegungsrichtung.EIN);
@@ -281,7 +281,7 @@ class ZaehldatenExtractorServiceTest {
 
     @Test
     void testEnrich_QJS_singleChosenSetsVerkehrsbeziehung() {
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
         var ext = new OptionsVerkehrsbeziehungDTO();
         ext.setVon(11);
         ext.setNach(12);
@@ -304,7 +304,7 @@ class ZaehldatenExtractorServiceTest {
 
     @Test
     void testEnrich_elseBranch_kreisverkehrCases() {
-        OptionsDTO options = createBaseOptions();
+        OptionsDto options = createBaseOptions();
 
         // HINEIN: von gesetzt, nach null
         options.setVonKnotenarm(1);
