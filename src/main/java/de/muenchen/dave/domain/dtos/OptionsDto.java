@@ -121,7 +121,7 @@ public class OptionsDto implements Serializable {
     private List<OptionsLaengsverkehrDto> chosenLaengsverkehre;
 
     // Für Zaehlart Qu
-    private List<OptionsQuerungsverkehrDTO> chosenQuerungsverkehre;
+    private List<OptionsQuerungsverkehrDto> chosenQuerungsverkehre;
 
     private String idVergleichszaehlungZeitreihe;
 }

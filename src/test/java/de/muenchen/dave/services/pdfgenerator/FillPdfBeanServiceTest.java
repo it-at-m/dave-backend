@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
@@ -175,12 +175,12 @@ class FillPdfBeanServiceTest {
         qv2.setKnotenarm(2);
         qv2.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
-        final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv1 = new OptionsQuerungsverkehrDto();
         oqv1.setKnotenarm(2);
         oqv1.setRichtung(Himmelsrichtung.N);
         optionsDTO.setChosenQuerungsverkehre(List.of(oqv1));
         assertThat(FillPdfBeanService.createChartTitleVerkehrsbeziehung(optionsDTO, zaehlung), is("Zählstelle - Teilauswahl"));
-        final OptionsQuerungsverkehrDTO oqv2 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv2 = new OptionsQuerungsverkehrDto();
         oqv2.setKnotenarm(2);
         oqv2.setRichtung(Himmelsrichtung.S);
         optionsDTO.setChosenQuerungsverkehre(List.of(oqv1, oqv2));
@@ -277,12 +277,12 @@ class FillPdfBeanServiceTest {
         qv2.setKnotenarm(2);
         qv2.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
-        final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv1 = new OptionsQuerungsverkehrDto();
         oqv1.setKnotenarm(2);
         oqv1.setRichtung(Himmelsrichtung.N);
         optionsDTO.setChosenQuerungsverkehre(List.of(oqv1));
         assertThat(FillPdfBeanService.getSchematischeUebersichtNeeded(optionsDTO, zaehlung), is(true));
-        final OptionsQuerungsverkehrDTO oqv2 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv2 = new OptionsQuerungsverkehrDto();
         oqv2.setKnotenarm(2);
         oqv2.setRichtung(Himmelsrichtung.S);
         optionsDTO.setChosenQuerungsverkehre(List.of(oqv1, oqv2));

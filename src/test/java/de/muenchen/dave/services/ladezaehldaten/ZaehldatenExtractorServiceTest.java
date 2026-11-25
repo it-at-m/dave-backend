@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -238,10 +238,10 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_QU_singleChosenSetsQuerungsverkehr() {
         OptionsDto options = createBaseOptions();
-        var ext = new OptionsQuerungsverkehrDTO();
+        var ext = new OptionsQuerungsverkehrDto();
         ext.setKnotenarm(5);
         ext.setRichtung(Himmelsrichtung.N);
-        LinkedList<OptionsQuerungsverkehrDTO> list = new LinkedList<>();
+        LinkedList<OptionsQuerungsverkehrDto> list = new LinkedList<>();
         list.add(ext);
         options.setChosenQuerungsverkehre(list);
 

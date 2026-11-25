@@ -7,7 +7,7 @@ import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.*;
@@ -218,7 +218,7 @@ class GenerateCsvServiceTest {
         qv2.setKnotenarm(4);
         qv2.setRichtung(Himmelsrichtung.S);
         zaehlung.setQuerungsverkehr(List.of(qv1, qv2));
-        final OptionsQuerungsverkehrDTO oqv1 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv1 = new OptionsQuerungsverkehrDto();
         oqv1.setKnotenarm(4);
         oqv1.setRichtung(Himmelsrichtung.N);
         options.setChosenQuerungsverkehre(List.of(oqv1));
@@ -226,7 +226,7 @@ class GenerateCsvServiceTest {
         assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
 
         // Zählart Qu; Alle Verkehrsbeziehungen
-        final OptionsQuerungsverkehrDTO oqv2 = new OptionsQuerungsverkehrDTO();
+        final OptionsQuerungsverkehrDto oqv2 = new OptionsQuerungsverkehrDto();
         oqv2.setKnotenarm(4);
         oqv2.setRichtung(Himmelsrichtung.S);
         options.setChosenQuerungsverkehre(List.of(oqv1, oqv2));

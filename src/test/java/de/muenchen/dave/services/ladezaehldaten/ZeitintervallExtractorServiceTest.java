@@ -16,7 +16,7 @@ import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
-import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
@@ -136,7 +136,7 @@ class ZeitintervallExtractorServiceTest {
         final var start = LocalDateTime.now().minusDays(1);
         final var ende = LocalDateTime.now();
 
-        final var chosen = new OptionsQuerungsverkehrDTO();
+        final var chosen = new OptionsQuerungsverkehrDto();
         chosen.setKnotenarm(2);
         chosen.setRichtung(Himmelsrichtung.O);
 
