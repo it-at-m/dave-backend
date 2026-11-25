@@ -11,8 +11,8 @@ import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -185,7 +185,7 @@ public class FillPdfBeanService {
             final BasicMessstellePdf basicPdf,
             final Messstelle messstelle,
             final String department,
-            final MessstelleAuswertungOptionsDTO optionsDTO,
+            final MessstelleAuswertungOptionsDto optionsDTO,
             final boolean isSingleMessstelle) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(
@@ -255,7 +255,7 @@ public class FillPdfBeanService {
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationenGesamtauswertung(
             final MessstelleninformationenPdfComponent messstelleninformationen,
             final Messstelle messstelle,
-            final MessstelleAuswertungOptionsDTO optionsDTO,
+            final MessstelleAuswertungOptionsDto optionsDTO,
             final boolean isSingleMessstelle) {
         messstelleninformationen.setStandortNeeded(isSingleMessstelle);
         messstelleninformationen.setKommentarNeeded(isSingleMessstelle);
@@ -470,7 +470,7 @@ public class FillPdfBeanService {
         return chartTitle.toString().trim();
     }
 
-    protected static String createChartTitle(final MessstelleAuswertungOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleAuswertungOptionsDto options, final Messstelle messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessstelleAuswertungIds().size() > 1) {
             chartTitle.append(CHART_TITLE_MEHRERE_MESSSTELLE);
@@ -991,13 +991,13 @@ public class FillPdfBeanService {
      */
     public void fillGesamtauswertungPdf(
             final GesamtauswertungMessstellePdf gesamtauswertungPdf,
-            final MessstelleAuswertungOptionsDTO options,
+            final MessstelleAuswertungOptionsDto options,
             final LadeZaehldatenStepLineDto auswertung,
             final String chartAsBase64Png,
             final String department) {
 
-        final Collection<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTOS = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds());
-        final Optional<MessstelleAuswertungIdDTO> messstelleAuswertungIdDTO = messstelleAuswertungIdDTOS.stream()
+        final Collection<MessstelleAuswertungIdDto> messstelleAuswertungIdDTOS = CollectionUtils.emptyIfNull(options.getMessstelleAuswertungIds());
+        final Optional<MessstelleAuswertungIdDto> messstelleAuswertungIdDTO = messstelleAuswertungIdDTOS.stream()
                 .findFirst();
         if (messstelleAuswertungIdDTO.isPresent()) {
             final Messstelle messstelle = this.messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.get().getMstId());

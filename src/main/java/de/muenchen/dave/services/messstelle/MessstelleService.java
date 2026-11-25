@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -102,7 +102,7 @@ public class MessstelleService {
         return Verkehrsart.KFZ.equals(messstelle.getDetektierteVerkehrsart());
     }
 
-    public List<MessstelleAuswertungDTO> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
+    public List<MessstelleAuswertungDto> getAllVisibleMessstellenForAuswertungOrderByMstIdAsc() {
         final List<Messstelle> messstellen = messstelleIndexService.findAllVisibleMessstellen();
         final List<Messstelle> sorted = messstellen.stream().sorted(Comparator.comparing(Messstelle::getMstId)).collect(Collectors.toList());
         return messstelleMapper.bean2auswertungDto(sorted);

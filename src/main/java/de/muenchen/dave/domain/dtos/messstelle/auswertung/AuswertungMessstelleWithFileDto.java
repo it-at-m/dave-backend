@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class AuswertungMessstelleWithFileDTO {
+public class AuswertungMessstelleWithFileDto {
 
     @NotNull
     private LadeZaehldatenStepLineDto zaehldatenMessstellen;

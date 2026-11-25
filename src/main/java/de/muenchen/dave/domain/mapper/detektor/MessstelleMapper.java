@@ -7,8 +7,8 @@ import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -141,9 +141,9 @@ public interface MessstelleMapper {
         dto.setStadtbezirk(stadtbezirkMapper.bezeichnungOf(bean.getStadtbezirkNummer()));
     }
 
-    List<MessstelleAuswertungDTO> bean2auswertungDto(List<Messstelle> bean);
+    List<MessstelleAuswertungDto> bean2auswertungDto(List<Messstelle> bean);
 
-    List<MessquerschnittAuswertungDTO> bean2auswertungMqDto(List<Messquerschnitt> bean);
+    List<MessquerschnittAuswertungDto> bean2auswertungMqDto(List<Messquerschnitt> bean);
 
     EditMessfaehigkeitDTO messfaehigkeitBean2EditMessfaehigkeitDto(Messfaehigkeit bean);
 

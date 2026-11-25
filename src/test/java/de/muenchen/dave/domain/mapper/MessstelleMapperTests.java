@@ -8,8 +8,8 @@ import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.MessstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -232,7 +232,7 @@ class MessstelleMapperTests {
     void bean2auswertungMqDto() {
         final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
 
-        final MessquerschnittAuswertungDTO expected = new MessquerschnittAuswertungDTO();
+        final MessquerschnittAuswertungDto expected = new MessquerschnittAuswertungDto();
         expected.setMqId(bean.getMqId());
         expected.setStandort(bean.getStandort());
         expected.setFahrtrichtung(bean.getFahrtrichtung());
@@ -247,7 +247,7 @@ class MessstelleMapperTests {
     void bean2auswertungDto() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
-        final MessstelleAuswertungDTO expected = new MessstelleAuswertungDTO();
+        final MessstelleAuswertungDto expected = new MessstelleAuswertungDto();
         expected.setMstId(bean.getMstId());
         expected.setStandort(bean.getStandort());
         expected.setDetektierteVerkehrsart(bean.getDetektierteVerkehrsart());

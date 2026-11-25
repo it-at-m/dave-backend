@@ -1,8 +1,8 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.services.messstelle.auswertung.AuswertungService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -33,15 +33,15 @@ public class AuswertungController {
     private final AuswertungService auswertungService;
 
     @GetMapping(value = "/messstelle/getAllVisibleMessstellen")
-    public ResponseEntity<List<MessstelleAuswertungDTO>> getAllVisibleMessstellen() {
+    public ResponseEntity<List<MessstelleAuswertungDto>> getAllVisibleMessstellen() {
         log.info("#getAllVisibleMessstellen");
-        final List<MessstelleAuswertungDTO> dto = auswertungService.getAllVisibleMessstellen();
+        final List<MessstelleAuswertungDto> dto = auswertungService.getAllVisibleMessstellen();
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping(value = "/messstelle")
-    public ResponseEntity<AuswertungMessstelleWithFileDTO> getAuswertungMessstelle(
-            @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDTO options) {
+    public ResponseEntity<AuswertungMessstelleWithFileDto> getAuswertungMessstelle(
+            @Valid @RequestBody @NotNull final MessstelleAuswertungOptionsDto options) {
         log.info("generateAuswertung für Messstellen {} aufgerufen", options.getMessstelleAuswertungIds());
         try {
             final var auswertungMessstellen = auswertungService.ladeAuswertungMessstellen(options);

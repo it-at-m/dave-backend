@@ -7,9 +7,9 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleWithFileDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
@@ -54,7 +54,7 @@ public class AuswertungService {
 
     private final ValidierungService validierungService;
 
-    public List<MessstelleAuswertungDTO> getAllVisibleMessstellen() {
+    public List<MessstelleAuswertungDto> getAllVisibleMessstellen() {
         return messstelleService.getAllVisibleMessstellenForAuswertungOrderByMstIdAsc();
     }
 
@@ -69,9 +69,9 @@ public class AuswertungService {
      * @throws IOException
      */
     @LogExecutionTime
-    public AuswertungMessstelleWithFileDTO ladeAuswertungMessstellen(final MessstelleAuswertungOptionsDTO options) throws IOException {
+    public AuswertungMessstelleWithFileDto ladeAuswertungMessstellen(final MessstelleAuswertungOptionsDto options) throws IOException {
         log.debug("#ladeAuswertungMessstellen {}", options);
-        final var auswertungMessstellen = new AuswertungMessstelleWithFileDTO();
+        final var auswertungMessstellen = new AuswertungMessstelleWithFileDto();
         final var auswertungenMqByMstId = this.ladeAuswertungGroupedByMstId(options);
         final var zaehldatenMessstellen = this.createZaehldatenForGanglinie(options.getFahrzeuge(), auswertungenMqByMstId);
         auswertungMessstellen.setZaehldatenMessstellen(zaehldatenMessstellen);
@@ -112,7 +112,7 @@ public class AuswertungService {
      *             Controller
      */
     protected byte[] createAuswertungMessstellenSpreadsheet(
-            final MessstelleAuswertungOptionsDTO options,
+            final MessstelleAuswertungOptionsDto options,
             final List<AuswertungMessstelle> auswertungenProMessstelle) throws IOException {
         if (CollectionUtils.isEmpty(options.getMessstelleAuswertungIds())) {
             throw new IllegalArgumentException("Es wurden keine Messstellen ausgewählt.");
@@ -127,7 +127,7 @@ public class AuswertungService {
      * @param options Definierte Optionen zum Laden der Daten
      * @return Liste an Auswertungen Pro Messstelle
      */
-    protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDTO options) {
+    protected List<AuswertungMessstelle> ladeAuswertungGroupedByMstId(final MessstelleAuswertungOptionsDto options) {
 
         // Pro Jahr + Zeitintervall, z.B. Januar ein eintrag in der Liste
         final List<Zeitraum> zeitraeume = this.createZeitraeume(options.getZeitraum(), options.getJahre());

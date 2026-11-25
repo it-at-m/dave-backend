@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.pdfgenerator.GeneratePdfService;
@@ -195,7 +195,7 @@ public class GeneratePdfController {
     @PostMapping(value = "/auswertung", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> generatePdfAuswertung(
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
-            @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDTO options,
+            @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDto options,
             @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final LadeZaehldatenStepLineDto auswertung,
             @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png) {
         try {

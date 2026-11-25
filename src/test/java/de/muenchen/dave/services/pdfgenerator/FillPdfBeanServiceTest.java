@@ -13,8 +13,8 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
@@ -382,7 +382,7 @@ class FillPdfBeanServiceTest {
     void fillMessstelleninformationenGesamtauswertung() {
         MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final MessstelleAuswertungOptionsDTO optionsDTO = new MessstelleAuswertungOptionsDTO();
+        final MessstelleAuswertungOptionsDto optionsDTO = new MessstelleAuswertungOptionsDto();
         optionsDTO.setJahre(List.of(2006, 2007, 2008));
         optionsDTO.setTagesTyp(TagesTyp.SAMSTAG);
         optionsDTO.setFahrzeuge(new FahrzeugOptionsDTO());
@@ -424,10 +424,10 @@ class FillPdfBeanServiceTest {
 
     @Test
     void createChartTitleGesamtauswertung() {
-        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
-        final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = new MessstelleAuswertungIdDTO();
+        final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
+        final MessstelleAuswertungIdDto messstelleAuswertungIdDTO = new MessstelleAuswertungIdDto();
         messstelleAuswertungIdDTO.setMstId("123");
-        options.setMessstelleAuswertungIds(Set.of(messstelleAuswertungIdDTO, new MessstelleAuswertungIdDTO()));
+        options.setMessstelleAuswertungIds(Set.of(messstelleAuswertungIdDTO, new MessstelleAuswertungIdDto()));
         assertThat(FillPdfBeanService.createChartTitle(options, new Messstelle()), is(FillPdfBeanService.CHART_TITLE_MEHRERE_MESSSTELLE));
 
         final Messstelle messstelle = new Messstelle();

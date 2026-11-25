@@ -10,7 +10,7 @@ import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.pdf.MustacheBean;
 import de.muenchen.dave.domain.pdf.templates.DatentabellePdf;
 import de.muenchen.dave.domain.pdf.templates.DiagrammPdf;
@@ -467,7 +467,7 @@ public class GeneratePdfService {
      * @return PDF als byte[]
      * @throws IOException
      */
-    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options,
+    public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDto options,
             final LadeZaehldatenStepLineDto auswertung,
             final String chartAsBase64Png,
             final String department)

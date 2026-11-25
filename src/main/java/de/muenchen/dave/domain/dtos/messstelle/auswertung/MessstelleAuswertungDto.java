@@ -7,12 +7,12 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class MessstelleAuswertungDTO implements Serializable {
+public class MessstelleAuswertungDto implements Serializable {
 
     @NotNull
     private String mstId;
     private String standort;
     @NotNull
-    private List<MessquerschnittAuswertungDTO> messquerschnitte;
+    private List<MessquerschnittAuswertungDto> messquerschnitte;
     private Verkehrsart detektierteVerkehrsart;
 }

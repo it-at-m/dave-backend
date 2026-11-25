@@ -6,7 +6,7 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class MessstelleAuswertungIdDTO implements Serializable {
+public class MessstelleAuswertungIdDto implements Serializable {
 
     @NotNull
     private String mstId;

@@ -5,8 +5,8 @@ import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
@@ -94,13 +94,13 @@ class AuswertungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
 
-        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
-        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDto>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDto();
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
 
-        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        final var auswertungOptions = new MessstelleAuswertungOptionsDto();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
         auswertungOptions.setJahre(jahre);
         auswertungOptions.setFahrzeuge(fahrzeugOptions);
@@ -220,13 +220,13 @@ class AuswertungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
 
-        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
-        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDto>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDto();
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
 
-        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        final var auswertungOptions = new MessstelleAuswertungOptionsDto();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
         auswertungOptions.setJahre(jahre);
         auswertungOptions.setFahrzeuge(fahrzeugOptions);
@@ -354,13 +354,13 @@ class AuswertungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
 
-        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
-        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDto>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDto();
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
 
-        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        final var auswertungOptions = new MessstelleAuswertungOptionsDto();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
         auswertungOptions.setJahre(jahre);
         auswertungOptions.setFahrzeuge(fahrzeugOptions);
@@ -495,13 +495,13 @@ class AuswertungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(true);
 
-        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
-        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDto>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDto();
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
 
-        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        final var auswertungOptions = new MessstelleAuswertungOptionsDto();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
         auswertungOptions.setJahre(jahre);
         auswertungOptions.setFahrzeuge(fahrzeugOptions);
@@ -620,13 +620,13 @@ class AuswertungServiceTest {
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setRadverkehr(false);
 
-        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDTO>();
-        var messstelleAuswertungId = new MessstelleAuswertungIdDTO();
+        final var messtellenAuswertungIds = new HashSet<MessstelleAuswertungIdDto>();
+        var messstelleAuswertungId = new MessstelleAuswertungIdDto();
         messstelleAuswertungId.setMstId("1234");
         messstelleAuswertungId.setMqIds(Set.of("123401", "123402"));
         messtellenAuswertungIds.add(messstelleAuswertungId);
 
-        final var auswertungOptions = new MessstelleAuswertungOptionsDTO();
+        final var auswertungOptions = new MessstelleAuswertungOptionsDto();
         auswertungOptions.setZeitraum(auswertungszeitraeume);
         auswertungOptions.setJahre(jahre);
         auswertungOptions.setFahrzeuge(fahrzeugOptions);

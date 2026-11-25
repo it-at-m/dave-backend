@@ -10,7 +10,7 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class MessstelleAuswertungOptionsDTO implements Serializable {
+public class MessstelleAuswertungOptionsDto implements Serializable {
 
     @NotNull
     private List<Integer> jahre;
@@ -19,7 +19,7 @@ public class MessstelleAuswertungOptionsDTO implements Serializable {
     @NotNull
     private List<AuswertungsZeitraum> zeitraum;
     @NotNull
-    private Set<MessstelleAuswertungIdDTO> messstelleAuswertungIds;
+    private Set<MessstelleAuswertungIdDto> messstelleAuswertungIds;
     @NotNull
     private FahrzeugOptionsDTO fahrzeuge;
 

@@ -2,8 +2,8 @@ package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -113,7 +113,7 @@ class SpreadsheetServiceTest {
 
     @Test
     void createSpreadsheetForMessstellenAsOdsKeepsGesamtStructure(@TempDir final Path tempDir) throws Exception {
-        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
+        final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
         options.setTagesTyp(TagesTyp.MO_SO);
         options.setFahrzeuge(new FahrzeugOptionsDTO());
         options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
@@ -166,11 +166,11 @@ class SpreadsheetServiceTest {
     void addMetaDataToRow() {
         final Table sheet = createSheet();
 
-        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
-        final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO1 = new MessstelleAuswertungIdDTO();
+        final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
+        final MessstelleAuswertungIdDto messstelleAuswertungIdDTO1 = new MessstelleAuswertungIdDto();
         messstelleAuswertungIdDTO1.setMstId("123");
         messstelleAuswertungIdDTO1.setMqIds(Set.of("12301", "12302"));
-        final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO2 = new MessstelleAuswertungIdDTO();
+        final MessstelleAuswertungIdDto messstelleAuswertungIdDTO2 = new MessstelleAuswertungIdDto();
         messstelleAuswertungIdDTO2.setMstId("456");
         messstelleAuswertungIdDTO2.setMqIds(Set.of("45601", "45602"));
         options.setTagesTyp(TagesTyp.MO_SO);
@@ -223,7 +223,7 @@ class SpreadsheetServiceTest {
     void addMetaDataToMessquerschnittRow() {
         final Table sheet = createSheet();
 
-        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
+        final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
         options.setTagesTyp(TagesTyp.MO_SO);
         final String mstId = "123";
         final String mqId = "12301";
@@ -262,7 +262,7 @@ class SpreadsheetServiceTest {
     void addDataHeaderToRow() {
         final Table sheet = createSheet();
 
-        final MessstelleAuswertungOptionsDTO options = new MessstelleAuswertungOptionsDTO();
+        final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
         options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
         final FahrzeugOptionsDTO fahrzeugOptions = new FahrzeugOptionsDTO();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);

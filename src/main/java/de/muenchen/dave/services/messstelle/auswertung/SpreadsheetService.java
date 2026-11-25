@@ -3,8 +3,8 @@ package de.muenchen.dave.services.messstelle.auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
-import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
+import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -49,7 +49,7 @@ public class SpreadsheetService {
      * @throws IOException kann bei der Erstellung des byte[] geworfen werden. Behandlung erfolgt im
      *             Controller.
      */
-    public byte[] createSpreadsheetForMessstellen(final List<AuswertungMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDTO options)
+    public byte[] createSpreadsheetForMessstellen(final List<AuswertungMessstelle> auswertungenProMessstelle, final MessstelleAuswertungOptionsDto options)
             throws IOException {
         try (SpreadsheetDocument spreadsheetDocument = createSpreadsheetDocument()) {
 
@@ -133,15 +133,15 @@ public class SpreadsheetService {
      * @param row aktuelle Zeile
      * @param options Verwendetet Optionen bei der Auswertung
      */
-    protected void addMetaDataToRow(final Row row, final MessstelleAuswertungOptionsDTO options) {
+    protected void addMetaDataToRow(final Row row, final MessstelleAuswertungOptionsDto options) {
         int cellIndex = 0;
         addStringToCell(getCell(row, cellIndex++), options.getTagesTyp().getBeschreibung());
 
         if (CollectionUtils.isNotEmpty(options.getMessstelleAuswertungIds())) {
             String cellValue = "alle Messquerschnitte";
             if (options.getMessstelleAuswertungIds().size() == 1) {
-                final Optional<MessstelleAuswertungIdDTO> first = options.getMessstelleAuswertungIds().stream().findFirst();
-                final MessstelleAuswertungIdDTO messstelleAuswertungIdDTO = first.get();
+                final Optional<MessstelleAuswertungIdDto> first = options.getMessstelleAuswertungIds().stream().findFirst();
+                final MessstelleAuswertungIdDto messstelleAuswertungIdDTO = first.get();
                 final Messstelle messstelleByMstId = messstelleService.getMessstelleByMstId(messstelleAuswertungIdDTO.getMstId());
                 final List<String> formattedMessquerschnitte = new ArrayList<>();
                 messstelleByMstId.getMessquerschnitte().forEach(messquerschnitt -> {
@@ -163,7 +163,7 @@ public class SpreadsheetService {
      * @param mstId ausgewertete Messstelle
      * @param mqId ausgewerteter Messquerschnitt
      */
-    protected void addMetaDataToMessquerschnittRow(final Row row, final MessstelleAuswertungOptionsDTO options, final String mstId, final String mqId) {
+    protected void addMetaDataToMessquerschnittRow(final Row row, final MessstelleAuswertungOptionsDto options, final String mstId, final String mqId) {
         int cellIndex = 0;
         addStringToCell(getCell(row, cellIndex++), options.getTagesTyp().getBeschreibung());
         addStringToCell(getCell(row, cellIndex++), mstId);
@@ -182,7 +182,7 @@ public class SpreadsheetService {
      * @param options bei der Auswertung gewählte Optionen
      * @param isGesamtSheet Flag falls es das GesamtSheet ist
      */
-    protected void addDataHeaderToRow(final Row row, final MessstelleAuswertungOptionsDTO options, final boolean isGesamtSheet) {
+    protected void addDataHeaderToRow(final Row row, final MessstelleAuswertungOptionsDto options, final boolean isGesamtSheet) {
         int headerCellIndex = 0;
         final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
         final List<AuswertungsZeitraum> zeitraum = options.getZeitraum();
