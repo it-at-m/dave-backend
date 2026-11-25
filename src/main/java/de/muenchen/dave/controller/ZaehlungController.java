@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.DienstleisterDTO;
+import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
@@ -158,7 +158,7 @@ public class ZaehlungController {
 
     @PostMapping(value = "/updateDienstleisterkennung", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<BackendIdDTO> updateDienstleisterkennung(@RequestBody @NotNull final DienstleisterDTO dienstleisterDTO,
+    public ResponseEntity<BackendIdDTO> updateDienstleisterkennung(@RequestBody @NotNull final DienstleisterDto dienstleisterDTO,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotNull final String zaehlungId) {
         log.debug("Zaehlung {} Dienstleisterkennung aktualisieren: {}", zaehlungId, dienstleisterDTO);
         try {

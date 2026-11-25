@@ -3,7 +3,7 @@ package de.muenchen.dave.services.persist;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.DienstleisterDTO;
+import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
@@ -343,7 +343,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         return this.indexService.getOpenZaehlungen();
     }
 
-    public BackendIdDTO updateDienstleisterkennung(final String zaehlungId, final DienstleisterDTO dienstleisterDTO)
+    public BackendIdDTO updateDienstleisterkennung(final String zaehlungId, final DienstleisterDto dienstleisterDTO)
             throws DataNotFoundException, BrokenInfrastructureException {
         final BackendIdDTO backendIdDto = new BackendIdDTO();
 

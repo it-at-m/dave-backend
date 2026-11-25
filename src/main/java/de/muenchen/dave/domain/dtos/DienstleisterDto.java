@@ -7,7 +7,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class DienstleisterDTO {
+public class DienstleisterDto {
 
     private UUID id;
     private Long entityVersion;

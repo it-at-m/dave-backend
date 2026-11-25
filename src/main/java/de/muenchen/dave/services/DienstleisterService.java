@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Dienstleister;
-import de.muenchen.dave.domain.dtos.DienstleisterDTO;
+import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import de.muenchen.dave.domain.mapper.DienstleisterMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.repositories.relationaldb.DienstleisterRepository;
@@ -36,7 +36,7 @@ public class DienstleisterService {
      * @param dienstleisterDTO neue oder geaenderte Daten eines Dienstleisters
      * @return gespeicherten Dienstleister als DTO
      */
-    public DienstleisterDTO saveOrUpdateDienstleister(final DienstleisterDTO dienstleisterDTO) {
+    public DienstleisterDto saveOrUpdateDienstleister(final DienstleisterDto dienstleisterDTO) {
         if (dienstleisterDTO.getId() != null) {
             final Optional<Dienstleister> byId = this.dienstleisterRepository.findById(dienstleisterDTO.getId());
             if (byId.isPresent()) {
@@ -46,7 +46,7 @@ public class DienstleisterService {
         return this.saveDienstleister(this.dienstleisterMapper.dto2bean(dienstleisterDTO));
     }
 
-    private DienstleisterDTO updateDienstleister(final Dienstleister toUpdate, final DienstleisterDTO newData) {
+    private DienstleisterDto updateDienstleister(final Dienstleister toUpdate, final DienstleisterDto newData) {
         toUpdate.setName(newData.getName());
         toUpdate.setKennung(newData.getKennung());
         toUpdate.setEmailAddresses(newData.getEmailAddresses());
@@ -54,7 +54,7 @@ public class DienstleisterService {
         return this.saveDienstleister(toUpdate);
     }
 
-    private DienstleisterDTO saveDienstleister(final Dienstleister toSave) {
+    private DienstleisterDto saveDienstleister(final Dienstleister toSave) {
         return this.dienstleisterMapper.bean2Dto(this.dienstleisterRepository.saveAndFlush(toSave));
     }
 
@@ -67,11 +67,11 @@ public class DienstleisterService {
         }
     }
 
-    public List<DienstleisterDTO> loadAllDienstleister() {
+    public List<DienstleisterDto> loadAllDienstleister() {
         return this.addErasableTag(this.dienstleisterRepository.findAll());
     }
 
-    public List<DienstleisterDTO> loadAllActiveDienstleister() {
+    public List<DienstleisterDto> loadAllActiveDienstleister() {
         return this.addErasableTag(this.dienstleisterRepository.findAllByActiveIsTrue());
     }
 
@@ -85,8 +85,8 @@ public class DienstleisterService {
         }
     }
 
-    private List<DienstleisterDTO> addErasableTag(final List<Dienstleister> dienstleister) {
-        final List<DienstleisterDTO> dienstleisterDTOS = this.dienstleisterMapper.beanList2DtoList(dienstleister);
+    private List<DienstleisterDto> addErasableTag(final List<Dienstleister> dienstleister) {
+        final List<DienstleisterDto> dienstleisterDTOS = this.dienstleisterMapper.beanList2DtoList(dienstleister);
         dienstleisterDTOS.forEach(dienstleisterDTO -> {
             try {
                 dienstleisterDTO.setErasable(!this.indexService.existsActiveZaehlungWithDienstleisterkennung(dienstleisterDTO.getKennung()));

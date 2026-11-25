@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.DienstleisterDTO;
+import de.muenchen.dave.domain.dtos.DienstleisterDto;
 import de.muenchen.dave.services.DienstleisterService;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
@@ -38,7 +38,7 @@ public class DienstleisterController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DienstleisterDTO> saveDienstleister(@RequestBody @NotNull final DienstleisterDTO dienstleisterDTO) {
+    public ResponseEntity<DienstleisterDto> saveDienstleister(@RequestBody @NotNull final DienstleisterDto dienstleisterDTO) {
         log.debug("Dienstleister speichern: {}", dienstleisterDTO);
         try {
             return ResponseEntity.ok(this.dienstleisterService.saveOrUpdateDienstleister(dienstleisterDTO));
@@ -55,7 +55,7 @@ public class DienstleisterController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DienstleisterDTO>> getAllDienstleister() {
+    public ResponseEntity<List<DienstleisterDto>> getAllDienstleister() {
         log.debug("Alle Dienstleister laden.");
         try {
             return ResponseEntity.ok(this.dienstleisterService.loadAllDienstleister());
@@ -72,7 +72,7 @@ public class DienstleisterController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/getAllActive", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DienstleisterDTO>> getAllActiveDienstleister() {
+    public ResponseEntity<List<DienstleisterDto>> getAllActiveDienstleister() {
         log.debug("Alle Dienstleister laden.");
         try {
             return ResponseEntity.ok(this.dienstleisterService.loadAllActiveDienstleister());
