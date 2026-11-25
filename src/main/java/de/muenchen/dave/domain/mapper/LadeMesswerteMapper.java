@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.messstelle.MesswerteSortingIndexUtil;
@@ -29,17 +29,17 @@ public interface LadeMesswerteMapper {
     @Mapping(target = "gueterverkehr", source = "summeGueterverkehr")
     @Mapping(target = "anteilSchwerverkehrAnKfzProzent", source = "prozentSchwerverkehr")
     @Mapping(target = "anteilGueterverkehrAnKfzProzent", source = "prozentGueterverkehr")
-    LadeMesswerteDTO interval2LadeMesswerte(final IntervalDto dto);
+    LadeMesswerteDto interval2LadeMesswerte(final IntervalDto dto);
 
     @AfterMapping
     default void interval2LadeMesswerte(
             final IntervalDto source,
-            @MappingTarget final LadeMesswerteDTO target) {
+            @MappingTarget final LadeMesswerteDto target) {
         target.setStartUhrzeit(source.getDatumUhrzeitVon().toLocalTime());
         target.setEndeUhrzeit(source.getDatumUhrzeitBis().toLocalTime());
     }
 
-    default List<LadeMesswerteDTO> interval2LadeMesswerte(final List<IntervalDto> intervals, final ZaehldatenIntervall zeitintervall) {
+    default List<LadeMesswerteDto> interval2LadeMesswerte(final List<IntervalDto> intervals, final ZaehldatenIntervall zeitintervall) {
         return intervals.stream()
                 .map(interval -> {
                     final var dto = interval2LadeMesswerte(interval);

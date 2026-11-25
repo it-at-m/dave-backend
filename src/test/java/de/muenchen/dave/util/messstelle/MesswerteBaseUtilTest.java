@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
@@ -211,7 +211,7 @@ class MesswerteBaseUtilTest {
         interval2.setProzentSchwerverkehr(BigDecimal.valueOf(1.1D));
         interval2.setProzentGueterverkehr(BigDecimal.valueOf(2.2D));
 
-        final LadeMesswerteDTO expected = new LadeMesswerteDTO();
+        final LadeMesswerteDto expected = new LadeMesswerteDto();
         expected.setPkw(interval1.getSummeAllePkw().intValue() + interval2.getSummeAllePkw().intValue());
         expected.setLkw(interval1.getAnzahlLkw().intValue() + interval2.getAnzahlLkw().intValue());
         expected.setLfw(interval1.getAnzahlLfw().intValue() + interval2.getAnzahlLfw().intValue());

@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -126,7 +126,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+        LadeMesswerteDto result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -262,7 +262,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+        LadeMesswerteDto result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -398,7 +398,7 @@ class SpitzenstundeServiceTest {
         interval6.setSummeSchwerverkehr(BigDecimal.valueOf(0));
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
-        LadeMesswerteDTO result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+        LadeMesswerteDto result = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                 Zeitblock.ZB_00_24,
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6),
                 true,
@@ -819,7 +819,7 @@ class SpitzenstundeServiceTest {
         result = spitzenstundeService.getSortingIndex(false, Zeitblock.ZB_00_24, null);
         Assertions.assertThat(result).isNotNull().isEqualTo(MesswerteSortingIndexUtil.SORTING_INDEX_SPITZEN_STUNDE_DAY_RAD);
 
-        final var spitzenStunde = new LadeMesswerteDTO();
+        final var spitzenStunde = new LadeMesswerteDto();
         spitzenStunde.setStartUhrzeit(LocalTime.of(6, 15, 0));
         spitzenStunde.setEndeUhrzeit(LocalTime.of(6, 30, 0));
         result = spitzenstundeService.getSortingIndex(true, null, spitzenStunde);
@@ -855,10 +855,10 @@ class SpitzenstundeServiceTest {
 
     @Test
     void isValueToCheckAgainstCurrentSpitzenstundeLarger() {
-        final var valueToCheck = new LadeMesswerteDTO();
+        final var valueToCheck = new LadeMesswerteDto();
         valueToCheck.setKfz(1000);
         valueToCheck.setFahrradfahrer(900);
-        final var currentSpitzenstunde = new LadeMesswerteDTO();
+        final var currentSpitzenstunde = new LadeMesswerteDto();
         currentSpitzenstunde.setKfz(999);
         currentSpitzenstunde.setFahrradfahrer(899);
         var result = spitzenstundeService.isValueToCheckAgainstCurrentSpitzenstundeLarger(true, currentSpitzenstunde, valueToCheck);

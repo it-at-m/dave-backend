@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -34,12 +34,12 @@ public class ListenausgabeService {
     private final LadeMesswerteMapper ladeMesswerteMapper;
     private final SpitzenstundeService spitzenstundeService;
 
-    public LadeMesswerteListenausgabeDTO ladeListenausgabe(
+    public LadeMesswerteListenausgabeDto ladeListenausgabe(
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
             final MessstelleOptionsDTO options) {
         log.debug("#ladeListenausgabe");
-        final var ladeMesswerteListenausgabe = new LadeMesswerteListenausgabeDTO();
+        final var ladeMesswerteListenausgabe = new LadeMesswerteListenausgabeDto();
         ladeMesswerteListenausgabe.getZaehldaten().addAll(ladeMesswerteMapper.interval2LadeMesswerte(intervals, options.getIntervall()));
 
         if (CollectionUtils.isNotEmpty(intervals)) {
@@ -93,7 +93,7 @@ public class ListenausgabeService {
                     }
 
                     if (Boolean.TRUE.equals(options.getSpitzenstunde())) {
-                        LadeMesswerteDTO spitzenstunde;
+                        LadeMesswerteDto spitzenstunde;
                         if (CollectionUtils.isNotEmpty(intervals)) {
                             spitzenstunde = spitzenstundeService.calculateSpitzenstundeAndAddBlockSpecificDataToResult(
                                     options.getZeitblock(),
@@ -179,15 +179,15 @@ public class ListenausgabeService {
 
         final var messwerteSortedBySortingIndex = ladeMesswerteListenausgabe.getZaehldaten()
                 .stream()
-                .sorted(Comparator.comparing(LadeMesswerteDTO::getSortingIndex))
+                .sorted(Comparator.comparing(LadeMesswerteDto::getSortingIndex))
                 .toList();
 
         ladeMesswerteListenausgabe.setZaehldaten(messwerteSortedBySortingIndex);
         return ladeMesswerteListenausgabe;
     }
 
-    protected List<LadeMesswerteDTO> calculateSumOfIntervalsPerHour(final List<IntervalDto> intervals) {
-        final List<LadeMesswerteDTO> dtos = new ArrayList<>();
+    protected List<LadeMesswerteDto> calculateSumOfIntervalsPerHour(final List<IntervalDto> intervals) {
+        final List<LadeMesswerteDto> dtos = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
             final LocalTime hourStart = LocalTime.of(i, 0, 0);
             final LocalTime hourEnd;
@@ -198,7 +198,7 @@ public class ListenausgabeService {
             }
             final List<IntervalDto> relevantIntervals = getIntervalsWithinRange(intervals, hourStart, hourEnd);
             if (CollectionUtils.isNotEmpty(relevantIntervals)) {
-                final LadeMesswerteDTO dto = MesswerteBaseUtil.calculateSum(
+                final LadeMesswerteDto dto = MesswerteBaseUtil.calculateSum(
                         relevantIntervals);
                 dto.setStartUhrzeit(hourStart);
                 dto.setEndeUhrzeit(hourEnd);
@@ -210,10 +210,10 @@ public class ListenausgabeService {
         return dtos;
     }
 
-    protected LadeMesswerteDTO calculateSumOfIntervalsAndAddBlockSpecificDataToResult(
+    protected LadeMesswerteDto calculateSumOfIntervalsAndAddBlockSpecificDataToResult(
             final List<IntervalDto> intervalsOfZeitblock,
             final Zeitblock zeitblock) {
-        final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervalsOfZeitblock);
+        final LadeMesswerteDto ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervalsOfZeitblock);
         ladeMesswerteDTO.setEndeUhrzeit(zeitblock.getEnd().toLocalTime());
         ladeMesswerteDTO.setStartUhrzeit(zeitblock.getStart().toLocalTime());
         ladeMesswerteDTO.setType(BLOCK);
@@ -221,10 +221,10 @@ public class ListenausgabeService {
         return ladeMesswerteDTO;
     }
 
-    protected LadeMesswerteDTO calculateTagessumme(
+    protected LadeMesswerteDto calculateTagessumme(
             final List<IntervalDto> intervals,
             final MessstelleOptionsDTO options) {
-        final LadeMesswerteDTO ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
+        final LadeMesswerteDto ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(options.getZeitblock().getEnd().toLocalTime());
         ladeMesswerteDTO.setStartUhrzeit(options.getZeitblock().getStart().toLocalTime());
         ladeMesswerteDTO.setType(GESAMT);

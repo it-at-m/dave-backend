@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
@@ -139,7 +139,7 @@ class ListenausgabeServiceTest {
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         final var result = listenausgabeService.ladeListenausgabe(intervals, true, options);
 
-        final var expectedSpitzenstunde = new LadeMesswerteDTO();
+        final var expectedSpitzenstunde = new LadeMesswerteDto();
         expectedSpitzenstunde.setType("SpStdBlock KFZ");
         expectedSpitzenstunde.setSortingIndex(12000000);
         expectedSpitzenstunde.setStartUhrzeit(LocalTime.of(2, 0, 0));
@@ -200,7 +200,7 @@ class ListenausgabeServiceTest {
         options.setZeitblock(Zeitblock.ZB_01_02);
         final var result = listenausgabeService.ladeListenausgabe(intervals, true, options);
 
-        final var expectedSumme = new LadeMesswerteDTO();
+        final var expectedSumme = new LadeMesswerteDto();
         expectedSumme.setType("Stunde");
         expectedSumme.setSortingIndex(11008008);
         expectedSumme.setStartUhrzeit(LocalTime.of(1, 0, 0));
@@ -1217,7 +1217,7 @@ class ListenausgabeServiceTest {
 
         var result = listenausgabeService.calculateSumOfIntervalsPerHour(List.of(interval0, interval1, interval2, interval3, interval4, interval5));
 
-        final var expected0 = new LadeMesswerteDTO();
+        final var expected0 = new LadeMesswerteDto();
         expected0.setType("Stunde");
         expected0.setStartUhrzeit(Zeitblock.ZB_09_10.getStart().toLocalTime());
         expected0.setEndeUhrzeit(Zeitblock.ZB_09_10.getEnd().toLocalTime());
@@ -1235,7 +1235,7 @@ class ListenausgabeServiceTest {
         expected0.setAnteilSchwerverkehrAnKfzProzent(0D);
         expected0.setAnteilGueterverkehrAnKfzProzent(0D);
 
-        final var expected1 = new LadeMesswerteDTO();
+        final var expected1 = new LadeMesswerteDto();
         expected1.setType("Stunde");
         expected1.setStartUhrzeit(Zeitblock.ZB_10_11.getStart().toLocalTime());
         expected1.setEndeUhrzeit(Zeitblock.ZB_10_11.getEnd().toLocalTime());
@@ -1253,7 +1253,7 @@ class ListenausgabeServiceTest {
         expected1.setAnteilSchwerverkehrAnKfzProzent(0D);
         expected1.setAnteilGueterverkehrAnKfzProzent(0D);
 
-        final var expected2 = new LadeMesswerteDTO();
+        final var expected2 = new LadeMesswerteDto();
         expected2.setType("Stunde");
         expected2.setStartUhrzeit(Zeitblock.ZB_11_12.getStart().toLocalTime());
         expected2.setEndeUhrzeit(Zeitblock.ZB_11_12.getEnd().toLocalTime());
@@ -1306,7 +1306,7 @@ class ListenausgabeServiceTest {
 
         var result = listenausgabeService.calculateSumOfIntervalsPerHour(List.of(interval0, interval1, interval2, interval3, interval4, interval5));
 
-        final var expected0 = new LadeMesswerteDTO();
+        final var expected0 = new LadeMesswerteDto();
         expected0.setType("Stunde");
         expected0.setStartUhrzeit(Zeitblock.ZB_22_23.getStart().toLocalTime());
         expected0.setEndeUhrzeit(Zeitblock.ZB_22_23.getEnd().toLocalTime());
@@ -1324,7 +1324,7 @@ class ListenausgabeServiceTest {
         expected0.setAnteilSchwerverkehrAnKfzProzent(0D);
         expected0.setAnteilGueterverkehrAnKfzProzent(0D);
 
-        final var expected1 = new LadeMesswerteDTO();
+        final var expected1 = new LadeMesswerteDto();
         expected1.setType("Stunde");
         expected1.setStartUhrzeit(Zeitblock.ZB_23_24.getStart().toLocalTime());
         expected1.setEndeUhrzeit(LocalTime.of(23, 59, 59));
@@ -1378,7 +1378,7 @@ class ListenausgabeServiceTest {
         var result = listenausgabeService.calculateSumOfIntervalsAndAddBlockSpecificDataToResult(
                 List.of(interval0, interval1, interval2, interval3, interval4, interval5), Zeitblock.ZB_10_11);
 
-        final var expected = new LadeMesswerteDTO();
+        final var expected = new LadeMesswerteDto();
         expected.setType("Block");
         expected.setStartUhrzeit(Zeitblock.ZB_10_11.getStart().toLocalTime());
         expected.setEndeUhrzeit(Zeitblock.ZB_10_11.getEnd().toLocalTime());
@@ -1436,7 +1436,7 @@ class ListenausgabeServiceTest {
 
         final var result = listenausgabeService.calculateTagessumme(List.of(interval1, interval2), options);
 
-        final var expected = new LadeMesswerteDTO();
+        final var expected = new LadeMesswerteDto();
         expected.setType("Gesamt");
         expected.setStartUhrzeit(Zeitblock.ZB_00_24.getStart().toLocalTime());
         expected.setEndeUhrzeit(Zeitblock.ZB_00_24.getEnd().toLocalTime());

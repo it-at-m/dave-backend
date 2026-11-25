@@ -7,8 +7,8 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
@@ -656,7 +656,7 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDTO> zaehldaten) {
+    public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDto> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             if (MesswerteBaseUtil.isDateRange(optionsDTO.getZeitraum())) {
@@ -678,12 +678,12 @@ public class FillPdfBeanService {
                         chartTitle.append(optionsDTO.getZeitauswahl());
                         chartTitle.append(StringUtils.SPACE);
                         // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
-                        final Optional<LadeMesswerteDTO> optSpitzenStundeBlock = zaehldaten.stream()
+                        final Optional<LadeMesswerteDto> optSpitzenStundeBlock = zaehldaten.stream()
                                 .filter(ladeZaehldatumDTO -> (LadeZaehldatenService.SPITZENSTUNDE_BLOCK.equals(ladeZaehldatumDTO.getType())
                                         || LadeZaehldatenService.SPITZENSTUNDE_TAG.equals(ladeZaehldatumDTO.getType())))
                                 .findFirst();
                         if (optSpitzenStundeBlock.isPresent()) {
-                            final LadeMesswerteDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
+                            final LadeMesswerteDto spitzenStundeBlock = optSpitzenStundeBlock.get();
 
                             chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
                             chartTitle.append(StringUtils.SPACE);
@@ -742,7 +742,7 @@ public class FillPdfBeanService {
     public void fillBelastungsplanPdf(
             final BelastungsplanMessstellePdf belastungsplanPdf,
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String department) {
@@ -875,7 +875,7 @@ public class FillPdfBeanService {
     public void fillGangliniePdf(
             final GanglinieMessstellePdf gangliniePdf,
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png,
@@ -891,7 +891,7 @@ public class FillPdfBeanService {
         gangliniePdf.setSchematischeUebersichtNeeded(messstelle.getMessquerschnitte().size() > options.getMessquerschnittIds().size());
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final List<LadeMesswerteDTO> messwerteDataTable = messwerte.getZaehldatenTable().getZaehldaten();
+        final List<LadeMesswerteDto> messwerteDataTable = messwerte.getZaehldatenTable().getZaehldaten();
         final List<GanglinieTable> gtList = new ArrayList<>();
 
         // Initialisierung vor erstem Schleifendurchlauf
@@ -901,7 +901,7 @@ public class FillPdfBeanService {
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
         this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options.getFahrzeuge());
 
-        for (final LadeMesswerteDTO messwert : messwerteDataTable) {
+        for (final LadeMesswerteDto messwert : messwerteDataTable) {
 
             // Wenn 60min ausgewählt sind, muss der Type auf Stunde gesetzt werden, wenn dieser leer ist
             if (options.getIntervall().getTypeZeitintervall() == TypeZeitintervall.STUNDE_KOMPLETT
@@ -1180,7 +1180,7 @@ public class FillPdfBeanService {
     public void fillDatentabellePdf(
             final DatentabelleMessstellePdf datentabellePdf,
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
@@ -1248,11 +1248,11 @@ public class FillPdfBeanService {
     }
 
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
-        final LadeProcessedMesswerteDTO messwerte = messwerteService.ladeMesswerte(messstelleId, options);
+        final LadeProcessedMesswerteDto messwerte = messwerteService.ladeMesswerte(messstelleId, options);
         return getDatentabellePdfZaehldaten(options, messwerte.getZaehldatenTable().getZaehldaten());
     }
 
-    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDTO> ladeMesswerteDTOS) {
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDto> ladeMesswerteDTOS) {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeMesswerteDTOS.stream()
                 .filter(ladeMesswerteDTO -> LadeZaehldatenService.TAGESWERT.equalsIgnoreCase(ladeMesswerteDTO.getType()))

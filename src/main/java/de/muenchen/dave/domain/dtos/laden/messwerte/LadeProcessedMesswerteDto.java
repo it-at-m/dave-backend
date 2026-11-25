@@ -8,17 +8,17 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class LadeProcessedMesswerteDTO implements Serializable {
+public class LadeProcessedMesswerteDto implements Serializable {
 
     TagesTyp tagesTyp;
     @NotNull
-    LadeMesswerteListenausgabeDTO zaehldatenTable;
+    LadeMesswerteListenausgabeDto zaehldatenTable;
     @NotNull
     LadeZaehldatenSteplineDTO zaehldatenStepline;
     @NotNull
     LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
     @NotNull
-    BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitte;
+    BelastungsplanMessquerschnitteDto belastungsplanMessquerschnitte;
     private Long requestedMeasuringDays;
     private Integer includedMeasuringDays;
 }

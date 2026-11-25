@@ -6,9 +6,9 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
@@ -67,7 +67,7 @@ class BelastungsplanServiceTest {
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
         // expected
-        LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO1 = new LadeBelastungsplanMessquerschnittDataDTO();
+        LadeBelastungsplanMessquerschnittDataDto ladeBelastungsplanMessquerschnittDataDTO1 = new LadeBelastungsplanMessquerschnittDataDto();
         ladeBelastungsplanMessquerschnittDataDTO1.setSumGv(50);
         ladeBelastungsplanMessquerschnittDataDTO1.setSumKfz(200);
         ladeBelastungsplanMessquerschnittDataDTO1.setSumRad(20);
@@ -77,7 +77,7 @@ class BelastungsplanServiceTest {
         ladeBelastungsplanMessquerschnittDataDTO1.setPercentGV(new BigDecimal("25.0"));
         ladeBelastungsplanMessquerschnittDataDTO1.setDirection("O");
 
-        LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO2 = new LadeBelastungsplanMessquerschnittDataDTO();
+        LadeBelastungsplanMessquerschnittDataDto ladeBelastungsplanMessquerschnittDataDTO2 = new LadeBelastungsplanMessquerschnittDataDto();
         ladeBelastungsplanMessquerschnittDataDTO2.setSumGv(30);
         ladeBelastungsplanMessquerschnittDataDTO2.setSumKfz(100);
         ladeBelastungsplanMessquerschnittDataDTO2.setSumRad(10);
@@ -87,11 +87,11 @@ class BelastungsplanServiceTest {
         ladeBelastungsplanMessquerschnittDataDTO2.setPercentGV(new BigDecimal("30.0"));
         ladeBelastungsplanMessquerschnittDataDTO2.setDirection("W");
 
-        List<LadeBelastungsplanMessquerschnittDataDTO> ladeBelastungsplanMessquerschnittDataDTOS = new ArrayList<>();
+        List<LadeBelastungsplanMessquerschnittDataDto> ladeBelastungsplanMessquerschnittDataDTOS = new ArrayList<>();
         ladeBelastungsplanMessquerschnittDataDTOS.add(ladeBelastungsplanMessquerschnittDataDTO1);
         ladeBelastungsplanMessquerschnittDataDTOS.add(ladeBelastungsplanMessquerschnittDataDTO2);
 
-        BelastungsplanMessquerschnitteDTO expected = new BelastungsplanMessquerschnitteDTO();
+        BelastungsplanMessquerschnitteDto expected = new BelastungsplanMessquerschnitteDto();
         expected.setLadeBelastungsplanMessquerschnittDataDTOList(ladeBelastungsplanMessquerschnittDataDTOS);
         expected.setTotalGv(80);
         expected.setTotalKfz(300);
@@ -140,7 +140,7 @@ class BelastungsplanServiceTest {
         totalSumOfAllMessquerschnitte.add(totalSumPerMessquerschnitt2);
 
         // expected
-        LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO1 = new LadeBelastungsplanMessquerschnittDataDTO();
+        LadeBelastungsplanMessquerschnittDataDto ladeBelastungsplanMessquerschnittDataDTO1 = new LadeBelastungsplanMessquerschnittDataDto();
         ladeBelastungsplanMessquerschnittDataDTO1.setSumGv(50);
         ladeBelastungsplanMessquerschnittDataDTO1.setSumKfz(200);
         ladeBelastungsplanMessquerschnittDataDTO1.setSumRad(20);
@@ -150,7 +150,7 @@ class BelastungsplanServiceTest {
         ladeBelastungsplanMessquerschnittDataDTO1.setPercentGV(new BigDecimal("25.0"));
         ladeBelastungsplanMessquerschnittDataDTO1.setDirection("O");
 
-        LadeBelastungsplanMessquerschnittDataDTO ladeBelastungsplanMessquerschnittDataDTO2 = new LadeBelastungsplanMessquerschnittDataDTO();
+        LadeBelastungsplanMessquerschnittDataDto ladeBelastungsplanMessquerschnittDataDTO2 = new LadeBelastungsplanMessquerschnittDataDto();
         ladeBelastungsplanMessquerschnittDataDTO2.setSumGv(30);
         ladeBelastungsplanMessquerschnittDataDTO2.setSumKfz(100);
         ladeBelastungsplanMessquerschnittDataDTO2.setSumRad(10);
@@ -160,11 +160,11 @@ class BelastungsplanServiceTest {
         ladeBelastungsplanMessquerschnittDataDTO2.setPercentGV(new BigDecimal("30.0"));
         ladeBelastungsplanMessquerschnittDataDTO2.setDirection("W");
 
-        List<LadeBelastungsplanMessquerschnittDataDTO> ladeBelastungsplanMessquerschnittDataDTOS = new ArrayList<>();
+        List<LadeBelastungsplanMessquerschnittDataDto> ladeBelastungsplanMessquerschnittDataDTOS = new ArrayList<>();
         ladeBelastungsplanMessquerschnittDataDTOS.add(ladeBelastungsplanMessquerschnittDataDTO1);
         ladeBelastungsplanMessquerschnittDataDTOS.add(ladeBelastungsplanMessquerschnittDataDTO2);
 
-        BelastungsplanMessquerschnitteDTO expected = new BelastungsplanMessquerschnitteDTO();
+        BelastungsplanMessquerschnitteDto expected = new BelastungsplanMessquerschnitteDto();
         expected.setLadeBelastungsplanMessquerschnittDataDTOList(ladeBelastungsplanMessquerschnittDataDTOS);
         expected.setTotalGv(80);
         expected.setTotalKfz(300);
@@ -180,7 +180,7 @@ class BelastungsplanServiceTest {
 
         doReturn(getMessstelle()).when(messstelleService).readMessstelleInfo(anyString());
 
-        LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
+        LadeMesswerteDto spitzenStunde = new LadeMesswerteDto();
         spitzenStunde.setSortingIndex(5);
         spitzenStunde.setType("type");
         spitzenStunde.setStartUhrzeit(LocalTime.parse("14:00"));

@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.CsvDto;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
@@ -43,8 +43,8 @@ public class GenerateCsvMstService {
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
     public CsvDto generateDatentabelleCsv(final String messstelleId, MessstelleOptionsDTO options) throws DataNotFoundException {
-        final LadeMesswerteListenausgabeDTO zaehldatenTable = messwerteService.ladeMesswerte(messstelleId, options).getZaehldatenTable();
-        final List<LadeMesswerteDTO> data = zaehldatenTable.getZaehldaten();
+        final LadeMesswerteListenausgabeDto zaehldatenTable = messwerteService.ladeMesswerte(messstelleId, options).getZaehldatenTable();
+        final List<LadeMesswerteDto> data = zaehldatenTable.getZaehldaten();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
         final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
 
@@ -152,7 +152,7 @@ public class GenerateCsvMstService {
      * @param dataCsv eine Zeile in der Tabelle
      * @return CSV-Zeile
      */
-    public String getData(final FahrzeugOptionsDTO options, final LadeMesswerteDTO dataCsv) {
+    public String getData(final FahrzeugOptionsDTO options, final LadeMesswerteDto dataCsv) {
         final StringBuilder data = new StringBuilder();
         // Zeit
         if (ObjectUtils.isNotEmpty(dataCsv.getStartUhrzeit())) {

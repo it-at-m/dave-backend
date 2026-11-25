@@ -8,7 +8,7 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.MustacheBean;
@@ -408,7 +408,7 @@ public class GeneratePdfService {
 
     public byte[] generateBelastungsplanPdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String department)
@@ -444,7 +444,7 @@ public class GeneratePdfService {
 
     public byte[] generateGangliniePdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png,
@@ -525,7 +525,7 @@ public class GeneratePdfService {
 
     public byte[] generateDatentabellePdf(
             final String messstelleId,
-            final LadeProcessedMesswerteDTO messwerte,
+            final LadeProcessedMesswerteDto messwerte,
             final MessstelleOptionsDTO options,
             final String schematischeUebersichtAsBase64Png,
             final String department) throws IOException, DataNotFoundException {

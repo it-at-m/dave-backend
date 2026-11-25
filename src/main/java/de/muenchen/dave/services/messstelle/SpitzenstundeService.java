@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -28,7 +28,7 @@ public class SpitzenstundeService {
             final boolean isKfzMessstelle,
             final ZaehldatenIntervall intervalSize) {
         var intervalsSpitzenstunde = new ArrayList<IntervalDto>();
-        var spitzenStunde = new LadeMesswerteDTO();
+        var spitzenStunde = new LadeMesswerteDto();
         for (int index = 0; index < intervals.size(); index++) {
             final var intervalsToCheckForSpitzenstunde = new ArrayList<IntervalDto>();
             if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
@@ -62,12 +62,12 @@ public class SpitzenstundeService {
         return intervalsSpitzenstunde;
     }
 
-    public LadeMesswerteDTO calculateSpitzenstundeAndAddBlockSpecificDataToResult(
+    public LadeMesswerteDto calculateSpitzenstundeAndAddBlockSpecificDataToResult(
             final Zeitblock block,
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
             final ZaehldatenIntervall intervalSize) {
-        LadeMesswerteDTO spitzenStunde = new LadeMesswerteDTO();
+        LadeMesswerteDto spitzenStunde = new LadeMesswerteDto();
         for (int index = 0; index < intervals.size(); index++) {
             final var intervalsToCheckForSpitzenstunde = new ArrayList<IntervalDto>();
             if (ZaehldatenIntervall.STUNDE_VIERTEL == intervalSize || ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT == intervalSize) {
@@ -118,7 +118,7 @@ public class SpitzenstundeService {
         return new String(type);
     }
 
-    protected int getSortingIndex(final boolean isKfzMessstelle, final Zeitblock zeitblock, final LadeMesswerteDTO spitzenStunde) {
+    protected int getSortingIndex(final boolean isKfzMessstelle, final Zeitblock zeitblock, final LadeMesswerteDto spitzenStunde) {
         int sortingIndex;
         if (Zeitblock.ZB_00_24.equals(zeitblock)) {
             sortingIndex = getSortingIndexSpitzenStundeCompleteDay(isKfzMessstelle);
@@ -142,8 +142,8 @@ public class SpitzenstundeService {
 
     protected boolean isValueToCheckAgainstCurrentSpitzenstundeLarger(
             final boolean isKfzMessstelle,
-            final LadeMesswerteDTO currentSpitzenstunde,
-            final LadeMesswerteDTO toCheckAgainstCurrentSpitzenstunde) {
+            final LadeMesswerteDto currentSpitzenstunde,
+            final LadeMesswerteDto toCheckAgainstCurrentSpitzenstunde) {
         boolean result;
         if (isKfzMessstelle) {
             result = isNewValueLarger(currentSpitzenstunde.getKfz(), toCheckAgainstCurrentSpitzenstunde.getKfz());

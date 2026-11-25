@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
@@ -52,7 +52,7 @@ public class MesswerteService {
      * @param options in der GUI definierte Optionen zum Laden der Daten
      * @return aufbereitete Daten
      */
-    public LadeProcessedMesswerteDTO ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
+    public LadeProcessedMesswerteDto ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
         log.debug("#ladeMesswerte {}", messstelleId);
 
         final var response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
@@ -93,7 +93,7 @@ public class MesswerteService {
         }
 
         // Aufbereiten der Daten für die entsprechenden Auswertungen
-        final var processedZaehldaten = new LadeProcessedMesswerteDTO();
+        final var processedZaehldaten = new LadeProcessedMesswerteDto();
         processedZaehldaten.setZaehldatenStepline(ganglinieService.ladeGanglinie(intervals, options.getFahrzeuge()));
         processedZaehldaten.setZaehldatenHeatmap(heatmapService.ladeHeatmap(intervals, options));
         processedZaehldaten.setZaehldatenTable(listenausgabeService.ladeListenausgabe(intervals, isKfzMessstelle, options));

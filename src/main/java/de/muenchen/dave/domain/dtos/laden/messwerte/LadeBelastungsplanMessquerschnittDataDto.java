@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class LadeBelastungsplanMessquerschnittDataDTO implements Serializable {
+public class LadeBelastungsplanMessquerschnittDataDto implements Serializable {
 
     @NotNull
     private String mqId;

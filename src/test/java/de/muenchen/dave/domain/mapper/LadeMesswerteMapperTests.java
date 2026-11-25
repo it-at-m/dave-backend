@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ class LadeMesswerteMapperTests {
         bean.setProzentSchwerverkehr(BigDecimal.valueOf(1.1D));
         bean.setProzentGueterverkehr(BigDecimal.valueOf(2.2D));
 
-        final LadeMesswerteDTO expected = new LadeMesswerteDTO();
+        final LadeMesswerteDto expected = new LadeMesswerteDto();
         expected.setType("");
         expected.setStartUhrzeit(bean.getDatumUhrzeitVon().toLocalTime());
         expected.setEndeUhrzeit(bean.getDatumUhrzeitBis().toLocalTime());

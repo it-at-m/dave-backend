@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
@@ -56,7 +56,7 @@ class DatentabellePdfZaehldatumMapperTests {
 
     @Test
     void ladeMesswerteDTO2bean() {
-        final LadeMesswerteDTO dto = new LadeMesswerteDTO();
+        final LadeMesswerteDto dto = new LadeMesswerteDto();
         dto.setSortingIndex(1);
         dto.setType("Stunde");
         dto.setStartUhrzeit(LocalTime.of(0, 0));

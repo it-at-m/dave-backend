@@ -3,7 +3,7 @@ package de.muenchen.dave.services.csvgenerator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
@@ -27,8 +27,8 @@ class GenerateCsvMstServiceTest {
 
     final GenerateCsvMstService csvService = new GenerateCsvMstService(null, null);
 
-    private static LadeMesswerteDTO getLadeMesswerteDTO() {
-        final LadeMesswerteDTO table = new LadeMesswerteDTO();
+    private static LadeMesswerteDto getLadeMesswerteDTO() {
+        final LadeMesswerteDto table = new LadeMesswerteDto();
 
         table.setStartUhrzeit(LocalTime.of(8, 0));
         table.setEndeUhrzeit(LocalTime.of(8, 15));
@@ -50,8 +50,8 @@ class GenerateCsvMstServiceTest {
         return table;
     }
 
-    private static LadeMesswerteDTO getLadeMesswerteDTOTyp2() {
-        final LadeMesswerteDTO table = new LadeMesswerteDTO();
+    private static LadeMesswerteDto getLadeMesswerteDTOTyp2() {
+        final LadeMesswerteDto table = new LadeMesswerteDto();
 
         table.setStartUhrzeit(LocalTime.of(8, 0));
         table.setEndeUhrzeit(LocalTime.of(8, 15));

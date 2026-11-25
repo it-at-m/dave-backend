@@ -7,9 +7,9 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeMesswerteListenausgabeDTO implements Serializable {
+public class LadeMesswerteListenausgabeDto implements Serializable {
 
     @NotNull
-    List<LadeMesswerteDTO> zaehldaten = new ArrayList<>();
+    List<LadeMesswerteDto> zaehldaten = new ArrayList<>();
 
 }

@@ -13,10 +13,10 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class BelastungsplanMessquerschnitteDTO implements Serializable {
+public class BelastungsplanMessquerschnitteDto implements Serializable {
 
     @NotNull
-    private List<LadeBelastungsplanMessquerschnittDataDTO> ladeBelastungsplanMessquerschnittDataDTOList;
+    private List<LadeBelastungsplanMessquerschnittDataDto> ladeBelastungsplanMessquerschnittDataDTOList;
     @NotNull
     private String strassenname;
     @NotNull

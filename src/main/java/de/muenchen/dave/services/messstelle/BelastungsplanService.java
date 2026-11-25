@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDto;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
 import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
@@ -34,13 +34,13 @@ public class BelastungsplanService {
                 : messstelle.getMessquerschnitte().getFirst().getStrassenname();
     }
 
-    public BelastungsplanMessquerschnitteDTO ladeBelastungsplan(
+    public BelastungsplanMessquerschnitteDto ladeBelastungsplan(
             final List<IntervalDto> intervals,
             final List<IntervalDto> totalSumForEachMessquerschnitt,
             final String messstelleId,
             final MessstelleOptionsDTO options) {
 
-        final BelastungsplanMessquerschnitteDTO belastungsplanMessquerschnitte = new BelastungsplanMessquerschnitteDTO();
+        final BelastungsplanMessquerschnitteDto belastungsplanMessquerschnitte = new BelastungsplanMessquerschnitteDto();
 
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
 
@@ -51,7 +51,7 @@ public class BelastungsplanService {
         final var messquerschnitte = totalSumForEachMessquerschnitt
                 .stream()
                 .map(sumOfMessquerschnitt -> {
-                    final LadeBelastungsplanMessquerschnittDataDTO messquerschnitt = new LadeBelastungsplanMessquerschnittDataDTO();
+                    final LadeBelastungsplanMessquerschnittDataDto messquerschnitt = new LadeBelastungsplanMessquerschnittDataDto();
 
                     final var kfz = ObjectUtils.defaultIfNull(sumOfMessquerschnitt.getSummeKraftfahrzeugverkehr(), BigDecimal.ZERO).intValue();
                     final var sumKfz = roundNumberIfNeeded(kfz, options);
@@ -82,17 +82,17 @@ public class BelastungsplanService {
                     messquerschnitt.setDirection(direction);
                     return messquerschnitt;
                 });
-        final List<LadeBelastungsplanMessquerschnittDataDTO> sortedMessquerschnitte;
+        final List<LadeBelastungsplanMessquerschnittDataDto> sortedMessquerschnitte;
         if (isDirectionNorthOrSouth(messstelle)) {
             sortedMessquerschnitte = messquerschnitte
                     .sorted(
                             Comparator.comparing(
-                                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)
+                                    LadeBelastungsplanMessquerschnittDataDto::getMqId)
                                     .reversed())
                     .toList();
         } else {
             sortedMessquerschnitte = messquerschnitte.sorted(Comparator.comparing(
-                    LadeBelastungsplanMessquerschnittDataDTO::getMqId)).toList();
+                    LadeBelastungsplanMessquerschnittDataDto::getMqId)).toList();
         }
         belastungsplanMessquerschnitte.setLadeBelastungsplanMessquerschnittDataDTOList(sortedMessquerschnitte);
 

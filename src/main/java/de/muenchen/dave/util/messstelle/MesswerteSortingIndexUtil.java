@@ -1,7 +1,7 @@
 package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import java.time.LocalTime;
@@ -124,7 +124,7 @@ public final class MesswerteSortingIndexUtil {
      * @return 0 falls der LadeMesswerteDTO nicht in einem {@link Zeitblock} vorkommt, ansonsten der
      *         Indexwert.
      */
-    public static int getSortingIndexWithinBlock(final LadeMesswerteDTO ladeMesswerteDto, final TypeZeitintervall type) {
+    public static int getSortingIndexWithinBlock(final LadeMesswerteDto ladeMesswerteDto, final TypeZeitintervall type) {
         int sortingIndex = 0;
 
         if (type.equals(TypeZeitintervall.STUNDE_KOMPLETT)
@@ -146,7 +146,7 @@ public final class MesswerteSortingIndexUtil {
      * @return 0 falls der LadeMesswerteDTO nicht in einen entsprechenden {@link Zeitblock} verortet
      *         werden kann ansonsten der Indexsummand des Zeitblocks.
      */
-    public static int getFirstStepSortingIndex(final LadeMesswerteDTO ladeMesswerteDto) {
+    public static int getFirstStepSortingIndex(final LadeMesswerteDto ladeMesswerteDto) {
         int sortingIndex = 0;
         if (MesswerteBaseUtil.isZeitintervallWithinZeitblock(ladeMesswerteDto, Zeitblock.ZB_00_06)) {
             sortingIndex = SORTING_INDEX_ZB_00_06;
@@ -190,7 +190,7 @@ public final class MesswerteSortingIndexUtil {
      * @return 0 falls der LadeMesswerteDTO nicht als normaler Intervall interpretiert werden kann.
      *         Ansonsten der entsprechende Indexsummand.
      */
-    public static int getThirdAndFourthStepSortingIndex(final LadeMesswerteDTO ladeMesswerteDto, final TypeZeitintervall type) {
+    public static int getThirdAndFourthStepSortingIndex(final LadeMesswerteDto ladeMesswerteDto, final TypeZeitintervall type) {
         int sortingIndex = 0;
         if (type.equals(TypeZeitintervall.STUNDE_KOMPLETT)
                 || type.equals(TypeZeitintervall.STUNDE_HALB)

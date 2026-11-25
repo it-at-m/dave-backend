@@ -12,7 +12,7 @@ import java.time.LocalTime;
 import lombok.Data;
 
 @Data
-public class LadeMesswerteDTO implements Serializable {
+public class LadeMesswerteDto implements Serializable {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private int sortingIndex;

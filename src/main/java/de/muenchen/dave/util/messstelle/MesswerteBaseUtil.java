@@ -1,6 +1,6 @@
 package de.muenchen.dave.util.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
@@ -42,26 +42,26 @@ public final class MesswerteBaseUtil {
                 && (toCheck.isBefore(end) || toCheck.equals(end));
     }
 
-    public static boolean isZeitintervallWithinZeitblock(final LadeMesswerteDTO zeitintervall, final Zeitblock zeitblock) {
+    public static boolean isZeitintervallWithinZeitblock(final LadeMesswerteDto zeitintervall, final Zeitblock zeitblock) {
         return isZeitintervallWithinTimeParameters(zeitintervall, zeitblock.getStart().toLocalTime(), zeitblock.getEnd().toLocalTime());
     }
 
     private static boolean isZeitintervallWithinTimeParameters(
-            final LadeMesswerteDTO zeitintervall,
+            final LadeMesswerteDto zeitintervall,
             final LocalTime startTime,
             final LocalTime endTime) {
         return (zeitintervall.getStartUhrzeit().equals(startTime) || zeitintervall.getStartUhrzeit().isAfter(startTime))
                 && isZeitintervallBeforeTimeParameters(zeitintervall, endTime);
     }
 
-    private static boolean isZeitintervallBeforeTimeParameters(final LadeMesswerteDTO zeitintervall,
+    private static boolean isZeitintervallBeforeTimeParameters(final LadeMesswerteDto zeitintervall,
             final LocalTime endTime) {
         return (zeitintervall.getEndeUhrzeit().equals(endTime) || zeitintervall.getEndeUhrzeit().isBefore(endTime))
                 && !(zeitintervall.getStartUhrzeit().equals(endTime) || zeitintervall.getStartUhrzeit().isAfter(endTime));
     }
 
-    public static LadeMesswerteDTO calculateSum(final List<IntervalDto> intervals) {
-        final LadeMesswerteDTO dto = new LadeMesswerteDTO();
+    public static LadeMesswerteDto calculateSum(final List<IntervalDto> intervals) {
+        final LadeMesswerteDto dto = new LadeMesswerteDto();
         dto.setPkw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getSummeAllePkw(), BigDecimal.ZERO).intValue()).sum());
         dto.setLkw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlLkw(), BigDecimal.ZERO).intValue()).sum());
         dto.setLfw(intervals.stream().mapToInt(interval -> ObjectUtils.defaultIfNull(interval.getAnzahlLfw(), BigDecimal.ZERO).intValue()).sum());

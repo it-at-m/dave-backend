@@ -2,7 +2,7 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDTO;
+import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
 import de.muenchen.dave.domain.pdf.assets.BaseAsset;
@@ -132,7 +132,7 @@ public class GeneratePdfController {
             @RequestParam(value = REQUEST_PARAMETER_CHARTTYPE) @NotEmpty final String type,
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleOptionsDTO options,
-            @Valid @RequestPart(value = REQUEST_PART_MESSWERTE) @NotNull final LadeProcessedMesswerteDTO messwerte,
+            @Valid @RequestPart(value = REQUEST_PART_MESSWERTE) @NotNull final LadeProcessedMesswerteDto messwerte,
             @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png,
             @RequestPart(
                     value = REQUEST_PART_SCHEMATISCHE_UEBERSICHT_AS_BASE64_PNG, required = false
