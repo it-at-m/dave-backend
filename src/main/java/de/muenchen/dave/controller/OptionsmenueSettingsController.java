@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
+import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDto;
 import de.muenchen.dave.services.OptionsmenueSettingsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class OptionsmenueSettingsController {
     private final OptionsmenueSettingsService optionsmenueSettingsService;
 
     @GetMapping(value = "/messstelle/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<OptionsmenueSettingsDTO>> getAllOptionsmenueSettingsForMessstellen() {
+    public ResponseEntity<List<OptionsmenueSettingsDto>> getAllOptionsmenueSettingsForMessstellen() {
         final var settings = optionsmenueSettingsService.getAllOptionsmenueSettingsForMessstellen();
         return ResponseEntity.ok(settings);
     }

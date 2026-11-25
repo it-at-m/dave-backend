@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.OptionsmenueSettings;
-import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
+import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDto;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.OptionsmenueSettingsMapperImpl;
@@ -58,22 +58,22 @@ class OptionsmenueSettingsServiceTest {
         Mockito.when(optionsmenueSettingsRepository.findAll())
                 .thenReturn(List.of(optionsmenueSettings1, optionsmenueSettings2, optionsmenueSettings3, optionsmenueSettings4));
 
-        final var expectedOptionsmenueSettings1 = new OptionsmenueSettingsDTO();
+        final var expectedOptionsmenueSettings1 = new OptionsmenueSettingsDto();
         expectedOptionsmenueSettings1.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         expectedOptionsmenueSettings1.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expectedOptionsmenueSettings1.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB, ZaehldatenIntervall.STUNDE_KOMPLETT));
 
-        final var expectedOptionsmenueSettings2 = new OptionsmenueSettingsDTO();
+        final var expectedOptionsmenueSettings2 = new OptionsmenueSettingsDto();
         expectedOptionsmenueSettings2.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         expectedOptionsmenueSettings2.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
         expectedOptionsmenueSettings2.setKraftfahrzeugverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_VIERTEL));
 
-        final var expectedOptionsmenueSettings3 = new OptionsmenueSettingsDTO();
+        final var expectedOptionsmenueSettings3 = new OptionsmenueSettingsDto();
         expectedOptionsmenueSettings3.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL_EINGESCHRAENKT);
         expectedOptionsmenueSettings3.setFahrzeugklasse(Fahrzeugklasse.ZWEI_PLUS_EINS);
         expectedOptionsmenueSettings3.setBusseChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_VIERTEL));
 
-        final var expectedOptionsmenueSettings4 = new OptionsmenueSettingsDTO();
+        final var expectedOptionsmenueSettings4 = new OptionsmenueSettingsDto();
         expectedOptionsmenueSettings4.setIntervall(null);
         expectedOptionsmenueSettings4.setFahrzeugklasse(null);
         expectedOptionsmenueSettings4.setRadverkehrChoosableIntervals(List.of(ZaehldatenIntervall.STUNDE_HALB));

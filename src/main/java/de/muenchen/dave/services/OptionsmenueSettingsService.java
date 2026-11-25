@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDTO;
+import de.muenchen.dave.domain.dtos.OptionsmenueSettingsDto;
 import de.muenchen.dave.domain.mapper.OptionsmenueSettingsMapper;
 import de.muenchen.dave.repositories.relationaldb.OptionsmenueSettingsRepository;
 import java.util.List;
@@ -20,7 +20,7 @@ public class OptionsmenueSettingsService {
     private final OptionsmenueSettingsMapper optionsmenueSettingsMapper;
 
     @Cacheable(value = CachingConfiguration.OPTIONSMENUE_SETTINGS_FOR_MESSSTELLEN)
-    public List<OptionsmenueSettingsDTO> getAllOptionsmenueSettingsForMessstellen() {
+    public List<OptionsmenueSettingsDto> getAllOptionsmenueSettingsForMessstellen() {
         log.debug("#getAllOptionsmenueSettingsForMessstellen");
         return optionsmenueSettingsRepository
                 .findAll()

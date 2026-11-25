@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class OptionsmenueSettingsDTO implements Serializable {
+public class OptionsmenueSettingsDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
