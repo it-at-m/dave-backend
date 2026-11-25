@@ -1,11 +1,11 @@
 package de.muenchen.dave.domain.dtos.messstelle;
 
-import de.muenchen.dave.domain.dtos.ErhebungsstelleTooltipDTO;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleTooltipDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
+public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
