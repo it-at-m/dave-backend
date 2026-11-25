@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class ResetAuffaelligkeitenDTO {
+public class ResetAuffaelligkeitenDto {
 
     @NotNull
     @Past

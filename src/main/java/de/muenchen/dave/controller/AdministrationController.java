@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.ResetAuffaelligkeitenDTO;
+import de.muenchen.dave.domain.dtos.ResetAuffaelligkeitenDto;
 import de.muenchen.dave.services.messstelle.UnauffaelligeTageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +27,7 @@ public class AdministrationController {
 
     @PostMapping(value = "/reset-unauffaelliger-tag")
     @Transactional
-    public ResponseEntity<Void> resetUnauffaelligerTag(@RequestBody @NotNull @Valid final ResetAuffaelligkeitenDTO reloadAuffaelligkeiten) {
+    public ResponseEntity<Void> resetUnauffaelligerTag(@RequestBody @NotNull @Valid final ResetAuffaelligkeitenDto reloadAuffaelligkeiten) {
         log.debug("#resetUnauffaelligerTag");
         try {
             this.unauffaelligeTageService.deleteAndReloadUnauffaelligerTagForEachDayDefinedByStartDateAndEndDate(
