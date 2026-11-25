@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
@@ -71,11 +71,11 @@ public class SucheController {
 
     @PostMapping(value = "/search-datenportal", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstellenForKarteDatenportal(
+    public ResponseEntity<Set<ErhebungsstelleKarteDto>> searchErhebungsstellenForKarteDatenportal(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions);
+            final Set<ErhebungsstelleKarteDto> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarteDatenportal(query, searchAndFilterOptions);
             return new ResponseEntity<>(erhebungsstellen, HttpStatus.OK);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im SucheController beim Suchen der Query: {}", query, e);
@@ -88,11 +88,11 @@ public class SucheController {
 
     @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<ErhebungsstelleKarteDTO>> searchErhebungsstelleForKarte(
+    public ResponseEntity<Set<ErhebungsstelleKarteDto>> searchErhebungsstelleForKarte(
             @RequestParam(value = REQUEST_PARAMETER_QUERY) @NotNull final String query,
             @RequestBody @NotNull @Valid final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         try {
-            final Set<ErhebungsstelleKarteDTO> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarte(
+            final Set<ErhebungsstelleKarteDto> erhebungsstellen = this.sucheService.sucheErhebungsstellenForKarte(
                     query,
                     searchAndFilterOptions,
                     true);

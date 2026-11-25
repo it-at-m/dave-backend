@@ -8,7 +8,7 @@ import co.elastic.clients.elasticsearch.core.search.FieldSuggester;
 import co.elastic.clients.elasticsearch.core.search.Suggester;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
@@ -237,11 +237,11 @@ public class SucheService {
                     "@securityContextInformationExtractorService.isFachadmin(), " +
                     "@securityContextInformationExtractorService.isAnwender()}"
     )
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarteDatenportal(
+    public Set<ErhebungsstelleKarteDto> sucheErhebungsstellenForKarteDatenportal(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelleSichtbarDatenportal");
-        final Set<ErhebungsstelleKarteDTO> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, false);
+        final Set<ErhebungsstelleKarteDto> searchResult = sucheErhebungsstellenForKarte(query, searchAndFilterOptions, false);
         final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
         if (isRoleAdmin) {
             return searchResult;
@@ -275,12 +275,12 @@ public class SucheService {
                     "@securityContextInformationExtractorService.isFachadmin(), " +
                     "@securityContextInformationExtractorService.isAnwender()}"
     )
-    public Set<ErhebungsstelleKarteDTO> sucheErhebungsstellenForKarte(
+    public Set<ErhebungsstelleKarteDto> sucheErhebungsstellenForKarte(
             final String query,
             final SearchAndFilterOptionsDTO searchAndFilterOptions,
             final boolean isForAdminportal) {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
-        final Set<ErhebungsstelleKarteDTO> searchResult = new HashSet<>();
+        final Set<ErhebungsstelleKarteDto> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
             final Set<MessstelleKarteDTO> messstellen = sucheMessstellenForKarte(query, searchAndFilterOptions);
             searchResult.addAll(messstellen);

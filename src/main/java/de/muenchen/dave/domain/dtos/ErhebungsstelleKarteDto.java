@@ -13,7 +13,7 @@ import lombok.Data;
                 de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO.class
         }
 )
-public class ErhebungsstelleKarteDTO implements Serializable {
+public class ErhebungsstelleKarteDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

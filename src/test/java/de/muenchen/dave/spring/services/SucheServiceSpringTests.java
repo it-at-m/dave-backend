@@ -21,7 +21,7 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
@@ -181,7 +181,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
+        final Set<ErhebungsstelleKarteDto> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
                 false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
@@ -220,7 +220,7 @@ public class SucheServiceSpringTests {
         when(zaehlstelleIndex.suggestSearch(any(), any())).thenReturn(resultComplexSuggest);
         when(messstelleIndex.suggestSearch(any(), any())).thenReturn(new PageImpl<>(List.of()));
 
-        final Set<ErhebungsstelleKarteDTO> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
+        final Set<ErhebungsstelleKarteDto> erhebungsstelleKarteDTOS = this.service.sucheErhebungsstellenForKarte("Z01", searchAndFilterOptions,
                 false);
         assertThat(erhebungsstelleKarteDTOS, is(notNullValue()));
         assertThat(erhebungsstelleKarteDTOS.isEmpty(), is(false));
