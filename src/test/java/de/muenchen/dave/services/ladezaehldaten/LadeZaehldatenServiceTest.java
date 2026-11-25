@@ -13,9 +13,9 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -90,10 +90,10 @@ class LadeZaehldatenServiceTest {
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
-        final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
+        final LadeZaehldatenTableDto result = service.ladeZaehldaten(zaehlungId, options);
 
         assertEquals(1, result.getZaehldaten().size());
-        final LadeZaehldatumDTO dto = result.getZaehldaten().get(0);
+        final LadeZaehldatumDto dto = result.getZaehldaten().get(0);
         assertEquals(10, dto.getPkw().intValue());
         assertEquals(2, dto.getLkw().intValue());
         // pkwEinheiten = sum of counts * 1 (pkwEinheit values are 1)
@@ -140,7 +140,7 @@ class LadeZaehldatenServiceTest {
                 eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
-        final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
+        final LadeZaehldatenTableDto result = service.ladeZaehldaten(zaehlungId, options);
 
         assertEquals(2, result.getZaehldaten().size());
 
@@ -185,12 +185,12 @@ class LadeZaehldatenServiceTest {
                 eq(options.getZeitblock().getEnd()), eq(false), eq(options), anySet()))
                 .thenReturn(List.of(zi));
 
-        final LadeZaehldatenTableDTO result = service.ladeZaehldaten(zaehlungId, options);
+        final LadeZaehldatenTableDto result = service.ladeZaehldaten(zaehlungId, options);
 
         assertEquals(1, result.getZaehldaten().size());
-        final LadeZaehldatumDTO dto = result.getZaehldaten().get(0);
-        assertTrue(dto instanceof LadeZaehldatumTageswertDTO);
-        final LadeZaehldatumTageswertDTO tageswert = (LadeZaehldatumTageswertDTO) dto;
+        final LadeZaehldatumDto dto = result.getZaehldaten().get(0);
+        assertTrue(dto instanceof LadeZaehldatumTageswertDto);
+        final LadeZaehldatumTageswertDto tageswert = (LadeZaehldatumTageswertDto) dto;
         assertEquals(new BigDecimal("123"), tageswert.getKfz());
         assertEquals(new BigDecimal("10"), tageswert.getGueterverkehr());
         assertEquals(new BigDecimal("20"), tageswert.getSchwerverkehr());

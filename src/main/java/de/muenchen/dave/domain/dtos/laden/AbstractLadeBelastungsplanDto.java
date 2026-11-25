@@ -11,13 +11,13 @@ import lombok.Data;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "belastungsplanTyp")
 @JsonSubTypes(
     {
-            @JsonSubTypes.Type(value = LadeBelastungsplanDTO.class, name = "DEFAULT"),
-            @JsonSubTypes.Type(value = LadeBelastungsplanQjsDTO.class, name = "QJS"),
-            @JsonSubTypes.Type(value = LadeBelastungsplanFjsDTO.class, name = "FJS"),
-            @JsonSubTypes.Type(value = LadeBelastungsplanQuDTO.class, name = "QU")
+            @JsonSubTypes.Type(value = LadeBelastungsplanDto.class, name = "DEFAULT"),
+            @JsonSubTypes.Type(value = LadeBelastungsplanQjsDto.class, name = "QJS"),
+            @JsonSubTypes.Type(value = LadeBelastungsplanFjsDto.class, name = "FJS"),
+            @JsonSubTypes.Type(value = LadeBelastungsplanQuDto.class, name = "QU")
     }
 )
-public abstract class AbstractLadeBelastungsplanDTO<T> implements Serializable {
+public abstract class AbstractLadeBelastungsplanDto<T> implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

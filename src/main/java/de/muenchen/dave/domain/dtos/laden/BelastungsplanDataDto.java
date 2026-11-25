@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BelastungsplanDataDTO extends AbstractBelastungsplanDataDTO {
+public class BelastungsplanDataDto extends AbstractBelastungsplanDataDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

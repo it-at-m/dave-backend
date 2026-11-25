@@ -2,8 +2,8 @@ package de.muenchen.dave.services.auswertung;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -69,14 +69,14 @@ public class AuswertungSpitzenstundeService {
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_RAD} oder
      *             {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_FUSS} ist.
      */
-    public List<LadeAuswertungSpitzenstundeDTO> getAuswertungSpitzenstunde(final String zaehlstellenNummer,
+    public List<LadeAuswertungSpitzenstundeDto> getAuswertungSpitzenstunde(final String zaehlstellenNummer,
             final Zaehlart zaehlart,
             final LocalDate zaehldatum,
             final Zeitblock zeitblock,
             final String zeitauswahl) throws DataNotFoundException, IncorrectZeitauswahlException {
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlstellenNummer, zaehlart, zaehldatum);
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(zaehlung.getId());
-        final List<LadeAuswertungSpitzenstundeDTO> ladeAuswertungSpitzenstunden = getSpitzenstunden(
+        final List<LadeAuswertungSpitzenstundeDto> ladeAuswertungSpitzenstunden = getSpitzenstunden(
                 zaehlung,
                 zeitblock,
                 zeitauswahl,
@@ -95,8 +95,8 @@ public class AuswertungSpitzenstundeService {
         });
         // Sortieren
         ladeAuswertungSpitzenstunden.sort(
-                Comparator.comparingInt(LadeAuswertungSpitzenstundeDTO::getVon)
-                        .thenComparingInt(LadeAuswertungSpitzenstundeDTO::getNach));
+                Comparator.comparingInt(LadeAuswertungSpitzenstundeDto::getVon)
+                        .thenComparingInt(LadeAuswertungSpitzenstundeDto::getNach));
         return ladeAuswertungSpitzenstunden;
     }
 
@@ -120,7 +120,7 @@ public class AuswertungSpitzenstundeService {
      * @throws DataNotFoundException falls keine Spitzenstunde für den gewählten Zeitblock gefunden
      *             wurde.
      */
-    public List<LadeAuswertungSpitzenstundeDTO> getSpitzenstunden(
+    public List<LadeAuswertungSpitzenstundeDto> getSpitzenstunden(
             final Zaehlung zaehlung,
             final Zeitblock zeitblock,
             final String zeitauswahl,
@@ -216,19 +216,19 @@ public class AuswertungSpitzenstundeService {
 
     /**
      * Diese Methode führt ein Mapping des {@link Zeitintervall}s auf
-     * {@link LadeAuswertungSpitzenstundeDTO} durch.
+     * {@link LadeAuswertungSpitzenstundeDto} durch.
      *
      * @param spitzenstunde als {@link Zeitintervall}.
      * @param pkwEinheit als {@link PkwEinheit}
-     * @return {@link LadeAuswertungSpitzenstundeDTO} des {@link Zeitintervall}s.
+     * @return {@link LadeAuswertungSpitzenstundeDto} des {@link Zeitintervall}s.
      */
-    public LadeAuswertungSpitzenstundeDTO mapToAuswertungSpitzenstundeDTO(final Zeitintervall spitzenstunde,
+    public LadeAuswertungSpitzenstundeDto mapToAuswertungSpitzenstundeDTO(final Zeitintervall spitzenstunde,
             final PkwEinheit pkwEinheit) {
-        final LadeZaehldatumDTO ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(
+        final LadeZaehldatumDto ladeZaehldatumDTO = LadeZaehldatenService.mapToZaehldatum(
                 spitzenstunde,
                 pkwEinheit,
                 new OptionsDto());
-        final LadeAuswertungSpitzenstundeDTO ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
+        final LadeAuswertungSpitzenstundeDto ladeZaehldatumWithDirectionDTO = ladeZaehldatumMapper
                 .ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(ladeZaehldatumDTO);
         ladeZaehldatumWithDirectionDTO.setVon(spitzenstunde.getVerkehrsbeziehung().getVon());
         ladeZaehldatumWithDirectionDTO.setNach(spitzenstunde.getVerkehrsbeziehung().getNach());

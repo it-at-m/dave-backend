@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeZaehlstelleWithUnreadMessageDTO implements Serializable {
+public class LadeZaehlstelleWithUnreadMessageDto implements Serializable {
 
     String id;
 
@@ -15,5 +15,5 @@ public class LadeZaehlstelleWithUnreadMessageDTO implements Serializable {
 
     Double lng;
 
-    List<LadeZaehlungWithUnreadMessageDTO> zaehlungen;
+    List<LadeZaehlungWithUnreadMessageDto> zaehlungen;
 }

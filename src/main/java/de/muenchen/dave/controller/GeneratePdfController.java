@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
@@ -196,7 +196,7 @@ public class GeneratePdfController {
     public ResponseEntity<byte[]> generatePdfAuswertung(
             @RequestPart(value = REQUEST_PART_DEPARTMENT) @NotEmpty final String department,
             @Valid @RequestPart(value = REQUEST_PART_OPTIONS) @NotNull final MessstelleAuswertungOptionsDTO options,
-            @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final LadeZaehldatenSteplineDTO auswertung,
+            @Valid @RequestPart(value = REQUEST_PART_AUSWERTUNG) @NotNull final LadeZaehldatenStepLineDto auswertung,
             @RequestPart(value = REQUEST_PART_CHART_AS_BASE64_PNG, required = false) final String chartAsBase64Png) {
         try {
             final byte[] pdf = generatePdfService.generateGesamtauswertungPdf(options, auswertung, chartAsBase64Png, department);

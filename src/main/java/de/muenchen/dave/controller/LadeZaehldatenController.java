@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDto;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.processzaehldaten.ProcessZaehldatenService;
 import jakarta.validation.Valid;
@@ -44,12 +44,12 @@ public class LadeZaehldatenController {
      */
     @PostMapping(value = "/lade-zaehldaten-processed", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<LadeProcessedZaehldatenDTO> ladeZaehldatenProcessed(
+    public ResponseEntity<LadeProcessedZaehldatenDto> ladeZaehldatenProcessed(
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotEmpty final String zaehlungId,
             @Valid @RequestBody @NotNull final OptionsDto options) {
         try {
             log.info("ladeZaehldatenProcessed für Zaehlung {} aufgerufen", zaehlungId);
-            final LadeProcessedZaehldatenDTO processedZaehldaten = processZaehldatenService.ladeProcessedZaehldaten(
+            final LadeProcessedZaehldatenDto processedZaehldaten = processZaehldatenService.ladeProcessedZaehldaten(
                     zaehlungId,
                     options);
             log.info("laden der Daten abgeschlossen.");

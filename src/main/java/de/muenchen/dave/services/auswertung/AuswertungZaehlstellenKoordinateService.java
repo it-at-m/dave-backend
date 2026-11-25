@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.auswertung;
 
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
 import de.muenchen.dave.services.ZaehlstelleIndexService;
@@ -25,13 +25,13 @@ public class AuswertungZaehlstellenKoordinateService {
     }
 
     /**
-     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDTO} für jede vorhandene
+     * @return ein {@link LadeAuswertungZaehlstelleKoordinateDto} für jede vorhandene
      *         {@link Zaehlstelle}
      */
-    public List<LadeAuswertungZaehlstelleKoordinateDTO> getAuswertungZaehlstellenKoordinate() {
+    public List<LadeAuswertungZaehlstelleKoordinateDto> getAuswertungZaehlstellenKoordinate() {
         return indexService.getAllZaehlstellen().stream()
                 .map(zaehlstelleMapper::bean2LadeAuswertungZaehlstelleKoordinateDto)
-                .sorted(Comparator.comparing(LadeAuswertungZaehlstelleKoordinateDTO::getNummer))
+                .sorted(Comparator.comparing(LadeAuswertungZaehlstelleKoordinateDto::getNummer))
                 .collect(Collectors.toList());
     }
 

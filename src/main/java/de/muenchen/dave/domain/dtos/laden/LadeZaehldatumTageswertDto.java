@@ -18,7 +18,7 @@ import lombok.Data;
                 "pkwEinheiten"
         }
 )
-public class LadeZaehldatumTageswertDTO extends LadeZaehldatumDTO {
+public class LadeZaehldatumTageswertDto extends LadeZaehldatumDto {
 
     private BigDecimal kfz;
 

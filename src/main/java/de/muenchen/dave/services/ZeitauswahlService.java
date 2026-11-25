@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
+import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDto;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
@@ -27,8 +27,8 @@ public class ZeitauswahlService {
         this.zeitintervallRepository = zeitintervallRepository;
     }
 
-    public ZeitauswahlDTO determinePossibleZeitauswahl(final String zaehldauer, final String zaehlungId) {
-        final ZeitauswahlDTO optionsZeitauswahl;
+    public ZeitauswahlDto determinePossibleZeitauswahl(final String zaehldauer, final String zaehlungId) {
+        final ZeitauswahlDto optionsZeitauswahl;
         final Zaehldauer zd = Zaehldauer.valueOf(zaehldauer);
 
         switch (zd) {
@@ -56,8 +56,8 @@ public class ZeitauswahlService {
      *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor2x4h() {
-        final var zeitauswahl = new ZeitauswahlDTO();
+    private ZeitauswahlDto getZeitauswahlFor2x4h() {
+        final var zeitauswahl = new ZeitauswahlDto();
         final Set<Zeitblock> blocks = new TreeSet<>();
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_15_19);
@@ -74,8 +74,8 @@ public class ZeitauswahlService {
      *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor13h() {
-        final var zeitauswahl = new ZeitauswahlDTO();
+    private ZeitauswahlDto getZeitauswahlFor13h() {
+        final var zeitauswahl = new ZeitauswahlDto();
         final Set<Zeitblock> blocks = new TreeSet<>();
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_10_15);
@@ -94,8 +94,8 @@ public class ZeitauswahlService {
      *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor16h(final String id) {
-        final var zeitauswahl = new ZeitauswahlDTO();
+    private ZeitauswahlDto getZeitauswahlFor16h(final String id) {
+        final var zeitauswahl = new ZeitauswahlDto();
         final Set<Zeitblock> blocks = new TreeSet<>();
         blocks.add(Zeitblock.ZB_06_10);
         blocks.add(Zeitblock.ZB_10_15);
@@ -115,8 +115,8 @@ public class ZeitauswahlService {
      *
      * @return
      */
-    private ZeitauswahlDTO getZeitauswahlFor24h() {
-        final var zeitauswahl = new ZeitauswahlDTO();
+    private ZeitauswahlDto getZeitauswahlFor24h() {
+        final var zeitauswahl = new ZeitauswahlDto();
         final Set<Zeitblock> blocks = new TreeSet<>();
         blocks.add(Zeitblock.ZB_00_06);
         blocks.add(Zeitblock.ZB_06_10);
@@ -131,7 +131,7 @@ public class ZeitauswahlService {
         return zeitauswahl;
     }
 
-    private ZeitauswahlDTO getZeitauswahlForSonstige(final String id) {
+    private ZeitauswahlDto getZeitauswahlForSonstige(final String id) {
         return getZeitauswahlDtoByZeitintervalle(id);
     }
 
@@ -226,8 +226,8 @@ public class ZeitauswahlService {
         return hours;
     }
 
-    private ZeitauswahlDTO getZeitauswahlDtoByZeitintervalle(final String id) {
-        final ZeitauswahlDTO zeitauswahlDTO = new ZeitauswahlDTO();
+    private ZeitauswahlDto getZeitauswahlDtoByZeitintervalle(final String id) {
+        final ZeitauswahlDto zeitauswahlDTO = new ZeitauswahlDto();
         final Set<Zeitblock> hours = new TreeSet<>();
         final Set<Zeitblock> blocks = new TreeSet<>();
         final List<Zeitintervall> zeitintervalle = zeitintervallRepository.findByZaehlungId(UUID.fromString(id), Sort.by(Sort.Direction.ASC, "startUhrzeit"));

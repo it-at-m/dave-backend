@@ -3,7 +3,7 @@ package de.muenchen.dave.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import java.math.BigDecimal;
 import org.hamcrest.core.IsNull;
@@ -13,7 +13,7 @@ class CalculationUtilTest {
 
     @Test
     public void calculateAnteilSchwerverkehrAnKfzProzent() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(680);
         zaehldatumDTO.setLkw(7);
         zaehldatumDTO.setLastzuege(7);
@@ -30,7 +30,7 @@ class CalculationUtilTest {
 
     @Test
     public void calculateAnteilGueterverkehrAnKfzProzent() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(680);
         zaehldatumDTO.setLkw(7);
         zaehldatumDTO.setLastzuege(7);
@@ -47,7 +47,7 @@ class CalculationUtilTest {
 
     @Test
     public void calculateAnteilSchwerverkehrAnKfzProzentNull() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setFahrradfahrer(114);
         zaehldatumDTO.setFussgaenger(0);
 
@@ -59,7 +59,7 @@ class CalculationUtilTest {
 
     @Test
     public void calculateAnteilGueterverkehrAnKfzProzentNull() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setFahrradfahrer(114);
         zaehldatumDTO.setFussgaenger(0);
 
@@ -71,7 +71,7 @@ class CalculationUtilTest {
 
     @Test
     public void getGueterverkehr() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(1);
         zaehldatumDTO.setLkw(2);
         zaehldatumDTO.setLastzuege(3);
@@ -86,7 +86,7 @@ class CalculationUtilTest {
 
     @Test
     public void getSchwerverkehr() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(1);
         zaehldatumDTO.setLkw(2);
         zaehldatumDTO.setLastzuege(3);
@@ -101,7 +101,7 @@ class CalculationUtilTest {
 
     @Test
     public void getKfz() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(1);
         zaehldatumDTO.setLkw(2);
         zaehldatumDTO.setLastzuege(3);
@@ -116,7 +116,7 @@ class CalculationUtilTest {
 
     @Test
     public void getGesamt() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
         zaehldatumDTO.setPkw(1);
         zaehldatumDTO.setLkw(2);
         zaehldatumDTO.setLastzuege(3);
@@ -131,7 +131,7 @@ class CalculationUtilTest {
 
     @Test
     public void nullCheck() {
-        final LadeZaehldatumDTO zaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto zaehldatumDTO = new LadeZaehldatumDto();
 
         BigDecimal expectedResult = BigDecimal.valueOf(0);
         assertThat(CalculationUtil.getGesamt(zaehldatumDTO), is(expectedResult));
@@ -147,7 +147,7 @@ class CalculationUtilTest {
         pkwEinheit.setKraftraeder(BigDecimal.valueOf(Integer.MAX_VALUE));
         pkwEinheit.setFahrradfahrer(BigDecimal.valueOf(Integer.MAX_VALUE));
 
-        LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(Integer.MAX_VALUE);
         ladeZaehldatumDTO.setLkw(Integer.MAX_VALUE);
         ladeZaehldatumDTO.setLastzuege(Integer.MAX_VALUE);
@@ -172,7 +172,7 @@ class CalculationUtilTest {
         pkwEinheit.setKraftraeder(BigDecimal.valueOf(5));
         pkwEinheit.setFahrradfahrer(BigDecimal.valueOf(6));
 
-        LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(1);
         ladeZaehldatumDTO.setLkw(1);
         ladeZaehldatumDTO.setLastzuege(1);

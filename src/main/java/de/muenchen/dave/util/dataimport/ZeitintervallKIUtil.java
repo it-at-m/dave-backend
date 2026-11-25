@@ -4,7 +4,7 @@ import com.google.common.collect.Streams;
 import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.KIPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.util.DaveConstants;
 import java.time.LocalDateTime;
@@ -108,7 +108,7 @@ public final class ZeitintervallKIUtil {
         kiZeitintervall.setFussgaenger(0);
 
         // Erstelle LadeZaehldatumDTO zur Summierung für Fahrzeugklassen
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(kiZeitintervall.getPkw());
         ladeZaehldatumDTO.setLkw(kiZeitintervall.getLkw());
         ladeZaehldatumDTO.setLastzuege(kiZeitintervall.getLastzuege());

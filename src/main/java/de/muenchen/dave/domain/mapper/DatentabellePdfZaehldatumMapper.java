@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
@@ -31,16 +31,16 @@ public interface DatentabellePdfZaehldatumMapper {
                 @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
         }
     )
-    DatentabellePdfZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDTO ladeZaehldatumDTO);
+    DatentabellePdfZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDto ladeZaehldatumDTO);
 
     @AfterMapping
-    default void toDatentabellePdfZaehldatum(@MappingTarget DatentabellePdfZaehldatum bean, LadeZaehldatumDTO dto) {
+    default void toDatentabellePdfZaehldatum(@MappingTarget DatentabellePdfZaehldatum bean, LadeZaehldatumDto dto) {
         if (StringUtils.equals(bean.getEndeUhrzeit(), UHRZEIT_23_59)) {
             bean.setEndeUhrzeit(UHRZEIT_24_00);
         }
     }
 
-    List<DatentabellePdfZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDTO> ladeZaehldatumDTOList);
+    List<DatentabellePdfZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDto> ladeZaehldatumDTOList);
 
     @Mappings(
         {

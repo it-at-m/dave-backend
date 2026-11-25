@@ -2,7 +2,7 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.*;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
 import de.muenchen.dave.services.messstelle.RoundingService;
@@ -118,7 +118,7 @@ public final class MappingUtil {
     }
 
     /**
-     * Berechnet für ein {@link Zeitintervall} das zugehörige {@link LadeZaehldatumDTO} und fügt es
+     * Berechnet für ein {@link Zeitintervall} das zugehörige {@link LadeZaehldatumDto} und fügt es
      * unter der aus dem Zeitintervall extrahierten {@link Bewegungsbeziehung} in die übergebene Map
      * ein.
      * <p>
@@ -147,8 +147,8 @@ public final class MappingUtil {
         try {
             // Zwischenergebnisse in lokalen Variablen
             final boolean isTageswert = LadeZaehldatenService.isZeitintervallForTageswert(zi, options);
-            final LadeZaehldatumDTO mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
-            final LadeZaehldatumDTO roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
+            final LadeZaehldatumDto mappedZaehldatum = LadeZaehldatenService.mapToZaehldatum(zi, zaehlung.getPkwEinheit(), options);
+            final LadeZaehldatumDto roundedZaehldatum = RoundingService.roundToNearestIfRoundingIsChosen(mappedZaehldatum, options);
 
             final ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum value = new ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum(
                     isTageswert, roundedZaehldatum);

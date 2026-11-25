@@ -4,9 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -24,13 +24,13 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService = new ProcessZaehldatenHeatmapService();
 
-    private LadeZaehldatenTableDTO zaehldatenTable;
+    private LadeZaehldatenTableDto zaehldatenTable;
 
     @BeforeEach
     public void beforeEach() {
-        zaehldatenTable = new LadeZaehldatenTableDTO();
+        zaehldatenTable = new LadeZaehldatenTableDto();
 
-        final LadeZaehldatumDTO ladeZaehldatum1 = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatum1 = new LadeZaehldatumDto();
         ladeZaehldatum1.setType(null);
         ladeZaehldatum1.setStartUhrzeit(LocalTime.of(6, 0));
         ladeZaehldatum1.setEndeUhrzeit(LocalTime.of(7, 0));
@@ -43,7 +43,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         ladeZaehldatum1.setFussgaenger(1);
         ladeZaehldatum1.setPkwEinheiten(1);
 
-        final LadeZaehldatumDTO ladeZaehldatum2 = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatum2 = new LadeZaehldatumDto();
         ladeZaehldatum2.setType(null);
         ladeZaehldatum2.setStartUhrzeit(LocalTime.of(7, 0));
         ladeZaehldatum2.setEndeUhrzeit(LocalTime.of(8, 0));
@@ -56,7 +56,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         ladeZaehldatum2.setFussgaenger(2);
         ladeZaehldatum2.setPkwEinheiten(2);
 
-        final LadeZaehldatumDTO ladeZaehldatum3 = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatum3 = new LadeZaehldatumDto();
         ladeZaehldatum3.setType(null);
         ladeZaehldatum3.setStartUhrzeit(LocalTime.of(8, 0));
         ladeZaehldatum3.setEndeUhrzeit(LocalTime.of(9, 0));
@@ -69,7 +69,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         ladeZaehldatum3.setFussgaenger(3);
         ladeZaehldatum3.setPkwEinheiten(3);
 
-        List<LadeZaehldatumDTO> zaehldaten = new ArrayList<>();
+        List<LadeZaehldatumDto> zaehldaten = new ArrayList<>();
         zaehldaten.add(ladeZaehldatum1);
         zaehldaten.add(ladeZaehldatum2);
         zaehldaten.add(ladeZaehldatum3);
@@ -97,7 +97,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);
 
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
 
         assertThat(ladeZaehldatenHeatmap.getLegend().size(), is(11));
         assertThat(ladeZaehldatenHeatmap.getLegend().get(0), is(ChartLegendUtil.PKW_EINHEITEN_HEATMAP));
@@ -179,7 +179,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);
 
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
 
         assertThat(ladeZaehldatenHeatmap.getLegend().size(), is(1));
         assertThat(ladeZaehldatenHeatmap.getLegend().get(0), is(ChartLegendUtil.PKW_HEATMAP));
@@ -221,7 +221,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         options.setZaehldauer(Zaehldauer.DAUER_24_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);
 
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
 
         assertThat(ladeZaehldatenHeatmap.getLegend().size(), is(0));
 
@@ -252,7 +252,7 @@ class ProcessZaehldatenHeatmapServiceTest {
 
     @Test
     public void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap() {
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDto();
         ladeZaehldatenHeatmap.setLegend(new ArrayList<>());
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -306,7 +306,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);
 
-        final LadeZaehldatumDTO ladeZaehldatum4 = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatum4 = new LadeZaehldatumDto();
         ladeZaehldatum4.setType(null);
         ladeZaehldatum4.setStartUhrzeit(LocalTime.of(9, 0));
         ladeZaehldatum4.setEndeUhrzeit(LocalTime.of(10, 0));
@@ -319,12 +319,12 @@ class ProcessZaehldatenHeatmapServiceTest {
         ladeZaehldatum4.setFussgaenger(4);
         ladeZaehldatum4.setPkwEinheiten(4);
 
-        List<LadeZaehldatumDTO> zaehldaten = zaehldatenTable.getZaehldaten();
+        List<LadeZaehldatumDto> zaehldaten = zaehldatenTable.getZaehldaten();
         zaehldaten.add(ladeZaehldatum4);
 
         zaehldatenTable.setZaehldaten(zaehldaten);
 
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(zaehldatenTable, options);
 
         assertThat(ladeZaehldatenHeatmap.getLegend().size(), is(11));
         assertThat(ladeZaehldatenHeatmap.getLegend().get(0), is(ChartLegendUtil.PKW_EINHEITEN_HEATMAP));
@@ -411,7 +411,7 @@ class ProcessZaehldatenHeatmapServiceTest {
         options.setZaehldauer(Zaehldauer.DAUER_2_X_4_STUNDEN);
         options.setZeitauswahl(LadeZaehldatenService.BLOCK);
 
-        LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmapDTO = new LadeZaehldatenHeatmapDTO();
+        LadeZaehldatenHeatmapDto ladeZaehldatenHeatmapDTO = new LadeZaehldatenHeatmapDto();
         List<String> xAxisData = new ArrayList<>();
         xAxisData.add("06:00");
         xAxisData.add("07:00");

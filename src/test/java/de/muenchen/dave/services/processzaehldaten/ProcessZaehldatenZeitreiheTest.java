@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.*;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -103,7 +103,7 @@ public class ProcessZaehldatenZeitreiheTest {
         options.setGueterverkehrsanteilProzent(true);
         options.setZeitreiheGesamt(true);
 
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(100);
         ladeZaehldatumDTO.setLkw(50);
         ladeZaehldatumDTO.setLastzuege(20);
@@ -116,7 +116,7 @@ public class ProcessZaehldatenZeitreiheTest {
         final List<Fahrzeug> kategorien = List.of(Fahrzeug.KFZ, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.SV_P, Fahrzeug.GV, Fahrzeug.RAD, Fahrzeug.SV,
                 Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD);
 
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO1 = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreiheDTO1 = new LadeZaehldatenZeitreiheDto();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO1,
                 ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO1.getKfz().getFirst(), is(new BigDecimal(200)));
@@ -135,7 +135,7 @@ public class ProcessZaehldatenZeitreiheTest {
         options.setRadverkehr(false);
         options.setSchwerverkehrsanteilProzent(false);
 
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO2 = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreiheDTO2 = new LadeZaehldatenZeitreiheDto();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, ladeZaehldatenZeitreiheDTO2,
                 ladeZaehldatumDTO, kategorien);
         assertThat(ladeZaehldatenZeitreiheDTO2.getKfz().size(), is(0));
@@ -159,7 +159,7 @@ public class ProcessZaehldatenZeitreiheTest {
         options.setGueterverkehrsanteilProzent(true);
         options.setZeitreiheGesamt(true);
 
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(100);
         ladeZaehldatumDTO.setLkw(50);
         ladeZaehldatumDTO.setLastzuege(20);
@@ -173,7 +173,7 @@ public class ProcessZaehldatenZeitreiheTest {
         final List<Fahrzeug> kategorien = List.of(Fahrzeug.KFZ, Fahrzeug.FUSS, Fahrzeug.GV_P, Fahrzeug.GV,
                 Fahrzeug.PKW, Fahrzeug.LKW, Fahrzeug.LZ, Fahrzeug.BUS, Fahrzeug.KRAD);
 
-        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto result = new LadeZaehldatenZeitreiheDto();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
                 ladeZaehldatumDTO, kategorien);
 
@@ -198,7 +198,7 @@ public class ProcessZaehldatenZeitreiheTest {
         options.setGueterverkehrsanteilProzent(false);
         options.setZeitreiheGesamt(true);
 
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(100);
         ladeZaehldatumDTO.setFahrradfahrer(40);
         ladeZaehldatumDTO.setFussgaenger(10);
@@ -207,7 +207,7 @@ public class ProcessZaehldatenZeitreiheTest {
         // Kategorien ohne KFZ und ohne RAD => Gesamt muss null sein
         final List<Fahrzeug> kategorien = List.of(Fahrzeug.FUSS, Fahrzeug.GV_P);
 
-        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto result = new LadeZaehldatenZeitreiheDto();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
                 ladeZaehldatumDTO, kategorien);
 
@@ -227,7 +227,7 @@ public class ProcessZaehldatenZeitreiheTest {
         options.setGueterverkehrsanteilProzent(true);
         options.setZeitreiheGesamt(false);
 
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(100);
         ladeZaehldatumDTO.setFahrradfahrer(40);
         ladeZaehldatumDTO.setFussgaenger(10);
@@ -236,7 +236,7 @@ public class ProcessZaehldatenZeitreiheTest {
         // GV (absolute) fehlt, GV_P (prozent) ist vorhanden
         final List<Fahrzeug> kategorien = List.of(Fahrzeug.GV_P);
 
-        final LadeZaehldatenZeitreiheDTO result = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto result = new LadeZaehldatenZeitreiheDto();
         ProcessZaehldatenZeitreiheService.fillLadeZaehldatenZeitreiheDTO(options, result,
                 ladeZaehldatumDTO, kategorien);
 

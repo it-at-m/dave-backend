@@ -12,7 +12,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeZaehlungDTO {
+public class LadeZaehlungDto {
 
     String id;
 
@@ -50,7 +50,7 @@ public class LadeZaehlungDTO {
 
     String kommentar;
 
-    List<LadeKnotenarmDTO> knotenarme;
+    List<LadeKnotenarmDto> knotenarme;
 
     List<Fahrzeug> kategorien;
 
@@ -63,6 +63,6 @@ public class LadeZaehlungDTO {
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
     List<BearbeiteVerkehrsbeziehungDto> verkehrsbeziehungen;
 
-    ZeitauswahlDTO zeitauswahl;
+    ZeitauswahlDto zeitauswahl;
 
 }

@@ -3,8 +3,8 @@ package de.muenchen.dave.services.processzaehldaten;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -99,8 +99,8 @@ public class ProcessZaehldatenZeitreiheService {
      */
     static void fillLadeZaehldatenZeitreiheDTO(
             final OptionsDto options,
-            final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO,
-            final LadeZaehldatumDTO ladeZaehldatumDTO,
+            final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreiheDTO,
+            final LadeZaehldatumDto ladeZaehldatumDTO,
             final List<Fahrzeug> kategorien) {
         if (options.getKraftfahrzeugverkehr()) {
             // Wenn Kategorie KFZ nicht vorhanden ist, null liefern statt 0
@@ -274,13 +274,13 @@ public class ProcessZaehldatenZeitreiheService {
      * @throws DataNotFoundException wenn keine Zaehlstelle/Zaehlung geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_ZAEHLDATEN_ZEITREIHE_DTO, key = "{#p0, #p1}")
-    public LadeZaehldatenZeitreiheDTO getZeitreiheDTO(final String currentZaehlungId, final OptionsDto options)
+    public LadeZaehldatenZeitreiheDto getZeitreiheDTO(final String currentZaehlungId, final OptionsDto options)
             throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getZeitreiheDTO mit %s und %s", currentZaehlungId, options.toString()));
         final Zaehlstelle zaehlstelle = indexService.getZaehlstelleByZaehlungId(currentZaehlungId);
         final Zaehlung currentZaehlung = indexService.getZaehlung(currentZaehlungId);
 
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDTO();
+        final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreihe = new LadeZaehldatenZeitreiheDto();
 
         getFilteredAndSortedZaehlungenForZeitreihe(zaehlstelle, currentZaehlung, options)
                 .forEach(zaehlung -> {
@@ -313,7 +313,7 @@ public class ProcessZaehldatenZeitreiheService {
 
                     if (CollectionUtils.isNotEmpty(zeitintervalle)) {
                         final Zeitintervall zeitintervall = zeitintervalle.getFirst();
-                        final LadeZaehldatumDTO ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
+                        final LadeZaehldatumDto ladeZaehldatum = LadeZaehldatenService.mapToZaehldatum(zeitintervalle.getFirst(), zaehlung.getPkwEinheit(),
                                 options);
 
                         // separate Meldung erzeugen, falls Werte in einer Zählung fehlen
@@ -439,8 +439,8 @@ public class ProcessZaehldatenZeitreiheService {
     }
 
     // Erstellt ein leeres LadeZaehldatumDTO
-    private static LadeZaehldatumDTO getEmptyLadeZaehldatumDTO() {
-        final var ladeZaehldatum = new LadeZaehldatumDTO();
+    private static LadeZaehldatumDto getEmptyLadeZaehldatumDTO() {
+        final var ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setPkw(0);
         ladeZaehldatum.setLkw(0);
         ladeZaehldatum.setLastzuege(0);

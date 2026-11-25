@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class BelastungsplanQjsDataDTO extends AbstractBelastungsplanDataDTO {
+public class BelastungsplanQjsDataDto extends AbstractBelastungsplanDataDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

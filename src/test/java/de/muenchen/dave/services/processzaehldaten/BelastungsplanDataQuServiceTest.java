@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQuDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQuDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -39,7 +39,7 @@ public class BelastungsplanDataQuServiceTest {
         querungsverkehr.setKnotenarm(2);
         querungsverkehr.setRichtung(Himmelsrichtung.O);
 
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(6);
         ladeZaehldatum.setFussgaenger(7);
 
@@ -49,7 +49,7 @@ public class BelastungsplanDataQuServiceTest {
         querungsverkehr.setKnotenarm(4);
         querungsverkehr.setRichtung(Himmelsrichtung.O);
 
-        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(60);
         ladeZaehldatum.setFussgaenger(70);
 
@@ -60,10 +60,10 @@ public class BelastungsplanDataQuServiceTest {
         zaehlung.setZaehlart(Zaehlart.FJS.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQuService()
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = new BelastungsplanDataQuService()
                 .buildBelastungsplanDataMap(zaehldatenJeQuerungsverkehr, zaehlung);
 
-        List<BelastungsplanQuDataDTO.QuKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+        List<BelastungsplanQuDataDto.QuKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanQuDataDto) belastungsplanData.get(Fahrzeug.FUSS))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeFuss);
         assertEquals(2, valuesKnotenarmeFuss.size());
@@ -71,7 +71,7 @@ public class BelastungsplanDataQuServiceTest {
         assertQuerungsverkehr(valuesKnotenarmeFuss, 2, Himmelsrichtung.O, 7);
         assertQuerungsverkehr(valuesKnotenarmeFuss, 4, Himmelsrichtung.O, 70);
 
-        List<BelastungsplanQuDataDTO.QuKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+        List<BelastungsplanQuDataDto.QuKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanQuDataDto) belastungsplanData.get(Fahrzeug.RAD))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeRad);
         assertEquals(2, valuesKnotenarmeRad.size());
@@ -107,20 +107,20 @@ public class BelastungsplanDataQuServiceTest {
         zi1.setEndeUhrzeit(LocalDateTime.now());
         zeitintervalle.add(zi1);
 
-        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQuService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
+        AbstractLadeBelastungsplanDto<?> data = new BelastungsplanDataQuService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
         assertNotNull(data);
         assertEquals("Eins", data.getStreets()[0]);
         assertNull(data.getStreets()[1]);
         assertEquals("Drei", data.getStreets()[2]);
         assertNotNull(data.getValue1());
-        BelastungsplanQuDataDTO value1 = (BelastungsplanQuDataDTO) data.getValue1();
+        BelastungsplanQuDataDto value1 = (BelastungsplanQuDataDto) data.getValue1();
         assertEquals(BigDecimal.valueOf(99), value1.getValuesKnotenarme().getFirst().getSumKnotenarm());
         assertEquals(BigDecimal.valueOf(99), value1.getValuesKnotenarme().getFirst().getValuesQuerungsverkehre().getFirst().getValue());
     }
 
-    private void assertQuerungsverkehr(List<BelastungsplanQuDataDTO.QuKnotenarmValue> values, int knotenarm, Himmelsrichtung richtung, int expectedValue) {
-        BelastungsplanQuDataDTO.QuKnotenarmValue quKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
-        BelastungsplanQuDataDTO.QuerungsverkehrValue querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
+    private void assertQuerungsverkehr(List<BelastungsplanQuDataDto.QuKnotenarmValue> values, int knotenarm, Himmelsrichtung richtung, int expectedValue) {
+        BelastungsplanQuDataDto.QuKnotenarmValue quKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
+        BelastungsplanQuDataDto.QuerungsverkehrValue querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
                 .filter(qv -> qv.getRichtung() == richtung).findFirst().orElseThrow();
         assertThat(querungsverkehrValue.getValue(), is(BigDecimal.valueOf(expectedValue)));
     }

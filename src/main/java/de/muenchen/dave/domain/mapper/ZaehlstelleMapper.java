@@ -4,10 +4,10 @@ import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDto;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -31,7 +31,7 @@ public interface ZaehlstelleMapper {
     BearbeiteZaehlstelleDto bean2bearbeiteDto(Zaehlstelle bean, @Context StadtbezirkMapper stadtbezirkMapper);
 
     @Mapping(target = "zaehlungen", ignore = true)
-    LadeZaehlstelleVisumDTO bean2ladeVisumDto(Zaehlstelle bean);
+    LadeZaehlstelleVisumDto bean2ladeVisumDto(Zaehlstelle bean);
 
     Zaehlstelle bearbeiteDto2bean(BearbeiteZaehlstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
 
@@ -67,7 +67,7 @@ public interface ZaehlstelleMapper {
 
     LeseZaehlstelleDto bean2LeseZaehlstelleDto(Zaehlstelle bean);
 
-    LadeZaehlstelleWithUnreadMessageDTO bean2LadeZaehlstelleWithUnreadMessageDTO(Zaehlstelle bean);
+    LadeZaehlstelleWithUnreadMessageDto bean2LadeZaehlstelleWithUnreadMessageDTO(Zaehlstelle bean);
 
     @AfterMapping
     default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDto dto, Zaehlstelle bean) {
@@ -77,10 +77,10 @@ public interface ZaehlstelleMapper {
 
     ExternalZaehlstelleDto bean2ExternalDto(Zaehlstelle bean);
 
-    LadeAuswertungZaehlstelleKoordinateDTO bean2LadeAuswertungZaehlstelleKoordinateDto(Zaehlstelle bean);
+    LadeAuswertungZaehlstelleKoordinateDto bean2LadeAuswertungZaehlstelleKoordinateDto(Zaehlstelle bean);
 
     @AfterMapping
-    default void toLadeAuswertungZaehlstelleKoordinateDto(@MappingTarget LadeAuswertungZaehlstelleKoordinateDTO dto, Zaehlstelle bean) {
+    default void toLadeAuswertungZaehlstelleKoordinateDto(@MappingTarget LadeAuswertungZaehlstelleKoordinateDto dto, Zaehlstelle bean) {
         dto.setLat(bean.getPunkt().getLat());
         dto.setLng(bean.getPunkt().getLon());
         final Zaehlung newestZaehlung = bean.getZaehlungen().stream()
@@ -91,7 +91,7 @@ public interface ZaehlstelleMapper {
 
     LeseZaehlungDto bean2LeseDto(Zaehlung bean);
 
-    LadeZaehlungWithUnreadMessageDTO bean2LadeZaehlungWithUnreadMessageDTO(Zaehlung bean);
+    LadeZaehlungWithUnreadMessageDto bean2LadeZaehlungWithUnreadMessageDTO(Zaehlung bean);
 
     @AfterMapping
     default void toLeseZaehlungDTO(@MappingTarget LeseZaehlungDto dto, Zaehlung bean) {

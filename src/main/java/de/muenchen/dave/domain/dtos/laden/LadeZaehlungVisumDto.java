@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeZaehlungVisumDTO {
+public class LadeZaehlungVisumDto {
 
     String id;
 
@@ -24,6 +24,6 @@ public class LadeZaehlungVisumDTO {
 
     CoordinateUtil.PositionUTM punktUtm;
 
-    List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungen;
+    List<VerkehrsbeziehungVisumDto> verkehrsbeziehungen;
 
 }

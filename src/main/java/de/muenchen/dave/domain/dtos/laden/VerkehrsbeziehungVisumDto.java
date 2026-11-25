@@ -4,12 +4,12 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class VerkehrsbeziehungVisumDTO {
+public class VerkehrsbeziehungVisumDto {
 
     private Integer von;
 
     private Integer nach;
 
-    private List<LadeZaehldatumDTO> zaehldaten;
+    private List<LadeZaehldatumDto> zaehldaten;
 
 }

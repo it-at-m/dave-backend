@@ -10,7 +10,7 @@ import lombok.Data;
  * Klasse stellt die möglichen Zeitblöcke und Stunden zur Verfügung welche ausgewählt werden können.
  */
 @Data
-public class ZeitauswahlDTO implements Serializable {
+public class ZeitauswahlDto implements Serializable {
 
     /**
      * Die möglichen Zeitblöcke

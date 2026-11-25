@@ -9,8 +9,8 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
@@ -655,12 +655,12 @@ public class ZaehlstelleIndexService {
         this.messageService.saveUpdateMessageForZaehlungStatus(zaehlung.getId(), updateStatusDTO);
     }
 
-    public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages() {
-        final List<LadeZaehlstelleWithUnreadMessageDTO> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.MOBILITAETSREFERAT.getParticipantId());
+    public List<LadeZaehlstelleWithUnreadMessageDto> readZaehlstellenWithUnreadMessages() {
+        final List<LadeZaehlstelleWithUnreadMessageDto> zaehlstellen = readZaehlstellenWithUnreadMessages(Participant.MOBILITAETSREFERAT.getParticipantId());
         zaehlstellen.forEach(zaehlstelle -> {
             final var filteredZaehlungen = zaehlstelle.getZaehlungen()
                     .stream()
-                    .filter(LadeZaehlungWithUnreadMessageDTO::getUnreadMessagesMobilitaetsreferat)
+                    .filter(LadeZaehlungWithUnreadMessageDto::getUnreadMessagesMobilitaetsreferat)
                     .collect(Collectors.toList());
             zaehlstelle.setZaehlungen(filteredZaehlungen);
         });
@@ -675,7 +675,7 @@ public class ZaehlstelleIndexService {
      * @return LadeZaehlstelleWithUnreadMessageDTOs bei denen für einen bestimmten Participant
      *         ungelesene Nachrichten vorliegen
      */
-    public List<LadeZaehlstelleWithUnreadMessageDTO> readZaehlstellenWithUnreadMessages(final int participantId) {
+    public List<LadeZaehlstelleWithUnreadMessageDto> readZaehlstellenWithUnreadMessages(final int participantId) {
         final List<Zaehlstelle> zaehlstellen;
         if (Participant.DIENSTLEISTER.getParticipantId() == participantId) {
             zaehlstellen = this.zaehlstelleIndex.findAllByZaehlungenUnreadMessagesDienstleisterTrue();

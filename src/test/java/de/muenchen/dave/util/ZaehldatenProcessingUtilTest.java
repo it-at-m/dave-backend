@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -25,7 +25,7 @@ class ZaehldatenProcessingUtilTest {
 
     @Test
     public void getStartUhrzeit() {
-        final LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatum = new LadeZaehldatumDto();
 
         ladeZaehldatum.setStartUhrzeit(LocalTime.of(10, 11, 23));
         assertThat(ZaehldatenProcessingUtil.getStartUhrzeit(ladeZaehldatum), is("10:11"));

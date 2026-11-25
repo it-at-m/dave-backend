@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -127,7 +127,7 @@ public class FillZeitreihePdfBeanService {
      * @throws DataNotFoundException wenn keine Daten gefunden wurden
      */
     public List<ZeitreiheTableRow> getZeitreiheTableDataForPdf(final String zaehlungId, final OptionsDto options) throws DataNotFoundException {
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
+        final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(zaehlungId, options);
         final List<ZeitreiheTableRow> zeitreiheTableRows = new ArrayList<>();
         for (int i = 0; i < ladeZaehldatenZeitreiheDTO.getDatum().size(); i++) {
             final ZeitreiheTableRow ztr = new ZeitreiheTableRow();

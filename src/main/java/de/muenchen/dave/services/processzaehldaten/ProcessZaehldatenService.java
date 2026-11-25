@@ -2,12 +2,12 @@ package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.LadeProcessedZaehldatenDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenZeitreiheDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -52,13 +52,13 @@ public class ProcessZaehldatenService {
      * @throws DataNotFoundException wenn keine Zaehldaten geladen werden konnte
      */
     @Cacheable(value = CachingConfiguration.LADE_PROCESSED_ZAEHLDATEN, key = "{#p0, #p1}")
-    public LadeProcessedZaehldatenDTO ladeProcessedZaehldaten(final String zaehlungId,
+    public LadeProcessedZaehldatenDto ladeProcessedZaehldaten(final String zaehlungId,
             final OptionsDto options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #ladeProcessedZaehldaten mit %s und %s", zaehlungId, options.toString()));
 
         log.debug("Lade Zaehldaten for Table");
-        final LadeProcessedZaehldatenDTO processedZaehldaten = new LadeProcessedZaehldatenDTO();
-        final LadeZaehldatenTableDTO ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
+        final LadeProcessedZaehldatenDto processedZaehldaten = new LadeProcessedZaehldatenDto();
+        final LadeZaehldatenTableDto ladeZaehldatenTable = ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlungId),
                 options);
         processedZaehldaten.setZaehldatenTable(ladeZaehldatenTable);
@@ -70,19 +70,19 @@ public class ProcessZaehldatenService {
                         options));
 
         log.debug("Process Zaehldaten Heatmap");
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = processZaehldatenHeatmapService.ladeProcessedZaehldatenHeatmap(
                 ladeZaehldatenTable,
                 options);
         processedZaehldaten.setZaehldatenHeatmap(ladeZaehldatenHeatmap);
 
         log.debug("Process Zaehldaten Belastungsplan");
-        final AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
+        final AbstractLadeBelastungsplanDto<?> ladeBelastungsplanDTO = processZaehldatenBelastungsplanService.getBelastungsplanDTO(
                 zaehlungId,
                 options);
         processedZaehldaten.setZaehldatenBelastungsplan(ladeBelastungsplanDTO);
 
         log.debug("Process Zaehldaten Zeitreihe");
-        final LadeZaehldatenZeitreiheDTO ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
+        final LadeZaehldatenZeitreiheDto ladeZaehldatenZeitreiheDTO = processZaehldatenZeitreiheService.getZeitreiheDTO(
                 zaehlungId,
                 options);
         processedZaehldaten.setZaehldatenZeitreihe(ladeZaehldatenZeitreiheDTO);
@@ -104,19 +104,19 @@ public class ProcessZaehldatenService {
      * @return LadeZaehldatenTableDTO mit den für die Zählungskenngrößen benötigten Werten
      * @throws DataNotFoundException Wenn die Zählung nicht geladen werden kann
      */
-    public LadeZaehldatenTableDTO ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
+    public LadeZaehldatenTableDto ladeZaehlungskenngroessen(final Zaehlung zaehlung) throws DataNotFoundException {
         log.debug("Lade Zaehlungskenngroessen");
 
         final OptionsDto options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setChosenVerkehrsbeziehungen(zaehlungMapper.mapVerkehrsbeziehungen(zaehlung.getVerkehrsbeziehungen()));
         options.setChosenLaengsverkehre(zaehlungMapper.mapLaengsverkehre(zaehlung.getLaengsverkehr()));
         options.setChosenQuerungsverkehre(zaehlungMapper.mapQuerungsverkehre(zaehlung.getQuerungsverkehr()));
-        final LadeZaehldatenTableDTO zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
+        final LadeZaehldatenTableDto zaehldatenFuerZaehlungskenngroessen = ladeZaehldatenService.ladeZaehldaten(
                 UUID.fromString(zaehlung.getId()),
                 options);
 
         // Entfernen der Intervalle aus den Zähldaten
-        final List<LadeZaehldatumDTO> zaehldatenWithoutIntervals = zaehldatenFuerZaehlungskenngroessen
+        final List<LadeZaehldatumDto> zaehldatenWithoutIntervals = zaehldatenFuerZaehlungskenngroessen
                 .getZaehldaten()
                 .stream()
                 .filter(ladeZaehldatum -> Objects.nonNull(ladeZaehldatum.getType()))

@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.AfterMapping;
@@ -23,15 +23,15 @@ public interface DatentabelleCsvZaehldatumMapper {
                 @Mapping(target = "startUhrzeit", source = "ladeZaehldatumDTO.startUhrzeit", dateFormat = "HH:mm"),
         }
     )
-    DatentabelleCsvZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDTO ladeZaehldatumDTO);
+    DatentabelleCsvZaehldatum ladeZaehldatumDTO2bean(LadeZaehldatumDto ladeZaehldatumDTO);
 
     @AfterMapping
-    default void toDatentabelleCsvZaehldatum(@MappingTarget DatentabelleCsvZaehldatum bean, LadeZaehldatumDTO dto) {
+    default void toDatentabelleCsvZaehldatum(@MappingTarget DatentabelleCsvZaehldatum bean, LadeZaehldatumDto dto) {
         if (StringUtils.equals(bean.getEndeUhrzeit(), UHRZEIT_23_59)) {
             bean.setEndeUhrzeit(UHRZEIT_24_00);
         }
     }
 
-    List<DatentabelleCsvZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDTO> ladeZaehldatumDTOList);
+    List<DatentabelleCsvZaehldatum> ladeZaehldatumDTOList2beanList(List<LadeZaehldatumDto> ladeZaehldatumDTOList);
 
 }

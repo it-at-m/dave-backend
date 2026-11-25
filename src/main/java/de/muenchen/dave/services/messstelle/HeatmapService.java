@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -35,13 +35,13 @@ public class HeatmapService {
      * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in
      *            der Heatmap dargestellt werde soll. Des
      *            Weiteren wird dieser Wert zur Ermittlung von
-     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
-     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
-     * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
+     *            {@link LadeZaehldatenHeatmapDto}#getRangeMax() und
+     *            {@link LadeZaehldatenHeatmapDto}#getRangeMin() herangezogen.
+     * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDto}#getLegend()
      *            hinterlegt wird.
      */
     protected static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
-            final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+            final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap,
             final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value,
@@ -91,8 +91,8 @@ public class HeatmapService {
      * @param intervals Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeHeatmap(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
+    public LadeZaehldatenHeatmapDto ladeHeatmap(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDto();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
         ladeZaehldatenHeatmap.setLegend(new ArrayList<>());

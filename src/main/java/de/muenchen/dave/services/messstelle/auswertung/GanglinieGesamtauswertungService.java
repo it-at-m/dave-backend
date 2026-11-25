@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.services.messstelle.Zeitraum;
@@ -27,7 +27,7 @@ public class GanglinieGesamtauswertungService {
      * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
      * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
-    public LadeZaehldatenSteplineDTO createGanglinieForSingleMessstelle(
+    public LadeZaehldatenStepLineDto createGanglinieForSingleMessstelle(
             final AuswertungMessstelle auswertungMessstelle,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         log.debug("#createGanglinieForSingleMessstelle");
@@ -144,7 +144,7 @@ public class GanglinieGesamtauswertungService {
      * @param fahrzeugOptions zur Steuerung der zu repräsentierenden Daten.
      * @return die Repräsentation der Zähldaten für die Gangliniendarstellung.
      */
-    public LadeZaehldatenSteplineDTO createGanglinieForMultipleMessstellen(
+    public LadeZaehldatenStepLineDto createGanglinieForMultipleMessstellen(
             final List<AuswertungMessstelle> auswertungMessstellen,
             final FahrzeugOptionsDTO fahrzeugOptions) {
         log.debug("#createGanglinieForMultipleMessstellen");

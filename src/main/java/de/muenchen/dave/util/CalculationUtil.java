@@ -1,6 +1,6 @@
 package de.muenchen.dave.util;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,11 +23,11 @@ public final class CalculationUtil {
 
     private static final Integer DEFAULT_VALUE_IF_NULL = 0;
 
-    public static BigDecimal calculateAnteilSchwerverkehrAnKfzProzent(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal calculateAnteilSchwerverkehrAnKfzProzent(final LadeZaehldatumDto ladeZaehldatum) {
         return calculateAnteilProzent(ladeZaehldatum.getSchwerverkehr(), ladeZaehldatum.getKfz());
     }
 
-    public static BigDecimal calculateAnteilGueterverkehrAnKfzProzent(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal calculateAnteilGueterverkehrAnKfzProzent(final LadeZaehldatumDto ladeZaehldatum) {
         return calculateAnteilProzent(ladeZaehldatum.getGueterverkehr(), ladeZaehldatum.getKfz());
     }
 
@@ -43,33 +43,33 @@ public final class CalculationUtil {
         return result;
     }
 
-    public static BigDecimal getGueterverkehr(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal getGueterverkehr(final LadeZaehldatumDto ladeZaehldatum) {
         final Integer result = ObjectUtils.defaultIfNull(ladeZaehldatum.getLkw(), DEFAULT_VALUE_IF_NULL)
                 + ObjectUtils.defaultIfNull(ladeZaehldatum.getLastzuege(), DEFAULT_VALUE_IF_NULL);
         return new BigDecimal(result);
     }
 
-    public static BigDecimal getSchwerverkehr(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal getSchwerverkehr(final LadeZaehldatumDto ladeZaehldatum) {
         final Integer result = getGueterverkehr(ladeZaehldatum).intValueExact()
                 + ObjectUtils.defaultIfNull(ladeZaehldatum.getBusse(), DEFAULT_VALUE_IF_NULL);
         return new BigDecimal(result);
     }
 
-    public static BigDecimal getKfz(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal getKfz(final LadeZaehldatumDto ladeZaehldatum) {
         final Integer result = ObjectUtils.defaultIfNull(ladeZaehldatum.getPkw(), DEFAULT_VALUE_IF_NULL)
                 + getSchwerverkehr(ladeZaehldatum).intValueExact()
                 + ObjectUtils.defaultIfNull(ladeZaehldatum.getKraftraeder(), DEFAULT_VALUE_IF_NULL);
         return new BigDecimal(result);
     }
 
-    public static BigDecimal getGesamt(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static BigDecimal getGesamt(final LadeZaehldatumDto ladeZaehldatum) {
         final Integer result = getKfz(ladeZaehldatum).intValueExact()
                 + ObjectUtils.defaultIfNull(ladeZaehldatum.getFahrradfahrer(), DEFAULT_VALUE_IF_NULL)
                 + ObjectUtils.defaultIfNull(ladeZaehldatum.getFussgaenger(), DEFAULT_VALUE_IF_NULL);
         return new BigDecimal(result);
     }
 
-    public static Integer calculatePkwEinheiten(final LadeZaehldatumDTO ladeZaehldatum,
+    public static Integer calculatePkwEinheiten(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         log.debug("Calculate PkwEinheiten");
         Integer calculationResult;
@@ -89,37 +89,37 @@ public final class CalculationUtil {
         return calculationResult;
     }
 
-    private static BigDecimal calculatePkwEinheitenForPkw(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForPkw(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getPkw(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getPkw(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
-    private static BigDecimal calculatePkwEinheitenForLkw(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForLkw(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getLkw(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getLkw(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
-    private static BigDecimal calculatePkwEinheitenForLastzuege(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForLastzuege(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getLastzuege(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getLastzuege(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
-    private static BigDecimal calculatePkwEinheitenForBusse(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForBusse(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getBusse(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getBusse(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
-    private static BigDecimal calculatePkwEinheitenForKraftraeder(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForKraftraeder(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getKraftraeder(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getKraftraeder(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));
     }
 
-    private static BigDecimal calculatePkwEinheitenForFahrradfahrer(final LadeZaehldatumDTO ladeZaehldatum,
+    private static BigDecimal calculatePkwEinheitenForFahrradfahrer(final LadeZaehldatumDto ladeZaehldatum,
             final PkwEinheit pkwEinheit) {
         return BigDecimal.valueOf(ObjectUtils.defaultIfNull(ladeZaehldatum.getFahrradfahrer(), DEFAULT_VALUE_IF_NULL))
                 .multiply(ObjectUtils.defaultIfNull(pkwEinheit.getFahrradfahrer(), BigDecimal.valueOf(DEFAULT_VALUE_IF_NULL)));

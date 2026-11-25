@@ -14,8 +14,8 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -217,14 +217,14 @@ class AuswertungSpitzenstundeServiceTest {
         zi.setVerkehrsbeziehung(vb);
 
         try (MockedStatic<LadeZaehldatenService> ladeMock = Mockito.mockStatic(LadeZaehldatenService.class)) {
-            final LadeZaehldatumDTO lade = new LadeZaehldatumDTO();
+            final LadeZaehldatumDto lade = new LadeZaehldatumDto();
             lade.setPkw(5);
             ladeMock.when(() -> LadeZaehldatenService.mapToZaehldatum(eq(zi), any(), any())).thenReturn(lade);
 
-            final LadeAuswertungSpitzenstundeDTO dto = new LadeAuswertungSpitzenstundeDTO();
+            final LadeAuswertungSpitzenstundeDto dto = new LadeAuswertungSpitzenstundeDto();
             when(ladeZaehldatumMapper.ladeZaehldatumDtoToLadeAuswertungSpitzenstundeDto(eq(lade))).thenReturn(dto);
 
-            final LadeAuswertungSpitzenstundeDTO result = service.mapToAuswertungSpitzenstundeDTO(zi, null);
+            final LadeAuswertungSpitzenstundeDto result = service.mapToAuswertungSpitzenstundeDTO(zi, null);
 
             assertNotNull(result);
             assertEquals(1, result.getVon());

@@ -2,9 +2,9 @@ package de.muenchen.dave.services.ladezaehldaten;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -123,26 +123,26 @@ public class LadeZaehldatenService {
     }
 
     /**
-     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach {@link LadeZaehldatumDTO}
+     * In dieser Methode findet das Mapping eines {@link Zeitintervall}s nach {@link LadeZaehldatumDto}
      * statt. Beim Mapping werden die Informationen in
      * {@link OptionsDto} berücksichtigt.
      *
-     * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDTO}.
+     * @param zeitintervall Der {@link Zeitintervall} zum Mapping nach {@link LadeZaehldatumDto}.
      * @param pkwEinheit als {@link PkwEinheit}
      * @param options die {@link OptionsDto} zur Berücksichtigung der Art und Weise des Mappings.
-     * @return das gemappte {@link LadeZaehldatumDTO}.
+     * @return das gemappte {@link LadeZaehldatumDto}.
      */
-    public static LadeZaehldatumDTO mapToZaehldatum(final Zeitintervall zeitintervall,
+    public static LadeZaehldatumDto mapToZaehldatum(final Zeitintervall zeitintervall,
             final PkwEinheit pkwEinheit,
             final OptionsDto options) {
-        final LadeZaehldatumDTO ladeZaehldatum;
+        final LadeZaehldatumDto ladeZaehldatum;
         // Hier wird entscheiden, ob für das gegebene Zeitintervall statt eines normalen Intervall-Datensatzes (LadeZaehldatumDTO)
         // ein Tageswert-Datensatz (LadeZaehldatumTageswertDTO) erzeugt werden soll.
         // Das ist notwendig, weil bei einem Zeitintervall vom Typ GESAMT (also Tages-/Summenintervall)
         // und einer Zähldauer von weniger als 24h, der im Zeitintervall gespeicherte Hochrechnungswert
         // als Tageswert verwendet werden muss — statt der rohen Intervalldaten.
         if (isZeitintervallForTageswert(zeitintervall, options)) {
-            final LadeZaehldatumTageswertDTO ladeZaehldatumTageswert = new LadeZaehldatumTageswertDTO();
+            final LadeZaehldatumTageswertDto ladeZaehldatumTageswert = new LadeZaehldatumTageswertDto();
             ladeZaehldatumTageswert.setKfz(
                     Objects.requireNonNullElse(
                             zeitintervall.getHochrechnung().getHochrechnungKfz(),
@@ -163,7 +163,7 @@ public class LadeZaehldatenService {
             ladeZaehldatumTageswert.setType(TAGESWERT);
             ladeZaehldatum = ladeZaehldatumTageswert;
         } else {
-            ladeZaehldatum = new LadeZaehldatumDTO();
+            ladeZaehldatum = new LadeZaehldatumDto();
             ladeZaehldatum.setPkw(zeitintervall.getPkw());
             ladeZaehldatum.setLkw(zeitintervall.getLkw());
             ladeZaehldatum.setLastzuege(zeitintervall.getLastzuege());
@@ -288,20 +288,20 @@ public class LadeZaehldatenService {
      * Diese Methode extrahiert die {@link Zeitintervall}e aus der Datenbank entsprechend der in den
      * {@link OptionsDto} vorhandenen Informationen und der
      * Zaehlungs-ID. Die aus der Datenbank extrahierten Daten werden anschließend nach
-     * {@link LadeZaehldatumDTO} gemappt. Schlussendlich werden alle
-     * {@link LadeZaehldatumDTO} im Objekt {@link LadeZaehldatenTableDTO} zurückgegeben.
+     * {@link LadeZaehldatumDto} gemappt. Schlussendlich werden alle
+     * {@link LadeZaehldatumDto} im Objekt {@link LadeZaehldatenTableDto} zurückgegeben.
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach
-     *            {@link LadeZaehldatumDTO}.
-     * @return ein {@link LadeZaehldatenTableDTO} mit den {@link LadeZaehldatumDTO}.
+     *            {@link LadeZaehldatumDto}.
+     * @return ein {@link LadeZaehldatenTableDto} mit den {@link LadeZaehldatumDto}.
      * @throws DataNotFoundException wenn keine Zaehlung gefunden wurde
      */
-    public LadeZaehldatenTableDTO ladeZaehldaten(
+    public LadeZaehldatenTableDto ladeZaehldaten(
             final UUID zaehlungId,
             final OptionsDto options) throws DataNotFoundException {
 
-        final LadeZaehldatenTableDTO ladeZaehldatenTable = new LadeZaehldatenTableDTO();
+        final LadeZaehldatenTableDto ladeZaehldatenTable = new LadeZaehldatenTableDto();
         final List<Zeitintervall> zeitintervalle;
         final Zaehlung zaehlung = indexService.getZaehlung(zaehlungId.toString());
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
@@ -311,7 +311,7 @@ public class LadeZaehldatenService {
             zeitintervalle = extractZeitintervalle(zaehlungId, zaehlart, zaehlung.getKreisverkehr(), options);
         }
         final PkwEinheit pkwEinheit = zaehlung.getPkwEinheit();
-        List<LadeZaehldatumDTO> ladeZaehldaten = zeitintervalle.stream()
+        List<LadeZaehldatumDto> ladeZaehldaten = zeitintervalle.stream()
                 .map(zeitintervall -> mapToZaehldatum(zeitintervall, pkwEinheit, options))
                 .collect(Collectors.toList());
         ladeZaehldatenTable.setZaehldaten(ladeZaehldaten);
@@ -379,7 +379,7 @@ public class LadeZaehldatenService {
      *
      * @param zaehlungId zur Extraktion der {@link Zeitintervall}e aus der Datenbank.
      * @param options zur Extraktion der {@link Zeitintervall}e aus der Datenbank und zum Mapping nach
-     *            {@link LadeZaehldatumDTO}.
+     *            {@link LadeZaehldatumDto}.
      * @return die 15-minütigen {@link Zeitintervall}e welche die gewählte Spitzenstunde definieren
      *         gefolgt vom {@link Zeitintervall} der Spitzenstunde.
      */

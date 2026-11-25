@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class LadeAuswertungZaehlstelleKoordinateDTO {
+public class LadeAuswertungZaehlstelleKoordinateDto {
 
     private String nummer;
 

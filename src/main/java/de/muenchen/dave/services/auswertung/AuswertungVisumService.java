@@ -1,11 +1,11 @@
 package de.muenchen.dave.services.auswertung;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDTO;
-import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlungVisumDto;
+import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDto;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
@@ -75,25 +75,25 @@ public class AuswertungVisumService {
      * @param verkehrsbeziehung Verkehrsbeziehung
      * @return die Visum-relevanten Verkehrsbeziehungsobjekte zur Extraktion der Zeitintervalle.
      */
-    public static List<VerkehrsbeziehungVisumDTO> getVerkehrsbeziehungVisum(final Verkehrsbeziehung verkehrsbeziehung, final Zaehlung zaehlung) {
-        final var verkehrsbeziehungenVisum = new ArrayList<VerkehrsbeziehungVisumDTO>();
-        VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum;
+    public static List<VerkehrsbeziehungVisumDto> getVerkehrsbeziehungVisum(final Verkehrsbeziehung verkehrsbeziehung, final Zaehlung zaehlung) {
+        final var verkehrsbeziehungenVisum = new ArrayList<VerkehrsbeziehungVisumDto>();
+        VerkehrsbeziehungVisumDto verkehrsbeziehungVisum;
         boolean isKreuzung = verkehrsbeziehung.getIsKreuzung() == null ? !zaehlung.getKreisverkehr() : verkehrsbeziehung.getIsKreuzung();
         if (isKreuzung) {
-            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDTO();
+            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDto();
             verkehrsbeziehungVisum.setVon(verkehrsbeziehung.getVon());
             verkehrsbeziehungVisum.setNach(null);
             verkehrsbeziehungenVisum.add(verkehrsbeziehungVisum);
-            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDTO();
+            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDto();
             verkehrsbeziehungVisum.setVon(null);
             verkehrsbeziehungVisum.setNach(verkehrsbeziehung.getNach());
             verkehrsbeziehungenVisum.add(verkehrsbeziehungVisum);
         } else {
-            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDTO();
+            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDto();
             verkehrsbeziehungVisum.setVon(verkehrsbeziehung.getKnotenarm());
             verkehrsbeziehungVisum.setNach(null);
             verkehrsbeziehungenVisum.add(verkehrsbeziehungVisum);
-            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDTO();
+            verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDto();
             verkehrsbeziehungVisum.setVon(null);
             verkehrsbeziehungVisum.setNach(verkehrsbeziehung.getKnotenarm());
             verkehrsbeziehungenVisum.add(verkehrsbeziehungVisum);
@@ -103,14 +103,14 @@ public class AuswertungVisumService {
 
     /**
      * Diese Methode erstellt die Optionen zur extraktion der Daten in Methode
-     * {@link AuswertungVisumService#ladeZaehldaten(VerkehrsbeziehungVisumDTO, Zaehlung)}.
+     * {@link AuswertungVisumService#ladeZaehldaten(VerkehrsbeziehungVisumDto, Zaehlung)}.
      *
      * @param verkehrsbeziehungVisum zum setzen der von und nach-Knotenarme in den Optionen.
      * @param zaehlung zum setzen der Optionen.
      * @return die Optionen für die Datenextraktion.
      */
     public static OptionsDto createOptions(
-            final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
+            final VerkehrsbeziehungVisumDto verkehrsbeziehungVisum,
             final Zaehlung zaehlung) {
         final var options = ZaehldatenProcessingUtil.createHardcodedOptions(zaehlung);
         options.setVonKnotenarm(verkehrsbeziehungVisum.getVon());
@@ -130,26 +130,26 @@ public class AuswertungVisumService {
      * @param monat im jahr welches ausgewertet werden soll.
      * @return durchgeführten Zählungen je Zählstelle mit den Zähldaten je relevante Verkehrsbeziehung.
      */
-    public LadeAuswertungVisumDTO getAuswertungVisum(final Integer jahr, final Integer monat) {
-        final var auswertungVisum = new LadeAuswertungVisumDTO();
+    public LadeAuswertungVisumDto getAuswertungVisum(final Integer jahr, final Integer monat) {
+        final var auswertungVisum = new LadeAuswertungVisumDto();
         auswertungVisum.setZaehlstellen(getZaehlstellenWithZaehlungenAndZaehldatenForYearAndMonth(jahr, monat));
         return auswertungVisum;
     }
 
-    public List<LadeZaehlstelleVisumDTO> getZaehlstellenWithZaehlungenAndZaehldatenForYearAndMonth(final Integer jahr, final Integer monat) {
+    public List<LadeZaehlstelleVisumDto> getZaehlstellenWithZaehlungenAndZaehldatenForYearAndMonth(final Integer jahr, final Integer monat) {
         final var monatTextuell = ZaehldatenProcessingUtil.getMonatTextuell(monat);
         return zaehlstelleIndex.findAllByZaehlungenJahr(jahr.toString()).parallelStream()
                 .map(zaehlstelle -> {
 
                     // Durcharbeiten der Zählungen für das im Parameter gegebene Jahr und Monat
-                    final List<LadeZaehlungVisumDTO> relevantZaehlungenVisum = zaehlstelle.getZaehlungen().stream()
+                    final List<LadeZaehlungVisumDto> relevantZaehlungenVisum = zaehlstelle.getZaehlungen().stream()
                             .filter(AuswertungVisumService::isZaehlartRelevant)
                             .filter(zaehlung -> isZaehldatumRelevant(zaehlung, jahr.toString(), monatTextuell))
                             .filter(AuswertungVisumService::isZaehlungActive)
                             .parallel()
                             .map(zaehlung -> {
                                 // Extrahieren der Zähldaten für alle Verkehrsbeziehungen einer Zählung
-                                final List<VerkehrsbeziehungVisumDTO> verkehrsbeziehungenVisum = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen())
+                                final List<VerkehrsbeziehungVisumDto> verkehrsbeziehungenVisum = CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen())
                                         .stream()
                                         .map(fz -> AuswertungVisumService.getVerkehrsbeziehungVisum(fz, zaehlung))
                                         .flatMap(Collection::stream)
@@ -168,7 +168,7 @@ public class AuswertungVisumService {
 
                     // Setzen der relevanten Zählungen samt Zaehldaten in Zaehlstellen-DTO für Visum.
                     // Falls für den Monat keine Zählung existiert wird für die Zählstelle null zurückgegeben.
-                    final LadeZaehlstelleVisumDTO zaehlstelleVisum;
+                    final LadeZaehlstelleVisumDto zaehlstelleVisum;
                     if (relevantZaehlungenVisum.isEmpty()) {
                         zaehlstelleVisum = null;
                     } else {
@@ -190,9 +190,9 @@ public class AuswertungVisumService {
      * @param zaehlung für welche die Daten extrahiert werden sollen.
      * @return die VerkehrsbeziehungVisum mit den Zaehldaten für die Zaehlung der Verkehrsbeziehung.
      */
-    public VerkehrsbeziehungVisumDTO ladeZaehldaten(final VerkehrsbeziehungVisumDTO verkehrsbeziehungVisum,
+    public VerkehrsbeziehungVisumDto ladeZaehldaten(final VerkehrsbeziehungVisumDto verkehrsbeziehungVisum,
             final Zaehlung zaehlung) {
-        List<LadeZaehldatumDTO> zaehldaten;
+        List<LadeZaehldatumDto> zaehldaten;
         try {
             zaehldaten = ladeZaehldatenService.ladeZaehldaten(
                     UUID.fromString(zaehlung.getId()),

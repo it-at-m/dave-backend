@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-public class StepLineSeriesEntryBigDecimalDTO extends StepLineSeriesEntryBaseDTO {
+public class StepLineSeriesEntryBigDecimalDto extends StepLineSeriesEntryBaseDto {
 
     @Serial
     private static final long serialVersionUID = 1L;

@@ -1,7 +1,7 @@
 package de.muenchen.dave.util;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -28,12 +28,12 @@ public final class ZaehldatenProcessingUtil {
     public static final DateTimeFormatter LOCAL_TIME = DateTimeFormatter.ofPattern("HH:mm");
 
     /**
-     * Diese Methoder gibt {@link LadeZaehldatumDTO}#getStartUhrzeit() als String zurück.
+     * Diese Methoder gibt {@link LadeZaehldatumDto}#getStartUhrzeit() als String zurück.
      *
      * @param ladeZaehldatum zur Erstellung des Startuhrzeitstrings.
      * @return die Startuhrzeig als String.
      */
-    public static String getStartUhrzeit(final LadeZaehldatumDTO ladeZaehldatum) {
+    public static String getStartUhrzeit(final LadeZaehldatumDto ladeZaehldatum) {
         return ladeZaehldatum.getStartUhrzeit().format(LOCAL_TIME);
     }
 

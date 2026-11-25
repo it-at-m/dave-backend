@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -38,12 +38,12 @@ public class ProcessZaehldatenHeatmapService {
      * @param value Der Wert welcher an der Position, definiert durch Spaltenindex und Zeilenindex, in
      *            der Heatmap dargestellt werde soll. Des
      *            Weiteren wird dieser Wert zur Ermittlung von
-     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMax() und
-     *            {@link LadeZaehldatenHeatmapDTO}#getRangeMin() herangezogen.
-     * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDTO}#getLegend()
+     *            {@link LadeZaehldatenHeatmapDto}#getRangeMax() und
+     *            {@link LadeZaehldatenHeatmapDto}#getRangeMin() herangezogen.
+     * @param legendEntry Der Legendeneintrag welcher in {@link LadeZaehldatenHeatmapDto}#getLegend()
      *            hinterlegt wird.
      */
-    public static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+    public static void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap,
             final int heatMapEntryIndex,
             final int klassenKategorienIndex,
             final Integer value,
@@ -94,7 +94,7 @@ public class ProcessZaehldatenHeatmapService {
      *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenHeatmap(
-            final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap,
+            final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap,
             final OptionsDto options) {
 
         if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
@@ -154,16 +154,16 @@ public class ProcessZaehldatenHeatmapService {
      * Diagramm aufbereitet.
      * <p>
      * Wenn die Aufteilung in zwei Unterdiagramme vorgenommen wird, werden die beiden Felder
-     * {@link LadeZaehldatenHeatmapDTO}#getXAxisDataSecondChart und
-     * {@link LadeZaehldatenHeatmapDTO}#getSeriesEntriesSecondChart befüllt, die ansonsten leer bleiben.
+     * {@link LadeZaehldatenHeatmapDto}#getXAxisDataSecondChart und
+     * {@link LadeZaehldatenHeatmapDto}#getSeriesEntriesSecondChart befüllt, die ansonsten leer bleiben.
      *
      * @param zaehldatenTable Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDTO ladeProcessedZaehldatenHeatmap(final LadeZaehldatenTableDTO zaehldatenTable,
+    public LadeZaehldatenHeatmapDto ladeProcessedZaehldatenHeatmap(final LadeZaehldatenTableDto zaehldatenTable,
             final OptionsDto options) {
-        final LadeZaehldatenHeatmapDTO ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
+        final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDto();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
         ladeZaehldatenHeatmap.setLegend(new ArrayList<>());

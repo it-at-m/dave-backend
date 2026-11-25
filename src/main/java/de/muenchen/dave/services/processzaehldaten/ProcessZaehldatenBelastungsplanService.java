@@ -4,10 +4,10 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -61,10 +61,10 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param vergleichsBelastungsplan Subtrahend-LadeBelastungsplanDTO
      * @return Differenzwert-LadeBelastungsplanDTO
      */
-    public static LadeBelastungsplanDTO calculateDifferenzdatenDTO(final LadeBelastungsplanDTO basisBelastungsplan,
-            final LadeBelastungsplanDTO vergleichsBelastungsplan) {
+    public static LadeBelastungsplanDto calculateDifferenzdatenDTO(final LadeBelastungsplanDto basisBelastungsplan,
+            final LadeBelastungsplanDto vergleichsBelastungsplan) {
 
-        final LadeBelastungsplanDTO differenzBelastungsplanDTO = new LadeBelastungsplanDTO();
+        final LadeBelastungsplanDto differenzBelastungsplanDTO = new LadeBelastungsplanDto();
         if (basisBelastungsplan.getValue1().isFilled()) {
             differenzBelastungsplanDTO.setValue1(
                     calculateDifferenzBelastungsplanData(
@@ -123,7 +123,7 @@ public class ProcessZaehldatenBelastungsplanService {
      *             * nicht aus den DBs extrahiert werden kann.
      */
     @Cacheable(value = CachingConfiguration.LADE_BELASTUNGSPLAN_DTO, key = "{#p0, #p1}")
-    public AbstractLadeBelastungsplanDTO<?> getBelastungsplanDTO(
+    public AbstractLadeBelastungsplanDto<?> getBelastungsplanDTO(
             final String zaehlungId,
             final OptionsDto options) throws DataNotFoundException {
         log.debug(String.format("Zugriff auf #getBelastungsplanDTO mit %s und %s", zaehlungId, options.toString()));
@@ -155,7 +155,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * {@link LadeZaehldatenService#ZEITAUSWAHL_SPITZENSTUNDE_KFZ} NICHT gesetzt, so dient als Basis zur
      * Datenaufbereitung die Tagessumme bzw. der Tageswert je einzelne {@link Verkehrsbeziehung}.
      * <p>
-     * Das {@link LadeBelastungsplanDTO} enthält in jedem Attribut einen zweidimensionalen Array. Die
+     * Das {@link LadeBelastungsplanDto} enthält in jedem Attribut einen zweidimensionalen Array. Die
      * erste Dimension stellt die von Knotenarme dar. In der
      * zweiten Dimesion werden alle nach Knotenarme vorgehalten. Die im Array hinterlegten Werte
      * entsprechen somit den Verkehr fließend von einem Knotenarm zu
@@ -167,7 +167,7 @@ public class ProcessZaehldatenBelastungsplanService {
      * @throws DataNotFoundException falls die {@link Zaehlstelle} oder die {@link Zaehlung} nicht aus
      *             den DBs extrahiert werden kann.
      */
-    public AbstractLadeBelastungsplanDTO<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
+    public AbstractLadeBelastungsplanDto<?> ladeProcessedZaehldatenBelastungsplan(final String zaehlungId,
             final OptionsDto options) throws DataNotFoundException {
         final Zaehlung zaehlung = findByZaehlungenId(zaehlungId);
         final List<Zeitintervall> zeitintervalle;
@@ -190,9 +190,9 @@ public class ProcessZaehldatenBelastungsplanService {
      * @return Differenzbelastungsplan
      * @throws DataNotFoundException beim Laden der Zaehldaten aus der DB
      */
-    public LadeBelastungsplanDTO getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
+    public LadeBelastungsplanDto getDifferenzdatenBelastungsplanDTO(final String zaehlungId,
             final OptionsDto options) throws DataNotFoundException {
-        final LadeBelastungsplanDTO basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
+        final LadeBelastungsplanDto basisBelastungsplan = castLadeBelastungsplanDTO(ladeProcessedZaehldatenBelastungsplan(zaehlungId, options));
 
         // Fuer die zweite Zaehlung muss in den Optionen die korrekte Zaehldauer gesetzt werden, damit
         // der Vergleich auch klappt. Dies ist noetig, wenn zwei Zaehlungen mit unterschiedlicher Dauer verglichen
@@ -203,7 +203,7 @@ public class ProcessZaehldatenBelastungsplanService {
         final Zaehlung zaehlung = this.findByZaehlungenId(options.getVergleichszaehlungsId());
         options.setZaehldauer(Zaehldauer.valueOf(zaehlung.getZaehldauer()));
 
-        final LadeBelastungsplanDTO vergleichsBelastungsplan = castLadeBelastungsplanDTO(
+        final LadeBelastungsplanDto vergleichsBelastungsplan = castLadeBelastungsplanDTO(
                 ladeProcessedZaehldatenBelastungsplan(options.getVergleichszaehlungsId(),
                         options));
 
@@ -347,8 +347,8 @@ public class ProcessZaehldatenBelastungsplanService {
      * @param vergleich Vergleich BelastungsplanDataDTO
      * @return Differenz BelastungsplanDataDTO
      */
-    private static BelastungsplanDataDTO calculateDifferenzBelastungsplanData(final BelastungsplanDataDTO basis, final BelastungsplanDataDTO vergleich) {
-        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+    private static BelastungsplanDataDto calculateDifferenzBelastungsplanData(final BelastungsplanDataDto basis, final BelastungsplanDataDto vergleich) {
+        final BelastungsplanDataDto belastungsplanData = new BelastungsplanDataDto();
         belastungsplanData.setLabel(basis.getLabel());
         belastungsplanData.setFilled(basis.isFilled());
         belastungsplanData.setPercent(basis.isPercent());
@@ -361,10 +361,10 @@ public class ProcessZaehldatenBelastungsplanService {
         return belastungsplanData;
     }
 
-    private LadeBelastungsplanDTO castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDTO<?> ladeBelastungsplanDTO) {
-        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDTO))
+    private LadeBelastungsplanDto castLadeBelastungsplanDTO(AbstractLadeBelastungsplanDto<?> ladeBelastungsplanDTO) {
+        if (!(ladeBelastungsplanDTO instanceof LadeBelastungsplanDto))
             throw new IllegalStateException("Fehlhafter Datentyp der Belastungsplandaten: " + ladeBelastungsplanDTO.getClass());
-        return (LadeBelastungsplanDTO) ladeBelastungsplanDTO;
+        return (LadeBelastungsplanDto) ladeBelastungsplanDTO;
     }
 
     @AllArgsConstructor
@@ -376,7 +376,7 @@ public class ProcessZaehldatenBelastungsplanService {
 
         private Boolean isTageswert;
 
-        private LadeZaehldatumDTO ladeZaehldatum;
+        private LadeZaehldatumDto ladeZaehldatum;
 
     }
 

@@ -2,7 +2,7 @@ package de.muenchen.dave.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDto;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -133,7 +133,7 @@ public class BelastungsplanCalculatorTest {
 
     @Test
     public void testCalculateSumsForBelastungsplanDataDto_svPercentPath() {
-        BelastungsplanDataDTO dto = new BelastungsplanDataDTO();
+        BelastungsplanDataDto dto = new BelastungsplanDataDto();
         dto.setLabel(Fahrzeug.SV_P.getName());
 
         // Prepare sumsKfz and sumsSv (arrays of length 2)
@@ -182,7 +182,7 @@ public class BelastungsplanCalculatorTest {
 
     @Test
     public void testCalculateSumsForBelastungsplanDataDto_kreuzungPath() {
-        BelastungsplanDataDTO dto = new BelastungsplanDataDTO();
+        BelastungsplanDataDto dto = new BelastungsplanDataDto();
         dto.setLabel("KFZ"); // not SV_P or GV_P, so will use calcSumsKreuzung
         BigDecimal[][] values = {
                 { BigDecimal.valueOf(1), BigDecimal.valueOf(2) },

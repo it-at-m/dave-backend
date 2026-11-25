@@ -15,7 +15,7 @@ import java.time.LocalTime;
 import lombok.Data;
 
 @Data
-public class LadeZaehldatumDTO implements Serializable {
+public class LadeZaehldatumDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

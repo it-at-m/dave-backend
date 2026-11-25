@@ -5,9 +5,9 @@ import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.TestUtils;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -28,7 +28,7 @@ public class BelastungsplanDataDefaultServiceTest {
         verkehrsbeziehung.setVon(2);
         verkehrsbeziehung.setNach(3);
 
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setPkw(1);
         ladeZaehldatum.setLkw(2);
         ladeZaehldatum.setLastzuege(3);
@@ -44,7 +44,7 @@ public class BelastungsplanDataDefaultServiceTest {
         verkehrsbeziehung.setVon(5);
         verkehrsbeziehung.setNach(2);
 
-        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setPkw(10);
         ladeZaehldatum.setLkw(20);
         ladeZaehldatum.setLastzuege(30);
@@ -61,20 +61,20 @@ public class BelastungsplanDataDefaultServiceTest {
         zaehlung.setZaehlart(Zaehlart.N.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataDefaultService()
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = new BelastungsplanDataDefaultService()
                 .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[1][2], is(BigDecimal.valueOf(15)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV)).getValues()[1][2], is(BigDecimal.valueOf(9)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV)).getValues()[1][2], is(BigDecimal.valueOf(5)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValues()[1][2], is(BigDecimal.valueOf(6)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[1][2], is(BigDecimal.valueOf(7)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[1][2], is(BigDecimal.valueOf(15)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.SV)).getValues()[1][2], is(BigDecimal.valueOf(9)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.GV)).getValues()[1][2], is(BigDecimal.valueOf(5)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.RAD)).getValues()[1][2], is(BigDecimal.valueOf(6)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[1][2], is(BigDecimal.valueOf(7)));
 
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[4][1], is(BigDecimal.valueOf(150)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV)).getValues()[4][1], is(BigDecimal.valueOf(90)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV)).getValues()[4][1], is(BigDecimal.valueOf(50)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.RAD)).getValues()[4][1], is(BigDecimal.valueOf(60)));
-        assertThat(((BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[4][1], is(BigDecimal.valueOf(70)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.KFZ)).getValues()[4][1], is(BigDecimal.valueOf(150)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.SV)).getValues()[4][1], is(BigDecimal.valueOf(90)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.GV)).getValues()[4][1], is(BigDecimal.valueOf(50)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.RAD)).getValues()[4][1], is(BigDecimal.valueOf(60)));
+        assertThat(((BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.FUSS)).getValues()[4][1], is(BigDecimal.valueOf(70)));
 
     }
 

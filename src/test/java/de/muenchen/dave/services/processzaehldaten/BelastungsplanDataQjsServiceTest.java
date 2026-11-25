@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanQjsDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -40,7 +40,7 @@ public class BelastungsplanDataQjsServiceTest {
         verkehrsbeziehung.setNach(4);
         verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
 
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(6);
         ladeZaehldatum.setFussgaenger(7);
 
@@ -51,7 +51,7 @@ public class BelastungsplanDataQjsServiceTest {
         verkehrsbeziehung.setNach(2);
         verkehrsbeziehung.setStrassenseite(Himmelsrichtung.N);
 
-        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(60);
         ladeZaehldatum.setFussgaenger(70);
 
@@ -62,11 +62,11 @@ public class BelastungsplanDataQjsServiceTest {
         zaehlung.setZaehlart(Zaehlart.QJS.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataQjsService()
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = new BelastungsplanDataQjsService()
                 .buildBelastungsplanDataMap(zaehldatenJeVerkehrsbeziehung, zaehlung);
 
-        BelastungsplanQjsDataDTO dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS));
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesFuss = dto.getValuesVerkehrsbeziehungen();
+        BelastungsplanQjsDataDto dto = ((BelastungsplanQjsDataDto) belastungsplanData.get(Fahrzeug.FUSS));
+        List<BelastungsplanQjsDataDto.VerkehrsbeziehungValue> valuesFuss = dto.getValuesVerkehrsbeziehungen();
 
         assertVerkehrsbeziehung(valuesFuss, 2, 4, Himmelsrichtung.N, 7);
         assertVerkehrsbeziehung(valuesFuss, 4, 2, Himmelsrichtung.N, 70);
@@ -74,8 +74,8 @@ public class BelastungsplanDataQjsServiceTest {
         assertThat(dto.getValuesStrassenseite().stream().filter(v -> v.getStrassenseite().equals(Himmelsrichtung.N)).findFirst().orElseThrow().getValue(),
                 is(BigDecimal.valueOf(77)));
 
-        dto = ((BelastungsplanQjsDataDTO) belastungsplanData.get(Fahrzeug.RAD));
-        List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> valuesRad = dto.getValuesVerkehrsbeziehungen();
+        dto = ((BelastungsplanQjsDataDto) belastungsplanData.get(Fahrzeug.RAD));
+        List<BelastungsplanQjsDataDto.VerkehrsbeziehungValue> valuesRad = dto.getValuesVerkehrsbeziehungen();
         assertVerkehrsbeziehung(valuesRad, 2, 4, Himmelsrichtung.N, 6);
         assertVerkehrsbeziehung(valuesRad, 4, 2, Himmelsrichtung.N, 60);
         assertThat(dto.getSumAll(), is(BigDecimal.valueOf(66)));
@@ -111,24 +111,24 @@ public class BelastungsplanDataQjsServiceTest {
         zi1.setEndeUhrzeit(LocalDateTime.now());
         zeitintervalle.add(zi1);
 
-        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
+        AbstractLadeBelastungsplanDto<?> data = new BelastungsplanDataQjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
         assertNotNull(data);
         assertEquals("Eins", data.getStreets()[0]);
         assertNull(data.getStreets()[1]);
         assertEquals("Drei", data.getStreets()[2]);
         assertNotNull(data.getValue1());
-        BelastungsplanQjsDataDTO value1 = (BelastungsplanQjsDataDTO) data.getValue1();
+        BelastungsplanQjsDataDto value1 = (BelastungsplanQjsDataDto) data.getValue1();
         assertEquals(BigDecimal.valueOf(99), value1.getSumAll());
         assertEquals(BigDecimal.valueOf(99), value1.getValuesStrassenseite().getFirst().getValue());
         assertEquals(BigDecimal.valueOf(99), value1.getValuesVerkehrsbeziehungen().getFirst().getValue());
     }
 
-    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDTO.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
+    private void assertVerkehrsbeziehung(List<BelastungsplanQjsDataDto.VerkehrsbeziehungValue> values, int von, int nach, Himmelsrichtung strassenseite,
             int expectedValue) {
         assertThat(values
                 .stream()
                 .filter(vb -> vb.getVon() == von && vb.getNach() == nach && vb.getStrassenseite().equals(strassenseite))
-                .map(BelastungsplanQjsDataDTO.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
+                .map(BelastungsplanQjsDataDto.VerkehrsbeziehungValue::getValue).findFirst().orElse(BigDecimal.ZERO),
                 is(BigDecimal.valueOf(expectedValue)));
     }
 

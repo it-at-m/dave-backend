@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDTO;
-import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlungDto;
+import de.muenchen.dave.domain.dtos.laden.ZeitauswahlDto;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
@@ -56,7 +56,7 @@ class ZeitauswahlServiceTest {
 
     @Test
     public void determinePossibleZeitauswahl() {
-        final LadeZaehlungDTO ladeZaehlung = new LadeZaehlungDTO();
+        final LadeZaehlungDto ladeZaehlung = new LadeZaehlungDto();
         ladeZaehlung.setId(UUID.randomUUID().toString());
         ladeZaehlung.setZaehldauer(Zaehldauer.SONSTIGE.name());
 
@@ -77,7 +77,7 @@ class ZeitauswahlServiceTest {
         when(zeitintervallRepository.findByZaehlungId(UUID.fromString(ladeZaehlung.getId()), Sort.by(Sort.Direction.ASC, "startUhrzeit")))
                 .thenReturn(zeitintervalle);
 
-        final ZeitauswahlDTO choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId());
+        final ZeitauswahlDto choosableZeitauswahlDTO = zeitauswahlService.determinePossibleZeitauswahl(ladeZaehlung.getZaehldauer(), ladeZaehlung.getId());
 
         assertThat(choosableZeitauswahlDTO, is(notNullValue()));
         assertThat(choosableZeitauswahlDTO.getBlocks(), is(notNullValue()));

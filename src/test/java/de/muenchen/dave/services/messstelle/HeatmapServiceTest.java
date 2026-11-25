@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -101,7 +101,7 @@ class HeatmapServiceTest {
 
         final var result = heatmapService.ladeHeatmap(intervals, options);
 
-        final var expected = new LadeZaehldatenHeatmapDTO();
+        final var expected = new LadeZaehldatenHeatmapDto();
         expected.setLegend(List.of("Güterverkehr", "Schwerverkehr", "Kraftfahrzeugverkehr", "Radverkehr", "Krafträder", "Busse", "Lastzüge",
                 "Lastkraftwagen", "Lieferwagen", "Personenkraftwagen"));
         expected.setRangeMin(0);
@@ -144,7 +144,7 @@ class HeatmapServiceTest {
 
     @Test
     void insertSingleHeatmapDataIntoLadeZaehldatenHeatmap() {
-        var ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDTO();
+        var ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDto();
         ladeZaehldatenHeatmap.setLegend(new ArrayList<>());
         ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(new ArrayList<>());
         HeatmapService.insertSingleHeatmapDataIntoLadeZaehldatenHeatmap(
@@ -153,7 +153,7 @@ class HeatmapServiceTest {
                 2,
                 3,
                 "A");
-        var expected = new LadeZaehldatenHeatmapDTO();
+        var expected = new LadeZaehldatenHeatmapDto();
         expected.setLegend(List.of("A"));
         expected.setRangeMin(0);
         expected.setRangeMax(3);
@@ -166,7 +166,7 @@ class HeatmapServiceTest {
                 3,
                 4,
                 "B");
-        expected = new LadeZaehldatenHeatmapDTO();
+        expected = new LadeZaehldatenHeatmapDto();
         expected.setLegend(List.of("A", "B"));
         expected.setRangeMin(0);
         expected.setRangeMax(4);
@@ -179,7 +179,7 @@ class HeatmapServiceTest {
                 4,
                 2,
                 "B");
-        expected = new LadeZaehldatenHeatmapDTO();
+        expected = new LadeZaehldatenHeatmapDto();
         expected.setLegend(List.of("A", "B"));
         expected.setRangeMin(0);
         expected.setRangeMax(4);
@@ -192,7 +192,7 @@ class HeatmapServiceTest {
                 5,
                 null,
                 "C");
-        expected = new LadeZaehldatenHeatmapDTO();
+        expected = new LadeZaehldatenHeatmapDto();
         expected.setLegend(List.of("A", "B", "C"));
         expected.setRangeMin(0);
         expected.setRangeMax(4);

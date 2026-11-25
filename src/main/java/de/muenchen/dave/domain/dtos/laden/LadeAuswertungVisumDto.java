@@ -4,8 +4,8 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeAuswertungVisumDTO {
+public class LadeAuswertungVisumDto {
 
-    private List<LadeZaehlstelleVisumDTO> zaehlstellen;
+    private List<LadeZaehlstelleVisumDto> zaehlstellen;
 
 }

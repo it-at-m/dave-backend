@@ -1,7 +1,7 @@
 package de.muenchen.dave.util.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ class GanglinieUtilTest {
 
     @Test
     void setRangeMaxRoundedToTwentyInZaehldatenStepline() {
-        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+        final var ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
 
         ladeZaehldatenStepline.setRangeMax(null);
         GanglinieUtil.setRangeMaxRoundedToTwentyInZaehldatenStepline(ladeZaehldatenStepline, null);
@@ -38,7 +38,7 @@ class GanglinieUtilTest {
 
     @Test
     void setRangeMaxPercentRoundedToTwoInZaehldatenStepline() {
-        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+        final var ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
 
         ladeZaehldatenStepline.setRangeMaxPercent(null);
         GanglinieUtil.setRangeMaxPercentRoundedToTwoInZaehldatenStepline(ladeZaehldatenStepline, null);
@@ -63,7 +63,7 @@ class GanglinieUtilTest {
 
     @Test
     void setLegendInZaehldatenStepline() {
-        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+        final var ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
 
         ladeZaehldatenStepline.setLegend(new ArrayList<>(List.of("A", "B", "D")));
         GanglinieUtil.setLegendInZaehldatenStepline(ladeZaehldatenStepline, "A");
@@ -80,10 +80,10 @@ class GanglinieUtilTest {
 
     @Test
     void setSeriesIndexForFirstChartValue() {
-        final var stepLineSeriesEntry = new StepLineSeriesEntryIntegerDTO();
+        final var stepLineSeriesEntry = new StepLineSeriesEntryIntegerDto();
         GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntry);
 
-        final var expected = new StepLineSeriesEntryIntegerDTO();
+        final var expected = new StepLineSeriesEntryIntegerDto();
         expected.setXAxisIndex(0);
         expected.setYAxisIndex(0);
 
@@ -92,10 +92,10 @@ class GanglinieUtilTest {
 
     @Test
     void setSeriesIndexForFirstChartPercent() {
-        final var stepLineSeriesEntry = new StepLineSeriesEntryIntegerDTO();
+        final var stepLineSeriesEntry = new StepLineSeriesEntryIntegerDto();
         GanglinieUtil.setSeriesIndexForFirstChartPercent(stepLineSeriesEntry);
 
-        final var expected = new StepLineSeriesEntryIntegerDTO();
+        final var expected = new StepLineSeriesEntryIntegerDto();
         expected.setXAxisIndex(0);
         expected.setYAxisIndex(1);
 
@@ -120,7 +120,7 @@ class GanglinieUtilTest {
     @Test
     void getInitialZaehldatenStepline() {
         final var result = GanglinieUtil.getInitialZaehldatenStepline();
-        final var expected = new LadeZaehldatenSteplineDTO();
+        final var expected = new LadeZaehldatenStepLineDto();
         expected.setRangeMax(0);
         expected.setRangeMaxPercent(0);
         expected.setLegend(new ArrayList<>());

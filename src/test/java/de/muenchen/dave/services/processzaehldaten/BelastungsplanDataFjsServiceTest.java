@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanFjsDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -47,7 +47,7 @@ public class BelastungsplanDataFjsServiceTest {
         laengsverkehr.setRichtung(Bewegungsrichtung.EIN);
         laengsverkehr.setStrassenseite(Himmelsrichtung.N);
 
-        LadeZaehldatumDTO ladeZaehldatum = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(6);
         ladeZaehldatum.setFussgaenger(7);
 
@@ -58,7 +58,7 @@ public class BelastungsplanDataFjsServiceTest {
         laengsverkehr.setRichtung(Bewegungsrichtung.EIN);
         laengsverkehr.setStrassenseite(Himmelsrichtung.N);
 
-        ladeZaehldatum = new LadeZaehldatumDTO();
+        ladeZaehldatum = new LadeZaehldatumDto();
         ladeZaehldatum.setFahrradfahrer(60);
         ladeZaehldatum.setFussgaenger(70);
 
@@ -69,10 +69,10 @@ public class BelastungsplanDataFjsServiceTest {
         zaehlung.setZaehlart(Zaehlart.FJS.toString());
         zaehlung.setKreisverkehr(false);
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = new BelastungsplanDataFjsService()
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = new BelastungsplanDataFjsService()
                 .buildBelastungsplanDataMap(zaehldatenJeLaengsverkehr, zaehlung);
 
-        List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.FUSS))
+        List<BelastungsplanFjsDataDto.FjsKnotenarmValue> valuesKnotenarmeFuss = ((BelastungsplanFjsDataDto) belastungsplanData.get(Fahrzeug.FUSS))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeFuss);
         assertEquals(2, valuesKnotenarmeFuss.size());
@@ -86,7 +86,7 @@ public class BelastungsplanDataFjsServiceTest {
         assertLaengsverkehr(valuesKnotenarmeFuss, 2, Himmelsrichtung.N, Bewegungsrichtung.EIN, 7);
         assertLaengsverkehr(valuesKnotenarmeFuss, 4, Himmelsrichtung.N, Bewegungsrichtung.EIN, 70);
 
-        List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanFjsDataDTO) belastungsplanData.get(Fahrzeug.RAD))
+        List<BelastungsplanFjsDataDto.FjsKnotenarmValue> valuesKnotenarmeRad = ((BelastungsplanFjsDataDto) belastungsplanData.get(Fahrzeug.RAD))
                 .getValuesKnotenarme();
         assertNotNull(valuesKnotenarmeRad);
         assertEquals(2, valuesKnotenarmeRad.size());
@@ -129,26 +129,26 @@ public class BelastungsplanDataFjsServiceTest {
         zi1.setEndeUhrzeit(LocalDateTime.now());
         zeitintervalle.add(zi1);
 
-        AbstractLadeBelastungsplanDTO<?> data = new BelastungsplanDataFjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
+        AbstractLadeBelastungsplanDto<?> data = new BelastungsplanDataFjsService().buildLadeBelastungsplanDTO(options, zaehlung, zeitintervalle);
         assertNotNull(data);
         assertEquals("Eins", data.getStreets()[0]);
         assertNull(data.getStreets()[1]);
         assertEquals("Drei", data.getStreets()[2]);
         assertNotNull(data.getValue1());
-        BelastungsplanFjsDataDTO value1 = (BelastungsplanFjsDataDTO) data.getValue1();
+        BelastungsplanFjsDataDto value1 = (BelastungsplanFjsDataDto) data.getValue1();
         assertEquals(BigDecimal.valueOf(99), value1.getValuesKnotenarme().getFirst().getSumKnotenarm());
         assertEquals(BigDecimal.valueOf(99), value1.getValuesKnotenarme().getFirst().getValuesStrassenseiten().getFirst().getSumStrassenseite());
         assertEquals(BigDecimal.valueOf(99),
                 value1.getValuesKnotenarme().getFirst().getValuesStrassenseiten().getFirst().getValuesLaengsverkehre().getFirst().getValue());
     }
 
-    private void assertLaengsverkehr(List<BelastungsplanFjsDataDTO.FjsKnotenarmValue> values, int knotenarm, Himmelsrichtung strassenseite,
+    private void assertLaengsverkehr(List<BelastungsplanFjsDataDto.FjsKnotenarmValue> values, int knotenarm, Himmelsrichtung strassenseite,
             Bewegungsrichtung richtung,
             int expectedValue) {
-        BelastungsplanFjsDataDTO.FjsKnotenarmValue fjsKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.FjsStrassenseiteValue fjsStrassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
+        BelastungsplanFjsDataDto.FjsKnotenarmValue fjsKnotenarmValue = values.stream().filter(kn -> kn.getKnotenarm() == knotenarm).findFirst().orElseThrow();
+        BelastungsplanFjsDataDto.FjsStrassenseiteValue fjsStrassenseiteValue = fjsKnotenarmValue.getValuesStrassenseiten().stream()
                 .filter(seite -> seite.getStrassenseite() == strassenseite).findFirst().orElseThrow();
-        BelastungsplanFjsDataDTO.LaengsverkehrValue laengsverkehrValue = fjsStrassenseiteValue.getValuesLaengsverkehre().stream()
+        BelastungsplanFjsDataDto.LaengsverkehrValue laengsverkehrValue = fjsStrassenseiteValue.getValuesLaengsverkehre().stream()
                 .filter(lv -> lv.getRichtung() == richtung).findFirst().orElseThrow();
         assertThat(laengsverkehrValue.getValue(), is(BigDecimal.valueOf(expectedValue)));
     }

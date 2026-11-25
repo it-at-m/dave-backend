@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDto;
 import de.muenchen.dave.domain.elasticsearch.PkwEinheit;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
@@ -76,8 +76,8 @@ class AuswertungSpitzenstundeServiceSpringTest {
         pkwEinheit.setKraftraeder(BigDecimal.TEN);
         pkwEinheit.setFahrradfahrer(BigDecimal.TEN);
 
-        final LadeAuswertungSpitzenstundeDTO result = auswertungSpitzenstundeService.mapToAuswertungSpitzenstundeDTO(spitzenstunde, pkwEinheit);
-        final LadeAuswertungSpitzenstundeDTO expected = new LadeAuswertungSpitzenstundeDTO();
+        final LadeAuswertungSpitzenstundeDto result = auswertungSpitzenstundeService.mapToAuswertungSpitzenstundeDTO(spitzenstunde, pkwEinheit);
+        final LadeAuswertungSpitzenstundeDto expected = new LadeAuswertungSpitzenstundeDto();
         expected.setVon(2);
         expected.setNach(3);
         expected.setType("SpStdTag Rad");

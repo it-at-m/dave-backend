@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeZaehldatenZeitreiheDTO implements Serializable {
+public class LadeZaehldatenZeitreiheDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

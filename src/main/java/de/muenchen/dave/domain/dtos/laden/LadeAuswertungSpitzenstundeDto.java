@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class LadeAuswertungSpitzenstundeDTO extends LadeZaehldatumDTO {
+public class LadeAuswertungSpitzenstundeDto extends LadeZaehldatumDto {
 
     private Integer von;
 

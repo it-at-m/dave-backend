@@ -1,9 +1,9 @@
 package de.muenchen.dave.util.messstelle;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -32,7 +32,7 @@ public final class GanglinieUtil {
     public static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     public static void setRangeMaxRoundedToTwentyInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final Integer value) {
         final var currentValue = ladeZaehldatenStepline.getRangeMax();
         final Integer newRoundedValue;
@@ -51,7 +51,7 @@ public final class GanglinieUtil {
     }
 
     public static void setRangeMaxPercentRoundedToTwoInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final BigDecimal value) {
 
         final var currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
@@ -69,7 +69,7 @@ public final class GanglinieUtil {
     }
 
     public static void setLegendInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final String legendEntry) {
         ladeZaehldatenStepline.setLegend(
                 ChartLegendUtil.checkAndAddToLegendWhenNotAvailable(
@@ -77,22 +77,22 @@ public final class GanglinieUtil {
                         legendEntry));
     }
 
-    public static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+    public static void setSeriesIndexForFirstChartValue(final StepLineSeriesEntryBaseDto stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ZERO);
         stepLineSeriesEntry.setYAxisIndex(ZERO);
     }
 
-    public static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+    public static void setSeriesIndexForFirstChartPercent(final StepLineSeriesEntryBaseDto stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ZERO);
         stepLineSeriesEntry.setYAxisIndex(ONE);
     }
 
-    public static void setSeriesIndexForSecondChartValue(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+    public static void setSeriesIndexForSecondChartValue(final StepLineSeriesEntryBaseDto stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ONE);
         stepLineSeriesEntry.setYAxisIndex(TWO);
     }
 
-    public static void setSeriesIndexForSecondChartPercent(final StepLineSeriesEntryBaseDTO stepLineSeriesEntry) {
+    public static void setSeriesIndexForSecondChartPercent(final StepLineSeriesEntryBaseDto stepLineSeriesEntry) {
         stepLineSeriesEntry.setXAxisIndex(ONE);
         stepLineSeriesEntry.setYAxisIndex(THREE);
     }
@@ -103,8 +103,8 @@ public final class GanglinieUtil {
                 : value.intValue();
     }
 
-    public static LadeZaehldatenSteplineDTO getInitialZaehldatenStepline() {
-        final var ladeZaehldatenStepline = new LadeZaehldatenSteplineDTO();
+    public static LadeZaehldatenStepLineDto getInitialZaehldatenStepline() {
+        final var ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
         ladeZaehldatenStepline.setRangeMax(0);
         ladeZaehldatenStepline.setRangeMaxPercent(0);
         ladeZaehldatenStepline.setLegend(new ArrayList<>());
@@ -114,68 +114,68 @@ public final class GanglinieUtil {
     }
 
     /**
-     * Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
-     * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
+     * Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDto} und
+     * {@link StepLineSeriesEntryBigDecimalDto} nach Fahrzeugklasse und Fahrzeugkategorie
      * aufgliedert und vorhält.
      */
     @Getter
     @Setter
     public static class SeriesEntries {
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryPkw;
+        private StepLineSeriesEntryIntegerDto seriesEntryPkw;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryLkw;
+        private StepLineSeriesEntryIntegerDto seriesEntryLkw;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryLfw;
+        private StepLineSeriesEntryIntegerDto seriesEntryLfw;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryLz;
+        private StepLineSeriesEntryIntegerDto seriesEntryLz;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryBus;
+        private StepLineSeriesEntryIntegerDto seriesEntryBus;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryKrad;
+        private StepLineSeriesEntryIntegerDto seriesEntryKrad;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryRad;
+        private StepLineSeriesEntryIntegerDto seriesEntryRad;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryKfz;
+        private StepLineSeriesEntryIntegerDto seriesEntryKfz;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntrySv;
+        private StepLineSeriesEntryIntegerDto seriesEntrySv;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntrySvProzent;
+        private StepLineSeriesEntryBigDecimalDto seriesEntrySvProzent;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryGv;
+        private StepLineSeriesEntryIntegerDto seriesEntryGv;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryGvProzent;
+        private StepLineSeriesEntryBigDecimalDto seriesEntryGvProzent;
 
         public SeriesEntries() {
-            seriesEntryPkw = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryPkw = new StepLineSeriesEntryIntegerDto();
             seriesEntryPkw.setName(ChartLegendUtil.PKW);
-            seriesEntryLkw = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryLkw = new StepLineSeriesEntryIntegerDto();
             seriesEntryLkw.setName(ChartLegendUtil.LKW);
-            seriesEntryLfw = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryLfw = new StepLineSeriesEntryIntegerDto();
             seriesEntryLfw.setName(ChartLegendUtil.LFW);
-            seriesEntryLz = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryLz = new StepLineSeriesEntryIntegerDto();
             seriesEntryLz.setName(ChartLegendUtil.LASTZUEGE);
-            seriesEntryBus = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryBus = new StepLineSeriesEntryIntegerDto();
             seriesEntryBus.setName(ChartLegendUtil.BUSSE);
-            seriesEntryKrad = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryKrad = new StepLineSeriesEntryIntegerDto();
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
-            seriesEntryRad = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryRad = new StepLineSeriesEntryIntegerDto();
             seriesEntryRad.setName(ChartLegendUtil.RAD);
-            seriesEntryKfz = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryKfz = new StepLineSeriesEntryIntegerDto();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
-            seriesEntrySv = new StepLineSeriesEntryIntegerDTO();
+            seriesEntrySv = new StepLineSeriesEntryIntegerDto();
             seriesEntrySv.setName(ChartLegendUtil.SCHWERVERKEHR);
-            seriesEntrySvProzent = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntrySvProzent = new StepLineSeriesEntryBigDecimalDto();
             seriesEntrySvProzent.setName(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-            seriesEntryGv = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryGv = new StepLineSeriesEntryIntegerDto();
             seriesEntryGv.setName(ChartLegendUtil.GUETERVERKEHR);
-            seriesEntryGvProzent = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryGvProzent = new StepLineSeriesEntryBigDecimalDto();
             seriesEntryGvProzent.setName(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
         }
 
         private static void addSeriesToAllEntriesIfChosen(
-                final List<StepLineSeriesEntryBaseDTO> allEntries,
-                final StepLineSeriesEntryBaseDTO entry,
+                final List<StepLineSeriesEntryBaseDto> allEntries,
+                final StepLineSeriesEntryBaseDto entry,
                 final Boolean isChosen) {
             if (isChosen) {
                 allEntries.add(entry);
@@ -183,15 +183,15 @@ public final class GanglinieUtil {
         }
 
         /**
-         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
+         * Gibt alle {@link StepLineSeriesEntryIntegerDto} und {@link StepLineSeriesEntryBigDecimalDto}
          * entsprechend der im Parameter options gewählten
          * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
-         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
-         *         {@link StepLineSeriesEntryBigDecimalDTO}.
+         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDto} und
+         *         {@link StepLineSeriesEntryBigDecimalDto}.
          */
-        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
-            final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
+        public List<StepLineSeriesEntryBaseDto> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
+            final List<StepLineSeriesEntryBaseDto> allEntries = new ArrayList<>();
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.isPersonenkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.isLastkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, options.isLastzuege());

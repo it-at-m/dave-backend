@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class LadeKnotenarmDTO {
+public class LadeKnotenarmDto {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int nummer;

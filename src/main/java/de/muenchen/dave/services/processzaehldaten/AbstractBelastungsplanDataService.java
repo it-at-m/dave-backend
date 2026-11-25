@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.processzaehldaten;
 
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractBelastungsplanDataService implements IBelastungsplanDataService {
 
     @SuppressWarnings("unchecked")
-    protected <T extends AbstractBelastungsplanDataDTO> void putFirstValueInBelastungsplan(AbstractLadeBelastungsplanDTO<T> ladeBelastungsplan,
-            Map<Fahrzeug, ? extends AbstractBelastungsplanDataDTO> belastungsplanData,
+    protected <T extends AbstractBelastungsplanDataDto> void putFirstValueInBelastungsplan(AbstractLadeBelastungsplanDto<T> ladeBelastungsplan,
+            Map<Fahrzeug, ? extends AbstractBelastungsplanDataDto> belastungsplanData,
             Fahrzeug value) {
         ladeBelastungsplan.setValue3(ladeBelastungsplan.getValue2());
         ladeBelastungsplan.setValue2(ladeBelastungsplan.getValue1());
@@ -23,7 +23,7 @@ public abstract class AbstractBelastungsplanDataService implements IBelastungspl
     }
 
     protected void markKIHochrechnung(final String zaehldauer, final String zeitauswahl,
-            final AbstractLadeBelastungsplanDTO<? extends AbstractBelastungsplanDataDTO> ladeBelastungsplanSum) {
+            final AbstractLadeBelastungsplanDto<? extends AbstractBelastungsplanDataDto> ladeBelastungsplanSum) {
         // KI-Hochgerechnete Werte sollen im Belastungsplan entsprechend gekennzeichnet werden
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(zeitauswahl) && List.of(Zaehldauer.DAUER_2_X_4_STUNDEN.toString(),
                 Zaehldauer.DAUER_13_STUNDEN.toString(), Zaehldauer.DAUER_16_STUNDEN.toString()).contains(zaehldauer)) {
@@ -37,7 +37,7 @@ public abstract class AbstractBelastungsplanDataService implements IBelastungspl
         }
     }
 
-    protected static void fillEmptyBelastungsplanData(AbstractBelastungsplanDataDTO data) {
+    protected static void fillEmptyBelastungsplanData(AbstractBelastungsplanDataDto data) {
         data.setLabel("");
         data.setFilled(false);
     }

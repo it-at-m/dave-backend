@@ -1,11 +1,11 @@
 package de.muenchen.dave.services.processzaehldaten;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.enums.Zaehldauer;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.services.ladezaehldaten.LadeZaehldatenService;
@@ -34,7 +34,7 @@ public class ProcessZaehldatenSteplineService {
     private static final Integer ROUNDING_VALUE_PERCENT = 2;
 
     public static void setRangeMaxRoundedInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final Integer value) {
         ladeZaehldatenStepline.setRangeMax(
                 ZaehldatenProcessingUtil.getValueRounded(
@@ -45,7 +45,7 @@ public class ProcessZaehldatenSteplineService {
     }
 
     public static void setRangeMaxRoundedInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final BigDecimal value) {
         setRangeMaxRoundedInZaehldatenStepline(
                 ladeZaehldatenStepline,
@@ -53,7 +53,7 @@ public class ProcessZaehldatenSteplineService {
     }
 
     public static void setRangeMaxPercentInZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final BigDecimal value) {
         final int currentValue = ladeZaehldatenStepline.getRangeMaxPercent();
         ladeZaehldatenStepline.setRangeMaxPercent(
@@ -75,15 +75,15 @@ public class ProcessZaehldatenSteplineService {
      *            {@link Zaehldauer#DAUER_2_X_4_STUNDEN}.
      */
     public static void splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(
-            final LadeZaehldatenSteplineDTO ladeZaehldatenStepline,
+            final LadeZaehldatenStepLineDto ladeZaehldatenStepline,
             final OptionsDto options) {
         if (options.getZeitblock().equals(Zeitblock.ZB_00_24)
                 && options.getZaehldauer().equals(Zaehldauer.DAUER_2_X_4_STUNDEN)
                 && !(StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_KFZ)
                         || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_RAD)
                         || StringUtils.equals(options.getZeitauswahl(), LadeZaehldatenService.ZEITAUSWAHL_SPITZENSTUNDE_FUSS))) {
-            final List<StepLineSeriesEntryBaseDTO> newSeriesEntriesFirstChart = new ArrayList<>();
-            final List<StepLineSeriesEntryBaseDTO> newSeriesEntriesSecondChart = new ArrayList<>();
+            final List<StepLineSeriesEntryBaseDto> newSeriesEntriesFirstChart = new ArrayList<>();
+            final List<StepLineSeriesEntryBaseDto> newSeriesEntriesSecondChart = new ArrayList<>();
             final int splittedSize = ladeZaehldatenStepline.getXAxisDataFirstChart().size() / 2;
 
             // Split X axis data
@@ -98,15 +98,15 @@ public class ProcessZaehldatenSteplineService {
 
             // Split StepLineSeriesEntries (Y axis data)
             ladeZaehldatenStepline.getSeriesEntriesFirstChart().forEach(serieEntryFirstChart -> {
-                if (serieEntryFirstChart.getClass().equals(StepLineSeriesEntryIntegerDTO.class)) {
+                if (serieEntryFirstChart.getClass().equals(StepLineSeriesEntryIntegerDto.class)) {
                     List<List<Integer>> splittedYAxisData = ListUtils.partition(
-                            ((StepLineSeriesEntryIntegerDTO) serieEntryFirstChart).getYAxisData(),
+                            ((StepLineSeriesEntryIntegerDto) serieEntryFirstChart).getYAxisData(),
                             splittedSize);
-                    final StepLineSeriesEntryIntegerDTO stepLineSeriesEntryFirstChart = new StepLineSeriesEntryIntegerDTO();
+                    final StepLineSeriesEntryIntegerDto stepLineSeriesEntryFirstChart = new StepLineSeriesEntryIntegerDto();
                     stepLineSeriesEntryFirstChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntryFirstChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(0)));
                     newSeriesEntriesFirstChart.add(stepLineSeriesEntryFirstChart);
-                    final StepLineSeriesEntryIntegerDTO stepLineSeriesEntrySecondChart = new StepLineSeriesEntryIntegerDTO();
+                    final StepLineSeriesEntryIntegerDto stepLineSeriesEntrySecondChart = new StepLineSeriesEntryIntegerDto();
                     stepLineSeriesEntrySecondChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntrySecondChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(1)));
                     newSeriesEntriesSecondChart.add(stepLineSeriesEntrySecondChart);
@@ -115,13 +115,13 @@ public class ProcessZaehldatenSteplineService {
                             stepLineSeriesEntrySecondChart);
                 } else {
                     List<List<BigDecimal>> splittedYAxisData = ListUtils.partition(
-                            ((StepLineSeriesEntryBigDecimalDTO) serieEntryFirstChart).getYAxisData(),
+                            ((StepLineSeriesEntryBigDecimalDto) serieEntryFirstChart).getYAxisData(),
                             splittedSize);
-                    final StepLineSeriesEntryBigDecimalDTO stepLineSeriesEntryFirstChart = new StepLineSeriesEntryBigDecimalDTO();
+                    final StepLineSeriesEntryBigDecimalDto stepLineSeriesEntryFirstChart = new StepLineSeriesEntryBigDecimalDto();
                     stepLineSeriesEntryFirstChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntryFirstChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(0)));
                     newSeriesEntriesFirstChart.add(stepLineSeriesEntryFirstChart);
-                    final StepLineSeriesEntryBigDecimalDTO stepLineSeriesEntrySecondChart = new StepLineSeriesEntryBigDecimalDTO();
+                    final StepLineSeriesEntryBigDecimalDto stepLineSeriesEntrySecondChart = new StepLineSeriesEntryBigDecimalDto();
                     stepLineSeriesEntrySecondChart.setName(serieEntryFirstChart.getName());
                     stepLineSeriesEntrySecondChart.setYAxisData(new ArrayList<>(splittedYAxisData.get(1)));
                     newSeriesEntriesSecondChart.add(stepLineSeriesEntrySecondChart);
@@ -137,8 +137,8 @@ public class ProcessZaehldatenSteplineService {
 
     public static void setSeriesIndexForChart(
             final String fahrzeugkategorie,
-            final StepLineSeriesEntryBaseDTO seriesEntryFirstChart,
-            final StepLineSeriesEntryBaseDTO seriesEntrySecondChart) {
+            final StepLineSeriesEntryBaseDto seriesEntryFirstChart,
+            final StepLineSeriesEntryBaseDto seriesEntrySecondChart) {
         if (ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT.equals(fahrzeugkategorie)
                 || ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT.equals(fahrzeugkategorie)) {
             GanglinieUtil.setSeriesIndexForFirstChartPercent(seriesEntryFirstChart);
@@ -159,22 +159,22 @@ public class ProcessZaehldatenSteplineService {
      * Diagramm aufbereitet.
      * <p>
      * Falls keine Aufteilung in zwei Unterdiagrammme erforderlich ist, werden in der Klasse
-     * {@link LadeZaehldatenSteplineDTO} neben den Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getLegend, {@link LadeZaehldatenSteplineDTO}#getRangeMax und
-     * {@link LadeZaehldatenSteplineDTO}#getRangeMaxPercent nur
-     * die Variablen {@link LadeZaehldatenSteplineDTO}#getXAxisDataFirstChart sowie
-     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesFirstChart gesetzt.
+     * {@link LadeZaehldatenStepLineDto} neben den Variablen
+     * {@link LadeZaehldatenStepLineDto}#getLegend, {@link LadeZaehldatenStepLineDto}#getRangeMax und
+     * {@link LadeZaehldatenStepLineDto}#getRangeMaxPercent nur
+     * die Variablen {@link LadeZaehldatenStepLineDto}#getXAxisDataFirstChart sowie
+     * {@link LadeZaehldatenStepLineDto}#getSeriesEntriesFirstChart gesetzt.
      * <p>
      * Ist eine Aufteilung notwendig, so werden auch die Variablen
-     * {@link LadeZaehldatenSteplineDTO}#getXAxisDataSecondChart sowie
-     * {@link LadeZaehldatenSteplineDTO}#getSeriesEntriesSecondChart gesetzt.
+     * {@link LadeZaehldatenStepLineDto}#getXAxisDataSecondChart sowie
+     * {@link LadeZaehldatenStepLineDto}#getSeriesEntriesSecondChart gesetzt.
      *
      * @param zaehldatenTable Die Datengrundlage zur Aufbereitung des Stepline-Diagramms.
      * @param options Die durch den User im Frontend gewählten Optionen.
      * @return Die aufbreiteten Daten für das Stepline-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenSteplineDTO ladeProcessedZaehldatenStepline(
-            final LadeZaehldatenTableDTO zaehldatenTable,
+    public LadeZaehldatenStepLineDto ladeProcessedZaehldatenStepline(
+            final LadeZaehldatenTableDto zaehldatenTable,
             final OptionsDto options) {
         final var zaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();
 
@@ -273,71 +273,71 @@ public class ProcessZaehldatenSteplineService {
     }
 
     /**
-     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDTO} und
-     * {@link StepLineSeriesEntryBigDecimalDTO} nach Fahrzeugklasse und Fahrzeugkategorie
+     * Innere Helfer-Klasse welche {@link StepLineSeriesEntryIntegerDto} und
+     * {@link StepLineSeriesEntryBigDecimalDto} nach Fahrzeugklasse und Fahrzeugkategorie
      * aufgliedert und vorhält.
      */
     @Getter
     @Setter
     private static class SeriesEntries {
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryPkw;
+        private StepLineSeriesEntryIntegerDto seriesEntryPkw;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryLkw;
+        private StepLineSeriesEntryIntegerDto seriesEntryLkw;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryLz;
+        private StepLineSeriesEntryIntegerDto seriesEntryLz;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryBus;
+        private StepLineSeriesEntryIntegerDto seriesEntryBus;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryKrad;
+        private StepLineSeriesEntryIntegerDto seriesEntryKrad;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryRad;
+        private StepLineSeriesEntryIntegerDto seriesEntryRad;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryFuß;
+        private StepLineSeriesEntryIntegerDto seriesEntryFuß;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryKfz;
+        private StepLineSeriesEntryBigDecimalDto seriesEntryKfz;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntrySv;
+        private StepLineSeriesEntryBigDecimalDto seriesEntrySv;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntrySvProzent;
+        private StepLineSeriesEntryBigDecimalDto seriesEntrySvProzent;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryGv;
+        private StepLineSeriesEntryBigDecimalDto seriesEntryGv;
 
-        private StepLineSeriesEntryBigDecimalDTO seriesEntryGvProzent;
+        private StepLineSeriesEntryBigDecimalDto seriesEntryGvProzent;
 
-        private StepLineSeriesEntryIntegerDTO seriesEntryPkwEinheiten;
+        private StepLineSeriesEntryIntegerDto seriesEntryPkwEinheiten;
 
         public SeriesEntries() {
-            seriesEntryPkw = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryPkw = new StepLineSeriesEntryIntegerDto();
             seriesEntryPkw.setName(ChartLegendUtil.PKW);
-            seriesEntryLkw = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryLkw = new StepLineSeriesEntryIntegerDto();
             seriesEntryLkw.setName(ChartLegendUtil.LKW);
-            seriesEntryLz = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryLz = new StepLineSeriesEntryIntegerDto();
             seriesEntryLz.setName(ChartLegendUtil.LASTZUEGE);
-            seriesEntryBus = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryBus = new StepLineSeriesEntryIntegerDto();
             seriesEntryBus.setName(ChartLegendUtil.BUSSE);
-            seriesEntryKrad = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryKrad = new StepLineSeriesEntryIntegerDto();
             seriesEntryKrad.setName(ChartLegendUtil.KRAFTRAEDER);
-            seriesEntryRad = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryRad = new StepLineSeriesEntryIntegerDto();
             seriesEntryRad.setName(ChartLegendUtil.RAD);
-            seriesEntryFuß = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryFuß = new StepLineSeriesEntryIntegerDto();
             seriesEntryFuß.setName(ChartLegendUtil.FUSSGAENGER);
-            seriesEntryKfz = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryKfz = new StepLineSeriesEntryBigDecimalDto();
             seriesEntryKfz.setName(ChartLegendUtil.KFZ);
-            seriesEntrySv = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntrySv = new StepLineSeriesEntryBigDecimalDto();
             seriesEntrySv.setName(ChartLegendUtil.SCHWERVERKEHR);
-            seriesEntrySvProzent = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntrySvProzent = new StepLineSeriesEntryBigDecimalDto();
             seriesEntrySvProzent.setName(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT);
-            seriesEntryGv = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryGv = new StepLineSeriesEntryBigDecimalDto();
             seriesEntryGv.setName(ChartLegendUtil.GUETERVERKEHR);
-            seriesEntryGvProzent = new StepLineSeriesEntryBigDecimalDTO();
+            seriesEntryGvProzent = new StepLineSeriesEntryBigDecimalDto();
             seriesEntryGvProzent.setName(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT);
-            seriesEntryPkwEinheiten = new StepLineSeriesEntryIntegerDTO();
+            seriesEntryPkwEinheiten = new StepLineSeriesEntryIntegerDto();
             seriesEntryPkwEinheiten.setName(ChartLegendUtil.PKW_EINHEITEN);
         }
 
-        private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDTO> allEntries,
-                final StepLineSeriesEntryBaseDTO entry,
+        private static void addSeriesToAllEntriesIfChosen(final List<StepLineSeriesEntryBaseDto> allEntries,
+                final StepLineSeriesEntryBaseDto entry,
                 final Boolean isChosen) {
             if (isChosen.booleanValue()) {
                 allEntries.add(entry);
@@ -345,17 +345,17 @@ public class ProcessZaehldatenSteplineService {
         }
 
         /**
-         * Gibt alle {@link StepLineSeriesEntryIntegerDTO} und {@link StepLineSeriesEntryBigDecimalDTO}
+         * Gibt alle {@link StepLineSeriesEntryIntegerDto} und {@link StepLineSeriesEntryBigDecimalDto}
          * entsprechend der im Parameter options gewählten
          * Fahrzeugklassen, Fahrzeugkategorien und Prozentwerte als Liste zurück.
          *
          * @param options Das Objekt mit der Information bezüglich erwünschter oder nicht erwünschter
          *            Fahrzeugklassen, Fahrzeugkategorien oder Prozentwerte
-         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDTO} und
-         *         {@link StepLineSeriesEntryBigDecimalDTO}.
+         * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDto} und
+         *         {@link StepLineSeriesEntryBigDecimalDto}.
          */
-        public List<StepLineSeriesEntryBaseDTO> getChosenStepLineSeriesEntries(final OptionsDto options) {
-            final List<StepLineSeriesEntryBaseDTO> allEntries = new ArrayList<>();
+        public List<StepLineSeriesEntryBaseDto> getChosenStepLineSeriesEntries(final OptionsDto options) {
+            final List<StepLineSeriesEntryBaseDto> allEntries = new ArrayList<>();
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.getPersonenkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.getLastkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLz, options.getLastzuege());

@@ -1,6 +1,5 @@
 package de.muenchen.dave.domain.dtos.laden;
 
-import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -11,19 +10,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-public class BelastungsplanFjsDataDTO extends AbstractBelastungsplanDataDTO {
+@EqualsAndHashCode(callSuper = true)
+public class BelastungsplanQuDataDto extends AbstractBelastungsplanDataDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    private List<FjsKnotenarmValue> valuesKnotenarme;
+    private List<QuKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
-    public static class FjsKnotenarmValue implements Serializable {
+    public static class QuKnotenarmValue implements Serializable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
@@ -31,29 +30,16 @@ public class BelastungsplanFjsDataDTO extends AbstractBelastungsplanDataDTO {
         @NotNull
         private BigDecimal sumKnotenarm;
         @NotNull
-        private final List<FjsStrassenseiteValue> valuesStrassenseiten;
+        private final List<QuerungsverkehrValue> valuesQuerungsverkehre;
     }
 
     @Data
     @RequiredArgsConstructor
-    public static class FjsStrassenseiteValue implements Serializable {
+    public static class QuerungsverkehrValue implements Serializable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
         @NotNull
-        private final Himmelsrichtung strassenseite;
-        @NotNull
-        private BigDecimal sumStrassenseite;
-        @NotNull
-        private final List<LaengsverkehrValue> valuesLaengsverkehre;
-    }
-
-    @Data
-    @RequiredArgsConstructor
-    public static class LaengsverkehrValue implements Serializable {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-        @NotNull
-        private final Bewegungsrichtung richtung;
+        private final Himmelsrichtung richtung;
         @NotNull
         private final BigDecimal value;
     }

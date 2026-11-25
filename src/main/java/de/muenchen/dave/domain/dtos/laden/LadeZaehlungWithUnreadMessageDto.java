@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class LadeZaehlungWithUnreadMessageDTO implements Serializable {
+public class LadeZaehlungWithUnreadMessageDto implements Serializable {
 
     Date datum;
 

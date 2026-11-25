@@ -8,9 +8,9 @@ import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDTO;
@@ -453,10 +453,10 @@ class FillPdfBeanServiceTest {
 
     @Test
     void getGesamtauswertungTableRows() {
-        final List<StepLineSeriesEntryBaseDTO> seriesEntries = new ArrayList<>();
-        final StepLineSeriesEntryIntegerDTO entryInt = new StepLineSeriesEntryIntegerDTO();
+        final List<StepLineSeriesEntryBaseDto> seriesEntries = new ArrayList<>();
+        final StepLineSeriesEntryIntegerDto entryInt = new StepLineSeriesEntryIntegerDto();
         entryInt.setYAxisData(List.of(123, 456));
-        final StepLineSeriesEntryBigDecimalDTO entryDec = new StepLineSeriesEntryBigDecimalDTO();
+        final StepLineSeriesEntryBigDecimalDto entryDec = new StepLineSeriesEntryBigDecimalDto();
         entryDec.setYAxisData(List.of(BigDecimal.ONE, BigDecimal.TEN));
         seriesEntries.add(entryInt);
         seriesEntries.add(entryDec);

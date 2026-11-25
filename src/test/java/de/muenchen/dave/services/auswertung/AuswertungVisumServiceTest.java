@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDTO;
+import de.muenchen.dave.domain.dtos.laden.VerkehrsbeziehungVisumDto;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -64,13 +64,13 @@ class AuswertungVisumServiceTest {
         verkehrsbeziehung.setVon(98);
         verkehrsbeziehung.setNach(99);
 
-        var firstExpected = new VerkehrsbeziehungVisumDTO();
+        var firstExpected = new VerkehrsbeziehungVisumDto();
         firstExpected.setVon(98);
         firstExpected.setNach(null);
-        var secondExpected = new VerkehrsbeziehungVisumDTO();
+        var secondExpected = new VerkehrsbeziehungVisumDto();
         secondExpected.setVon(null);
         secondExpected.setNach(99);
-        List<VerkehrsbeziehungVisumDTO> expectedList = Arrays.asList(firstExpected, secondExpected);
+        List<VerkehrsbeziehungVisumDto> expectedList = Arrays.asList(firstExpected, secondExpected);
 
         var zaehlung = new Zaehlung();
         zaehlung.setKreisverkehr(false);
@@ -85,10 +85,10 @@ class AuswertungVisumServiceTest {
         verkehrsbeziehung.setHeraus(false);
         verkehrsbeziehung.setVorbei(false);
 
-        firstExpected = new VerkehrsbeziehungVisumDTO();
+        firstExpected = new VerkehrsbeziehungVisumDto();
         firstExpected.setVon(55);
         firstExpected.setNach(null);
-        secondExpected = new VerkehrsbeziehungVisumDTO();
+        secondExpected = new VerkehrsbeziehungVisumDto();
         secondExpected.setVon(null);
         secondExpected.setNach(55);
         expectedList = Arrays.asList(firstExpected, secondExpected);
@@ -103,10 +103,10 @@ class AuswertungVisumServiceTest {
         verkehrsbeziehung.setHeraus(true);
         verkehrsbeziehung.setVorbei(false);
 
-        firstExpected = new VerkehrsbeziehungVisumDTO();
+        firstExpected = new VerkehrsbeziehungVisumDto();
         firstExpected.setVon(56);
         firstExpected.setNach(null);
-        secondExpected = new VerkehrsbeziehungVisumDTO();
+        secondExpected = new VerkehrsbeziehungVisumDto();
         secondExpected.setVon(null);
         secondExpected.setNach(56);
         expectedList = Arrays.asList(firstExpected, secondExpected);
@@ -121,10 +121,10 @@ class AuswertungVisumServiceTest {
         verkehrsbeziehung.setHeraus(false);
         verkehrsbeziehung.setVorbei(true);
 
-        firstExpected = new VerkehrsbeziehungVisumDTO();
+        firstExpected = new VerkehrsbeziehungVisumDto();
         firstExpected.setVon(57);
         firstExpected.setNach(null);
-        secondExpected = new VerkehrsbeziehungVisumDTO();
+        secondExpected = new VerkehrsbeziehungVisumDto();
         secondExpected.setVon(null);
         secondExpected.setNach(57);
         expectedList = Arrays.asList(firstExpected, secondExpected);
@@ -138,7 +138,7 @@ class AuswertungVisumServiceTest {
         zaehlung.setKategorien(Arrays.asList(Fahrzeug.KFZ, Fahrzeug.RAD, Fahrzeug.FUSS));
         zaehlung.setZaehldauer("DAUER_2_X_4_STUNDEN");
 
-        final var verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDTO();
+        final var verkehrsbeziehungVisum = new VerkehrsbeziehungVisumDto();
         verkehrsbeziehungVisum.setVon(98);
         verkehrsbeziehungVisum.setNach(99);
 

@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
@@ -75,9 +75,9 @@ class AuswertungZaehlstellenKoordinateServiceTest {
 
         when(indexService.getAllZaehlstellen()).thenReturn(zaehlstellen);
 
-        final List<LadeAuswertungZaehlstelleKoordinateDTO> resultList = auswertungZaehlstellenKoordinateService.getAuswertungZaehlstellenKoordinate();
-        final List<LadeAuswertungZaehlstelleKoordinateDTO> expectedList = new ArrayList<>();
-        LadeAuswertungZaehlstelleKoordinateDTO expected = new LadeAuswertungZaehlstelleKoordinateDTO();
+        final List<LadeAuswertungZaehlstelleKoordinateDto> resultList = auswertungZaehlstellenKoordinateService.getAuswertungZaehlstellenKoordinate();
+        final List<LadeAuswertungZaehlstelleKoordinateDto> expectedList = new ArrayList<>();
+        LadeAuswertungZaehlstelleKoordinateDto expected = new LadeAuswertungZaehlstelleKoordinateDto();
         expected.setNummer("123456");
         expected.setKommentar("Ein Kommentar");
         expected.setLetzteZaehlung(LocalDate.of(2019, 1, 1));
@@ -85,7 +85,7 @@ class AuswertungZaehlstellenKoordinateServiceTest {
         expected.setLng(10.1234567);
         expectedList.add(expected);
 
-        expected = new LadeAuswertungZaehlstelleKoordinateDTO();
+        expected = new LadeAuswertungZaehlstelleKoordinateDto();
         expected.setNummer("654321");
         expected.setKommentar("Ein Kommentar");
         expected.setLetzteZaehlung(LocalDate.of(2018, 1, 1));

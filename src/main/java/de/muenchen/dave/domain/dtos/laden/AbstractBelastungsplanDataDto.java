@@ -6,7 +6,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public abstract class AbstractBelastungsplanDataDTO implements Serializable {
+public abstract class AbstractBelastungsplanDataDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

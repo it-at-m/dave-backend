@@ -1,12 +1,12 @@
 package de.muenchen.dave.services.pdfgenerator;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
+import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
@@ -626,16 +626,16 @@ public class FillPdfBeanService {
                         chartTitle.append(StringUtils.SPACE);
 
                         // Wenn Spitzenstunde ausgewählt soll die berechnete Spitzenstunde ebenfalls in der Überschrift erscheinen
-                        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId),
+                        final LadeZaehldatenTableDto ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId),
                                 optionsDTO);
-                        final List<LadeZaehldatumDTO> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
+                        final List<LadeZaehldatumDto> ladeZaehldatumDTOs = ladeZaehldatenTableDTO.getZaehldaten();
 
-                        final Optional<LadeZaehldatumDTO> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
+                        final Optional<LadeZaehldatumDto> optSpitzenStundeBlock = ladeZaehldatumDTOs.stream()
                                 .filter(ladeZaehldatumDTO -> (LadeZaehldatenService.SPITZENSTUNDE_BLOCK.equals(ladeZaehldatumDTO.getType())
                                         || LadeZaehldatenService.SPITZENSTUNDE_TAG.equals(ladeZaehldatumDTO.getType())))
                                 .findFirst();
                         if (optSpitzenStundeBlock.isPresent()) {
-                            final LadeZaehldatumDTO spitzenStundeBlock = optSpitzenStundeBlock.get();
+                            final LadeZaehldatumDto spitzenStundeBlock = optSpitzenStundeBlock.get();
 
                             chartTitle.append(spitzenStundeBlock.getStartUhrzeit());
                             chartTitle.append(StringUtils.SPACE);
@@ -788,8 +788,8 @@ public class FillPdfBeanService {
         gangliniePdf.setSchematischeUebersichtNeeded(getSchematischeUebersichtNeeded(options, zaehlung));
         gangliniePdf.setSchematischeUebersichtAsBase64Png(schematischeUebersichtAsBase64Png);
 
-        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
-        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
+        final LadeZaehldatenTableDto ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
+        final List<LadeZaehldatumDto> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
         final List<GanglinieTable> gtList = new ArrayList<>();
 
         // Initialisierung vor erstem Schleifendurchlauf
@@ -799,7 +799,7 @@ public class FillPdfBeanService {
         // Ausgewählte Fahrzeugklassen / -kategorien werden gemapped, damit nur diese im PDF angezeigt werden.
         this.diagrammPdfOptionsMapper.options2gangliniePdf(gangliniePdf, options);
 
-        for (final LadeZaehldatumDTO lzDto : ladeZaehldatumDTOS) {
+        for (final LadeZaehldatumDto lzDto : ladeZaehldatumDTOS) {
             // Type ist 'null', wenn normales Intervall. Es sind im Gangliniendiagramm nur Stunden-, Tageswerte gewuenscht
             if (LadeZaehldatenService.STUNDE.equals(lzDto.getType())
                     || LadeZaehldatenService.GESAMT.equals(lzDto.getType())
@@ -992,7 +992,7 @@ public class FillPdfBeanService {
     public void fillGesamtauswertungPdf(
             final GesamtauswertungMessstellePdf gesamtauswertungPdf,
             final MessstelleAuswertungOptionsDTO options,
-            final LadeZaehldatenSteplineDTO auswertung,
+            final LadeZaehldatenStepLineDto auswertung,
             final String chartAsBase64Png,
             final String department) {
 
@@ -1016,7 +1016,7 @@ public class FillPdfBeanService {
             this.diagrammPdfOptionsMapper.options2gesamtauswertungPdf(gesamtauswertungPdf, options.getFahrzeuge());
 
             final List<String> header = ListUtils.emptyIfNull(auswertung.getXAxisDataFirstChart());
-            final List<StepLineSeriesEntryBaseDTO> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
+            final List<StepLineSeriesEntryBaseDto> seriesEntries = ListUtils.emptyIfNull(auswertung.getSeriesEntriesFirstChart());
             final List<String> legend = ListUtils.emptyIfNull(auswertung.getLegend());
 
             final List<GesamtauswertungTableRow> gesamtauswertungTableRows = getGesamtauswertungTableRows(seriesEntries,
@@ -1080,7 +1080,7 @@ public class FillPdfBeanService {
      * @return Map<Nummer der Tabelle, Zeilen pro Tabelle>
      */
     protected static List<GesamtauswertungTableRow> getGesamtauswertungTableRows(
-            final List<StepLineSeriesEntryBaseDTO> seriesEntries,
+            final List<StepLineSeriesEntryBaseDto> seriesEntries,
             final List<String> legend,
             final boolean hasMultipleMessstellen,
             final List<String> header) {
@@ -1097,13 +1097,13 @@ public class FillPdfBeanService {
                     if (row.getCssColorBox().contains("%")) {
                         row.setCssColorBox(row.getCssColorBox().replace(" %", "-anteil"));
                     }
-                    final StepLineSeriesEntryBaseDTO baseDto = seriesEntries.get(index);
-                    if (baseDto.getClass() == StepLineSeriesEntryIntegerDTO.class) {
-                        final StepLineSeriesEntryIntegerDTO integerDto = (StepLineSeriesEntryIntegerDTO) baseDto;
+                    final StepLineSeriesEntryBaseDto baseDto = seriesEntries.get(index);
+                    if (baseDto.getClass() == StepLineSeriesEntryIntegerDto.class) {
+                        final StepLineSeriesEntryIntegerDto integerDto = (StepLineSeriesEntryIntegerDto) baseDto;
                         row.setGesamtauswertungTableColumns(
                                 integerDto.getYAxisData().stream().map(integer -> new GesamtauswertungTableColumn(convertZaehldata(integer))).toList());
-                    } else if (baseDto.getClass() == StepLineSeriesEntryBigDecimalDTO.class) {
-                        final StepLineSeriesEntryBigDecimalDTO bigdecimalDto = (StepLineSeriesEntryBigDecimalDTO) baseDto;
+                    } else if (baseDto.getClass() == StepLineSeriesEntryBigDecimalDto.class) {
+                        final StepLineSeriesEntryBigDecimalDto bigdecimalDto = (StepLineSeriesEntryBigDecimalDto) baseDto;
                         row.setGesamtauswertungTableColumns(bigdecimalDto.getYAxisData().stream()
                                 .map(bigDecimal -> new GesamtauswertungTableColumn(convertZaehldata(bigDecimal))).toList());
                     } else {
@@ -1212,8 +1212,8 @@ public class FillPdfBeanService {
      * @throws DataNotFoundException wenn keine Zaehldaten gefunden wurden
      */
     public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final OptionsDto options, final String zaehlungId) throws DataNotFoundException {
-        final LadeZaehldatenTableDTO ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
-        final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
+        final LadeZaehldatenTableDto ladeZaehldatenTableDTO = this.ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options);
+        final List<LadeZaehldatumDto> ladeZaehldatumDTOS = ladeZaehldatenTableDTO.getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeZaehldatumDTOS.stream()

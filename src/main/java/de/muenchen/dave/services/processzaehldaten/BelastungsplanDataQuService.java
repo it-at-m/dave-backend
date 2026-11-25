@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class BelastungsplanDataQuService extends AbstractBelastungsplanDataService {
 
-    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
+    public AbstractLadeBelastungsplanDto<?> buildLadeBelastungsplanDTO(
             final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
@@ -25,13 +25,13 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
                 zaehlung,
                 zeitintervalle);
 
-        var ladeBelastungsplan = new LadeBelastungsplanQuDTO();
+        var ladeBelastungsplan = new LadeBelastungsplanQuDto();
         ladeBelastungsplan.setStreets(new String[8]);
         ladeBelastungsplan.setValue1(getEmptyBelastungsplanData());
         ladeBelastungsplan.setValue2(getEmptyBelastungsplanData());
         ladeBelastungsplan.setValue3(getEmptyBelastungsplanData());
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         if (options.getRadverkehr() && belastungsplanData.containsKey(Fahrzeug.RAD)) {
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.RAD);
@@ -42,34 +42,34 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
         return ladeBelastungsplan;
     }
 
-    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDto> buildBelastungsplanDataMap(
             Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeQuerungsverkehr,
             final Zaehlung zaehlung) {
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> returnValue = new HashMap<>();
 
         if (zaehlung.getKategorien().contains(Fahrzeug.RAD)) {
             returnValue.put(Fahrzeug.RAD,
-                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDTO::getFahrradfahrer, zaehldatenJeQuerungsverkehr));
+                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.RAD, LadeZaehldatumDto::getFahrradfahrer, zaehldatenJeQuerungsverkehr));
         }
         if (zaehlung.getKategorien().contains(Fahrzeug.FUSS)) {
             returnValue.put(Fahrzeug.FUSS,
-                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDTO::getFussgaenger, zaehldatenJeQuerungsverkehr));
+                    buildBelastungsplanDataDTOForFahrzeug(Fahrzeug.FUSS, LadeZaehldatumDto::getFussgaenger, zaehldatenJeQuerungsverkehr));
         }
         return returnValue;
     }
 
-    private BelastungsplanQuDataDTO getEmptyBelastungsplanData() {
-        final BelastungsplanQuDataDTO data = new BelastungsplanQuDataDTO();
+    private BelastungsplanQuDataDto getEmptyBelastungsplanData() {
+        final BelastungsplanQuDataDto data = new BelastungsplanQuDataDto();
         fillEmptyBelastungsplanData(data);
         data.setValuesKnotenarme(new ArrayList<>());
         return data;
     }
 
-    private BelastungsplanQuDataDTO buildBelastungsplanDataDTOForFahrzeug(
+    private BelastungsplanQuDataDto buildBelastungsplanDataDTOForFahrzeug(
             final Fahrzeug fz,
-            final Function<LadeZaehldatumDTO, Integer> reader,
+            final Function<LadeZaehldatumDto, Integer> reader,
             final Map<Querungsverkehr, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeQuerungsverkehr) {
-        final BelastungsplanQuDataDTO belastungsplanData = getEmptyBelastungsplanData();
+        final BelastungsplanQuDataDto belastungsplanData = getEmptyBelastungsplanData();
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(fz.getName());
         zaehldatenJeQuerungsverkehr.forEach((querungsverkehr, tupelTageswertZaehldatum) -> addValueAndSum(querungsverkehr,
@@ -80,26 +80,26 @@ public class BelastungsplanDataQuService extends AbstractBelastungsplanDataServi
 
     /**
      * Setzt den Zählwert anhand des {@link Querungsverkehr} an die richtige Stelle des
-     * {@link BelastungsplanQuDataDTO} und addiert ihn zur Summe des entsprechenden Knotenarms.
+     * {@link BelastungsplanQuDataDto} und addiert ihn zur Summe des entsprechenden Knotenarms.
      */
     private void addValueAndSum(
             final Querungsverkehr querungsverkehr,
             final BigDecimal value,
-            final BelastungsplanQuDataDTO belastungsplanData) {
-        final BelastungsplanQuDataDTO.QuKnotenarmValue quKnotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
+            final BelastungsplanQuDataDto belastungsplanData) {
+        final BelastungsplanQuDataDto.QuKnotenarmValue quKnotenarmValue = belastungsplanData.getValuesKnotenarme().stream()
                 .filter(kn -> Objects.equals(kn.getKnotenarm(), querungsverkehr.getKnotenarm())).findFirst()
                 .orElseGet(() -> {
-                    final var kv = new BelastungsplanQuDataDTO.QuKnotenarmValue(querungsverkehr.getKnotenarm(), new ArrayList<>());
+                    final var kv = new BelastungsplanQuDataDto.QuKnotenarmValue(querungsverkehr.getKnotenarm(), new ArrayList<>());
                     belastungsplanData.getValuesKnotenarme().add(kv);
                     return kv;
                 });
-        Optional<BelastungsplanQuDataDTO.QuerungsverkehrValue> querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
+        Optional<BelastungsplanQuDataDto.QuerungsverkehrValue> querungsverkehrValue = quKnotenarmValue.getValuesQuerungsverkehre().stream()
                 .filter(qv -> qv.getRichtung() == querungsverkehr.getRichtung()).findFirst();
         if (querungsverkehrValue.isPresent()) {
             log.error("Fehler beim Berechnen der Daten: doppelte Bewegungsbeziehungen");
             throw new IllegalStateException("Fehler beim Berechnen der Daten");
         } else {
-            quKnotenarmValue.getValuesQuerungsverkehre().add(new BelastungsplanQuDataDTO.QuerungsverkehrValue(querungsverkehr.getRichtung(), value));
+            quKnotenarmValue.getValuesQuerungsverkehre().add(new BelastungsplanQuDataDto.QuerungsverkehrValue(querungsverkehr.getRichtung(), value));
             // Summiere Knotenarm
             if (quKnotenarmValue.getSumKnotenarm() == null) {
                 quKnotenarmValue.setSumKnotenarm(value);

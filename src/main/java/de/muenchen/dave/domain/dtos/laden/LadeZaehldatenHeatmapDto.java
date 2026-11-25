@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 
 @Data
-public class LadeZaehldatenSteplineDTO implements Serializable {
+public class LadeZaehldatenHeatmapDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
@@ -15,15 +15,15 @@ public class LadeZaehldatenSteplineDTO implements Serializable {
     @NotNull
     private List<String> legend;
     @NotNull
-    private Integer rangeMax;
+    private Integer rangeMin;
     @NotNull
-    private Integer rangeMaxPercent;
+    private Integer rangeMax;
     @Getter(onMethod_ = { @NotNull }) // NotNull alleine reicht nicht
     @NotNull
     private List<String> xAxisDataFirstChart;
     private List<String> xAxisDataSecondChart;
     @NotNull
-    private List<StepLineSeriesEntryBaseDTO> seriesEntriesFirstChart;
-    private List<StepLineSeriesEntryBaseDTO> seriesEntriesSecondChart;
+    private List<List<Integer>> seriesEntriesFirstChart;
+    private List<List<Integer>> seriesEntriesSecondChart;
 
 }

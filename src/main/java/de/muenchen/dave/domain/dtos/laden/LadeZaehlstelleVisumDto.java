@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LadeZaehlstelleVisumDTO {
+public class LadeZaehlstelleVisumDto {
 
     String id;
 
@@ -18,6 +18,6 @@ public class LadeZaehlstelleVisumDTO {
 
     CoordinateUtil.PositionUTM punktUtm;
 
-    List<LadeZaehlungVisumDTO> zaehlungen = new ArrayList<>();
+    List<LadeZaehlungVisumDto> zaehlungen = new ArrayList<>();
 
 }

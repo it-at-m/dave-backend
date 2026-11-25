@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.dtos.laden.messwerte;
 
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,9 +14,9 @@ public class LadeProcessedMesswerteDto implements Serializable {
     @NotNull
     LadeMesswerteListenausgabeDto zaehldatenTable;
     @NotNull
-    LadeZaehldatenSteplineDTO zaehldatenStepline;
+    LadeZaehldatenStepLineDto zaehldatenStepline;
     @NotNull
-    LadeZaehldatenHeatmapDTO zaehldatenHeatmap;
+    LadeZaehldatenHeatmapDto zaehldatenHeatmap;
     @NotNull
     BelastungsplanMessquerschnitteDto belastungsplanMessquerschnitte;
     private Long requestedMeasuringDays;

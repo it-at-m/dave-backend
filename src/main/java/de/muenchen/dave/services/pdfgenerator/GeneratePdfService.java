@@ -7,7 +7,7 @@ import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import com.openhtmltopdf.svgsupport.BatikSVGDrawer;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDTO;
@@ -468,7 +468,7 @@ public class GeneratePdfService {
      * @throws IOException
      */
     public byte[] generateGesamtauswertungPdf(final MessstelleAuswertungOptionsDTO options,
-            final LadeZaehldatenSteplineDTO auswertung,
+            final LadeZaehldatenStepLineDto auswertung,
             final String chartAsBase64Png,
             final String department)
             throws IOException {

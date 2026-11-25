@@ -108,9 +108,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.RAD))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
+        assertEquals("KFZ", ((BelastungsplanDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -134,9 +134,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.KFZ, Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("KFZ", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
+        assertEquals("KFZ", ((BelastungsplanDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -160,9 +160,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
+        assertEquals("RAD", ((BelastungsplanDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -186,9 +186,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanDataDTO) dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -213,9 +213,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanQjsDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -240,9 +240,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanFjsDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -267,9 +267,9 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("FUSS", ((BelastungsplanQuDataDTO) dto.getValue1()).getLabel());
+        assertEquals("FUSS", ((BelastungsplanQuDataDto) dto.getValue1()).getLabel());
     }
 
     /**
@@ -294,10 +294,10 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanQjsDataDTO) dto.getValue1()).getLabel());
-        assertTrue((((BelastungsplanQjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
+        assertEquals("RAD", ((BelastungsplanQjsDataDto) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanQjsDataDto) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -322,10 +322,10 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanFjsDataDTO) dto.getValue1()).getLabel());
-        assertTrue((((BelastungsplanFjsDataDTO) dto.getValue2()).getLabel()).isEmpty());
+        assertEquals("RAD", ((BelastungsplanFjsDataDto) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanFjsDataDto) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -350,10 +350,10 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 .thenReturn(List.of(
                         createTestZeitintervall(zaehlung.getId(), List.of(Fahrzeug.RAD, Fahrzeug.FUSS))));
 
-        AbstractLadeBelastungsplanDTO<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
+        AbstractLadeBelastungsplanDto<?> dto = service.ladeProcessedZaehldatenBelastungsplan(zaehlung.getId(), options);
 
-        assertEquals("RAD", ((BelastungsplanQuDataDTO) dto.getValue1()).getLabel());
-        assertTrue((((BelastungsplanQuDataDTO) dto.getValue2()).getLabel()).isEmpty());
+        assertEquals("RAD", ((BelastungsplanQuDataDto) dto.getValue1()).getLabel());
+        assertTrue((((BelastungsplanQuDataDto) dto.getValue2()).getLabel()).isEmpty());
     }
 
     /**
@@ -365,7 +365,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         final OptionsDto options = new OptionsDto();
         options.setDifferenzdatenDarstellen(false);
 
-        final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
+        final LadeBelastungsplanDto expected = new LadeBelastungsplanDto();
 
         doReturn(expected).when(serviceSpy).ladeProcessedZaehldatenBelastungsplan(anyString(), any(OptionsDto.class));
         Zaehlstelle zaehlstelle = new Zaehlstelle();
@@ -392,7 +392,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         options.setDifferenzdatenDarstellen(true);
         options.setVergleichszaehlungsId("vergleich-1");
 
-        final LadeBelastungsplanDTO expected = new LadeBelastungsplanDTO();
+        final LadeBelastungsplanDto expected = new LadeBelastungsplanDto();
 
         doReturn(expected).when(serviceSpy).getDifferenzdatenBelastungsplanDTO(anyString(), any(OptionsDto.class));
         Zaehlstelle zaehlstelle = new Zaehlstelle();
@@ -415,8 +415,8 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
     @Test
     void testCalculateDifferenzdatenDTO() {
-        final LadeBelastungsplanDTO dto1 = new LadeBelastungsplanDTO();
-        BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+        final LadeBelastungsplanDto dto1 = new LadeBelastungsplanDto();
+        BelastungsplanDataDto belastungsplanData = new BelastungsplanDataDto();
         belastungsplanData.setValues(getBigDecimalTwoDimArrayAsc());
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(Fahrzeug.KFZ.getName());
@@ -433,7 +433,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         dto1.setValue2(belastungsplanData);
         dto1.setValue3(belastungsplanData);
 
-        belastungsplanData = new BelastungsplanDataDTO();
+        belastungsplanData = new BelastungsplanDataDto();
         belastungsplanData.setValues(getBigDecimalTwoDimArrayDesc());
         belastungsplanData.setFilled(true);
         belastungsplanData.setLabel(Fahrzeug.KFZ.getName());
@@ -447,7 +447,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
                 BigDecimal.valueOf(7), BigDecimal.valueOf(6), BigDecimal.valueOf(5),
                 BigDecimal.valueOf(4), BigDecimal.valueOf(3), BigDecimal.valueOf(2) });
 
-        final LadeBelastungsplanDTO dto2 = new LadeBelastungsplanDTO();
+        final LadeBelastungsplanDto dto2 = new LadeBelastungsplanDto();
         dto2.setValue1(belastungsplanData);
         dto2.setValue2(belastungsplanData);
         dto2.setValue3(belastungsplanData);
@@ -455,7 +455,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         dto1.setStreets(new String[] { "Arnulfstraße", "Joseph-Spital-Straße", "Sonnenstraße", null, null, null, "Joseph-Spital-Straße", null });
         dto2.setStreets(new String[] { "Arnulfstraße", "Joseph-Spital-Str.", "Sonnenstraße", null, "Abengauerweg", null, "Joseph-Spital-Str.", null });
 
-        final LadeBelastungsplanDTO calculated = ProcessZaehldatenBelastungsplanService.calculateDifferenzdatenDTO(dto1, dto2);
+        final LadeBelastungsplanDto calculated = ProcessZaehldatenBelastungsplanService.calculateDifferenzdatenDTO(dto1, dto2);
 
         assertThat((calculated.getValue1()).getValues(), is(getDifferenzwert()));
         assertThat((calculated.getValue2()).getValues(), is(getDifferenzwert()));
@@ -494,7 +494,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
     public void testRoundToNearestIfRoundingIsChoosen() {
         final OptionsDto options = new OptionsDto();
         options.setRounding(Rounding.NONE);
-        LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setType("TEST");
         ladeZaehldatumDTO.setStartUhrzeit(LocalTime.of(8, 0));
         ladeZaehldatumDTO.setEndeUhrzeit(LocalTime.of(9, 0));
@@ -503,12 +503,12 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
         ladeZaehldatumDTO.setFahrradfahrer(49);
         ladeZaehldatumDTO.setFussgaenger(51);
 
-        LadeZaehldatumDTO result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
+        LadeZaehldatumDto result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
         assertThat(result, is(ladeZaehldatumDTO));
 
         options.setRounding(Rounding.R10);
         result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
-        LadeZaehldatumTageswertDTO expectedTageswert = new LadeZaehldatumTageswertDTO();
+        LadeZaehldatumTageswertDto expectedTageswert = new LadeZaehldatumTageswertDto();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
         expectedTageswert.setEndeUhrzeit(LocalTime.of(9, 0));
@@ -523,7 +523,7 @@ public class ProcessZaehldatenBelastungsplanServiceTest {
 
         options.setRounding(Rounding.R100);
         result = RoundingService.roundToNearestIfRoundingIsChosen(ladeZaehldatumDTO, options);
-        expectedTageswert = new LadeZaehldatumTageswertDTO();
+        expectedTageswert = new LadeZaehldatumTageswertDto();
         expectedTageswert.setType("TEST");
         expectedTageswert.setStartUhrzeit(LocalTime.of(8, 0));
         expectedTageswert.setEndeUhrzeit(LocalTime.of(9, 0));

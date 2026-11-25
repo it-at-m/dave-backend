@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumTageswertDto;
 import de.muenchen.dave.domain.enums.Rounding;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class RoundingService {
 
     /**
-     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDTO} des Parameters "toRound"
+     * Diese Methode rundet die Zahlinformationen im {@link LadeZaehldatumDto} des Parameters "toRound"
      * auf den nächsten Wert welcher im Parameter "nearestValueToRound" angegeben ist.
      * Es sollen nur 10er-Potenzen angegeben werden.
      * <p>
@@ -28,16 +28,16 @@ public class RoundingService {
      *
      * @param toRound Auf welchem die Rundung durchgeführt werden soll.
      * @param optionsDto Um auf Durchführung der Rundung zu prüfen
-     * @return den gerundeten {@link LadeZaehldatumDTO}, falls
+     * @return den gerundeten {@link LadeZaehldatumDto}, falls
      *         gerundet werden soll. Andernfall wird das
-     *         {@link LadeZaehldatumDTO} im Parameter zurückgegeben.
+     *         {@link LadeZaehldatumDto} im Parameter zurückgegeben.
      */
-    public static LadeZaehldatumDTO roundToNearestIfRoundingIsChosen(
-            final LadeZaehldatumDTO toRound,
+    public static LadeZaehldatumDto roundToNearestIfRoundingIsChosen(
+            final LadeZaehldatumDto toRound,
             final OptionsDto optionsDto) {
         if (optionsDto.getRounding() != null && optionsDto.getRounding() != Rounding.NONE) {
             final int nearestValueToRound = optionsDto.getRounding().getValue();
-            final LadeZaehldatumTageswertDTO ladeZaehldatumDTO = new LadeZaehldatumTageswertDTO();
+            final LadeZaehldatumTageswertDto ladeZaehldatumDTO = new LadeZaehldatumTageswertDto();
             ladeZaehldatumDTO.setType(toRound.getType());
             ladeZaehldatumDTO.setStartUhrzeit(toRound.getStartUhrzeit());
             ladeZaehldatumDTO.setEndeUhrzeit(toRound.getEndeUhrzeit());

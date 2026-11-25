@@ -3,7 +3,7 @@ package de.muenchen.dave.services.pdfgenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.AssetType;
 import de.muenchen.dave.domain.enums.Fahrzeug;
@@ -184,7 +184,7 @@ public class ReportService {
                     zaehlungskenngroessenAsset.setPrintRad(zaehlung.getKategorien().contains(Fahrzeug.RAD));
                     zaehlungskenngroessenAsset.setPrintKfz(zaehlung.getKategorien().contains(Fahrzeug.KFZ));
 
-                    final LadeZaehldatenTableDTO zaehldatenForZaehlungskenngroessen = this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung);
+                    final LadeZaehldatenTableDto zaehldatenForZaehlungskenngroessen = this.processZaehldatenService.ladeZaehlungskenngroessen(zaehlung);
                     final List<ZaehlungskenngroessenData> data = this.ladeZaehldatumMapper
                             .ladeZaehldatumDtoListToZaehlungskenngroessenDataList(zaehldatenForZaehlungskenngroessen.getZaehldaten());
 

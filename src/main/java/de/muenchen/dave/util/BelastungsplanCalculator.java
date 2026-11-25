@@ -1,6 +1,6 @@
 package de.muenchen.dave.util;
 
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDto;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -148,8 +148,8 @@ public class BelastungsplanCalculator {
      * @param sumsGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um die Summen erweiterte BelastungsplanDataDTO-Objekt zurück
      */
-    public static BelastungsplanDataDTO calculateSumsForBelastungsplanDataDto(
-            final BelastungsplanDataDTO data,
+    public static BelastungsplanDataDto calculateSumsForBelastungsplanDataDto(
+            final BelastungsplanDataDto data,
             final Map<String, BigDecimal[]> sumsKfz,
             final Map<String, BigDecimal[]> sumsSv,
             final Map<String, BigDecimal[]> sumsGv,

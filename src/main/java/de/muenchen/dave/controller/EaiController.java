@@ -1,8 +1,8 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungSpitzenstundeDto;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungVisumDto;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -76,7 +76,7 @@ public class EaiController {
      */
     @GetMapping(value = "/lade-auswertung-spitzenstunde", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<LadeAuswertungSpitzenstundeDTO>> ladeAuswertungSpitzenstunde(
+    public ResponseEntity<List<LadeAuswertungSpitzenstundeDto>> ladeAuswertungSpitzenstunde(
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLSTELLE_NUMMER) @NotEmpty final String zaehlstellenNummer,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLART) @NotNull final Zaehlart zaehlart,
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLDATUM) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull final LocalDate zaehldatum,
@@ -89,7 +89,7 @@ public class EaiController {
                 zeitblock,
                 zeitauswahl);
         try {
-            final List<LadeAuswertungSpitzenstundeDTO> ladeAuswertungSpitzenstunden = auswertungSpitzenstundeService.getAuswertungSpitzenstunde(
+            final List<LadeAuswertungSpitzenstundeDto> ladeAuswertungSpitzenstunden = auswertungSpitzenstundeService.getAuswertungSpitzenstunde(
                     zaehlstellenNummer,
                     zaehlart,
                     zaehldatum,
@@ -111,13 +111,13 @@ public class EaiController {
     /**
      * Rest-Endpunkt zum Bereitstellung aller Zählstellen samt deren Koordinaten.
      *
-     * @return die {@link LadeAuswertungZaehlstelleKoordinateDTO} je vorhandener Zählstelle.
+     * @return die {@link LadeAuswertungZaehlstelleKoordinateDto} je vorhandener Zählstelle.
      */
     @GetMapping(value = "/lade-auswertung-zaehlstellen-koordinate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<LadeAuswertungZaehlstelleKoordinateDTO>> ladeAuswertungZaehlstellenKoordinate() {
+    public ResponseEntity<List<LadeAuswertungZaehlstelleKoordinateDto>> ladeAuswertungZaehlstellenKoordinate() {
         log.info("ladeAuswertungZaehlstellenKoordinate aufgerufen");
-        final List<LadeAuswertungZaehlstelleKoordinateDTO> ladeAuswertungSpitzenstunden = auswertungZaehlstellenKoordinateService
+        final List<LadeAuswertungZaehlstelleKoordinateDto> ladeAuswertungSpitzenstunden = auswertungZaehlstellenKoordinateService
                 .getAuswertungZaehlstellenKoordinate();
         log.info("Laden der Auswertung der Zaehlstellenkoordinaten abgeschlossen.");
         return ResponseEntity.ok(ladeAuswertungSpitzenstunden);
@@ -128,11 +128,11 @@ public class EaiController {
      *
      * @param jahr welches ausgewertet werden soll.
      * @param monat im jahr welches ausgewertet werden soll.
-     * @return die {@link LadeAuswertungZaehlstelleKoordinateDTO} je vorhandener Zählstelle.
+     * @return die {@link LadeAuswertungZaehlstelleKoordinateDto} je vorhandener Zählstelle.
      */
     @GetMapping(value = "/lade-auswertung-visum", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<LadeAuswertungVisumDTO> ladeAuswertungVisum(@RequestParam(value = REQUEST_PARAMETER_JAHR) @NotNull final Integer jahr,
+    public ResponseEntity<LadeAuswertungVisumDto> ladeAuswertungVisum(@RequestParam(value = REQUEST_PARAMETER_JAHR) @NotNull final Integer jahr,
             @RequestParam(value = REQUEST_PARAMETER_MONAT) @NotNull @Min(1) @Max(12) final Integer monat) {
         log.info("ladeAuswertungVisum aufgerufen");
         final var auswertungVisum = auswertungVisumService.getAuswertungVisum(jahr, monat);

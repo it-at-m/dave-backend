@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDto;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
@@ -124,9 +124,9 @@ public class ZaehlstelleController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/unread-messages", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDTO>> getZaehlstellenWithUnreadMessages() {
+    public ResponseEntity<List<LadeZaehlstelleWithUnreadMessageDto>> getZaehlstellenWithUnreadMessages() {
         try {
-            final List<LadeZaehlstelleWithUnreadMessageDTO> dto = this.indexService.readZaehlstellenWithUnreadMessages();
+            final List<LadeZaehlstelleWithUnreadMessageDto> dto = this.indexService.readZaehlstellenWithUnreadMessages();
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im ZaehlstellenController, Zählstellen mit ungelesenen Nachrichten für das Mobilitätsreferat konnten nicht gefunden werden", e);

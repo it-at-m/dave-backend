@@ -9,7 +9,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
 import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDto;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
-import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -134,7 +134,7 @@ public abstract class ZaehlungPersistierungsService {
             final Zeitintervall zeitintervall,
             final HochrechnungsfaktorDto hochrechnungsfaktor,
             final String zaehldauer) {
-        final LadeZaehldatumDTO ladeZaehldatumDTO = new LadeZaehldatumDTO();
+        final LadeZaehldatumDto ladeZaehldatumDTO = new LadeZaehldatumDto();
         ladeZaehldatumDTO.setPkw(zeitintervall.getPkw());
         ladeZaehldatumDTO.setLkw(zeitintervall.getLkw());
         ladeZaehldatumDTO.setLastzuege(zeitintervall.getLastzuege());

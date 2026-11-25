@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos.laden;
 
+import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -10,19 +11,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
-public class BelastungsplanQuDataDTO extends AbstractBelastungsplanDataDTO {
+@Data
+public class BelastungsplanFjsDataDto extends AbstractBelastungsplanDataDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     @NotNull
-    private List<QuKnotenarmValue> valuesKnotenarme;
+    private List<FjsKnotenarmValue> valuesKnotenarme;
 
     @Data
     @RequiredArgsConstructor
-    public static class QuKnotenarmValue implements Serializable {
+    public static class FjsKnotenarmValue implements Serializable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
@@ -30,16 +31,29 @@ public class BelastungsplanQuDataDTO extends AbstractBelastungsplanDataDTO {
         @NotNull
         private BigDecimal sumKnotenarm;
         @NotNull
-        private final List<QuerungsverkehrValue> valuesQuerungsverkehre;
+        private final List<FjsStrassenseiteValue> valuesStrassenseiten;
     }
 
     @Data
     @RequiredArgsConstructor
-    public static class QuerungsverkehrValue implements Serializable {
+    public static class FjsStrassenseiteValue implements Serializable {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
         @NotNull
-        private final Himmelsrichtung richtung;
+        private final Himmelsrichtung strassenseite;
+        @NotNull
+        private BigDecimal sumStrassenseite;
+        @NotNull
+        private final List<LaengsverkehrValue> valuesLaengsverkehre;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    public static class LaengsverkehrValue implements Serializable {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
+        @NotNull
+        private final Bewegungsrichtung richtung;
         @NotNull
         private final BigDecimal value;
     }

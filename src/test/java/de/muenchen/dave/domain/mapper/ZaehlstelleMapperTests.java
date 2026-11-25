@@ -12,7 +12,7 @@ import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
+import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
@@ -117,8 +117,8 @@ public class ZaehlstelleMapperTests {
         zaehlung.setDatum(LocalDate.of(2019, 1, 1));
         zaehlstelle.getZaehlungen().add(zaehlung);
 
-        final LadeAuswertungZaehlstelleKoordinateDTO result = mapper.bean2LadeAuswertungZaehlstelleKoordinateDto(zaehlstelle);
-        final LadeAuswertungZaehlstelleKoordinateDTO expected = new LadeAuswertungZaehlstelleKoordinateDTO();
+        final LadeAuswertungZaehlstelleKoordinateDto result = mapper.bean2LadeAuswertungZaehlstelleKoordinateDto(zaehlstelle);
+        final LadeAuswertungZaehlstelleKoordinateDto expected = new LadeAuswertungZaehlstelleKoordinateDto();
         expected.setNummer("123456");
         expected.setKommentar("Ein Kommentar");
         expected.setLetzteZaehlung(LocalDate.of(2019, 1, 1));

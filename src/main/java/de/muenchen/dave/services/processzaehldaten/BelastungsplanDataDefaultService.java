@@ -3,10 +3,10 @@ package de.muenchen.dave.services.processzaehldaten;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDTO;
-import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDTO;
-import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDTO;
+import de.muenchen.dave.domain.dtos.laden.AbstractBelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
+import de.muenchen.dave.domain.dtos.laden.BelastungsplanDataDto;
+import de.muenchen.dave.domain.dtos.laden.LadeBelastungsplanDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.util.BelastungsplanCalculator;
@@ -23,20 +23,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class BelastungsplanDataDefaultService extends AbstractBelastungsplanDataService {
 
-    public AbstractLadeBelastungsplanDTO<?> buildLadeBelastungsplanDTO(
+    public AbstractLadeBelastungsplanDto<?> buildLadeBelastungsplanDTO(
             final OptionsDto options,
             final Zaehlung zaehlung,
             final List<Zeitintervall> zeitintervalle) {
         Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> ladeZaehldatumBelastungsplan = MappingUtil
                 .mapVerkehrsbeziehungen(options, zaehlung, zeitintervalle);
 
-        var ladeBelastungsplan = new LadeBelastungsplanDTO();
+        var ladeBelastungsplan = new LadeBelastungsplanDto();
         ladeBelastungsplan.setStreets(new String[8]);
         ladeBelastungsplan.setValue1(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue2(getEmptyBelastungsplanData());
         (ladeBelastungsplan).setValue3(getEmptyBelastungsplanData());
 
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> belastungsplanData = buildBelastungsplanDataMap(ladeZaehldatumBelastungsplan, zaehlung);
         zaehlung.getKnotenarme().forEach(knotenarm -> ladeBelastungsplan.getStreets()[knotenarm.getNummer() - 1] = knotenarm.getStrassenname());
         ladeBelastungsplan.setKreisverkehr(zaehlung.getKreisverkehr());
 
@@ -68,10 +68,10 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
             putFirstValueInBelastungsplan(ladeBelastungsplan, belastungsplanData, Fahrzeug.FUSS);
         }
 
-        LadeBelastungsplanDTO ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(
+        LadeBelastungsplanDto ladeBelastungsplanSum = this.calculateSumsForLadeBelastungsplanDto(
                 ladeBelastungsplan,
-                (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.KFZ),
-                (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDTO) belastungsplanData.get(Fahrzeug.GV));
+                (BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.KFZ),
+                (BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.SV), (BelastungsplanDataDto) belastungsplanData.get(Fahrzeug.GV));
 
         markKIHochrechnung(zaehlung.getZaehldauer(), options.getZeitauswahl(), ladeBelastungsplanSum);
 
@@ -79,26 +79,26 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
     }
 
     /**
-     * Liefert eine {@link AbstractBelastungsplanDataDTO} pro Fahrzeugklasse mit den Daten für den
+     * Liefert eine {@link AbstractBelastungsplanDataDto} pro Fahrzeugklasse mit den Daten für den
      * Belastungsplan
      *
      * @param zaehldatenJeVerkehrsbeziehung aus der DB ermittelten Werte
      * @param zaehlung wird benötigt zur überprüfung, ob welche Fahrzeug gezählt wurden
      * @return eine Map mit Key: Fahrzeug und Value:AbstractBelastungsplanDataDTO.
      */
-    public Map<Fahrzeug, AbstractBelastungsplanDataDTO> buildBelastungsplanDataMap(
+    public Map<Fahrzeug, AbstractBelastungsplanDataDto> buildBelastungsplanDataMap(
             final Map<Verkehrsbeziehung, ProcessZaehldatenBelastungsplanService.TupelTageswertZaehldatum> zaehldatenJeVerkehrsbeziehung,
             final Zaehlung zaehlung) {
-        final Map<Fahrzeug, AbstractBelastungsplanDataDTO> returnValue = new HashMap<>();
+        final Map<Fahrzeug, AbstractBelastungsplanDataDto> returnValue = new HashMap<>();
 
-        final BelastungsplanDataDTO belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);
-        final BelastungsplanDataDTO belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV), false);
-        final BelastungsplanDataDTO belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
-        final BelastungsplanDataDTO belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
-        final BelastungsplanDataDTO belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
-        final BelastungsplanDataDTO belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.SV_P,
+        final BelastungsplanDataDto belastungsplanDataKfz = createBelastungsplanData(Fahrzeug.KFZ, zaehlung.getKategorien().contains(Fahrzeug.KFZ), false);
+        final BelastungsplanDataDto belastungsplanDataSv = createBelastungsplanData(Fahrzeug.SV, zaehlung.getKategorien().contains(Fahrzeug.SV), false);
+        final BelastungsplanDataDto belastungsplanDataGv = createBelastungsplanData(Fahrzeug.GV, zaehlung.getKategorien().contains(Fahrzeug.GV), false);
+        final BelastungsplanDataDto belastungsplanDataRad = createBelastungsplanData(Fahrzeug.RAD, zaehlung.getKategorien().contains(Fahrzeug.RAD), false);
+        final BelastungsplanDataDto belastungsplanDataFuss = createBelastungsplanData(Fahrzeug.FUSS, zaehlung.getKategorien().contains(Fahrzeug.FUSS), false);
+        final BelastungsplanDataDto belastungsplanDataSvProzent = createBelastungsplanData(Fahrzeug.SV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataSv.isFilled(), true);
-        final BelastungsplanDataDTO belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.GV_P,
+        final BelastungsplanDataDto belastungsplanDataGvProzent = createBelastungsplanData(Fahrzeug.GV_P,
                 belastungsplanDataKfz.isFilled() && belastungsplanDataGv.isFilled(), true);
 
         zaehldatenJeVerkehrsbeziehung.forEach((verkehrsbeziehung, tupelTageswertZaehldatum) -> {
@@ -168,8 +168,8 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         return returnValue;
     }
 
-    private BelastungsplanDataDTO createBelastungsplanData(Fahrzeug fahrzeug, boolean filled, boolean percent) {
-        final BelastungsplanDataDTO belastungsplanData = new BelastungsplanDataDTO();
+    private BelastungsplanDataDto createBelastungsplanData(Fahrzeug fahrzeug, boolean filled, boolean percent) {
+        final BelastungsplanDataDto belastungsplanData = new BelastungsplanDataDto();
         belastungsplanData.setFilled(filled);
         belastungsplanData.setPercent(percent);
         belastungsplanData.setLabel(fahrzeug.getName());
@@ -177,8 +177,8 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
         return belastungsplanData;
     }
 
-    private BelastungsplanDataDTO getEmptyBelastungsplanData() {
-        final BelastungsplanDataDTO data = new BelastungsplanDataDTO();
+    private BelastungsplanDataDto getEmptyBelastungsplanData() {
+        final BelastungsplanDataDto data = new BelastungsplanDataDto();
         fillEmptyBelastungsplanData(data);
         data.setPercent(false);
         data.setValues(getEmptyDatastructure());
@@ -195,11 +195,11 @@ public class BelastungsplanDataDefaultService extends AbstractBelastungsplanData
      * @param dataGv Datengrundlage von GV zur Berechnung der GV%-Anteile
      * @return gibt das um alle Summen erweiterte LadeBelastungsplanDTO-Objekt zurück
      */
-    private LadeBelastungsplanDTO calculateSumsForLadeBelastungsplanDto(
-            final LadeBelastungsplanDTO ladeBelastungsplan,
-            final BelastungsplanDataDTO dataKfz,
-            final BelastungsplanDataDTO dataSv,
-            final BelastungsplanDataDTO dataGv) {
+    private LadeBelastungsplanDto calculateSumsForLadeBelastungsplanDto(
+            final LadeBelastungsplanDto ladeBelastungsplan,
+            final BelastungsplanDataDto dataKfz,
+            final BelastungsplanDataDto dataSv,
+            final BelastungsplanDataDto dataGv) {
 
         Map<String, BigDecimal[]> sumsKfz = null;
         Map<String, BigDecimal[]> sumsSv = null;

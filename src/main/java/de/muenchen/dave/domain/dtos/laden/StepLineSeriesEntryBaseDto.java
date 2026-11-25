@@ -13,11 +13,11 @@ import lombok.Getter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
 @JsonSubTypes(
     {
-            @JsonSubTypes.Type(value = StepLineSeriesEntryBigDecimalDTO.class, name = "BIGDECIMAL"),
-            @JsonSubTypes.Type(value = StepLineSeriesEntryIntegerDTO.class, name = "INTEGER") }
+            @JsonSubTypes.Type(value = StepLineSeriesEntryBigDecimalDto.class, name = "BIGDECIMAL"),
+            @JsonSubTypes.Type(value = StepLineSeriesEntryIntegerDto.class, name = "INTEGER") }
 )
 @Data
-public abstract class StepLineSeriesEntryBaseDTO implements Serializable {
+public abstract class StepLineSeriesEntryBaseDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
