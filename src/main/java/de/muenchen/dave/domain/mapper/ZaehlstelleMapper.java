@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.LeseZaehlungDTO;
+import de.muenchen.dave.domain.dtos.LeseZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
@@ -89,12 +89,12 @@ public interface ZaehlstelleMapper {
         dto.setLetzteZaehlung(newestZaehlung != null ? newestZaehlung.getDatum() : null);
     }
 
-    LeseZaehlungDTO bean2LeseDto(Zaehlung bean);
+    LeseZaehlungDto bean2LeseDto(Zaehlung bean);
 
     LadeZaehlungWithUnreadMessageDTO bean2LadeZaehlungWithUnreadMessageDTO(Zaehlung bean);
 
     @AfterMapping
-    default void toLeseZaehlungDTO(@MappingTarget LeseZaehlungDTO dto, Zaehlung bean) {
+    default void toLeseZaehlungDTO(@MappingTarget LeseZaehlungDto dto, Zaehlung bean) {
         dto.setLat(bean.getPunkt().getLat());
         dto.setLng(bean.getPunkt().getLon());
     }

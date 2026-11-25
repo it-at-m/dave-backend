@@ -29,6 +29,6 @@ public class LeseZaehlstelleDto implements Serializable {
     String kommentar;
     List<String> suchwoerter;
     @NotNull
-    List<LeseZaehlungDTO> zaehlungen;
+    List<LeseZaehlungDto> zaehlungen;
     Boolean sichtbarDatenportal;
 }
