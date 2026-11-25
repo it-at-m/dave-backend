@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.is;
 import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.elasticsearch.*;
@@ -192,7 +192,7 @@ class GenerateCsvServiceTest {
         lv2.setStrassenseite(Himmelsrichtung.O);
         lv2.setRichtung(Bewegungsrichtung.EIN);
         zaehlung.setLaengsverkehr(List.of(lv1, lv2));
-        final OptionsLaengsverkehrDTO olv1 = new OptionsLaengsverkehrDTO();
+        final OptionsLaengsverkehrDto olv1 = new OptionsLaengsverkehrDto();
         olv1.setKnotenarm(1);
         olv1.setStrassenseite(Himmelsrichtung.W);
         olv1.setRichtung(Bewegungsrichtung.EIN);
@@ -201,7 +201,7 @@ class GenerateCsvServiceTest {
         assertThat(csvService.getMetaData(metaObject, header, options), is(expected));
 
         // Zählart FjS; Alle Verkehrsbeziehungen
-        final OptionsLaengsverkehrDTO olv2 = new OptionsLaengsverkehrDTO();
+        final OptionsLaengsverkehrDto olv2 = new OptionsLaengsverkehrDto();
         olv2.setKnotenarm(1);
         olv2.setStrassenseite(Himmelsrichtung.O);
         olv2.setRichtung(Bewegungsrichtung.EIN);

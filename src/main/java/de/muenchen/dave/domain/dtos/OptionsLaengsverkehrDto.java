@@ -9,7 +9,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class OptionsLaengsverkehrDTO extends OptionsBewegungsbeziehungDto {
+public class OptionsLaengsverkehrDto extends OptionsBewegungsbeziehungDto {
 
     private Integer knotenarm;
 

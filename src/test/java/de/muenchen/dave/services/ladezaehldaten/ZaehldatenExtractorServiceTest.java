@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
+import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDto;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
@@ -259,11 +259,11 @@ class ZaehldatenExtractorServiceTest {
     @Test
     void testEnrich_FJS_singleChosenSetsLaengsverkehr() {
         OptionsDto options = createBaseOptions();
-        var ext = new OptionsLaengsverkehrDTO();
+        var ext = new OptionsLaengsverkehrDto();
         ext.setKnotenarm(7);
         ext.setRichtung(Bewegungsrichtung.EIN);
         ext.setStrassenseite(Himmelsrichtung.O);
-        LinkedList<OptionsLaengsverkehrDTO> list = new LinkedList<>();
+        LinkedList<OptionsLaengsverkehrDto> list = new LinkedList<>();
         list.add(ext);
         options.setChosenLaengsverkehre(list);
 
