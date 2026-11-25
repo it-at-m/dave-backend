@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -56,10 +56,10 @@ public class ChatMessageServiceTest {
 
     @Test
     public void saveChatMessageTest() throws BrokenInfrastructureException, DataNotFoundException {
-        final ChatMessageDTO chatMessageDTO = ChatMessageDTORandomFactory.getOne();
+        final ChatMessageDto chatMessageDTO = ChatMessageDTORandomFactory.getOne();
         final ChatMessage chatMessage = new ChatMessageMapperImpl().dto2bean(chatMessageDTO);
         when(chatMessageRepository.saveAndFlush(any())).thenReturn(chatMessage);
-        ChatMessageDTO result = chatMessageService.saveChatMessage(chatMessageDTO);
+        ChatMessageDto result = chatMessageService.saveChatMessage(chatMessageDTO);
         assertThat(result, is(chatMessageDTO));
     }
 
@@ -74,7 +74,7 @@ public class ChatMessageServiceTest {
 
         when(indexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final ChatMessageDTO chatMessageDTO = ChatMessageDTORandomFactory.getOne();
+        final ChatMessageDto chatMessageDTO = ChatMessageDTORandomFactory.getOne();
         chatMessageDTO.setZaehlungId(id);
 
         when(securityContextInformationExtractorService.getUserName()).thenReturn("tester");
@@ -88,8 +88,8 @@ public class ChatMessageServiceTest {
     public void loadChatMessagesTest() throws DataNotFoundException {
         final List<ChatMessage> chatMessageList = ChatMessageRandomFactory.getSome();
         when(chatMessageRepository.findAllByZaehlungIdOrderByTimestampAsc(any())).thenReturn(chatMessageList);
-        final List<ChatMessageDTO> expected = new ChatMessageMapperImpl().beanList2DtoList(chatMessageList);
-        final List<ChatMessageDTO> result = chatMessageService.loadChatMessages(UUID.randomUUID());
+        final List<ChatMessageDto> expected = new ChatMessageMapperImpl().beanList2DtoList(chatMessageList);
+        final List<ChatMessageDto> result = chatMessageService.loadChatMessages(UUID.randomUUID());
         assertThat(result, is(expected));
     }
 

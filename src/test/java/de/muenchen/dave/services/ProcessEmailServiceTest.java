@@ -3,7 +3,7 @@ package de.muenchen.dave.services;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.services.email.ProcessEmailService;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class ProcessEmailServiceTest {
     @Test
     void processCorrectEmail() throws IOException, MessagingException {
         // Email vom Mobilitätsreferat
-        final ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+        final ChatMessageDto chatMessageDTO = new ChatMessageDto();
         chatMessageDTO.setZaehlungId("5ff15a92-7dac-434a-a5a9-a54914c38274");
         chatMessageDTO.setParticipantId(Participant.MOBILITAETSREFERAT.getParticipantId());
         chatMessageDTO.setContent("Antwort");

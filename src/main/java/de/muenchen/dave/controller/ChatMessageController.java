@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.ChatMessageService;
@@ -48,7 +48,7 @@ public class ChatMessageController {
     )
     @GetMapping(value = "/allChatMessagesByZaehlungId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<ChatMessageDTO>> getAllChatMessagesByZaehlungId(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) String zaehlungId) {
+    public ResponseEntity<List<ChatMessageDto>> getAllChatMessagesByZaehlungId(@RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) String zaehlungId) {
         log.debug("Lade ChatMessages zur Zaehlung ID: {}", zaehlungId);
         try {
             return ResponseEntity.ok(chatMessageService.loadChatMessages(UUID.fromString(zaehlungId)));
@@ -74,7 +74,7 @@ public class ChatMessageController {
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ChatMessageDTO> saveChatMessage(@RequestBody @NotNull final ChatMessageDTO chatMessageDTO) {
+    public ResponseEntity<ChatMessageDto> saveChatMessage(@RequestBody @NotNull final ChatMessageDto chatMessageDTO) {
         log.debug("Neue ChatMessage speichern: {}", chatMessageDTO.getContent());
         try {
             return ResponseEntity.ok(chatMessageService.saveChatMessage(chatMessageDTO));

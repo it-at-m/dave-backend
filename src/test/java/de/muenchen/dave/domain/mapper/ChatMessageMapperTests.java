@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
 import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ public class ChatMessageMapperTests {
 
     @Test
     public void testDto2bean() {
-        ChatMessageDTO dto = ChatMessageDTORandomFactory.getOne();
+        ChatMessageDto dto = ChatMessageDTORandomFactory.getOne();
         ChatMessage bean = this.mapper.dto2bean(dto);
 
         assertThat(bean, hasProperty("id", equalTo(UUID.fromString(dto.getId()))));
@@ -48,7 +48,7 @@ public class ChatMessageMapperTests {
     @Test
     public void testBean2Dto() {
         ChatMessage bean = ChatMessageRandomFactory.getOne();
-        ChatMessageDTO dto = this.mapper.bean2Dto(bean);
+        ChatMessageDto dto = this.mapper.bean2Dto(bean);
 
         assertThat(dto, hasProperty("id", equalTo(bean.getId().toString())));
         assertThat(dto, hasProperty("zaehlungId", equalTo(bean.getZaehlungId().toString())));

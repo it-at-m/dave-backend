@@ -5,9 +5,9 @@ import java.util.UUID;
 
 public class ChatMessageDTORandomFactory {
 
-    public static ChatMessageDTO getOne() {
+    public static ChatMessageDto getOne() {
 
-        final var dto = new ChatMessageDTO();
+        final var dto = new ChatMessageDto();
 
         dto.setId(UUID.randomUUID().toString());
         dto.setZaehlungId(UUID.randomUUID().toString());

@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
@@ -55,14 +55,14 @@ public class ChatMessageService {
      * Zählung beim Dienstleister, dann wird auch eine E-Mail
      * versendet.
      *
-     * @param chatMessageDTO Das {@link ChatMessageDTO} zum Speichern.
-     * @return Das gespeicherte {@link ChatMessageDTO}.
+     * @param chatMessageDTO Das {@link ChatMessageDto} zum Speichern.
+     * @return Das gespeicherte {@link ChatMessageDto}.
      * @throws BrokenInfrastructureException Bei Verbindungsfehlern
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, eine Chat-Nachricht für die
      *             {@link Zaehlung} zu speichern
      */
-    public ChatMessageDTO saveChatMessage(final ChatMessageDTO chatMessageDTO)
+    public ChatMessageDto saveChatMessage(final ChatMessageDto chatMessageDTO)
             throws BrokenInfrastructureException, DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu senden
         authorizationService.assertCanReadAndWriteMessagesForZaehlung(chatMessageDTO.getZaehlungId());
@@ -86,12 +86,12 @@ public class ChatMessageService {
      * Die Methode lädt alle ChatMessages zu einer ZaehlungID.
      *
      * @param zaehlungID Die ID der Zählung zum Laden der ChatMessage.
-     * @return Alle geladenen {@link ChatMessageDTO}s.
+     * @return Alle geladenen {@link ChatMessageDto}s.
      * @throws DataNotFoundException Wenn Daten nicht geladen werden konnten
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, Chat-Nachrichten für die
      *             {@link Zaehlung} zu laden
      */
-    public List<ChatMessageDTO> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
+    public List<ChatMessageDto> loadChatMessages(final UUID zaehlungID) throws DataNotFoundException, AccessDeniedException {
         // Prüfen, ob der Nutzer berechtigt ist, Chat-Nachrichten zu lesen
         authorizationService.assertCanReadAndWriteMessagesForZaehlung(zaehlungID.toString());
 

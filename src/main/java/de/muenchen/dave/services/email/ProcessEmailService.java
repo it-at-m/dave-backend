@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.email;
 
-import de.muenchen.dave.domain.dtos.ChatMessageDTO;
+import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.services.ChatMessageService;
 import java.io.IOException;
@@ -37,14 +37,14 @@ public class ProcessEmailService {
     }
 
     /**
-     * Verarbeitet eine Email zu einem {@link ChatMessageDTO}.
+     * Verarbeitet eine Email zu einem {@link ChatMessageDto}.
      *
      * @param message die zu verarbeitende Email
-     * @return das generierte {@link ChatMessageDTO}
+     * @return das generierte {@link ChatMessageDto}
      * @throws IOException Fehler bei der Verbindung zum Postfach
      * @throws MessagingException allgemeiner E-Mail Fehler
      */
-    public ChatMessageDTO processEmail(final Message message) throws IOException, MessagingException {
+    public ChatMessageDto processEmail(final Message message) throws IOException, MessagingException {
         final String messageContent = processContent(message);
         return generateChatMessage(message, messageContent);
     }
@@ -174,14 +174,14 @@ public class ProcessEmailService {
     }
 
     /**
-     * Generiert aus einer {@link Message} ein {@link ChatMessageDTO}.
+     * Generiert aus einer {@link Message} ein {@link ChatMessageDto}.
      *
      * @param msg die Nachricht aus der Email
      * @param messageContent der Inhalt aus der Nachricht
-     * @return das generierte {@link ChatMessageDTO}
+     * @return das generierte {@link ChatMessageDto}
      * @throws MessagingException allgemeiner E-Mail Fehler
      */
-    private ChatMessageDTO generateChatMessage(final Message msg, final String messageContent) throws MessagingException {
+    private ChatMessageDto generateChatMessage(final Message msg, final String messageContent) throws MessagingException {
 
         // Betreff auslesen
         final String subject = msg.getSubject();
@@ -212,7 +212,7 @@ public class ProcessEmailService {
         }
 
         // ChatMessageDTO erstellen
-        final ChatMessageDTO chatMessageDTO = new ChatMessageDTO();
+        final ChatMessageDto chatMessageDTO = new ChatMessageDto();
         chatMessageDTO.setZaehlungId(zaehlungId);
         chatMessageDTO.setContent(messageContent);
         chatMessageDTO.setParticipantId(participantId);

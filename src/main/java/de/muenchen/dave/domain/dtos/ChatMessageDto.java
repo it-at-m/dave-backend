@@ -8,7 +8,7 @@ import lombok.Data;
 
 // Definition of getter, setter, ...
 @Data
-public class ChatMessageDTO implements Serializable {
+public class ChatMessageDto implements Serializable {
 
     private String id;
     @NotNull
