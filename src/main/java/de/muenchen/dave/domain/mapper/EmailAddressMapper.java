@@ -1,19 +1,20 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.EmailAddress;
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface EmailAddressMapper {
 
-    EmailAddress dto2bean(EmailAddressDTO dto);
+    EmailAddress dto2bean(EmailAddressDto dto);
 
-    List<EmailAddress> dto2bean(List<EmailAddressDTO> dto);
+    List<EmailAddress> dto2bean(List<EmailAddressDto> dto);
 
-    EmailAddressDTO bean2Dto(EmailAddress bean);
+    EmailAddressDto bean2Dto(EmailAddress bean);
 
-    List<EmailAddressDTO> bean2Dto(List<EmailAddress> bean);
+    List<EmailAddressDto> bean2Dto(List<EmailAddress> bean);
 }

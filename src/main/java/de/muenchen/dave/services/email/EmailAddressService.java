@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.EmailAddress;
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.mapper.EmailAddressMapper;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
@@ -31,7 +31,7 @@ public class EmailAddressService {
      * @param emailAddressDTO Das zu erneuernde EmailAddressDTO
      * @return das erneuerte EmailAddressDTO
      */
-    public EmailAddressDTO saveOrUpdateEmailAddress(final EmailAddressDTO emailAddressDTO) {
+    public EmailAddressDto saveOrUpdateEmailAddress(final EmailAddressDto emailAddressDTO) {
         if (emailAddressDTO.getId() != null) {
             final Optional<EmailAddress> byId = this.emailAddressRepository.findById(emailAddressDTO.getId());
             if (byId.isPresent()) {
@@ -41,12 +41,12 @@ public class EmailAddressService {
         return this.saveEmailAddress(this.emailAddressMapper.dto2bean(emailAddressDTO));
     }
 
-    private EmailAddressDTO updateEmailAddress(final EmailAddress toUpdate, final EmailAddressDTO newData) {
+    private EmailAddressDto updateEmailAddress(final EmailAddress toUpdate, final EmailAddressDto newData) {
         toUpdate.setEmailAddress(newData.getEmailAddress());
         return this.saveEmailAddress(toUpdate);
     }
 
-    private EmailAddressDTO saveEmailAddress(final EmailAddress toSave) {
+    private EmailAddressDto saveEmailAddress(final EmailAddress toSave) {
         return this.emailAddressMapper.bean2Dto(this.emailAddressRepository.saveAndFlush(toSave));
     }
 
@@ -56,7 +56,7 @@ public class EmailAddressService {
      *
      * @return geladenes EmailAddressDTO
      */
-    public List<EmailAddressDTO> loadEmailAddresses() {
+    public List<EmailAddressDto> loadEmailAddresses() {
         final List<EmailAddress> emailAddresses = this.emailAddressRepository.findAll();
         if (CollectionUtils.isNotEmpty(emailAddresses)) {
             return this.emailAddressMapper.bean2Dto(emailAddresses);

@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Participant;
@@ -185,7 +185,7 @@ public class EmailSendService {
     private String[] loadMailAddressesReferat() {
         return this.emailAddressService.loadEmailAddresses()
                 .stream()
-                .map(EmailAddressDTO::getEmailAddress)
+                .map(EmailAddressDto::getEmailAddress)
                 .toArray(String[]::new);
     }
 

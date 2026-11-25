@@ -7,7 +7,7 @@ import lombok.Data;
 
 // Definition of getter, setter, ...
 @Data
-public class EmailAddressDTO {
+public class EmailAddressDto {
 
     private UUID id;
     private Long entityVersion;

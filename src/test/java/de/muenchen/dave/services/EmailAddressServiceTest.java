@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 
 import de.muenchen.dave.domain.EmailAddress;
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.dtos.EmailAddressDTORandomFactory;
 import de.muenchen.dave.domain.mapper.EmailAddressMapperImpl;
 import de.muenchen.dave.repositories.relationaldb.EmailAddressRepository;
@@ -26,11 +26,11 @@ public class EmailAddressServiceTest {
     @Test
     public void updateEmailAddressTest() {
         // Test wenn keine Email-Adresse zur ParticipantId existiert
-        final EmailAddressDTO emailAddressDTO = EmailAddressDTORandomFactory.getOne();
+        final EmailAddressDto emailAddressDTO = EmailAddressDTORandomFactory.getOne();
         final int participantId = emailAddressDTO.getParticipantId();
         final EmailAddress emailAddress = new EmailAddressMapperImpl().dto2bean(emailAddressDTO);
         Mockito.when(this.emailAddressRepository.saveAndFlush(any())).thenReturn(emailAddress);
-        EmailAddressDTO result = this.emailAddressService.saveOrUpdateEmailAddress(emailAddressDTO);
+        EmailAddressDto result = this.emailAddressService.saveOrUpdateEmailAddress(emailAddressDTO);
         assertThat(result, is(emailAddressDTO));
 
         // Test wenn eine Email-Adresse zur ParticipantId existiert

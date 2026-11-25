@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.email.EmailAddressService;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +40,7 @@ public class EmailAddressController {
      */
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.PUT }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EmailAddressDTO> saveEmailAddress(@RequestBody @NotNull final EmailAddressDTO emailAddress) {
+    public ResponseEntity<EmailAddressDto> saveEmailAddress(@RequestBody @NotNull final EmailAddressDto emailAddress) {
         log.debug("Email-Adresse erneuern: {}", emailAddress.getEmailAddress());
         try {
             return ResponseEntity.ok(this.emailService.saveOrUpdateEmailAddress(emailAddress));
@@ -58,7 +58,7 @@ public class EmailAddressController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/emailAddresses", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<EmailAddressDTO>> getEmailAddresses() {
+    public ResponseEntity<List<EmailAddressDto>> getEmailAddresses() {
         log.debug("Lade die Email-Adresseen");
         try {
             return ResponseEntity.ok(this.emailService.loadEmailAddresses());

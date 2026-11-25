@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.email;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.EmailAddressDTO;
+import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.MessstelleStatus;
@@ -59,9 +59,9 @@ class EmailSendServiceTest {
 
         final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
 
-        final var emailAdress1 = new EmailAddressDTO();
+        final var emailAdress1 = new EmailAddressDto();
         emailAdress1.setEmailAddress("mail1@xxx.yy");
-        final var emailAdress2 = new EmailAddressDTO();
+        final var emailAdress2 = new EmailAddressDto();
         emailAdress2.setEmailAddress("mail2@xxx.yy");
 
         Mockito.when(emailAddressService.loadEmailAddresses()).thenReturn(List.of(emailAdress1, emailAdress2));
@@ -142,9 +142,9 @@ class EmailSendServiceTest {
     void sendMailForMessstelleChangeMessageForNewMessstelle() {
         final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
 
-        final var emailAdress1 = new EmailAddressDTO();
+        final var emailAdress1 = new EmailAddressDto();
         emailAdress1.setEmailAddress("mail1@xxx.yy");
-        final var emailAdress2 = new EmailAddressDTO();
+        final var emailAdress2 = new EmailAddressDto();
         emailAdress2.setEmailAddress("mail2@xxx.yy");
 
         Mockito.when(emailAddressService.loadEmailAddresses()).thenReturn(List.of(emailAdress1, emailAdress2));
@@ -172,9 +172,9 @@ class EmailSendServiceTest {
     void sendMailForMessstelleChangeMessageForExistingMessstelle() {
         final var emailSendServiceSpy = Mockito.spy(this.emailSendService);
 
-        final var emailAdress1 = new EmailAddressDTO();
+        final var emailAdress1 = new EmailAddressDto();
         emailAdress1.setEmailAddress("mail1@xxx.yy");
-        final var emailAdress2 = new EmailAddressDTO();
+        final var emailAdress2 = new EmailAddressDto();
         emailAdress2.setEmailAddress("mail2@xxx.yy");
 
         Mockito.when(emailAddressService.loadEmailAddresses()).thenReturn(List.of(emailAdress1, emailAdress2));
