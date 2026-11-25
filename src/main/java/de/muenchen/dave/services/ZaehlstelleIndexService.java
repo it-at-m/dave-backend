@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.configuration.CachingConfiguration;
-import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
@@ -421,9 +421,9 @@ public class ZaehlstelleIndexService {
     }
 
     @Cacheable(value = CachingConfiguration.READ_ZAEHLSTELLE_DTO, key = "{#p0, #p1}")
-    public LeseZaehlstelleDTO readZaehlstelleDTO(final String zaehlstelleId, final boolean isFachadmin) throws DataNotFoundException {
+    public LeseZaehlstelleDto readZaehlstelleDTO(final String zaehlstelleId, final boolean isFachadmin) throws DataNotFoundException {
         log.debug("Zugriff auf #readZaehlstelleDTO");
-        final LeseZaehlstelleDTO leseZaehlstelleDTO = this.zaehlstelleMapper.bean2LeseZaehlstelleDto(this.getZaehlstelle(zaehlstelleId));
+        final LeseZaehlstelleDto leseZaehlstelleDTO = this.zaehlstelleMapper.bean2LeseZaehlstelleDto(this.getZaehlstelle(zaehlstelleId));
         // Alle Zaehlung mit einem Status != ACTIVE werden ausgefilter (wenn kein Fachadmin angemeldet ist)
         leseZaehlstelleDTO.setZaehlungen(
                 leseZaehlstelleDTO.getZaehlungen().stream()

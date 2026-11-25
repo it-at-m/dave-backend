@@ -10,7 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import com.google.common.base.Splitter;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
-import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlstelleSuggestDTO;
@@ -91,7 +91,7 @@ public class ZaehlstelleMapperTests {
     @Test
     public void testBean2LeseZaehlstelleDto() {
         Zaehlstelle bean = ZaehlstelleRandomFactory.getOne();
-        LeseZaehlstelleDTO dto = this.mapper.bean2LeseZaehlstelleDto(bean);
+        LeseZaehlstelleDto dto = this.mapper.bean2LeseZaehlstelleDto(bean);
 
         // Check Zählstelle
         assertThat(dto.getId(), is(equalTo(bean.getId())));

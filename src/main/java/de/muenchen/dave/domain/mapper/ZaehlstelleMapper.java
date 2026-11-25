@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
@@ -65,12 +65,12 @@ public interface ZaehlstelleMapper {
         dto.setText(bean.getNummer() + StringUtils.SPACE + bean.getStadtbezirk());
     }
 
-    LeseZaehlstelleDTO bean2LeseZaehlstelleDto(Zaehlstelle bean);
+    LeseZaehlstelleDto bean2LeseZaehlstelleDto(Zaehlstelle bean);
 
     LadeZaehlstelleWithUnreadMessageDTO bean2LadeZaehlstelleWithUnreadMessageDTO(Zaehlstelle bean);
 
     @AfterMapping
-    default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDTO dto, Zaehlstelle bean) {
+    default void toLeseZaehlstelleDto(@MappingTarget LeseZaehlstelleDto dto, Zaehlstelle bean) {
         dto.setLat(bean.getPunkt().getLat());
         dto.setLng(bean.getPunkt().getLon());
     }

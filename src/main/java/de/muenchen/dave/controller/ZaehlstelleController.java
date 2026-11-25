@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.LeseZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
@@ -46,9 +46,9 @@ public class ZaehlstelleController {
 
     @GetMapping(value = "/byId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<LeseZaehlstelleDTO> getZaehlstelleHeader(@RequestParam(value = REQUEST_PARAMETER_ID) final String zaehlstelleId) {
+    public ResponseEntity<LeseZaehlstelleDto> getZaehlstelleHeader(@RequestParam(value = REQUEST_PARAMETER_ID) final String zaehlstelleId) {
         try {
-            final LeseZaehlstelleDTO dto = this.indexService.readZaehlstelleDTO(
+            final LeseZaehlstelleDto dto = this.indexService.readZaehlstelleDTO(
                     zaehlstelleId,
                     securityContextInformationExtractorService.isFachadmin());
             return ResponseEntity.ok(dto);

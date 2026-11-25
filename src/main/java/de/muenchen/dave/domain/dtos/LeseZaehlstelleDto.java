@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class LeseZaehlstelleDTO implements Serializable {
+public class LeseZaehlstelleDto implements Serializable {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
