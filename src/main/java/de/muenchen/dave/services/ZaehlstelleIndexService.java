@@ -3,7 +3,7 @@ package de.muenchen.dave.services;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
@@ -557,8 +557,8 @@ public class ZaehlstelleIndexService {
      * @return Liste mit allen relevanten Zählungen
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public List<OpenZaehlungDTO> getOpenZaehlungen() throws BrokenInfrastructureException {
-        final List<OpenZaehlungDTO> zaehlungen = new ArrayList<>();
+    public List<OpenZaehlungDto> getOpenZaehlungen() throws BrokenInfrastructureException {
+        final List<OpenZaehlungDto> zaehlungen = new ArrayList<>();
         final PageRequest pageable = PageRequest.of(0, 10000);
         try {
             final String[] status = {
@@ -592,7 +592,7 @@ public class ZaehlstelleIndexService {
             allByStatus.forEach(zaehlstelle -> {
                 zaehlstelle.getZaehlungen().forEach(zaehlung -> {
                     if (statusAsList.contains(zaehlung.getStatus())) {
-                        final OpenZaehlungDTO openZaehlungDTO = this.zaehlungMapper.bean2OpenZaehlungDto(zaehlung);
+                        final OpenZaehlungDto openZaehlungDTO = this.zaehlungMapper.bean2OpenZaehlungDto(zaehlung);
                         if (StringUtils.isNotEmpty(zaehlstelle.getNummer())) {
                             openZaehlungDTO.setZaehlstellenNummer(zaehlstelle.getNummer());
                         }

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
@@ -91,7 +91,7 @@ public class ZaehlstelleIndexServiceSpringTest {
                 zaehlstelle3));
         when(zaehlstelleIndex.findAllByStatus(anyString(), any())).thenReturn(resultFindAllByStatus);
 
-        final List<OpenZaehlungDTO> openZaehlungen = this.service.getOpenZaehlungen();
+        final List<OpenZaehlungDto> openZaehlungen = this.service.getOpenZaehlungen();
 
         assertThat(openZaehlungen.size(), is(2));
 

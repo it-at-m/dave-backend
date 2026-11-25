@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.Hochrechnung;
 import de.muenchen.dave.domain.PkwEinheit;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.DienstleisterDto;
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
@@ -339,7 +339,7 @@ public class InternalZaehlungPersistierungsService extends ZaehlungPersistierung
         this.indexService.updateStatusOfInstrucedZaehlungen();
     }
 
-    public List<OpenZaehlungDTO> loadAllOpenZaehlungen() throws BrokenInfrastructureException {
+    public List<OpenZaehlungDto> loadAllOpenZaehlungen() throws BrokenInfrastructureException {
         return this.indexService.getOpenZaehlungen();
     }
 

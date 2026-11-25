@@ -1,7 +1,7 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.DienstleisterDto;
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
@@ -51,10 +51,10 @@ public class ZaehlungController {
 
     @GetMapping(value = "/loadAllOpenZaehlungen", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<List<OpenZaehlungDTO>> loadAllOpenZaehlungen() {
+    public ResponseEntity<List<OpenZaehlungDto>> loadAllOpenZaehlungen() {
         log.debug("Lade alle offenen Zählungen");
         try {
-            final List<OpenZaehlungDTO> openZaehlungDTOS = this.internalZaehlungPersistierungsService.loadAllOpenZaehlungen();
+            final List<OpenZaehlungDto> openZaehlungDTOS = this.internalZaehlungPersistierungsService.loadAllOpenZaehlungen();
             log.debug("Alle offenene Zählungen wurden geladen");
             return ResponseEntity.ok(openZaehlungDTOS);
         } catch (final BrokenInfrastructureException bie) {

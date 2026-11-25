@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class OpenZaehlungDTO implements Serializable {
+public class OpenZaehlungDto implements Serializable {
 
     String id;
 

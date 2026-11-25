@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
+import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.OptionsLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDTO;
@@ -176,7 +176,7 @@ public interface ZaehlungMapper {
         dto.setText(bean.getDatum().format(DATE_TIME_FORMATTER) + StringUtils.SPACE + bean.getProjektName());
     }
 
-    OpenZaehlungDTO bean2OpenZaehlungDto(final Zaehlung bean);
+    OpenZaehlungDto bean2OpenZaehlungDto(final Zaehlung bean);
 
     List<OptionsVerkehrsbeziehungDTO> mapVerkehrsbeziehungen(final List<Verkehrsbeziehung> verkehrsbeziehungen);
 
