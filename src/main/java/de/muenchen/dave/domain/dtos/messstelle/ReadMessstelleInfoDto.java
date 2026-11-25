@@ -9,7 +9,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ReadMessstelleInfoDTO implements Serializable {
+public class ReadMessstelleInfoDto implements Serializable {
 
     @NotNull
     private String id;
@@ -40,9 +40,9 @@ public class ReadMessstelleInfoDTO implements Serializable {
     @NotNull
     private String kommentar;
     @NotNull
-    private List<ReadMessquerschnittDTO> messquerschnitte;
+    private List<ReadMessquerschnittDto> messquerschnitte;
     @NotNull
-    private List<ReadMessfaehigkeitDTO> messfaehigkeiten;
+    private List<ReadMessfaehigkeitDto> messfaehigkeiten;
     @NotNull
     private Boolean lageplanVorhanden;
 }

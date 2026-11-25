@@ -4,10 +4,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Verkehrsart;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
@@ -72,13 +72,13 @@ class GenerateCsvMstServiceTest {
         return table;
     }
 
-    private static MessstelleOptionsDTO getOptionsDTO() {
-        MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
+    private static MessstelleOptionsDto getOptionsDTO() {
+        MessstelleOptionsDto optionsDTO = new MessstelleOptionsDto();
         optionsDTO.setZeitraum(List.of(LocalDate.of(2024, 3, 22)));
         optionsDTO.setIntervall(ZaehldatenIntervall.STUNDE_VIERTEL);
         optionsDTO.setZeitblock(Zeitblock.ZB_00_06);
         optionsDTO.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
-        final FahrzeugOptionsDTO fahrzeugOptionsDTO = new FahrzeugOptionsDTO();
+        final FahrzeugOptionsDto fahrzeugOptionsDTO = new FahrzeugOptionsDto();
         fahrzeugOptionsDTO.setKraftfahrzeugverkehr(true);
         fahrzeugOptionsDTO.setSchwerverkehr(true);
         fahrzeugOptionsDTO.setGueterverkehr(true);
@@ -129,15 +129,15 @@ class GenerateCsvMstServiceTest {
 
     @Test
     void getMetaData() {
-        final ReadMessstelleInfoDTO messstelleInfoDTO = new ReadMessstelleInfoDTO();
+        final ReadMessstelleInfoDto messstelleInfoDTO = new ReadMessstelleInfoDto();
         messstelleInfoDTO.setMstId("123");
         messstelleInfoDTO.setDetektierteVerkehrsart(Verkehrsart.KFZ);
-        ReadMessquerschnittDTO mq = new ReadMessquerschnittDTO();
+        ReadMessquerschnittDto mq = new ReadMessquerschnittDto();
         mq.setMqId("0");
 
         messstelleInfoDTO.setMessquerschnitte(List.of(mq));
 
-        MessstelleOptionsDTO optionsDTO = GenerateCsvMstServiceTest.getOptionsDTO();
+        MessstelleOptionsDto optionsDTO = GenerateCsvMstServiceTest.getOptionsDTO();
         final String header = csvService.getMetaData(messstelleInfoDTO, csvService.getHeader(optionsDTO.getFahrzeuge()), optionsDTO,
                 optionsDTO.getZeitraum().size() == 1);
         final List<String> expectedData = new ArrayList<>();

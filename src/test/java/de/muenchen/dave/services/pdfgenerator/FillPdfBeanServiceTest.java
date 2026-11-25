@@ -11,8 +11,8 @@ import de.muenchen.dave.domain.dtos.OptionsVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.*;
@@ -296,7 +296,7 @@ class FillPdfBeanServiceTest {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final String department = "TestOU";
         final String tagesTyp = TagesTyp.SAMSTAG.name();
-        final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto optionsDTO = new MessstelleOptionsDto();
         optionsDTO.setZeitraum(List.of(LocalDate.now()));
 
         FillPdfBeanService.fillBasicPdf(basicPdf, messstelle, department, optionsDTO, tagesTyp);
@@ -311,7 +311,7 @@ class FillPdfBeanServiceTest {
         MessstelleninformationenPdfComponent informationen = new MessstelleninformationenPdfComponent();
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
         final String tagesTyp = TagesTyp.SAMSTAG.name();
-        final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto optionsDTO = new MessstelleOptionsDto();
         final ArrayList<LocalDate> localDates = new ArrayList<>();
         localDates.add(LocalDate.now().minusDays(1));
         localDates.add(LocalDate.now());
@@ -343,7 +343,7 @@ class FillPdfBeanServiceTest {
     @Test
     void createChartTitle() {
         final Messstelle messstelle = MessstelleRandomFactory.getMessstelle();
-        final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto optionsDTO = new MessstelleOptionsDto();
         final Set<String> mqIds = new HashSet<>();
         messstelle.getMessquerschnitte().forEach(messquerschnitt -> mqIds.add(messquerschnitt.getMqId()));
         optionsDTO.setMessquerschnittIds(mqIds);
@@ -367,7 +367,7 @@ class FillPdfBeanServiceTest {
 
     @Test
     void getTimeblockForChartTitle_Messstelle() {
-        final MessstelleOptionsDTO optionsDTO = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto optionsDTO = new MessstelleOptionsDto();
         optionsDTO.setZeitblock(Zeitblock.ZB_00_06);
         assertThat(FillPdfBeanService.getTimeblockForChartTitle(optionsDTO), is("0 - 6 Uhr"));
         optionsDTO.setZeitblock(Zeitblock.ZB_10_15);
@@ -385,7 +385,7 @@ class FillPdfBeanServiceTest {
         final MessstelleAuswertungOptionsDto optionsDTO = new MessstelleAuswertungOptionsDto();
         optionsDTO.setJahre(List.of(2006, 2007, 2008));
         optionsDTO.setTagesTyp(TagesTyp.SAMSTAG);
-        optionsDTO.setFahrzeuge(new FahrzeugOptionsDTO());
+        optionsDTO.setFahrzeuge(new FahrzeugOptionsDto());
         optionsDTO.setZeitraum(List.of(AuswertungsZeitraum.JANUAR, AuswertungsZeitraum.FEBRUAR, AuswertungsZeitraum.MAERZ));
         boolean isSingleMessstelle = false;
 
@@ -605,7 +605,7 @@ class FillPdfBeanServiceTest {
     @Test
     void getSelectedFahrzeugeAsText() {
         final String expected = "Lkw, Lz, Krad";
-        final FahrzeugOptionsDTO fahrzeugOptionsDTO = new FahrzeugOptionsDTO();
+        final FahrzeugOptionsDto fahrzeugOptionsDTO = new FahrzeugOptionsDto();
         fahrzeugOptionsDTO.setLastkraftwagen(true);
         fahrzeugOptionsDTO.setLastzuege(true);
         fahrzeugOptionsDTO.setKraftraeder(true);

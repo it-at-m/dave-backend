@@ -9,9 +9,9 @@ import static org.mockito.Mockito.doReturn;
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Verkehrsart;
@@ -107,7 +107,7 @@ class BelastungsplanServiceTest {
 
         doReturn(getMessstelle()).when(messstelleService).readMessstelleInfo(anyString());
         //result
-        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto options = new MessstelleOptionsDto();
         options.setMessquerschnittIds(Set.of("1", "2"));
         options.setRounding(Rounding.NONE);
         final IntervalDto interval = new IntervalDto();
@@ -205,7 +205,7 @@ class BelastungsplanServiceTest {
                 any()))
                 .thenReturn(spitzenStunde);
         //result
-        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto options = new MessstelleOptionsDto();
         options.setMessquerschnittIds(Set.of("1"));
         options.setZeitauswahl(Zeitauswahl.SPITZENSTUNDE_KFZ.getCapitalizedName());
         options.setRounding(Rounding.NONE);
@@ -235,7 +235,7 @@ class BelastungsplanServiceTest {
 
     @Test
     void roundNumberIfNeeded() {
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
 
         options.setRounding(Rounding.R100);
         var result = belastungsplanService.roundNumberIfNeeded(null, options);
@@ -294,8 +294,8 @@ class BelastungsplanServiceTest {
         Assertions.assertThat(result).isNotNull().isEqualTo(101);
     }
 
-    ReadMessstelleInfoDTO getMessstelle() {
-        ReadMessstelleInfoDTO readMessstelleInfoDTO = new ReadMessstelleInfoDTO();
+    ReadMessstelleInfoDto getMessstelle() {
+        ReadMessstelleInfoDto readMessstelleInfoDTO = new ReadMessstelleInfoDto();
         readMessstelleInfoDTO.setId("123");
         readMessstelleInfoDTO.setMstId("13");
         readMessstelleInfoDTO.setStandort("Hauptstraße 1");
@@ -311,7 +311,7 @@ class BelastungsplanServiceTest {
         readMessstelleInfoDTO.setAbbaudatum(LocalDate.of(2023, 12, 31));
         readMessstelleInfoDTO.setKommentar("Messstelle an belebter Hauptstraße");
 
-        ReadMessquerschnittDTO readMessquerschnittDTO1 = new ReadMessquerschnittDTO();
+        ReadMessquerschnittDto readMessquerschnittDTO1 = new ReadMessquerschnittDto();
         readMessquerschnittDTO1.setId("1001");
         readMessquerschnittDTO1.setMqId("1");
         readMessquerschnittDTO1.setLongitude(9.1234);
@@ -323,7 +323,7 @@ class BelastungsplanServiceTest {
         readMessquerschnittDTO1.setAnzahlDetektoren(6);
         readMessquerschnittDTO1.setStandort("Autobahnauffahrt");
 
-        ReadMessquerschnittDTO readMessquerschnittDTO2 = new ReadMessquerschnittDTO();
+        ReadMessquerschnittDto readMessquerschnittDTO2 = new ReadMessquerschnittDto();
         readMessquerschnittDTO2.setId("112312");
         readMessquerschnittDTO2.setMqId("2");
         readMessquerschnittDTO2.setLongitude(10.5678);
@@ -335,7 +335,7 @@ class BelastungsplanServiceTest {
         readMessquerschnittDTO2.setAnzahlDetektoren(4);
         readMessquerschnittDTO2.setStandort("Kreuzung");
 
-        List<ReadMessquerschnittDTO> listMessquerschnitte = new ArrayList<>();
+        List<ReadMessquerschnittDto> listMessquerschnitte = new ArrayList<>();
         listMessquerschnitte.add(readMessquerschnittDTO1);
         listMessquerschnitte.add(readMessquerschnittDTO2);
         readMessstelleInfoDTO.setMessquerschnitte(listMessquerschnitte);
@@ -345,7 +345,7 @@ class BelastungsplanServiceTest {
 
     @Test
     void isDirectionNorthOrSouth() {
-        ReadMessstelleInfoDTO messstelle = getMessstelle();
+        ReadMessstelleInfoDto messstelle = getMessstelle();
         messstelle.getMessquerschnitte().getFirst().setFahrtrichtung("O");
         messstelle.getMessquerschnitte().getLast().setFahrtrichtung("W");
         Assertions.assertThat(belastungsplanService.isDirectionNorthOrSouth(messstelle)).isFalse();

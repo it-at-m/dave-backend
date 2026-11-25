@@ -2,7 +2,7 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
@@ -37,7 +37,7 @@ public class ListenausgabeService {
     public LadeMesswerteListenausgabeDto ladeListenausgabe(
             final List<IntervalDto> intervals,
             final boolean isKfzMessstelle,
-            final MessstelleOptionsDTO options) {
+            final MessstelleOptionsDto options) {
         log.debug("#ladeListenausgabe");
         final var ladeMesswerteListenausgabe = new LadeMesswerteListenausgabeDto();
         ladeMesswerteListenausgabe.getZaehldaten().addAll(ladeMesswerteMapper.interval2LadeMesswerte(intervals, options.getIntervall()));
@@ -223,7 +223,7 @@ public class ListenausgabeService {
 
     protected LadeMesswerteDto calculateTagessumme(
             final List<IntervalDto> intervals,
-            final MessstelleOptionsDTO options) {
+            final MessstelleOptionsDto options) {
         final LadeMesswerteDto ladeMesswerteDTO = MesswerteBaseUtil.calculateSum(intervals);
         ladeMesswerteDTO.setEndeUhrzeit(options.getZeitblock().getEnd().toLocalTime());
         ladeMesswerteDTO.setStartUhrzeit(options.getZeitblock().getStart().toLocalTime());

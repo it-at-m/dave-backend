@@ -11,7 +11,7 @@ import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDto;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDto;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDto;
 import de.muenchen.dave.domain.dtos.suche.SucheMessstelleSuggestDto;
@@ -282,7 +282,7 @@ public class SucheService {
         log.debug("Zugriff auf den Service #sucheErhebungsstelle");
         final Set<ErhebungsstelleKarteDto> searchResult = new HashSet<>();
         if (searchAndFilterOptions.isSearchInMessstellen()) {
-            final Set<MessstelleKarteDTO> messstellen = sucheMessstellenForKarte(query, searchAndFilterOptions);
+            final Set<MessstelleKarteDto> messstellen = sucheMessstellenForKarte(query, searchAndFilterOptions);
             searchResult.addAll(messstellen);
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
@@ -353,7 +353,7 @@ public class SucheService {
      * @param searchAndFilterOptions Filteroptionen für die Verkehrsart
      * @return Karten-DTOs der passenden Messstellen
      */
-    private Set<MessstelleKarteDTO> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDto searchAndFilterOptions) {
+    private Set<MessstelleKarteDto> sucheMessstellenForKarte(final String query, final SearchAndFilterOptionsDto searchAndFilterOptions) {
         final List<Messstelle> messstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {

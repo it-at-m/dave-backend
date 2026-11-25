@@ -3,11 +3,11 @@ package de.muenchen.dave.domain.mapper;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.EditMessquerschnittDto;
+import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessquerschnittAuswertungDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
 import de.muenchen.dave.domain.elasticsearch.MessquerschnittRandomFactory;
@@ -38,7 +38,7 @@ class MessstelleMapperTests {
     void testBean2readDto() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
-        final ReadMessstelleInfoDTO expected = new ReadMessstelleInfoDTO();
+        final ReadMessstelleInfoDto expected = new ReadMessstelleInfoDto();
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setStadtbezirkNummer(bean.getStadtbezirkNummer());
@@ -57,7 +57,7 @@ class MessstelleMapperTests {
         expected.setKommentar(bean.getKommentar());
         expected.setLageplanVorhanden(bean.getLageplanVorhanden());
 
-        final MessstelleTooltipDTO tooltip = new MessstelleTooltipDTO();
+        final MessstelleTooltipDto tooltip = new MessstelleTooltipDto();
         tooltip.setMstId(bean.getMstId());
         tooltip.setStandort(bean.getStandort());
         tooltip.setStadtbezirk("Schwabing-West");
@@ -80,7 +80,7 @@ class MessstelleMapperTests {
     void testBean2editDto() {
         final Messstelle bean = MessstelleRandomFactory.getMessstelle();
 
-        final EditMessstelleDTO expected = new EditMessstelleDTO();
+        final EditMessstelleDto expected = new EditMessstelleDto();
         expected.setId(bean.getId());
         expected.setMstId(bean.getMstId());
         expected.setName(bean.getName());
@@ -121,7 +121,7 @@ class MessstelleMapperTests {
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-Neuhausen");
 
-        final EditMessstelleDTO updatedData = new EditMessstelleDTO();
+        final EditMessstelleDto updatedData = new EditMessstelleDto();
         updatedData.setId("darf nicht aktualisiert werden");
         updatedData.setMstId("darf nicht aktualisiert werden");
         updatedData.setName("darf nicht aktualisiert werden");
@@ -188,7 +188,7 @@ class MessstelleMapperTests {
     void teatBean2readDtoQuerschnitt() {
         final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
 
-        final ReadMessquerschnittDTO expected = new ReadMessquerschnittDTO();
+        final ReadMessquerschnittDto expected = new ReadMessquerschnittDto();
         expected.setId(bean.getId());
         expected.setMqId(bean.getMqId());
         expected.setLongitude(bean.getPunkt().getLon());
@@ -210,7 +210,7 @@ class MessstelleMapperTests {
     void testBean2editDtoQuerschnitt() {
         final Messquerschnitt bean = MessquerschnittRandomFactory.getMessquerschnitt();
 
-        final EditMessquerschnittDTO expected = new EditMessquerschnittDTO();
+        final EditMessquerschnittDto expected = new EditMessquerschnittDto();
         expected.setId(bean.getId());
         expected.setMqId(bean.getMqId());
         expected.setLongitude(bean.getPunkt().getLon());

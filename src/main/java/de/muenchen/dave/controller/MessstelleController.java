@@ -1,9 +1,9 @@
 package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.messstelle.MessstelleService;
 import jakarta.validation.constraints.NotNull;
@@ -39,11 +39,11 @@ public class MessstelleController {
     )
     @GetMapping(value = "/info/byId", params = REQUEST_PARAMETER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoById(
+    public ResponseEntity<ReadMessstelleInfoDto> readMessstelleInfoById(
             @RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
         log.debug("#readMessstelleInfoById with id {}", messstelleId);
         try {
-            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
+            final ReadMessstelleInfoDto readMessstelleDTO = this.messstelleService.readMessstelleInfo(messstelleId);
             return ResponseEntity.ok(readMessstelleDTO);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
@@ -60,11 +60,11 @@ public class MessstelleController {
     )
     @GetMapping(value = "/info/ByMstId", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoByMstId(
+    public ResponseEntity<ReadMessstelleInfoDto> readMessstelleInfoByMstId(
             @RequestParam(value = REQUEST_PARAMETER_MSTID) final String mstId) {
         log.debug("#readMessstelleInfoByMstId with id {}", mstId);
         try {
-            final ReadMessstelleInfoDTO readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
+            final ReadMessstelleInfoDto readMessstelleDTO = this.messstelleService.readMessstelleInfoByMstId(mstId);
             return ResponseEntity.ok(readMessstelleDTO);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", mstId, e);
@@ -84,7 +84,7 @@ public class MessstelleController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @PatchMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<BackendIdDto> updateMessstelle(@RequestBody @NotNull final EditMessstelleDTO messstelle) {
+    public ResponseEntity<BackendIdDto> updateMessstelle(@RequestBody @NotNull final EditMessstelleDto messstelle) {
         log.debug("Messstelle speichern: {}", messstelle);
         final BackendIdDto backendIdDTO = this.messstelleService.updateMessstelle(messstelle);
         return ResponseEntity.ok(backendIdDTO);
@@ -93,10 +93,10 @@ public class MessstelleController {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/edit", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<EditMessstelleDTO> getBearbeiteMessstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
+    public ResponseEntity<EditMessstelleDto> getBearbeiteMessstelle(@RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
         log.debug("#getBearbeiteMessstelle with id {}", messstelleId);
         try {
-            final EditMessstelleDTO dto = this.messstelleService.getMessstelleToEdit(messstelleId);
+            final EditMessstelleDto dto = this.messstelleService.getMessstelleToEdit(messstelleId);
             return ResponseEntity.ok(dto);
         } catch (final ResourceNotFoundException e) {
             log.error("Fehler im MessstelleController, Messstelle konnte nicht gefunden werden. ID: {}", messstelleId, e);
@@ -110,7 +110,7 @@ public class MessstelleController {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/loadAllMessstellenForOverview", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<MessstelleOverviewDTO>> getAllMessstellenForOverview() {
+    public ResponseEntity<List<MessstelleOverviewDto>> getAllMessstellenForOverview() {
         log.debug("#getAllMessstellenForOverview");
         try {
             return ResponseEntity.ok(this.messstelleService.getAllMessstellenForOverview());

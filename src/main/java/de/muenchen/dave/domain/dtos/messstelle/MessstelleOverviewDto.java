@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class MessstelleOverviewDTO implements Serializable {
+public class MessstelleOverviewDto implements Serializable {
     private String id;
     @NotNull
     private String mstId;

@@ -16,14 +16,14 @@ import lombok.Data;
 
 @Data
 @TagestypValid
-public class MessstelleOptionsDTO implements Serializable {
+public class MessstelleOptionsDto implements Serializable {
 
     @NotEmpty
     @Size(min = 2, max = 2)
     private List<@NotNull LocalDate> zeitraum;
 
     @NotNull
-    private FahrzeugOptionsDTO fahrzeuge;
+    private FahrzeugOptionsDto fahrzeuge;
 
     @NotEmpty
     private String zeitauswahl;

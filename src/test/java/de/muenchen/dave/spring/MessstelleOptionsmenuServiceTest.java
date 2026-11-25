@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.Kalendertag;
 import de.muenchen.dave.domain.UnauffaelligerTag;
-import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDto;
 import de.muenchen.dave.services.KalendertagService;
 import de.muenchen.dave.services.messstelle.MessstelleOptionsmenuService;
 import de.muenchen.dave.services.messstelle.UnauffaelligeTageService;
@@ -63,7 +63,7 @@ class MessstelleOptionsmenuServiceTest {
         when(kalendertagService.getAllKalendertageWhereDatumNotInExcludedDatesAndDatumIsBeforeLatestDate(any(), any()))
                 .thenReturn(kalendertage);
 
-        final AuffaelligeTageDTO expected = new AuffaelligeTageDTO();
+        final AuffaelligeTageDto expected = new AuffaelligeTageDto();
         expected.setAuffaelligeTage(dates);
 
         assertThat(messstelleOptionsmenuService.getAuffaelligeTageForMessstelle("4000"), is(expected));

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReadMessfaehigkeitDTO implements Serializable {
+public class ReadMessfaehigkeitDto implements Serializable {
 
     @NotNull
     private String gueltigBis;

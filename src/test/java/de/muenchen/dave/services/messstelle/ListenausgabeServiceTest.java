@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.enums.Zeitblock;
 import de.muenchen.dave.domain.mapper.LadeMesswerteMapperImpl;
@@ -134,7 +134,7 @@ class ListenausgabeServiceTest {
         interval6.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(0));
 
         final var intervals = List.of(interval0, interval1, interval2, interval3, interval4, interval5, interval6);
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Spitzenstunde KFZ");
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         final var result = listenausgabeService.ladeListenausgabe(intervals, true, options);
@@ -193,7 +193,7 @@ class ListenausgabeServiceTest {
         interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(13));
 
         final var intervals = List.of(interval2, interval3);
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Stunde");
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         options.setStundensumme(true);
@@ -254,7 +254,7 @@ class ListenausgabeServiceTest {
         interval3.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(13));
 
         final var intervals = List.of(interval2, interval3);
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Stunde");
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         options.setStundensumme(false);
@@ -281,7 +281,7 @@ class ListenausgabeServiceTest {
         interval2.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(12));
 
         final var intervals = List.of(interval2);
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Stunde");
         options.setIntervall(ZaehldatenIntervall.STUNDE_KOMPLETT);
         options.setStundensumme(true);
@@ -1015,7 +1015,7 @@ class ListenausgabeServiceTest {
         interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
         intervals.add(interval);
 
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Tageswert");
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         options.setStundensumme(true);
@@ -1166,7 +1166,7 @@ class ListenausgabeServiceTest {
         interval.setSummeKraftfahrzeugverkehr(BigDecimal.valueOf(9));
         intervals.add(interval);
 
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitauswahl("Block");
         options.setIntervall(ZaehldatenIntervall.STUNDE_HALB);
         options.setStundensumme(true);
@@ -1431,7 +1431,7 @@ class ListenausgabeServiceTest {
         interval2.setProzentSchwerverkehr(BigDecimal.valueOf(1.1D));
         interval2.setProzentGueterverkehr(BigDecimal.valueOf(2.2D));
 
-        final var options = new MessstelleOptionsDTO();
+        final var options = new MessstelleOptionsDto();
         options.setZeitblock(Zeitblock.ZB_00_24);
 
         final var result = listenausgabeService.calculateTagessumme(List.of(interval1, interval2), options);

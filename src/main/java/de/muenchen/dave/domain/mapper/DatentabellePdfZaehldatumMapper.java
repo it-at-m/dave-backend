@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
 import java.util.List;
@@ -77,6 +77,6 @@ public interface DatentabellePdfZaehldatumMapper {
     @Mapping(target = "showGueterverkehr", source = "gueterverkehr")
     @Mapping(target = "showSchwerverkehrsanteilProzent", source = "schwerverkehrsanteilProzent")
     @Mapping(target = "showGueterverkehrsanteilProzent", source = "gueterverkehrsanteilProzent")
-    DatentabellePdfZaehldaten fahrzeugOptionsToDatentabellePdfZaehldaten(final FahrzeugOptionsDTO options);
+    DatentabellePdfZaehldaten fahrzeugOptionsToDatentabellePdfZaehldaten(final FahrzeugOptionsDto options);
 
 }

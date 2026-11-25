@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ValidateZeitraumAndTagestypForMessstelleDTO {
+public class ValidateZeitraumAndTagestypForMessstelleDto {
     @NotEmpty
     private List<@NotNull LocalDate> zeitraum;
     @NotEmpty

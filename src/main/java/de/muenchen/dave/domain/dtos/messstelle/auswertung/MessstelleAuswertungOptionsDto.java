@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.dtos.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +21,6 @@ public class MessstelleAuswertungOptionsDto implements Serializable {
     @NotNull
     private Set<MessstelleAuswertungIdDto> messstelleAuswertungIds;
     @NotNull
-    private FahrzeugOptionsDTO fahrzeuge;
+    private FahrzeugOptionsDto fahrzeuge;
 
 }

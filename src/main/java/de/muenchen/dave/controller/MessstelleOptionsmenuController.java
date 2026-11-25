@@ -1,8 +1,8 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDTO;
+import de.muenchen.dave.domain.dtos.messstelle.AuffaelligeTageDto;
+import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDto;
+import de.muenchen.dave.domain.dtos.messstelle.ValidatedZeitraumAndTagestypDto;
 import de.muenchen.dave.services.messstelle.MessstelleOptionsmenuService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -31,15 +31,15 @@ public class MessstelleOptionsmenuController {
     private final MessstelleOptionsmenuService messstelleOptionsmenuService;
 
     @GetMapping("/auffaellige-tage")
-    public ResponseEntity<AuffaelligeTageDTO> getAuffaelligeTage(
+    public ResponseEntity<AuffaelligeTageDto> getAuffaelligeTage(
             @RequestParam(value = REQUEST_PARAM_MESSSTELLE_ID) @NotNull final String mstId) {
         log.debug("#getAuffaelligeTage for MessstelleId {}", mstId);
         return ResponseEntity.ok(messstelleOptionsmenuService.getAuffaelligeTageForMessstelle(mstId));
     }
 
     @PostMapping("/validate-zeitraum-and-tagestyp")
-    public ResponseEntity<ValidatedZeitraumAndTagestypDTO> validateZeitraumAndTagestyp(
-            @Valid @RequestBody @NotNull final ValidateZeitraumAndTagestypForMessstelleDTO request) {
+    public ResponseEntity<ValidatedZeitraumAndTagestypDto> validateZeitraumAndTagestyp(
+            @Valid @RequestBody @NotNull final ValidateZeitraumAndTagestypForMessstelleDto request) {
         log.debug("#validateZeitraumAndTagestyp for MessstelleId {}", request.getMstId());
         return ResponseEntity.ok(messstelleOptionsmenuService.isZeitraumAndTagestypValid(request));
     }

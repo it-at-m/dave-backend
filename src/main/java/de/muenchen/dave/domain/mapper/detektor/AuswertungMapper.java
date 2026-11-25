@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper.detektor;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -50,5 +50,5 @@ public interface AuswertungMapper {
 
     IntervalDto tagesaggregat2Interval(final TagesaggregatDto tagesaggregat);
 
-    FahrzeugOptionsDTO deepCopyOf(final FahrzeugOptionsDTO fahrzeugOptions);
+    FahrzeugOptionsDto deepCopyOf(final FahrzeugOptionsDto fahrzeugOptions);
 }

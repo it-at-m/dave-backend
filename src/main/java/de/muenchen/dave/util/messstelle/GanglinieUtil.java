@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
 import java.math.BigDecimal;
@@ -190,7 +190,7 @@ public final class GanglinieUtil {
          * @return Liste mit den erwünschten {@link StepLineSeriesEntryIntegerDto} und
          *         {@link StepLineSeriesEntryBigDecimalDto}.
          */
-        public List<StepLineSeriesEntryBaseDto> getChosenStepLineSeriesEntries(final FahrzeugOptionsDTO options) {
+        public List<StepLineSeriesEntryBaseDto> getChosenStepLineSeriesEntries(final FahrzeugOptionsDto options) {
             final List<StepLineSeriesEntryBaseDto> allEntries = new ArrayList<>();
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryPkw, options.isPersonenkraftwagen());
             addSeriesToAllEntriesIfChosen(allEntries, seriesEntryLkw, options.isLastkraftwagen());

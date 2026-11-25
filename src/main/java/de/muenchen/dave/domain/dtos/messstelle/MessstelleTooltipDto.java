@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class MessstelleTooltipDTO implements ErhebungsstelleTooltipDto {
+public class MessstelleTooltipDto implements ErhebungsstelleTooltipDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;

@@ -3,9 +3,9 @@ package de.muenchen.dave.services.messstelle;
 import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.util.messstelle.FahrtrichtungUtil;
 import java.time.format.DateTimeFormatter;
@@ -42,11 +42,11 @@ public class GenerateCsvMstService {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDto generateDatentabelleCsv(final String messstelleId, MessstelleOptionsDTO options) throws DataNotFoundException {
+    public CsvDto generateDatentabelleCsv(final String messstelleId, MessstelleOptionsDto options) throws DataNotFoundException {
         final LadeMesswerteListenausgabeDto zaehldatenTable = messwerteService.ladeMesswerte(messstelleId, options).getZaehldatenTable();
         final List<LadeMesswerteDto> data = zaehldatenTable.getZaehldaten();
-        final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
-        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final ReadMessstelleInfoDto messstelle = messstelleService.readMessstelleInfo(messstelleId);
+        final FahrzeugOptionsDto fahrzeugOptions = options.getFahrzeuge();
 
         final boolean isSingleDay = !options.getZeitraum().isEmpty() && options.getZeitraum().getFirst().isEqual(options.getZeitraum().getLast());
 
@@ -105,7 +105,7 @@ public class GenerateCsvMstService {
      * @param options Zur Anzeige der Verkehrsbeziehung
      * @return Csv-Zeile
      */
-    public String getMetaData(final ReadMessstelleInfoDTO messstelle, final String header, final MessstelleOptionsDTO options, final boolean isSingleDay) {
+    public String getMetaData(final ReadMessstelleInfoDto messstelle, final String header, final MessstelleOptionsDto options, final boolean isSingleDay) {
         final int neededSemikolons = header.split(SEMIKOLON).length - 1;
         final StringBuilder metaData = new StringBuilder();
         metaData.append(messstelle.getMstId());
@@ -152,7 +152,7 @@ public class GenerateCsvMstService {
      * @param dataCsv eine Zeile in der Tabelle
      * @return CSV-Zeile
      */
-    public String getData(final FahrzeugOptionsDTO options, final LadeMesswerteDto dataCsv) {
+    public String getData(final FahrzeugOptionsDto options, final LadeMesswerteDto dataCsv) {
         final StringBuilder data = new StringBuilder();
         // Zeit
         if (ObjectUtils.isNotEmpty(dataCsv.getStartUhrzeit())) {
@@ -263,7 +263,7 @@ public class GenerateCsvMstService {
      * @param options aktuelle Einstellungen
      * @return Header als CSV-Zeile
      */
-    public String getHeader(final FahrzeugOptionsDTO options) {
+    public String getHeader(final FahrzeugOptionsDto options) {
         final StringBuilder header = new StringBuilder();
         // Zeit
         header.append("von");

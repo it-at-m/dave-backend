@@ -9,8 +9,8 @@ import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
@@ -165,7 +165,7 @@ public class FillPdfBeanService {
             final BasicMessstellePdf basicPdf,
             final Messstelle messstelle,
             final String department,
-            final MessstelleOptionsDTO optionsDTO,
+            final MessstelleOptionsDto optionsDTO,
             final String tagesTyp) {
         fillPdfBeanWithData(basicPdf, department);
         basicPdf.setMessstelleninformationen(fillMessstelleninformationen(basicPdf.getMessstelleninformationen(), messstelle, optionsDTO, tagesTyp));
@@ -218,7 +218,7 @@ public class FillPdfBeanService {
     protected static MessstelleninformationenPdfComponent fillMessstelleninformationen(
             final MessstelleninformationenPdfComponent messstelleninformationen,
             final Messstelle messstelle,
-            final MessstelleOptionsDTO optionsDTO,
+            final MessstelleOptionsDto optionsDTO,
             final String tagesTyp) {
         messstelleninformationen.setStandortNeeded(true);
         messstelleninformationen.setStandort(StringUtils.defaultIfEmpty(messstelle.getStandort(), StringUtils.EMPTY));
@@ -286,7 +286,7 @@ public class FillPdfBeanService {
      * @param options aktuelle Einstellungen
      * @return ausgewaehlte Verkehrsarten als String
      */
-    protected static String getSelectedFahrzeugeAsText(final FahrzeugOptionsDTO options) {
+    protected static String getSelectedFahrzeugeAsText(final FahrzeugOptionsDto options) {
         final List<String> selectedFahrzeuge = new ArrayList<>();
         // Fahrzeugtypen
         if (options.isPersonenkraftwagen()) {
@@ -420,7 +420,7 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    protected static List<DatatableTitle> createChartTitleAsList(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+    protected static List<DatatableTitle> createChartTitleAsList(final MessstelleOptionsDto options, final Messstelle messstelle) {
         final List<DatatableTitle> titles = new ArrayList<>();
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             titles.add(new DatatableTitle(CHART_TITLE_GESAMTE_MESSSTELLE, "no_margin_top", "negativ_margin_bottom"));
@@ -448,7 +448,7 @@ public class FillPdfBeanService {
         return titles;
     }
 
-    protected static String createChartTitle(final MessstelleOptionsDTO options, final Messstelle messstelle) {
+    protected static String createChartTitle(final MessstelleOptionsDto options, final Messstelle messstelle) {
         final StringBuilder chartTitle = new StringBuilder();
         if (options.getMessquerschnittIds().size() == messstelle.getMessquerschnitte().size()) {
             chartTitle.append(CHART_TITLE_GESAMTE_MESSSTELLE);
@@ -546,7 +546,7 @@ public class FillPdfBeanService {
         return getTimeblockForChartTitle(optionsDTO.getZeitblock());
     }
 
-    protected static String getTimeblockForChartTitle(final MessstelleOptionsDTO optionsDTO) {
+    protected static String getTimeblockForChartTitle(final MessstelleOptionsDto optionsDTO) {
         return getTimeblockForChartTitle(optionsDTO.getZeitblock());
     }
 
@@ -656,7 +656,7 @@ public class FillPdfBeanService {
         return chartTitle.toString();
     }
 
-    public String createChartTitleZeitauswahl(final MessstelleOptionsDTO optionsDTO, final List<LadeMesswerteDto> zaehldaten) {
+    public String createChartTitleZeitauswahl(final MessstelleOptionsDto optionsDTO, final List<LadeMesswerteDto> zaehldaten) {
         final StringBuilder chartTitle = new StringBuilder();
         if (Zeitauswahl.TAGESWERT.getCapitalizedName().equals(optionsDTO.getZeitauswahl())) {
             if (MesswerteBaseUtil.isDateRange(optionsDTO.getZeitraum())) {
@@ -743,7 +743,7 @@ public class FillPdfBeanService {
             final BelastungsplanMessstellePdf belastungsplanPdf,
             final String messstelleId,
             final LadeProcessedMesswerteDto messwerte,
-            final MessstelleOptionsDTO options,
+            final MessstelleOptionsDto options,
             final String chartAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
@@ -876,7 +876,7 @@ public class FillPdfBeanService {
             final GanglinieMessstellePdf gangliniePdf,
             final String messstelleId,
             final LadeProcessedMesswerteDto messwerte,
-            final MessstelleOptionsDTO options,
+            final MessstelleOptionsDto options,
             final String chartAsBase64Png,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
@@ -1181,7 +1181,7 @@ public class FillPdfBeanService {
             final DatentabelleMessstellePdf datentabellePdf,
             final String messstelleId,
             final LadeProcessedMesswerteDto messwerte,
-            final MessstelleOptionsDTO options,
+            final MessstelleOptionsDto options,
             final String schematischeUebersichtAsBase64Png,
             final String department) {
         final Messstelle messstelle = this.messstelleService.getMessstelle(messstelleId);
@@ -1247,12 +1247,12 @@ public class FillPdfBeanService {
         return datentabellePdfZaehldaten;
     }
 
-    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final String messstelleId) {
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDto options, final String messstelleId) {
         final LadeProcessedMesswerteDto messwerte = messwerteService.ladeMesswerte(messstelleId, options);
         return getDatentabellePdfZaehldaten(options, messwerte.getZaehldatenTable().getZaehldaten());
     }
 
-    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDTO options, final List<LadeMesswerteDto> ladeMesswerteDTOS) {
+    public DatentabellePdfZaehldaten getDatentabellePdfZaehldaten(final MessstelleOptionsDto options, final List<LadeMesswerteDto> ladeMesswerteDTOS) {
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
         ladeMesswerteDTOS.stream()
                 .filter(ladeMesswerteDTO -> LadeZaehldatenService.TAGESWERT.equalsIgnoreCase(ladeMesswerteDTO.getType()))
@@ -1261,7 +1261,7 @@ public class FillPdfBeanService {
                     ladeMesswerteDTO.setStartUhrzeit(null);
                 });
 
-        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final FahrzeugOptionsDto fahrzeugOptions = options.getFahrzeuge();
         final DatentabellePdfZaehldaten datentabellePdfZaehldaten = this.datentabellePdfZaehldatumMapper
                 .fahrzeugOptionsToDatentabellePdfZaehldaten(fahrzeugOptions);
 
@@ -1299,7 +1299,7 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugtypen;
     }
 
-    private int calcActiveTabsFahrzeugtypen(final FahrzeugOptionsDTO optionsDTO) {
+    private int calcActiveTabsFahrzeugtypen(final FahrzeugOptionsDto optionsDTO) {
         int activeTabsFahrzeugtypen = 0;
         if (optionsDTO.isPersonenkraftwagen()) {
             activeTabsFahrzeugtypen++;
@@ -1342,7 +1342,7 @@ public class FillPdfBeanService {
         return activeTabsFahrzeugklasse;
     }
 
-    private int calcActiveTabsFahrzeugklassen(final FahrzeugOptionsDTO optionsDTO) {
+    private int calcActiveTabsFahrzeugklassen(final FahrzeugOptionsDto optionsDTO) {
         int activeTabsFahrzeugklasse = 0;
         if (optionsDTO.isKraftfahrzeugverkehr()) {
             activeTabsFahrzeugklasse++;
@@ -1367,7 +1367,7 @@ public class FillPdfBeanService {
         return activeTabsAnteile;
     }
 
-    private int calcActiveTabsAnteile(final FahrzeugOptionsDTO optionsDTO) {
+    private int calcActiveTabsAnteile(final FahrzeugOptionsDto optionsDTO) {
         int activeTabsAnteile = 0;
         if (optionsDTO.isSchwerverkehrsanteilProzent()) {
             activeTabsAnteile++;

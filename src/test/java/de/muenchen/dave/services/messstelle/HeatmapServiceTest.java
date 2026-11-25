@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -82,8 +82,8 @@ class HeatmapServiceTest {
 
         final var intervals = List.of(interval0, interval1, interval2);
 
-        final var options = new MessstelleOptionsDTO();
-        final var optionsFahrzeuge = new FahrzeugOptionsDTO();
+        final var options = new MessstelleOptionsDto();
+        final var optionsFahrzeuge = new FahrzeugOptionsDto();
         optionsFahrzeuge.setKraftfahrzeugverkehr(true);
         optionsFahrzeuge.setSchwerverkehr(true);
         optionsFahrzeuge.setGueterverkehr(true);

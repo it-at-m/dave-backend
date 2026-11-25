@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class FahrzeugOptionsDTO implements Serializable {
+public class FahrzeugOptionsDto implements Serializable {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean kraftfahrzeugverkehr;

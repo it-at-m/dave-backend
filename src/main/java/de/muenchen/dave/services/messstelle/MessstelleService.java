@@ -1,10 +1,10 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
-import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.EditMessstelleDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOverviewDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungDto;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messfaehigkeit;
 import de.muenchen.dave.domain.elasticsearch.detektor.Messquerschnitt;
@@ -49,17 +49,17 @@ public class MessstelleService {
         return messstelleIndexService.findByMstIdOrThrowException(mstId);
     }
 
-    public ReadMessstelleInfoDTO readMessstelleInfo(final String messstelleId) {
+    public ReadMessstelleInfoDto readMessstelleInfo(final String messstelleId) {
         final var messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         return messstelleMapper.bean2readDto(messstelle, stadtbezirkMapper);
     }
 
-    public ReadMessstelleInfoDTO readMessstelleInfoByMstId(final String mstId) {
+    public ReadMessstelleInfoDto readMessstelleInfoByMstId(final String mstId) {
         final Messstelle byIdOrThrowException = messstelleIndexService.findByMstIdOrThrowException(mstId);
         return messstelleMapper.bean2readDto(byIdOrThrowException, stadtbezirkMapper);
     }
 
-    public EditMessstelleDTO getMessstelleToEdit(final String messstelleId) {
+    public EditMessstelleDto getMessstelleToEdit(final String messstelleId) {
         final Messstelle messstelle = messstelleIndexService.findByIdOrThrowException(messstelleId);
         messstelle.setMessfaehigkeiten(
                 messstelle.getMessfaehigkeiten()
@@ -74,7 +74,7 @@ public class MessstelleService {
         return messstelleMapper.bean2editDto(messstelle, stadtbezirkMapper);
     }
 
-    public BackendIdDto updateMessstelle(final EditMessstelleDTO dto) {
+    public BackendIdDto updateMessstelle(final EditMessstelleDto dto) {
         final Messstelle actualMessstelle = messstelleIndexService.findByIdOrThrowException(dto.getId());
         final Messstelle aktualisiert = messstelleMapper.updateMessstelle(actualMessstelle, dto, stadtbezirkMapper);
         sanitizationService.sanitizeMessstelle(aktualisiert);
@@ -85,7 +85,7 @@ public class MessstelleService {
         return backendIdDTO;
     }
 
-    public List<MessstelleOverviewDTO> getAllMessstellenForOverview() {
+    public List<MessstelleOverviewDto> getAllMessstellenForOverview() {
         final List<Messstelle> messstellen = messstelleIndexService.findAllMessstellen();
         return messstelleMapper.bean2overviewDto(messstellen, stadtbezirkMapper);
     }
@@ -126,7 +126,7 @@ public class MessstelleService {
      * @param endDateZeitraum
      * @return die extrahierten Messfähigkeiten.
      */
-    public List<ReadMessfaehigkeitDTO> getMessfaehigkeitenForZeitraumForMessstelle(
+    public List<ReadMessfaehigkeitDto> getMessfaehigkeitenForZeitraumForMessstelle(
             final String mstId,
             final LocalDate startDateZeitraum,
             final LocalDate endDateZeitraum) {
@@ -180,8 +180,8 @@ public class MessstelleService {
                 (date.isEqual(endDateZeitraum) || date.isBefore(endDateZeitraum));
     }
 
-    protected ReadMessfaehigkeitDTO setEarlierDateOrLaterDateInMessfaehigkeit(
-            final ReadMessfaehigkeitDTO messfaehigkeit,
+    protected ReadMessfaehigkeitDto setEarlierDateOrLaterDateInMessfaehigkeit(
+            final ReadMessfaehigkeitDto messfaehigkeit,
             final LocalDate startDateZeitraum,
             final LocalDate endDateZeitraum) {
         final var messfaehigkeitGueltigAb = Objects.isNull(messfaehigkeit.getGueltigAb())

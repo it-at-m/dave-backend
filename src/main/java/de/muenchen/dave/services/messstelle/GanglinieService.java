@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class GanglinieService {
 
     // Refactoring: Synergieeffekt mit ProcessZaehldatenSteplineService nutzen
-    public LadeZaehldatenStepLineDto ladeGanglinie(final List<IntervalDto> intervals, final FahrzeugOptionsDTO fahrzeugOptions) {
+    public LadeZaehldatenStepLineDto ladeGanglinie(final List<IntervalDto> intervals, final FahrzeugOptionsDto fahrzeugOptions) {
         log.debug("#ladeGanglinie");
 
         final var ladeZaehldatenStepline = GanglinieUtil.getInitialZaehldatenStepline();

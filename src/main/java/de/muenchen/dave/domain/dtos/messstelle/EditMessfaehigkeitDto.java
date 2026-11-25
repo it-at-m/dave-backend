@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class EditMessfaehigkeitDTO implements Serializable {
+public class EditMessfaehigkeitDto implements Serializable {
 
     private String gueltigBis;
     private String gueltigAb;

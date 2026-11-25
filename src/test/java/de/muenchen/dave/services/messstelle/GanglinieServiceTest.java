@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -82,7 +82,7 @@ class GanglinieServiceTest {
         interval2.setProzentSchwerverkehr(BigDecimal.valueOf(14));
 
         final var intervals = List.of(interval0, interval1, interval2);
-        final var optionsFahrzeuge = new FahrzeugOptionsDTO();
+        final var optionsFahrzeuge = new FahrzeugOptionsDto();
         optionsFahrzeuge.setKraftfahrzeugverkehr(true);
         optionsFahrzeuge.setSchwerverkehr(true);
         optionsFahrzeuge.setGueterverkehr(true);

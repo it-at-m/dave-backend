@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldaten;
 import de.muenchen.dave.domain.pdf.helper.DatentabellePdfZaehldatum;
 import java.math.BigDecimal;
@@ -17,7 +17,7 @@ class DatentabellePdfZaehldatumMapperTests {
 
     @Test
     void fahrzeugOptionsToDatentabellePdfZaehldaten() {
-        final FahrzeugOptionsDTO fahrzeugOptionsDTO = new FahrzeugOptionsDTO();
+        final FahrzeugOptionsDto fahrzeugOptionsDTO = new FahrzeugOptionsDto();
         fahrzeugOptionsDTO.setKraftfahrzeugverkehr(false);
         fahrzeugOptionsDTO.setSchwerverkehr(true);
         fahrzeugOptionsDTO.setGueterverkehr(false);

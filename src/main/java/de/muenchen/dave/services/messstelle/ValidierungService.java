@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDto;
+import de.muenchen.dave.domain.dtos.messstelle.ValidateZeitraumAndTagestypForMessstelleDto;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.domain.enums.Verkehrsart;
@@ -38,7 +38,7 @@ public class ValidierungService {
 
     private final KalendertagService kalendertagService;
 
-    public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDTO request) {
+    public boolean isZeitraumAndTagestypValid(final ValidateZeitraumAndTagestypForMessstelleDto request) {
         final var tagestypen = TagesTyp.getIncludedTagestypen(request.getTagesTyp());
 
         final long numberOfRelevantKalendertage = kalendertagService.countAllKalendertageByDatumAndTagestypen(
@@ -97,7 +97,7 @@ public class ValidierungService {
                         .doubleValue() >= 0.5;
     }
 
-    public List<ReadMessfaehigkeitDTO> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
+    public List<ReadMessfaehigkeitDto> getRelevantMessfaehigkeitenAccordingFahrzeugklasse(
             final ValidateZeitraumAndTagesTypForMessstelleModel request,
             final Fahrzeugklasse fahrzeugklasse) {
         final var relevantMessfaehigkeiten = request.getMessfaehigkeiten()
@@ -117,7 +117,7 @@ public class ValidierungService {
      * @param verkehrsartOfMst Verkehrsart der angefragten Messstelle
      * @return die Fahrzeugklasse auf Basis der gewählten Fahrzeugoptions.
      */
-    public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDTO fahrzeugOptions, final Verkehrsart verkehrsartOfMst) {
+    public Fahrzeugklasse getFahrzeugklasseAccordingChoosenFahrzeugoptions(final FahrzeugOptionsDto fahrzeugOptions, final Verkehrsart verkehrsartOfMst) {
         if (verkehrsartOfMst.equals(Verkehrsart.KFZ) && areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(fahrzeugOptions)) {
             return Fahrzeugklasse.SUMME_KFZ;
         } else if (verkehrsartOfMst.equals(Verkehrsart.KFZ) && areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(fahrzeugOptions)) {
@@ -131,7 +131,7 @@ public class ValidierungService {
         }
     }
 
-    protected boolean areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
+    protected boolean areFahrzeugoptionsForFahrzeugklasseAchtPlusEinsChoosen(final FahrzeugOptionsDto fahrzeugOptions) {
         return fahrzeugOptions.isKraftfahrzeugverkehr() ||
                 fahrzeugOptions.isSchwerverkehr() ||
                 fahrzeugOptions.isSchwerverkehrsanteilProzent() ||
@@ -145,7 +145,7 @@ public class ValidierungService {
                 fahrzeugOptions.isLieferwagen();
     }
 
-    protected boolean areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
+    protected boolean areFahrzeugoptionsForFahrzeugklasseZweiPlusEinsChoosen(final FahrzeugOptionsDto fahrzeugOptions) {
         return (fahrzeugOptions.isKraftfahrzeugverkehr() ||
                 fahrzeugOptions.isSchwerverkehr() ||
                 fahrzeugOptions.isSchwerverkehrsanteilProzent()) &&
@@ -159,7 +159,7 @@ public class ValidierungService {
                 !fahrzeugOptions.isLieferwagen();
     }
 
-    protected boolean areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
+    protected boolean areFahrzeugoptionsForFahrzeugklasseSummeKfzChoosen(final FahrzeugOptionsDto fahrzeugOptions) {
         return fahrzeugOptions.isKraftfahrzeugverkehr() &&
                 !fahrzeugOptions.isSchwerverkehr() &&
                 !fahrzeugOptions.isSchwerverkehrsanteilProzent() &&
@@ -173,7 +173,7 @@ public class ValidierungService {
                 !fahrzeugOptions.isLieferwagen();
     }
 
-    protected boolean areFahrzeugoptionsForFahrzeugklasseRadChoosen(final FahrzeugOptionsDTO fahrzeugOptions) {
+    protected boolean areFahrzeugoptionsForFahrzeugklasseRadChoosen(final FahrzeugOptionsDto fahrzeugOptions) {
         return fahrzeugOptions.isRadverkehr();
     }
 

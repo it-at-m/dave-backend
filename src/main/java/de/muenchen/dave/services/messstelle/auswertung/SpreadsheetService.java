@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
@@ -184,7 +184,7 @@ public class SpreadsheetService {
      */
     protected void addDataHeaderToRow(final Row row, final MessstelleAuswertungOptionsDto options, final boolean isGesamtSheet) {
         int headerCellIndex = 0;
-        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final FahrzeugOptionsDto fahrzeugOptions = options.getFahrzeuge();
         final List<AuswertungsZeitraum> zeitraum = options.getZeitraum();
         if (CollectionUtils.isNotEmpty(zeitraum)) {
             if (AuswertungsZeitraum.isHalbjahr(zeitraum.getFirst())) {
@@ -255,7 +255,7 @@ public class SpreadsheetService {
     private int addDataToGesamtSheet(
             final Table sheet,
             final List<Auswertung> auswertungen,
-            final FahrzeugOptionsDTO fahrzeugOptions,
+            final FahrzeugOptionsDto fahrzeugOptions,
             final int startRowIndex) {
         for (int rowIndex = 0; rowIndex < auswertungen.size(); rowIndex++) {
             addDataToRow(getRowAtIndex(sheet, startRowIndex + rowIndex), auswertungen.get(rowIndex), fahrzeugOptions, true);
@@ -274,7 +274,7 @@ public class SpreadsheetService {
     private void addDataToSheet(
             final Table sheet,
             final List<Auswertung> auswertungen,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
+            final FahrzeugOptionsDto fahrzeugOptions) {
         for (int rowIndex = 0; rowIndex < auswertungen.size(); rowIndex++) {
             addDataToRow(getRowAtIndex(sheet, 4 + rowIndex), auswertungen.get(rowIndex), fahrzeugOptions, false);
         }
@@ -291,7 +291,7 @@ public class SpreadsheetService {
     protected void addDataToRow(
             final Row row,
             final Auswertung auswertung,
-            final FahrzeugOptionsDTO fahrzeugOptions,
+            final FahrzeugOptionsDto fahrzeugOptions,
             final boolean isGesamtSheet) {
 
         int cellIndex = 0;

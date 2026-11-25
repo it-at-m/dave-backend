@@ -8,7 +8,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class EditMessstelleDTO implements Serializable {
+public class EditMessstelleDto implements Serializable {
 
     private String id;
 
@@ -38,8 +38,8 @@ public class EditMessstelleDTO implements Serializable {
     private String standort;
     private List<String> customSuchwoerter;
 
-    private List<EditMessquerschnittDTO> messquerschnitte;
-    private List<EditMessfaehigkeitDTO> messfaehigkeiten;
+    private List<EditMessquerschnittDto> messquerschnitte;
+    private List<EditMessfaehigkeitDto> messfaehigkeiten;
 
     private Boolean lageplanVorhanden;
 }

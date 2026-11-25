@@ -12,7 +12,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.dtos.OptionsDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -370,7 +370,7 @@ public class FillPdfBeanServiceSpringTest {
     public void createChartTitleBelastungsplan_Messstelle() throws DataNotFoundException {
         this.init();
 
-        final MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+        final MessstelleOptionsDto options = new MessstelleOptionsDto();
 
         options.setZeitauswahl(Zeitauswahl.TAGESWERT.getCapitalizedName());
         options.setZeitraum(List.of(LocalDate.now()));

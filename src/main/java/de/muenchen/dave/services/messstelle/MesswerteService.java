@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeProcessedMesswerteDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.geodateneai.gen.api.MesswerteApi;
@@ -52,7 +52,7 @@ public class MesswerteService {
      * @param options in der GUI definierte Optionen zum Laden der Daten
      * @return aufbereitete Daten
      */
-    public LadeProcessedMesswerteDto ladeMesswerte(final String messstelleId, final MessstelleOptionsDTO options) {
+    public LadeProcessedMesswerteDto ladeMesswerte(final String messstelleId, final MessstelleOptionsDto options) {
         log.debug("#ladeMesswerte {}", messstelleId);
 
         final var response = this.ladeMesswerteIntervalle(options, messstelleService.getMessquerschnittIdsByMessstelleId(messstelleId));
@@ -127,7 +127,7 @@ public class MesswerteService {
      * @param messquerschnittIds zu ladende Messquerschnitte
      * @return geladene Intervall-Daten als DTO
      */
-    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDTO options, final Set<String> messquerschnittIds) {
+    protected IntervalResponseDto ladeMesswerteIntervalle(final MessstelleOptionsDto options, final Set<String> messquerschnittIds) {
         final var request = new MesswertRequestDto();
         // Anhand der MesstellenId die entsprechenden MessquerschnittIds ermitteln
         request.setSelectedMessquerschnittIds(options.getMessquerschnittIds().stream().map(Integer::valueOf).toList());

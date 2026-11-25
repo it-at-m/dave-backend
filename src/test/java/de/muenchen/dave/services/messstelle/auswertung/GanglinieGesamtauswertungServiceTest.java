@@ -4,7 +4,7 @@ import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBigDecimalDto;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.enums.AuswertungsZeitraum;
@@ -73,7 +73,7 @@ class GanglinieGesamtauswertungServiceTest {
         auswertung.setDaten(tagesaggregat);
         auswertungMessstelle.getAuswertungenProZeitraum().add(auswertung);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setPersonenkraftwagen(true);
         fahrzeugOptions.setLieferwagen(true);
         fahrzeugOptions.setLastkraftwagen(true);
@@ -236,7 +236,7 @@ class GanglinieGesamtauswertungServiceTest {
 
         auswertungMessstellen.add(auswertungMessstelle);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setPersonenkraftwagen(false);
         fahrzeugOptions.setLieferwagen(false);
         fahrzeugOptions.setLastkraftwagen(false);

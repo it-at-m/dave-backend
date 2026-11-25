@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class EditMessquerschnittDTO implements Serializable {
+public class EditMessquerschnittDto implements Serializable {
 
     private String id;
     private String mqId;

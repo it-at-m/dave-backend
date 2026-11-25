@@ -2,7 +2,7 @@ package de.muenchen.dave.controller;
 
 import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.services.GenerateCsvService;
 import de.muenchen.dave.services.messstelle.GenerateCsvMstService;
@@ -61,7 +61,7 @@ public class GenerateCsvController {
     @PostMapping(value = "/generate-csv-mst")
     public ResponseEntity<CsvDto> generateCSVMessstelle(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final String messstelleId,
-            @Valid @RequestBody @NotNull final MessstelleOptionsDTO options) {
+            @Valid @RequestBody @NotNull final MessstelleOptionsDto options) {
         try {
             log.info("GenerateCSV für Messstelle {} aufgerufen", messstelleId);
             final CsvDto dto = generateCsvServiceMst.generateDatentabelleCsv(messstelleId, options);

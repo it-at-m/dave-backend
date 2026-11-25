@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReadMessquerschnittDTO implements Serializable {
+public class ReadMessquerschnittDto implements Serializable {
 
     private String id;
     private String mqId;

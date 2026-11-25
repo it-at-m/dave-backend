@@ -1,7 +1,7 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.dtos.OptionsDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.pdf.templates.GangliniePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GanglinieMessstellePdf;
 import de.muenchen.dave.domain.pdf.templates.messstelle.GesamtauswertungMessstellePdf;
@@ -18,9 +18,9 @@ public interface DiagrammPdfOptionsMapper {
     GangliniePdf options2gangliniePdf(@MappingTarget GangliniePdf gangliniePdf, OptionsDto dto);
 
     GanglinieMessstellePdf options2gangliniePdf(
-            @MappingTarget GanglinieMessstellePdf gangliniePdf, FahrzeugOptionsDTO dto);
+            @MappingTarget GanglinieMessstellePdf gangliniePdf, FahrzeugOptionsDto dto);
 
     GesamtauswertungMessstellePdf options2gesamtauswertungPdf(
-            @MappingTarget GesamtauswertungMessstellePdf gesamtauswertungPdf, FahrzeugOptionsDTO dto);
+            @MappingTarget GesamtauswertungMessstellePdf gesamtauswertungPdf, FahrzeugOptionsDto dto);
 
 }

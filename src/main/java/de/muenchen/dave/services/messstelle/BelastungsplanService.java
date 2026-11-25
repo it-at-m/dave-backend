@@ -2,9 +2,9 @@ package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.messwerte.BelastungsplanMessquerschnitteDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeBelastungsplanMessquerschnittDataDto;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessquerschnittDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessstelleInfoDto;
 import de.muenchen.dave.domain.enums.Rounding;
 import de.muenchen.dave.domain.enums.Zeitauswahl;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
@@ -28,7 +28,7 @@ public class BelastungsplanService {
 
     private final SpitzenstundeService spitzenstundeService;
 
-    protected static String getStrassennameFromMessquerschnitt(final ReadMessstelleInfoDTO messstelle) {
+    protected static String getStrassennameFromMessquerschnitt(final ReadMessstelleInfoDto messstelle) {
         return CollectionUtils.isEmpty(messstelle.getMessquerschnitte())
                 ? ""
                 : messstelle.getMessquerschnitte().getFirst().getStrassenname();
@@ -38,11 +38,11 @@ public class BelastungsplanService {
             final List<IntervalDto> intervals,
             final List<IntervalDto> totalSumForEachMessquerschnitt,
             final String messstelleId,
-            final MessstelleOptionsDTO options) {
+            final MessstelleOptionsDto options) {
 
         final BelastungsplanMessquerschnitteDto belastungsplanMessquerschnitte = new BelastungsplanMessquerschnitteDto();
 
-        final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
+        final ReadMessstelleInfoDto messstelle = messstelleService.readMessstelleInfo(messstelleId);
 
         belastungsplanMessquerschnitte.setMstId(messstelle.getMstId());
         belastungsplanMessquerschnitte.setStadtbezirkNummer(messstelle.getStadtbezirkNummer());
@@ -140,15 +140,15 @@ public class BelastungsplanService {
         return belastungsplanMessquerschnitte;
     }
 
-    protected String getDirection(final ReadMessstelleInfoDTO messstelle, final String messquerschnittId) {
-        final ReadMessquerschnittDTO messquerschnittDto = messstelle.getMessquerschnitte().stream()
+    protected String getDirection(final ReadMessstelleInfoDto messstelle, final String messquerschnittId) {
+        final ReadMessquerschnittDto messquerschnittDto = messstelle.getMessquerschnitte().stream()
                 .filter(readMessquerschnittDTO -> Objects.equals(readMessquerschnittDTO.getMqId(), messquerschnittId))
                 .toList()
                 .getFirst();
         return messquerschnittDto.getFahrtrichtung();
     }
 
-    protected boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDTO messstelle) {
+    protected boolean isDirectionNorthOrSouth(final ReadMessstelleInfoDto messstelle) {
         if (CollectionUtils.isEmpty(messstelle.getMessquerschnitte())) {
             return false;
         }
@@ -161,7 +161,7 @@ public class BelastungsplanService {
         return BigDecimal.valueOf(percentage).setScale(1, RoundingMode.HALF_UP);
     }
 
-    protected Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDTO options) {
+    protected Integer roundNumberIfNeeded(final Integer numberToRound, final MessstelleOptionsDto options) {
         if (Rounding.NONE.equals(options.getRounding())) {
             return numberToRound;
         } else {

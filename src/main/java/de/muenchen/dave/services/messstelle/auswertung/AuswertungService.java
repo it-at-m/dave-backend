@@ -2,8 +2,8 @@ package de.muenchen.dave.services.messstelle.auswertung;
 
 import de.muenchen.dave.configuration.LogExecutionTime;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenStepLineDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
@@ -90,7 +90,7 @@ public class AuswertungService {
      * @return die aufbereiteten Daten für die Gangliniendarstellung.
      */
     protected LadeZaehldatenStepLineDto createZaehldatenForGanglinie(
-            final FahrzeugOptionsDTO fahrzeugOptions,
+            final FahrzeugOptionsDto fahrzeugOptions,
             final List<AuswertungMessstelle> auswertungenMessstellen) {
         final var auswertungenProMessstelle = ListUtils.emptyIfNull(auswertungenMessstellen);
         if (auswertungenProMessstelle.size() == 1) {
@@ -149,7 +149,7 @@ public class AuswertungService {
                             .getFahrzeugklasseAccordingChoosenFahrzeugoptions(options.getFahrzeuge(),
                                     messstelleService.getMessstelleByMstId(validateZeitraumAndTagesTypForMessstelle.getMstId()).getDetektierteVerkehrsart());
 
-                    List<ReadMessfaehigkeitDTO> relevantMessfaehigkeiten;
+                    List<ReadMessfaehigkeitDto> relevantMessfaehigkeiten;
                     TagesaggregatResponseDto tagesaggregatResponse = createEmptyTagesaggregatResponse(validateZeitraumAndTagesTypForMessstelle.getMqIds());
                     ValidierungService.ValidationResult validationResult = new ValidierungService.ValidationResult();
 
@@ -386,7 +386,7 @@ public class AuswertungService {
      * @return die Liste mit den Einzelzeiträumen bestehend aus dem Start- und Enddatum des
      *         Gültigkeitsbereichs der Messfähigkeit.
      */
-    protected List<List<LocalDate>> getZeitraeumeOfGivenMessfaehigkeiten(final List<ReadMessfaehigkeitDTO> messfaehigkeiten) {
+    protected List<List<LocalDate>> getZeitraeumeOfGivenMessfaehigkeiten(final List<ReadMessfaehigkeitDto> messfaehigkeiten) {
         return CollectionUtils.emptyIfNull(messfaehigkeiten)
                 .stream()
                 .map(messfaehigkeit -> List.of(LocalDate.parse(messfaehigkeit.getGueltigAb()), LocalDate.parse(messfaehigkeit.getGueltigBis())))
@@ -402,10 +402,10 @@ public class AuswertungService {
      * @return eine Kopie der Fahrzeugoptions mit Falsifizierten attributen entsprechend der
      *         Fahrzeugklasse.
      */
-    protected FahrzeugOptionsDTO getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
+    protected FahrzeugOptionsDto getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptions(
             final Fahrzeugklasse fahrzeugklasse,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
-        final FahrzeugOptionsDTO adaptedFahrzeugOptions = auswertungMapper.deepCopyOf(fahrzeugOptions);
+            final FahrzeugOptionsDto fahrzeugOptions) {
+        final FahrzeugOptionsDto adaptedFahrzeugOptions = auswertungMapper.deepCopyOf(fahrzeugOptions);
         if (Fahrzeugklasse.ACHT_PLUS_EINS.equals(fahrzeugklasse)) {
             return adaptedFahrzeugOptions;
         } else if (Fahrzeugklasse.ZWEI_PLUS_EINS.equals(fahrzeugklasse)) {
@@ -460,18 +460,18 @@ public class AuswertungService {
 
     /**
      * Setzt Attribute der Tagesaggregate in der gegebenen {@link TagesaggregatResponseDto} basierend
-     * auf den gewählten {@link FahrzeugOptionsDTO} auf null, wenn das Attribut in den Fahrzeugoptions
+     * auf den gewählten {@link FahrzeugOptionsDto} auf null, wenn das Attribut in den Fahrzeugoptions
      * den Wert false besitzt.
      *
      * @param tagesaggregatResponse Das {@link TagesaggregatResponseDto}, dessen Attribute null gesetzt
      *            werden sollen.
-     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDto}, die die Kriterien für das Nullsetzen der
      *            Attribute definiert.
      * @return Das modifizierte {@link TagesaggregatResponseDto} mit ggf. null gesetzten Attributen.
      */
     protected TagesaggregatResponseDto nullingAttributesOfTagesaggregateInTagesaggregatResponseAccordingChosenFahrzeugoptions(
             final TagesaggregatResponseDto tagesaggregatResponse,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
+            final FahrzeugOptionsDto fahrzeugOptions) {
         final var nulledTagesaggregate = nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
                 tagesaggregatResponse.getSumOverAllAggregatesOfAllMqId(),
                 fahrzeugOptions);
@@ -491,20 +491,20 @@ public class AuswertungService {
 
     /**
      * Setzt bestimmte Attribute des {@link TagesaggregatDto} auf null, basierend auf den gewählten
-     * {@link FahrzeugOptionsDTO}.
+     * {@link FahrzeugOptionsDto}.
      *
      * Diese Methode überprüft die verschiedenen Optionen in {@code fahrzeugOptions} und setzt die
      * entsprechenden Attribute im {@code tagesaggregat} auf null, wenn die jeweilige Option false ist.
      *
      * @param tagesaggregat Das {@link TagesaggregatDto}, dessen Attribute null gesetzt werden sollen.
-     * @param fahrzeugOptions Die {@link FahrzeugOptionsDTO}, die die Kriterien für das Nullsetzen der
+     * @param fahrzeugOptions Die {@link FahrzeugOptionsDto}, die die Kriterien für das Nullsetzen der
      *            Attribute definiert.
      * @return Das modifizierte {@link TagesaggregatDto} mit null gesetzten Attributen, die nicht den
      *         gewählten Fahrzeugoptionen entsprechen.
      */
     protected TagesaggregatDto nullingAttributesOfTagesaggregatAccordingChosenFahrzeugoptions(
             final TagesaggregatDto tagesaggregat,
-            final FahrzeugOptionsDTO fahrzeugOptions) {
+            final FahrzeugOptionsDto fahrzeugOptions) {
         if (!fahrzeugOptions.isKraftfahrzeugverkehr()) {
             tagesaggregat.setSummeKraftfahrzeugverkehr(null);
         }

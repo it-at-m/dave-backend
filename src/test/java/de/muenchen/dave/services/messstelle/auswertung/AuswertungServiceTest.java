@@ -1,7 +1,7 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.ReadMessfaehigkeitDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelle;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.AuswertungMessstelleUndZeitraum;
@@ -80,7 +80,7 @@ class AuswertungServiceTest {
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -107,7 +107,7 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2020-01-01");
         messfaehigkeit.setGueltigBis("2020-03-31");
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -206,7 +206,7 @@ class AuswertungServiceTest {
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -233,7 +233,7 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2020-01-01");
         messfaehigkeit.setGueltigBis("2020-03-31");
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -340,7 +340,7 @@ class AuswertungServiceTest {
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -367,7 +367,7 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2020-01-01");
         messfaehigkeit.setGueltigBis("2020-03-31");
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.ACHT_PLUS_EINS);
@@ -481,7 +481,7 @@ class AuswertungServiceTest {
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -508,7 +508,7 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2020-01-01");
         messfaehigkeit.setGueltigBis("2020-03-31");
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
@@ -606,7 +606,7 @@ class AuswertungServiceTest {
         final var jahre = new ArrayList<Integer>();
         jahre.add(2020);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -633,7 +633,7 @@ class AuswertungServiceTest {
         auswertungOptions.setTagesTyp(TagesTyp.MO_SO);
         auswertungOptions.setMessstelleAuswertungIds(messtellenAuswertungIds);
 
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2020-01-01");
         messfaehigkeit.setGueltigBis("2020-03-31");
         messfaehigkeit.setFahrzeugklasse(Fahrzeugklasse.RAD);
@@ -896,7 +896,7 @@ class AuswertungServiceTest {
         final var mqIds = Set.of("123401", "123402");
         final var tagesTyp = TagesTyp.WERKTAG_MO_FR;
 
-        final var messfaehigkeiten = List.of(new ReadMessfaehigkeitDTO(), new ReadMessfaehigkeitDTO());
+        final var messfaehigkeiten = List.of(new ReadMessfaehigkeitDto(), new ReadMessfaehigkeitDto());
         Mockito.when(messstelleService.getMessfaehigkeitenForZeitraumForMessstelle(
                 mstId,
                 zeitraum.getStartDate(),
@@ -942,16 +942,16 @@ class AuswertungServiceTest {
 
     @Test
     void getZeitraeumeOfGivenMessfaehigkeiten() {
-        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDTO>();
-        var messfaehigkeit = new ReadMessfaehigkeitDTO();
+        final var messfaehigkeiten = new ArrayList<ReadMessfaehigkeitDto>();
+        var messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2008-02-01");
         messfaehigkeit.setGueltigBis("2009-05-15");
         messfaehigkeiten.add(messfaehigkeit);
-        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2009-04-10");
         messfaehigkeit.setGueltigBis("2009-07-31");
         messfaehigkeiten.add(messfaehigkeit);
-        messfaehigkeit = new ReadMessfaehigkeitDTO();
+        messfaehigkeit = new ReadMessfaehigkeitDto();
         messfaehigkeit.setGueltigAb("2010-01-01");
         messfaehigkeit.setGueltigBis("2011-12-31");
         messfaehigkeiten.add(messfaehigkeit);
@@ -970,7 +970,7 @@ class AuswertungServiceTest {
 
     @Test
     void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseAchtPlusEins() {
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -988,7 +988,7 @@ class AuswertungServiceTest {
                 Fahrzeugklasse.ACHT_PLUS_EINS,
                 fahrzeugOptions);
 
-        final var expected = new FahrzeugOptionsDTO();
+        final var expected = new FahrzeugOptionsDto();
         expected.setKraftfahrzeugverkehr(true);
         expected.setSchwerverkehr(true);
         expected.setSchwerverkehrsanteilProzent(true);
@@ -1009,7 +1009,7 @@ class AuswertungServiceTest {
 
     @Test
     void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseZweiPlusEins() {
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -1027,7 +1027,7 @@ class AuswertungServiceTest {
                 Fahrzeugklasse.ZWEI_PLUS_EINS,
                 fahrzeugOptions);
 
-        final var expected = new FahrzeugOptionsDTO();
+        final var expected = new FahrzeugOptionsDto();
         expected.setKraftfahrzeugverkehr(true);
         expected.setSchwerverkehr(true);
         expected.setSchwerverkehrsanteilProzent(true);
@@ -1048,7 +1048,7 @@ class AuswertungServiceTest {
 
     @Test
     void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseSummeKfz() {
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -1066,7 +1066,7 @@ class AuswertungServiceTest {
                 Fahrzeugklasse.SUMME_KFZ,
                 fahrzeugOptions);
 
-        final var expected = new FahrzeugOptionsDTO();
+        final var expected = new FahrzeugOptionsDto();
         expected.setKraftfahrzeugverkehr(true);
         expected.setSchwerverkehr(false);
         expected.setSchwerverkehrsanteilProzent(false);
@@ -1087,7 +1087,7 @@ class AuswertungServiceTest {
 
     @Test
     void getAdaptedFahrzeugOptionsAccordingFahrzeugklasseAndGivenFahrzeugOptionsForFahrzeugklasseRad() {
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -1105,7 +1105,7 @@ class AuswertungServiceTest {
                 Fahrzeugklasse.RAD,
                 fahrzeugOptions);
 
-        final var expected = new FahrzeugOptionsDTO();
+        final var expected = new FahrzeugOptionsDto();
         expected.setKraftfahrzeugverkehr(false);
         expected.setSchwerverkehr(false);
         expected.setSchwerverkehrsanteilProzent(false);
@@ -1176,7 +1176,7 @@ class AuswertungServiceTest {
 
         tagesaggregatResponse.setMeanOfAggregatesForEachMqId(tagesaggregate);
 
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1263,7 +1263,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1313,7 +1313,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(true);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1363,7 +1363,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(true);
@@ -1413,7 +1413,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1463,7 +1463,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1513,7 +1513,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1563,7 +1563,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1613,7 +1613,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1663,7 +1663,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1713,7 +1713,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1763,7 +1763,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);
@@ -1813,7 +1813,7 @@ class AuswertungServiceTest {
         tagesaggregat.setSummeAllePkw(BigDecimal.valueOf(10));
         tagesaggregat.setAnzahlLfw(BigDecimal.valueOf(11));
         tagesaggregat.setAnzahlRad(BigDecimal.valueOf(12));
-        final var fahrzeugOptions = new FahrzeugOptionsDTO();
+        final var fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(false);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setSchwerverkehrsanteilProzent(false);

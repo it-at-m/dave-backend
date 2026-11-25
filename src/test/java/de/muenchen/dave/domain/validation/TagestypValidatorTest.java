@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.validation;
 
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.domain.enums.TagesTyp;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class TagestypValidatorTest {
 
     @Test
     void isValidTagestyp() {
-        MessstelleOptionsDTO options = new MessstelleOptionsDTO();
+        MessstelleOptionsDto options = new MessstelleOptionsDto();
 
         options.setZeitraum(new ArrayList<>());
         Assertions.assertTrue(validator.isValid(options, null));

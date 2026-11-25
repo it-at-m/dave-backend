@@ -1,8 +1,8 @@
 package de.muenchen.dave.services.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenHeatmapDto;
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
-import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
+import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDto;
 import de.muenchen.dave.geodateneai.gen.model.IntervalDto;
 import de.muenchen.dave.util.ChartLegendUtil;
 import de.muenchen.dave.util.ZaehldatenProcessingUtil;
@@ -91,7 +91,7 @@ public class HeatmapService {
      * @param intervals Die Datengrundlage zur Aufbereitung des Heatmap-Diagramms.
      * @return Die aufbreiteten Daten für das Heatmap-Diagramm entsprechend der gewählten Optionen.
      */
-    public LadeZaehldatenHeatmapDto ladeHeatmap(final List<IntervalDto> intervals, final MessstelleOptionsDTO options) {
+    public LadeZaehldatenHeatmapDto ladeHeatmap(final List<IntervalDto> intervals, final MessstelleOptionsDto options) {
         final LadeZaehldatenHeatmapDto ladeZaehldatenHeatmap = new LadeZaehldatenHeatmapDto();
         ladeZaehldatenHeatmap.setRangeMin(0);
         ladeZaehldatenHeatmap.setRangeMax(0);
@@ -100,7 +100,7 @@ public class HeatmapService {
         ladeZaehldatenHeatmap.setSeriesEntriesFirstChart(new ArrayList<>());
         final AtomicInteger heatMapEntryIndex = new AtomicInteger(0);
 
-        final FahrzeugOptionsDTO fahrzeugOptions = options.getFahrzeuge();
+        final FahrzeugOptionsDto fahrzeugOptions = options.getFahrzeuge();
 
         intervals.forEach(intervall -> {
             final AtomicInteger klassenKategorienIndex = new AtomicInteger(0);

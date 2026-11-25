@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle.auswertung;
 
-import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
+import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.Auswertung;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungIdDto;
 import de.muenchen.dave.domain.dtos.messstelle.auswertung.MessstelleAuswertungOptionsDto;
@@ -115,7 +115,7 @@ class SpreadsheetServiceTest {
     void createSpreadsheetForMessstellenAsOdsKeepsGesamtStructure(@TempDir final Path tempDir) throws Exception {
         final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
         options.setTagesTyp(TagesTyp.MO_SO);
-        options.setFahrzeuge(new FahrzeugOptionsDTO());
+        options.setFahrzeuge(new FahrzeugOptionsDto());
         options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
 
         final byte[] spreadsheet = spreadsheetService.createSpreadsheetForMessstellen(List.of(), options);
@@ -264,7 +264,7 @@ class SpreadsheetServiceTest {
 
         final MessstelleAuswertungOptionsDto options = new MessstelleAuswertungOptionsDto();
         options.setZeitraum(List.of(AuswertungsZeitraum.JAHRE));
-        final FahrzeugOptionsDTO fahrzeugOptions = new FahrzeugOptionsDTO();
+        final FahrzeugOptionsDto fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setGueterverkehr(true);
@@ -343,7 +343,7 @@ class SpreadsheetServiceTest {
         final Table sheet = createSheet();
         final String mqId = "12301";
 
-        final FahrzeugOptionsDTO fahrzeugOptions = new FahrzeugOptionsDTO();
+        final FahrzeugOptionsDto fahrzeugOptions = new FahrzeugOptionsDto();
         fahrzeugOptions.setKraftfahrzeugverkehr(true);
         fahrzeugOptions.setSchwerverkehr(false);
         fahrzeugOptions.setGueterverkehr(true);

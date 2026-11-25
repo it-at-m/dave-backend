@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ValidatedZeitraumAndTagestypDTO {
+public class ValidatedZeitraumAndTagestypDto {
     @NotNull
     private Boolean isValid;
 }

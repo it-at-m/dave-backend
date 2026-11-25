@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class MessstelleKarteDTO extends ErhebungsstelleKarteDto {
+public class MessstelleKarteDto extends ErhebungsstelleKarteDto {
 
     @java.io.Serial
     private static final long serialVersionUID = 1L;
