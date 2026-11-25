@@ -26,10 +26,11 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
-import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.Laengsverkehr;
 import de.muenchen.dave.domain.elasticsearch.Querungsverkehr;
@@ -341,7 +342,7 @@ class ZaehlungPersistierungsServiceTest {
 
     @Test
     public void mapToVerkehrsbeziehungForZeitintervallExternal() {
-        final ExternalVerkehrsbeziehungDTO verkehrsbeziehungDto = new ExternalVerkehrsbeziehungDTO();
+        final ExternalVerkehrsbeziehungDto verkehrsbeziehungDto = new ExternalVerkehrsbeziehungDto();
         verkehrsbeziehungDto.setIsKreuzung(true);
         verkehrsbeziehungDto.setVon(1);
         verkehrsbeziehungDto.setNach(2);
@@ -640,20 +641,20 @@ class ZaehlungPersistierungsServiceTest {
     @Test
     public void getAllBewegungsbeziehungenFromExternalZaehlung() {
         // Fall: Alle Listen sind null -> Ergebnis ist leer
-        final ExternalZaehlungDTO externalZaehlungDTO = new ExternalZaehlungDTO();
+        final ExternalZaehlungDto externalZaehlungDTO = new ExternalZaehlungDto();
         externalZaehlungDTO.setLaengsverkehr(null);
         externalZaehlungDTO.setQuerungsverkehr(null);
         externalZaehlungDTO.setVerkehrsbeziehungen(null);
 
-        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> result = externalZaehlungPersistierungsService
+        List<ExternalBewegungsbeziehungDto> result = externalZaehlungPersistierungsService
                 .getAllBewegungsbeziehungenFromZaehlung(externalZaehlungDTO);
-        List<de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO> expected = new ArrayList<>();
+        List<ExternalBewegungsbeziehungDto> expected = new ArrayList<>();
         assertThat(result, is(expected));
 
         // Fall: Gemischte Listen, eine Liste enthält ein null-Element -> nulls werden gefiltert
-        final ExternalLaengsverkehrDTO l1 = new ExternalLaengsverkehrDTO();
+        final ExternalLaengsverkehrDto l1 = new ExternalLaengsverkehrDto();
         l1.setId("v1");
-        final ExternalQuerungsverkehrDTO q2 = new ExternalQuerungsverkehrDTO();
+        final ExternalQuerungsverkehrDto q2 = new ExternalQuerungsverkehrDto();
         q2.setId("v2");
         externalZaehlungDTO.setLaengsverkehr(Arrays.asList(l1, null));
         externalZaehlungDTO.setQuerungsverkehr(Collections.singletonList(q2));

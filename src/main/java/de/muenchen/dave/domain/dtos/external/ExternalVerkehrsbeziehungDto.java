@@ -9,7 +9,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ExternalVerkehrsbeziehungDTO extends ExternalBewegungsbeziehungDTO {
+public class ExternalVerkehrsbeziehungDto extends ExternalBewegungsbeziehungDto {
 
     Boolean isKreuzung;
 

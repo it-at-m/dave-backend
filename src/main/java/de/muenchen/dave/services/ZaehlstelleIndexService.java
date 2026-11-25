@@ -8,7 +8,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -489,10 +489,10 @@ public class ZaehlstelleIndexService {
      * @return Liste mit allen für Extern relevanten Zählungen
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      */
-    public List<ExternalZaehlungDTO> getZaehlungenForExternal(final String diensleisterkennung, final boolean isFachadmin)
+    public List<ExternalZaehlungDto> getZaehlungenForExternal(final String diensleisterkennung, final boolean isFachadmin)
             throws BrokenInfrastructureException {
         log.debug(String.format("getZaehlungenForExternal(|%s|, |%s|)", diensleisterkennung, isFachadmin));
-        final List<ExternalZaehlungDTO> zaehlungen = new ArrayList<>();
+        final List<ExternalZaehlungDto> zaehlungen = new ArrayList<>();
         final PageRequest pageable = PageRequest.of(0, 10000);
         try {
             final String[] status = {

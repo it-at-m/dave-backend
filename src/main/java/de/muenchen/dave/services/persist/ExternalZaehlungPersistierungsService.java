@@ -5,11 +5,11 @@ import de.muenchen.dave.domain.Laengsverkehr;
 import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
-import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -58,7 +58,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @throws DataNotFoundException beim Laden der Zaehlstelle im Index
      * @throws AccessDeniedException Wenn der Nutzer nicht berechtigt ist, die Zählung zu bearbeiten
      */
-    public BackendIdDto saveZaehlung(final ExternalZaehlungDTO zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
+    public BackendIdDto saveZaehlung(final ExternalZaehlungDto zaehlungDto) throws DataNotFoundException, BrokenInfrastructureException, AccessDeniedException {
         log.debug("saveZaehlung");
 
         // Prüfen, ob der Dienstleister berechtigt ist, die Zählung zu bearbeiten / zu speichern
@@ -76,7 +76,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
 
                 // Aktualisieren der Knotenarme mit den Filenames
                 zaehlung.setKnotenarme(this.knotenarmMapper.externalDtoList2beanList(zaehlungDto.getKnotenarme()));
-                final List<ExternalBewegungsbeziehungDTO> bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
+                final List<ExternalBewegungsbeziehungDto> bewegungsbeziehungen = getAllBewegungsbeziehungenFromZaehlung(zaehlungDto);
 
                 // Verkehrsbeziehungen werden nach Zeitintervallen durchsucht
                 if (CollectionUtils.isNotEmpty(bewegungsbeziehungen)) {
@@ -90,7 +90,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
                                     .map(this.zeitintervallMapper::zeitintervallDtoToZeitintervall)
                                     .map(zeitintervall -> this.setAdditionalDataToZeitintervall(zeitintervall, zaehlung, bewegungsbeziehung))
                                     .forEach(zeitintervalleToPersist::add))
-                            .map(ExternalBewegungsbeziehungDTO::getId)
+                            .map(ExternalBewegungsbeziehungDto::getId)
                             .toList();
 
                     // Zeitintervalle zur Verkehrsbeziehung löschen, bevor neue gespeichert werden sollen
@@ -116,7 +116,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         return backendIdDto;
     }
 
-    public List<ExternalZaehlungDTO> getZaehlungenForExternal(final String dienstleisterKennung, final boolean isFachadmin)
+    public List<ExternalZaehlungDto> getZaehlungenForExternal(final String dienstleisterKennung, final boolean isFachadmin)
             throws BrokenInfrastructureException {
         return this.indexService.getZaehlungenForExternal(dienstleisterKennung, isFachadmin);
     }
@@ -137,7 +137,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
     public Zeitintervall setAdditionalDataToZeitintervall(
             final Zeitintervall zeitintervall,
             final Zaehlung zaehlung,
-            final ExternalBewegungsbeziehungDTO externalBewegungsbeziehung) {
+            final ExternalBewegungsbeziehungDto externalBewegungsbeziehung) {
         zeitintervall.setZaehlungId(UUID.fromString(zaehlung.getId()));
         zeitintervall.setBewegungsbeziehungId(UUID.fromString(externalBewegungsbeziehung.getId()));
 
@@ -150,16 +150,16 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
         // Setzen der Bewegungsbeziehung im Zeitintervall
         final var zaehlart = Zaehlart.valueOf(zaehlung.getZaehlart());
         if (Zaehlart.FJS.equals(zaehlart)) {
-            final var externalLaengsverkehrToMap = (ExternalLaengsverkehrDTO) externalBewegungsbeziehung;
+            final var externalLaengsverkehrToMap = (ExternalLaengsverkehrDto) externalBewegungsbeziehung;
             final Laengsverkehr laengsverkehrForZeitintervall = this.createLaengsverkehrForZeitintervall(externalLaengsverkehrToMap);
             zeitintervall.setLaengsverkehr(laengsverkehrForZeitintervall);
         } else if (Zaehlart.QU.equals(zaehlart)) {
-            final var externalQuerungsverkehrToMap = (ExternalQuerungsverkehrDTO) externalBewegungsbeziehung;
+            final var externalQuerungsverkehrToMap = (ExternalQuerungsverkehrDto) externalBewegungsbeziehung;
             final Querungsverkehr querungsverkehrForZeitintervall = this.createQuerungsverkehrForZeitintervall(externalQuerungsverkehrToMap);
             zeitintervall.setQuerungsverkehr(querungsverkehrForZeitintervall);
         } else {
             // alle anderen Zählarten
-            final var externalVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDTO) externalBewegungsbeziehung;
+            final var externalVerkehrsbeziehungToMap = (ExternalVerkehrsbeziehungDto) externalBewegungsbeziehung;
             final de.muenchen.dave.domain.Verkehrsbeziehung verkehrsbeziehungForZeitintervall = this.createVerkehrsbeziehungForZeitintervall(
                     zaehlart,
                     externalVerkehrsbeziehungToMap);
@@ -182,7 +182,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      */
     public de.muenchen.dave.domain.Verkehrsbeziehung createVerkehrsbeziehungForZeitintervall(
             final Zaehlart zaehlart,
-            final ExternalVerkehrsbeziehungDTO externalVerkehrsbeziehung) {
+            final ExternalVerkehrsbeziehungDto externalVerkehrsbeziehung) {
         final var verkehrsbeziehung = new de.muenchen.dave.domain.Verkehrsbeziehung();
         if (BooleanUtils.isTrue(externalVerkehrsbeziehung.getIsKreuzung()) || Zaehlart.QJS.equals(zaehlart)) {
             verkehrsbeziehung.setVon(externalVerkehrsbeziehung.getVon());
@@ -209,7 +209,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return die {@link de.muenchen.dave.domain.Querungsverkehr} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final ExternalQuerungsverkehrDTO externalQuerungsverkehr) {
+    public de.muenchen.dave.domain.Querungsverkehr createQuerungsverkehrForZeitintervall(final ExternalQuerungsverkehrDto externalQuerungsverkehr) {
         final var querungsverkehr = new de.muenchen.dave.domain.Querungsverkehr();
         querungsverkehr.setRichtung(externalQuerungsverkehr.getRichtung());
         querungsverkehr.setKnotenarm(externalQuerungsverkehr.getKnotenarm());
@@ -225,7 +225,7 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
      * @return die {@link de.muenchen.dave.domain.Laengsverkehr} zum Anfügen an einen
      *         {@link Zeitintervall}
      */
-    public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final ExternalLaengsverkehrDTO externalLaengsverkehr) {
+    public de.muenchen.dave.domain.Laengsverkehr createLaengsverkehrForZeitintervall(final ExternalLaengsverkehrDto externalLaengsverkehr) {
         final var laengsverkehr = new de.muenchen.dave.domain.Laengsverkehr();
         laengsverkehr.setRichtung(externalLaengsverkehr.getRichtung());
         laengsverkehr.setStrassenseite(externalLaengsverkehr.getStrassenseite());

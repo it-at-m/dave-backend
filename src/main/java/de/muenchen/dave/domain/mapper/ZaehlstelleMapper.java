@@ -3,7 +3,7 @@ package de.muenchen.dave.domain.mapper;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.LeseZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleVisumDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
@@ -75,7 +75,7 @@ public interface ZaehlstelleMapper {
         dto.setLng(bean.getPunkt().getLon());
     }
 
-    ExternalZaehlstelleDTO bean2ExternalDto(Zaehlstelle bean);
+    ExternalZaehlstelleDto bean2ExternalDto(Zaehlstelle bean);
 
     LadeAuswertungZaehlstelleKoordinateDTO bean2LadeAuswertungZaehlstelleKoordinateDto(Zaehlstelle bean);
 

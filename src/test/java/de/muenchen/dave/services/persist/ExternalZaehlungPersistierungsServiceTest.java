@@ -11,10 +11,10 @@ import de.muenchen.dave.domain.Querungsverkehr;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.ZeitintervallDto;
-import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalLaengsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalQuerungsverkehrDto;
+import de.muenchen.dave.domain.dtos.external.ExternalVerkehrsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
@@ -93,7 +93,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlung.setZaehlart("FJS");
         zaehlung.setZaehldauer("24h");
 
-        final var external = new ExternalLaengsverkehrDTO();
+        final var external = new ExternalLaengsverkehrDto();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
         external.setId(bewegungsbeziehungId);
         external.setKnotenarm(5);
@@ -135,7 +135,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlung.setZaehlart("QU");
         zaehlung.setZaehldauer("24h");
 
-        final var external = new ExternalQuerungsverkehrDTO();
+        final var external = new ExternalQuerungsverkehrDto();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
         external.setId(bewegungsbeziehungId);
         external.setKnotenarm(7);
@@ -174,7 +174,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlung.setZaehlart("N");
         zaehlung.setZaehldauer("24h");
 
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
         external.setId(bewegungsbeziehungId);
         // Kreuzungspfad
@@ -217,7 +217,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         zaehlung.setZaehlart("N");
         zaehlung.setZaehldauer("24h");
 
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         final var bewegungsbeziehungId = UUID.randomUUID().toString();
         external.setId(bewegungsbeziehungId);
         // Kreisverkehrspfad (isKreuzung=false), aber keine Hinein/Heraus/Vorbei Flags gesetzt
@@ -250,7 +250,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateVerkehrsbeziehungForZeitintervall_KreuzungTrue() {
         // Vorbereitung: Kreuzungspfad (isKreuzung = true)
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         external.setIsKreuzung(Boolean.TRUE);
         external.setVon(10);
         external.setNach(11);
@@ -271,7 +271,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateVerkehrsbeziehungForZeitintervall_ZaehlartQJS_TreatedAsKreuzung() {
         // Vorbereitung: Zaehlart QU sollte ebenfalls den Kreuzungspfad verwenden
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         // isKreuzung bleibt null/false
         external.setVon(20);
         external.setNach(21);
@@ -291,7 +291,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateVerkehrsbeziehungForZeitintervall_Kreisverkehr_Hinein() {
         // Vorbereitung: Kreisverkehrspfad mit HINEIN gesetzt
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         external.setIsKreuzung(Boolean.FALSE);
         external.setKnotenarm(99);
         external.setHinein(Boolean.TRUE);
@@ -312,7 +312,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateVerkehrsbeziehungForZeitintervall_Kreisverkehr_NoFlags_NullFahrbewegung() {
         // Vorbereitung: Kreisverkehrspfad ohne gesetzte Fahrbewegung
-        final var external = new ExternalVerkehrsbeziehungDTO();
+        final var external = new ExternalVerkehrsbeziehungDto();
         external.setIsKreuzung(Boolean.FALSE);
         external.setKnotenarm(123);
         external.setHinein(Boolean.FALSE);
@@ -332,7 +332,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateLaengsverkehrForZeitintervall_AllFields() {
         // Vorbereitung: Alle Felder gesetzt
-        final var external = new ExternalLaengsverkehrDTO();
+        final var external = new ExternalLaengsverkehrDto();
         external.setKnotenarm(3);
         external.setRichtung(Bewegungsrichtung.EIN);
         external.setStrassenseite(Himmelsrichtung.NO);
@@ -350,7 +350,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateLaengsverkehrForZeitintervall_NullFields() {
         // Vorbereitung: Alle Felder null
-        final var external = new ExternalLaengsverkehrDTO();
+        final var external = new ExternalLaengsverkehrDto();
         external.setKnotenarm(null);
         external.setRichtung(null);
         external.setStrassenseite(null);
@@ -368,7 +368,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateQuerungsverkehrForZeitintervall_AllFields() {
         // Vorbereitung: Alle Felder gesetzt
-        final var external = new ExternalQuerungsverkehrDTO();
+        final var external = new ExternalQuerungsverkehrDto();
         external.setKnotenarm(8);
         external.setRichtung(Himmelsrichtung.S);
 
@@ -384,7 +384,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testCreateQuerungsverkehrForZeitintervall_NullFields() {
         // Vorbereitung: Alle Felder null
-        final var external = new ExternalQuerungsverkehrDTO();
+        final var external = new ExternalQuerungsverkehrDto();
         external.setKnotenarm(null);
         external.setRichtung(null);
 
@@ -400,7 +400,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     @Test
     void testSaveZaehlung_noBewegungsbeziehungen_callsErneuereOnly() throws Exception {
         // Vorbereitung
-        final var dto = new ExternalZaehlungDTO();
+        final var dto = new ExternalZaehlungDto();
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
@@ -439,7 +439,7 @@ class ExternalZaehlungPersistierungsServiceTest {
     void testSaveZaehlung_withBewegungsbeziehungen_persistsAndDeletesZeitintervalle() throws Exception {
         // Vorbereitung
         final var bewegungsId = "b1";
-        final var dto = new ExternalZaehlungDTO();
+        final var dto = new ExternalZaehlungDto();
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
@@ -447,7 +447,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         dto.setWetter("rain");
         dto.setZaehlsituation("changed");
 
-        final var ev = new ExternalVerkehrsbeziehungDTO();
+        final var ev = new ExternalVerkehrsbeziehungDto();
         ev.setId(bewegungsId);
         final var ziDto = new ZeitintervallDto();
         ziDto.setPkw(2);
@@ -498,13 +498,13 @@ class ExternalZaehlungPersistierungsServiceTest {
     void testSaveZaehlung_withBewegungsbeziehungen_noZeitintervalle_deletesOnly() throws Exception {
         // Vorbereitung
         final var bewegungsId = "b2";
-        final var dto = new ExternalZaehlungDTO();
+        final var dto = new ExternalZaehlungDto();
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
 
-        final var ev = new ExternalVerkehrsbeziehungDTO();
+        final var ev = new ExternalVerkehrsbeziehungDto();
         ev.setId(bewegungsId);
         ev.setZeitintervalle(null); // no zeitintervalle
         dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));
@@ -537,13 +537,13 @@ class ExternalZaehlungPersistierungsServiceTest {
     void testSaveZaehlung_notAuthorizedUser_throwsAccessDeniedException() throws DataNotFoundException {
         // Vorbereitung
         final var bewegungsId = "b3";
-        final var dto = new ExternalZaehlungDTO();
+        final var dto = new ExternalZaehlungDto();
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
         dto.setZaehlart("N");
 
-        final var ev = new ExternalVerkehrsbeziehungDTO();
+        final var ev = new ExternalVerkehrsbeziehungDto();
         ev.setId(bewegungsId);
         ev.setZeitintervalle(null); // no zeitintervalle
         dto.setVerkehrsbeziehungen(java.util.Collections.singletonList(ev));

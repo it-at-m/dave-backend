@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -98,7 +98,7 @@ public class ZaehlungController {
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @GetMapping(value = "/getZaehlungenForExternal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ExternalZaehlungDTO>> getZaehlungenForExternal() {
+    public ResponseEntity<List<ExternalZaehlungDto>> getZaehlungenForExternal() {
         log.debug("Lade Zaehlungen für Dienstleister");
         try {
             return ResponseEntity.ok(this.externalZaehlungPersistierungsService.getZaehlungenForExternal(
@@ -114,7 +114,7 @@ public class ZaehlungController {
                 " T(de.muenchen.dave.security.AuthoritiesEnum).EXTERNAL.name())"
     )
     @PostMapping(value = "/saveExternal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BackendIdDto> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDTO zaehlung) {
+    public ResponseEntity<BackendIdDto> saveExternalZaehlung(@RequestBody @NotNull final ExternalZaehlungDto zaehlung) {
         log.debug("Externe Zaehlung speichern: {}", zaehlung);
         try {
             final BackendIdDto backendIdDto = this.externalZaehlungPersistierungsService.saveZaehlung(zaehlung);

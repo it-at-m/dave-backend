@@ -5,7 +5,7 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
-public class ExternalZaehlstelleDTO {
+public class ExternalZaehlstelleDto {
 
     String id;
 
@@ -17,7 +17,7 @@ public class ExternalZaehlstelleDTO {
 
     String kommentar;
 
-    List<ExternalZaehlungDTO> zaehlungen;
+    List<ExternalZaehlungDto> zaehlungen;
 
     Boolean sichtbarDatenportal;
 

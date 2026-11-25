@@ -10,7 +10,7 @@ import lombok.Data;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 @Data
-public class ExternalZaehlungDTO {
+public class ExternalZaehlungDto {
 
     String id;
 
@@ -51,16 +51,16 @@ public class ExternalZaehlungDTO {
 
     String kommentar;
 
-    List<ExternalKnotenarmDTO> knotenarme;
+    List<ExternalKnotenarmDto> knotenarme;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<ExternalLaengsverkehrDTO> laengsverkehr;
+    List<ExternalLaengsverkehrDto> laengsverkehr;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<ExternalQuerungsverkehrDTO> querungsverkehr;
+    List<ExternalQuerungsverkehrDto> querungsverkehr;
 
     @JsonSerialize(nullsUsing = EmptyListSerializer.class)
-    List<ExternalVerkehrsbeziehungDTO> verkehrsbeziehungen;
+    List<ExternalVerkehrsbeziehungDto> verkehrsbeziehungen;
 
     // Zählstelle
     String zaehlstelleNummer;

@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.ZaehlstelleRandomFactory;
 import de.muenchen.dave.domain.elasticsearch.ZaehlungRandomFactory;
@@ -87,7 +87,7 @@ class ExternalZaehlungPersistierungsServiceSpringTest {
 
         when(this.zaehlstelleIndex.findAllByStatus(anyString(), any())).thenReturn(new PageImpl<>(indexResult));
 
-        final List<ExternalZaehlungDTO> zaehlungenForExternal = this.externalZaehlungPersistierungsService
+        final List<ExternalZaehlungDto> zaehlungenForExternal = this.externalZaehlungPersistierungsService
                 .getZaehlungenForExternal(zst.getZaehlungen().get(0).getDienstleisterkennung(), false);
         assertThat(zaehlungenForExternal.size(), is(3));
         assertThat(zaehlungenForExternal.get(0).getStatus(), is(Status.INSTRUCTED.name()));

@@ -7,8 +7,8 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteBewegungsbeziehungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDto;
-import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalBewegungsbeziehungDto;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDto;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Bewegungsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -239,7 +239,7 @@ public abstract class ZaehlungPersistierungsService {
         }
     }
 
-    public List<ExternalBewegungsbeziehungDTO> getAllBewegungsbeziehungenFromZaehlung(final ExternalZaehlungDTO zaehlung) {
+    public List<ExternalBewegungsbeziehungDto> getAllBewegungsbeziehungenFromZaehlung(final ExternalZaehlungDto zaehlung) {
         return Stream.of(zaehlung.getLaengsverkehr(), zaehlung.getQuerungsverkehr(), zaehlung.getVerkehrsbeziehungen())
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
