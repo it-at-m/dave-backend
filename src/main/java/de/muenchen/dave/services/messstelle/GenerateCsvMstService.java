@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.messstelle;
 
-import de.muenchen.dave.domain.dtos.CsvDTO;
+import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteDTO;
 import de.muenchen.dave.domain.dtos.laden.messwerte.LadeMesswerteListenausgabeDTO;
 import de.muenchen.dave.domain.dtos.messstelle.FahrzeugOptionsDTO;
@@ -42,7 +42,7 @@ public class GenerateCsvMstService {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDTO generateDatentabelleCsv(final String messstelleId, MessstelleOptionsDTO options) throws DataNotFoundException {
+    public CsvDto generateDatentabelleCsv(final String messstelleId, MessstelleOptionsDTO options) throws DataNotFoundException {
         final LadeMesswerteListenausgabeDTO zaehldatenTable = messwerteService.ladeMesswerte(messstelleId, options).getZaehldatenTable();
         final List<LadeMesswerteDTO> data = zaehldatenTable.getZaehldaten();
         final ReadMessstelleInfoDTO messstelle = messstelleService.readMessstelleInfo(messstelleId);
@@ -66,7 +66,7 @@ public class GenerateCsvMstService {
             csvBuilder.append(getData(fahrzeugOptions, dat));
             csvBuilder.append(StringUtils.LF);
         });
-        final CsvDTO csvAsString = new CsvDTO();
+        final CsvDto csvAsString = new CsvDto();
         csvAsString.setCsvAsString(new String(csvBuilder));
         return csvAsString;
     }

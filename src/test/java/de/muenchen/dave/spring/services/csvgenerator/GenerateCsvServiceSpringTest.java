@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.csv.CsvMetaObject;
-import de.muenchen.dave.domain.dtos.CsvDTO;
+import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenTableDTO;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
@@ -206,7 +206,7 @@ public class GenerateCsvServiceSpringTest {
         init();
         final OptionsDTO options = getOptionsDTO();
 
-        final CsvDTO csvDTO = generateCsvService.generateDatentabelleCsv(MOCKABLE_ZAEHLUNG_ID, options);
+        final CsvDto csvDTO = generateCsvService.generateDatentabelleCsv(MOCKABLE_ZAEHLUNG_ID, options);
 
         final StringBuilder expected = new StringBuilder();
         expected.append("Zählstellennummer;Zählart;Zähldatum;Verkehrsbeziehung;;;;;;;;;;;;");

@@ -2,7 +2,7 @@ package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.csv.CsvMetaObject;
 import de.muenchen.dave.domain.csv.DatentabelleCsvZaehldatum;
-import de.muenchen.dave.domain.dtos.CsvDTO;
+import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDTO;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
@@ -46,7 +46,7 @@ public class GenerateCsvService {
      * @return CSV als String
      * @throws DataNotFoundException Wenn keine Daten gelesen werden konnten
      */
-    public CsvDTO generateDatentabelleCsv(String zaehlungId, OptionsDTO options) throws DataNotFoundException {
+    public CsvDto generateDatentabelleCsv(String zaehlungId, OptionsDTO options) throws DataNotFoundException {
         final List<LadeZaehldatumDTO> ladeZaehldatumDTOS = ladeZaehldatenService.ladeZaehldaten(UUID.fromString(zaehlungId), options).getZaehldaten();
 
         // Bei Tageswert soll keine Uhrzeit angezeigt werden
@@ -74,7 +74,7 @@ public class GenerateCsvService {
             csvBuilder.append(getData(options, dat));
             csvBuilder.append("\n");
         });
-        final CsvDTO csvAsString = new CsvDTO();
+        final CsvDto csvAsString = new CsvDto();
         csvAsString.setCsvAsString(new String(csvBuilder));
         return csvAsString;
     }

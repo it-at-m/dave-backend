@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.CsvDTO;
+import de.muenchen.dave.domain.dtos.CsvDto;
 import de.muenchen.dave.domain.dtos.OptionsDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleOptionsDTO;
 import de.muenchen.dave.exceptions.DataNotFoundException;
@@ -45,12 +45,12 @@ public class GenerateCsvController {
      * @return ResponseEntity of Type CsvDTO
      */
     @PostMapping(value = "/generate-csv")
-    public ResponseEntity<CsvDTO> generateCSV(
+    public ResponseEntity<CsvDto> generateCSV(
             @RequestParam(value = REQUEST_PARAMETER_ZAEHLUNG_ID) @NotEmpty final String zaehlungId,
             @Valid @RequestBody @NotNull final OptionsDTO options) {
         try {
             log.info("GenerateCSV für Zaehlung {} aufgerufen", zaehlungId);
-            final CsvDTO dto = generateCsvService.generateDatentabelleCsv(zaehlungId, options);
+            final CsvDto dto = generateCsvService.generateDatentabelleCsv(zaehlungId, options);
             log.info("CSV wurde erstellt");
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (final DataNotFoundException exception) {
@@ -59,12 +59,12 @@ public class GenerateCsvController {
     }
 
     @PostMapping(value = "/generate-csv-mst")
-    public ResponseEntity<CsvDTO> generateCSVMessstelle(
+    public ResponseEntity<CsvDto> generateCSVMessstelle(
             @RequestParam(value = REQUEST_PARAMETER_MESSSTELLE_ID) @NotEmpty final String messstelleId,
             @Valid @RequestBody @NotNull final MessstelleOptionsDTO options) {
         try {
             log.info("GenerateCSV für Messstelle {} aufgerufen", messstelleId);
-            final CsvDTO dto = generateCsvServiceMst.generateDatentabelleCsv(messstelleId, options);
+            final CsvDto dto = generateCsvServiceMst.generateDatentabelleCsv(messstelleId, options);
             log.info("CSV wurde erstellt");
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (final DataNotFoundException exception) {
