@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.domain.InfoMessage;
-import de.muenchen.dave.domain.dtos.InfoMessageDTO;
+import de.muenchen.dave.domain.dtos.InfoMessageDto;
 import de.muenchen.dave.domain.relationaldb.InfoMessageRandomFactory;
 import de.muenchen.dave.repositories.elasticsearch.CustomSuggestIndex;
 import de.muenchen.dave.repositories.elasticsearch.MessstelleIndex;
@@ -101,13 +101,13 @@ public class InfoMessageServiceTest {
 
         assertThat(infoMessageRepository.findAll().size(), is(11));
 
-        final var infoMessageDto = new InfoMessageDTO();
+        final var infoMessageDto = new InfoMessageDto();
         infoMessageDto.setContent("XXX");
         infoMessageDto.setGueltigVon(LocalDate.now());
         infoMessageDto.setGueltigBis(infoMessageDto.getGueltigVon().plusDays(1));
         infoMessageDto.setAktiv(true);
 
-        List<InfoMessageDTO> result = infoMessageService.saveInfoMessage(infoMessageDto);
+        List<InfoMessageDto> result = infoMessageService.saveInfoMessage(infoMessageDto);
 
         assertThat(infoMessageRepository.findAll().size(), is(11));
         assertThat(result.size(), is(11));
@@ -215,7 +215,7 @@ public class InfoMessageServiceTest {
 
         assertThat(infoMessageRepository.findAll().size(), is(11));
 
-        List<InfoMessageDTO> result = infoMessageService.loadAllInfoMessages();
+        List<InfoMessageDto> result = infoMessageService.loadAllInfoMessages();
 
         assertThat(result.size(), is(11));
 
@@ -270,7 +270,7 @@ public class InfoMessageServiceTest {
 
         assertThat(infoMessageRepository.findAll().size(), is(10));
 
-        List<InfoMessageDTO> result = infoMessageService.loadAllInfoMessages();
+        List<InfoMessageDto> result = infoMessageService.loadAllInfoMessages();
 
         assertThat(result.size(), is(11));
 

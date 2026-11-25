@@ -1,7 +1,7 @@
 package de.muenchen.dave.services;
 
 import de.muenchen.dave.domain.InfoMessage;
-import de.muenchen.dave.domain.dtos.InfoMessageDTO;
+import de.muenchen.dave.domain.dtos.InfoMessageDto;
 import de.muenchen.dave.domain.mapper.InfoMessageMapper;
 import de.muenchen.dave.repositories.relationaldb.InfoMessageRepository;
 import java.util.List;
@@ -26,14 +26,14 @@ public class InfoMessageService {
     }
 
     /**
-     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene {@link InfoMessageDTO}s als
+     * Die Methode speichert eine InfoMessage ab und gibt alle vorhandene {@link InfoMessageDto}s als
      * Liste zurück, beginnend mit der neusten aktiven
      * InfoMessage.
      *
-     * @param infoMessageDTO Das {@link InfoMessageDTO} zum Speichern.
-     * @return die {@link InfoMessageDTO}s
+     * @param infoMessageDTO Das {@link InfoMessageDto} zum Speichern.
+     * @return die {@link InfoMessageDto}s
      */
-    public List<InfoMessageDTO> saveInfoMessage(final InfoMessageDTO infoMessageDTO) {
+    public List<InfoMessageDto> saveInfoMessage(final InfoMessageDto infoMessageDTO) {
         final InfoMessage infoMessage;
         if (ObjectUtils.isEmpty(infoMessageDTO.getId())) {
             setAllInfoMessagesInactiveAndDeleteInactiveExceptAllowedInfoMessages();
@@ -53,14 +53,14 @@ public class InfoMessageService {
         return loadAllInfoMessages();
     }
 
-    public InfoMessageDTO loadActiveInfoMessage() {
+    public InfoMessageDto loadActiveInfoMessage() {
         final var infoMessage = infoMessageRepository.findTopByAktivIsTrueOrderByCreatedTimeDesc()
                 .orElseGet(this::getEmptyInfoMessage);
         return infoMessageMapper.bean2Dto(infoMessage);
 
     }
 
-    public List<InfoMessageDTO> loadAllInfoMessages() {
+    public List<InfoMessageDto> loadAllInfoMessages() {
         final var infoMessages = infoMessageRepository.findAllByOrderByCreatedTimeDesc();
         final var isInfoMessageEmpty = infoMessages.stream()
                 .noneMatch(InfoMessage::getAktiv);

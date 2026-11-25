@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class InfoMessageDTO {
+public class InfoMessageDto {
 
     private UUID id;
     private String content;

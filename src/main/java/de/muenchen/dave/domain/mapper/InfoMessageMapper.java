@@ -1,9 +1,10 @@
 package de.muenchen.dave.domain.mapper;
 
 import de.muenchen.dave.domain.InfoMessage;
-import de.muenchen.dave.domain.dtos.InfoMessageDTO;
+import de.muenchen.dave.domain.dtos.InfoMessageDto;
 import java.time.LocalDate;
 import java.time.ZoneId;
+
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -12,12 +13,12 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface InfoMessageMapper {
 
-    InfoMessage dto2bean(InfoMessageDTO dto);
+    InfoMessage dto2bean(InfoMessageDto dto);
 
-    InfoMessageDTO bean2Dto(InfoMessage bean);
+    InfoMessageDto bean2Dto(InfoMessage bean);
 
     @AfterMapping
-    default void toInfoMessageDTO(@MappingTarget InfoMessageDTO dto, InfoMessage chatMessage) {
+    default void toInfoMessageDTO(@MappingTarget InfoMessageDto dto, InfoMessage chatMessage) {
         final LocalDate now = LocalDate.now(ZoneId.of("Europe/Berlin"));
         if (chatMessage.getGueltigVon() == null || chatMessage.getGueltigBis() == null) {
             dto.setGueltig(false);

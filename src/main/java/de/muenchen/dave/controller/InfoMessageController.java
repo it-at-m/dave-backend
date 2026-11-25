@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.InfoMessageDTO;
+import de.muenchen.dave.domain.dtos.InfoMessageDto;
 import de.muenchen.dave.exceptions.ResourceNotFoundException;
 import de.muenchen.dave.services.InfoMessageService;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +37,7 @@ public class InfoMessageController {
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<List<InfoMessageDTO>> getAllInfoMessages() {
+    public ResponseEntity<List<InfoMessageDto>> getAllInfoMessages() {
         log.debug("Laden aller aktuellen InfoMessages");
         try {
             return ResponseEntity.ok(infoMessageService.loadAllInfoMessages());
@@ -62,7 +62,7 @@ public class InfoMessageController {
     )
     @GetMapping(value = "/active", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<InfoMessageDTO> getActiveInfoMessage() {
+    public ResponseEntity<InfoMessageDto> getActiveInfoMessage() {
         log.debug("Laden der aktuellen InfoMessage");
         try {
             return ResponseEntity.ok(infoMessageService.loadActiveInfoMessage());
@@ -84,7 +84,7 @@ public class InfoMessageController {
     @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
     @Transactional()
-    public ResponseEntity<List<InfoMessageDTO>> saveInfoMessage(@RequestBody @NotNull final InfoMessageDTO infoMessageDTO) {
+    public ResponseEntity<List<InfoMessageDto>> saveInfoMessage(@RequestBody @NotNull final InfoMessageDto infoMessageDTO) {
         log.debug("Neue Infomessage speichern: {}", infoMessageDTO.getContent());
         try {
             return ResponseEntity.ok(infoMessageService.saveInfoMessage(infoMessageDTO));
