@@ -6,12 +6,10 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ConfigurationDTO {
+public class TenantConfigurationDto {
 
     @NotNull
-    private ZaehlstelleConfigurationDTO zaehlstelle;
-
+    private String datenportalHeader;
     @NotNull
-    private TenantConfigurationDTO tenant;
-
+    private MapConfigurationDto mapConfiguration;
 }

@@ -1,6 +1,6 @@
 package de.muenchen.dave.controller;
 
-import de.muenchen.dave.domain.dtos.init.ConfigurationDTO;
+import de.muenchen.dave.domain.dtos.init.ConfigurationDto;
 import de.muenchen.dave.services.ConfigurationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class ConfigurationController {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
-    public ResponseEntity<ConfigurationDTO> getConfiguration() {
+    public ResponseEntity<ConfigurationDto> getConfiguration() {
         log.debug("#getConfiguration");
         try {
             return ResponseEntity.ok(configurationService.getConfiguration());

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ZaehlstelleConfigurationDTO {
+public class ZaehlstelleConfigurationDto {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private boolean automaticNumberAssignment;

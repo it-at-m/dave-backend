@@ -1,6 +1,6 @@
 package de.muenchen.dave.properties;
 
-import de.muenchen.dave.domain.dtos.init.LayerDTO;
+import de.muenchen.dave.domain.dtos.init.LayerDto;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class MapConfigProperties {
     private Integer centerZoom = 12;
 
     @NotEmpty(message = "Es muss mindestens ein Basis-Layer konfiguriert sein (dave.tenant.map.baseLayers).")
-    private List<LayerDTO> baseLayers;
+    private List<LayerDto> baseLayers;
 
-    private List<LayerDTO> overlayLayers = new ArrayList<>();
+    private List<LayerDto> overlayLayers = new ArrayList<>();
 }
