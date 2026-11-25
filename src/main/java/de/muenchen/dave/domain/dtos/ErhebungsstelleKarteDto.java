@@ -10,7 +10,7 @@ import lombok.Data;
 @Schema(
         oneOf = {
                 de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO.class,
-                de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO.class
+                de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto.class
         }
 )
 public class ErhebungsstelleKarteDto implements Serializable {

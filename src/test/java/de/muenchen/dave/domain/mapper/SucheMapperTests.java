@@ -3,7 +3,7 @@ package de.muenchen.dave.domain.mapper;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
@@ -69,8 +69,8 @@ class SucheMapperTests {
     @Test
     void testZaehlstelleToZaehlstelleKarteDTO() {
         final Zaehlstelle zaehlstelle = ZaehlstelleRandomFactory.getOne();
-        final ZaehlstelleKarteDTO actual = mapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
-        final ZaehlstelleKarteDTO expected = new ZaehlstelleKarteDTO();
+        final ZaehlstelleKarteDto actual = mapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
+        final ZaehlstelleKarteDto expected = new ZaehlstelleKarteDto();
         expected.setId(zaehlstelle.getId());
         expected.setFachId(zaehlstelle.getNummer());
         expected.setType("zaehlstelle");

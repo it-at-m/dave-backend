@@ -23,7 +23,7 @@ import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
 import de.muenchen.dave.domain.elasticsearch.CustomSuggest;
@@ -201,7 +201,7 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDto).map(ZaehlstelleKarteDto.class::cast).findFirst()
                 .get().getZaehlartenKarte(), is(expected));
     }
 
@@ -235,7 +235,7 @@ public class SucheServiceSpringTests {
         zaehlartKarte.setLongitude(2.0);
         expected.add(zaehlartKarte);
 
-        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDTO).map(ZaehlstelleKarteDTO.class::cast).findFirst()
+        assertThat(erhebungsstelleKarteDTOS.stream().filter(stelle -> stelle instanceof ZaehlstelleKarteDto).map(ZaehlstelleKarteDto.class::cast).findFirst()
                 .get().getZaehlartenKarte(), is(expected));
     }
 

@@ -1,6 +1,6 @@
 package de.muenchen.dave.domain.mapper;
 
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleTooltipDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleTooltipDTO;
@@ -92,11 +92,11 @@ public interface SucheMapper {
         return zaehlstelleTooltipDTO;
     }
 
-    ZaehlstelleKarteDTO zaehlstelleToZaehlstelleKarteDTO(final Zaehlstelle zaehlstelle);
+    ZaehlstelleKarteDto zaehlstelleToZaehlstelleKarteDTO(final Zaehlstelle zaehlstelle);
 
     @AfterMapping
     default void zaehlstelleToZaehlstelleKarteDTOAfterMapping(
-            @MappingTarget final ZaehlstelleKarteDTO dto,
+            @MappingTarget final ZaehlstelleKarteDto dto,
             final Zaehlstelle bean) {
         dto.setType("zaehlstelle");
         dto.setFachId(bean.getNummer());

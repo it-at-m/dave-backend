@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDto;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
@@ -286,7 +286,7 @@ public class SucheService {
             searchResult.addAll(messstellen);
         }
         if (searchAndFilterOptions.isSearchInZaehlstellen()) {
-            final Set<ZaehlstelleKarteDTO> zaehlstellen = sucheZaehlstellenForKarte(query, isForAdminportal);
+            final Set<ZaehlstelleKarteDto> zaehlstellen = sucheZaehlstellenForKarte(query, isForAdminportal);
             searchResult.addAll(zaehlstellen);
         }
         return searchResult;
@@ -301,7 +301,7 @@ public class SucheService {
      * @param isForAdminportal ob die Anfrage vom Adminportal stammt
      * @return Karten-DTOs der passenden Zählstellen
      */
-    private Set<ZaehlstelleKarteDTO> sucheZaehlstellenForKarte(final String query, final boolean isForAdminportal) {
+    private Set<ZaehlstelleKarteDto> sucheZaehlstellenForKarte(final String query, final boolean isForAdminportal) {
         final List<Zaehlstelle> zaehlstellen;
         final PageRequest pageable = PageRequest.of(0, 10000);
         if (StringUtils.isEmpty(query)) {
@@ -452,8 +452,8 @@ public class SucheService {
      * @param isForAdminportal ob die Anfrage vom Adminportal stammt
      * @return Karten-DTOs der erlaubten Zählstellen
      */
-    private Set<ZaehlstelleKarteDTO> filterZaehlstellenKarte(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
-        final Set<ZaehlstelleKarteDTO> zaehlstelleKarteDTOSet = new HashSet<>();
+    private Set<ZaehlstelleKarteDto> filterZaehlstellenKarte(final List<Zaehlstelle> zaehlstellen, final boolean isForAdminportal) {
+        final Set<ZaehlstelleKarteDto> zaehlstelleKarteDTOSet = new HashSet<>();
 
         for (final Zaehlstelle zaehlstelle : this.filterZaehlungenForEachZaehlstelle(zaehlstellen, isForAdminportal)) {
             final boolean isRoleAdmin = securityContextInformationExtractorService.isFachadmin();
@@ -473,7 +473,7 @@ public class SucheService {
             final String nummer = zaehlstelle.getNummer();
             final Integer anzahlZaehlungen = CollectionUtils.emptyIfNull(zaehlstelle.getZaehlungen()).size();
 
-            final ZaehlstelleKarteDTO zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
+            final ZaehlstelleKarteDto zaehlstelleKarteDTO = sucheMapper.zaehlstelleToZaehlstelleKarteDTO(zaehlstelle);
             zaehlstelleKarteDTO.setLetzteZaehlungId(letzteZaehlungId);
 
             zaehlstelleKarteDTO.setTooltip(
