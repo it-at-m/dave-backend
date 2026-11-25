@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
 import com.google.common.collect.Lists;
-import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Status;
@@ -71,14 +71,14 @@ public class SucheServiceTest {
         zaehlung.setPunkt(new GeoPoint(3, 4));
         zaehlungen.add(zaehlung);
 
-        Set<ZaehlartenKarteDTO> expected = new HashSet<>();
-        ZaehlartenKarteDTO zaehlartenKarte = new ZaehlartenKarteDTO();
+        Set<ZaehlartenKarteDto> expected = new HashSet<>();
+        ZaehlartenKarteDto zaehlartenKarte = new ZaehlartenKarteDto();
         zaehlartenKarte.setLatitude(1.0);
         zaehlartenKarte.setLongitude(2.0);
         zaehlartenKarte.setZaehlarten(new TreeSet<>(List.of("FjS")));
         expected.add(zaehlartenKarte);
 
-        zaehlartenKarte = new ZaehlartenKarteDTO();
+        zaehlartenKarte = new ZaehlartenKarteDto();
         zaehlartenKarte.setLatitude(3.0);
         zaehlartenKarte.setLongitude(4.0);
         zaehlartenKarte.setZaehlarten(new TreeSet<>(Arrays.asList("K", "QjS", "T")));

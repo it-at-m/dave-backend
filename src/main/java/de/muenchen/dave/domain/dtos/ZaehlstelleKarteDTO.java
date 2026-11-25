@@ -16,6 +16,6 @@ public class ZaehlstelleKarteDTO extends ErhebungsstelleKarteDto {
     @NotNull
     private String letzteZaehlungId;
     @NotNull
-    private Set<ZaehlartenKarteDTO> zaehlartenKarte = new HashSet<>();
+    private Set<ZaehlartenKarteDto> zaehlartenKarte = new HashSet<>();
 
 }

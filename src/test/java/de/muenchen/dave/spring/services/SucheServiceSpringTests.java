@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 import de.muenchen.dave.DaveBackendApplication;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
 import de.muenchen.dave.domain.dtos.suche.SucheComplexSuggestsDTO;
@@ -189,13 +189,13 @@ public class SucheServiceSpringTests {
         assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
         assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
 
-        Set<ZaehlartenKarteDTO> expected = new HashSet<>();
-        ZaehlartenKarteDTO zaehlartKarte = new ZaehlartenKarteDTO();
+        Set<ZaehlartenKarteDto> expected = new HashSet<>();
+        ZaehlartenKarteDto zaehlartKarte = new ZaehlartenKarteDto();
         zaehlartKarte.setZaehlarten(new TreeSet<>(List.of("Q")));
         zaehlartKarte.setLatitude(1.0);
         zaehlartKarte.setLongitude(1.0);
         expected.add(zaehlartKarte);
-        zaehlartKarte = new ZaehlartenKarteDTO();
+        zaehlartKarte = new ZaehlartenKarteDto();
         zaehlartKarte.setZaehlarten(new TreeSet<>(List.of("Q_")));
         zaehlartKarte.setLatitude(1.0);
         zaehlartKarte.setLongitude(2.0);
@@ -228,8 +228,8 @@ public class SucheServiceSpringTests {
         assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLatitude(), is(equalTo(1.0)));
         assertThat(erhebungsstelleKarteDTOS.stream().findFirst().get().getLongitude(), is(equalTo(1.0)));
 
-        Set<ZaehlartenKarteDTO> expected = new HashSet<>();
-        ZaehlartenKarteDTO zaehlartKarte = new ZaehlartenKarteDTO();
+        Set<ZaehlartenKarteDto> expected = new HashSet<>();
+        ZaehlartenKarteDto zaehlartKarte = new ZaehlartenKarteDto();
         zaehlartKarte.setZaehlarten(new TreeSet<>(List.of("Q_")));
         zaehlartKarte.setLatitude(1.0);
         zaehlartKarte.setLongitude(2.0);

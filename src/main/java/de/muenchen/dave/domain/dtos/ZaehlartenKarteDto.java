@@ -14,7 +14,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode(exclude = { "zaehlarten" })
-public class ZaehlartenKarteDTO implements Serializable {
+public class ZaehlartenKarteDto implements Serializable {
 
     @NotNull
     private Double longitude;

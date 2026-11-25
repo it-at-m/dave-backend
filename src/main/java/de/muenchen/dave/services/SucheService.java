@@ -9,7 +9,7 @@ import co.elastic.clients.elasticsearch.core.search.Suggester;
 import com.google.common.collect.Lists;
 import de.muenchen.dave.configuration.CachingConfiguration;
 import de.muenchen.dave.domain.dtos.ErhebungsstelleKarteDto;
-import de.muenchen.dave.domain.dtos.ZaehlartenKarteDTO;
+import de.muenchen.dave.domain.dtos.ZaehlartenKarteDto;
 import de.muenchen.dave.domain.dtos.ZaehlstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.messstelle.MessstelleKarteDTO;
 import de.muenchen.dave.domain.dtos.suche.SearchAndFilterOptionsDTO;
@@ -98,15 +98,15 @@ public class SucheService {
      * @param zaehlungen zu verarbeitende Zählungen
      * @return Zählarten, gruppiert nach Koordinaten
      */
-    public static Set<ZaehlartenKarteDTO> mapZaehlungenToZaehlartenKarte(final List<Zaehlung> zaehlungen) {
-        final Set<ZaehlartenKarteDTO> zaehlartenKarteSet = new HashSet<>();
+    public static Set<ZaehlartenKarteDto> mapZaehlungenToZaehlartenKarte(final List<Zaehlung> zaehlungen) {
+        final Set<ZaehlartenKarteDto> zaehlartenKarteSet = new HashSet<>();
         CollectionUtils.emptyIfNull(zaehlungen).forEach(zaehlung -> {
             log.debug("Zaehlung: {}", zaehlung.toString());
-            final var zaehlartenKarte = new ZaehlartenKarteDTO();
+            final var zaehlartenKarte = new ZaehlartenKarteDto();
             zaehlartenKarte.setLatitude(zaehlung.getPunkt().getLat());
             zaehlartenKarte.setLongitude(zaehlung.getPunkt().getLon());
-            final Optional<ZaehlartenKarteDTO> optZaehlartenKarte = zaehlartenKarteSet.stream()
-                    .filter(zaehlartenKarteDTO -> zaehlartenKarteDTO.equals(zaehlartenKarte))
+            final Optional<ZaehlartenKarteDto> optZaehlartenKarte = zaehlartenKarteSet.stream()
+                    .filter(zaehlartenKarteDto -> zaehlartenKarteDto.equals(zaehlartenKarte))
                     .findFirst();
             final var kuerzelZaehlart = Zaehlart.getKuerzelForZaehlartOrNullIfZaehlartNotExisting(zaehlung.getZaehlart());
             if (!Objects.isNull(kuerzelZaehlart)) {
