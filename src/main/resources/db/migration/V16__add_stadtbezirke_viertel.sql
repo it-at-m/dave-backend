@@ -13,7 +13,7 @@ CREATE INDEX idx_stadtbezirk_stadt ON stadtbezirk (stadt);
 CREATE INDEX idx_stadtbezirk_stadt_nummer ON stadtbezirk (stadt, nummer);
 
 
-CREATE TABLE IF NOT EXISTS stadtbezirk_viertel
+CREATE TABLE IF NOT EXISTS stadtbezirksviertel
 (
     id character varying(36) NOT NULL,
     created_time timestamp without time zone NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS stadtbezirk_viertel
     PRIMARY KEY ("id")
 );
 
-alter table if exists stadtbezirk_viertel
+alter table if exists stadtbezirksviertel
     add constraint FK7abqxhfbfywi9hvrr5odh2i3a
     foreign key (stadtbezirk_id)
     references stadtbezirk;
 
-CREATE INDEX idx_stadtbezirk_viertel_stadtbezirk_id  ON stadtbezirk_viertel USING btree (stadtbezirk_id);
+CREATE INDEX idx_stadtbezirksviertel_stadtbezirk_id  ON stadtbezirk_viertel USING btree (stadtbezirk_id);
