@@ -6,7 +6,7 @@ import de.muenchen.dave.domain.dtos.laden.AbstractLadeBelastungsplanDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import java.util.List;
 
-public interface IBelastungsplanDataService {
+public interface BelastungsplanDataService {
 
     AbstractLadeBelastungsplanDto<?> buildLadeBelastungsplanDTO(final OptionsDto options,
             final Zaehlung zaehlung,

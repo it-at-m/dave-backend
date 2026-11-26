@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractBelastungsplanDataService implements IBelastungsplanDataService {
+public abstract class AbstractBelastungsplanDataService implements BelastungsplanDataService {
 
     @SuppressWarnings("unchecked")
     protected <T extends AbstractBelastungsplanDataDto> void putFirstValueInBelastungsplan(AbstractLadeBelastungsplanDto<T> ladeBelastungsplan,
