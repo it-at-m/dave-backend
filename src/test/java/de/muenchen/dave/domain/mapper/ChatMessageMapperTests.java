@@ -5,8 +5,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.ChatMessageDto;
+import de.muenchen.dave.domain.dtos.ChatMessageDtoRandomFactory;
 import de.muenchen.dave.domain.relationaldb.ChatMessageRandomFactory;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
