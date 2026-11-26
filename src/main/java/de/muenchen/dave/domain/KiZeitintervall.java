@@ -18,7 +18,7 @@ import org.hibernate.validator.constraints.Range;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class KIZeitintervall {
+public class KiZeitintervall {
 
     @Min(value = 0, message = "RAD must not be negative")
     int rad;

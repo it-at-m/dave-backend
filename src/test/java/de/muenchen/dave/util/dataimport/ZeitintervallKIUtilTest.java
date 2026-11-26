@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -47,7 +47,7 @@ class ZeitintervallKIUtilTest {
     @Test
     void testCreateKIZeitintervalleFromPredictionResultsLengthMismatch() {
         // Arrange
-        List<KIPredictionResult> predictionResults = List.of(new KIPredictionResult(6));
+        List<KiPredictionResult> predictionResults = List.of(new KiPredictionResult(6));
         List<Zeitintervall> zeitintervalle = Arrays.asList(new Zeitintervall(), new Zeitintervall());
 
         // Act & Assert
@@ -63,10 +63,10 @@ class ZeitintervallKIUtilTest {
     @Test
     void testCreateKIZeitintervalleFromPredictionResults() {
         // Arrange
-        KIPredictionResult predictionResult1 = new KIPredictionResult(6);
-        KIPredictionResult predictionResult2 = new KIPredictionResult(1);
+        KiPredictionResult predictionResult1 = new KiPredictionResult(6);
+        KiPredictionResult predictionResult2 = new KiPredictionResult(1);
 
-        List<KIPredictionResult> predictionResults = Arrays.asList(predictionResult1, predictionResult2);
+        List<KiPredictionResult> predictionResults = Arrays.asList(predictionResult1, predictionResult2);
 
         Verkehrsbeziehung verkehrsbeziehung1 = new Verkehrsbeziehung();
         verkehrsbeziehung1.setVon(1);

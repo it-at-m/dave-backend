@@ -11,7 +11,7 @@ import lombok.Value;
  * </p>
  */
 @Value
-public class KIPredictionResult {
+public class KiPredictionResult {
 
     int radTagessumme;
 
@@ -23,10 +23,10 @@ public class KIPredictionResult {
      * @return vorhergesagte Rad-Tagessumme
      * @throws IllegalArgumentException wenn die falsche Anzahl an Elementen übergeben wurde.
      */
-    public static KIPredictionResult fromArray(long[] predictionResults) throws IllegalArgumentException, ArithmeticException {
+    public static KiPredictionResult fromArray(long[] predictionResults) throws IllegalArgumentException, ArithmeticException {
         if (predictionResults.length != 1)
             throw new IllegalArgumentException("Incorrect amount of elements provided. Array must contain 1 element.");
-        return new KIPredictionResult(Math.toIntExact(predictionResults[0]));
+        return new KiPredictionResult(Math.toIntExact(predictionResults[0]));
     }
 
 }

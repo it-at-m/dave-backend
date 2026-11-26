@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.persist;
 
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -189,7 +189,7 @@ public class ZeitintervallPersistierungsService {
                 groupedZeitintervalleByBewegungsbeziehung);
         if (modelZaehldauer.isPresent()) {
             try {
-                final List<KIPredictionResult> predictionResults = hochrechnungsService
+                final List<KiPredictionResult> predictionResults = hochrechnungsService
                         .calculateRadhochrechnung(modelZaehldauer.get(), groupedZeitintervalleByBewegungsbeziehung);
                 if (!predictionResults.isEmpty()) {
                     final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil

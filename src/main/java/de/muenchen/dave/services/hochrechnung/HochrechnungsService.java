@@ -1,6 +1,6 @@
 package de.muenchen.dave.services.hochrechnung;
 
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.Zaehldauer;
@@ -34,7 +34,7 @@ public class HochrechnungsService {
      * @return leere Liste, falls kein passendes Modell verfuegbar ist, sonst eine Vorhersage je Gruppe
      * @throws PredictionFailedException wenn das gefundene Modell nicht inferiert werden kann
      */
-    public List<KIPredictionResult> calculateRadhochrechnung(final Zaehldauer zaehldauer,
+    public List<KiPredictionResult> calculateRadhochrechnung(final Zaehldauer zaehldauer,
             final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         final Optional<OnnxHochrechnungsmodell> model = onnxModelRegistry.findModel(zaehldauer, Fahrzeug.RAD);
         if (model.isEmpty()) {

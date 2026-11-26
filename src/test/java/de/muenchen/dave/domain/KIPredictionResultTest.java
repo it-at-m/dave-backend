@@ -15,7 +15,7 @@ class KIPredictionResultTest {
         long[] tagessummen = { 6 };
 
         // Act
-        KIPredictionResult result = KIPredictionResult.fromArray(tagessummen);
+        KiPredictionResult result = KiPredictionResult.fromArray(tagessummen);
 
         // Assert
         assertThat(result, hasProperty("radTagessumme", equalTo(6)));
@@ -27,7 +27,7 @@ class KIPredictionResultTest {
         long[] tagessummen = { 1, 2, 3, 4, 5, 6, 7 };
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> KIPredictionResult.fromArray(tagessummen));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> KiPredictionResult.fromArray(tagessummen));
 
         String expectedMessage = "Incorrect amount of elements provided. Array must contain 1 element.";
         String actualMessage = exception.getMessage();

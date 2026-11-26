@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.Fahrzeug;
 import de.muenchen.dave.domain.enums.ModelInputSchema;
@@ -31,7 +31,7 @@ class OnnxHochrechnungsmodellReineFahrzeugwerteTest {
         final List<List<Zeitintervall>> zeitintervalle = List.of(createZeitintervalle());
 
         try (OnnxHochrechnungsmodell model = new OnnxHochrechnungsmodell(create2x4hDefinition(), new ReineFahrzeugwerteEncoder())) {
-            final List<KIPredictionResult> result = model.calculate(zeitintervalle);
+            final List<KiPredictionResult> result = model.calculate(zeitintervalle);
 
             assertThat(result.size(), equalTo(1));
         }

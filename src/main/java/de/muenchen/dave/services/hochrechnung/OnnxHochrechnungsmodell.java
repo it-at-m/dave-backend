@@ -5,7 +5,7 @@ import ai.onnxruntime.OnnxValue;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.properties.OnnxModelDefinition;
@@ -53,7 +53,7 @@ public class OnnxHochrechnungsmodell implements AutoCloseable {
      * @return Vorhersagen in derselben Reihenfolge wie die Eingabegruppen
      * @throws PredictionFailedException wenn die Inferenz nicht ausgefuehrt werden kann
      */
-    public List<KIPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
+    public List<KiPredictionResult> calculate(final List<List<Zeitintervall>> groupedZeitintervalle) throws PredictionFailedException {
         final long[][] inputData;
         try {
             inputData = modelInputEncoder.encode(
@@ -66,10 +66,10 @@ public class OnnxHochrechnungsmodell implements AutoCloseable {
         if (predictions.length != groupedZeitintervalle.size()) {
             throw new PredictionFailedException(definition.getId(), PredictionFailedException.ONNX_INVALID_INPUT_DIMENSION);
         }
-        final List<KIPredictionResult> results = new ArrayList<>();
+        final List<KiPredictionResult> results = new ArrayList<>();
         for (final long[] prediction : predictions) {
             try {
-                results.add(KIPredictionResult.fromArray(prediction));
+                results.add(KiPredictionResult.fromArray(prediction));
             } catch (final IllegalArgumentException | ArithmeticException exception) {
                 throw new PredictionFailedException(
                         definition.getId(), PredictionFailedException.ONNX_PREDICTION_UNKNOWN_RESULTTYPE_ERROR);

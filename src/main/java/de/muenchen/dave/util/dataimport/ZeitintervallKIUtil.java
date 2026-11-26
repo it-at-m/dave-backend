@@ -2,7 +2,7 @@ package de.muenchen.dave.util.dataimport;
 
 import com.google.common.collect.Streams;
 import de.muenchen.dave.domain.Hochrechnung;
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatumDto;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -42,7 +42,7 @@ public final class ZeitintervallKIUtil {
      * @return Liste der zu perstierenden Zeitintervalle für die KI-Tagessummen
      */
     public static List<Zeitintervall> createKIZeitintervalleForTagessummeFromKIPredictionResults(
-            final List<KIPredictionResult> predictionResults,
+            final List<KiPredictionResult> predictionResults,
             final List<Zeitintervall> firstZeitintervallOfBewegungsbeziehungen) {
         if (predictionResults.size() != firstZeitintervallOfBewegungsbeziehungen.size())
             throw new IllegalArgumentException(LIST_LENGTH_MISMATCH);
@@ -91,7 +91,7 @@ public final class ZeitintervallKIUtil {
      *         Hochrechnung) enthält.
      */
     private static Zeitintervall createKIZeitintervallFromKIPredictionResult(
-            final KIPredictionResult predictionResult,
+            final KiPredictionResult predictionResult,
             final Zeitintervall zeitintervall) {
         final Zeitintervall kiZeitintervall = ZeitintervallBaseUtil.createZeitintervallWithoutCountingValues(
                 zeitintervall.getZaehlungId(),

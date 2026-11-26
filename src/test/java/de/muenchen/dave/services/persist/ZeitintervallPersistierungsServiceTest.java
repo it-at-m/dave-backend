@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.Hochrechnung;
-import de.muenchen.dave.domain.KIPredictionResult;
+import de.muenchen.dave.domain.KiPredictionResult;
 import de.muenchen.dave.domain.Verkehrsbeziehung;
 import de.muenchen.dave.domain.Zeitintervall;
 import de.muenchen.dave.domain.enums.TypeZeitintervall;
@@ -41,7 +41,7 @@ class ZeitintervallPersistierungsServiceTest {
     void test_With13HoursPrediction_PersistsKiAndGesamtHochrechnung() throws PredictionFailedException {
         final ZeitintervallRepository zeitintervallRepository = Mockito.mock(ZeitintervallRepository.class);
         final HochrechnungsService hochrechnungsService = Mockito.mock(HochrechnungsService.class);
-        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KIPredictionResult(123)));
+        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KiPredictionResult(123)));
         final ZeitintervallPersistierungsService service = new ZeitintervallPersistierungsService(zeitintervallRepository, hochrechnungsService);
 
         service.aufbereitenUndPersistieren(Zaehldauer.DAUER_13_STUNDEN, createZeitintervalle(52), true);
@@ -57,7 +57,7 @@ class ZeitintervallPersistierungsServiceTest {
     void test_With16HoursPrediction_PersistsKiAndGesamtHochrechnung() throws PredictionFailedException {
         final ZeitintervallRepository zeitintervallRepository = Mockito.mock(ZeitintervallRepository.class);
         final HochrechnungsService hochrechnungsService = Mockito.mock(HochrechnungsService.class);
-        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KIPredictionResult(123)));
+        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KiPredictionResult(123)));
         final ZeitintervallPersistierungsService service = new ZeitintervallPersistierungsService(zeitintervallRepository, hochrechnungsService);
 
         service.aufbereitenUndPersistieren(Zaehldauer.DAUER_16_STUNDEN, createZeitintervalle(64), true);
@@ -69,7 +69,7 @@ class ZeitintervallPersistierungsServiceTest {
     void test_WithOtherDurationAndComplete2x4HourModelBlocks_Uses2x4HourModel() throws PredictionFailedException {
         final ZeitintervallRepository zeitintervallRepository = Mockito.mock(ZeitintervallRepository.class);
         final HochrechnungsService hochrechnungsService = Mockito.mock(HochrechnungsService.class);
-        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KIPredictionResult(123), new KIPredictionResult(123)));
+        when(hochrechnungsService.calculateRadhochrechnung(any(), any())).thenReturn(List.of(new KiPredictionResult(123), new KiPredictionResult(123)));
         final ZeitintervallPersistierungsService service = new ZeitintervallPersistierungsService(zeitintervallRepository, hochrechnungsService);
 
         service.aufbereitenUndPersistieren(Zaehldauer.SONSTIGE, createZeitintervalleForOtherDuration(), true);
