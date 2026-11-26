@@ -84,7 +84,7 @@ public class DienstleisterController {
 
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole(T(de.muenchen.dave.security.AuthoritiesEnum).FACHADMIN.name())")
-    public ResponseEntity<?> deleteDienstleister(@PathVariable(value = "id") final UUID id) {
+    public ResponseEntity<Void> deleteDienstleister(@PathVariable(value = "id") final UUID id) {
         log.debug("Dienstleister löschen.");
         try {
             this.dienstleisterService.deleteDienstleister(id);

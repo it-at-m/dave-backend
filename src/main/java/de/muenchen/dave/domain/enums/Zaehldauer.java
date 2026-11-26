@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Arrays;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum Zaehldauer {
 
     /**

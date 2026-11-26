@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.dtos.init;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,6 +9,8 @@ import lombok.Data;
 public class TenantConfigurationDTO {
 
     private String city;
+    @NotNull
     private String datenportalHeader;
+    @NotNull
     private MapConfigurationDTO mapConfiguration;
 }
