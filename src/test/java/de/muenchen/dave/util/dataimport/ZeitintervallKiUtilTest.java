@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-class ZeitintervallKIUtilTest {
+class ZeitintervallKiUtilTest {
 
     @Test
     void testGroupZeitintervalleByBewegungsbeziehung() {
