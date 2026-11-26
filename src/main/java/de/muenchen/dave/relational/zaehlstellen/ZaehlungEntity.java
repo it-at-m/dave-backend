@@ -133,19 +133,18 @@ public class ZaehlungEntity extends BaseEntity {
     @Column(name = "kategorien", columnDefinition = "text[]")
     private Set<String> kategorien;
 
-    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "zaehlung", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnotenarmEntity> knotenarme = new ArrayList<>();
 
-    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<LaengsverkehrEntity> laengsverkehre = new ArrayList<>();
 
-    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<QuerungsverkehrEntity> querungsverkehre = new ArrayList<>();
 
-    @OneToMany(cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
     @JoinColumn(name = "zaehlung_id", referencedColumnName = "id")
     private List<VerkehrsbeziehungEntity> verkehrsbeziehungen = new ArrayList<>();
 

@@ -7,33 +7,34 @@ import de.muenchen.dave.domain.dtos.OpenZaehlungDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BackendIdDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
+import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
+import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlstelleWithUnreadMessageDTO;
 import de.muenchen.dave.domain.dtos.laden.LadeZaehlungWithUnreadMessageDTO;
 import de.muenchen.dave.domain.enums.Participant;
 import de.muenchen.dave.domain.enums.Status;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
+import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
+import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.BrokenInfrastructureException;
 import de.muenchen.dave.exceptions.DataNotFoundException;
 import de.muenchen.dave.exceptions.PlausibilityException;
-import de.muenchen.dave.domain.dtos.bearbeiten.UpdateStatusDTO;
-import de.muenchen.dave.domain.dtos.external.ExternalZaehlungDTO;
-import de.muenchen.dave.domain.mapper.ZaehlstelleMapper;
-import de.muenchen.dave.domain.mapper.ZaehlungMapper;
+import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
 import de.muenchen.dave.relational.zaehlstellen.ZaehlstelleEntity;
 import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
-import de.muenchen.dave.relational.repository.ZaehlstellenIndexRepository;
+import de.muenchen.dave.services.persist.BewegungsbeziehungSynchronisierungsService;
+import de.muenchen.dave.services.persist.KnotenarmSynchronisierungsService;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -57,6 +58,10 @@ public class ZaehlstelleIndexService {
     private final ChatMessageService messageService;
     private final StadtbezirkMapper stadtbezirkMapper;
     private final SanitizationService sanitizationService;
+    private final BewegungsbeziehungSynchronisierungsService bewegungsbeziehungSynchronisierungsService;
+    private final KnotenarmSynchronisierungsService knotenarmSynchronisierungsService;
+    private final EntityManager entityManager;
+
     @Value(value = "${elasticsearch.host}")
     private String elasticsearchHost;
 
@@ -64,14 +69,16 @@ public class ZaehlstelleIndexService {
     private String elasticsearchPort;
 
     public ZaehlstelleIndexService(final ZeitauswahlService zeitauswahlService,
-            final ZaehlstelleMapper zaehlstelleMapper,
-            final CustomSuggestIndexService customSuggestIndexService,
-            final ZaehlungMapper zaehlungMapper,
-            final ZaehlstellenIndexRepository zaehlstelleIndex,
-            // @Lazy prevents circular dependency
-            @Lazy final ChatMessageService messageService,
-            final StadtbezirkMapper stadtbezirkMapper,
-            final SanitizationService sanitizationService) {
+                                   final ZaehlstelleMapper zaehlstelleMapper,
+                                   final CustomSuggestIndexService customSuggestIndexService,
+                                   final ZaehlungMapper zaehlungMapper,
+                                   final ZaehlstellenIndexRepository zaehlstelleIndex,
+                                   // @Lazy prevents circular dependency
+                                   @Lazy final ChatMessageService messageService,
+                                   final StadtbezirkMapper stadtbezirkMapper,
+                                   final SanitizationService sanitizationService,
+                                   final BewegungsbeziehungSynchronisierungsService bewegungsbeziehungSynchronisierungsService,
+                                   final KnotenarmSynchronisierungsService knotenarmSynchronisierungsService, EntityManager entityManager) {
         this.zeitauswahlService = zeitauswahlService;
         this.zaehlstelleMapper = zaehlstelleMapper;
         this.customSuggestIndexService = customSuggestIndexService;
@@ -80,6 +87,9 @@ public class ZaehlstelleIndexService {
         this.messageService = messageService;
         this.stadtbezirkMapper = stadtbezirkMapper;
         this.sanitizationService = sanitizationService;
+        this.bewegungsbeziehungSynchronisierungsService = bewegungsbeziehungSynchronisierungsService;
+        this.knotenarmSynchronisierungsService = knotenarmSynchronisierungsService;
+        this.entityManager = entityManager;
     }
 
     public BackendIdDTO speichereZaehlstelle(final BearbeiteZaehlstelleDTO zaehlstelle)
@@ -175,20 +185,17 @@ public class ZaehlstelleIndexService {
      * @throws DataNotFoundException Bei Ladefehlern
      */
     public ZaehlungEntity erstelleZaehlung(final BearbeiteZaehlungDTO zdto, final UUID zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
-        final ZaehlungEntity zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
-        // Set ZaehlungEntity ID
-        if (zaehlung.getId() == null) {
-            zaehlung.setId(UUID.randomUUID());
-        }
 
-        // Set ID in Verkehrsbeziehung, LaengsverkehrEntity and QuerungsverkehrEntity if it exists.
-        Stream.of(
-                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
-                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehre()),
-                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehre()))
-                .flatMap(Collection::stream)
-                .filter(bewegungsbeziehung -> StringUtils.isEmpty(bewegungsbeziehung.getId() != null ? bewegungsbeziehung.getId().toString() : null))
-                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID()));
+        final ZaehlungEntity zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
+        zaehlung.getKnotenarme().forEach(knotenarm -> knotenarm.setZaehlung(zaehlung));
+        this.knotenarmSynchronisierungsService.synchronisiere(
+                zdto,
+                zaehlung);
+        this.bewegungsbeziehungSynchronisierungsService.synchronisiere(
+                zdto,
+                zaehlung);
+
+        entityManager.persist(zaehlung);
 
         // Zählstelle erneuern
         final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
@@ -213,42 +220,36 @@ public class ZaehlstelleIndexService {
      * @throws BrokenInfrastructureException Bei Fehler in Verbindung mit ElasticSearch
      * @throws DataNotFoundException Bei Ladefehlern
      */
-    public ZaehlungEntity erneuereZaehlung(final BearbeiteZaehlungDTO zdto, final UUID zaehlstelleId) throws BrokenInfrastructureException, DataNotFoundException {
-        final ZaehlungEntity zaehlung = this.zaehlungMapper.bearbeiteDto2bean(zdto);
-        // Set ZaehlungEntity ID
-        if (zaehlung.getId() == null) {
-            zaehlung.setId(UUID.randomUUID());
-        }
+    public ZaehlungEntity erneuereZaehlung(
+            final BearbeiteZaehlungDTO zdto,
+            final UUID zaehlstelleId
+    ) throws BrokenInfrastructureException, DataNotFoundException {
 
-        // Set ID in Verkehrsbeziehung, LaengsverkehrEntity and QuerungsverkehrEntity if it exists.
-        Stream.of(
-                CollectionUtils.emptyIfNull(zaehlung.getVerkehrsbeziehungen()),
-                CollectionUtils.emptyIfNull(zaehlung.getLaengsverkehre()),
-                CollectionUtils.emptyIfNull(zaehlung.getQuerungsverkehre()))
-                .flatMap(Collection::stream)
-                .filter(bewegungsbeziehung -> bewegungsbeziehung.getId() == null)
-                .forEach(bewegungsbeziehung -> bewegungsbeziehung.setId(UUID.randomUUID()));
+        final ZaehlstelleEntity zst = this.zaehlstelleIndex.findById(zaehlstelleId)
+                .orElseThrow(() -> {
+                    log.error("Keine Zählstelle zur id {} gefunden.", zaehlstelleId);
+                    return new DataNotFoundException("Die Zählstelle konnte nicht gefunden werden.");
+                });
 
-        // Zählstelle erneuern
-        final Optional<ZaehlstelleEntity> zsto = this.zaehlstelleIndex.findById(zaehlstelleId);
-        if (zsto.isPresent()) {
-            final ZaehlstelleEntity zst = zsto.get();
-            for (int index = 0; index < zst.getZaehlungen().size(); index++) {
-                // Ersetze bisherige Zählung durch erneuerte Zählung
-                if (zst.getZaehlungen().get(index).getId().equals(zaehlung.getId())) {
-                    zst.getZaehlungen().remove(index);
-                    zst.getZaehlungen().add(zaehlung);
-                    break;
-                }
-            }
-            customSuggestIndexService.updateSuggestionsForZaehlung(zaehlung);
-            updateZaehlstelleWithLetzteZaehlung(zst);
-            this.speichereZaehlstelleInDatenbank(zst);
-        } else {
-            log.error("Keine Zählstelle zur id {} gefunden.", zaehlstelleId);
-            throw new DataNotFoundException("Die Zählung konnte nicht angelegt werden, da die dazugehörige Zählstelle nicht gefunden wurde. ");
-        }
-        return zaehlung;
+        final ZaehlungEntity existingZaehlung = zst.getZaehlungen().stream()
+                .filter(zaehlung -> zaehlung.getId().equals(zdto.getId()))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException(
+                        "Die Zählung konnte in der Zählstelle nicht gefunden werden."));
+
+        this.zaehlungMapper.updateEntity(zdto, existingZaehlung);
+        this.knotenarmSynchronisierungsService.synchronisiere(
+                zdto,
+                existingZaehlung);
+        this.bewegungsbeziehungSynchronisierungsService.synchronisiere(
+                zdto,
+                existingZaehlung);
+
+        this.customSuggestIndexService.updateSuggestionsForZaehlung(existingZaehlung);
+        this.updateZaehlstelleWithLetzteZaehlung(zst);
+        this.speichereZaehlstelleInDatenbank(zst);
+
+        return existingZaehlung;
     }
 
     /**
