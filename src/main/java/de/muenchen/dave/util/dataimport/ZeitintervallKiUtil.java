@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
  * </p>
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class ZeitintervallKIUtil {
+public final class ZeitintervallKiUtil {
 
     public static final String LIST_LENGTH_MISMATCH = "Mismatch in list size of predictionResults and firstZeitintervalleOfVerkehrsbeziehungen";
 
@@ -50,7 +50,7 @@ public final class ZeitintervallKIUtil {
         return Streams.zip(
                 predictionResults.stream(),
                 firstZeitintervallOfBewegungsbeziehungen.stream(),
-                ZeitintervallKIUtil::createKIZeitintervallFromKIPredictionResult).collect(Collectors.toList());
+                ZeitintervallKiUtil::createKIZeitintervallFromKIPredictionResult).collect(Collectors.toList());
     }
 
     /**

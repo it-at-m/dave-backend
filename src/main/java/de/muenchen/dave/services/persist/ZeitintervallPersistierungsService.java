@@ -11,7 +11,7 @@ import de.muenchen.dave.exceptions.PredictionFailedException;
 import de.muenchen.dave.repositories.relationaldb.ZeitintervallRepository;
 import de.muenchen.dave.services.hochrechnung.HochrechnungsService;
 import de.muenchen.dave.util.dataimport.ZeitintervallBaseUtil;
-import de.muenchen.dave.util.dataimport.ZeitintervallKIUtil;
+import de.muenchen.dave.util.dataimport.ZeitintervallKiUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallSortingIndexUtil;
 import de.muenchen.dave.util.dataimport.ZeitintervallZeitblockSummationUtil;
 import java.util.ArrayList;
@@ -182,7 +182,7 @@ public class ZeitintervallPersistierungsService {
         final var kiZeitintervalle = new ArrayList<Zeitintervall>();
 
         // Die Gruppierung bestimmt zugleich die Zuordnung einer Modellzeile zu einer Bewegungsbeziehung.
-        final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKIUtil
+        final List<List<Zeitintervall>> groupedZeitintervalleByBewegungsbeziehung = ZeitintervallKiUtil
                 .groupZeitintervalleByBewegungsbeziehung(zeitintervalle);
         final Optional<Zaehldauer> modelZaehldauer = determineModelZaehldauer(
                 zaehldauer,
@@ -192,14 +192,14 @@ public class ZeitintervallPersistierungsService {
                 final List<KiPredictionResult> predictionResults = hochrechnungsService
                         .calculateRadhochrechnung(modelZaehldauer.get(), groupedZeitintervalleByBewegungsbeziehung);
                 if (!predictionResults.isEmpty()) {
-                    final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKIUtil
+                    final List<Zeitintervall> firstZeitintervallForEachBewegungsbeziehung = ZeitintervallKiUtil
                             .extractFirstZeitintervallForEachBewegungsbeziehung(groupedZeitintervalleByBewegungsbeziehung);
-                    final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKIUtil
+                    final List<Zeitintervall> kiZeitintervalleForTagessumme = ZeitintervallKiUtil
                             .createKIZeitintervalleForTagessummeFromKIPredictionResults(
                                     predictionResults,
                                     firstZeitintervallForEachBewegungsbeziehung);
                     kiZeitintervalle.addAll(kiZeitintervalleForTagessumme);
-                    ZeitintervallKIUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
+                    ZeitintervallKiUtil.mergeKiHochrechnungInGesamt(summierteZeitbloecke, kiZeitintervalle);
                 }
             } catch (final PredictionFailedException exception) {
                 final String message = "KI-Hochrechnung der Tagessummen fehlgeschlagen:\n"

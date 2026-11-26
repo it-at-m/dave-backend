@@ -34,7 +34,7 @@ class ZeitintervallKIUtilTest {
         zeitintervall3.setBewegungsbeziehungId(UUID.randomUUID());
 
         // Act
-        List<List<Zeitintervall>> result = ZeitintervallKIUtil
+        List<List<Zeitintervall>> result = ZeitintervallKiUtil
                 .groupZeitintervalleByBewegungsbeziehung(Arrays.asList(zeitintervall1, zeitintervall2, zeitintervall3));
         result.sort(Comparator.comparingInt(List::size));
 
@@ -52,9 +52,9 @@ class ZeitintervallKIUtilTest {
 
         // Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults, zeitintervalle));
+                () -> ZeitintervallKiUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults, zeitintervalle));
 
-        String expectedMessage = ZeitintervallKIUtil.LIST_LENGTH_MISMATCH;
+        String expectedMessage = ZeitintervallKiUtil.LIST_LENGTH_MISMATCH;
         String actualMessage = exception.getMessage();
 
         assertThat(actualMessage, equalTo(expectedMessage));
@@ -87,7 +87,7 @@ class ZeitintervallKIUtilTest {
         List<Zeitintervall> zeitintervalle = Arrays.asList(zeitintervall1, zeitintervall2);
 
         // Act
-        List<Zeitintervall> kiZeitintervalle = ZeitintervallKIUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults,
+        List<Zeitintervall> kiZeitintervalle = ZeitintervallKiUtil.createKIZeitintervalleForTagessummeFromKIPredictionResults(predictionResults,
                 zeitintervalle);
 
         // Assert
