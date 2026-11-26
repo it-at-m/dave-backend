@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.domain.ChatMessage;
-import de.muenchen.dave.domain.dtos.ChatMessageDTORandomFactory;
+import de.muenchen.dave.domain.dtos.ChatMessageDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.ChatMessageDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlstelle;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -56,7 +56,7 @@ public class ChatMessageServiceTest {
 
     @Test
     public void saveChatMessageTest() throws BrokenInfrastructureException, DataNotFoundException {
-        final ChatMessageDto chatMessageDTO = ChatMessageDTORandomFactory.getOne();
+        final ChatMessageDto chatMessageDTO = ChatMessageDtoRandomFactory.getOne();
         final ChatMessage chatMessage = new ChatMessageMapperImpl().dto2bean(chatMessageDTO);
         when(chatMessageRepository.saveAndFlush(any())).thenReturn(chatMessage);
         ChatMessageDto result = chatMessageService.saveChatMessage(chatMessageDTO);
@@ -74,7 +74,7 @@ public class ChatMessageServiceTest {
 
         when(indexService.getZaehlung(id)).thenReturn(zaehlung);
 
-        final ChatMessageDto chatMessageDTO = ChatMessageDTORandomFactory.getOne();
+        final ChatMessageDto chatMessageDTO = ChatMessageDtoRandomFactory.getOne();
         chatMessageDTO.setZaehlungId(id);
 
         when(securityContextInformationExtractorService.getUserName()).thenReturn("tester");

@@ -3,7 +3,7 @@ package de.muenchen.dave.domain.dtos;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class ChatMessageDTORandomFactory {
+public class ChatMessageDtoRandomFactory {
 
     public static ChatMessageDto getOne() {
 

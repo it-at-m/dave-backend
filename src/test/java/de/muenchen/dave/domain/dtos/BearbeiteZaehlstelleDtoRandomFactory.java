@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-public class BearbeiteZaehlstelleDTORandomFactory {
+public class BearbeiteZaehlstelleDtoRandomFactory {
 
     private final static FakeValuesService service = new FakeValuesService(new Locale.Builder().setLanguage("test").build(), new RandomService());
 
@@ -34,7 +34,7 @@ public class BearbeiteZaehlstelleDTORandomFactory {
         dto.setLat(Doubles.tryParse(x.get(LAT)));
         dto.setLng(Doubles.tryParse(x.get(LNG)));
         dto.setPunkt(new GeoPoint(Doubles.tryParse(x.get(LAT)), Doubles.tryParse(x.get(LNG))));
-        dto.setZaehlungen(Collections.singletonList(BearbeiteZaehlungDTORandomFactory.getOne()));
+        dto.setZaehlungen(Collections.singletonList(BearbeiteZaehlungDtoRandomFactory.getOne()));
         dto.setCustomSuchwoerter(Collections.singletonList(Faker.instance().animal().name()));
 
         return dto;

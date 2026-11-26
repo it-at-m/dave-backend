@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.dtos;
 
 import com.github.javafaker.Faker;
 
-public class BearbeiteHochrechnungsfaktorDTORandomFactory {
+public class BearbeiteHochrechnungsfaktorDtoRandomFactory {
 
     public static HochrechnungsfaktorDto getOne() {
         HochrechnungsfaktorDto h = new HochrechnungsfaktorDto();

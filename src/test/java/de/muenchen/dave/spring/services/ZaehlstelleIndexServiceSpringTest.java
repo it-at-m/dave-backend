@@ -11,7 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import de.muenchen.dave.DaveBackendApplication;
-import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.NextZaehlstellennummerDto;
 import de.muenchen.dave.domain.dtos.OpenZaehlungDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
@@ -111,7 +111,7 @@ public class ZaehlstelleIndexServiceSpringTest {
 
     @Test
     public void erstelleZaehlstelle() throws BrokenInfrastructureException {
-        final BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
+        final BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDtoRandomFactory.getOne();
         final Zaehlstelle zaehlstelle1 = ZaehlstelleRandomFactory.getOne();
 
         when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing");

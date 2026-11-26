@@ -5,7 +5,7 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BearbeiteKnotenarmDTORandomFactory {
+public class BearbeiteKnotenarmDtoRandomFactory {
 
     public static BearbeiteKnotenarmDto getOne() {
         BearbeiteKnotenarmDto dto = new BearbeiteKnotenarmDto();

@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import de.muenchen.dave.domain.dtos.BearbeiteZaehlungDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteZaehlungDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDto;
 import de.muenchen.dave.domain.dtos.suche.SucheZaehlungSuggestDto;
 import de.muenchen.dave.domain.elasticsearch.Zaehlung;
@@ -33,7 +33,7 @@ public class ZaehlungMapperTests {
 
     @Test
     public void testBearbeiteDto2bean() {
-        BearbeiteZaehlungDto dto = BearbeiteZaehlungDTORandomFactory.getOne();
+        BearbeiteZaehlungDto dto = BearbeiteZaehlungDtoRandomFactory.getOne();
         Zaehlung bean = this.mapper.bearbeiteDto2bean(dto);
 
         assertThat(bean, hasProperty("datum", equalTo(dto.getDatum())));

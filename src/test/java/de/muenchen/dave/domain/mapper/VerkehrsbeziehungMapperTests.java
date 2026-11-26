@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import de.muenchen.dave.domain.dtos.BearbeiteVerkehrsbeziehungKreuzungDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteVerkehrsbeziehungKreuzungDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDto;
 import de.muenchen.dave.domain.elasticsearch.Verkehrsbeziehung;
 import de.muenchen.dave.domain.elasticsearch.VerkehrsbeziehungKreuzungRandomFactory;
@@ -18,7 +18,7 @@ public class VerkehrsbeziehungMapperTests {
 
     @Test
     public void testDto2bean() {
-        BearbeiteVerkehrsbeziehungDto dto = BearbeiteVerkehrsbeziehungKreuzungDTORandomFactory.getOne();
+        BearbeiteVerkehrsbeziehungDto dto = BearbeiteVerkehrsbeziehungKreuzungDtoRandomFactory.getOne();
         Verkehrsbeziehung bean = this.mapper.dto2Bean(dto);
 
         assertThat(bean.getVon(), is(equalTo(dto.getVon())));

@@ -2,7 +2,7 @@ package de.muenchen.dave.domain.dtos;
 
 import com.github.javafaker.Faker;
 
-public class EmailAddressDTORandomFactory {
+public class EmailAddressDtoRandomFactory {
 
     public static EmailAddressDto getOne() {
         EmailAddressDto dto = new EmailAddressDto();

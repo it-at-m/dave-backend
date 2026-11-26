@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.google.common.base.Splitter;
-import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteZaehlstelleDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.LeseZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlstelleDto;
 import de.muenchen.dave.domain.dtos.laden.LadeAuswertungZaehlstelleKoordinateDto;
@@ -35,7 +35,7 @@ public class ZaehlstelleMapperTests {
 
     @Test
     public void testBearbeiteDto2bean() {
-        BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDTORandomFactory.getOne();
+        BearbeiteZaehlstelleDto dto = BearbeiteZaehlstelleDtoRandomFactory.getOne();
         final StadtbezirkMapper stadtbezirkMapper = Mockito.mock(StadtbezirkMapper.class);
         Mockito.when(stadtbezirkMapper.bezeichnungOf(any())).thenReturn("Schwabing-West");
         Zaehlstelle bean = this.mapper.bearbeiteDto2bean(dto, stadtbezirkMapper);

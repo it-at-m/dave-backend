@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
 import de.muenchen.dave.domain.EmailAddress;
-import de.muenchen.dave.domain.dtos.EmailAddressDTORandomFactory;
+import de.muenchen.dave.domain.dtos.EmailAddressDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.EmailAddressDto;
 import de.muenchen.dave.domain.relationaldb.EmailAddressRandomFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class EmailAddressMapperTests {
 
     @Test
     public void testDto2bean() {
-        EmailAddressDto dto = EmailAddressDTORandomFactory.getOne();
+        EmailAddressDto dto = EmailAddressDtoRandomFactory.getOne();
         EmailAddress bean = this.mapper.dto2bean(dto);
 
         assertThat(bean, hasProperty("participantId", equalTo(dto.getParticipantId())));

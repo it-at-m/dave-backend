@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Random;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
-public class BearbeiteZaehlungDTORandomFactory {
+public class BearbeiteZaehlungDtoRandomFactory {
 
     public static BearbeiteZaehlungDto getOne() {
 

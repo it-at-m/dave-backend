@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
-import de.muenchen.dave.domain.dtos.BearbeiteKnotenarmDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteKnotenarmDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteKnotenarmDto;
 import de.muenchen.dave.domain.elasticsearch.Knotenarm;
 import de.muenchen.dave.domain.elasticsearch.KnotenarmRandomFactory;
@@ -18,7 +18,7 @@ public class KnotenarmAndBearbeiteKnotenarmMapperTests {
 
     @Test
     public void testDto2bean() {
-        BearbeiteKnotenarmDto dto = BearbeiteKnotenarmDTORandomFactory.getOne();
+        BearbeiteKnotenarmDto dto = BearbeiteKnotenarmDtoRandomFactory.getOne();
         Knotenarm bean = this.mapper.bearbeitenDto2bean(dto);
 
         assertThat(bean, hasProperty("nummer", equalTo(dto.getNummer())));

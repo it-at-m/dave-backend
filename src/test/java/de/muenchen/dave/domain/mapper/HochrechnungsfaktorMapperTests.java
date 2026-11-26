@@ -4,7 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 
-import de.muenchen.dave.domain.dtos.BearbeiteHochrechnungsfaktorDTORandomFactory;
+import de.muenchen.dave.domain.dtos.BearbeiteHochrechnungsfaktorDtoRandomFactory;
 import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDto;
 import de.muenchen.dave.domain.elasticsearch.Hochrechnungsfaktor;
 import de.muenchen.dave.domain.elasticsearch.HochrechnungsfaktorRandomFactory;
@@ -28,7 +28,7 @@ public class HochrechnungsfaktorMapperTests {
 
     @Test
     public void testDto2bean() {
-        HochrechnungsfaktorDto dto = BearbeiteHochrechnungsfaktorDTORandomFactory.getOne();
+        HochrechnungsfaktorDto dto = BearbeiteHochrechnungsfaktorDtoRandomFactory.getOne();
         Hochrechnungsfaktor bean = this.mapper.dto2beanElastic(dto);
 
         assertThat(bean, hasProperty("kfz", equalTo(dto.getKfz())));
