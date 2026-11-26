@@ -25,10 +25,10 @@ public class SearchAndFilterOptionsDTO {
     private boolean sonderzaehlung;
     private List<Zaehlart> zaehlarten;
     private List<Zaehldauer> zaehldauern;
+    private List<Integer> stadtbezirkNummern;
     private LocalDate zaehldatumVon;
     private LocalDate zaehldatumBis;
     private List<String> zaehlJahreszeiten;
-    private List<Integer> stadtbezirkNummern;
     private List<Integer> zaehlMonate;
     private List<TagesTyp> tagesTypen;
     private List<Wetter> wetter;
