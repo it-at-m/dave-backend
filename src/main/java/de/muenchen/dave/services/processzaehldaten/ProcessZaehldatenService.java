@@ -30,7 +30,7 @@ public class ProcessZaehldatenService {
 
     private final ZaehlungMapper zaehlungMapper;
 
-    private final ProcessZaehldatenSteplineService processZaehldatenSteplineService;
+    private final ProcessZaehldatenStepLineService processZaehldatenSteplineService;
 
     private final ProcessZaehldatenHeatmapService processZaehldatenHeatmapService;
 

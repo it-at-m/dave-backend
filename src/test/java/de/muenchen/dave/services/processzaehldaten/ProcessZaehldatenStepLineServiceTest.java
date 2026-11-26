@@ -23,9 +23,9 @@ import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ProcessZaehldatenSteplineServiceTest {
+class ProcessZaehldatenStepLineServiceTest {
 
-    private final ProcessZaehldatenSteplineService processZaehldatenSteplineService = new ProcessZaehldatenSteplineService();
+    private final ProcessZaehldatenStepLineService processZaehldatenSteplineService = new ProcessZaehldatenStepLineService();
 
     private LadeZaehldatenTableDto ladeZaehldatenTable;
 
@@ -382,24 +382,24 @@ class ProcessZaehldatenSteplineServiceTest {
         final LadeZaehldatenStepLineDto ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
         ladeZaehldatenStepline.setRangeMax(0);
 
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 42);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 42);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(60));
 
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 100);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 100);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 120);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, 120);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
 
         final Integer value = null;
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
     }
 
@@ -408,24 +408,24 @@ class ProcessZaehldatenSteplineServiceTest {
         final LadeZaehldatenStepLineDto ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
         ladeZaehldatenStepline.setRangeMax(0);
 
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(42));
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(42));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(60));
 
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(100));
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(100));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(120));
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(120));
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
 
         final BigDecimal value = null;
         ladeZaehldatenStepline.setRangeMax(300);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(300));
 
         ladeZaehldatenStepline.setRangeMax(158);
-        ProcessZaehldatenSteplineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxRoundedInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMax(), is(160));
     }
 
@@ -434,24 +434,24 @@ class ProcessZaehldatenSteplineServiceTest {
         final LadeZaehldatenStepLineDto ladeZaehldatenStepline = new LadeZaehldatenStepLineDto();
         ladeZaehldatenStepline.setRangeMaxPercent(0);
 
-        ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(1));
+        ProcessZaehldatenStepLineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(1));
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(2));
 
         ladeZaehldatenStepline.setRangeMaxPercent(30);
-        ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(12));
+        ProcessZaehldatenStepLineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(12));
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(30));
 
         ladeZaehldatenStepline.setRangeMaxPercent(16);
-        ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(12));
+        ProcessZaehldatenStepLineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, BigDecimal.valueOf(12));
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(16));
 
         final BigDecimal value = null;
         ladeZaehldatenStepline.setRangeMaxPercent(30);
-        ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(30));
 
         ladeZaehldatenStepline.setRangeMaxPercent(16);
-        ProcessZaehldatenSteplineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, value);
+        ProcessZaehldatenStepLineService.setRangeMaxPercentInZaehldatenStepline(ladeZaehldatenStepline, value);
         assertThat(ladeZaehldatenStepline.getRangeMaxPercent(), is(16));
 
     }
@@ -496,7 +496,7 @@ class ProcessZaehldatenSteplineServiceTest {
         ladeZaehldatenStepline.setXAxisDataFirstChart(Arrays.asList("1", "2", "3", "4"));
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
 
-        ProcessZaehldatenSteplineService
+        ProcessZaehldatenStepLineService
                 .splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(ladeZaehldatenStepline, options);
 
         assertThat(ladeZaehldatenStepline.getXAxisDataFirstChart(), is(Arrays.asList("1", "2", "3", "4")));
@@ -545,7 +545,7 @@ class ProcessZaehldatenSteplineServiceTest {
         ladeZaehldatenStepline.setXAxisDataFirstChart(Arrays.asList("1", "2", "3", "4"));
         ladeZaehldatenStepline.setSeriesEntriesFirstChart(seriesEntriesFirstChart);
 
-        ProcessZaehldatenSteplineService
+        ProcessZaehldatenStepLineService
                 .splitSeriesEntriesIntoFirstChartAndSecondChartIfNecessaryInLadeZaehldatenStepline(ladeZaehldatenStepline, options);
 
         assertThat(ladeZaehldatenStepline.getXAxisDataFirstChart(), is(Arrays.asList("1", "2")));
@@ -588,7 +588,7 @@ class ProcessZaehldatenSteplineServiceTest {
         final StepLineSeriesEntryBaseDto seriesEntryFirstChart = new StepLineSeriesEntryIntegerDto();
         final StepLineSeriesEntryBaseDto seriesEntrySecondChart = new StepLineSeriesEntryIntegerDto();
 
-        ProcessZaehldatenSteplineService
+        ProcessZaehldatenStepLineService
                 .setSeriesIndexForChart(ChartLegendUtil.SCHWERVERKEHR_ANTEIL_PROZENT, seriesEntryFirstChart, seriesEntrySecondChart);
 
         assertThat(seriesEntryFirstChart.getXAxisIndex(), is(0));
@@ -596,7 +596,7 @@ class ProcessZaehldatenSteplineServiceTest {
         assertThat(seriesEntrySecondChart.getXAxisIndex(), is(1));
         assertThat(seriesEntrySecondChart.getYAxisIndex(), is(3));
 
-        ProcessZaehldatenSteplineService
+        ProcessZaehldatenStepLineService
                 .setSeriesIndexForChart("A", seriesEntryFirstChart, seriesEntrySecondChart);
 
         assertThat(seriesEntryFirstChart.getXAxisIndex(), is(0));
@@ -604,7 +604,7 @@ class ProcessZaehldatenSteplineServiceTest {
         assertThat(seriesEntrySecondChart.getXAxisIndex(), is(1));
         assertThat(seriesEntrySecondChart.getYAxisIndex(), is(2));
 
-        ProcessZaehldatenSteplineService
+        ProcessZaehldatenStepLineService
                 .setSeriesIndexForChart(ChartLegendUtil.GUETERVERKEHR_ANTEIL_PROZENT, seriesEntryFirstChart, seriesEntrySecondChart);
 
         assertThat(seriesEntryFirstChart.getXAxisIndex(), is(0));
