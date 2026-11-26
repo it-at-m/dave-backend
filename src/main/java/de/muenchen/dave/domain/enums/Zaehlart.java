@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.EnumUtils;
 
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum Zaehlart {
 
     // Standardzählung/Normal
