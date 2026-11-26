@@ -11,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "stadtbezirk_viertel")
+@Table(name = "stadtbezirksviertel")
 public class StadtbezirksviertelEntity extends BaseEntity {
 
     @Column(name = "nummer", unique = true, nullable = false, length = 20)
