@@ -55,10 +55,10 @@ public final class CoordinateUtil {
         log.debug("Transform from WGS84 to UTM coordinates.");
         final var positionUtm = new PositionUTM();
         if (ObjectUtils.isNotEmpty(positionWgs84)) {
-            final var wgsCoordinates = new WGS84(
+            final var wgsCoordinates = new Wgs84(
                     positionWgs84.getLat(),
                     positionWgs84.getLon());
-            var utm = new UTM(wgsCoordinates);
+            var utm = new Utm(wgsCoordinates);
             positionUtm.setZone(utm.getZone());
             positionUtm.setLetter(utm.getLetter());
             positionUtm.setEasting(utm.getEasting());

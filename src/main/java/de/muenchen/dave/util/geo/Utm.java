@@ -13,20 +13,20 @@ import org.apache.commons.lang3.StringUtils;
  *      "https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">Wikipedia-entry
  *      on UTM</a>
  */
-public class UTM {
+public class Utm {
     private double easting;
     private double northing;
     private int zone;
     private char letter;
 
-    public UTM(int zone, char letter, double easting, double northing) {
+    public Utm(int zone, char letter, double easting, double northing) {
         this.zone = zone;
         this.letter = Character.toUpperCase(letter);
         this.easting = easting;
         this.northing = northing;
     }
 
-    public UTM(String utm) {
+    public Utm(String utm) {
         String[] parts = utm.split(StringUtils.SPACE);
         zone = Integer.parseInt(parts[0]);
         letter = parts[1].toUpperCase(Locale.ENGLISH).charAt(0);
@@ -34,7 +34,7 @@ public class UTM {
         northing = Double.parseDouble(parts[3]);
     }
 
-    public UTM(WGS84 wgs) {
+    public Utm(Wgs84 wgs) {
         fromWGS84(wgs.getLatitude(), wgs.getLongitude());
     }
 
@@ -64,7 +64,7 @@ public class UTM {
      * taken into account.
      */
     public boolean equals(Object o) {
-        if (o instanceof UTM other) {
+        if (o instanceof Utm other) {
             return (zone == other.zone) &&
                     (letter == other.letter) &&
                     (easting == other.easting) &&

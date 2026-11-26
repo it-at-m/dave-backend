@@ -8,16 +8,16 @@ package de.muenchen.dave.util.geo;
  *      Overflow</a>
  * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System">Wikipedia-entry on WGS-84</a>
  */
-public class WGS84 {
+public class Wgs84 {
     private double latitude;
     private double longitude;
 
-    public WGS84(double latitude, double longitude) {
+    public Wgs84(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public WGS84(UTM utm) {
+    public Wgs84(Utm utm) {
         fromUTM(utm.getZone(), utm.getLetter(), utm.getEasting(), utm.getNorthing());
     }
 
@@ -37,7 +37,7 @@ public class WGS84 {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof WGS84 other) {
+        if (o instanceof Wgs84 other) {
             return (latitude == other.latitude) &&
                     (longitude == other.longitude);
         }
