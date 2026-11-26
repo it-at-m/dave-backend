@@ -29,4 +29,4 @@ alter table if exists stadtbezirksviertel
     foreign key (stadtbezirk_id)
     references stadtbezirk;
 
-CREATE INDEX idx_stadtbezirksviertel_stadtbezirk_id  ON stadtbezirk_viertel USING btree (stadtbezirk_id);
+CREATE INDEX idx_stadtbezirksviertel_stadtbezirk_id  ON stadtbezirksviertel USING btree (stadtbezirk_id);
