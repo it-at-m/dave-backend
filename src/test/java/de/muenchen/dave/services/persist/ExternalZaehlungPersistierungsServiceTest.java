@@ -19,6 +19,7 @@ import de.muenchen.dave.domain.elasticsearch.Zaehlung;
 import de.muenchen.dave.domain.enums.Bewegungsrichtung;
 import de.muenchen.dave.domain.enums.FahrbewegungKreisverkehr;
 import de.muenchen.dave.domain.enums.Himmelsrichtung;
+import de.muenchen.dave.domain.enums.Wetter;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.KnotenarmMapper;
 import de.muenchen.dave.domain.mapper.ZeitintervallMapper;
@@ -403,8 +404,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
-        dto.setZaehlart("N");
-        dto.setWetter("sunny");
+        dto.setZaehlart(Zaehlart.N);
+        dto.setWetter(Wetter.SUNNY);
         dto.setZaehlsituation("normal");
         dto.setLaengsverkehr(null);
         dto.setQuerungsverkehr(null);
@@ -425,7 +426,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         assertNotNull(backend);
         assertEquals(id, backend.getId());
         // Zaehlung in Zaehlstelle sollte aktualisiert worden sein
-        assertEquals("sunny", zaehlstelle.getZaehlungen().get(0).getWetter());
+        assertEquals(Wetter.SUNNY.name(), zaehlstelle.getZaehlungen().get(0).getWetter());
         assertEquals("normal", zaehlstelle.getZaehlungen().get(0).getZaehlsituation());
 
         // Verifiziere Interaktionen
@@ -442,8 +443,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
-        dto.setZaehlart("N");
-        dto.setWetter("rain");
+        dto.setZaehlart(Zaehlart.N);
+        dto.setWetter(Wetter.RAINY);
         dto.setZaehlsituation("changed");
 
         final var ev = new ExternalVerkehrsbeziehungDTO();
@@ -501,7 +502,8 @@ class ExternalZaehlungPersistierungsServiceTest {
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
-        dto.setZaehlart("N");
+        dto.setZaehlart(Zaehlart.N);
+        dto.setWetter(Wetter.CLOUDY);
 
         final var ev = new ExternalVerkehrsbeziehungDTO();
         ev.setId(bewegungsId);
@@ -540,7 +542,7 @@ class ExternalZaehlungPersistierungsServiceTest {
         final var id = UUID.randomUUID().toString();
         dto.setId(id);
         dto.setDatum(null);
-        dto.setZaehlart("N");
+        dto.setZaehlart(Zaehlart.N);
 
         final var ev = new ExternalVerkehrsbeziehungDTO();
         ev.setId(bewegungsId);

@@ -3,6 +3,11 @@ package de.muenchen.dave.domain.dtos.external;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.muenchen.dave.configuration.json.EmptyListSerializer;
 import de.muenchen.dave.domain.enums.Fahrzeug;
+import de.muenchen.dave.domain.enums.Quelle;
+import de.muenchen.dave.domain.enums.Status;
+import de.muenchen.dave.domain.enums.Wetter;
+import de.muenchen.dave.domain.enums.Zaehlart;
+import de.muenchen.dave.domain.enums.Zaehldauer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,7 +21,7 @@ public class ExternalZaehlungDTO {
 
     LocalDate datum;
 
-    String zaehlart;
+    Zaehlart zaehlart;
 
     GeoPoint punkt;
 
@@ -41,13 +46,13 @@ public class ExternalZaehlungDTO {
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     int zaehlIntervall;
 
-    String wetter;
+    Wetter wetter;
 
-    String status;
+    Status status;
 
-    String quelle;
+    Quelle quelle;
 
-    String zaehldauer;
+    Zaehldauer zaehldauer;
 
     String kommentar;
 

@@ -69,8 +69,8 @@ public class ExternalZaehlungPersistierungsService extends ZaehlungPersistierung
             if (zaehlung.getId().equalsIgnoreCase(zaehlungDto.getId())) {
                 // Datum, Zählart, Wetter, Zaehlsituation und ZaehlsituationErweitert koennen vom Dienstleister berarbeitet werden.
                 zaehlung.setDatum(zaehlungDto.getDatum());
-                zaehlung.setZaehlart(zaehlungDto.getZaehlart());
-                zaehlung.setWetter(zaehlungDto.getWetter());
+                zaehlung.setZaehlart(zaehlungDto.getZaehlart().name());
+                zaehlung.setWetter(zaehlungDto.getWetter().name());
                 zaehlung.setZaehlsituation(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituation()));
                 zaehlung.setZaehlsituationErweitert(sanitizationService.sanitizeAllowedHtml(zaehlungDto.getZaehlsituationErweitert()));
 

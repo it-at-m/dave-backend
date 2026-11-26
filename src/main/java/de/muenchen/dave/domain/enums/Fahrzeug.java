@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum Fahrzeug implements Serializable {
 
     // Kategorien

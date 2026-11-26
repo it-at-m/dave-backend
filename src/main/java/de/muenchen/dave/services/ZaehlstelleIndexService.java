@@ -524,7 +524,7 @@ public class ZaehlstelleIndexService {
             allByExternalStatus.forEach(zaehlstelle -> {
                 this.zaehlstelleMapper.bean2ExternalDto(zaehlstelle).getZaehlungen().forEach(zaehlung -> {
                     // Wenn Fachadmin, dann anzeigen, sonst anhand der Dienstleisterkennung filtern
-                    if (statusAsList.contains(zaehlung.getStatus())
+                    if (statusAsList.contains(zaehlung.getStatus().name())
                             && (StringUtils.equalsIgnoreCase(diensleisterkennung, zaehlung.getDienstleisterkennung()) || isFachadmin)) {
                         if (StringUtils.isNotEmpty(zaehlstelle.getKommentar())) {
                             zaehlung.setZaehlstelleKommentar(zaehlstelle.getKommentar());
