@@ -1,5 +1,7 @@
 package de.muenchen.dave.services.persist;
 
+import de.muenchen.dave.domain.Hochrechnungsfaktor;
+import de.muenchen.dave.domain.dtos.HochrechnungsfaktorDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteLaengsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteQuerungsverkehrDTO;
 import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteVerkehrsbeziehungDTO;
@@ -7,10 +9,13 @@ import de.muenchen.dave.domain.dtos.bearbeiten.BearbeiteZaehlungDTO;
 import de.muenchen.dave.domain.enums.Zaehlart;
 import de.muenchen.dave.domain.mapper.ZaehlungMapper;
 import de.muenchen.dave.exceptions.DataNotFoundException;
+import de.muenchen.dave.relational.repository.HochrechnungsfaktorRepository;
 import de.muenchen.dave.relational.zaehlstellen.LaengsverkehrEntity;
 import de.muenchen.dave.relational.zaehlstellen.QuerungsverkehrEntity;
 import de.muenchen.dave.relational.zaehlstellen.VerkehrsbeziehungEntity;
 import de.muenchen.dave.relational.zaehlstellen.ZaehlungEntity;
+import de.muenchen.dave.services.HochrechnungsfaktorService;
+import jakarta.persistence.EntityManager;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,7 +32,10 @@ public class BewegungsbeziehungSynchronisierungsService {
 
     private final ZaehlungMapper zaehlungMapper;
 
-    public void synchronisiere(
+    private final EntityManager entityManager;
+    private final HochrechnungsfaktorRepository hochrechnungsfaktorRepository;
+
+    public void synchronize(
             BearbeiteZaehlungDTO dto,
             ZaehlungEntity zaehlung
     ) throws DataNotFoundException {
@@ -61,6 +69,10 @@ public class BewegungsbeziehungSynchronisierungsService {
                         updateEntity = foundEntity.orElseThrow(() -> new DataNotFoundException("Die Laengsverkehr-ID konnte in der Zaehlung nicht gefunden werden: " + lDto.getId()));
                     }
                     this.zaehlungMapper.updateEntity(lDto, updateEntity);
+
+                    updateEntity.setHochrechnungsfaktor(
+                            synchronizeHochrechnungsfaktor(
+                                    lDto.getHochrechnungsfaktor()));
                 }
             }
         } else if (Zaehlart.QU.name().equals(dto.getZaehlart())) {
@@ -92,6 +104,10 @@ public class BewegungsbeziehungSynchronisierungsService {
                         updateEntity = foundEntity.orElseThrow(() -> new DataNotFoundException("Die Querungsverkehr-ID konnte in der Zaehlung nicht gefunden werden: " + lDto.getId()));
                     }
                     this.zaehlungMapper.updateEntity(lDto, updateEntity);
+
+                    updateEntity.setHochrechnungsfaktor(
+                            synchronizeHochrechnungsfaktor(
+                                    lDto.getHochrechnungsfaktor()));
                 }
             }
         } else {
@@ -123,9 +139,35 @@ public class BewegungsbeziehungSynchronisierungsService {
                         updateEntity = foundEntity.orElseThrow(() -> new DataNotFoundException("Die Verkehrsbeziehung-ID konnte in der Zaehlung nicht gefunden werden: " + lDto.getId()));
                     }
                     this.zaehlungMapper.updateEntity(lDto, updateEntity);
+
+                    updateEntity.setHochrechnungsfaktor(
+                            synchronizeHochrechnungsfaktor(
+                                    lDto.getHochrechnungsfaktor()));
                 }
             }
         }
+    }
+
+    private Hochrechnungsfaktor synchronizeHochrechnungsfaktor(
+            final HochrechnungsfaktorDTO dto
+    ) throws DataNotFoundException {
+        if (dto == null) {
+            return null;
+        }
+
+        final Hochrechnungsfaktor faktor;
+        if (dto.getId() == null) {
+            faktor = new Hochrechnungsfaktor();
+            HochrechnungsfaktorService.setDtoDataToEntity(dto, faktor);
+            entityManager.persist(faktor);
+        } else {
+            faktor = hochrechnungsfaktorRepository.findById(dto.getId())
+                    .orElseThrow(() -> new DataNotFoundException(
+                            "Hochrechnungsfaktor nicht gefunden: " + dto.getId()));
+
+            HochrechnungsfaktorService.setDtoDataToEntity(dto, faktor);
+        }
+        return faktor;
     }
 
 }

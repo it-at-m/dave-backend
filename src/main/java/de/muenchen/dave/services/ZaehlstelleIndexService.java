@@ -62,12 +62,6 @@ public class ZaehlstelleIndexService {
     private final KnotenarmSynchronisierungsService knotenarmSynchronisierungsService;
     private final EntityManager entityManager;
 
-    @Value(value = "${elasticsearch.host}")
-    private String elasticsearchHost;
-
-    @Value(value = "${elasticsearch.port}")
-    private String elasticsearchPort;
-
     public ZaehlstelleIndexService(final ZeitauswahlService zeitauswahlService,
                                    final ZaehlstelleMapper zaehlstelleMapper,
                                    final CustomSuggestIndexService customSuggestIndexService,
@@ -123,7 +117,7 @@ public class ZaehlstelleIndexService {
             final ZaehlstelleEntity save = this.zaehlstelleIndex.save(zaehlstelle);
             log.warn("Zählstelle {} wurde erfolgreich gespeichert", save.getId());
         } catch (final DataAccessResourceFailureException e) {
-            log.error("cannot access elasticsearch index on {}:{}", this.elasticsearchHost, this.elasticsearchPort);
+            log.error("Error saving zaehlstelle :{}", e.getMessage());
             throw new BrokenInfrastructureException();
         }
     }
@@ -191,7 +185,7 @@ public class ZaehlstelleIndexService {
         this.knotenarmSynchronisierungsService.synchronisiere(
                 zdto,
                 zaehlung);
-        this.bewegungsbeziehungSynchronisierungsService.synchronisiere(
+        this.bewegungsbeziehungSynchronisierungsService.synchronize(
                 zdto,
                 zaehlung);
 
@@ -241,7 +235,7 @@ public class ZaehlstelleIndexService {
         this.knotenarmSynchronisierungsService.synchronisiere(
                 zdto,
                 existingZaehlung);
-        this.bewegungsbeziehungSynchronisierungsService.synchronisiere(
+        this.bewegungsbeziehungSynchronisierungsService.synchronize(
                 zdto,
                 existingZaehlung);
 
@@ -543,7 +537,7 @@ public class ZaehlstelleIndexService {
                 });
             });
         } catch (final DataAccessResourceFailureException e) {
-            log.error("cannot access elasticsearch index on {}:{}", this.elasticsearchHost, this.elasticsearchPort);
+            log.error("Error saving zaehlstelle :{}", e.getMessage());
             throw new BrokenInfrastructureException();
         }
         return zaehlungen;
@@ -607,7 +601,7 @@ public class ZaehlstelleIndexService {
                 });
             });
         } catch (final DataAccessResourceFailureException e) {
-            log.error("cannot access elasticsearch index on {}:{}", this.elasticsearchHost, this.elasticsearchPort);
+            log.error("Error saving zaehlstelle :{}", e.getMessage());
             throw new BrokenInfrastructureException();
         }
 
