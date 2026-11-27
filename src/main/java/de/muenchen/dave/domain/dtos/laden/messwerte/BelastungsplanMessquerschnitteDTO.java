@@ -21,7 +21,6 @@ public class BelastungsplanMessquerschnitteDTO implements Serializable {
     private String strassenname;
     @NotNull
     private String mstId;
-    @NotNull
     private Integer stadtbezirkNummer;
     @NotNull
     private Integer totalKfz;

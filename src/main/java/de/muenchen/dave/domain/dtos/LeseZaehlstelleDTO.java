@@ -17,7 +17,6 @@ public class LeseZaehlstelleDTO implements Serializable {
     String nummer;
     @NotNull
     String name;
-    @NotNull
     Integer stadtbezirkNummer;
     @NotNull
     Double lat;

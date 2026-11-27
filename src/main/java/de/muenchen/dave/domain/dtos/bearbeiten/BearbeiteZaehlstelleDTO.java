@@ -13,8 +13,7 @@ public class BearbeiteZaehlstelleDTO {
 
     String nummer;
 
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-    int stadtbezirkNummer;
+    Integer stadtbezirkNummer;
 
     GeoPoint punkt;
     @NotNull
