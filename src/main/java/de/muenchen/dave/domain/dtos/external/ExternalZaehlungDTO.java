@@ -65,7 +65,7 @@ public class ExternalZaehlungDTO {
     // Zählstelle
     String zaehlstelleNummer;
 
-    String zaehlstelleStadtbezirk;
+    Integer zaehlstelleStadtbezirkNummer;
 
     GeoPoint zaehlstellePunkt;
 

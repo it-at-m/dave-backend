@@ -12,9 +12,6 @@ public class ZaehlstelleTooltipDTO implements ErhebungsstelleTooltipDTO {
 
     @NotNull
     private String zaehlstellennnummer;
-    @NotNull
-    private String stadtbezirk;
-    @NotNull
     private Integer stadtbezirknummer;
     @NotNull
     private Integer anzahlZaehlungen;

@@ -8,12 +8,12 @@ import de.muenchen.dave.domain.elasticsearch.detektor.Messstelle;
 import de.muenchen.dave.domain.enums.Fahrzeugklasse;
 import de.muenchen.dave.domain.enums.ZaehldatenIntervall;
 import de.muenchen.dave.domain.mapper.FahrzeugklassenMapper;
-import de.muenchen.dave.domain.mapper.StadtbezirkMapper;
 import de.muenchen.dave.domain.mapper.VerkehrsartMapper;
 import de.muenchen.dave.geodateneai.gen.model.MessfaehigkeitDto;
 import de.muenchen.dave.geodateneai.gen.model.MessquerschnittDto;
 import de.muenchen.dave.geodateneai.gen.model.MessstelleDto;
 import de.muenchen.dave.geodateneai.gen.model.UnauffaelligerTagDto;
+import de.muenchen.dave.services.StadtbezirkService;
 import de.muenchen.dave.util.SuchwortUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 )
 public interface MessstelleReceiverMapper {
 
-    Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    Messstelle createMessstelle(MessstelleDto dto, @Context StadtbezirkService stadtbezirkService);
 
     Messquerschnitt createMessquerschnitt(MessquerschnittDto dto);
 
@@ -49,7 +49,7 @@ public interface MessstelleReceiverMapper {
     List<Messfaehigkeit> createMessfaehigkeit(List<MessfaehigkeitDto> dto);
 
     @AfterMapping
-    default void dto2EntityAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper) {
+    default void dto2EntityAfterMapping(@MappingTarget Messstelle bean, MessstelleDto dto, @Context StadtbezirkService stadtbezirkService) {
         if (StringUtils.isEmpty(bean.getId())) {
             bean.setId(UUID.randomUUID().toString());
         }
@@ -79,7 +79,7 @@ public interface MessstelleReceiverMapper {
         }
 
         // Suchworte setzen
-        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkMapper);
+        final Set<String> generatedSuchwoerter = SuchwortUtil.generateSuchworteOfMessstelle(bean, stadtbezirkService);
 
         bean.setSuchwoerter(new ArrayList<>());
         if (CollectionUtils.isNotEmpty(generatedSuchwoerter)) {
@@ -115,11 +115,11 @@ public interface MessstelleReceiverMapper {
     @Mapping(target = "messquerschnitte", ignore = true)
     @Mapping(target = "lageplanVorhanden", ignore = true)
     @Mapping(target = "fahrzeugklasse", ignore = true)
-    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    Messstelle updateMessstelle(@MappingTarget Messstelle existing, MessstelleDto dto, @Context StadtbezirkService stadtbezirkService);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "standort", ignore = true)
-    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkMapper stadtbezirkMapper);
+    Messquerschnitt updateMessquerschnitt(@MappingTarget Messquerschnitt existing, MessquerschnittDto dto, @Context StadtbezirkService stadtbezirkService);
 
     default ZaehldatenIntervall map(final MessfaehigkeitDto.IntervallEnum intervall) {
         final ZaehldatenIntervall mappingTarget;

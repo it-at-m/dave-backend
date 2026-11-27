@@ -13,7 +13,6 @@ public class MessstelleOverviewDTO implements Serializable {
     private String status;
     private Boolean sichtbarDatenportal;
     private Boolean geprueft;
-    private String stadtbezirk;
     private String stadtbezirkNummer;
     private Boolean lageplanVorhanden;
 }
