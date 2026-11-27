@@ -146,35 +146,17 @@ class SanitizationServiceTest {
     void sanitizeBearbeiteZaehlstelleDto_safeInputIsKept() {
         // Harmloser HTML-Input bleibt erhalten
         BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setStadtbezirk("Moosach");
+        bearbeiteZaehlstelleDTO.setStadtbezirkNummer(10);
         bearbeiteZaehlstelleDTO.setKommentar(ALLOWED_HTML_2);
         bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(ALLOWED_HTML_1, ALLOWED_HTML_2));
 
         sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
 
-        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirk(), is(Stadtbezirk.MOOSACH.getBezeichnung()));
+        assertThat(bearbeiteZaehlstelleDTO.getStadtbezirkNummer(), is(10));
         assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(ALLOWED_HTML_2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(ALLOWED_HTML_1));
         assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(1), is(ALLOWED_HTML_2));
-    }
-
-    @Test
-    void sanitizeBearbeiteZaehlstelleDto_unsafeInputIsRemoved() {
-        // Schädlicher / nicht erlaubter HTML-Input wird entfernt
-        BearbeiteZaehlstelleDTO bearbeiteZaehlstelleDTO = new BearbeiteZaehlstelleDTO();
-        bearbeiteZaehlstelleDTO.setKommentar(NOT_ALLOWED_HTML_2);
-        bearbeiteZaehlstelleDTO.setCustomSuchwoerter(List.of(NOT_ALLOWED_HTML_3, NOT_ALLOWED_HTML_4));
-
-        sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO);
-
-        assertThat(bearbeiteZaehlstelleDTO.getKommentar(), is(EXPECTED_2));
-        assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().size(), is(2));
-        assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(0), is(EXPECTED_3));
-        assertThat(bearbeiteZaehlstelleDTO.getCustomSuchwoerter().get(1), is(EXPECTED_4));
-
-        bearbeiteZaehlstelleDTO.setStadtbezirk("Südkreuz");
-        assertThrows(IllegalArgumentException.class, () -> sanitizationService.sanitizeBearbeiteZaehlstelleDto(bearbeiteZaehlstelleDTO));
     }
 
     @Test

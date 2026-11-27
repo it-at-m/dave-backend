@@ -37,7 +37,7 @@ public class MessstelleController {
         "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
     )
-    @GetMapping(value = "/info", params = REQUEST_PARAMETER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/info/byId", params = REQUEST_PARAMETER_ID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoById(
             @RequestParam(value = REQUEST_PARAMETER_ID) final String messstelleId) {
@@ -58,7 +58,7 @@ public class MessstelleController {
         "hasAnyRole(T(de.muenchen.dave.security.AuthoritiesEnum).ANWENDER.name(), " +
                 "T(de.muenchen.dave.security.AuthoritiesEnum).POWERUSER.name())"
     )
-    @GetMapping(value = "/info", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/info/ByMstId", params = REQUEST_PARAMETER_MSTID, produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional(readOnly = true)
     public ResponseEntity<ReadMessstelleInfoDTO> readMessstelleInfoByMstId(
             @RequestParam(value = REQUEST_PARAMETER_MSTID) final String mstId) {

@@ -1,7 +1,6 @@
 package de.muenchen.dave.util.messstelle;
 
 import de.muenchen.dave.domain.dtos.laden.LadeZaehldatenSteplineDTO;
-import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryBaseDTO;
 import de.muenchen.dave.domain.dtos.laden.StepLineSeriesEntryIntegerDTO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -81,10 +80,10 @@ class GanglinieUtilTest {
 
     @Test
     void setSeriesIndexForFirstChartValue() {
-        final var stepLineSeriesEntry = new StepLineSeriesEntryBaseDTO();
+        final var stepLineSeriesEntry = new StepLineSeriesEntryIntegerDTO();
         GanglinieUtil.setSeriesIndexForFirstChartValue(stepLineSeriesEntry);
 
-        final var expected = new StepLineSeriesEntryBaseDTO();
+        final var expected = new StepLineSeriesEntryIntegerDTO();
         expected.setXAxisIndex(0);
         expected.setYAxisIndex(0);
 

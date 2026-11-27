@@ -1,5 +1,8 @@
 package de.muenchen.dave.domain.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(enumAsRef = true)
 public enum Himmelsrichtung {
 
     N,
@@ -16,6 +19,6 @@ public enum Himmelsrichtung {
 
     W,
 
-    NW;
+    NW
 
 }

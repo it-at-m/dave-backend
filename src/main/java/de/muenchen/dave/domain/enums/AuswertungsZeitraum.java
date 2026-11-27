@@ -1,5 +1,6 @@
 package de.muenchen.dave.domain.enums;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @AllArgsConstructor
 @Getter
+@Schema(enumAsRef = true)
 public enum AuswertungsZeitraum {
 
     // Monate

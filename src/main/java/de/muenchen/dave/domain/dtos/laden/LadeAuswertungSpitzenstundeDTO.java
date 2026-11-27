@@ -21,8 +21,6 @@ public class LadeAuswertungSpitzenstundeDTO extends LadeZaehldatumDTO {
     // Info Zählstelle
     private String nummerZaehlstelle;
 
-    private String stadtbezirk;
-
     private Integer stadtbezirkNummer;
 
     // Info Zählung
